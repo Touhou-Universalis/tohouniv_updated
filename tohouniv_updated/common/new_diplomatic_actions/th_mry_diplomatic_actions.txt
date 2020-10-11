@@ -1,0 +1,843 @@
+#MRY incite Moriya zealots
+th_incite_moriya_zealots = {
+	category = covert
+
+	require_acceptance = no
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		OR = {
+			tag = MRY
+			was_tag = MRY
+		}
+		has_reform = Gensokyan_shrine_theocracy
+		religion = Moriya_Shintoism #Just to make it easier
+		FROM = {
+			NOT = { religion = ROOT }
+			any_owned_province = { religion = ROOT }
+		}
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 50
+		}
+		dip_tech = 9
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_already_incited_zealots
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_has_already_incited_zealots }
+					had_country_flag = {
+						flag = th_has_already_incited_zealots
+						days = 1825
+					}
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		FROM = {
+			set_country_flag = th_has_already_incited_zealots
+			every_owned_province = { 
+				limit = {
+					religion = ROOT
+				}
+				add_province_modifier = { 
+    				name = th_incited_zealots
+    				duration = 1825  
+				}
+			}
+			country_event = {
+				id = flavor_mry.100
+				days = 1825
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -50			
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#MRY request another country to convert
+th_request_conversion = {
+	category = influence
+	alert_index = 30
+	alert_tooltip = th_request_conversion_tooltip
+	require_acceptance = yes
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		OR = {
+			tag = MRY
+			was_tag = MRY
+		}
+		has_reform = Gensokyan_shrine_theocracy
+		religion = Moriya_Shintoism #Just to make it easier
+		FROM = {
+			NOT = { religion = ROOT }
+			any_owned_province = { religion = ROOT }
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				th_has_incidents_enabled = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_mry_conversion_enabled_tt
+				has_global_flag = th_mry_conversion_enabled
+			}
+		}
+		else = {
+			has_reform = TH_feudal_shrine_reform
+		}
+		#has activated incidents and Mountain of faith incident had happened(doesn`t have to end, but the introduction event must trigger)
+		#or had deactivated incidents and has feudal shrine theocracy government reform
+		#the target country has half of total development or number of province following moriya shinto
+		#the target country is independent or a tributary.they mustn`t be subject of MRY either.
+	}
+
+	on_accept = {
+		add_prestige = 10
+		FROM = {
+			change_religion = ROOT
+			add_opinion = {
+    				who = ROOT
+    				modifier = th_great_guider
+			}
+		}
+		add_opinion = {
+    			who = FROM
+    			modifier = th_new_follower
+		}		
+	}
+
+	on_decline = {
+		FROM = {
+			add_opinion = {
+    				who = ROOT
+    				modifier = th_instigator
+			}
+		}
+		add_opinion = {
+    			who = FROM
+    			modifier = th_refused_conversion
+		}
+	}
+
+    ai_acceptance = {
+        add_entry = {
+            name = DIPLO_OPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = -0.5
+			multiply_variable = {
+				which = ai_value
+				value = -0.5
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 2
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+    }
+	ai_will_do = {
+		always = no
+		#has_global_flag = MRY INCIDENT
+	}
+}
+
+#MRY establish religious tributaries
+th_establish_religious_tributaries = {
+	category = influence
+
+	require_acceptance = yes
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		FROM = {
+			NOT = { is_subject_of_type = th_religious_tributary }
+		}
+		OR = {
+			tag = MRY
+			was_tag = MRY
+		}
+		has_reform = Gensokyan_shrine_theocracy
+		religion = Moriya_Shintoism #Just to make it easier
+	}
+
+	is_allowed = {
+		FROM = {
+			religion = ROOT
+			is_at_war = no
+		}
+		OR = {
+			FROM = { 
+				is_subject_of = ROOT
+				is_subject_of_type = vassal	
+			}
+			FROM = {
+				NOT = { num_of_cities = 3 }
+			}
+			FROM = {
+				NOT = { total_development = 60 }
+			}
+		}
+		is_at_war = no
+	}
+
+	on_accept = {
+		create_subject = {
+			subject_type = th_religious_tributary
+			subject = FROM
+		}	
+	}
+    ai_acceptance = {
+        add_entry = {
+            name = DIPLO_OPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = -0.5
+			multiply_variable = {
+				which = ai_value
+				value = -0.5
+			}
+		}
+		add_entry = {
+			name = TH_DIPLO_IS_SUBJECT
+			limit = {
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 10000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_HAS_SUBJECTS
+			limit = {
+				FROM = {
+					num_of_subjects = 1
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 2
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+	}
+	
+	ai_will_do = {
+		NOT = { historical_rival_with = FROM }
+		manpower_percentage = 0.5
+		treasury = 0
+		monthly_income = 0
+		NOT = {
+			ai_attitude = {
+				who = FROM
+				attitude = attitude_threatened
+			}
+			ai_attitude = {
+				who = FROM
+				attitude = atittude_rivalry
+			}
+			FROM = {
+				overlord = {
+					OR = {
+						AND = {
+							manpower_percentage = 0.5
+							army_size = ROOT
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_allied
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_friendly
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_neutral
+						}
+					}
+				}
+				
+			}
+
+		}
+		OR = {
+			AND = {
+				manpower_percentage = 0.7
+				ai_attitude = {
+					who = FROM
+					attitude = attitude_outraged
+				}
+			}
+			AND = {
+				manpower_percentage = 0.6
+				ai_attitude = {
+					who = FROM
+					attitude = attitude_hostile
+				}
+			}
+			ai_attitude = {
+				who = FROM
+				attitude = attitude_protective
+			}
+			ai_attitude = {
+				who = FROM
+				attitude = attitude_domineering
+			}
+			FROM = {
+				ai_attitude = {
+					who = ROOT
+					attitude = attitude_threatened
+				}
+			}
+		}
+	}
+}
+
+#MRY revoke religious tributaries
+th_revoke_religious_tributaries = {
+	category = influence
+
+	require_acceptance = yes
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		OR = {
+			tag = MRY
+			was_tag = MRY
+		}
+		has_reform = Gensokyan_shrine_theocracy
+		religion = Moriya_Shintoism #Just to make it easier
+		FROM = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_religious_tributary
+		}
+	}
+
+	is_allowed = {
+        FROM = {
+            custom_trigger_tooltip = {
+                tooltip = th_dev_condition_tooltip
+                NOT = { total_development = 200 }
+           }
+        }
+	}
+
+	on_accept = {
+		create_subject = {
+			subject_type = vassal
+			subject = FROM
+		}	
+	}
+    ai_acceptance = {
+        add_entry = {
+            name = DIPLO_OPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +6 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.6
+			}
+		}
+		add_entry = {
+			name = DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = -0.5
+			multiply_variable = {
+				which = ai_value
+				value = -0.5
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					OR = {
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_hostile
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_outraged
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_disloyal
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_rebellious
+						}
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					OR = {
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_loyal
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_friendly
+						}
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 10
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 5
+			multiply_variable = {
+				which = ai_value
+				value = 5
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#MRY cancel religious tributaries
+th_cancel_religious_tributaries = {
+	category = influence
+
+	require_acceptance = no
+
+	is_visible = {
+		FROM = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_religious_tributary
+		}
+	}
+
+	is_allowed = {
+		always = yes
+	}
+
+	on_accept = {
+		FROM = {
+			grant_independence = yes
+			add_opinion = {
+				who = ROOT
+				modifier = th_evil_god
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}

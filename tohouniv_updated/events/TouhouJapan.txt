@@ -1,0 +1,370 @@
+########################################
+# Flavor Events for Japan getting a foot in Gensokyo
+########################################
+
+namespace = th_japan_events
+
+#Japanese invasion of Gensokyo
+
+country_event = {
+	id = th_japan_events.1
+	title = "th_japan_events.1.t"
+	desc = "th_japan_events.1.desc"
+	picture = SHRINE_eventPicture
+	
+	major = yes
+
+	trigger = {
+		culture_group = japanese_g
+		is_subject = no
+		NOT = { has_country_flag = japanese_war_with_gensokyo }
+		any_known_country = {
+			defensive_war_with = ROOT 
+			culture_group = Gensokyan_culture
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = japanese_war_with_gensokyo
+		}
+	}
+
+	option = {		#It is time to tame this strange land.
+		name = "th_japan_events.1.a"
+
+		add_mil_power = 75
+		add_country_modifier = { 
+			name = th_conquest_of_a_legend
+			duration = 9125
+		}
+	}
+}
+
+#Japan encounters Gensokyan humans
+
+country_event = {
+	id = th_japan_events.2
+	title = "th_japan_events.2.t"
+	desc = "th_japan_events.2.desc"
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		culture_group = japanese_g
+		NOT = { accepted_culture = Gensokyo_human }
+		any_province = { 
+			culture = Gensokyo_human
+			owned_by = ROOT
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}	
+
+	option = {		#They are still Japanese. We just have to remind them.
+		name = "th_japan_events.2.a"
+		
+		add_years_of_income = -0.1
+		custom_tooltip = th_japan_events.2.a.tt
+		
+		trigger = {
+			NOT = { has_country_flag = th_japan_culturual_enrichment_used }			
+		}
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					culture = Gensokyo_human
+				}
+				add_province_modifier = {
+					name = th_stubborn_gensokyan
+					duration = 3650
+				}
+				change_culture = ROOT
+			}
+			set_country_flag = th_japan_culturual_enrichment_used
+		}
+		
+		ai_chance = {
+			factor = 90
+		}
+	}
+	
+	option = {		#They are not Japanese, but their culture will definetely enrich ours.
+		name = "th_japan_events.2.b"
+		
+		trigger = {
+			NOT = { has_country_flag = th_japan_culturual_enrichment_used }			
+		}
+		
+		add_prestige = -25
+		add_dip_power = -50
+		add_accepted_culture = Gensokyo_human
+		
+		ai_chance = {
+			factor = 10
+		}
+	}
+	
+	option = {		#Remind them more.
+		name = "th_japan_events.2.c"
+		
+		add_years_of_income = -0.03
+		custom_tooltip = th_japan_events.2.c.tt
+		
+		trigger = {
+			has_country_flag = th_japan_culturual_enrichment_used
+		}
+		
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					culture = Gensokyo_human
+				}
+				add_province_modifier = {
+					name = th_stubborn_gensokyan
+					duration = 3650
+				}
+				change_culture = ROOT
+			}
+		}
+	}
+}
+
+#Japan has Gensokyan provinces
+
+country_event = {
+	id = th_japan_events.3
+	title = "th_japan_events.3.t"
+	desc = "th_japan_events.3.desc"
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		religion = shinto
+		NOT = { has_country_flag = japanese_reaction_to_th_shintoism }
+		any_province = { 
+			religion = Gensokyan 
+			owned_by = ROOT
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = japanese_reaction_to_th_shintoism
+		}
+	}
+
+	option = {		#Convert to Genoskyan
+		name = "th_japan_events.3.a"
+		
+		add_prestige = -100
+		change_religion = Gensokyan
+		add_country_modifier = { 
+			name = th_support_of_the_shrine_maiden
+			duration = 1825
+		}
+		every_known_country = { 
+			limit = { religion = shinto	}
+			add_opinion = { who = ROOT modifier = th_converted_to_heretic_shinto }
+		}
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+	option = {		#Tolerate and adapt to their religion
+		name = "th_japan_events.3.b"
+		
+		add_prestige = -10
+		add_stability = -1
+		set_country_flag = revolution_of_shintoism_flag
+		
+		add_country_modifier = { 
+			name = th_revolution_of_shintoism
+			duration = -1
+		}
+		
+		every_owned_province = {
+			limit = {
+				religion = Gensokyan
+			}
+			add_province_modifier = {
+				name = th_accepted_heretics
+				duration = -1
+			}
+		}
+		
+		ai_chance = {
+			factor = 60
+		}
+	}
+	option = {		#They are all heathens
+		name = "th_japan_events.3.c"
+		
+		add_prestige = 25
+		add_country_modifier = { 
+			name = th_lecture_the_heathens
+			duration = 1825
+		}
+		
+		ai_chance = {
+			factor = 40
+		}
+	}
+}
+
+# Update the provinces by reconquest
+
+province_event = {
+	id = th_japan_events.4
+	title = "th_japan_events.4.t"
+	desc = "th_japan_events.4.desc"
+	picture = SHRINE_eventPicture
+	
+	hidden = yes
+	
+	trigger = {
+		religion = Gensokyan
+		has_province_modifier = th_accepted_heretics
+		owner = { NOT = { has_country_flag = revolution_of_shintoism_flag } }
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {
+		name = "th_japan_events.4.a"
+		
+		remove_province_modifier = th_accepted_heretics
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+province_event = {
+	id = th_japan_events.5
+	title = "th_japan_events.5.t"
+	desc = "th_japan_events.5.desc"
+	picture = SHRINE_eventPicture
+	
+	hidden = yes
+	
+	trigger = {
+		religion = Gensokyan
+		NOT = { has_province_modifier = th_accepted_heretics }
+		owner = { has_country_flag = revolution_of_shintoism_flag }
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {
+		name = "th_japan_events.5.a"
+		
+		add_province_modifier = {
+			name = th_accepted_heretics
+			duration = -1
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Japan finds the rogue Fujiwara Princess
+
+country_event = {
+	id = th_japan_events.6
+	title = "th_japan_events.6.t"
+	desc = "th_japan_events.6.desc"
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		NOT = { has_global_flag = mokou_captured_by_the_japanese }
+		culture_group = japanese_g
+		OR = {
+			AND = {
+				NOT = { exists = FUJ }
+				any_province = {
+					culture = Eientei
+					owned_by = ROOT
+				}
+			}
+			FUJ = { is_subject_of = ROOT }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = mokou_captured_by_the_japanese
+
+			country_event = {
+				id = th_japan_events.7
+				days = 365
+			}
+		}
+	}
+
+	option = {		#The Emperor should learn about this
+		name = "th_japan_events.6.a"
+		trigger = {
+			OR = {
+				has_reform = daimyo
+				has_reform = shogunate
+			}
+		}
+		
+		add_prestige = 15
+		add_legitimacy = 10
+	}
+	
+	option = {		#Interesting
+		name = "th_japan_events.6.b"
+		trigger = {
+			NOT = { has_reform = daimyo	}
+			NOT = { has_reform = shogunate }
+		}
+		
+		add_prestige = 15
+		add_legitimacy = 10
+	}
+}
+
+#Emperors reaction to Mokou
+
+country_event = {
+	id = th_japan_events.7
+	title = "th_japan_events.7.t"
+	desc = "th_japan_events.7.desc"
+	picture = SHRINE_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		owns = 1020
+	}
+
+	option = {		#Sweet doge
+		name = "th_japan_events.7.a"
+		add_prestige = 25
+		add_treasury = 1200
+	}
+}

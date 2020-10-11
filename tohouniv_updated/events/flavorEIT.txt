@@ -1,0 +1,660 @@
+########################################
+# Flavor Events for Eientei
+########################################
+
+namespace = flavor_eit
+
+#Mokou is now part of the governmet and tries to destabilize it!
+country_event = {
+	id = flavor_eit.1
+	title = flavor_eit.1.t
+	desc = flavor_eit.1.desc
+	picture = KAGUYAVSMOKOU_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = EIT
+		NOT = { exists = FUJ }
+		NOT = { has_country_flag = eit_has_adapted_government }
+		owns_core_province = 4839
+		Fujiwara_state = {
+			type = all
+			country_or_non_sovereign_subject_holds = ROOT
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = eit_has_adapted_government
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {	#She will find her place under my rule soon enough
+		name = flavor_eit.1.a
+		
+		add_adm_power = -50
+		add_legitimacy = -20
+		every_province = {
+			limit = {
+				is_core = FUJ
+			}
+			remove_core = FUJ
+		}
+		if = {
+			limit = {
+				NOT = { government = monarchy }
+			}
+			change_government = monarchy
+		}		
+		add_government_reform = Gensokyan_kaguya_states_reform
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Eirin developed a protection potion for the invasion of the moon
+country_event = {
+	id = flavor_eit.2
+	title = flavor_eit.2.t
+	desc = flavor_eit.2.desc
+	picture = SPACEREISEN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_eit.2.a
+
+		add_army_tradition = 30
+		add_navy_tradition = 30
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Form the Lunarian Empire / Destroy the Lunarian Realm
+country_event = {
+	id = flavor_eit.3
+	title = flavor_eit.3.t
+	desc = flavor_eit.3.desc
+	picture = KAGUYALUNAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#From this day forward we shall be known as the Lunarian Empire!
+		name = flavor_eit.3.a
+		
+		add_country_modifier = {
+			name = eit_successor_of_the_lunarians
+			duration = -1
+		}
+		custom_tooltip = eit_allows_forming_lem
+		hidden_effect = {
+			set_country_flag = eit_can_form_lem
+		}
+
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	#The Lunarians were flawed. Impure. It is time to make our own destiny
+		name = flavor_eit.3.b
+		
+		add_country_modifier = {
+			name = eit_destroyer_of_the_lunarians
+			duration = -1
+		}
+
+		ai_chance = { 
+			factor = 50
+		}
+	}
+}
+
+#Relationship between Mokou and Kaguya improves
+country_event = {
+	id = flavor_eit.4
+	title = flavor_eit.4.t
+	desc = flavor_eit.4.desc
+	picture = TERUMOKO_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = { #Due improved opinions of eachother the likelyhood of bad events gets more limited to both extreme ends
+		custom_tooltip = flavor_eit.4.tt
+		hidden_effect = {
+			set_country_flag = th_states_improved_relationship_between_kagu_mokou
+			change_statists_vs_orangists = -2
+		} 
+	}
+	
+	option = {	#For now our country needs Kaguya in power
+		name = flavor_eit.4.a
+		
+		change_statists_vs_orangists = 1.1
+
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	#We need now Mokou's fire more than ever
+		name = flavor_eit.4.b
+		
+		change_statists_vs_orangists = 0.9
+
+		ai_chance = { 
+			factor = 50
+		}
+	}
+}
+
+#Sends ambassador for province purchase
+country_event = {
+	id = flavor_eit.5
+	title = flavor_eit.5.t
+	desc = flavor_eit.5.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = flavor_eit.5.a
+		
+		random_country = {
+			limit = {
+				has_opinion = {
+					who = ROOT
+					value = 75
+				}
+				NOT = { tag = ROOT }
+				num_of_owned_provinces_with = {
+					value = 2
+					is_overseas = no
+				}
+				num_of_owned_provinces_with = {
+					value = 1
+					is_overseas = no
+					area = Western_great_border
+				}
+			}
+			country_event = {
+				id = flavor_eit.6
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+#EIT wants to buy our province in the borderlands
+country_event = {
+	id = flavor_eit.6
+	title = flavor_eit.6.t
+	desc = flavor_eit.6.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Let Eientei have this worthless province
+		name = flavor_eit.6.a		
+
+		random_province = {
+			limit = {
+				owned_by = ROOT
+				area = Western_great_border
+				is_capital = no
+			}
+			cede_province = FROM
+			add_core = FROM
+		} 
+		add_treasury = 500
+		FROM = {
+			country_event = {
+				id = flavor_eit.7
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Nah
+		name = flavor_eit.6.b
+
+		random_province = {
+			limit = {
+				owned_by = ROOT
+				area = Western_great_border
+				is_capital = no
+			}
+			add_core = FROM
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = insulted
+		}
+		FROM = {
+			country_event = {
+				id = flavor_eit.8
+			}
+		}
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Province is now ours!
+country_event = {
+	id = flavor_eit.7
+	title = flavor_eit.7.t
+	desc = flavor_eit.7.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Sweet
+		name = flavor_eit.7.a
+
+		add_prestige = 10
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#They declined our offer!
+country_event = {
+	id = flavor_eit.8
+	title = flavor_eit.8.t
+	desc = flavor_eit.8.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	# :<
+		name = flavor_eit.8.a
+
+		add_prestige = -5
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Crowning of a new Tenno!
+country_event = {
+	id = flavor_eit.9
+	title = flavor_eit.9.t
+	desc = flavor_eit.9.desc
+	picture = MOKOU_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Let Mokou become Tenno of Japan
+		name = flavor_eit.9.a
+		
+		hidden_effect = {
+			japan_region = {
+				limit = {
+					is_permanent_claim = ROOT 
+				}
+				remove_claim = ROOT
+			}
+			gensokyo_continent = {
+				limit = {
+					is_core = FUJ
+				}
+				remove_core = FUJ
+			}
+		}
+		japan_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = FUJ
+			remove_claim = ROOT
+			remove_core = ROOT
+			change_religion = ROOT
+		}
+		release = FUJ
+		create_subject = {
+			subject_type = th_special_march
+			subject = FUJ
+		}
+		FUJ = {
+			change_government = monarchy
+			add_government_reform = Gensokyan_monarchy
+			adopt_reform_progress = ROOT
+			change_primary_culture = ROOT
+			change_religion = ROOT
+			define_ruler = {
+				name = "Mokou"
+				dynasty = "Fujiwara"
+				age = "15"
+				adm = 5
+				dip = 4
+				mil = 6
+				fixed = yes
+				female = yes
+				culture = ROOT
+				religion = ROOT
+			}
+			japan_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = FUJ
+			}
+			add_historical_friend = ROOT
+			hidden_effect = {
+				add_ruler_modifier = { 
+					name = eit_restored_honour
+					duration = -1
+				}
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = japanese
+				add_accepted_culture = kyushuan
+				add_accepted_culture = togoku
+				country_event = { id = TH_mission_events.3 }
+				country_event = { id = TH_mission_events.4 }
+				country_event = { id = TH_mission_events.5 }
+				set_capital = 1020
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+					}
+				}
+				set_government_rank = 2
+			}
+		}
+		add_historical_friend = FUJ
+		
+		add_country_modifier = {
+			name = eit_mokou_loyalty
+			duration = -1
+			desc = eit_mokou_loyalty_tt
+		}
+		hidden_effect = {
+			set_country_flag = eit_has_mokou_servant
+		}
+
+		ai_chance = { 
+			factor = 80
+		}
+	}
+}
+
+#Assault the Lunarian Palace
+country_event = {
+	id = flavor_eit.10
+	title = flavor_eit.10.t
+	desc = flavor_eit.10.desc
+	picture = WATATSUKI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#
+		name = flavor_eit.10.a
+
+		5168 = {
+			change_controller = ROOT
+		}
+		custom_tooltip = eit_captured_the_wata_sis_tt
+		LCU = {
+			add_stability = -3
+			add_war_exhaustion = 5
+			hidden_effect = {
+				if = {
+					limit = {
+						has_heir = yes
+					}
+					exile_heir_as = lcu_imprisoned_heir
+					set_country_flag = lcu_imprisoned_heir_flag
+				}
+				exile_ruler_as = lcu_imprisoned_ruler
+				set_country_flag = lcu_imprisoned_rulers
+			}
+			define_ruler = {
+				dynasty = "Tsukikage"
+				culture = LCU
+				religion = LCU
+				female = yes
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Watatsuki return
+country_event = {
+	id = flavor_eit.11
+	title = flavor_eit.11.t
+	desc = flavor_eit.11.desc
+	picture = WATATSUKI_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = LCU
+		NOT = { exists = EIT }
+		has_country_flag = lcu_imprisoned_rulers
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {	#They have returned!
+		name = flavor_eit.11.a
+
+		custom_tooltip = eit_wata_sis_return_tt
+		add_stability = 2
+		set_ruler = lcu_imprisoned_ruler
+		if = {
+			limit = {
+				has_country_flag = lcu_imprisoned_heir_flag
+			}
+			set_heir = lcu_imprisoned_heir
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Lose Mokous loyalty if she becomes free
+country_event = {
+	id = flavor_eit.12
+	title = flavor_eit.12.t
+	desc = flavor_eit.12.desc
+	picture = MOKOU_eventPicture
+	
+	hidden = yes
+	
+	trigger = {
+		has_country_modifier = eit_mokou_loyalty
+		exists = FUJ
+		FUJ = {
+			NOT = { is_subject_of = ROOT }
+		}
+		NOT = { owns_or_non_sovereign_subject_of = 1020 }
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {
+		name = flavor_eit.12.a
+
+		remove_country_modifier = eit_mokou_loyalty
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Regain Mokou's loyalty
+country_event = {
+	id = flavor_eit.13
+	title = flavor_eit.13.t
+	desc = flavor_eit.13.desc
+	picture = MOKOU_eventPicture
+	
+	hidden = yes
+	
+	trigger = {
+		NOT = { has_country_modifier = eit_mokou_loyalty }
+		has_country_flag = eit_has_mokou_servant
+		OR = {
+			NOT = { exists = FUJ }
+			FUJ = {
+				is_subject_of = ROOT
+			}
+		}
+		owns_or_non_sovereign_subject_of = 1020
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {
+		name = flavor_eit.13.a
+
+		add_country_modifier = {
+			name = eit_mokou_loyalty
+			duration = -1
+			desc = eit_mokou_loyalty_tt
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+
+#Kaguya returns
+country_event = {
+	id = flavor_eit.101
+	title = flavor_eit.101.t
+	desc = flavor_eit.101.desc
+	picture = KAGUYA_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			define_ruler = {
+				name = "Kaguya"
+				dynasty = "Houraisan"
+				adm = 3
+				dip = 5
+				mil = 6
+				fixed = yes
+				age = 15
+				claim = 100
+				female = yes
+			}
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = EIT_kaguya_in_charge
+		}
+	}
+	
+	option = {	#WB
+		name = flavor_eit.101.a
+	}
+}
+
+#Hire Eirin as an advisor
+country_event = {
+	id = flavor_eit.102
+	title = flavor_eit.102.t
+	desc = flavor_eit.102.desc
+	picture = EIRIN_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = eit_eirin_hired
+		}
+	}
+
+	option = {
+		name = flavor_eit.102.a
+		define_advisor = {
+			type = th_advisor_eirin
+			name = "Eirin Yagokoro"
+			skill = 3
+			location = 4839
+			discount = yes
+			female = yes
+			culture = Eientei
+			religion = ROOT
+		}
+		hidden_effect = {
+			country_event = {  		#Clear event after 30 years
+				id = flavor_eit.103
+				days = 18250
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#clear of flag, make Eirin available for hire again
+country_event = {
+	id = flavor_eit.103
+	title = flavor_eit.103.t
+	desc = flavor_eit.103.desc
+	picture = EIRIN_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes	
+
+	option = {
+		name = flavor_eit.103.a
+		clr_country_flag = eit_eirin_hired
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}

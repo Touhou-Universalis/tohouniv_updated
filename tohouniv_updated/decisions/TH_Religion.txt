@@ -1,0 +1,675 @@
+country_decisions = {
+
+	#TH more conversion efforts
+	th_increase_missioniary_efforts = {
+		potential = {
+			religion_group = Touhou
+			NOT = { religion = Toho_Buddhist }
+			NOT = { has_country_modifier = th_increased_religious_efforts_modifier }
+			NOT = {	has_reform = Gensokyan_shrine_theocracy	}
+			NOT = { has_country_modifier = th_increased_tolerance_modifier }
+			NOT = { has_country_modifier = th_increased_harmonization_modifier }
+		}
+		allow = {
+			adm_tech = 5
+			NOT = { has_country_modifier = th_increased_tolerance_modifier }
+			NOT = { has_country_modifier = th_increased_harmonization_modifier }
+		}
+		effect = {
+			add_country_modifier = {
+				name = "th_increased_religious_efforts_modifier"
+				duration = -1
+			}
+		}		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	#TH adapt to a more tolerant policy
+	th_adapt_to_other_religions = {
+		potential = {
+			religion_group = Touhou
+			NOT = { has_country_modifier = th_increased_tolerance_modifier }
+			NOT = {	has_reform = Gensokyan_shrine_theocracy	}
+			NOT = { has_country_modifier = th_increased_religious_efforts_modifier }
+			NOT = { has_country_modifier = th_increased_harmonization_modifier }
+		}
+		allow = {
+			adm_tech = 5
+			NOT = { has_country_modifier = th_increased_religious_efforts_modifier }
+			NOT = { has_country_modifier = th_increased_harmonization_modifier }
+		}
+		effect = {
+			add_country_modifier = {
+				name = "th_increased_tolerance_modifier"
+				duration = -1
+			}
+		}		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	#TH Increase Harmonization efforts
+	th_increase_buddhistic_tolerance = {
+		potential = {
+			religion = Toho_Buddhist
+			NOT = { has_country_modifier = th_increased_harmonization_modifier }
+			NOT = { has_country_modifier = th_increased_tolerance_modifier }
+			NOT = {	has_reform = Gensokyan_shrine_theocracy	}
+			NOT = { has_country_modifier = th_increased_religious_efforts_modifier }
+			NOT = { has_country_modifier = th_increased_tolerance_modifier }
+		}
+		allow = {
+			adm_tech = 5
+			NOT = { has_country_modifier = th_increased_religious_efforts_modifier }
+			NOT = { has_country_modifier = th_increased_tolerance_modifier }
+		}
+		effect = {
+			add_country_modifier = {
+				name = "th_increased_harmonization_modifier"
+				duration = -1
+			}
+		}		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	#Buff for religion efforts
+	th_support_local_shrines = {
+		potential = {
+			NOT = { has_country_modifier = th_support_local_shrines_modifier }
+			religion_group = Touhou
+		}
+		allow = {
+			adm_tech = 10
+		}
+		effect = {	
+			add_country_modifier = {
+				name = "th_support_local_shrines_modifier"
+				duration = -1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	#TH Buff for more tolerance
+	th_encourage_multi_religious_society = {
+		potential = {
+			religion_group = Touhou
+			NOT = { has_country_modifier = th_encourage_multi_religious_society_modifier }
+			NOT = {	has_reform = Gensokyan_shrine_theocracy	}
+		}
+		allow = {
+			adm_tech = 14
+		}
+		effect = {
+			add_country_modifier = {
+				name = "th_encourage_multi_religious_society_modifier"
+				duration = -1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+	#TH female ruler claim defender of faith
+	th_female_ruler_claim_defender_of_faith = {
+		potential = {
+			is_female = yes
+			is_defender_of_faith = no
+			OR = {
+				religion_group = Touhou
+				OR = {
+					tag = FLR
+					was_tag = FLR
+					}
+				}
+			NOT = { has_ruler_flag = th_a_feminist_major }
+		}
+		allow = {
+			is_free_or_tributary_trigger = yes
+			treasury = 500
+			all_country = {
+				OR = {
+					NOT = { religion = ROOT }
+					NOT = { prestige = ROOT }
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = th_ruler_has_temporarily_left.tt
+			hidden_effect = {
+				country_event = { 	#Major is a feminist
+					id = touhou_setting.7
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	#TH female ruler return to throne(only for defender of faith)
+	th_female_defender_of_faith = {
+		potential = {
+			OR = {
+				religion_group = Touhou
+				OR = {
+					tag = FLR
+					was_tag = FLR
+					}
+				}
+			has_ruler_flag = th_a_feminist_major
+		}
+		allow = {
+			is_defender_of_faith = yes
+		}
+		effect = {
+			custom_tooltip = th_ruler_rejoins.tt
+			hidden_effect = {
+				set_ruler = th_exiled_ruler
+			}
+			if = {
+				limit = {
+					has_country_flag = th_has_exiled_heir
+				}
+				set_heir = th_exiled_heir
+				clr_country_flag = th_has_exiled_heir
+			}			
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}	
+
+	#Shinto Switch deity
+	th_shinto_deity_decision = {
+		potential = {
+			OR = {
+				religion = Gensokyan
+				religion = Moriya_Shintoism
+			}
+			OR = {
+				has_estate = estate_church
+				has_country_flag = th_permanent_shorter_deity_swapping
+			}
+		}
+		allow = {
+			has_regency = no
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_permanent_shorter_deity_swapping }
+				}
+				has_estate_privilege = th_estate_church_flexible_deities
+				custom_trigger_tooltip = {
+					tooltip = decision_once_every_twenty_years
+					OR = {
+						NOT = { has_country_flag = th_clerigy_deity_decision }
+						had_country_flag = {
+							flag = th_clerigy_deity_decision
+							days = 7300
+						}
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = decision_once_every_ten_years
+					OR = {
+						NOT = { has_country_flag = th_clerigy_deity_decision }
+						had_country_flag = {
+							flag = th_clerigy_deity_decision
+							days = 3650
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			clr_country_flag = th_clerigy_deity_decision
+			set_country_flag = th_clerigy_deity_decision
+			if = {
+				limit = {
+					religion = Gensokyan
+				}
+				country_event = { id = TH_shinto_events.3 }
+			}
+			if = {
+				limit = {
+					religion = Moriya_Shintoism
+				}
+				country_event = { id = TH_shinto_events.4 }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	#Information event for Moriya Shinto countries to see what additionally buffs their deities will have
+	th_mry_shinto_deity_buffs_info = {
+		potential = {
+			religion = Moriya_Shintoism
+		}
+		
+		allow = {
+			always = yes
+		}
+			
+		effect = {
+			country_event = { 
+				id = TH_mry_shinto_events.103
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	#Info event which province brings what benefits
+	th_mry_shinto_province_deity_info = {
+		potential = {
+			religion = Moriya_Shintoism
+		}
+
+		allow = {
+			always = yes
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4803	#Hakurei
+				province_id = 4839	#Kishin
+				province_id = 5090	#Keiki
+				province_id = 4883	#Sukuna
+				province_id = 5035	#Hina
+				province_id = 4830	#Hecatia
+				province_id = 5178	#Junko
+				province_id = 5062	#Shinki
+				province_id = 4855	#Satori
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { religion = ROOT }
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = TH_mry_shinto_events.104
+			}
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	#Buddhism start meditation
+	th_buddhism_start_meditation = {
+		potential = {
+			religion = Toho_Buddhist
+			has_ruler_flag = th_buddhism_meditation_available
+			NOT = { has_country_modifier = th_buddhism_meditating }
+			OR = {
+				NOT = { has_country_flag = th_buddhism_meditation_cd }
+				had_country_flag = {
+					flag = th_buddhism_meditation_cd
+					days = 1825
+				}
+			}
+		}
+		
+		allow = {
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+				}
+				harmony = 10
+			}
+			else = {
+				OR = {
+					legitimacy = 10
+					devotion = 10
+					horde_unity = 10
+					republican_tradition = 5
+					meritocracy = 10
+				}
+			}
+		}
+			
+		effect = {
+			custom_tooltip = th_buddhism_start_meditation.tt
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+				}
+				add_harmony = -10
+			}
+			else = {
+				add_legitimacy = -10
+				add_devotion = -10
+				add_horde_unity = -10
+				add_republican_tradition = -5
+				add_meritocracy = -10
+			}
+			add_country_modifier = {
+				name = th_buddhism_meditating
+				duration = -1
+			}
+			set_ruler_flag = th_buddhism_ruler_is_meditating
+			clr_ruler_flag = th_buddhism_meditation_available
+			hidden_effect = {
+				country_event = {
+					id = th_bdh_meditation_events.2
+					days = 1825
+				}
+				set_country_flag = th_buddhism_stage_1
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	#Buddhism stop meditation
+	th_buddhism_stop_meditation = {
+		potential = {
+			religion = Toho_Buddhist
+			has_ruler_flag = th_buddhism_ruler_is_meditating
+			has_country_modifier = th_buddhism_meditating
+		}
+		
+		allow = {
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+				}
+				harmony = 5
+			}
+			else = {
+				OR = {
+					legitimacy = 5
+					devotion = 5
+					horde_unity = 5
+					republican_tradition = 2
+					meritocracy = 5
+				}
+			}
+		}
+			
+		effect = {
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+				}
+				add_harmony = -5
+			}
+			else = {
+				add_legitimacy = -5
+				add_devotion = -5
+				add_horde_unity = -5
+				add_republican_tradition = -2
+				add_meritocracy = -5
+			}
+			custom_tooltip = th_bdh_meditation_set_cd
+			th_buddhism_clear_meditation = yes
+			if = {
+				limit = {
+					check_variable = {
+						which = th_buddhism_stage_variable
+						value = 3
+					}
+				}
+				country_event = {
+					id = th_bdh_meditation_events.102
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = {
+						which = th_buddhism_stage_variable
+						value = 2
+					}
+				}
+				country_event = {
+					id = th_bdh_meditation_events.103
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = {
+						which = th_buddhism_stage_variable
+						value = 1
+					}
+				}
+				country_event = {
+					id = th_bdh_meditation_events.104
+				}
+			}
+			else = {
+				country_event = {
+					id = th_bdh_meditation_events.105
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	#Taoism - Trigger next cycle
+	th_taoism_trigger_cycle = {
+		potential = {
+			religion = Toho_Taoist
+			uses_fervor = yes
+			has_country_flag = th_taoism_started_the_circle
+			NOT = { has_country_flag = th_taoism_currently_triggering }
+		}
+		
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = th_taoism_triggering_cycle_off_cd
+				OR = {
+					NOT = { has_country_flag = th_taoism_trigger_cycle_cd }
+					had_country_flag = {
+						flag = th_taoism_trigger_cycle_cd
+						days = 5475
+					}
+				}
+			}
+			fervor = 90
+		}
+			
+		effect = {
+			add_fervor = -100
+			country_event = {
+				id = th_taoism_events.17
+			}
+			set_country_flag = th_taoism_currently_triggering
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	#Taoism - Go one step back in the circle
+	th_taoism_revert_cycle = {
+		potential = {
+			religion = Toho_Taoist
+			uses_fervor = yes
+			has_country_flag = th_taoism_started_the_circle
+			NOT = { has_country_flag = th_taoism_currently_reverting }
+		}
+		
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = th_taoism_revert_cycle_off_cd
+				OR = {
+					NOT = { has_country_flag = th_taoism_revert_cycle_cd }
+					had_country_flag = {
+						flag = th_taoism_revert_cycle_cd
+						days = 5475
+					}
+				}
+			}
+			fervor = 90
+		}
+			
+		effect = {
+			add_fervor = -100
+			country_event = {
+				id = th_taoism_events.14
+			}
+			set_country_flag = th_taoism_currently_reverting
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	#Taoism - Control circle
+	th_taoism_control_cycle = {
+		potential = {
+			religion = Toho_Taoist
+			uses_fervor = yes
+			has_country_flag = th_taoism_started_the_circle
+			NOT = { has_country_flag = th_taoism_currently_controlling }
+		}
+		
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = th_taoism_control_cycle_off_cd
+				OR = {
+					NOT = { has_country_flag = th_taoism_control_cycle_cd }
+					had_country_flag = {
+						flag = th_taoism_control_cycle_cd
+						days = 5475
+					}
+				}
+			}
+			fervor = 90
+		}
+			
+		effect = {
+			add_fervor = -100
+			country_event = {
+				id = th_taoism_events.15
+			}
+			set_country_flag = th_taoism_currently_controlling
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	#Taoism - Destroy circle
+	th_taoism_destroy_cycle = {
+		potential = {
+			religion = Toho_Taoist
+			uses_fervor = yes
+			has_country_flag = th_taoism_started_the_circle
+			NOT = { has_country_flag = th_taoism_currently_destroying }
+		}
+		
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = th_taoism_destroy_cycle_off_cd
+				OR = {
+					NOT = { has_country_flag = th_taoism_destroy_cycle_cd }
+					had_country_flag = {
+						flag = th_taoism_destroy_cycle_cd
+						days = 5475
+					}
+				}
+			}
+			fervor = 90
+		}
+			
+		effect = {
+			add_fervor = -100
+			country_event = {
+				id = th_taoism_events.16
+			}
+			set_country_flag = th_taoism_currently_destroying
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	#Counter Reformation
+	th_embrace_counter_reformation = {
+		potential = {
+			religion_group = Touhou
+			NOT = { religion = Lunarian_religion }
+			NOT = { religion = TH_Christians }
+			NOT = { religion = Moriya_Shintoism }
+			NOT = { religion = Toho_Buddhist }
+			NOT = { has_country_modifier = th_counter_reformation }
+			NOT = { has_country_modifier = th_increased_harmonization_efforts }
+			has_global_flag = th_counter_reformation_enabled
+		}
+
+		major = yes
+
+		allow = {
+			NOT = { has_idea_group = humanist_ideas }
+			stability = 1
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = th_counter_reformation
+				duration = -1
+				desc = th_counter_reformation_tt
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+
+	#Increased Harmonization Efforts
+	th_increase_harmonization_efforts = {
+		potential = {
+			religion_group = Touhou
+			religion = Toho_Buddhist
+			NOT = { has_country_modifier = th_counter_reformation }
+			NOT = { has_country_modifier = th_increased_harmonization_efforts }
+			has_global_flag = th_counter_reformation_enabled
+		}
+
+		major = yes
+
+		allow = {
+			stability = 1
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = th_increased_harmonization_efforts
+				duration = -1
+				desc = th_counter_reformation_tt
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}

@@ -1,0 +1,255 @@
+########################################
+# Flavor Events for Hakurei Realm
+########################################
+
+namespace = flavor_net
+
+#PU Yukari
+country_event = {
+	id = flavor_net.1
+	title = flavor_net.1.t
+	desc = flavor_net.1.desc
+	picture = YUKARI2_eventPicture
+    
+    is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+                    has_ruler = "Yuyuko"
+                    dynasty = "Saigyouji"
+				}
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 600
+				}
+			}
+			else = {
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 0
+				}
+			}
+			#Yuyukos base diplo fight skills
+			set_variable = {
+				which = th_yukari_diplo_skills
+				value = 1250
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_yukari_diplo_skills
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = th_deactivated_incidents }
+				}
+				country_event = {
+					id = th_incidents_event.20
+				}
+			}
+		}
+	}
+	
+	option = {	#Yukari is no longer capable of ruling her realm! I have to fight her!
+		name = flavor_net.1.a
+		trigger = {
+			NOT = { has_global_flag = th_deactivated_incidents }
+			MHG = {
+				was_player = no
+				ai = yes
+			}
+		}
+		highlight = yes
+		custom_tooltip = flavor_net.1.a.tt
+		th_danmaku_diplo_fight_ruler_and_opponent = yes
+		hidden_effect = {
+			set_country_flag = NET_diplo_fight_with_yukari
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#We have to take over the throne!
+		name = flavor_net.1.b
+		trigger = {
+			MHG = {
+				was_player = no
+				ai = yes
+			}
+		}
+		custom_tooltip = flavor_net.1.b.tt
+		declare_war_with_cb = {
+			who = MHG
+			casus_belli = cb_restore_personal_union
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#We have a claim on Yuyukos throne
+		name = flavor_net.1.c
+		custom_tooltip = flavor_net.1.c.tt
+		add_casus_belli = {
+			target = MHG
+			type = cb_restore_personal_union
+			months = 900
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#I trust in Yuyuko's judgement
+		name = flavor_net.1.d
+		custom_tooltip = flavor_net.1.d.tt
+		add_opinion = {
+			who = MHG
+			modifier = mhg_high_trust
+		}
+		reverse_add_opinion = {
+			who = MHG
+			modifier = mhg_high_trust
+		}
+		add_trust = {
+			who = MHG
+			value = 25
+			mutual = yes
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Result of the diplo fight between Yukari and Yuyuko - Draw or better
+country_event = {
+	id = flavor_net.2
+	title = flavor_net.2.t
+	desc = flavor_net.2.desc
+	picture = YUYUKOANDYUKARI_eventPicture
+	
+	trigger = {
+		has_country_flag = NET_diplo_fight_with_yukari
+		has_country_flag = th_incident_last_diplo_fight_won
+	}
+
+	mean_time_to_happen = {
+		days = 20
+	}
+
+	immediate = {
+		clr_country_flag = NET_diplo_fight_with_yukari
+	}
+	
+	option = {	#I hope Yukari can sleep better while I take care over Mayohiga
+		name = flavor_net.2.a
+		create_subject = {
+			subject_type = personal_union
+			subject = MHG
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Result of the diplo fight between Yukari and Yuyuko - Defeat
+country_event = {
+	id = flavor_net.3
+	title = flavor_net.3.t
+	desc = flavor_net.3.desc
+	picture = YUKARIFIGHT_eventPicture
+	
+	trigger = {
+		has_country_flag = NET_diplo_fight_with_yukari
+		has_country_flag = th_incident_last_diplo_fight_won
+	}
+
+	mean_time_to_happen = {
+		days = 20
+	}
+
+	immediate = {
+		clr_country_flag = NET_diplo_fight_with_yukari
+	}
+	
+	option = {	#I misjudged her. She can still hold responsibilty apparently
+		name = flavor_net.3.a
+		add_casus_belli = {
+			target = MHG
+			type = cb_restore_personal_union
+			months = 900
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Hire Youmu as an advisor
+country_event = {
+	id = flavor_net.102
+	title = flavor_net.102.t
+	desc = flavor_net.102.desc
+	picture = YOUMU_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = net_youmu_hired
+		}
+	}
+
+	option = {
+		name = flavor_net.102.a
+		define_advisor = {
+			type = th_advisor_youmu
+			name = "Youmu Konpaku"
+			skill = 3
+			location = 4806
+			discount = yes
+			female = yes
+			culture = Netherlandish
+			religion = ROOT
+		}
+		hidden_effect = {
+			country_event = {  		#Clear event after 30 years
+				id = flavor_net.103
+				days = 18250
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#clear of flag, make Youmu available for hire again
+country_event = {
+	id = flavor_net.103
+	title = flavor_net.103.t
+	desc = flavor_net.103.desc
+	picture = YOUMU_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes	
+
+	option = {
+		name = flavor_net.103.a
+		clr_country_flag = net_youmu_hired
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}

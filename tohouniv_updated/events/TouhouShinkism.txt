@@ -1,0 +1,121 @@
+########################################
+# Flavor Events for Shinkism
+########################################
+
+namespace = shinkism_events
+
+# Shinkism conversion event
+country_event = {
+	id = shinkism_events.1
+	title = shinkism_events.1.t
+	desc = shinkism_events.1.desc
+	picture = SHINKISM_eventPicture
+	
+	major = yes
+	
+	trigger = {
+		is_lesser_in_union = no
+		NOT = { has_country_flag = had_shinkism_question }
+		is_subject = no
+		is_year = 1500
+		religion_group = Touhou
+		OR = {
+			tag = MKI
+			was_tag = MKI
+			AND = {
+				primary_culture = Makaian
+				capital_scope = {
+					region = makai_region
+				}
+				NOT = { exists = MKI }
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 12
+		modifier = {
+			factor = 0.25
+			tag = MKI
+		}
+	}
+	
+	immediate = {
+		set_country_flag = had_shinkism_question
+	}
+		
+	option = { # just convert
+		name = shinkism_events.1.a
+		ai_chance = {
+			factor = 100
+		}
+		enable_religion = TH_Shinkism
+		every_neighbor_country = {
+			limit = {
+				religion_group = Touhou
+				NOT = { religion = TH_Shinkism }
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = renounced_as_heretics
+			}
+		}
+		change_religion = TH_Shinkism
+		if = {
+			limit = {
+				NOT = { has_country_flag = reformation_money }
+			}
+			add_years_of_income = 1.0
+		}
+		custom_tooltip = th_shinkism_convert_all_makai_provinces
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					culture = Makaian
+				}
+				change_religion = TH_Shinkism
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 9000
+				}
+			}
+		} 
+		add_country_modifier = {
+			name = "conversion_zeal"
+			duration = 3650
+		}
+		if = {
+			limit = {
+				OR = {
+					tag = MKI
+					was_tag = MKI
+					AND = {
+						has_ruler = "Shinki"
+						dynasty = " "
+						ruler_has_personality = immortal_personality
+					}
+				}
+				has_religious_school = no
+			}
+			set_religious_school = {
+				group = Touhou
+				school = shinki_school
+			}
+		}
+	}
+	
+	option = { # dont convert
+		name = shinkism_events.1.b
+		custom_tooltip = shinkism_events.1.b.tt
+		hidden_effect = {
+			enable_religion = TH_Shinkism
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Shinki visits province -> convert / church power
+
+#Forest of Magic relations due to Alice / Shinki

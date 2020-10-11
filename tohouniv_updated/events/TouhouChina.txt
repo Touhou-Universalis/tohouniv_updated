@@ -1,0 +1,126 @@
+########################################
+# Flavor Events for the Celestial Empire
+########################################
+
+namespace = th_china_events
+
+#Former Emperor of China loses his tributaries...
+country_event = {
+	id = th_china_events.1
+	title = th_china_events.1.t
+	desc = th_china_events.1.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	trigger = {
+		is_emperor_of_china = no
+		has_country_modifier = lost_mandate_of_heaven
+		num_of_subjects = 1 
+		any_subject_country = { is_subject_of_type = tributary_state }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			every_subject_country = { 
+				limit = { is_subject_of_type = tributary_state } 
+				country_event = { id = th_china_events.2 }
+			}
+			every_known_country = { 
+				limit = { is_emperor_of_china = yes } 
+				country_event = { id = th_china_events.3 }
+			}
+		}
+	}
+	
+	option = {	#Why has the heaven abondon us?
+		name = th_china_events.1.a
+	}
+}
+
+#... to the new Emperor of China
+country_event = {
+	id = th_china_events.2
+	title = th_china_events.2.t
+	desc = th_china_events.2.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		is_subject = yes
+		is_subject_of_type = tributary_state
+		overlord = {
+			is_emperor_of_china = no
+			has_country_modifier = lost_mandate_of_heaven
+		}
+	}
+	
+	option = {	#Long live the new emperor
+		name = th_china_events.2.a
+		every_country = {
+			limit = {
+				is_emperor_of_china = yes
+			}
+			create_subject = {
+				subject_type = tributary_state
+				subject = ROOT
+			}
+			add_meritocracy_effect = yes
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#We will protect us ourself now.
+		name = th_china_events.2.b
+		grant_independence = yes
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Message of the old tributaries to new Emperor
+country_event = {
+	id = th_china_events.3
+	title = th_china_events.3.t
+	desc = th_china_events.3.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		is_emperor_of_china = yes
+	}
+	
+	option = {	#Lovely
+		name = th_china_events.3.a
+		add_prestige = 10
+	}
+}
+
+#Update the Celestial Empire Government to Gensokyan Celestial Empire
+country_event = {
+	id = th_china_events.4
+	title = th_china_events.4.t
+	desc = th_china_events.4.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		is_emperor_of_china = yes
+		technology_group = tech_gensokyan
+	}
+
+	option = {	#Standard reform for every nation with Dharma
+		name = th_china_events.4.a
+		add_government_reform = Gensokyan_celestial_empire
+	}
+}

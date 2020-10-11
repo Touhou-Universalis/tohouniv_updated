@@ -1,0 +1,322 @@
+th_has_incidents_enabled = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_incidents_enabled_tt
+		NOT = { has_global_flag = th_deactivated_incidents }
+	}
+}
+
+th_incident_is_investigator = {
+	custom_trigger_tooltip = {
+		tooltip = th_incident_is_investigator_tt
+		has_country_flag = th_incident_investigating
+	}
+}
+
+th_incident_has_incident_active = {
+	custom_trigger_tooltip = {
+		tooltip = th_incident_has_incident_active_tt
+		has_global_flag = th_active_incident
+	}
+}
+
+th_has_incidents_disabled = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_incidents_disabled_tt
+		NOT = { has_global_flag = th_deactivated_incidents }
+	}
+}
+
+th_incident_is_not_investigator = {
+	custom_trigger_tooltip = {
+		tooltip = th_incident_is_not_investigator_tt
+		NOT = { has_country_flag = th_incident_investigating }
+	}
+}
+
+th_incident_has_not_incident_active = {
+	custom_trigger_tooltip = {
+		tooltip = th_incident_has_not_incident_active_tt
+		NOT = { has_global_flag = th_active_incident }
+	}
+}
+
+th_incident_compare_good_outcomes = {
+	check_variable = {
+		which = th_incident_outcome_counter
+		value = $value$
+	}
+}
+
+th_winnable_fight_trigger = {
+	check_variable = {
+		which = th_current_fighting_skills
+		which = th_enemy_upper_border_draw
+	}
+}
+
+th_unwinnable_fight_trigger = {
+	check_variable = {
+		which = th_enemy_lower_border_draw
+		which = th_current_fighting_skills
+	}
+}
+
+th_drawable_fight_trigger = {
+	AND = {
+		check_variable = {
+			which = th_current_fighting_skills
+			which = th_enemy_lower_border_draw
+		}
+		check_variable = {
+			which = th_enemy_upper_border_draw
+			which = th_current_fighting_skills
+		}
+	}
+}
+
+th_winnable_diplo_fight_trigger = {
+	check_variable = {
+		which = th_current_diplo_skills
+		which = th_enemy_upper_border_draw
+	}
+}
+
+th_unwinnable_diplo_fight_trigger = {
+	check_variable = {
+		which = th_enemy_lower_border_draw
+		which = th_current_diplo_skills
+	}
+}
+
+th_drawable_diplo_fight_trigger = {
+	AND = {
+		check_variable = {
+			which = th_current_diplo_skills
+			which = th_enemy_lower_border_draw
+		}
+		check_variable = {
+			which = th_enemy_upper_border_draw
+			which = th_current_diplo_skills
+		}
+	}
+}
+
+th_is_not_major_main_character = {	#Use "th_is_not_major_main_character = no" if the priority is irelevant
+	NOT = { tag = HKR }	#Reimu
+	NOT = { tag = FOM }	#Marisa
+	
+	NOT = { was_tag = HKR }
+	NOT = { was_tag = FOM }
+}
+
+th_is_major_main_character = {		#Gives HKR a higher priority than FOM
+	OR = {
+		tag = HKR
+		AND = {
+			capital_scope = {
+				superregion = gensokyo_superregion
+			}
+			NOT = { exists = HKR }
+			was_tag = HKR
+		}
+
+		AND = {
+			OR = {
+				NOT = { exists = HKR }
+				HKR = {
+					is_subject_other_than_tributary_trigger = yes
+				}
+			}
+			all_country = {
+				limit = {
+					capital_scope = {
+						superregion = gensokyo_superregion
+					}
+				}
+				NOT = { was_tag = HKR }
+			}
+			OR = {
+				tag = FOM
+				AND = {
+					capital_scope = {
+						superregion = gensokyo_superregion
+					}
+					NOT = { exists = FOM }
+					was_tag = FOM
+				}
+			}
+		}
+	}
+}
+
+th_is_not_minor_main_character = {
+	if = {		#Sakuya, if she is NOT antagonist
+		limit = {
+			NOT = { has_global_flag = th_current_incident_scarlet_mists }
+		}
+		NOT = { tag = SCR }
+		NOT = { tag = SCD }
+		NOT = { was_tag = SCR }
+		NOT = { was_tag = SCD }
+	}
+	
+	if = {		#Sanae, if she is NOT antagonist
+		limit = {
+			always = yes
+		}
+		NOT = { tag = MRY }
+		NOT = { was_tag = MRY }
+	}
+	
+	if = {		#Youmu, if she is NOT antagonist
+		limit = {
+			NOT = {	has_global_flag = th_current_incident_cherry_blossom }
+		}
+		NOT = { tag = NMG }
+		NOT = { tag = NET }
+		NOT = { was_tag = NMG }
+		NOT = { was_tag = NET }
+	}
+}
+
+th_is_minor_main_character = {		#Gives MRY a higher chance
+	OR = {
+		AND = {		#Sanae, if she is NOT antagonist
+			NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+			tag = MRY
+		}
+		AND = {
+			NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+			capital_scope = {
+				superregion = gensokyo_superregion
+			}
+			NOT = { exists = MRY }
+			was_tag = MRY
+		}
+
+		AND = {
+			OR = {
+				NOT = { exists = MRY }
+				MRY = {
+					is_subject_other_than_tributary_trigger = yes
+				}
+			}
+			OR = {
+				AND = {		#Sakuya, if she is NOT antagonist
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+					tag = SCR
+					NOT = { exists = SCD }
+				}	
+				AND = {		#Sakuya, if she is NOT antagonist
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+					tag = SCD
+				}
+				AND = {
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+					capital_scope = {
+						superregion = gensokyo_superregion
+					}
+					was_tag = SCR
+					NOT = { exists = SCD }
+					NOT = { exists = SCR }
+				}
+				AND = {
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+					capital_scope = {
+						superregion = gensokyo_superregion
+					}
+					was_tag = SCD
+					NOT = { exists = SCD }
+					NOT = { exists = SCR }
+				}
+				AND = {		#Youmu, if she is NOT antagonist
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+					tag = NET
+					NOT = { exists = NMG }
+				}
+				AND = {		#Sakuya, if she is NOT antagonist
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+					tag = NMG
+				}
+				AND = {
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+					capital_scope = {
+						superregion = gensokyo_superregion
+					}
+					was_tag = NET
+					NOT = { exits = NET }
+					NOT = { exits = NMG }
+				}
+				AND = {
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+					capital_scope = {
+						superregion = gensokyo_superregion
+					}
+					was_tag = NMG
+					NOT = { exits = NET }
+					NOT = { exits = NMG }
+				}
+			}	
+		}
+	}
+}
+
+th_is_not_incident_antagonist = {
+	if = {	#Is not Remilia
+		limit = {
+			has_global_flag = th_current_incident_scarlet_mists
+		}
+		NOT = { tag = SCR }
+		NOT = { tag = SCD }
+
+		NOT = { was_tag = SCR }
+		NOT = { was_tag = SCD }
+	}
+	if = {	#Is not Yuyuko or Yukari
+		limit = {
+			has_global_flag = th_current_incident_cherry_blossom
+		}
+		NOT = { tag = NMG }
+		NOT = { tag = MHG }
+		NOT = { tag = NET }
+
+		NOT = { was_tag = NMG }
+		NOT = { was_tag = MHG }
+		NOT = { was_tag = NET }
+	}
+	if = {	#Is not Keine, Kaguya or Mokou
+		limit = {
+			has_global_flag = th_current_incident_cherry_blossom
+		}
+		NOT = { tag = EIT }
+		NOT = { tag = FUJ }
+		NOT = { tag = HMC }
+
+		NOT = { was_tag = EIT }
+		NOT = { was_tag = FUJ }
+		NOT = { was_tag = HMC }
+	}
+	if = {	#Is not Aki, Hina, Nitori, Aya or Sanae
+		limit = {
+			has_global_flag = th_current_incident_cherry_blossom
+		}
+		NOT = { tag = AKI }
+		NOT = { tag = YOF }
+		NOT = { tag = KPP }
+		NOT = { tag = TGU }
+		NOT = { tag = MRY }
+
+		NOT = { was_tag = AKI }
+		NOT = { was_tag = YOF }
+		NOT = { was_tag = KPP }
+		NOT = { was_tag = TGU }
+		NOT = { was_tag = MRY }
+	}
+}
+
+###INCIDENT REFORM CENTER###
+th_has_a_religious_center = {
+	any_owned_province = {
+		has_province_modifier = th_center_of_reformation
+	}
+}

@@ -1,0 +1,1095 @@
+########################################
+# Events for Touhou Theocracies
+########################################
+
+namespace = touhou_theocracy
+
+country_event = {
+	id = touhou_theocracy.1
+	title = touhou_theocracy.1.t
+	desc = touhou_theocracy.1.desc
+	picture = {
+		trigger = { 
+			OR = {
+				religion_group = eastern 
+				religion_group = Touhou 
+			}
+		}
+		picture = SHRINE_eventPicture
+	}
+	picture = {
+		trigger = { 
+			NOT = {
+				religion_group = eastern 
+				religion_group = Touhou 
+			}
+		}
+		picture = RELIGION_eventPicture
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	trigger = {
+		has_reform = Gensokyan_shrine_theocracy
+		NOT = { has_country_flag = in_theocracy_heir_selection }
+		has_government_attribute = heir
+		has_heir = no
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = in_theocracy_heir_selection
+
+			if = {
+				limit = {
+					has_country_flag = KOL_secondogeniture_of_BAV
+					OR = {
+						is_subject = no
+						overlord = {
+							OR = {
+								NOT = { government = monarchy }
+								NOT = { has_government_attribute = heir }
+								AND = {
+									NOT = { tag = BAV }
+									NOT = { was_tag = BAV }
+								}
+							}
+						}
+					}
+				}
+				clr_country_flag = KOL_secondogeniture_of_BAV
+			}
+			else_if = {
+				limit = {
+					has_country_flag = KOL_secondogeniture_of_BAV
+				}
+				overlord = { save_event_target_as = probably_bavaria }
+			}
+			
+			clr_country_flag = theo_local_noble_flag
+			clr_country_flag = theo_foreign_noble_flag
+			clr_country_flag = theo_merchants_son_flag
+			clr_country_flag = theo_talented_theologian_flag
+			clr_country_flag = theo_local_preacher_flag
+			clr_country_flag = theo_papal_protege_flag
+			clr_country_flag = theo_imam_khatib_flag
+			clr_country_flag = theo_influential_reformer_flag
+			
+			if = {
+				limit = {
+					has_estate = estate_nobles
+					any_owned_province = {
+						is_capital = no
+						is_state = yes
+					}
+				}
+				random_owned_province = {
+					limit = { 
+						is_capital = no
+						is_state = yes
+					}
+					save_event_target_as = noble_province
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_estate = estate_maratha
+						has_estate = estate_rajput
+					}
+					any_owned_province = {
+						is_capital = no
+						is_state = yes
+						religion = hinduism
+					}
+					religion = hinduism
+				}
+				random_owned_province = {
+					limit = { 
+						is_capital = no
+						is_state = yes
+						religion = hinduism
+					}
+					save_event_target_as = noble_province
+				}
+			}
+			if = {
+				limit = {
+					has_estate = estate_burghers
+					any_owned_province = {
+						is_capital = no
+						is_state = yes
+					}
+				}
+				random_owned_province = {
+					limit = { 
+						is_capital = no
+						is_state = yes
+					}
+					save_event_target_as = burgher_province
+				}
+			}
+			else_if = {
+				limit = {
+					has_estate = estate_vaisyas
+					religion = hinduism
+					any_owned_province = {
+						is_capital = no
+						is_state = yes
+						religion = hinduism
+					}
+				}
+				random_owned_province = {
+					limit = { 
+						is_capital = no
+						is_state = yes
+						religion = hinduism
+					}
+					save_event_target_as = burgher_province
+				}
+			}
+			if = {
+				limit = {
+					has_estate = estate_church
+					any_owned_province = {
+						is_capital = no
+						is_state = yes
+					}
+				}
+				random_owned_province = {
+					limit = { 
+						is_capital = no
+						is_state = yes
+					}
+					save_event_target_as = church_province
+				}
+			}
+			else_if = {
+				limit = {
+					has_estate = estate_brahmins
+					religion = hinduism
+					any_owned_province = {
+						is_capital = no
+						is_state = yes
+						religion = hinduism
+					}
+				}
+				random_owned_province = {
+					limit = { 
+						is_capital = no
+						is_state = yes
+						religion = hinduism
+					}
+					save_event_target_as = church_province
+				}
+			}
+			#Papal Protoge:
+			random_country = {
+				limit = {
+					OR = {
+						tag = PAP
+						culture_group = latin
+					}
+				}
+				save_event_target_as = papal_protoge_country
+			}
+			
+		}
+	}
+
+	option = {
+		name = theocracy.1.a		# A Local Noble
+		trigger = { NOT = { has_country_flag = KOL_secondogeniture_of_BAV } }
+		if = {
+			limit = {
+				has_estate = estate_nobles
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_maratha
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_maratha
+				loyalty = 15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_rajput
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_rajput
+				loyalty = 15
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = -15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_brahmins
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_brahmins
+				loyalty = -15
+			}
+		}
+		set_country_flag = theo_local_noble_flag # USED IN DEVOTION.TXT
+		if = {
+			limit = {
+				has_saved_event_target = noble_province
+			}
+			define_heir = {
+				age = 35
+				hidden = yes
+				culture = event_target:noble_province
+			}
+		}
+		else = {
+			define_heir = {
+				age = 35
+				hidden = yes
+			}
+		}
+		add_devotion = -5
+		add_prestige = 10
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+
+	option = {
+		name = theocracy.1.b		# A Foreign Noble
+		trigger = {
+			NOT = { has_country_flag = KOL_secondogeniture_of_BAV }
+			any_neighbor_country = {
+				government = monarchy
+				has_regency = no
+				religion = ROOT
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_nobles
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 10
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_maratha
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_maratha
+				loyalty = 10
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_rajput
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_rajput
+				loyalty = 10
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = -10
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_brahmins
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_brahmins
+				loyalty = -10
+			}
+		}		
+		set_country_flag = theo_foreign_noble_flag # USED IN DEVOTION.TXT
+		random_neighbor_country = { 
+			limit = {
+				government = monarchy
+				has_regency = no
+				religion = ROOT
+			}
+			ROOT = { 
+				define_heir = { 
+					dynasty = PREV 
+					age = 35
+					culture = PREV
+					hidden = yes
+				} 
+			}
+			add_opinion = { who = ROOT modifier = opinion_theocracy_noble }
+		}
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+
+	option = {
+		name = theocracy.1.c		# A Merchant's Son
+		trigger = { NOT = { has_country_flag = KOL_secondogeniture_of_BAV } }
+		if = {
+			limit = {
+				has_estate = estate_burghers
+			}
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_vaisyas
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_vaisyas
+				loyalty = 15
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = -15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_brahmins
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_brahmins
+				loyalty = -15
+			}
+		}
+		set_country_flag = theo_merchants_son_flag # USED IN DEVOTION.TXT
+		
+		if = {
+			limit = {
+				has_saved_event_target = burgher_province
+			}
+			define_heir = {
+				age = 35
+				hidden = yes
+				culture = event_target:burgher_province
+			}
+		}
+		else = {
+			define_heir = {
+				age = 35
+				hidden = yes
+			}
+		}
+		add_years_of_income = 0.35
+		add_devotion = -5
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+
+	option = {
+		name = theocracy.1.e		# A Talented Theologian
+		trigger = { NOT = { has_country_flag = KOL_secondogeniture_of_BAV } }
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = 15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_brahmins
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_brahmins
+				loyalty = 15
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_burghers
+			}
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = -15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_vaisyas
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_vaisyas
+				loyalty = -15
+			}
+		}
+		set_country_flag = theo_talented_theologian_flag # USED IN DEVOTION.TXT
+		if = {
+			limit = {
+				has_saved_event_target = church_province
+			}
+			define_heir = {
+				age = 35
+				hidden = yes
+				culture = event_target:church_province
+			}
+		}
+		else = {
+			define_heir = {
+				age = 35
+				hidden = yes
+			}
+		}
+		add_devotion = 5
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+	option = {
+		name = theocracy.1.f		# A Local Preacher
+		trigger = {
+			NOT = { has_country_flag = KOL_secondogeniture_of_BAV }
+			NOT = {
+				religion_group = muslim
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = 15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_brahmins
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_brahmins
+				loyalty = 15
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_nobles
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_maratha
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_maratha
+				loyalty = -15
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_rajput
+				religion = hinduism
+			}
+			add_estate_loyalty = {
+				estate = estate_rajput
+				loyalty = -15
+			}
+		}
+		set_country_flag = theo_local_preacher_flag # USED IN DEVOTION.TXT
+		if = {
+			limit = {
+				has_saved_event_target = church_province
+			}
+			define_heir = {
+				age = 35
+				hidden = yes
+				culture = event_target:church_province
+			}
+		}
+		else = {
+			define_heir = {
+				age = 35
+				hidden = yes
+			}
+		}
+		add_devotion = 10
+		add_prestige = -5
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+	option = {
+		name = theocracy.1.d		# A Papal Protege
+		trigger = {
+			NOT = { has_country_flag = KOL_secondogeniture_of_BAV }
+			religion = catholic
+		}
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = 15
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_nobles
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -10
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_burghers
+			}
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = -10
+			}
+		}
+		set_country_flag = theo_papal_protege_flag # USED IN DEVOTION.TXT
+		if = {
+			limit = {
+				has_saved_event_target = papal_protoge_country
+			}
+			define_heir = {
+				age = 35
+				culture = event_target:papal_protoge_country
+				hidden = yes
+			}
+		}
+		else = {
+			define_heir = {
+				age = 35
+				hidden = yes
+			}
+		}
+		add_papal_influence = 10
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+	option = {
+		name = theocracy.1.g		# A Local Imam Khatib
+		trigger = {
+			NOT = { has_country_flag = KOL_secondogeniture_of_BAV }
+			religion_group = muslim
+		}
+		set_country_flag = theo_imam_khatib_flag # USED IN DEVOTION.TXT
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = 15
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_nobles
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -15
+			}
+		}		
+		define_heir = {
+			age = 35
+			hidden = yes
+		}
+		add_devotion = 10
+		add_prestige = -10
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+	option = {
+		name = theocracy.1.h		# An Influential Reformer
+		trigger = {
+			NOT = { has_country_flag = KOL_secondogeniture_of_BAV }
+			OR = {
+				religion = reformed
+				religion = protestant
+			}
+		}
+		set_country_flag = theo_influential_reformer_flag # USED IN DEVOTION.TXT
+		if = {
+			limit = {
+				has_estate = estate_burghers
+			}
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 10
+			}
+		}		
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = -10
+			}
+		}
+		define_heir = {
+			age = 35
+			hidden = yes
+		}
+		if = { 
+			limit = { religion = reformed }
+			add_fervor = 10
+		}
+		if = { 
+			limit = { religion = protestant }
+			add_church_power = 10
+		}
+		add_prestige = -10
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+
+	option = {
+		name = touhou_theocracy.1.i		# True Heir of Hakurei
+		trigger = {
+			OR = {
+				tag = HKR
+				tag = GNK
+			}
+		}
+
+		set_country_flag = theo_local_noble_flag # USED IN DEVOTION.TXT
+		if = {
+			limit = {
+				has_saved_event_target = noble_province
+			}
+			define_heir = {
+				age = 10
+				dynasty = Hakurei
+				hidden = yes
+				adm = 1
+				dip = 1
+				mil = 2
+				female = yes
+				culture = event_target:noble_province
+			}
+		}
+		else = {
+			define_heir = {
+				age = 10
+				dynasty = Hakurei
+				hidden = yes
+				adm = 1
+				dip = 1
+				mil = 2
+				female = yes
+			}
+		}
+		add_devotion = -5
+		add_prestige = 10
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+
+	option = {
+		name = touhou_theocracy.1.j		# True Heir of Moriya
+		trigger = {
+			OR = {
+				tag = MRY
+				tag = GNK
+			}
+		}
+
+		set_country_flag = theo_local_noble_flag # USED IN DEVOTION.TXT
+		if = {
+			limit = {
+				has_saved_event_target = noble_province
+			}
+			define_heir = {
+				age = 10
+				dynasty = Moriya
+				hidden = yes
+				adm = 1
+				dip = 1
+				mil = 2
+				female = yes
+				culture = event_target:noble_province
+			}
+		}
+		else = {
+			define_heir = {
+				age = 10
+				dynasty = Moriya
+				hidden = yes
+				adm = 1
+				dip = 1
+				mil = 2
+				female = yes
+			}
+		}
+		add_devotion = -5
+		add_prestige = 10
+		clr_country_flag = in_theocracy_heir_selection
+		custom_tooltip = theocracy.1.tt
+	}
+
+	option = {
+		name = theocracy.1.i		# A Noble of House von Wittelsbach
+		trigger = {
+			has_country_flag = KOL_secondogeniture_of_BAV
+		}
+		define_heir = {
+			age = 35
+			dynasty = event_target:probably_bavaria
+			culture = event_target:probably_bavaria
+			religion = event_target:probably_bavaria
+		}
+	}
+}
+
+country_event = {	#Incident - Non-Gensokyan declares war upon Gensokyo
+	id = touhou_theocracy.2
+	title = touhou_theocracy.2.t
+	desc = touhou_theocracy.2.desc
+	picture = SHRINE_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	trigger = {
+		NOT = { capital_scope = { continent = gensokyo_continent } }
+		NOT = { religion_group = Touhou }
+		NOT = { has_country_flag = TH_foreign_invader }
+		any_country = {
+			capital_scope = { continent = gensokyo_continent }
+			NOT = { has_country_flag = TH_asked_for_help_against_@ROOT }
+			is_in_war = {
+				attacker_leader = ROOT
+				defender_leader = THIS
+			}
+		}
+		any_country = {
+			capital_scope = { continent = gensokyo_continent }
+			has_reform = Gensokyan_shrine_theocracy
+		}
+	}
+	
+	option = {		#Defender will call now the shrine maiden
+		name = touhou_theocracy.2.a
+		custom_tooltip = touhou_theocracy.2.a.tt
+		hidden_effect = {
+			set_country_flag = TH_foreign_invader
+			every_country = {
+				limit = {
+					capital_scope = { continent = gensokyo_continent }
+					NOT = { has_country_flag = TH_asked_for_help_against_@ROOT }
+					is_in_war = {
+						attacker_leader = ROOT
+						defender_leader = THIS
+					}
+				}
+				country_event = { id = touhou_theocracy.3 }
+				set_country_flag = TH_asked_for_help_against_@ROOT
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+country_event = {	#Incident - Gensokyo get attacked by none-gensokyan
+	id = touhou_theocracy.3
+	title = touhou_theocracy.3.t
+	desc = touhou_theocracy.3.desc
+	picture = SHRINE_eventPicture
+
+	is_triggered_only = yes
+	
+	option = {		#Call the Shrine Maidens for help
+		name = touhou_theocracy.3.a
+		trigger = {
+			NOT = { has_reform = Gensokyan_shrine_theocracy }
+		}
+		custom_tooltip = touhou_theocracy.3.a.tt
+		hidden_effect = {
+			if = {
+				limit = {
+					NOT = { has_country_flag = TH_called_shrine_maidens_in }
+				}
+				set_country_flag = TH_called_shrine_maidens_in
+			}
+			every_known_country = {
+				limit = {
+					has_reform = Gensokyan_shrine_theocracy
+					NOT = { war_with = ROOT }
+					NOT = { war_with = FROM }
+					capital_scope = { continent = gensokyo_continent }
+					has_opinion = {
+						who = ROOT
+						value = -50
+					}
+				}
+				country_event = { id = touhou_theocracy.4 }
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = {		#If the defender is already shrine theocracy
+		name = touhou_theocracy.3.b
+		trigger = {
+			has_reform = Gensokyan_shrine_theocracy
+		}
+		add_devotion = 15
+		add_prestige = 15
+		if = {
+			limit = {
+				NOT = { has_country_modifier = th_defense_of_gensokyo }
+			}
+			add_country_modifier = { 
+				name = th_defense_of_gensokyo
+				duration = -1  
+				desc = th_defense_of_gensokyo_tooltip
+			}
+		}
+		else = {
+			add_army_tradition = 20
+		}
+	}
+}
+
+country_event = {	#Incident - The Shrine Maiden get the call to arms
+	id = touhou_theocracy.4
+	title = touhou_theocracy.4.t
+	desc = touhou_theocracy.4.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "touhou_theocracy.4.a"
+		add_opinion = {
+			who = FROM
+			modifier = th_defense_of_gensokyo_opinion
+		}
+		every_known_country = {
+			limit = {
+				religion_group = Touhou
+				capital_scope = { continent = gensokyo_continent }
+			}
+			add_opinion = {
+				who = THIS
+				modifier = th_defender_of_gensokyo
+			}
+		}
+				
+		FROM = {
+			add_opinion = {
+				who = ROOT
+				modifier = th_defense_of_gensokyo_opinion
+			}
+		}
+		join_all_defensive_wars_of = FROM
+		add_devotion = 15
+		add_prestige = 15
+		if = {
+			limit = {
+				NOT = { has_country_modifier = th_defense_of_gensokyo }
+			}
+			add_country_modifier = { 
+				name = th_defense_of_gensokyo
+				duration = -1  
+				desc = th_defense_of_gensokyo_tooltip
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					is_bankrupt = yes
+					war_exhaustion = 10
+				}
+			}
+		}
+	}
+	
+	option = { # stay out of this
+		name = "touhou_theocracy.4.b"
+		add_prestige = -25
+		add_devotion = -25
+		add_country_modifier = {
+			name = dishonoured_alliance
+			duration = 3650
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					is_bankrupt = no
+					NOT = { war_exhaustion = 10 }
+				}
+			}
+		}
+	}	
+}
+
+country_event = {	#Incident - Non-Gensokyan finishes war with Gensokyan
+	id = touhou_theocracy.5
+	title = touhou_theocracy.5.t
+	desc = touhou_theocracy.5.desc
+	picture = SHRINE_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	hidden = yes
+	
+	trigger = {
+		has_country_flag = TH_foreign_invader
+		all_country = {
+			limit = {
+				has_country_flag = TH_asked_for_help_against_@ROOT
+			}
+			NOT = { war_with = ROOT }
+		}
+	}
+	
+	option = {		#Delete flag
+		name = touhou_theocracy.5.a
+		hidden_effect = {
+			clr_country_flag = TH_foreign_invader
+			every_known_country = {
+				limit = {
+					has_country_flag = TH_asked_for_help_against_@ROOT
+				}
+				clr_country_flag = TH_asked_for_help_against_@ROOT
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+country_event = {	#Defense of Gensokyo is over
+	id = touhou_theocracy.6
+	title = touhou_theocracy.6.t
+	desc = touhou_theocracy.6.desc
+	picture = SHRINE_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	trigger = {
+		has_country_modifier = th_defense_of_gensokyo
+		OR = {
+			NOT = {
+				calc_true_if = {
+					all_country = {
+						has_country_flag = TH_called_shrine_maidens_in
+					}
+					amount = 1
+				}
+			}
+			NOT = { is_in_war = { defenders = ROOT } }
+		}
+	}
+	
+	option = {
+		name = touhou_theocracy.6.a
+		remove_country_modifier = th_defense_of_gensokyo			
+	}
+}
+
+country_event = {	#Incident - Shrine Maiden Caller is not at any war
+	id = touhou_theocracy.7
+	title = touhou_theocracy.7.t
+	desc = touhou_theocracy.7.desc
+	picture = SHRINE_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	hidden = yes
+	
+	trigger = {
+		has_country_flag = TH_called_shrine_maidens_in
+		NOT = {
+			calc_true_if = {
+				all_country = {
+					capital_scope = {
+						NOT = { continent = gensokyo_continent }
+					}
+					is_in_war = {
+						attacker_leader = THIS
+						defender_leader = ROOT
+					}
+				}
+				amount = 1
+			}
+		}
+	}
+	
+	option = {		#Delete flag
+		name = touhou_theocracy.7.a
+		hidden_effect = {
+			clr_country_flag = TH_called_shrine_maidens_in
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

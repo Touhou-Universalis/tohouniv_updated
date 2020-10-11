@@ -1,0 +1,916 @@
+########################################
+# Flavor Events for Scarlet Realm
+########################################
+
+namespace = flavor_scr
+
+#Historical Friendship between Flandre and Koishi
+country_event = {
+	id = flavor_scr.1
+	title = flavor_scr.1.t
+	desc = flavor_scr.1.desc
+	picture = KOIFLAN_eventPicture
+	
+	major = yes
+	
+	fire_only_once = yes
+	
+	trigger = {
+		exists = CRD
+		tag = SCR
+		has_ruler = "Flandre"
+		dynasty = "Scarlet"
+		is_female = yes
+		CRD = {
+			has_ruler = "Koishi"
+			dynasty = "Komeiji"
+			is_female = yes
+			mil = 6
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {
+		name = flavor_scr.1.a
+		add_prestige = 10
+		remove_historical_rival = CRD
+		add_historical_friend = CRD
+		CRD = {
+			add_prestige = 10
+			remove_historical_rival = ROOT
+			add_historical_friend = ROOT
+		}
+	}
+}
+
+########################################
+# Minor Flavor Events  #
+########################################
+
+#Ludwig van Beethoven composed Sonata Pathétique
+country_event = {
+	id = flavor_scr.2
+	title = flavor_scr.2.t
+	desc = flavor_scr.2.desc
+	picture = THEATRE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		OR = {
+			tag = SCR
+			AND = {
+				OR = {
+					tag = SCD
+					tag = GNK
+				}
+				OR = {
+					primary_culture = Scarlett
+					dynasty = "Scarlet"
+				}
+			}
+		}
+		is_year = 1790
+		NOT = { is_year = 1827 }
+	}
+	
+	mean_time_to_happen = {
+		months = 180
+		
+		modifier = {
+			factor = 0.75
+			exists = HAB
+		}
+		modifier = {
+			factor = 0.25
+			AND = {
+				has_ruler = "Remilia"
+				dynasty = "Scarlet"
+			}
+		}
+	}
+	
+	option = {	#Hire this man! I want him to compose a theme for me!
+		name = flavor_scr.2.a
+		add_years_of_income = -0.25
+		add_country_modifier = { 
+			name = th_scr_septette_of_a_dead_princess
+			duration = -1
+		}
+		if = {
+			limit = {
+				exists = HAB
+			}
+			HAB = {
+				add_opinion = {
+					who = ROOT
+					modifier = th_admires_our_culture
+				}
+			}
+		}
+		add_adm_power = 100
+		add_prestige = 10
+		
+		ai_chance = { 
+			factor = 50 
+			modifier = {
+				factor = 100
+				has_ruler = "Remilia"
+				dynasty = "Scarlet"
+			}
+		}
+	}
+	
+	option = {	#We need the money for more important stuff.
+		name = flavor_scr.2.b
+		add_prestige = -5
+	}		
+}
+
+########################################
+# Mission Events for Scarlet Realm
+########################################
+
+#Hong dynasty takes over China
+
+country_event = {
+	id = flavor_scr.3
+	title = "flavor_scr.3.t"
+	desc = "flavor_scr.3.desc"
+	picture = MEILING_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	major = yes
+	
+	option = {		#Create the Hong dynasty
+		name = flavor_scr.3.a
+		north_china_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = HNG
+			remove_core = ROOT
+			change_religion = ROOT
+		}
+		manchuria_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = HNG
+			remove_core = ROOT
+			change_religion = ROOT
+		}
+		release = HNG
+		create_subject = {
+			subject_type = th_special_march
+			subject = HNG
+		}
+		HNG = {
+			change_government = monarchy
+			add_government_reform = Gensokyan_monarchy
+			adopt_reform_progress = ROOT
+			change_primary_culture = ROOT
+			change_religion = ROOT
+			define_ruler = {
+				name = "Meiling"
+				dynasty = "Hong"
+				age = "25"
+				adm = 3
+				dip = 4
+				mil = 6
+				fixed = yes
+				female = yes
+				culture = ROOT
+				religion = ROOT
+			}
+			set_ruler_flag = touhou_character_ruler
+			north_china_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = HNG }
+				}
+				add_permanent_claim = HNG
+			}
+			south_china_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = HNG }
+				}
+				add_permanent_claim = HNG
+			}
+			xinan_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = HNG }
+				}
+				add_permanent_claim = HNG
+			}
+			hidden_effect = {
+				add_ruler_modifier = { 
+					name = scr_meilings_loyalty
+					duration = -1
+				}
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = shandong_culture
+				add_accepted_culture = chihan
+				country_event = { id = TH_mission_events.3 }
+				set_capital = 1816
+				capital_scope = {
+						build_to_forcelimit = {
+							infantry = 0.6
+							cavalry = 0.3
+						}
+					}
+			}
+		}
+		1816 = {
+			add_base_tax = 2
+			add_base_manpower = 2
+			add_base_production = 2
+			change_culture = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 80
+		}
+	}
+	option = {		#We can rule over China by ourself
+		name = flavor_scr.3.b
+		1816 = {
+			add_base_tax = 4
+			add_base_manpower = 4
+			add_base_production = 4
+		}
+		
+		ai_chance = { 
+			factor = 20
+		}
+	}
+	option = {		#Let the player play as Hong
+		name = flavor_scr.3.c
+		north_china_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = HNG
+			change_religion = ROOT
+			remove_core = ROOT
+		}
+		manchuria_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = HNG
+			change_religion = ROOT
+			remove_core = ROOT
+		}
+		release = HNG
+		switch_tag = HNG
+		HNG = {
+			change_government = monarchy
+			add_government_reform = Gensokyan_monarchy
+			adopt_reform_progress = ROOT
+			change_primary_culture = ROOT
+			change_religion = ROOT
+			define_ruler = {
+				name = "Meiling"
+				dynasty = "Hong"
+				age = "25"
+				adm = 3
+				dip = 4
+				mil = 6
+				fixed = yes
+				female = yes
+				culture = ROOT
+				religion = ROOT
+			}
+			set_ruler_flag = touhou_character_ruler
+			north_china_region = {
+				limit = {
+					NOT = { is_core = HNG }
+					NOT = { is_permanent_claim = HNG }
+				}
+				add_permanent_claim = HNG
+			}
+			south_china_region = {
+				limit = {
+					NOT = { is_core = HNG }
+					NOT = { is_permanent_claim = HNG }
+				}
+				add_permanent_claim = HNG
+			}
+			xinan_region = {
+				limit = {
+					NOT = { is_core = HNG }
+					NOT = { is_permanent_claim = HNG }
+				}
+				add_permanent_claim = HNG
+			}
+			hidden_effect = {
+				add_ruler_modifier = { 
+					name = scr_meilings_loyalty
+					duration = -1
+				}
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = shandong_culture
+				add_accepted_culture = chihan
+				country_event = { id = TH_mission_events.3 }
+				set_capital = 1816
+				capital_scope = {
+						build_to_forcelimit = {
+							infantry = 0.6
+							cavalry = 0.3
+						}
+					}
+			}
+		}
+		1816 = {
+			add_base_tax = 2
+			add_base_manpower = 2
+			add_base_production = 2
+			change_culture = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Flandre takes over Netherlands
+
+country_event = {
+	id = flavor_scr.4
+	title = "flavor_scr.4.t"
+	desc = "flavor_scr.4.desc"
+	picture = FLANDREHAPPY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	major = yes
+	
+	option = {		#Create an satelite union
+		name = flavor_scr.4.a
+		trigger = {
+			has_ruler = "Flandre"
+			dynasty = "Scarlet"
+			is_female = yes
+			OR = {
+				 ruler_has_personality = immortal_personality
+				 AND = {
+					adm = 5
+					dip = 3
+					mil = 6
+				}
+			}
+		}
+		low_countries_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = FLR
+			remove_core = ROOT
+			change_religion = ROOT
+		}
+		release = FLR
+		FLR = {
+			change_government = monarchy
+			add_government_reform = Gensokyan_monarchy
+			adopt_reform_progress = ROOT
+			change_primary_culture = ROOT
+			change_religion = ROOT
+			low_countries_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = FLR
+			}
+			hidden_effect = {
+				add_country_modifier = { 
+					name = scr_flans_loyalty
+					duration = -1
+				}
+				add_accepted_culture = flemish
+				add_accepted_culture = dutch
+				add_accepted_culture = wallonian
+				country_event = { id = TH_mission_events.3 }
+				country_event = { id = TH_mission_events.4 }
+				country_event = { id = TH_mission_events.5 }
+				set_capital = 90
+				capital_scope = {
+						build_to_forcelimit = {
+							infantry = 0.6
+							cavalry = 0.3
+						}
+					}
+			}
+		}
+		create_union = FLR
+		90 = {
+			add_base_tax = 2
+			add_base_manpower = 2
+			add_base_production = 2
+			change_culture = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 80
+		}
+	}
+	
+	option = {		#Give Flandre the lowlands
+		name = flavor_scr.4.b
+		trigger = {
+			NOT = {
+				AND = {
+					has_ruler = "Flandre"
+					dynasty = "Scarlet"
+					is_female = yes
+					OR = {
+							ruler_has_personality = immortal_personality
+							AND = {
+							adm = 5
+							dip = 3
+							mil = 6
+						}
+					}					
+				}
+			}
+		}
+		low_countries_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = FLR
+			remove_core = ROOT
+			change_religion = ROOT
+		}
+		release = FLR
+		create_subject = {
+			subject_type = th_special_march
+			subject = FLR
+		}
+		FLR = {
+			change_government = monarchy
+			add_government_reform = Gensokyan_monarchy
+			adopt_reform_progress = ROOT
+			change_primary_culture = ROOT
+			change_religion = ROOT
+			define_ruler = {
+				name = "Flandre"
+				dynasty = "Scarlet"
+				age = "15"
+				adm = 5
+				dip = 3
+				mil = 6
+				fixed = yes
+				female = yes
+				culture = ROOT
+				religion = ROOT
+			}
+			set_ruler_flag = touhou_character_ruler
+			low_countries_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = FLR
+			}
+			hidden_effect = {
+				add_ruler_modifier = { 
+					name = scr_flans_loyalty
+					duration = -1
+				}
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = flemish
+				add_accepted_culture = dutch
+				add_accepted_culture = wallonian
+				country_event = { id = TH_mission_events.3 }
+				country_event = { id = TH_mission_events.4 }
+				country_event = { id = TH_mission_events.5 }
+				set_capital = 90
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+					}
+				}
+			}
+		}
+		90 = {
+			add_base_tax = 2
+			add_base_manpower = 2
+			add_base_production = 2
+			change_culture = ROOT
+		}
+		if = {
+			limit = {
+				has_heir = "Flandre"
+				heir_has_ruler_dynasty = yes 
+				dynasty = "Scarlet"
+				has_female_heir = yes
+				OR = {
+					heir_has_personality = immortal_personality
+					AND = {
+						heir_adm = 5
+						heir_dip = 3
+						heir_mil = 6
+					}
+				}
+			}
+			remove_heir = yes
+		}
+		
+		ai_chance = { 
+			factor = 80
+		}
+	}
+	option = {		#We can rule over Flanders by ourself
+		name = flavor_scr.4.c
+		trigger = {
+			NOT = {
+				AND = {
+					has_ruler = "Flandre"
+					dynasty = "Scarlet"
+					is_female = yes
+					OR = {
+							ruler_has_personality = immortal_personality
+							AND = {
+							adm = 5
+							dip = 3
+							mil = 6
+						}
+					}
+				}
+			}
+		}
+		90 = {
+			add_base_tax = 4
+			add_base_manpower = 4
+			add_base_production = 4
+		}
+		add_accepted_culture = flemish
+		add_accepted_culture = dutch
+		add_accepted_culture = wallonian
+		
+		ai_chance = { 
+			factor = 20
+		}
+	}
+	
+	option = {		#Let the player play as Flandrish realm - root religion
+		name = flavor_scr.4.d
+		trigger = {
+			NOT = {
+				AND = {
+					has_ruler = "Flandre"
+					dynasty = "Scarlet"
+					is_female = yes
+					OR = {
+							ruler_has_personality = immortal_personality
+							AND = {
+							adm = 5
+							dip = 3
+							mil = 6
+						}
+					}
+				}				
+			}
+		}
+		low_countries_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = FLR
+			remove_core = ROOT
+		}
+		release = FLR
+		if = {
+			limit = {
+				has_heir = "Flandre"
+				heir_has_ruler_dynasty = yes 
+				dynasty = "Scarlet"
+				has_female_heir = yes
+				OR = {
+					heir_has_personality = immortal_personality
+					AND = {
+						heir_adm = 5
+						heir_dip = 3
+						heir_mil = 6
+					}
+				}
+			}
+			remove_heir = yes
+		}
+		switch_tag = FLR
+		FLR = {
+			change_government = monarchy
+			add_government_reform = Gensokyan_monarchy
+			adopt_reform_progress = ROOT
+			change_primary_culture = ROOT
+			change_religion = ROOT
+			define_ruler = {
+				name = "Flandre"
+				dynasty = "Scarlet"
+				age = "15"
+				adm = 5
+				dip = 3
+				mil = 6
+				fixed = yes
+				female = yes
+				culture = ROOT
+				religion = ROOT
+			}
+			set_ruler_flag = touhou_character_ruler
+			low_countries_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = FLR
+			}
+			hidden_effect = {
+				add_ruler_modifier = { 
+					name = scr_flans_loyalty
+					duration = -1
+				}
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = flemish
+				add_accepted_culture = dutch
+				add_accepted_culture = wallonian
+				country_event = { id = TH_mission_events.3 }
+				country_event = { id = TH_mission_events.4 }
+				country_event = { id = TH_mission_events.5 }
+				set_capital = 90
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+					}
+				}
+			}
+		}
+		90 = {
+			add_base_tax = 2
+			add_base_manpower = 2
+			add_base_production = 2
+			change_culture = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {		#Flan continues to rule from Gensokyo
+		name = flavor_scr.4.e
+		trigger = {
+			has_ruler = "Flandre"
+			dynasty = "Scarlet"
+			is_female = yes
+			OR = {
+				 ruler_has_personality = immortal_personality
+				 AND = {
+					adm = 5
+					dip = 3
+					mil = 6
+				}
+			}
+		}
+		90 = {
+			add_base_tax = 4
+			add_base_manpower = 4
+			add_base_production = 4
+		}
+		add_accepted_culture = flemish
+		add_accepted_culture = dutch
+		add_accepted_culture = wallonian
+		
+		ai_chance = { 
+			factor = 20
+		}
+	}	
+	
+	option = {		#Let Flandre abondon the Scarlet Realm
+		name = flavor_scr.4.f
+		trigger = {
+			has_ruler = "Flandre"
+			dynasty = "Scarlet"
+			is_female = yes
+			OR = {
+				 ruler_has_personality = immortal_personality
+				 AND = {
+					adm = 5
+					dip = 3
+					mil = 6
+				}
+			}
+		}
+		low_countries_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = FLR
+			remove_core = ROOT
+		}
+		release = FLR
+		ROOT = {
+			define_ruler = {
+				name = "Remilia"
+				dynasty = "Scarlet"
+				age = "15"
+				adm = 4
+				dip = 4
+				mil = 6
+				fixed = yes
+				female = yes
+				culture = ROOT
+				religion = ROOT
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+			}
+		}
+		switch_tag = FLR
+		FLR = {
+			change_government = monarchy
+			add_government_reform = Gensokyan_monarchy
+			adopt_reform_progress = ROOT
+			change_primary_culture = ROOT
+			change_religion = ROOT
+			define_ruler = {
+				name = "Flandre"
+				dynasty = "Scarlet"
+				age = "15"
+				adm = 5
+				dip = 3
+				mil = 6
+				fixed = yes
+				female = yes
+				culture = ROOT
+				religion = ROOT
+			}
+			low_countries_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = FLR
+			}
+			hidden_effect = {
+				add_ruler_modifier = { 
+					name = scr_flans_loyalty
+					duration = -1
+				}
+				set_ruler_flag = touhou_character_ruler
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = flemish
+				add_accepted_culture = dutch
+				add_accepted_culture = wallonian
+				country_event = { id = TH_mission_events.3 }
+				country_event = { id = TH_mission_events.4 }
+				country_event = { id = TH_mission_events.5 }
+				set_capital = 90
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+					}
+				}
+			}
+		}
+		90 = {
+			add_base_tax = 2
+			add_base_manpower = 2
+			add_base_production = 2
+			change_culture = ROOT
+		}
+		
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Flandrish Realm Conversion to Christianity
+country_event = {
+	id = flavor_scr.5
+	title = "flavor_scr.5.t"
+	desc = "flavor_scr.5.desc"
+	picture = RELIGIOUS_CONVERSION_eventPicture
+	
+	trigger = {
+		tag = FLR
+		capital_scope = { 
+			OR = {
+				religion = catholic
+				religion = orthodox
+				religion = coptic
+				religion = reformed
+				religion = protestant
+				religion = anglican
+			}
+		}
+		NOT = { has_country_flag = th_FLR_choose_religion }
+		is_subject = no
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		set_country_flag = th_FLR_choose_religion
+	}
+	
+	option = {
+		name = "flavor_scr.5.a" #
+		ai_chance = { factor = 100 }
+		trigger = { any_owned_province = { religion = catholic } }
+		change_religion = catholic
+		low_countries_region = {
+			limit = {
+				owned_by = FLR
+			}
+			change_religion = catholic
+		}
+	}
+	option = {
+		name = "flavor_scr.5.b" #
+		ai_chance = { factor = 100 }
+		trigger = { any_owned_province = { religion = orthodox } }
+		change_religion = orthodox
+		low_countries_region = {
+			limit = {
+				owned_by = FLR
+			}
+			change_religion = orthodox
+		}
+	}
+	option = {
+		name = "flavor_scr.5.c" #
+		ai_chance = { factor = 100 }
+		trigger = { any_owned_province = { religion = coptic } }
+		change_religion = coptic
+		low_countries_region = {
+			limit = {
+				owned_by = FLR
+			}
+			change_religion = coptic
+		}
+	}
+	option = {
+		name = "flavor_scr.5.d" #
+		ai_chance = { factor = 100 }
+		trigger = { any_owned_province = { religion = reformed } }
+		change_religion = reformed
+		low_countries_region = {
+			limit = {
+				owned_by = FLR
+			}
+			change_religion = reformed
+		}
+	}
+	option = {
+		name = "flavor_scr.5.e" #
+		ai_chance = { factor = 100 }
+		trigger = { any_owned_province = { religion = protestant } }
+		change_religion = protestant
+		low_countries_region = {
+			limit = {
+				owned_by = FLR
+			}
+			change_religion = protestant
+		}
+	}
+	option = {
+		name = "flavor_scr.5.g" #
+		ai_chance = { factor = 100 }
+		trigger = { any_owned_province = { religion = anglican } }
+		change_religion = anglican
+		low_countries_region = {
+			limit = {
+				owned_by = FLR
+			}
+			change_religion = anglican
+		}
+	}
+	option = {	#Stay TH Shinto
+		name = "flavor_scr.5.f" #
+		ai_chance = { factor = 1 }
+		change_religion = Gensokyan
+		low_countries_region = {
+			limit = {
+				owned_by = FLR
+			}
+			change_religion = Gensokyan
+		}
+	}
+}

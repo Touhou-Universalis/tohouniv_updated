@@ -1,0 +1,770 @@
+komeijis_missions_create_an_empire_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = CRD
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	CRD_form_the_komeiji_navy = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
+		trigger = {
+			num_of_total_ports = 15
+			navy_size_percentage = 0.9
+		}
+		effect = {
+			add_prestige = 15
+			add_country_modifier = {
+				name = "crd_search_for_new_pets"
+				duration = 7300
+			}
+			define_explorer = {
+				shock = 1
+				fire = 6
+				manuever = 1
+				siege = 0
+				name = "Utsuho Reiuji"
+				female = yes
+			}
+		}
+	}
+	
+	CRD_break_the_barrier = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { CRD_form_the_komeiji_navy }
+		position = 2
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = scr_break_the_barrier.tooltip
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+		}
+	}
+	
+	CRD_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { CRD_break_the_barrier }
+		position = 3
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
+			}
+			country_event = { id = TH_mission_events.4 }			
+		}
+	}
+
+	CRD_the_scarletts = {
+		icon = mission_touhou_the_scarlets
+		required_missions = {  }
+		position = 4
+		trigger = {
+			is_subject = no
+			OR = {
+				is_rival = SCR
+				SCR = { is_rival = ROOT }
+				alliance_with = SCR
+				NOT = { exists = SCR }
+			}
+		}
+		effect = {
+			Scarlett_domain = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			Scarlet_island = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			Scarlet_mountain = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					SCR = {
+						is_subject = NO
+					}
+				}
+				add_casus_belli = {
+					target = SCR
+					type = cb_restore_personal_union
+					months = 900
+				}
+			}
+		}
+	}
+	
+	CRD_two_mansions_one_dynasty = {
+		icon = mission_touhou_scarlet_komeiji_union
+		required_missions = { CRD_the_scarletts }
+		position = 5
+		
+		provinces_to_highlight = {
+			OR = {
+				area = Scarlett_domain
+				area = Scarlet_island
+				area = Scarlet_mountain
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		
+		trigger = {
+			Scarlett_domain = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Scarlet_island = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Scarlet_mountain = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = "crd_scarlett_komeijis"
+				duration = 7300
+			}
+			add_prestige = 25
+			Eastern_mountains = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			Mayohiga_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			Ran_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			Great_youkai_forest = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_youkai_forest = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			Land_of_the_black_doors = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			Black_door_border_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	CRD_control_over_the_untrustworthy_youkai = {
+		icon = mission_assemble_an_army
+		required_missions = { CRD_two_mansions_one_dynasty }
+		position = 6
+		
+		provinces_to_highlight = {
+			continent = gensokyo_continent
+			culture = Youkai
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = crd_conquer_youkai.tooltip
+				num_of_owned_provinces_with = {
+					value = 15
+					culture = Youkai
+				}
+			}
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = "crd_no_untrusting_threats"
+				duration = 7300
+			}
+			add_accepted_culture = Youkai
+			add_mil_power = 100 
+		}
+	}
+}
+
+komeijis_missions_dominate_gensokyo_slot = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = CRD
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	CRD_improve_oni_relations = {
+		icon = mission_touhou_army
+		required_missions = {  }
+		position = 1
+		trigger = {
+			OR = {
+				reverse_has_opinion = {
+					who = ONI
+					value = 150
+				}
+				NOT = { exists = ONI }
+			}
+		}
+		effect = {
+			Land_of_the_dead = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Gate_to_the_dead = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	CRD_control_the_lone_coast = {
+		icon = mission_touhou_realm_of_the_dead
+		required_missions = { CRD_improve_oni_relations }
+		position = 2
+		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4899
+				province_id = 4853
+			}
+		}
+		
+		trigger = {
+			owns_or_non_sovereign_subject_of = 4899
+			owns_or_non_sovereign_subject_of = 4853
+		}
+		effect = {
+			Northern_hills = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_hills = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			The_hills = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}		
+			Youkai_Mountains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			North_tengu_plains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Southern_youkai_mountains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = TGU
+				}
+				add_casus_belli = {
+					target = TGU
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+			4861 = {
+				add_permanent_province_modifier = { 
+					name = crd_endless_supply_for_the_blazing_flames
+					duration = -1
+				}
+			}
+		}
+	}
+	
+	CRD_between_hell_and_heaven = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { CRD_control_the_lone_coast }
+		position = 3
+		provinces_to_highlight = {
+			province_id = 4811
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			4811 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 25
+			add_country_modifier = {
+				name = "crd_backup_of_the_oni"
+				duration = 7300
+			}
+			Higan = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_higan = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Higan_southern_coast = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Western_higan = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = HIG
+				}
+				add_casus_belli = {
+					target = HIG
+					type = cb_restore_personal_union
+					months = 900
+				}
+			}
+		}
+	}
+	
+	CRD_new_master_of_the_judge = {
+		icon = mission_touhou_judge_of_gensokyo
+		required_missions = { CRD_between_hell_and_heaven }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				area = Higan
+				area = Eastern_higan
+				area = Higan_southern_coast
+				area = Western_higan
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			Higan = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Eastern_higan = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Higan_southern_coast = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Western_higan = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 25
+			add_country_modifier = {
+				name = "crd_controlleur_of_the_judge"
+				duration = 7300
+			}
+			hell_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Great_border = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Dragon_islands = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Western_dragon_islands = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_dragon_islands = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
+		}
+	}
+	
+	CRD_hell_and_heaven_in_one = {
+		icon = mission_touhou_hell_and_heaven
+		required_missions = { CRD_new_master_of_the_judge }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4879
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				AND = {
+					province_id = 4880
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+			}
+		}
+		trigger = {
+			4879 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			4880 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_dip_power = 100
+			korea_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = KOR
+				}
+				add_casus_belli = {
+					target = KOR
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+		}
+	}
+	
+	
+	CRD_entrance_to_the_mandate_of_heaven = {
+		icon = mission_great_wall
+		required_missions = { CRD_hell_and_heaven_in_one }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				area = south_korea_area
+				area = eastern_korea_area
+				area = pyongan_area
+				area = hamgyeong_area
+				area = western_korea_area
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				south_korea_area = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				eastern_korea_area = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				western_korea_area = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				pyongan_area = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				hamgyeong_area = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		}
+		effect = {
+			add_adm_power = 100
+			add_accepted_culture = korean
+			xinan_region = {
+				discover_country = ROOT
+			}
+			mongolia_region = {
+				discover_country = ROOT
+			}
+			manchuria_region = {
+				discover_country = ROOT
+			}
+			tibet_region = {
+				discover_country = ROOT
+			}
+			indo_china_region = {
+				discover_country = ROOT
+			}
+			burma_region = {
+				discover_country = ROOT
+			}
+		}
+	}
+}
+
+komeijis_missions_middle_screen_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = CRD
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	CRD_form_the_scarlett_komeiji_nation_mission = {
+		icon = mission_touhou_empress_satori
+		required_missions = {  }
+		position = 6
+		trigger = {
+			OR = {
+				tag = SCD
+				tag = GNK
+				government_rank = 3
+			}
+			total_development = 650
+		}
+		effect = {
+			add_country_modifier = {
+				name = "crd_formed_a_powerful_union_with_scr"
+				duration = -1
+			}
+		}
+	}
+	
+	CRD_attack_china = {
+		icon = mission_manchu_warrior
+		position = 7
+		required_missions = { 
+			CRD_entrance_to_the_mandate_of_heaven
+			CRD_control_over_the_untrustworthy_youkai
+		}
+		trigger = {
+			OR = {
+				is_rival = MNG
+				MNG = { is_rival = ROOT }
+				NOT = { exists = MNG }
+				if = {
+					limit = {
+						exists = MNG
+					}
+					total_development = MNG
+					total_development = 1000
+				}
+			}
+		}
+		effect = {
+			add_mil_power = 100
+			south_china_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			north_china_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			xinan_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			liaoning_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	CRD_take_the_mandate_of_heaven = {
+		icon = mission_touhou_mandate_of_heaven
+		position = 8
+		required_missions = { 
+			CRD_attack_china
+		}
+		trigger = {
+			if = {
+				limit = {
+					any_country = {
+						is_emperor_of_china = yes
+					}
+				}
+				any_country = {
+					is_emperor_of_china = yes
+					war_with = ROOT
+				}
+				war_score = 70
+				if = {
+					limit = {
+						any_country = {
+							is_emperor_of_china = yes
+							owns = 1816
+						}
+					}
+					controls = 1816
+				}
+				else = {
+					any_country = {
+						is_emperor_of_china = yes
+						capital_scope = {
+							controlled_by = ROOT
+						}
+					}
+				}
+			}
+			else = {
+				OR = {
+					AND = {
+						1816 = {
+							owner = {
+								war_with = ROOT
+							}
+						}
+						war_score = 70
+						controls = 1816
+					}
+					1816 = {
+						owned_by = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+		}
+		effect = {
+			add_war_exhaustion = -20
+			country_event = { id = TH_mission_events.1 }
+			country_event = { id = TH_mission_events.3 }
+		}
+	}
+}

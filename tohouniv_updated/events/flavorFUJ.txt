@@ -1,0 +1,881 @@
+########################################
+# Flavor Events for Fujiwara
+########################################
+
+namespace = flavor_fuj
+
+#Kaguya is defeated. FUJ become new government
+country_event = {
+	id = flavor_fuj.1
+	title = flavor_fuj.1.t
+	desc = flavor_fuj.1.desc
+	picture = KAGUYAVSMOKOU_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = FUJ
+		NOT = { exists = EIT }
+		NOT = { has_country_flag = fuj_has_adapted_government }
+		owns_core_province = 4845
+		Eientei_state = {
+			type = all
+			country_or_non_sovereign_subject_holds = ROOT
+		}
+		Bamboo_forest_of_the_lost = {
+			type = all
+			country_or_non_sovereign_subject_holds = ROOT
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = fuj_has_adapted_government
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {	#She will find her place under my rule soon enough
+		name = flavor_fuj.1.a
+		
+		add_adm_power = -50
+		add_legitimacy = -20
+		every_province = {
+			limit = {
+				is_core = EIT
+			}
+			remove_core = EIT
+		}
+		if = {
+			limit = {
+				NOT = { government = monarchy }
+			}
+			change_government = monarchy
+		}		
+		add_government_reform = Gensokyan_mokou_states_reform
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Control Terakoya and first meeting with Keine
+country_event = {
+	id = flavor_fuj.2
+	title = flavor_fuj.2.t
+	desc = flavor_fuj.2.desc
+	picture = MOKOUKEINE_eventPicture
+	
+	trigger = {
+		OR = {
+			tag = FUJ
+			was_tag = FUJ
+		}
+		4827 = {
+			country_or_non_sovereign_subject_holds = ROOT
+		}
+		NOT = { has_country_flag = fuj_keine_met }
+	}
+
+	fire_only_once = yes
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = fuj_keine_met
+		}
+	}
+
+	option = {	#Keine, long time not seen. Let me become guardian of you and human beings
+		name = flavor_fuj.2.a
+		add_adm_power = 50
+		add_dip_power = 50
+		add_mil_power = 50
+		custom_tooltip = fuj_can_hire_keine_now_tt
+				
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Claims over Japan
+country_event = {
+	id = flavor_fuj.3
+	title = flavor_fuj.3.t
+	desc = flavor_fuj.3.desc
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		has_country_flag = fuj_defeated_sff
+		has_country_flag = fuj_defeated_net
+		has_country_flag = fuj_defeated_mim
+		has_country_flag = fuj_protects_humans
+		NOT = { has_country_flag = fuj_had_claim_event }
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = fuj_had_claim_event
+		} 
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {	#
+		name = flavor_fuj.3.a
+		
+		japan_region = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+
+		add_adm_power = 75
+		add_dip_power = 75
+		add_mil_power = 75
+
+		if = {
+			limit = {
+				NOT = { government_rank = 2 }
+			}
+			set_government_rank = 2
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Relationship between Kaguya and Mokou improves
+country_event = {
+	id = flavor_fuj.4
+	title = flavor_fuj.4.t
+	desc = flavor_fuj.4.desc
+	picture = TERUMOKO_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = { #Due improved opinions of eachother the likelyhood of bad events gets more limited to both extreme ends
+		custom_tooltip = flavor_fuj.4.tt
+		hidden_effect = {
+			set_country_flag = th_states_improved_relationship_between_kagu_mokou
+			change_statists_vs_orangists = -2
+		} 
+	}
+	
+	option = {	#For now our country needs Mokou in power
+		name = flavor_fuj.4.a
+		
+		change_statists_vs_orangists = 1.1
+
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	#We need now Kaguya's diplomacy more than ever
+		name = flavor_fuj.4.b
+		
+		change_statists_vs_orangists = 0.9
+
+		ai_chance = { 
+			factor = 50
+		}
+	}
+}
+
+#Human Capital joins FUJ
+country_event = {
+	id = flavor_fuj.5
+	title = flavor_fuj.5.t
+	desc = flavor_fuj.5.desc
+	picture = RINNOSUKE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#For now our country needs Mokou in power
+		name = flavor_fuj.5.a
+		
+		if = {
+			limit = {
+				HMC = {
+					was_player = no
+					ai = yes
+				}
+			}
+			create_subject = {
+				subject_type = vassal
+				subject = HMC
+			}
+		}
+		else = {
+			add_adm_power = 150
+			add_dip_power = 150
+			add_mil_power = 150
+		}
+
+		ai_chance = { 
+			factor = 50
+		}
+	}
+}
+
+#Mokou becomes Tenno
+country_event = {
+	id = flavor_fuj.6
+	title = flavor_fuj.6.t
+	desc = flavor_fuj.6.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	major = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+
+	}
+	
+	option = {	#Mokou is both Tenno and Shogun!
+		name = flavor_fuj.6.a
+
+		custom_tooltip = flavor_fuj.6.tt
+		hidden_effect = {
+			japan_region = {
+				limit = {
+					owned_by = ROOT
+				}
+				remove_core = ROOT
+			}
+			release = ODA
+			release = AMA
+			release = ASA
+			release = CSK
+			release = DTE
+			release = HJO
+			release = HSK
+			release = HTK
+			release = IKE
+			release = IMG
+			release = MAE
+			release = MRI
+			release = OTM
+			release = OUC
+			release = SBA
+			release = SMZ
+			release = TKD
+			release = TKG
+			release = UES
+			release = YMN
+			release = RFR
+			release = ASK
+			release = KTB
+			release = ANU
+			release = AKM
+			release = AKT
+			release = CBA
+			release = ISK
+			release = ITO
+			release = KKC
+			release = KNO
+			release = OGS
+			release = SHN
+			release = STK
+			release = TKI
+			release = UTN
+			release = TTI
+	
+			every_country = {
+				limit = {
+					capital_scope = {
+						region = japan_region
+					}
+				}
+				country_event = { id = flavor_fuj.7 }
+			}
+		}
+
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#All former daimyos become Mokou's subjects - subject event
+country_event = {
+	id = flavor_fuj.7
+	title = flavor_fuj.7.t
+	desc = flavor_fuj.7.desc
+	picture = SHRINE_eventPicture
+
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	option = {	#All hail Mokou!
+		name = flavor_fuj.7.a
+		
+		if = {
+			limit = {
+				ai = yes
+				was_player = no
+			}
+			FROM = {
+				create_subject = {
+					subject_type = th_mokou_daimyo
+					subject = ROOT
+				}
+			}
+			change_religion = FROM
+		}
+		else = {
+			FROM = {
+				add_treasury = 100
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Event to explain how to calm Kaguya down
+country_event = {
+	id = flavor_fuj.8
+	title = flavor_fuj.8.t
+	desc = flavor_fuj.8.desc
+	picture = KAGUYA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#All hail Mokou!
+		name = flavor_fuj.8.a
+		
+		custom_tooltip = flavor_fuj.8.tt	#Increases Mokou's stress by 250%
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Shooting cannons at swallows!
+country_event = {
+	id = flavor_fuj.9
+	title = flavor_fuj.9.t
+	desc = flavor_fuj.9.desc
+	picture = KAGUYA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Shoot at the birds...
+		name = flavor_fuj.9.a
+		
+		custom_tooltip = flavor_fuj.9.att
+		country_event = { id = flavor_fuj.10 }
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#... or at Kaguya
+		name = flavor_fuj.9.b
+		
+		custom_tooltip = flavor_fuj.9.btt
+		country_event = { id = flavor_fuj.11 }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Shooting cannons at swallows!
+country_event = {
+	id = flavor_fuj.10
+	title = flavor_fuj.10.t
+	desc = flavor_fuj.10.desc
+	picture = KAGUYA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Kaguya is entertained, but at what cost?
+		name = flavor_fuj.10.a
+		
+		add_years_of_income = 4
+		add_prestige = -15
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Shooting at Kaguya is always a good idea
+country_event = {
+	id = flavor_fuj.11
+	title = flavor_fuj.11.t
+	desc = flavor_fuj.11.desc
+	picture = KAGUYAVSMOKOUFUN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#TAKE THIS
+		name = flavor_fuj.11.a
+		
+		add_prestige = 40
+		add_army_professionalism = 0.1
+		add_dip_power = -75
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Dragon fight
+country_event = {
+	id = flavor_fuj.12
+	title = flavor_fuj.12.t
+	desc = flavor_fuj.12.desc
+	picture = MOKOU_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			#Dragon's Base Fighting Skills
+			set_variable = {
+				which = th_fuj_dragon_combat_skills
+				value = 750
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_fuj_dragon_combat_skills
+			}	
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = flavor_fuj.12.a
+		custom_tooltip = flavor_fuj.12.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		hidden_effect = {
+			country_event = {
+				id = flavor_fuj.13
+				days = 10
+			}
+		}			
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Dragon fight result evaluation
+country_event = {
+	id = flavor_fuj.13
+	title = flavor_fuj.13.t
+	desc = flavor_fuj.13.desc
+	picture = MOKOU_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = flavor_fuj.13.a
+
+		if = {
+			limit = {
+				has_country_flag = th_incident_last_fight_won
+			}
+			country_event = { id = flavor_fuj.14 }
+		}
+		else = {
+			country_event = { id = flavor_fuj.15 }
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Victory over the Dragon
+country_event = {
+	id = flavor_fuj.14
+	title = flavor_fuj.14.t
+	desc = flavor_fuj.14.desc
+	picture = MOKOU_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Dragonborn Mokou
+		name = flavor_fuj.14.a
+		custom_tooltip = flavor_fuj.14.a.tt
+		add_prestige = 40
+		add_treasury = 1000
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Defeat against the Dragon
+country_event = {
+	id = flavor_fuj.15
+	title = flavor_fuj.15.t
+	desc = flavor_fuj.15.desc
+	picture = DRAGON_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Dragonborn Mokou
+		name = flavor_fuj.15.a
+		custom_tooltip = flavor_fuj.15.a.tt
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+#Mokou returns
+country_event = {
+	id = flavor_fuj.101
+	title = flavor_fuj.101.t
+	desc = flavor_fuj.101.desc
+	picture = MOKOU_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			define_ruler = {
+				name = "Mokou"
+				dynasty = "Fujiwara"
+				culture = Eientei
+				fixed = yes
+				adm = 5
+				dip = 4
+				mil = 6
+				age = 20
+				claim = 100
+				female = yes
+			}
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = FUJ_mokou_in_charge
+			if = {
+				limit = {
+					th_fuj_has_n_volcanos = {
+						value = 4
+					}
+				}
+				define_ruler_to_general = {
+					fire = 6
+					shock = 5
+					manuever = 4
+					siege = 6
+				}
+			}
+			else_if = {
+				limit = {
+					th_fuj_has_n_volcanos = {
+						value = 3
+					}
+				}
+				define_ruler_to_general = {
+					fire = 5
+					shock = 5
+					manuever = 3
+					siege = 5
+				}
+			}
+			else_if = {
+				limit = {
+					th_fuj_has_n_volcanos = {
+						value = 2
+					}
+				}
+				define_ruler_to_general = {
+					fire = 5
+					shock = 5
+					manuever = 2
+					siege = 4
+				}
+			}
+			else_if = {
+				limit = {
+					th_fuj_has_n_volcanos = {
+						value = 1
+					}
+				}
+				define_ruler_to_general = {
+					fire = 4
+					shock = 4
+					manuever = 2
+					siege = 3
+				}
+			}
+			else = {
+				define_ruler_to_general = {
+					fire = 3
+					shock = 3
+					manuever = 2
+					siege = 2
+				}
+			}
+		}
+	}
+
+	option = {	#WB
+		name = flavor_fuj.101.a
+	}
+}
+
+#Hire Keine as an advisor
+country_event = {
+	id = flavor_fuj.102
+	title = flavor_fuj.102.t
+	desc = flavor_fuj.102.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = fuj_keine_hired
+		}
+	}
+
+	option = {
+		name = flavor_fuj.102.a^
+		if = {
+			limit = {
+				owns = 4827
+			}
+			define_advisor = {
+				type = th_advisor_keine
+				name = "Keine Kamishirasawa"
+				skill = 3
+				location = 4827
+				discount = yes
+				female = yes
+				culture = Eientei
+				religion = ROOT
+			}
+		}
+		else_if = {
+			limit = {
+				owns = 4845
+			}
+			define_advisor = {
+				type = th_advisor_keine
+				name = "Keine Kamishirasawa"
+				skill = 3
+				location = 4845
+				discount = yes
+				female = yes
+				culture = Eientei
+				religion = ROOT
+			}
+		}
+		else = {
+			define_advisor = {
+				type = th_advisor_keine
+				name = "Keine Kamishirasawa"
+				skill = 3
+				discount = yes
+				female = yes
+				culture = Eientei
+				religion = ROOT
+			}
+		}
+		hidden_effect = {
+			country_event = {  		#Clear event after 30 years
+				id = flavor_fuj.103
+				days = 18250
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#clear of flag, make Eirin available for hire again
+country_event = {
+	id = flavor_fuj.103
+	title = flavor_fuj.103.t
+	desc = flavor_fuj.103.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes	
+
+	option = {
+		name = flavor_fuj.3.a
+		clr_country_flag = fuj_keine_hired
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Set volcano counter for FUJ
+country_event = {
+    id = flavor_fuj.104
+	title = flavor_fuj.104.t
+	desc = flavor_fuj.104.desc
+	picture = SPY_eventPicture
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+		OR = {
+			tag = FUJ
+			AND = {
+				NOT = { exists = FUJ }
+				was_tag = FUJ
+			}
+		}
+		NOT = { has_country_flag = th_fuj_has_volcano_counter_setup }
+    }
+
+    hidden = yes
+
+    option = {
+        name = flavor_fuj.104.a
+		set_country_flag = th_fuj_has_volcano_counter_setup
+		th_fuj_set_volcano_counter = yes
+
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Replace Mokou when a volcano mission gets completed
+country_event = {
+	id = flavor_fuj.105
+	title = flavor_fuj.105.t
+	desc = flavor_fuj.105.desc
+	picture = MOKOU_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {	#WB
+		name = flavor_fuj.105.a
+		define_ruler = {
+			name = "Mokou"
+			dynasty = "Fujiwara"
+			culture = Eientei
+			fixed = yes
+			adm = 5
+			dip = 4
+			mil = 6
+			age = 20
+			claim = 100
+			female = yes
+		}
+		add_ruler_personality = immortal_personality
+		set_ruler_flag = touhou_character_ruler
+		set_ruler_flag = FUJ_mokou_in_charge
+		if = {
+			limit = {
+				th_fuj_has_n_volcanos = {
+					value = 4
+				}
+			}
+			define_ruler_to_general = {
+				fire = 6
+				shock = 5
+				manuever = 4
+				siege = 6
+			}
+		}
+		else_if = {
+			limit = {
+				th_fuj_has_n_volcanos = {
+					value = 3
+				}
+			}
+			define_ruler_to_general = {
+				fire = 5
+				shock = 5
+				manuever = 3
+				siege = 5
+			}
+		}
+		else_if = {
+			limit = {
+				th_fuj_has_n_volcanos = {
+					value = 2
+				}
+			}
+			define_ruler_to_general = {
+				fire = 5
+				shock = 5
+				manuever = 2
+				siege = 4
+			}
+		}
+		else_if = {
+			limit = {
+				th_fuj_has_n_volcanos = {
+					value = 1
+				}
+			}
+			define_ruler_to_general = {
+				fire = 4
+				shock = 4
+				manuever = 2
+				siege = 3
+			}
+		}
+		else = {
+			define_ruler_to_general = {
+				fire = 3
+				shock = 3
+				manuever = 2
+				siege = 2
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

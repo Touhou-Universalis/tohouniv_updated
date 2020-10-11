@@ -1,0 +1,1093 @@
+flr_slot1_branch = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+				tag = FLR
+				NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	flr_restore_our_sovereignty = {
+		icon = assert_our_sovereignty
+		required_missions = {  }
+		position = 1
+		
+		trigger = {
+			is_subject = no
+			OR = {
+			BUR = { war_with = ROOT }
+			NOT = { exists = BUR }
+			}
+		}
+		effect = {
+			add_stability = 2
+			change_government_reform_progress = 100
+			wallonia_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			picardy_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = "th_FLR_legitimate_integration"
+				duration = 9125
+			}
+			country_event = { id = flavor_flr.2 }
+		}
+	}
+	
+	flr_dominance_in_low_countries = {
+		icon = mission_have_two_subjects
+		required_missions = { flr_restore_our_sovereignty }
+		position = 2
+		
+		provinces_to_highlight = {
+			owned_by = BUR
+		}
+		
+		trigger = {
+			OR = {
+				AND = {
+					total_development = BUR
+					army_size = BUR
+					prestige = BUR
+				}
+				NOT = { exists = BUR }
+			}
+		}
+		
+		effect = {
+			low_countries_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			181 = {
+				if = {
+					limit = {
+						NOT = {
+							is_permanent_claim = ROOT
+							is_core = ROOT
+						}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			191 = {
+				if = {
+					limit = {
+						NOT = {
+							is_permanent_claim = ROOT
+							is_core = ROOT
+						}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			if = {
+				limit = { exists = BUR }
+				BUR = { country_event = { id = flavor_flr.4 } }
+			}
+			add_country_modifier = {
+				name = "th_FLR_new_vassals"
+				duration = 10950
+			}
+			if = {
+				limit = { exists = BUR }
+				tooltip = {
+					every_country = {
+						limit = {
+							is_subject_of = BUR
+						}
+						hidden_effect = { BUR = { free_vassal = prev } }
+						ROOT = { vassalize = prev }
+						}
+					}
+			}
+		}
+	}
+	
+	flr_hegemony_in_low_countries = {
+		icon = mission_landsknecht_soldier
+		required_missions = { flr_dominance_in_low_countries }
+		position = 3
+		provinces_to_highlight = {
+			region = low_contries_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 15
+				region = low_countries_region
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "th_FLR_hegemony_lowlands"
+				duration = 9125
+			}
+		}
+	}
+	
+	flr_stability_of_low_countries = {
+		icon = imperial_capitals
+		required_missions = { flr_hegemony_in_low_countries }
+		position = 4
+		trigger = {
+			ROOT = {
+						NOT = { unrest = 2 }
+						NOT = { num_of_loans = 1 }
+						manpower_percentage = 0.8
+					}
+				}
+		effect = {
+			add_country_modifier = {
+				name = "th_FLR_mistress_lowlands"
+				duration = -1
+			}
+		}
+	}
+	
+	flr_diplomacy_with_germany = {
+		icon = imperial_ascendancy
+		required_missions = { flr_stability_of_low_countries }
+		position = 5
+		trigger = {
+				calc_true_if = {
+					all_country = {
+						OR = {
+							is_subject_of = ROOT
+							alliance_with = ROOT
+						}
+						custom_trigger_tooltip = {
+							tooltip = flr_diplomacy_with_germany.tt
+							capital_scope = {
+								OR = {
+										region = north_german_region
+										region = south_german_region
+								}
+							}
+						}
+					}
+					amount = 3
+				}
+		}
+		effect = {
+			north_westphalia_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			westphalia_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			north_rhine_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			lower_rhineland_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			braunschweig_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			northern_saxony_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			lower_saxony_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			weser_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	flr_entrance_of_north_germany = {
+		icon = mission_cannons_firing
+		required_missions = { flr_diplomacy_with_germany }
+		provinces_to_highlight = {
+			OR = {
+				area = northern_saxony_area
+				area = lower_saxony_area
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 5
+				OR = {
+					area = northern_saxony_area
+					area = lower_saxony_area
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+					name = th_FLR_saxony_conquest
+					duration = 5475
+			}
+			mecklenburg_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			mittelmark_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			neumark_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					BRA = {
+						is_subject = NO
+					}
+				}
+				add_casus_belli = {
+					target = BRA
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+			if = {
+				limit = {
+					PRU = {
+						is_subject = NO
+						was_tag = BRA
+					}
+				}
+				add_casus_belli = {
+					target = PRU
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+		}
+	}
+	
+	flr_brandenburg_electorate = {
+		icon = electorate_of_brandenburg
+		required_missions = { flr_entrance_of_north_germany }
+		provinces_to_highlight = {
+				province_id = 50
+		}
+		position = 7
+		trigger = {
+			50 = {
+			country_or_non_sovereign_subject_holds = ROOT				
+			}
+		}
+		effect = {
+			add_country_modifier = {
+					name = th_FLR_brandenburg_army
+					duration = -1
+				}
+			north_german_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+			limit = {
+					is_part_of_hre = yes
+					is_elector = no
+					BRA = { is_elector = yes }
+				}
+			country_event = { id = flavor_flr.5 }
+			}
+		}
+	}
+	
+	flr_reunion_france = {
+		icon = centralize_france
+		required_missions = { flr_imperial_crown_of_germany }
+		provinces_to_highlight = {
+			region = france_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		position = 9
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 40
+				region = france_region
+			}
+		}
+		effect = {
+			add_country_modifier = {
+					name = th_FLR_reunion_france
+					duration = 7300
+			}
+		}
+	}
+}
+
+flr_slot2_branch = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+				tag = FLR
+				NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	flr_beyond_the_rhine = {
+		icon = rhineland_conquest
+		required_missions = { flr_diplomacy_with_germany }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				area = north_westphalia_area
+				area = westphalia_area
+				area = north_rhine_area
+				area = lower_rhineland_area
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 10
+				OR = {
+					area = north_westphalia_area
+					area = westphalia_area
+					area = north_rhine_area
+					area = lower_rhineland_area
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+					name = th_FLR_rhineland_wealth
+					duration = 7300
+				}
+		}
+	}
+	
+	flr_control_italy = {
+		icon = complete_the_risorgimento
+		required_missions = { flr_imperial_crown_of_germany }
+		position = 9
+		provinces_to_highlight = {
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			region = italy_region
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 40
+				region = italy_region
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = th_FLR_control_italy
+				duration = 7300
+			}
+		}
+	}
+}
+
+flr_slot3_branch = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+				tag = FLR
+				NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	flr_lex_salica = {
+		icon = mission_touhou_queen_flan
+		required_missions = { 
+				flr_diplomacy_with_germany
+				flr_professional_army
+		}
+		position = 6
+		provinces_to_highlight = {
+			region = low_contries_region
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			has_global_modifier_value = {
+				which = discipline
+				value = 0.25
+			}
+			OR = {
+				AND = {
+					calc_true_if = {
+						amount = 3
+						all_elector = {
+							has_opinion = { who = ROOT value = 100 }
+							}
+						}
+					diplomatic_reputation = 6
+				}
+				AND = {
+					NOT = { hre_size = 1 }
+					NOT = { exists = HLR }
+				}
+			}
+		}
+		
+		effect = {
+			add_prestige = 50
+			custom_tooltip = flr_lex_salica_tt
+			if = {
+				limit = {
+					AND = {
+						NOT = { hre_size = 1 }
+						NOT = { exists = HLR }
+					}
+				}
+				country_event = { id = flavor_flr.31 }
+			}
+			else = {
+				country_event = { id = flavor_flr.3 }
+			}
+		}
+	}
+	flr_hegemony_in_germany = {
+		icon = ger_kaiserreich
+		required_missions = {
+				flr_entrance_of_north_germany
+				flr_lex_salica
+		}
+		position = 7
+		trigger = {
+			OR = {
+				AND = {
+					ROOT = {
+					is_emperor = yes
+					if = {
+						limit = {
+							has_dlc = "Emperor"
+							}
+						hre_reform_passed = emperor_perpetual_diet
+						}
+					else = {
+						hre_reform_passed = landfriede
+						}
+					}
+				}
+				AND = {
+					NOT = { exists = HLR }
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 41
+						region = north_german_region
+					}
+				}
+			}
+		}
+		effect = {
+				south_german_region = {
+					limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+					}
+				add_permanent_claim = ROOT
+				}
+				custom_tooltip = flr_hegemony_in_germany_tt
+				if = {
+					limit = { is_emperor = yes }
+					add_country_modifier = {
+						name = th_FLR_authority_kaiserin
+						duration = 7300
+					}
+				}
+				else = {
+					add_country_modifier = {
+						name = th_FLR_hegemony_germany
+						duration = 7300
+					}
+				}
+			}
+	}
+	flr_imperial_crown_of_germany = {
+		icon = spread_the_von_wettins
+		required_missions = {
+				flr_brandenburg_electorate
+				flr_hegemony_in_germany
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = north_german_region
+				region = south_german_region
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		position = 8
+		trigger = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 100
+					OR = {
+						region = north_german_region
+						region = south_german_region
+					}
+				}
+		}
+		effect = {
+			france_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					FRA = {
+						is_subject = NO
+					}
+				}
+				add_casus_belli = {
+					target = FRA
+					type = cb_restore_personal_union
+					months = 900
+				}
+			}
+			italy_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			balkan_region = {
+				limit = {
+					NOT = { is_core = root }
+					NOT = { is_permanent_claim = root }
+				}
+				add_permanent_claim = root
+			}
+			custom_tooltip = emp_hab_take_wallachia_bulgaria_effect_tooltip
+			hidden_effect = {
+				europe = {
+					limit = {
+						owned_by = TUR
+						NOT = { is_core = root }
+						NOT = { is_permanent_claim = root }
+						NOT = { region = anatolia_region }
+						NOT = { region = caucasia_region }
+						NOT = { region = balkan_region }
+					}
+					add_claim = root
+				}
+			}
+			if = {
+				limit = {
+						is_emperor = no
+						NOT = { government_rank = 3 }
+					}
+				set_government_rank = 3 
+			}
+			add_country_modifier = {
+					name = th_FLR_keiserin_germany
+					duration = -1
+			}
+		}
+	}
+	flr_guardian_of_europe = {
+		icon = mission_ottoman_diplomacy
+		required_missions = { flr_imperial_crown_of_germany }
+		position = 9
+		provinces_to_highlight = {
+			owned_by = TUR
+			continent = europe
+			NOT = { region = anatolia_region }
+			NOT = { region = caucasia_region }
+		}
+		
+		trigger = {
+			NOT = {
+				europe = {
+					custom_trigger_tooltip = {
+						tooltip = emp_hab_scourge_of_europe_trigger_tooltip
+						owned_by = TUR
+						NOT = { region = anatolia_region }
+						NOT = { region = caucasia_region }
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					religion_group = christian
+				}
+				add_country_modifier = {
+					name = "th_FLR_guardian_europe"
+					duration = -1
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = "th_FLR_terror_of_balkans"
+					duration = -1
+				}
+			}
+		}
+	}
+	
+	flr_mistress_of_europe = {
+		icon = mission_touhou_judge_of_gensokyo
+		required_missions = { 
+				flr_reunion_france
+				flr_control_italy
+				flr_guardian_of_europe
+		}
+		position = 10
+		trigger = {
+				NOT = {
+					any_country = {
+						total_own_and_non_tributary_subject_development = ROOT 
+						}
+					}
+				custom_trigger_tooltip = {
+					tooltip = flr_mistress_of_europe.tt
+					NOT = {
+						any_country = {
+							OR = {
+								capital_scope = {
+									continent = europe
+									}
+								capital_scope = {
+									continent = gensokyo_continent
+									}
+								}
+							army_size = ROOT
+							}
+						}
+					}
+		}
+		effect = {
+			add_country_modifier = {
+					name = "th_FLR_mistress_europe"
+					duration = -1
+			}
+			Scarlet_island = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Scarlett_domain = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Scarlet_mountain = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					OR = {
+						exists = SCR
+						exists = SCD
+					}
+				}
+				country_event = { id = flavor_flr.60 }
+			}
+		}
+	}
+	
+	flr_homecoming = {
+		icon = mission_touhou_empress_remilia
+		required_missions = { flr_mistress_of_europe }
+		position = 11
+		provinces_to_highlight = {
+			area = Scarlet_island
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			Scarlet_island = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			OR = {
+				NOT = { exists = SCR }
+				SCR = {
+					is_subject_of = ROOT
+				}
+			}
+			OR = {
+				NOT = { exists = SCD }
+				SCD = {
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = 	{
+			add_country_modifier = {
+				name = th_FLR_Scarlet_union
+				duration	= -1
+				}
+			gensokyo_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			former_hell_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+}
+
+flr_slot4_branch = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+				tag = FLR
+				NOT = { map_setup = map_setup_random }
+		}
+	has_country_shield = yes
+	
+	flr_economic_base = {
+		icon = mission_colonial
+		required_missions = {  }
+		position = 6
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 5
+				OR = {
+					has_building = marketplace
+					has_building = trade_depot
+					has_building = stock_exchange
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 5
+				OR = {
+					has_building = workshop
+					has_building = counting_house
+				}
+			}
+		}
+		effect = {
+			add_mercantilism = 3
+			90 = {
+				add_province_modifier = {
+					name = "th_FLR_economic_base"
+					duration = 7300
+				}
+			}
+		}
+	}
+	
+	flr_economic_support_army = {
+		icon = mission_hanseatic_city
+		required_missions = { 
+				flr_beyond_the_rhine
+				flr_economic_base
+				flr_controlled_army
+				}
+		position = 7
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 15
+				has_manufactory_trigger = yes
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = th_FLR_economic_support
+				duration	= 7300
+				}
+		}
+	}
+	flr_industrialize_empire = {
+		icon = industrialized_rhineland
+		required_missions = {
+				flr_imperial_crown_of_germany
+				flr_economic_support_army
+				flr_enlightened_mistress
+				}
+		position = 9
+		provinces_to_highlight = {
+			trade_goods = coal
+		}
+		trigger = {
+			has_institution = industrialization
+			if = {
+				limit = {
+					has_dlc = "Rule Britannia"
+				}
+				calc_true_if = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					trade_goods = coal
+				}
+				amount = 5
+				}
+			}
+			else = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 40
+					has_manufactory_trigger = yes
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = th_FLR_industrialize_empire
+				duration = 7300
+			}
+		}
+	}
+}
+
+flr_slot5_branch = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+				tag = FLR
+				NOT = { map_setup = map_setup_random }
+		}
+	has_country_shield = yes
+	
+	flr_trade_north_sea = {
+		icon = support_the_bulk_trades
+		required_missions = {  }
+		trigger = {
+			num_of_total_ports = 9
+			num_of_light_ship = 15
+		}
+		effect = {
+			add_navy_tradition = 35
+			add_country_modifier = {
+				name = "th_FLR_trade_north"
+				duration = 7300
+			}
+			define_explorer = {
+				shock = 3
+				fire = 3
+				manuever = 3
+				siege = 0
+				name = "Flandres Clone Explorer"
+				female = yes
+			}
+		}
+	}
+	
+	flr_new_world_routes = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = { flr_trade_north_sea }
+		trigger = {
+				OR = {
+					north_america = { has_discovered = ROOT }
+					south_america = { has_discovered = ROOT }
+					guinea_region = { has_discovered = ROOT }
+				}
+		}
+		effect = {
+				add_country_modifier = {
+				name = "th_FLR_desire_new_routes"
+				duration = 7300
+			}
+		}
+	}
+	
+	flr_trade_new_world = {
+		icon = mission_african_gold
+		required_missions = { flr_new_world_routes }
+		trigger = {
+				num_of_merchants = 4
+				custom_trigger_tooltip = {
+					tooltip = flr_trade_new_world.tt
+					OR = {
+						any_country = {
+							AND = {
+								is_subject_of = ROOT
+								is_subject_of_type = colony
+								num_of_owned_provinces_with = { value = 20 }
+							}
+						}
+						num_of_owned_provinces_with = {
+							NOT = { continent = europe }
+							is_node_in_trade_company_region = yes
+							value = 20
+						}
+					}
+				}
+		}
+		effect = {
+				add_mercantilism = 5
+				add_country_modifier = {
+				name = "th_FLR_trade_new_world"
+				duration = 7300
+			}
+		}
+	}
+	
+	flr_war_preparation = {
+		icon = mission_assemble_an_army
+		required_missions = {  }
+		position = 4
+		trigger = {
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				army_professionalism = 0.20
+			}
+			has_global_modifier_value = {
+				which = discipline
+				value = 0.1
+			}
+		}
+		effect = {
+				add_country_modifier = {
+				name = "th_FLR_war_preparation"
+				duration = 7300
+			}
+		}
+	}
+	
+	flr_professional_army = {
+		icon = army_reforms
+		required_missions = { flr_war_preparation }
+		trigger = {
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				army_professionalism = 0.50
+			}
+			has_global_modifier_value = {
+				which = discipline
+				value = 0.2
+			}
+		}
+		effect = {
+				add_country_modifier = {
+				name = "th_FLR_professional_army"
+				duration = 7300
+			}
+		}
+	}
+	
+	flr_controlled_army = {
+		icon = balance_the_estates
+		required_missions = { flr_professional_army }
+		trigger = {
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				army_professionalism = 1
+			}
+			if = {
+				limit = {
+					has_estate = estate_nobles
+				}
+				NOT = {
+				estate_influence = {
+					estate = estate_nobles
+					influence = 40
+					}
+				}
+			}
+		}
+		effect = {
+				add_country_modifier = {
+				name = "th_FLR_controlled_army"
+				duration = -1
+			}
+		}
+	}
+	
+	flr_enlightened_mistress = {
+		icon = mission_touhou_monarch_flan
+		required_missions = { flr_controlled_army }
+		position = 8
+		trigger = {
+			has_final_tier_reforms_trigger = yes
+			if = {
+				limit = {
+					is_revolutionary = no
+				}
+				absolutism = 90
+			}
+			else = {
+				revolutionary_zeal = 90
+			}
+			has_institution = enlightenment
+		}
+		effect = {
+			change_adm = 1
+			change_dip = 1
+			add_country_modifier = {
+				name = "th_FLR_enlightened_mistress"
+				duration = -1
+			}
+		}
+	}
+}

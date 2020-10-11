@@ -1,0 +1,3177 @@
+########################################
+# Incident Events
+########################################
+
+namespace = th_incidents_cherryblossom
+
+#Cherry Blossom Incident - 1.Check any possible investigator country	- HIDDEN
+country_event = {
+	id = th_incidents_cherryblossom.1
+	title = "th_incidents_cherryblossom.1.t"
+	desc = "th_incidents_cherryblossom.1.desc"
+	picture = SCARLETMIST_eventPicture
+
+	trigger = {
+		if = {
+			limit = {
+				has_global_flag = th_random_incident_active
+			}
+			has_global_flag = th_picked_rng_incident_pcb
+		}
+		else = {
+			is_year = 1475
+		}
+		NOT = { has_global_flag = th_active_incident }
+		NOT = { has_global_flag = th_cherry_blossom_incident_solved }
+		NOT = { has_global_flag = th_deactivated_incidents }
+		OR = {
+			NOT = { has_global_flag = th_recently_solved_incident_flag }
+			had_global_flag = { flag = th_recently_solved_incident_flag days = 1825 }
+		}
+		capital_scope = {
+			superregion = gensokyo_superregion
+		}
+	}
+	
+	fire_only_once = yes
+	hidden = yes	
+
+	mean_time_to_happen = {
+		months = 12
+
+		modifier = {
+			factor = 0.8
+			OR = {
+				exists = NET
+				exists = NMG
+			}
+		}
+		modifier = {
+			factor = 0.5
+			OR = {
+				AND = {
+					tag = MRY
+					NOT = { exists = HKR }
+				}
+				tag = FOM
+				tag = SCR
+				tag = HKR
+				AND = {
+					tag = GNK
+					has_reform = Gensokyan_shrine_theocracy
+					NOT = { exists = HKR }
+					NOT = { exists = MRY }
+				}
+			}
+		}
+		modifier = {
+			factor = 0.2
+			AND = {
+				OR = {
+					tag = SCR
+					tag = SCD
+				}
+				ai = no
+			}
+		}
+		modifier = {
+			factor = 0.15
+			AND = {
+				tag = FOM
+				ai = no
+			}
+		}
+		modifier = {
+			factor = 0.1
+			AND = {
+				tag = HKR
+				ai = no
+			}
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				exists = NET
+			}
+			NET = {
+				th_incident_forbids_to_become_investigator = yes
+			}
+		}
+		if = {
+			limit = {
+				exists = NMG
+			}
+			NMG = {
+				th_incident_forbids_to_become_investigator = yes
+			}
+		}
+		if = {
+			limit = {
+				exists = MHG
+			}
+			MHG = {
+				th_incident_forbids_to_become_investigator = yes
+			}
+		}
+		if = {
+			limit = {
+				exists = PRI
+			}
+			PRI = {
+				th_incident_forbids_to_become_investigator = yes
+			}
+		}
+		if = {
+			limit = {
+				exists = LIL
+			}
+			LIL = {
+				th_incident_forbids_to_become_investigator = yes
+			}
+		}
+		every_known_country = {
+			limit = {
+				OR = {
+					was_tag = NET
+					was_tag = MHG
+					was_tag = NMG
+				}
+				NOT = { tag = NET }
+				NOT = { tag = MHG }
+				NOT = { tag = NMG }
+			}
+			th_incident_forbids_to_become_investigator = yes
+		}
+		set_global_flag = th_PCP_inci_setup_flag
+	}
+
+	option = {		#Check any possible investigator country
+		name = "th_incidents_cherryblossom.1.a"
+		th_incident_search_for_eligible_investigator = yes
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - 2.Incident starts,add debuffs	- HIDDEN
+country_event = {
+	id = th_incidents_cherryblossom.2
+	title = "th_incidents_cherryblossom.2.t"
+	desc = "th_incidents_cherryblossom.2.desc"
+	picture = SCARLETMIST_eventPicture
+
+	trigger = {
+		has_country_flag = th_eligible_investigator
+		has_global_flag = th_PCP_inci_setup_flag
+	}
+
+	fire_only_once = yes
+	hidden = yes	
+
+	immediate = {
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					owner = {
+						NOT = { tag = NET }
+						NOT = { tag = MHG }
+						NOT = { was_tag = NET }
+						NOT = { was_tag = MHG }
+						NOT = { is_subject_of = NET }
+						NOT = { is_subject_of = NMG }
+					}
+					NOT = { has_province_modifier = th_PCB_hard_winter }
+				}
+				add_province_modifier = {
+					name = th_PCB_hard_winter
+					duration = -1
+					desc = th_incident_duration_tt
+				}
+			}
+			random_province = {
+				limit = {
+					superregion = gensokyo_superregion
+					owner = {
+						NOT = { tag = NET }
+						NOT = { tag = MHG }
+						NOT = { was_tag = NET }
+						NOT = { was_tag = MHG }
+						NOT = { is_subject_of = NET }
+						NOT = { is_subject_of = NMG }
+					}
+					NOT = { has_province_modifier = th_PCB_hard_winter }
+				}
+				add_province_modifier = {
+					name = th_PCB_howling_winds
+					duration = -1
+					desc = th_incident_duration_tt
+				}
+			}
+			clr_global_flag = th_PCP_inci_setup_flag
+			set_global_flag = th_active_incident
+			set_global_flag = th_current_incident_cherry_blossom
+			set_global_flag = th_PCB_inci_started
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 30
+
+		modifier = {
+			factor = 0.1
+			tag = HKR
+		}
+	}
+
+	option = {		#Set the first investigator
+		name = "th_incidents_cherryblossom.2.a"
+		custom_tooltip = th_incidents_cherryblossom_2.a.tt
+		country_event = {
+			id = th_incidents_cherryblossom.3
+			days = 0
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - 3.Set an investigator(use whenever there is need)	- HIDDEN
+country_event = {
+	id = th_incidents_cherryblossom.3
+	title = "th_incidents_cherryblossom.3.t"
+	desc = "th_incidents_cherryblossom.3.desc"
+	picture = SCARLETMIST_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {		#find an investigator
+		name = "th_incidents_cherryblossom.3.a"
+		custom_tooltip = th_incidents_cherryblossom_3.a.tt
+		th_incident_setup_investigator = {
+			introduction_event = th_incidents_cherryblossom.4
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - 4.Introduction of incident
+country_event = {
+	id = th_incidents_cherryblossom.4
+	title = "th_incidents_cherryblossom.4.t"
+	desc = {
+		trigger = {
+			OR = {
+				tag = NET
+				was_tag = NET
+			}
+		}
+		desc = "th_incidents_cherryblossom.4.desc.1"
+	}
+	desc = {
+		trigger = { tag = MHG }
+		desc = "th_incidents_cherryblossom.4.desc.2"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = NET }
+			NOT = {	tag = MHG }
+			NOT = {	was_tag = NET }
+		}
+		desc = "th_incidents_cherryblossom.4.desc.3"
+	}
+	picture = SNOWSPRING_eventPicture
+
+	is_triggered_only = yes	
+
+	option = {		#We should investigate this mysterious late spring.
+		name = "th_incidents_cherryblossom.4.a"
+		trigger = {
+			th_incident_is_investigator = yes
+		}
+ 		custom_tooltip = th_incidents_cherryblossom.4.a.tt
+		highlight = yes	
+		add_adm_power = -25
+		hidden_effect = {
+			set_variable = {
+				which = th_PCB_inci_goodbad_level
+				value = 0
+			}
+			country_event = {
+				id = th_incidents_cherryblossom.5
+				days = 1095
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_incident_had_info }
+				}
+				country_event = {
+					id = th_incidents_event.1
+					days = 1
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = {		#I don`t want to investigate the incident.For minor character who was chosen the first investigator
+		name = "th_incidents_cherryblossom.4.b"
+		trigger = {
+			th_incident_is_investigator = yes
+			th_is_not_major_main_character = yes
+			th_is_not_minor_main_character = yes
+			any_known_country = {	#must have another eligible investigator country
+				exists = yes
+				has_country_flag = th_eligible_investigator
+			}
+		}
+		custom_tooltip = th_incidents_cherryblossom.4.b.tt
+		add_prestige = -25
+		hidden_effect = {
+			clr_country_flag = th_incident_investigating 
+			random_known_country = {	
+				limit = {
+					exists = yes
+					has_country_flag = th_eligible_investigator
+				}	
+				add_adm_power = -25
+				th_incident_set_country_to_new_investigator = yes
+			}
+		}		
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {		#I shall be the first investigator!For main character player who was not chosen the first investigator
+		name = "th_incidents_cherryblossom.4.c"
+		trigger = {
+			th_incident_is_not_investigator = yes
+			OR = {
+				tag = HKR
+				tag = FOM
+				tag = MRY
+				tag = SCR
+				tag = SCD
+			}
+			has_country_flag = th_eligible_investigator
+
+		}
+ 		custom_tooltip = th_incidents_cherryblossom.4.c.tt
+		highlight = yes			
+		add_adm_power = -25
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					th_incident_is_investigator = yes
+				}
+				clr_country_flag = th_incident_investigating
+			}
+			th_incident_set_country_to_new_investigator = yes
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {		#Well, let it be.
+		name = "th_incidents_cherryblossom.4.d"	
+		trigger = {
+			th_incident_is_not_investigator = yes
+			NOT = { 
+				tag = NET
+				tag = MHG
+				tag = NMG
+				was_tag = NET
+				was_tag = MHG 
+				was_tag = NMG
+			}
+		}	
+		custom_tooltip = th_incidents_cherryblossom.4.d.tt
+
+		ai_chance = {
+			factor = 100
+		}	
+	}
+
+	option = {		#For mistress Yuyuko!
+		name = "th_incidents_cherryblossom.4.e"
+		trigger = {
+			OR = {
+				tag = NET
+				was_tag = NET
+			}
+		}	
+		custom_tooltip = th_incidents_cherryblossom.4.e.tt
+		highlight = yes	
+		add_army_tradition = 15
+		add_navy_tradition = 15
+		add_treasury = 200
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = {		#Yuyuko is causing incident. However Yukari has been sleeping and she didn`t notice that at all
+		name = "th_incidents_cherryblossom.4.f"
+		trigger = { 
+			OR = {
+				tag = MHG
+				was_tag = MHG
+			}			
+		}
+		custom_tooltip = th_incidents_cherryblossom.4.f.tt
+		if = {
+			limit = {
+				has_ruler_flag = MHG_yukari_in_charge
+			}
+			custom_tooltip = th_incidents_cherryblossom.4.f.special
+			hidden_effect = {
+				set_country_flag = MHG_yukari_retired
+				exile_ruler_as = sleeping_yukari
+			}
+		}
+		hidden_effect = {
+			set_country_flag = th_incident_yukari_unaviable
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+
+
+#Cherry Blossom Incident - Letty Encounter
+country_event = {
+	id = th_incidents_cherryblossom.5
+	title = "th_incidents_cherryblossom.5.t"
+	desc = {
+		trigger = { 
+			OR = {
+				tag = HKR
+				tag = MRY
+			}
+		}
+		desc = "th_incidents_cherryblossom.5.desc.1"
+	}
+	desc = {
+		trigger = { tag = FOM }
+		desc = "th_incidents_cherryblossom.5.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		desc = "th_incidents_cherryblossom.5.desc.3"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = HKR }
+			NOT = { tag = FOM }
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { tag = MRY }
+		}
+		desc = "th_incidents_cherryblossom.5.desc.4"
+	}
+	picture = LETTY_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			set_global_flag = th_PCB_inci_letty_encountered
+			clr_global_flag = th_PCB_inci_started
+			#Letty Base Fighting Skills
+			set_variable = {
+				which = th_PCB_inci_letty_combat_skills
+				value = 950
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_PCB_inci_letty_combat_skills
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			if = {
+				limit = {
+					th_incident_is_investigator = yes
+				}
+				country_event = {
+					id = th_incidents_cherryblossom.6
+					days = 1095
+				}
+			}
+		}
+	}
+	
+	option = {		#She's in my way! I will have to fight her!
+		name = "th_incidents_cherryblossom.5.a"
+		custom_tooltip = th_incidents_cherryblossom.5.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 40 
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = yes
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = yes
+			}
+		}
+	}
+	
+	option = {		#Just melt the snow...
+		name = "th_incidents_cherryblossom.5.b"
+		custom_tooltip = th_incidents_cherryblossom.5.b.tt
+		random_owned_area = {
+			add_devastation = 50
+		} 
+		if = {
+			limit = {
+				OR = {
+					ruler_has_personality = malevolent_personality
+					ruler_has_personality = cruel_personality
+				}
+			}
+			add_mil_power = 150
+		}
+		if = {
+			limit = {
+				ruler_has_personality = kind_hearted_personality
+			}
+			remove_ruler_personality = kind_hearted_personality
+			add_ruler_personality = cruel_personality 
+		}
+		th_incident_victory_bonus = yes	
+		
+		ai_chance = { 
+			factor = 20 
+			modifier = {
+				factor = 100
+				OR = {
+					ruler_has_personality = malevolent_personality
+					ruler_has_personality = cruel_personality
+				}
+			}
+			modifier = {
+				factor = 0
+				ruler_has_personality = kind_hearted_personality
+			}
+		}
+	}
+	
+	option = {		#It's just a little snow...
+		name = "th_incidents_cherryblossom.5.c"
+		custom_tooltip = th_incidents_cherryblossom.5.c.tt
+		add_yearly_manpower = -0.25
+		th_incident_minor_defeat_bonus = yes
+		
+		ai_chance = { 
+			factor = 20
+		}
+	}
+	
+	option = {		#Special case: Cirno encounters Letty (via Subject or is Cirnia)
+		name = "th_incidents_cherryblossom.5.d"
+		custom_tooltip = th_incidents_cherryblossom.5.d.tt
+		highlight = yes
+		trigger = {
+			OR = {
+				tag = CIN
+				CIN = {
+					exists = yes
+					is_subject_of = ROOT
+				}
+			}
+		}
+		add_dip_power = 100
+		th_incident_minor_victory_bonus = yes
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}			
+
+#Cherry Blossom Incident - Chen Encounter
+country_event = {
+	id = th_incidents_cherryblossom.6
+	title = "th_incidents_cherryblossom.6.t"
+	desc = {
+		trigger = { 
+			OR = {
+				tag = HKR
+				tag = MRY
+			}
+		}
+		desc = "th_incidents_cherryblossom.6.desc.1"
+	}
+	desc = {
+		trigger = { tag = FOM }
+		desc = "th_incidents_cherryblossom.6.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		desc = "th_incidents_cherryblossom.6.desc.3"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = HKR }
+			NOT = { tag = FOM }
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { tag = MRY }
+		}
+		desc = "th_incidents_cherryblossom.6.desc.4"
+	}
+	picture = CHEN_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			set_global_flag = th_PCB_inci_chen_encountered
+			clr_global_flag = th_PCB_inci_letty_encountered
+			#Cirno's Base Fighting Skills
+			set_variable = {
+				which = th_PCB_inci_chen_combat_skills
+				value = 1000
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_PCB_inci_chen_combat_skills
+			}	
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			if = {
+				limit = {
+					th_incident_is_investigator = yes
+				}
+				country_event = {
+					id = th_incidents_cherryblossom.7
+					days = 1095
+				}
+			}
+		}
+	}
+	
+	option = {		#Another target. Great, I'll got bored on this lake.
+		name = "th_incidents_cherryblossom.6.a"
+		custom_tooltip = th_incidents_cherryblossom.6.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 40 
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = yes
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = yes
+			}
+		}
+	}
+	
+	option = {		#Let her play with ball of wool
+		name = "th_incidents_cherryblossom.6.b"
+		custom_tooltip = th_incidents_cherryblossom.6.b.tt
+		add_years_of_income = -0.75
+		th_incident_minor_victory_bonus = yes
+		
+		ai_chance = { 
+			factor = 15
+		}
+	}
+	
+	option = {		#I just play a little bit with the kitty
+		name = "th_incidents_cherryblossom.6.c"
+		custom_tooltip = th_incidents_cherryblossom.6.c.tt
+		add_adm_power = 125
+		th_incident_defeat_bonus = yes
+		
+		ai_chance = { 
+			factor = 15
+		}
+	}
+	
+	option = {		#Orin, I think their is a friend for you
+		name = "th_incidents_cherryblossom.6.d"
+		highlight = yes
+		trigger = {
+			OR = {
+				tag = CRD
+				tag = SCD
+			}
+		}
+		custom_tooltip = th_incidents_cherryblossom.6.d.tt
+		add_prestige = 25
+		th_incident_major_victory_bonus = yes
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - Alice Encounter
+country_event = {
+	id = th_incidents_cherryblossom.7
+	title = "th_incidents_cherryblossom.7.t"
+	desc = {
+		trigger = { 
+			OR = {
+				tag = HKR
+				tag = MRY
+			}
+		}
+		desc = "th_incidents_cherryblossom.7.desc.1"
+	}
+	desc = {
+		trigger = {
+			tag = FOM
+			NOT = {	has_ruler = "Alice" }
+			NOT = {	dynasty = "Margatroid" }
+		}
+		desc = "th_incidents_cherryblossom.7.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		desc = "th_incidents_cherryblossom.7.desc.3"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = HKR }
+			NOT = { tag = FOM }
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { tag = MRY }
+		}
+		desc = "th_incidents_cherryblossom.7.desc.4"
+	}
+	desc = {
+		trigger = { 
+			tag = FOM
+			has_ruler = "Alice"
+			dynasty = "Margatroid"
+		}
+		desc = "th_incidents_cherryblossom.7.desc.4"
+	}
+	picture = ALICE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			if = {
+				limit = {
+					has_ruler = "Marisa"
+					dynasty = "Kirisame"
+				}
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 600
+				}
+				country_event = {
+					id = th_incidents_event.20
+				}
+			}
+			else = {
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 0
+				}
+			}
+			set_global_flag = th_PCB_inci_alice_encountered
+			clr_global_flag = th_PCB_inci_chen_encountered
+			#Meiling's Base Fighting Skills
+			set_variable = {
+				which = th_PCB_inci_alice_combat_skills
+				value = 1125
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_PCB_inci_alice_combat_skills
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			if = {
+				limit = {
+					th_incident_is_investigator = yes
+				}
+				country_event = {
+					id = th_incidents_cherryblossom.8
+					days = 1095
+				}
+			}
+		}
+	}
+	
+	option = {		#A ruler over puppets? Her little dolls won't help her
+		name = "th_incidents_cherryblossom.7.a"
+		trigger = {
+			NOT = { tag = FOM }
+		}
+		custom_tooltip = th_incidents_cherryblossom.7.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 75 
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = yes
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = yes
+			}
+		}
+	}
+	
+	option = {		#Alice?! Well, looks like we have some training to do together...
+		name = "th_incidents_cherryblossom.7.b"
+		trigger = {
+			tag = FOM
+			NOT = {	has_ruler = "Alice" }
+			NOT = {	dynasty = "Margatroid" }
+		}
+		custom_tooltip = th_incidents_cherryblossom.7.b.tt
+		highlight = yes
+		th_danmaku_diplo_fight_ruler_and_opponent = yes
+		add_army_tradition = 40
+		add_army_professionalism = 0.5
+		add_mil_power = 200
+		th_incident_major_victory_bonus = yes
+		
+		ai_chance = { 
+			factor = 100 
+		}
+	}
+	
+	option = {		#Huh... I don't think I will fight myself...
+		name = "th_incidents_cherryblossom.7.c"
+		trigger = {
+			tag = FOM
+			has_ruler = "Alice"
+			dynasty = "Margatroid"
+		}
+		custom_tooltip = th_incidents_cherryblossom.7.c.tt
+		highlight = yes
+		add_adm_power = 25
+		th_incident_major_victory_bonus = yes
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {		#Lady Alice, I am certain you want surely take a look at our library
+		name = "th_incidents_cherryblossom.7.d"
+		trigger = {
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		custom_tooltip = th_incidents_cherryblossom.7.d.tt
+		if = {
+			limit = {
+				exists = FOM
+			}
+			FOM = {
+				add_army_tradition = 40
+				add_mil_power = 200
+			}
+		}
+		th_incident_minor_victory_bonus = yes
+		
+		ai_chance = { 
+			factor = 25
+			modifier = {
+				factor = 0
+				th_winnable_fight_trigger = yes
+			}
+			modifier = {
+				factor = 100
+				th_unwinnable_fight_trigger = yes
+			}
+		}
+	}
+	
+	option = {		#Let me pass, my daughter
+		name = "th_incidents_cherryblossom.7.e"
+		trigger = {
+			tag = MKI
+		}
+		custom_tooltip = th_incidents_cherryblossom.7.e.tt
+		add_legitimacy = 25
+		th_incident_victory_bonus = yes
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - Prismriver Encounter
+country_event = {
+	id = th_incidents_cherryblossom.8
+	title = "th_incidents_cherryblossom.8.t"
+	desc = {
+		trigger = { 
+			OR = {
+				tag = HKR
+				tag = MRY
+			}
+		}
+		desc = "th_incidents_cherryblossom.8.desc.1"
+	}
+	desc = {
+		trigger = { tag = FOM }
+		desc = "th_incidents_cherryblossom.8.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		desc = "th_incidents_cherryblossom.8.desc.3"
+	}
+	desc = {
+		trigger = {
+			tag = PRI
+		}
+		desc = "th_incidents_cherryblossom.8.desc.5"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = HKR }
+			NOT = { tag = FOM }
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { tag = MRY }
+			NOT = { tag = PRI }
+		}
+		desc = "th_incidents_cherryblossom.8.desc.4"
+	}
+	picture = PRISMRIVER_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			set_global_flag = th_PCB_inci_prismriver_encountered
+			clr_global_flag = th_PCB_inci_alice_encountered
+			#Prismriver's Base Fighting Skills (summed up)
+			set_variable = {
+				which = th_PCB_inci_prismriver_combat_skills
+				value = 1260
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_PCB_inci_prismriver_combat_skills
+			}	
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			if = {
+				limit = {
+					th_incident_is_investigator = yes
+				}
+				country_event = {
+					id = th_incidents_cherryblossom.9
+					days = 1095
+				}
+			}
+		}
+	}
+	
+	option = {		#Too bad for them
+		name = "th_incidents_cherryblossom.8.a"
+		trigger = {
+			NOT = { tag = PRI }
+		}
+		custom_tooltip = th_incidents_cherryblossom.8.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 75 
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = yes
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = yes
+			}
+		}
+	}
+	
+	option = {		#Huh... I don't think I will fight myself...
+		name = "th_incidents_cherryblossom.8.b"
+		trigger = {
+			tag = PRI
+		}
+		custom_tooltip = th_incidents_cherryblossom.8.b.tt
+		highlight = yes
+		add_adm_power = 25
+		th_incident_major_victory_bonus = yes
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - Youmu Encounter
+country_event = {
+	id = th_incidents_cherryblossom.9
+	title = "th_incidents_cherryblossom.9.t"
+	desc = {
+		trigger = { 
+			OR = {
+				tag = HKR
+				tag = MRY
+			}
+		}
+		desc = "th_incidents_cherryblossom.9.desc.1"
+	}
+	desc = {
+		trigger = { tag = FOM }
+		desc = "th_incidents_cherryblossom.9.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		desc = "th_incidents_cherryblossom.9.desc.3"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = HKR }
+			NOT = { tag = FOM }
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { tag = MRY }
+		}
+		desc = "th_incidents_cherryblossom.9.desc.4"
+	}
+	picture = YOUMU2_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			set_global_flag = th_PCB_inci_youmu_encountered
+			clr_global_flag = th_PCB_inci_prismriver_encountered
+			#Youmu's Base Fighting Skills
+			set_variable = {
+				which = th_PCB_inci_youmu_combat_skills
+				value = 1400
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_PCB_inci_youmu_combat_skills
+			}	
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			if = {
+				limit = {
+					th_incident_is_investigator = yes
+				}
+				country_event = {
+					id = th_incidents_cherryblossom.10
+					days = 1095
+				}
+			}
+		}
+	}
+	
+	option = {		#I don't think she will let me through. I will have to defeat her.
+		name = "th_incidents_cherryblossom.9.a"
+		custom_tooltip = th_incidents_cherryblossom.9.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - Yuyuko Encounter
+country_event = {
+	id = th_incidents_cherryblossom.10
+	title = "th_incidents_cherryblossom.10.t"
+	desc = {
+		trigger = { 
+			OR = {
+				tag = HKR
+				tag = MRY
+			}
+		}
+		desc = "th_incidents_cherryblossom.10.desc.1"
+	}
+	desc = {
+		trigger = { tag = FOM }
+		desc = "th_incidents_cherryblossom.10.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		desc = "th_incidents_cherryblossom.10.desc.3"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = HKR }
+			NOT = { tag = FOM }
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { tag = MRY }
+		}
+		desc = "th_incidents_cherryblossom.10.desc.4"
+	}
+	picture = YUYUKO_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			set_global_flag = th_PCB_inci_yuyuko_encountered
+			clr_global_flag = th_PCB_inci_youmu_encountered
+			#Yuyuko's Base Fighting Skills
+			set_variable = {
+				which = th_PCB_inci_yuyuko_combat_skills
+				value = 1500
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_PCB_inci_yuyuko_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#I will have to defeat her myself
+		name = "th_incidents_cherryblossom.10.a"
+		custom_tooltip = th_incidents_cherryblossom.10.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		hidden_effect = {
+			set_global_flag = th_PCB_incident_end
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident EXTRA - Ran Encounter
+country_event = {
+	id = th_incidents_cherryblossom.11
+	title = "th_incidents_cherryblossom.11.t"
+	desc = "th_incidents_cherryblossom.11.desc"
+	picture = RAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			#Ran's Base Fighting Skills
+			set_variable = {
+				which = th_PCB_inci_rans_combat_skills
+				value = 1600
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_PCB_inci_rans_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#I don't speak any programming language. Sorry.
+		name = "th_incidents_cherryblossom.11.a"
+		custom_tooltip = th_incidents_cherryblossom.11.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		hidden_effect = {
+			country_event = {
+				id = th_incidents_cherryblossom.12
+				days = 90
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident EXTRA - Yukari Encounter
+country_event = {
+	id = th_incidents_cherryblossom.12
+	title = "th_incidents_cherryblossom.12.t"
+	desc = "th_incidents_cherryblossom.12.desc"
+	picture = YUKARI2_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			#Yukari's Base Fighting Skills
+			set_variable = {
+				which = th_PCB_inci_yukari_combat_skills
+				value = 1650
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_PCB_inci_yukari_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#So, you are the head of Gensokyo? Doesn't matter. I will still beat you up
+		name = "th_incidents_cherryblossom.12.a"
+		custom_tooltip = th_incidents_cherryblossom.12.a.tt
+		highlight = yes
+		th_danmaku_fight_ruler_and_opponent = yes
+		hidden_effect = {
+			country_event = {
+				id = th_incidents_cherryblossom.17
+				days = 90
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+
+#Cherry Blossom Incident - Terrible Outcome because of dead ruler!
+country_event = { #Nothing changes and the Frost will kill us all!
+	id = th_incidents_cherryblossom.13
+	title = "th_incidents_cherryblossom.13.t"
+	desc = "th_incidents_cherryblossom.13.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		has_global_flag = th_PCB_incident_end
+		has_country_flag = th_incident_last_fight_terribly_lost
+		th_incident_is_investigator = yes
+		NOT = { has_global_flag = th_cherry_blossom_incident_solved }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = th_cherry_blossom_incident_solved
+			th_incident_clear_all_limited_flags = yes
+			th_incident_clear_about_flags_pcb = yes
+			clr_global_flag = th_PCB_inci_yuyuko_encountered
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	major = yes
+	
+	option = {		#Well, I've done what I could.
+		name = "th_incidents_cherryblossom.13.a"
+		custom_tooltip = th_incidents_cherryblossom.13.a.tt
+		if = {
+			limit = {
+				exists = NMG
+			}
+			NMG = {
+				add_country_modifier = {
+					name = "th_PCB_revived_soul_within_saigyou"
+					duration = 1825
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				exists = NET
+			}
+			NET = {
+				add_country_modifier = {
+					name = "th_PCB_revived_soul_within_saigyou"
+					duration = 1825
+				}
+			}
+		}
+		add_adm_power = 100
+		add_prestige = -10
+		add_devotion = -10
+		custom_tooltip = th_incidents_cherryblossom_frozen_wastes
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					NOT = { owned_by = NET }
+					NOT = { owned_by = NMG }
+					NOT = { owned_by = MHG }
+				}
+				add_province_modifier = {
+					name = th_PCB_frozen_wastes
+					duration = 1825
+				}
+			}
+		}
+	}
+}
+
+#Cherry Blossom Incident - Bad Outcome
+country_event = { #Nothing changes and the tree blooms
+	id = th_incidents_cherryblossom.14
+	title = "th_incidents_cherryblossom.14.t"
+	desc = "th_incidents_cherryblossom.14.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		has_global_flag = th_PCB_incident_end
+		th_incident_is_investigator = yes
+		NOT = { has_global_flag = th_cherry_blossom_incident_solved }
+		check_variable = {
+			which = th_PCB_inci_goodbad_level
+			value = 0
+		}
+		NOT = {
+			check_variable = {
+				which = th_PCB_inci_goodbad_level
+				value = 5
+			}
+		}
+		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = th_cherry_blossom_incident_solved
+			th_incident_clear_all_limited_flags = yes
+			th_incident_clear_about_flags_pcb = yes
+			clr_global_flag = th_PCB_inci_yuyuko_encountered
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	major = yes
+	
+	option = {		#Well, I've done what I could.
+		name = "th_incidents_cherryblossom.14.a"
+		custom_tooltip = th_incidents_cherryblossom.14.a.tt
+		if = {
+			limit = {
+				exists = NMG
+			}
+			NMG = {
+				add_country_modifier = {
+					name = "th_PCB_revived_soul_within_saigyou"
+					duration = 1825
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				exists = NET
+			}
+			NET = {
+				add_country_modifier = {
+					name = "th_PCB_revived_soul_within_saigyou"
+					duration = 1825
+				}
+			}
+		}
+		add_adm_power = 100
+		add_prestige = -10
+		add_devotion = -10
+		custom_tooltip = th_incidents_cherryblossom_frozen_wastes
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					NOT = { owned_by = NET }
+					NOT = { owned_by = NMG }
+					NOT = { owned_by = MHG }
+				}
+				add_province_modifier = {
+					name = th_PCB_frozen_wastes
+					duration = 1825
+				}
+			}
+		}
+	}
+}
+
+#Cherry Blossom Incident - OK Outcome
+country_event = { 
+	id = th_incidents_cherryblossom.15
+	title = "th_incidents_cherryblossom.15.t"
+	desc = {
+		trigger = { 
+			OR = {
+				tag = HKR
+				tag = MRY
+			}
+		}
+		desc = "th_incidents_cherryblossom.15.desc.1"
+	}
+	desc = {
+		trigger = { tag = FOM }
+		desc = "th_incidents_cherryblossom.15.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		desc = "th_incidents_cherryblossom.15.desc.3"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = HKR }
+			NOT = { tag = FOM }
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { tag = MRY }
+		}
+		desc = "th_incidents_cherryblossom.15.desc.4"
+	}
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		has_global_flag = th_PCB_incident_end
+		th_incident_is_investigator = yes
+		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
+		NOT = { has_global_flag = th_cherry_blossom_incident_solved }
+		check_variable = {
+			which = th_PCB_inci_goodbad_level
+			value = 5
+		}
+		NOT = {
+			check_variable = {
+				which = th_PCB_inci_goodbad_level
+				value = 10
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = th_cherry_blossom_incident_solved
+			th_incident_clear_all_limited_flags = yes
+			th_incident_clear_about_flags_pcb = yes
+			clr_global_flag = th_PCB_inci_yuyuko_encountered
+			th_incident_increase_good_outcome_counter = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	major = yes
+	
+	option = {		#Finally, it's over.
+		name = "th_incidents_cherryblossom.15.a"
+		custom_tooltip = th_incidents_cherryblossom.15.a.tt
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_PCB_inci_saigyou_ayakashi_repressed"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_PCB_inci_saigyou_ayakashi_repressed"
+				duration = 3650
+			}
+		}
+		add_adm_power = 100
+		add_prestige = 25
+		add_devotion = 10
+	}
+}
+
+#Cherry Blossom Incident - Good Outcome
+country_event = { #Yuyuko visits the shrine
+	id = th_incidents_cherryblossom.16
+	title = "th_incidents_cherryblossom.16.t"
+	desc = {
+		trigger = { 
+			OR = {
+				tag = HKR
+				tag = MRY
+			}
+		}
+		desc = "th_incidents_cherryblossom.16.desc.1"
+	}
+	desc = {
+		trigger = { tag = FOM }
+		desc = "th_incidents_cherryblossom.16.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = SCR
+				tag = SCD
+			}
+		}
+		desc = "th_incidents_cherryblossom.16.desc.3"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = HKR }
+			NOT = { tag = FOM }
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { tag = MRY }
+		}
+		desc = "th_incidents_cherryblossom.16.desc.4"
+	}
+	picture = THFEST_eventPicture
+	
+	trigger = {
+		has_global_flag = th_PCB_incident_end
+		NOT = { has_global_flag = th_cherry_blossom_incident_solved }
+		check_variable = {
+			which = th_PCB_inci_goodbad_level
+			value = 10
+		}
+		th_incident_is_investigator = yes
+		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = th_cherry_blossom_incident_solved
+			th_incident_clear_all_limited_flags = yes
+			th_incident_clear_about_flags_pcb = yes
+			clr_global_flag = th_PCB_inci_yuyuko_encountered
+			th_incident_increase_good_outcome_counter = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	major = yes
+	
+	option = {		#Well, we should investigate this, or Remilia will never go away.
+		name = "th_incidents_cherryblossom.16.a"
+		custom_tooltip = th_incidents_cherryblossom.16.a.tt
+		highlight = yes
+		add_adm_power = -25
+		add_prestige = 35
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+				}
+			}
+			add_country_modifier = {
+				name = "th_PCB_inci_saigyou_ayakashi_repressed"
+				duration = 9125
+			}
+			hidden_effect = {
+				set_country_flag = th_solved_pcb_inci
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_PCB_inci_saigyou_ayakashi_repressed"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_PCB_inci_saigyou_ayakashi_repressed"
+				duration = 3650
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = th_incidents_cherryblossom.11
+				days = 90
+			}
+		}
+	}
+	
+	option = {		#The rain will stop eventually. She can stay here for awhile.
+		name = "th_incidents_cherryblossom.16.b"
+		custom_tooltip = th_incidents_cherryblossom.16.b.tt
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+				}
+			}
+			add_country_modifier = {
+				name = "th_PCB_inci_saigyou_ayakashi_repressed"
+				duration = 9125
+			}
+			hidden_effect = {
+				set_country_flag = th_solved_pcb_inci
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_PCB_inci_saigyou_ayakashi_repressed"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_PCB_inci_saigyou_ayakashi_repressed"
+				duration = 3650
+			}
+		}
+		add_adm_power = 150
+		add_prestige = 25
+		add_devotion = 10
+	}
+}
+
+#Cherry Blossom Incident - EXTRA Outcome Good
+country_event = { #Yuyuko and Yukari visit the shrine
+	id = th_incidents_cherryblossom.17
+	title = "th_incidents_cherryblossom.17.t"
+	desc = "th_incidents_cherryblossom.17.desc"
+	picture = THFEST_eventPicture
+	
+	is_triggered_only = yes	
+	major = yes
+	
+	option = {		#The rain will stop eventually. She can stay here for awhile.
+		name = "th_incidents_cherryblossom.17.a"	
+		custom_tooltip = th_incidents_cherryblossom.17.a.tt
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+				}
+			}
+			add_country_modifier = {
+				name = "th_PCB_inci_extra"
+				duration = 9125
+			}
+			hidden_effect = {
+				set_country_flag = th_solved_pcb_inci_extra
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_PCB_inci_extra"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_PCB_inci_extra"
+				duration = 3650
+			}
+		}
+		add_adm_power = 150
+		if = {
+			limit = {
+				has_country_flag = th_increased_donations_from_events
+			}
+			add_years_of_income = 3
+		}
+		else = {
+			add_years_of_income = 2
+		}
+		add_prestige = 50
+		add_devotion = 10
+	}
+}
+
+
+
+#Cherry Blossom Incident - Forbid NET, NMG and MHG to become investigators
+country_event = {
+	id = th_incidents_cherryblossom.271
+	title = th_incidents_cherryblossom.271.t
+	desc = th_incidents_cherryblossom.271.desc
+	picture = SNOWSPRING_eventPicture
+
+	trigger = {
+		has_global_flag = th_current_incident_cherry_blossom
+		OR = {
+			tag = NET
+			tag = NMG
+			tag = MHG
+			was_tag = NET
+			was_tag = NMG
+			was_tag = MHG
+		}
+		NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		name = th_incidents_cherryblossom.271.a
+		hidden_effect = {
+			set_country_flag = th_is_not_valid_for_investiagtor_role
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - Special Case: nobody can become investigator
+country_event = {
+	id = th_incidents_cherryblossom.23
+	title = "th_incidents_cherryblossom.23.t"
+	desc = "th_incidents_cherryblossom.23.desc"
+	picture = SNOWSPRING_eventPicture
+	
+	trigger = {
+		has_global_flag = th_current_incident_cherry_blossom		
+		gensokyo_superregion = {
+			OR = {
+				owned_by = NET
+				owned_by = NMG
+				owned_by = MHG
+				owner = {
+					OR = {
+						is_subject_of = NET
+						is_subject_of = NMG
+						is_subject_of = MHG
+					}
+				}
+			}
+		}
+		OR = {
+			tag = NET
+			tag = NMG
+			tag = MHG
+		}
+		all_country = {
+			NOT = { has_country_flag = th_eligible_investigator }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 5
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = th_cherry_blossom_incident_solved
+			th_incident_clear_all_limited_flags = yes
+			th_incident_clear_about_flags_pcb = yes
+			clr_global_flag = th_PCB_inci_started
+			clr_global_flag = th_PCB_inci_letty_encountered
+			clr_global_flag = th_PCB_inci_chen_encountered
+			clr_global_flag = th_PCB_inci_alice_encountered
+			clr_global_flag = th_PCB_inci_prismriver_encountered
+			clr_global_flag = th_PCB_inci_youmu_encountered
+			clr_global_flag = th_PCB_inci_yuyuko_encountered
+		}
+	}
+	
+	major = yes
+	
+	option = {		#Netherworld triumphs!
+		name = "th_incidents_cherryblossom.23.a"
+		trigger = {
+			OR = {
+				tag = NMG
+				tag = NET
+			}
+		}
+		custom_tooltip = th_incidents_cherryblossom.23.a.tt					
+		add_country_modifier = {
+			name = "th_PCB_revived_soul_within_saigyou"
+			duration = 9125
+		}		
+	}
+	
+	option = {		#Yukari solved the problem on her own!
+		name = "th_incidents_cherryblossom.23.b"
+		trigger = {
+			tag = MHG
+		}
+		if = {
+			limit = {
+				exists = NMG
+			}
+			NMG = {
+				add_country_modifier = {
+					name = "th_PCB_revived_soul_within_saigyou"
+					duration = 9125
+				}	
+			}
+		}
+		else_if = {
+			limit = {
+				exists = NET
+			}
+			NET = {
+				add_country_modifier = {
+					name = "th_PCB_revived_soul_within_saigyou"
+					duration = 9125
+				}
+			}
+		}
+		custom_tooltip = th_incidents_cherryblossom.23.b.tt		
+	}
+}
+		
+#Cherry Blossom Incident - Mechanic Events - Province recovers from winter	- HIDDEN
+province_event = {
+	id = th_incidents_cherryblossom.24
+	title = "th_incidents_cherryblossom.24.t"
+	desc = "th_incidents_cherryblossom.24.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		OR = {
+			has_province_modifier = th_PCB_hard_winter
+			has_province_modifier = th_PCB_howling_winds
+			has_province_modifier = th_PCB_frozen_land
+			has_province_modifier = th_PCB_permanent_blizzard
+			has_province_modifier = th_PCB_endless_winter
+		}		
+		OR = {
+			owner = {
+				OR = {
+					tag = NET
+					tag = NMG
+					AND = {
+						tag = MHG
+						overlord_of = NET
+					}
+				}				
+			}			
+			NOT = { has_global_flag = th_current_incident_cherry_blossom }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = "th_incidents_cherryblossom.24.a"
+		remove_province_modifier = th_PCB_hard_winter
+		remove_province_modifier = th_PCB_howling_winds
+		remove_province_modifier = th_PCB_frozen_land
+		remove_province_modifier = th_PCB_permanent_blizzard
+		remove_province_modifier = th_PCB_endless_winter
+		remove_province_modifier = th_PCB_locals_take_a_rest
+		remove_province_modifier = th_PCB_locals_are_freezing
+		remove_province_modifier = th_PCB_locals_are_used_to_freezing_to_death
+		remove_province_modifier = th_PCB_abandon_province
+		remove_province_modifier = th_PCB_great_fire
+		remove_province_modifier = th_PCB_people_holding_together
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}		
+}
+
+#Cherry Blossom Incident - Mechanic Events - Province gets winter again - HIDDEN
+province_event = {
+	id = th_incidents_cherryblossom.25
+	title = "th_incidents_cherryblossom.25.t"
+	desc = "th_incidents_cherryblossom.25.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		NOT = { has_province_modifier = th_PCB_hard_winter }
+		superregion = gensokyo_superregion
+		owner = {
+			NOT = { tag = NET }
+			NOT = { tag = NMG }
+			NOT = { tag = MHG }
+		}		
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = "th_incidents_cherryblossom.25.a"
+		add_permanent_province_modifier = {
+			name = th_PCB_hard_winter
+			duration = -1
+			desc = th_incident_duration_tt
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}		
+}
+
+#Cherry Blossom Incident - Mechanic Events - province gets howling winds - HIDDEN
+province_event = {
+	id = th_incidents_cherryblossom.26
+	title = "th_incidents_cherryblossom.26.t"
+	desc = "th_incidents_cherryblossom.26.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		has_province_modifier = th_PCB_hard_winter
+		any_neighbor_province = {
+			OR = {
+				has_province_modifier = th_PCB_howling_winds
+				has_province_modifier = th_PCB_frozen_land
+				has_province_modifier = th_PCB_permanent_blizzard
+				has_province_modifier = th_PCB_endless_winter
+				owner = {
+					OR = {
+						was_tag = NET
+						tag = NET
+					}
+				}
+			}
+			NOT = {
+				province_distance = {
+					who = ROOT
+					distance = 40
+				}
+			}
+		}
+		superregion = gensokyo_superregion
+		owner = {
+			NOT = { tag = NET }
+			NOT = { tag = NMG }
+			NOT = { tag = MHG }
+			NOT = {	is_subject_of = NET }
+			NOT = { is_subject_of = NMG }
+		}
+		NOT = { has_province_modifier = th_PCB_howling_winds }
+		NOT = { has_province_modifier = th_PCB_frozen_land }
+		NOT = { has_province_modifier = th_PCB_permanent_blizzard }
+		NOT = { has_province_modifier = th_PCB_endless_winter }
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+	
+	mean_time_to_happen = {
+		months = 48
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = "th_incidents_cherryblossom.26.a"
+		add_permanent_province_modifier = {
+			name = th_PCB_howling_winds
+			duration = -1
+			desc = th_incident_duration_tt
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}		
+}
+
+#Cherry Blossom Incident - Mechanic Events - province gets frozen land - HIDDEN
+province_event = {
+	id = th_incidents_cherryblossom.27
+	title = "th_incidents_cherryblossom.27.t"
+	desc = "th_incidents_cherryblossom.27.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		has_province_modifier = th_PCB_hard_winter
+		any_neighbor_province = {
+			OR = {
+				has_province_modifier = th_PCB_frozen_land
+				has_province_modifier = th_PCB_permanent_blizzard
+				has_province_modifier = th_PCB_endless_winter
+				owner = {
+					OR = {
+						was_tag = NET
+						tag = NET
+					}
+				}
+			}
+			NOT = {
+				province_distance = {
+					who = ROOT
+					distance = 40
+				}
+			}
+		}
+		superregion = gensokyo_superregion
+		owner = {
+			NOT = { tag = NET }
+			NOT = { tag = NMG }
+			NOT = { tag = MHG }
+			NOT = {	is_subject_of = NET }
+			NOT = { is_subject_of = NMG }
+		}
+		has_province_modifier = th_PCB_howling_winds
+		NOT = { has_province_modifier = th_PCB_frozen_land }
+		NOT = { has_province_modifier = th_PCB_permanent_blizzard }
+		NOT = { has_province_modifier = th_PCB_endless_winter }
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+	
+	mean_time_to_happen = {
+		months = 48
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = "th_incidents_cherryblossom.27.a"
+		remove_province_modifier = th_PCB_howling_winds
+		add_permanent_province_modifier = {
+			name = th_PCB_frozen_land
+			duration = -1
+			desc = th_incident_duration_tt
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}		
+}
+
+#Cherry Blossom Incident - Mechanic Events - province gets permanent blizzard - HIDDEN
+province_event = {
+	id = th_incidents_cherryblossom.28
+	title = "th_incidents_cherryblossom.28.t"
+	desc = "th_incidents_cherryblossom.28.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		has_province_modifier = th_PCB_hard_winter
+		any_neighbor_province = {
+			OR = {
+				has_province_modifier = th_PCB_permanent_blizzard
+				has_province_modifier = th_PCB_endless_winter
+				owner = {
+					OR = {
+						was_tag = NET
+						tag = NET
+					}
+				}
+			}
+			NOT = {
+				province_distance = {
+					who = ROOT
+					distance = 40
+				}
+			}
+		}
+		superregion = gensokyo_superregion
+		owner = {
+			NOT = { tag = NET }
+			NOT = { tag = NMG }
+			NOT = { tag = MHG }
+			NOT = {	is_subject_of = NET }
+			NOT = { is_subject_of = NMG }
+		}
+		has_province_modifier = th_PCB_frozen_land
+		NOT = { has_province_modifier = th_PCB_permanent_blizzard }
+		NOT = { has_province_modifier = th_PCB_endless_winter }
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+	
+	mean_time_to_happen = {
+		months = 48
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = "th_incidents_cherryblossom.28.a"
+		remove_province_modifier = th_PCB_frozen_land
+		add_permanent_province_modifier = {
+			name = th_PCB_permanent_blizzard
+			duration = -1
+			desc = th_incident_duration_tt
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - Mechanic Events - province gets endless winter - HIDDEN
+province_event = {
+	id = th_incidents_cherryblossom.29
+	title = "th_incidents_cherryblossom.29.t"
+	desc = "th_incidents_cherryblossom.29.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		has_province_modifier = th_PCB_hard_winter
+		any_neighbor_province = {
+			OR = {
+				has_province_modifier = th_PCB_endless_winter
+				owner = {
+					OR = {
+						was_tag = NET
+						tag = NET
+					}
+				}
+			}
+			NOT = {
+				province_distance = {
+					who = ROOT
+					distance = 40
+				}
+			}
+		}
+		superregion = gensokyo_superregion
+		owner = {
+			NOT = { tag = NET }
+			NOT = { tag = NMG }
+			NOT = { tag = MHG }
+			NOT = {	is_subject_of = NET }
+			NOT = { is_subject_of = NMG }
+		}
+		has_province_modifier = th_PCB_permanent_blizzard
+		NOT = { has_province_modifier = th_PCB_endless_winter }
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+	
+	mean_time_to_happen = {
+		months = 48
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = "th_incidents_cherryblossom.29.a"
+		remove_province_modifier = th_PCB_permanent_blizzard
+		add_permanent_province_modifier = {
+			name = th_PCB_endless_winter
+			duration = -1
+			desc = th_incident_duration_tt
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+#Cherry Blossom Incident - Random Snow Spring events - Gets insane spring buff
+country_event = {	#Added this event, because the player should get an information when NET gets the buff
+	id = th_incidents_cherryblossom.30
+	title = "th_incidents_cherryblossom.30.t"
+	desc = "th_incidents_cherryblossom.30.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		OR = {
+			AND = {
+				tag = NET
+				NOT = { exists = NMG }
+			}
+			tag = NMG
+		}
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+	
+	fire_only_once = yes
+	major = yes
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {		#The Spirit of the Spring is ours!
+		name = "th_incidents_cherryblossom.30.a"
+		add_country_modifier = {
+			name = "th_PCB_spirit_of_spring"
+			duration = 9125
+		}
+	}
+}
+
+#Cherry Blossom Incident - Random Snow Spring events - Yuyuko's undeads demand their land back
+province_event = {
+	id = th_incidents_cherryblossom.31
+	title = "th_incidents_cherryblossom.31.t"
+	desc = "th_incidents_cherryblossom.31.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		owner = { ai = no }
+		has_global_flag = th_current_incident_cherry_blossom
+		NOT = { has_province_flag = nether_revolt }
+		NOT = { local_autonomy = 1 }
+		region = netherworld_region
+		culture = Netherlandish
+		owner = {
+			NOT = { tag = NET }
+			NOT = { tag = NMG }
+			is_free_or_tributary_trigger = yes
+			num_of_cities = 4
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 30
+		modifier = {
+			factor = 0.5
+			any_neighbor_province = {
+				has_province_flag = nether_revolt
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_owner_religion = no
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				NOT = { culture_group = ROOT }
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				NOT = { primary_culture = ROOT }
+				NOT = { accepted_culture = ROOT }
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = { war_with = NET }
+		}
+		modifier = {
+			factor = 0.75
+			unrest = 3
+		}
+		modifier = {
+			factor = 0.75
+			unrest = 5
+		}
+		modifier = {
+			factor = 0.75
+			unrest = 7
+		}
+		modifier = {
+			factor = 0.75
+			unrest = 9
+		}
+	}
+
+	option = {
+		name = "th_incidents_cherryblossom.31.a"
+		set_province_flag = nether_revolt
+		spawn_rebels = {
+			type = nationalist_rebels
+			size = 1
+			friend = NET
+		}
+		
+		ai_chance = { 
+			factor = 90
+		}
+	}
+	option = {
+		name = "th_incidents_cherryblossom.31.b"
+		cede_province = NET
+		
+		ai_chance = { 
+			factor = 10
+		}
+	}
+}
+
+#Cherry Blossom Incident - Random Snow Spring events - Yuyuko's undeads demands her independence back
+country_event = {
+	id = th_incidents_cherryblossom.32
+	title = "th_incidents_cherryblossom.32.t"
+	desc = "th_incidents_cherryblossom.32.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+	
+	trigger = {
+		has_global_flag = th_current_incident_cherry_blossom
+		NOT = { tag = MHG }
+		overlord_of = NET
+		NET = {
+			NOT = { has_country_modifier = th_PCB_demands_independence }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {		#Nah
+		name = "th_incidents_cherryblossom.32.a"
+		NET = {
+			add_country_modifier = {
+				name = "th_PCB_demands_independence"
+				duration = 5475
+			}
+		}
+		
+		ai_chance = { 
+			factor = 90
+		}
+	}
+	
+	option = {		#The ghost lady is the stress not worth.
+		name = "th_incidents_cherryblossom.32.b"
+		NET = {
+			grant_independence = yes 
+		}
+		
+		ai_chance = { 
+			factor = 10
+		}
+	}
+}
+
+#Cherry Blossom Incident - Random Snow Spring events - It's for the local people to cold to work
+province_event = {
+	id = th_incidents_cherryblossom.33
+	title = "th_incidents_cherryblossom.33.t"
+	desc = "th_incidents_cherryblossom.33.desc"
+	picture = SNOWSPRING_eventPicture
+
+	trigger = {
+		has_global_flag = th_current_incident_cherry_blossom
+		OR = {
+			has_province_modifier = th_PCB_frozen_land
+			has_province_modifier = th_PCB_permanent_blizzard
+			has_province_modifier = th_PCB_endless_winter
+		}
+		NOT = { has_province_modifier = th_PCB_locals_take_a_rest }
+		NOT = { has_province_modifier = th_PCB_locals_are_freezing }
+		NOT = { has_province_modifier = th_PCB_locals_are_used_to_freezing_to_death }
+	}
+
+	mean_time_to_happen = {
+		months = 36
+	}
+
+	option = {	#Well, I can't force the people to work
+		name = "th_incidents_cherryblossom.33.a"
+		add_province_modifier = {
+			name = th_PCB_locals_take_a_rest
+			duration = 1460
+		}
+
+		ai_chance = {
+			factor = 75
+		}
+	}
+
+	option = { #You have to endure it
+		name = "th_incidents_cherryblossom.33.b"
+		add_province_modifier = {
+			name = th_PCB_locals_are_freezing
+			duration = 1460
+		}
+
+		ai_chance = {
+			factor = 25
+		}
+	}
+
+	option = { #And? Guys, you should be already got used to cold weather
+		name = "th_incidents_cherryblossom.33.c"
+		trigger = {
+			owner = {
+				tag = CIN
+			}
+		}
+		add_province_modifier = {
+			name = th_PCB_locals_are_used_to_freezing_to_death
+			duration = 1460
+		}
+
+		ai_chance = {
+			factor = 25
+		}
+	}
+}
+
+#Cherry Blossom Incident - Random Snow Spring events - The blizzard causes heavy damage
+province_event = {
+	id = th_incidents_cherryblossom.34
+	title = "th_incidents_cherryblossom.34.t"
+	desc = "th_incidents_cherryblossom.34.desc"
+	picture = SNOWSPRING_eventPicture
+
+	trigger = {
+		has_global_flag = th_current_incident_cherry_blossom
+		OR = {
+			has_province_modifier = th_PCB_permanent_blizzard
+			has_province_modifier = th_PCB_endless_winter
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 60
+	}
+
+	option = {	#These are truely bad news.
+		name = "th_incidents_cherryblossom.34.a"
+		add_devastation = 33
+
+		ai_chance = {
+			factor = 25
+		}
+	}
+
+	option = { #We have to do something!
+		name = "th_incidents_cherryblossom.34.b"
+		add_devastation = 10
+		owner = {
+			add_years_of_income = -0.25
+		}		
+
+		ai_chance = { 
+			factor = 75
+			modifier = {
+				factor = 0
+				NOT = { owner = { years_of_income = 0.2 } }
+			}
+		}
+	}
+}
+
+#Cherry Blossom Incident - Random Snow Spring events - The winter makes the land uninhabitable
+province_event = {
+	id = th_incidents_cherryblossom.35
+	title = "th_incidents_cherryblossom.35.t"
+	desc = "th_incidents_cherryblossom.33.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+
+	trigger = {
+		has_global_flag = th_current_incident_cherry_blossom
+		has_province_modifier = th_PCB_endless_winter
+		NOT = { has_province_modifier = th_PCB_abandon_province }
+		NOT = { has_province_modifier = th_PCB_great_fire }
+		NOT = { has_province_modifier = th_PCB_people_holding_together }
+	}
+
+	mean_time_to_happen = {
+		months = 36
+	}
+
+	option = {	#Forsake this province, but bring them at least in the army!
+		name = "th_incidents_cherryblossom.35.a"
+		add_province_modifier = {
+			name = th_PCB_abandon_province
+			duration = 1460
+		}
+
+		ai_chance = {
+			factor = 75
+		}
+	}
+
+	option = { #Burn everything down to keep the cold away!
+		name = "th_incidents_cherryblossom.35.b"
+		add_province_modifier = {
+			name = th_PCB_great_fire
+			duration = 1460
+		}
+
+		ai_chance = {
+			factor = 25
+		}
+	}
+
+	option = { #Hold it together! The winter cannot be endless
+		name = "th_incidents_cherryblossom.35.c"
+		add_province_modifier = {
+			name = th_PCB_people_holding_together
+			duration = 1460
+		}
+
+		ai_chance = {
+			factor = 25
+		}
+	}
+}
+
+#Cherry Blossom Incident - Random Snow Spring events - The winter demands its tribute (Lose tons of manpower, sailors and unrest
+country_event = {
+	id = th_incidents_cherryblossom.36
+	title = "th_incidents_cherryblossom.36.t"
+	desc = "th_incidents_cherryblossom.36.desc"
+	picture = SNOWSPRINGADVANCED_eventPicture
+
+	trigger = {
+		calc_true_if = {
+			all_owned_province = {
+				superregion = gensokyo_superregion
+				has_province_modifier = th_PCB_endless_winter
+			}
+			amount = 20
+		}
+		NOT = { has_country_modifier = th_PCB_the_icy_purge }
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+
+	mean_time_to_happen = {
+		months = 48
+	}
+
+	option = {	#The icy winds of death claims the lives of our men!
+		name = "th_incidents_cherryblossom.36.a"
+		add_yearly_manpower = -0.25
+		add_yearly_sailors = -0.25
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	option = {	#The icy winds of death claims the lives of our advisors!
+		name = "th_incidents_cherryblossom.36.b"
+		add_stability = -1
+		kill_advisor = random
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	option = {	#The icy winds of death claims the lives of our merchants!
+		name = "th_incidents_cherryblossom.36.c"
+		add_years_of_income = -2
+		kill_advisor = random
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	option = {	#The icy winds of death claims everyone!
+		name = "th_incidents_cherryblossom.36.d"
+		kill_advisor = random
+		add_yearly_manpower = -2
+		add_yearly_sailors = -2
+		add_years_of_income = -3
+		add_stability = -2
+		add_country_modifier = {
+			name = "th_PCB_the_icy_purge"
+			duration = 3650
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Cherry Blossom Incident - Random Snow Spring events - Fighting the winter off
+country_event = {
+	id = th_incidents_cherryblossom.37
+	title = "th_incidents_cherryblossom.37.t"
+	desc = "th_incidents_cherryblossom.37.desc"
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		th_incident_is_investigator = yes
+		any_known_country = { 
+			any_owned_province = {
+				OR = {
+					has_province_modifier = th_PCB_howling_winds
+					has_province_modifier = th_PCB_frozen_land
+					has_province_modifier = th_PCB_permanent_blizzard
+					has_province_modifier = th_PCB_endless_winter
+				}
+			}
+		}
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+	
+	mean_time_to_happen = {
+		months = 24
+
+		modifier = {
+			factor = 0.5			
+			calc_true_if = {
+				all_province = {
+					superregion = gensokyo_superregion
+					OR = {
+						has_province_modifier = th_PCB_howling_winds
+						has_province_modifier = th_PCB_frozen_land
+						has_province_modifier = th_PCB_permanent_blizzard
+						has_province_modifier = th_PCB_endless_winter
+					}
+				}
+				amount = 15
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			random_known_country = {
+				limit = {
+					any_owned_province = {
+						NOT = { has_province_flag = th_first_clean_dummy }
+						NOT = { has_province_flag = th_second_clean_dummy }
+						OR = {
+							has_province_modifier = th_PCB_howling_winds
+							has_province_modifier = th_PCB_frozen_land
+							has_province_modifier = th_PCB_permanent_blizzard
+							has_province_modifier = th_PCB_endless_winter
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						OR = {
+							has_province_modifier = th_PCB_howling_winds
+							has_province_modifier = th_PCB_frozen_land
+							has_province_modifier = th_PCB_permanent_blizzard
+							has_province_modifier = th_PCB_endless_winter
+						}
+					}
+					set_province_flag = th_first_clean_dummy
+				}
+			}
+			random_known_country = {
+				limit = {
+					any_owned_province = {
+						NOT = { has_province_flag = th_first_clean_dummy }
+						NOT = { has_province_flag = th_second_clean_dummy }
+						OR = {
+							has_province_modifier = th_PCB_howling_winds
+							has_province_modifier = th_PCB_frozen_land
+							has_province_modifier = th_PCB_permanent_blizzard
+							has_province_modifier = th_PCB_endless_winter
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						OR = {
+							has_province_modifier = th_PCB_howling_winds
+							has_province_modifier = th_PCB_frozen_land
+							has_province_modifier = th_PCB_permanent_blizzard
+							has_province_modifier = th_PCB_endless_winter
+						}
+					}
+					set_province_flag = th_second_clean_dummy
+				}
+			}
+		}
+	}
+	
+	option = {		#Put more resources into the warming the province up
+		name = "th_incidents_cherryblossom.37.a"
+		add_adm_power = -25
+		random_known_country = {
+			limit = {
+				any_owned_province = {
+					OR = {
+						has_province_modifier = th_PCB_howling_winds
+						has_province_modifier = th_PCB_frozen_land
+						has_province_modifier = th_PCB_permanent_blizzard
+						has_province_modifier = th_PCB_endless_winter
+					}
+					has_province_flag = th_first_clean_dummy
+				}
+			}
+			random_owned_province = {
+				limit = {
+					OR = {
+						has_province_modifier = th_PCB_howling_winds
+						has_province_modifier = th_PCB_frozen_land
+						has_province_modifier = th_PCB_permanent_blizzard
+						has_province_modifier = th_PCB_endless_winter
+					}
+					has_province_flag = th_first_clean_dummy
+				}
+				th_PCB_incident_reduce_winter_modifier = yes
+				clr_province_flag = th_first_clean_dummy
+			}
+		}
+		random_known_country = {
+			limit = {
+				any_owned_province = {
+					OR = {
+						has_province_modifier = th_PCB_howling_winds
+						has_province_modifier = th_PCB_frozen_land
+						has_province_modifier = th_PCB_permanent_blizzard
+						has_province_modifier = th_PCB_endless_winter
+					}
+					has_province_flag = th_second_clean_dummy
+				}
+			}
+			random_owned_province = {
+				limit = {
+					OR = {
+						has_province_modifier = th_PCB_howling_winds
+						has_province_modifier = th_PCB_frozen_land
+						has_province_modifier = th_PCB_permanent_blizzard
+						has_province_modifier = th_PCB_endless_winter
+					}
+					has_province_flag = th_second_clean_dummy
+				}
+				th_PCB_incident_reduce_winter_modifier = yes
+				clr_province_flag = th_second_clean_dummy
+			}
+		}
+		
+		if = {
+			limit = {
+				th_incident_is_investigator = yes
+			}
+			custom_tooltip = th_incidents_cherryblossom.37.a.tt
+			th_incident_minor_victory_bonus = yes
+		}
+		
+		ai_chance = { 
+			factor = 75
+			modifier = {
+				factor = 0
+				NOT = {  adm_power = 25 }
+			}
+		}
+	}
+	
+	option = {		#The normal mikos will clean it up
+		name = "th_incidents_cherryblossom.37.b"
+		add_adm_power = 10
+		random_known_country = {
+			limit = {
+				any_owned_province = {
+					OR = {
+						has_province_modifier = th_PCB_howling_winds
+						has_province_modifier = th_PCB_frozen_land
+						has_province_modifier = th_PCB_permanent_blizzard
+						has_province_modifier = th_PCB_endless_winter
+					}
+					has_province_flag = th_first_clean_dummy
+				}
+			}
+			random_owned_province = {
+				limit = {
+					OR = {
+						has_province_modifier = th_PCB_howling_winds
+						has_province_modifier = th_PCB_frozen_land
+						has_province_modifier = th_PCB_permanent_blizzard
+						has_province_modifier = th_PCB_endless_winter
+					}
+					has_province_flag = th_first_clean_dummy
+				}
+				th_PCB_incident_reduce_winter_modifier = yes
+				clr_province_flag = th_first_clean_dummy
+			}
+		}
+		
+		ai_chance = { 
+			factor = 25
+			modifier = {
+				factor = 100
+				NOT = {  adm_power = 25 }
+			}
+		}
+	}
+}
+
+#Cherry Blossom Incident - Random Snow Spring events - Fighting the winter off own province
+province_event = {
+	id = th_incidents_cherryblossom.38
+	title = "th_incidents_cherryblossom.38.t"
+	desc = "th_incidents_cherryblossom.38.desc"
+	picture = SNOWSPRING_eventPicture
+	
+	trigger = {
+		OR = {
+			has_province_modifier = th_PCB_howling_winds
+			has_province_modifier = th_PCB_frozen_land
+			has_province_modifier = th_PCB_permanent_blizzard
+			has_province_modifier = th_PCB_endless_winter
+		}
+		superregion = gensokyo_superregion
+		has_global_flag = th_current_incident_cherry_blossom
+	}
+
+	is_mtth_scaled_to_size = 1
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {		#Clean the province up!
+		name = "th_incidents_cherryblossom.38.a"
+		owner = {
+			add_years_of_income = -0.05
+		}
+		th_PCB_incident_reduce_winter_modifier = yes
+		
+		if = {
+			limit = {
+				owner = { th_incident_is_investigator = yes }
+			}
+			custom_tooltip = th_incidents_cherryblossom.37.a.tt
+			th_incident_minor_victory_bonus = yes
+		}
+		
+		ai_chance = { 
+			factor = 75
+			modifier = {
+				factor = 0
+				NOT = { owner = { years_of_income = 0.1 } }
+			}
+		}
+	}
+	
+	option = {		#We'll have to endure it
+		name = "th_incidents_cherryblossom.38.b"
+		add_devastation = 5
+		
+		ai_chance = { 
+			factor = 25
+			modifier = {
+				factor = 100
+				NOT = { owner = { years_of_income = 0.1 } }
+			}
+		}
+	}
+}
+
+#Cherry Blossom Incident - Flavor Snow Spring events - Yukari awakens after incident is over
+country_event = {
+	id = th_incidents_cherryblossom.39
+	title = th_incidents_cherryblossom.39.t
+	desc = th_incidents_cherryblossom.39.desc
+	picture = YUKARI_eventPicture
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	trigger = {
+		has_global_flag = th_cherry_blossom_incident_solved
+		has_country_flag = th_incident_yukari_unaviable
+		has_country_flag = MHG_yukari_retired
+	}
+
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = th_incident_yukari_unaviable
+		}
+	}
+
+	option = {
+		name = th_incidents_cherryblossom.39.a
+		custom_tooltip = th_incidents_cherryblossom.39.a.tt
+		country_event = { id = flavor_mhg.101 }
+	}
+}
+
+#Cherry Blossom Incident - Flavor Snow Spring events - Yukari remain unaviable if MHG gets released
+country_event = {
+	id = th_incidents_cherryblossom.40
+	title = th_incidents_cherryblossom.40.t
+	desc = th_incidents_cherryblossom.40.desc
+	picture = YUKARI_eventPicture
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	trigger = {
+		OR = {
+			tag = NMG
+			tag = MHG
+		}
+		has_global_flag = th_current_incident_cherry_blossom
+		NOT = {	has_global_flag = th_cherry_blossom_incident_solved }
+		NOT = {	has_country_flag = th_incident_yukari_unaviable	}
+		has_global_flag = th_incident_introduced
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_incident_yukari_unaviable
+		}
+	}
+
+	hidden = yes
+
+	option = {
+		name = th_incidents_cherryblossom.40.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Cherry Blossom Incident - Special Case: nobody can become investigator & Gensokyo not united by NET/MHG
+country_event = {
+	id = th_incidents_cherryblossom.41
+	title = "th_incidents_cherryblossom.41.t"
+	desc = "th_incidents_cherryblossom.41.desc"
+	picture = SNOWSPRING_eventPicture
+	
+	trigger = {
+		has_global_flag = th_current_incident_cherry_blossom	
+		any_province = {
+			superregion = gensokyo_superregion
+			NOT = { owned_by = NET }
+		}
+		any_province = {
+			superregion = gensokyo_superregion
+			NOT = { owned_by = MHG }
+		}
+		any_province = {
+			superregion = gensokyo_superregion
+			NOT = { owned_by = NMG }
+		}
+		owns = 4806
+		all_country = {
+			NOT = { has_country_flag = th_eligible_investigator }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 5
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = th_cherry_blossom_incident_solved
+			th_incident_clear_all_limited_flags = yes
+			th_incident_clear_about_flags_pcb = yes
+			clr_global_flag = th_PCB_inci_started
+			clr_global_flag = th_PCB_inci_letty_encountered
+			clr_global_flag = th_PCB_inci_chen_encountered
+			clr_global_flag = th_PCB_inci_alice_encountered
+			clr_global_flag = th_PCB_inci_prismriver_encountered
+			clr_global_flag = th_PCB_inci_youmu_encountered
+			clr_global_flag = th_PCB_inci_yuyuko_encountered
+		}
+	}
+	
+	major = yes
+	
+	option = {		#Nobody stops Yuyuko and things get worse
+		name = "th_incidents_cherryblossom.41.a"
+		trigger = {
+			OR = {
+				tag = NMG
+				tag = NET
+			}
+		}
+		custom_tooltip = th_incidents_cherryblossom.41.a.tt					
+		add_country_modifier = {
+			name = "th_PCB_revived_soul_within_saigyou"
+			duration = 3650
+		}		
+		custom_tooltip = th_incidents_cherryblossom_frozen_wastes
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					NOT = { owned_by = NET }
+					NOT = { owned_by = NMG }
+					NOT = { owned_by = MHG }
+				}
+				add_province_modifier = {
+					name = th_PCB_frozen_wastes
+					duration = 1825
+				}
+			}
+		}
+	}
+	
+	option = {		#Yukari solved the problem on her own!
+		name = "th_incidents_cherryblossom.41.b"
+		trigger = {
+			tag = MHG
+		}
+		if = {
+			limit = {
+				exists = NMG
+			}
+			NMG = {
+				add_country_modifier = {
+					name = "th_PCB_revived_soul_within_saigyou"
+					duration = 3650
+				}	
+			}
+		}
+		else_if = {
+			limit = {
+				exists = NET
+			}
+			NET = {
+				add_country_modifier = {
+					name = "th_PCB_revived_soul_within_saigyou"
+					duration = 3650
+				}
+			}
+		}
+		custom_tooltip = th_incidents_cherryblossom.41.b.tt		
+		custom_tooltip = th_incidents_cherryblossom_frozen_wastes
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					NOT = { owned_by = NET }
+					NOT = { owned_by = NMG }
+					NOT = { owned_by = MHG }
+				}
+				add_province_modifier = {
+					name = th_PCB_frozen_wastes
+					duration = 1825
+				}
+			}
+		}
+	}
+	option = {		#Nobody is investigating. We can only pray for spring`s back
+		name = "th_incidents_cherryblossom.41.c"
+		trigger = {
+			NOT = {
+				tag = NET
+				tag = MHG
+				was_tag = NET
+				was_tag = MHG
+			}
+		}
+		custom_tooltip = th_incidents_cherryblossom.41.c.tt
+		custom_tooltip = th_incidents_cherryblossom_frozen_wastes
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					NOT = { owned_by = NET }
+					NOT = { owned_by = NMG }
+					NOT = { owned_by = MHG }
+				}
+				add_province_modifier = {
+					name = th_PCB_frozen_wastes
+					duration = 1825
+				}
+			}
+		}
+	}
+}

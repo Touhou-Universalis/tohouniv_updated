@@ -1,0 +1,530 @@
+########################################
+# Events for Touhou Diplomacy
+########################################
+
+namespace = th_diplo_events
+
+#Provocate War
+country_event = {
+    id = th_diplo_events.1
+	title = th_diplo_events.1.t
+	desc = th_diplo_events.1.desc
+	picture = SPY_eventPicture
+
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            random_country = {
+                limit = {
+                    has_country_flag = th_is_planned_aggressor_of_@ROOT
+                }
+                save_event_target_as = planned_aggressor
+            }
+        }
+    }
+
+    after = {
+        event_target:planned_aggressor = {
+            clr_country_flag = th_is_planned_aggressor_of_@ROOT
+        }
+        clr_country_flag = th_has_already_a_planned_aggressor
+    }
+
+    option = {  #Excellent
+        name = th_diplo_events.1.a
+        hidden_effect = {
+            event_target:planned_aggressor = {
+                country_event = {
+                    id = th_diplo_events.2
+                    days = 1
+                }
+            }
+        }
+    }
+}
+
+#Aggressor gets order to declare war
+country_event = {
+    id = th_diplo_events.2
+	title = th_diplo_events.2.t
+	desc = th_diplo_events.2.desc
+    picture = DIPLOMACY_eventPicture
+    
+    major = yes
+
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            random_country = {
+                limit = {
+                    has_country_flag = th_target_for_planned_war
+                }
+                save_event_target_as = planned_target
+            }
+        }
+    }
+
+    after = {
+        event_target:planned_target = {
+            clr_country_flag = th_target_for_planned_war
+        }
+    }
+
+    option = {  #To War!
+        name = th_diplo_events.2.a
+        trigger = {
+            event_target:planned_target = {
+                exists = yes
+            }
+            is_free_or_tributary_trigger = yes
+        }
+        declare_war_with_cb = {
+            casus_belli = cb_insult
+            who = event_target:planned_target            
+        }
+
+        ai_chance = {
+            factor = 100
+            modifier = {
+                factor = 0
+                was_player = yes
+            }
+            modifier = {
+                factor = 0
+                event_target:planned_target = {
+                    was_player = yes
+                }
+            }
+            modifier = {
+                factor = 0
+                event_target:planned_target = {
+                    ai = no
+                }
+            }
+        }
+    }
+
+    option = {  #We got tricked!
+        name = th_diplo_events.2.b
+        trigger = {
+            OR = {
+                event_target:planned_target = {
+                    exists = no
+                }                
+                is_free_or_tributary_trigger = no
+            }
+        }
+        add_prestige = -25
+        add_stability = -1
+
+        ai_chance = {
+            factor = 100
+            modifier = {
+                factor = 0
+                was_player = yes
+            }
+        }
+    }
+
+    option = {  #There is something wrong...
+        name = th_diplo_events.2.c
+
+        ai_chance = {
+            factor = 0
+            modifier = {
+                factor = 100
+                was_player = yes
+            }
+            modifier = {
+                factor = 100
+                event_target:planned_target = {
+                    was_player = yes
+                }
+            }
+            modifier = {
+                factor = 100
+                event_target:planned_target = {
+                    ai = no
+                }
+            }
+        }
+    }
+}
+
+#Clear flag
+country_event = {
+    id = th_diplo_events.3
+	title = th_diplo_events.3.t
+	desc = th_diplo_events.3.desc
+	picture = SPY_eventPicture
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        any_country = {
+            has_country_flag = th_has_already_a_planned_aggressor
+        }
+        calc_true_if = {
+            all_country = {
+                has_country_flag = th_is_planned_aggressor_of_@ROOT
+            }
+            amount = 0
+        }
+    }
+
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.3.a
+        clr_country_flag = th_has_already_a_planned_aggressor
+
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Clear flag if country is no longer able to be an aggressor
+country_event = {
+    id = th_diplo_events.4
+	title = th_diplo_events.4.t
+	desc = th_diplo_events.4.desc
+	picture = SPY_eventPicture
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        has_country_flag = th_has_already_a_planned_aggressor
+        calc_true_if = {
+            all_country = {
+                has_country_flag = th_is_planned_aggressor_of_@ROOT
+                is_free_or_tributary_trigger = no
+            }
+            amount = 1
+        }
+    }
+
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.4.a
+        clr_country_flag = th_has_already_a_planned_aggressor
+        every_country = {
+            limit = {
+                has_country_flag = th_is_planned_aggressor_of_@ROOT
+            }
+            clr_country_flag = th_is_planned_aggressor_of_@ROOT
+        }
+
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Set counter of aggressors for EIT
+country_event = {
+    id = th_diplo_events.5
+	title = th_diplo_events.5.t
+	desc = th_diplo_events.5.desc
+	picture = SPY_eventPicture
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+		OR = {
+			tag = EIT
+			AND = {
+				NOT = { exists = EIT }
+				was_tag = EIT
+			}
+		}
+		NOT = { has_country_flag = th_eit_has_aggressor_counter_setup }
+    }
+
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.5.a
+		set_country_flag = th_eit_has_aggressor_counter_setup
+		th_eit_set_aggressor_counter = yes
+
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Provocate War against Rival for EIT
+country_event = {
+    id = th_diplo_events.6
+	title = th_diplo_events.6.t
+	desc = th_diplo_events.6.desc
+	picture = SPY_eventPicture
+
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+        }
+    }
+    major = yes
+
+    after = {
+		every_country = {
+			limit = {
+				has_country_flag = th_eit_is_planned_aggressor_of_@ROOT
+			}
+            clr_country_flag = th_eit_is_planned_aggressor_of_@ROOT
+		}
+		while = {
+			limit = {
+				th_eit_has_at_least_one_aggressor = yes
+			}
+			th_eit_decrement_aggressor_counter = yes
+		}
+        clr_country_flag = th_has_already_a_planned_aggressor
+    }
+
+    option = {  #Excellent
+        name = th_diplo_events.1.a
+        hidden_effect = {
+            every_country = {
+                limit = {
+                    has_country_flag = th_eit_is_planned_aggressor_of_@ROOT
+                }
+                country_event = {
+                    id = th_diplo_events.8
+                    days = 1
+                }
+            }
+        }
+    }
+}
+
+#Aggressor gets order to declare war
+country_event = {
+    id = th_diplo_events.8
+	title = th_diplo_events.8.t
+	desc = th_diplo_events.8.desc
+    picture = DIPLOMACY_eventPicture
+    
+    major = yes
+
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            random_country = {
+                limit = {
+                    has_country_flag = th_eit_target_for_planned_war
+                }
+                save_event_target_as = planned_target_eit
+            }
+        }
+    }
+
+    after = {
+        event_target:planned_target_eit = {
+            clr_country_flag = th_eit_target_for_planned_war
+        }
+    }
+
+    option = {  #To War!
+        name = th_diplo_events.2.a
+        trigger = {
+            event_target:planned_target_eit = {
+                exists = yes
+            }
+            is_free_or_tributary_trigger = yes
+        }
+        declare_war_with_cb = {
+            casus_belli = cb_insult
+            who = event_target:planned_target_eit            
+        }
+
+        ai_chance = {
+            factor = 100
+            modifier = {
+                factor = 0
+                was_player = yes
+            }
+            modifier = {
+                factor = 0
+                event_target:planned_target_eit = {
+                    was_player = yes
+                }
+            }
+            modifier = {
+                factor = 0
+                event_target:planned_target_eit = {
+                    ai = no
+                }
+            }
+        }
+    }
+
+    option = {  #We got tricked!
+        name = th_diplo_events.2.b
+        trigger = {
+            OR = {
+                event_target:planned_target_eit = {
+                    exists = no
+                }                
+                is_free_or_tributary_trigger = no
+            }
+        }
+        add_prestige = -25
+        add_stability = -1
+
+        ai_chance = {
+            factor = 100
+            modifier = {
+                factor = 0
+                was_player = yes
+            }
+        }
+    }
+
+    option = {  #There is something wrong...
+        name = th_diplo_events.2.c
+
+        ai_chance = {
+            factor = 0
+            modifier = {
+                factor = 100
+                was_player = yes
+            }
+            modifier = {
+                factor = 100
+                event_target:planned_target_eit = {
+                    was_player = yes
+                }
+            }
+            modifier = {
+                factor = 100
+                event_target:planned_target_eit = {
+                    ai = no
+                }
+            }
+        }
+    }
+}
+
+#Clear flag if country is no longer able to be an aggressor for EIT
+country_event = {
+    id = th_diplo_events.9
+	title = th_diplo_events.9.t
+	desc = th_diplo_events.9.desc
+	picture = SPY_eventPicture
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+		th_eit_has_at_least_one_aggressor = yes
+        calc_true_if = {
+            all_country = {
+                has_country_flag = th_eit_is_planned_aggressor_of_@ROOT
+                is_free_or_tributary_trigger = no
+            }
+            amount = 1
+        }
+    }
+
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.9.a
+        every_country = {
+            limit = {
+                has_country_flag = th_eit_is_planned_aggressor_of_@ROOT
+                is_free_or_tributary_trigger = no
+            }
+            clr_country_flag = th_eit_is_planned_aggressor_of_@ROOT
+			ROOT = {
+				th_eit_decrement_aggressor_counter = yes
+			}
+        }
+
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Nation broke peldging
+country_event = {
+    id = th_diplo_events.10
+	title = th_diplo_events.10.t
+	desc = th_diplo_events.10.desc
+	picture = SHRINE_eventPicture
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        any_country = {
+            has_country_flag = th_pledged_to_religion_to_@ROOT
+            NOT = { has_country_modifier = th_pledged_to_remain_religious }
+        }
+        has_country_flag = th_able_to_force_religious_pledging
+    }
+
+    option = {
+        name = th_diplo_events.10.a
+        every_country = {
+            limit = {
+                has_country_flag = th_pledged_to_religion_to_@ROOT
+                NOT = { has_country_modifier = th_pledged_to_remain_religious }
+            }
+            reverse_add_casus_belli = {
+                type = cb_touhou_penance_war
+                target = ROOT
+            }
+            clr_country_flag = th_pledged_to_religion_to_@ROOT
+        }
+
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Removes punitive modifier if free again
+country_event = {
+    id = th_diplo_events.11
+	title = th_diplo_events.11.t
+	desc = th_diplo_events.11.desc
+	picture = SHRINE_eventPicture
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    hidden = yes
+
+    trigger = {
+        has_country_modifier = th_subjugated_in_penance
+        is_subject = no
+    }
+
+    option = {
+        name = th_diplo_events.11.a
+        remove_country_modifier = th_subjugated_in_penance
+
+        ai_chance = {
+            factor = 100
+        }
+    }
+}

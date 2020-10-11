@@ -1,0 +1,2768 @@
+########################################
+# Flavor Events for Mayohiga
+########################################
+
+namespace = flavor_mhg
+
+#Mayohiga's Daimyos - break vassalization, if Mayohiga changes government reform
+country_event = {
+	id = flavor_mhg.1
+	title = flavor_mhg.1.t
+	desc = flavor_mhg.1.desc
+	picture = YUKARI_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	trigger = {
+		NOT = { has_reform = TH_puppet_master_reform }
+		NOT = { has_country_flag = TH_puppet_master_nd }
+		num_of_subjects = 1 
+		any_subject_country = { is_subject_of_type = th_yukari_daimyo }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			every_subject_country = { 
+				limit = { is_subject_of_type = th_yukari_daimyo } 
+				country_event = { id = flavor_mhg.2 }
+			}
+		}
+	}
+	
+	option = {	#Abuse what?
+		name = flavor_mhg.1.a
+	}
+	option = {	#Worth it.
+		name = flavor_mhg.1.b
+	}
+	option = {	#Welp, bye Daimyos.
+		name = flavor_mhg.1.c
+	}
+	option = {	#You start to getting annoying...
+		name = flavor_mhg.1.d
+	}
+	option = {	#Can I have my immersion back, please?
+		name = flavor_mhg.1.e
+	}
+}
+
+#Mayohiga's Daimyos get independent
+country_event = {
+	id = flavor_mhg.2
+	title = flavor_mhg.2.t
+	desc = flavor_mhg.2.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		AND = {
+			is_subject = yes
+			is_subject_of_type = th_yukari_daimyo
+		}
+		overlord = {
+			NOT = { has_reform = TH_puppet_master_reform }
+		}
+	}
+	
+	option = {	#We are now masters of our own fate.
+		name = flavor_mhg.2.a
+		grant_independence = yes
+	}
+}
+
+#Lose Puppet Master Flag
+country_event = {
+	id = flavor_mhg.3
+	title = flavor_mhg.3.t
+	desc = flavor_mhg.3.desc
+	picture = YUKARI_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	trigger = {
+		has_country_flag = TH_puppet_master_nd
+		NOT = { government = monarchy }
+		NOT = { has_reform = TH_puppet_master_reform }
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = flavor_mhg.3.a
+		hidden_effect = {
+			clr_country_flag = TH_puppet_master_nd
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Mayohiga's vassals become daimyos
+country_event = {
+	id = flavor_mhg.4
+	title = flavor_mhg.4.t
+	desc = flavor_mhg.4.desc
+	picture = YUKARI_eventPicture
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+	
+	trigger = {
+		OR = {
+			has_reform = TH_puppet_master_reform
+			has_country_flag = TH_puppet_master_nd
+		}
+		num_of_subjects = 1 
+		OR = {
+			any_subject_country = { is_subject_of_type = vassal }
+			any_subject_country = { is_subject_of_type = daimyo_vassal }
+		}		
+	}
+	immediate = {
+		hidden_effect = {
+			every_subject_country = { 
+				limit = { 
+					OR = { 
+						is_subject_of_type = vassal 
+						is_subject_of_type = daimyo_vassal
+					}
+					NOT = { is_subject_of_type = th_yukari_daimyo }
+				} 
+				country_event = { id = flavor_mhg.5 }
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_mhg.4.a
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Vassal becomes Daimyo
+country_event = {
+	id = flavor_mhg.5
+	title = flavor_mhg.5.t
+	desc = flavor_mhg.5.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {	#Long live Yukari
+		name = flavor_mhg.5.a
+		grant_independence = yes
+		FROM = {
+			create_subject = {
+				subject_type = th_yukari_daimyo
+				subject = ROOT
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+###MISSION RELATED EVENTS###
+
+#Humilation of Remilia
+country_event = {
+	id = flavor_mhg.6
+	title = flavor_mhg.6.t
+	desc = flavor_mhg.6.desc
+	picture = REMILIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Resolve this useless rivalry
+		name = flavor_mhg.6.a
+
+		if = {
+			limit = {
+				exists = SCD
+				war_with = SCD
+			}
+			white_peace = SCD
+			remove_historical_rival = SCD
+			add_historical_friend = SCD
+			SCD = {
+				remove_historical_rival = ROOT
+				add_historical_friend = ROOT
+			}
+			create_subject = {
+				subject_type = th_yukari_march
+				subject = SCD
+			}
+		}
+		
+		else_if = {
+			limit = {
+				exists = SCR
+				war_with = SCR
+			}
+			white_peace = SCR
+			remove_historical_rival = SCR
+			add_historical_friend = SCR
+			SCR = {
+				remove_historical_rival = ROOT
+				add_historical_friend = ROOT
+			}
+			create_subject = {
+				subject_type = th_yukari_march
+				subject = SCR
+			}
+		}
+
+		add_dip_power = 150
+		add_war_exhaustion = -10
+		add_country_modifier = { 
+			name = mhg_support_of_the_vampire
+			duration = 7300
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Teach the little brat some manners
+		name = flavor_mhg.6.b
+
+		if = {
+			limit = {
+				exists = SCD
+				war_with = SCD
+			}
+			SCD = {
+				add_war_exhaustion = 2
+				add_stability = -2
+			}
+			add_years_of_income = 1
+		}
+		
+		else_if = {
+			limit = {
+				exists = SCR
+				war_with = SCR
+			}
+			SCR = {
+				add_war_exhaustion = 2
+				add_stability = -2
+			}
+			add_years_of_income = 1
+		}
+
+		add_mil_power = 150
+		add_army_tradition = 25
+		add_country_modifier = { 
+			name = mhg_disciplinated_the_vampire
+			duration = 7300
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#I think her rivalry is not a problem at all
+		name = flavor_mhg.6.c
+
+		add_adm_power = 150
+		add_stability = 2
+		add_years_of_income = 1.5
+		add_country_modifier = { 
+			name = mhg_neutral_decision
+			duration = 7300
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Annihilation of the lunarian threat
+country_event = {
+	id = flavor_mhg.7
+	title = flavor_mhg.7.t
+	desc = flavor_mhg.7.desc
+	picture = YUKARIVSEIRIN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Long live Yukari
+		name = flavor_mhg.7.a
+		
+		custom_tooltip = flavor_mhg.7.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Restoration of the Hakurei Barrier
+country_event = {
+	id = flavor_mhg.8
+	title = flavor_mhg.8.t
+	desc = flavor_mhg.8.desc
+	picture = BARRIER_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Make everyone to my tributary
+		name = flavor_mhg.8.a
+
+		add_country_modifier = {
+			name = mhg_restored_barrier
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Restore Gensokyan Authority
+country_event = {
+	id = flavor_mhg.9
+	title = flavor_mhg.9.t
+	desc = flavor_mhg.9.desc
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Gensokyo achieved unity through tranquility
+		name = flavor_mhg.9.a
+		add_adm_power = 350
+		add_dip_power = 350
+		if = {
+			limit = {
+				NOT = { government_rank = 3 }
+			}
+			set_government_rank = 3
+		}
+		add_country_modifier = {
+			name = mhg_symbolic_unification
+			duration = -1
+		}
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					capital_scope = {
+						continent = gensokyo_continent
+					}
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = mhg_fortified_authority_in_gensokyo					
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = mhg_fortified_authority_in_gensokyo
+				}
+			}
+		}
+		custom_tooltip = flavor_mhg.9.a.tt
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Daimyo becomes too powerful!
+country_event = {
+	id = flavor_mhg.10
+	title = flavor_mhg.10.t
+	desc = flavor_mhg.10.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	trigger = {
+		any_subject_country = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_yukari_daimyo
+			total_development = 300
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+	
+	option = {	#DAMNIT
+		name = flavor_mhg.10.a
+		every_subject_country = {
+			limit = {
+				is_subject_of = ROOT
+				is_subject_of_type = th_yukari_daimyo
+				total_development = 300
+			}
+			grant_independence = yes
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+###EVENTS REGARDING AMERICA###
+
+#Fate of the Aztec Empire
+country_event = {
+	id = flavor_mhg.11
+	title = flavor_mhg.11.t
+	desc = flavor_mhg.11.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Modernize current aztec subject
+		name = flavor_mhg.11.a
+		trigger = {
+			exists = AZT
+			AZT = {
+				ai = yes
+				was_player = no
+			}
+		}
+		custom_tooltip = th_modernize_the_aztecs
+		hidden_effect = {
+			inherit = AZT
+			release = AZT
+			create_subject = {
+				subject_type = th_yukari_puppet_state
+				subject = AZT
+			}
+			AZT = {
+				change_religion = ROOT
+				every_owned_province = {
+					change_religion = ROOT
+					remove_core = ROOT
+					add_institution_embracement = {
+						which = feudalism
+						value = 100
+					}
+					add_next_institution_embracement = 10
+				}
+				change_government = monarchy
+				add_government_reform = feudalism_reform
+				adopt_reform_progress = ROOT
+				set_government_rank = 2
+				add_legitimacy = 100
+				define_ruler = {
+					name = "Moctezuma"
+					dynasty = "Ilhuicamina"
+					age = "25"
+					adm = 4
+					dip = 3
+					mil = 5
+					fixed = yes
+					religion = ROOT
+				}
+				mexico_region = {
+					limit = {
+						NOT = { is_permanent_claim = AZT }
+						NOT = { is_core = AZT }
+					}
+					add_permanent_claim = AZT
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Do nothing with Aztecs, because they're a player
+		name = flavor_mhg.11.b
+		trigger = {
+			exists = AZT
+			AZT = {
+				ai = no
+				was_player = yes
+			}
+		}
+		add_adm_power = 200
+		add_dip_power = 200
+		add_mil_power = 200
+		if = {
+			limit = {				
+				owns_or_subject_of = 852
+			}
+			852 = {
+				add_base_tax = 4
+				add_base_production = 4
+				add_base_manpower = 3
+			}
+		}
+		custom_tooltip = flavor_mhg.11.b.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Release Aztecs
+		name = flavor_mhg.11.c
+		trigger = {
+			NOT = { exists = AZT }
+		}
+		custom_tooltip = th_release_aztecs
+		hidden_effect = {
+			852 = {
+				add_core = AZT
+				remove_core = ROOT
+				owner = {
+					release = AZT
+				}
+			}
+			create_subject = {
+				subject_type = th_yukari_puppet_state
+				subject = AZT
+			}
+			AZT = {
+				change_religion = ROOT
+				every_owned_province = {
+					change_religion = ROOT
+					remove_core = ROOT
+					add_institution_embracement = {
+						which = feudalism
+						value = 100
+					}
+					add_next_institution_embracement = 10
+				}
+				change_government = monarchy
+				add_government_reform = feudalism_reform
+				set_government_rank = 2
+				add_legitimacy = 100
+				adopt_reform_progress = ROOT
+				define_ruler = {
+					name = "Moctezuma"
+					dynasty = "Ilhuicamina"
+					age = "25"
+					adm = 4
+					dip = 3
+					mil = 5
+					fixed = yes
+					religion = ROOT
+				}
+				mexico_region = {
+					limit = {
+						NOT = { is_permanent_claim = AZT }
+						NOT = { is_core = AZT }
+					}
+					add_permanent_claim = AZT
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Integrate them into our colonial nation
+		name = flavor_mhg.11.d
+		trigger = {
+			exists = AZT
+			AZT = {
+				ai = yes
+				was_player = no
+				is_subject_of = ROOT
+			}
+		}
+		inherit = AZT
+		add_adm_power = 50
+		add_dip_power = 50
+		add_mil_power = 50
+	}
+	
+	option = {	#Do nothing with Aztecs, because they're a player
+		name = flavor_mhg.11.e
+		add_adm_power = 200
+		add_dip_power = 200
+		add_mil_power = 200
+	}
+}
+
+#Visit the pagan gods - start event
+country_event = {
+	id = flavor_mhg.12
+	title = flavor_mhg.12.t
+	desc = flavor_mhg.12.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Lets see how it will go
+		name = flavor_mhg.12.a
+		custom_tooltip = flavor_mhg.12.a.tt
+		hidden_effect = {
+			set_country_flag = mhg_pagan_gods_event_chain
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Control over the heart of the Aztec Empire
+country_event = {
+	id = flavor_mhg.14
+	title = flavor_mhg.14.t
+	desc = flavor_mhg.14.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	trigger = {
+		has_country_flag = mhg_pagan_gods_event_chain
+		owns_or_subject_of = 852
+		NOT = { has_country_flag = mhg_meeting_with_the_pagan_gods_ended }
+		NOT = { has_country_flag = mhg_has_mexican_city }
+	}
+
+	mean_time_to_happen = {
+		days = 90
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = mhg_has_mexican_city
+		}
+	}
+
+	option = {
+		name = flavor_mhg.14.a
+		852 = {
+			add_permanent_province_modifier = {
+				name = mhg_yukaris_gift_to_quetzalcoatl
+				duration = -1
+			}
+		}
+		custom_tooltip = flavor_mhg.14.a.tt
+	}
+}
+
+#Control over Sotuta
+country_event = {
+	id = flavor_mhg.15
+	title = flavor_mhg.15.t
+	desc = flavor_mhg.15.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	trigger = {
+		has_country_flag = mhg_pagan_gods_event_chain
+		owns_or_subject_of = 846
+		NOT = { has_country_flag = mhg_meeting_with_the_pagan_gods_ended }
+		NOT = { has_country_flag = mhg_has_sotuta }
+	}
+
+	mean_time_to_happen = {
+		days = 90
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = mhg_has_sotuta
+		}
+	}
+
+	option = {
+		name = flavor_mhg.15.a
+		add_mercantilism = 5
+		add_years_of_income = 1
+		custom_tooltip = flavor_mhg.15.a.tt
+	}
+}
+
+#Control over Cholula
+country_event = {
+	id = flavor_mhg.16
+	title = flavor_mhg.16.t
+	desc = flavor_mhg.16.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	trigger = {
+		has_country_flag = mhg_pagan_gods_event_chain
+		owns_or_subject_of = 2644
+		NOT = { has_country_flag = mhg_meeting_with_the_pagan_gods_ended }
+		NOT = { has_country_flag = mhg_has_cholula }
+	}
+
+	mean_time_to_happen = {
+		days = 90
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = mhg_has_cholula
+		}
+	}
+
+	option = {
+		name = flavor_mhg.16.a
+		2644 = {
+			add_permanent_province_modifier = {
+				name = mhg_shikigami_in_mexican_gold_mine
+				duration = 3650
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_ruler = "Yukari" }
+				NOT = { has_ruler = "Ran" }
+				NOT = { adm = 5 }
+				NOT = { dip = 5 }
+				NOT = { mil = 5 }
+			}
+			add_ruler_modifier = {
+				name = mhg_insanity
+				duration = 7300
+			}
+		}
+		custom_tooltip = flavor_mhg.16.a.tt
+	}
+}
+
+#Meeting with Quetzacoatl
+country_event = {
+	id = flavor_mhg.17
+	title = flavor_mhg.17.t
+	desc = flavor_mhg.17.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	major = yes
+
+	trigger = {
+		has_country_flag = mhg_pagan_gods_event_chain
+		has_country_flag = mhg_has_mexican_city
+		has_country_flag = mhg_has_sotuta
+		has_country_flag = mhg_has_cholula
+		NOT = { has_country_flag = mhg_met_quetzacoatl }
+	}
+
+	mean_time_to_happen = {
+		days = 90
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = mhg_met_quetzacoatl
+		}
+	}
+
+	option = {	#Convince the youkais to come to Gensoyko
+		name = flavor_mhg.17.a
+		add_country_modifier = {
+			name = mhg_aztec_youkais
+			duration = 9125
+		}
+		add_stability = -1
+		custom_tooltip = flavor_mhg.17.a.tt
+	}
+
+	option = {	#Let them be
+		name = flavor_mhg.17.b
+		add_stability = 2
+		custom_tooltip = flavor_mhg.17.b.tt
+	}
+}
+
+#Yukari leaves Cholula
+country_event = {
+	id = flavor_mhg.18
+	title = flavor_mhg.18.t
+	desc = flavor_mhg.18.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	trigger = {
+		has_country_flag = mhg_met_quetzacoatl
+		NOT = { has_country_flag = mhg_meeting_with_the_pagan_gods_ended }
+	}
+
+	mean_time_to_happen = {
+		days = 90
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = mhg_meeting_with_the_pagan_gods_ended
+			clr_country_flag = mhg_pagan_gods_event_chain
+			clr_country_flag = mhg_has_mexican_city
+			clr_country_flag = mhg_has_sotuta
+			clr_country_flag = mhg_has_cholula
+			clr_country_flag = mhg_met_quetzacoatl
+		}
+	}
+
+	option = {
+		name = flavor_mhg.18.a
+		add_prestige = 25
+		custom_tooltip = flavor_mhg.18.a.tt
+		custom_tooltip = mhg_got_treasure_from_outworld
+		hidden_effect = {
+			set_country_flag = mhg_gift_from_outworld_friends
+		}
+	}
+}
+
+###EVENTS REGARDING ASIA###
+
+#Meeting with the Tenno - Good
+country_event = {
+	id = flavor_mhg.19
+	title = flavor_mhg.19.t
+	desc = flavor_mhg.19.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Sweet.
+		name = flavor_mhg.19.a
+		4182 = {
+			add_core = ROOT
+			cede_province = ROOT
+		}
+		add_prestige = 25
+		add_mercantilism = 5
+		if = {
+			limit = {
+				exists = JAP
+			}
+			reverse_add_opinion = {
+				who = JAP
+				modifier = th_lucrative_trade_deal
+			}
+		} 
+		else = {
+			reverse_add_opinion = {
+				who = ASK
+				modifier = th_lucrative_trade_deal
+			}
+		}
+		custom_tooltip = flavor_mhg.19.a.tt
+		hidden_effect = {
+			set_country_flag = mhg_nagasaki_claim
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Meeting with the Tenno - Bad
+country_event = {
+	id = flavor_mhg.20
+	title = flavor_mhg.20.t
+	desc = flavor_mhg.20.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#This means war!
+		name = flavor_mhg.20.a
+		4182 = {
+			add_core = ROOT
+		}
+		1020 = {
+			owner = {
+				add_casus_belli = {
+					type = cb_insult
+					target = ROOT
+					months = 180
+				}
+			}
+		}
+		add_country_modifier = {
+			name = mhg_tensed_relations_with_japan
+			duration = 5475
+		}
+		custom_tooltip = flavor_mhg.20.a.tt
+		hidden_effect = {
+			set_country_flag = mhg_nagasaki_claim
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Meeting with the Tenno - Lol, which Tenno
+country_event = {
+	id = flavor_mhg.21
+	title = flavor_mhg.21.t
+	desc = flavor_mhg.21.desc
+	picture = YUKARI2_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#I am the Tenno!
+		name = flavor_mhg.21.a
+		4182 = {
+			add_core = ROOT
+			cede_province = ROOT
+		}
+		add_mercantilism = 2 
+		custom_tooltip = flavor_mhg.21.a.tt
+		hidden_effect = {
+			set_country_flag = mhg_nagasaki_claim
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Nagasaki becomes important trade city
+country_event = {
+	id = flavor_mhg.22
+	title = flavor_mhg.22.t
+	desc = flavor_mhg.22.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	major = yes
+
+	trigger = {
+		has_country_flag = mhg_nagasaki_claim
+		owns_or_subject_of = 4182
+	}
+
+	mean_time_to_happen = {
+		days = 90
+	}
+	
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = mhg_nagasaki_claim
+		}
+	}
+
+	option = {	#Screw you Portugal
+		name = flavor_mhg.22.a
+		4182 = {
+			change_religion = ROOT
+			add_base_tax = 3
+			add_base_production = 3
+			add_base_manpower = 2
+			center_of_trade = 2
+		}
+		custom_tooltip = flavor_mhg.22.a.tt
+	}
+}
+
+#Meeting with the Emperor - Good
+country_event = {
+	id = flavor_mhg.23
+	title = flavor_mhg.23.t
+	desc = flavor_mhg.23.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Sweet.
+		name = flavor_mhg.23.a
+		668 = {
+			add_core = ROOT
+			cede_province = ROOT
+			remove_core = MNG
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 1
+			add_center_of_trade_level = 1
+		}
+		add_prestige = 25
+		add_mercantilism = 5
+		reverse_add_opinion = {
+			who = MNG
+			modifier = th_lucrative_trade_deal
+		}
+		custom_tooltip = flavor_mhg.23.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Meeting with the Emperor - Bad
+country_event = {
+	id = flavor_mhg.24
+	title = flavor_mhg.24.t
+	desc = flavor_mhg.24.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#I'll take the province anyway
+		name = flavor_mhg.24.a
+		668 = {
+			add_core = ROOT
+			cede_province = ROOT
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 1
+			add_center_of_trade_level = 1
+		}
+		custom_tooltip = flavor_mhg.24.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Well, then no more trades with China
+		name = flavor_mhg.24.b
+		668 = {
+			add_permanent_claim = ROOT
+		}
+		add_mercantilism = 5
+		add_casus_belli = {
+			type = cb_insult
+			target = MNG
+			months = 180
+		}
+		hidden_effect = {
+			668 = {
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
+				add_center_of_trade_level = 1
+			}
+		}
+		custom_tooltip = flavor_mhg.24.b.tt
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Meeting with old friends in India
+country_event = {
+	id = flavor_mhg.25
+	title = flavor_mhg.25.t
+	desc = flavor_mhg.25.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = flavor_mhg.25.a
+		add_country_modifier = {
+			name = mhg_pagan_jewel
+			duration = 9125
+		}
+		custom_tooltip = flavor_mhg.25.a.tt
+		custom_tooltip = mhg_got_treasure_from_outworld
+		hidden_effect = {
+			set_country_flag = mhg_gift_from_outworld_friends
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+###EVENTS REGARDING MIDDLE EAST###
+
+#Yukari decides to visit a contact man in Hormuz
+country_event = {
+	id = flavor_mhg.26
+	title = flavor_mhg.26.t
+	desc = flavor_mhg.26.desc
+	picture = THMIDDLEEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Yukari goes
+		name = flavor_mhg.26.a
+		2999 = {
+			owner = {
+				country_event = {
+					id = flavor_mhg.27					
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Hormuz Sultan gets a visit by Yukari
+country_event = {
+	id = flavor_mhg.27
+	title = flavor_mhg.27.t
+	desc = flavor_mhg.27.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#This woman makes a fair point. We should listen to her.
+		name = flavor_mhg.27.a
+		trigger = {
+			NOT = { tag = ORM }
+		}
+		2999 = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+		}
+		add_treasury = 1000
+		FROM = {
+			country_event = {
+				id = flavor_mhg.28
+			}
+		}
+		custom_tooltip = flavor_mhg.27.a.tt
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = 75					
+					}
+				}				
+			}
+		}
+	}
+	
+	option = {	#This island shall remain ours
+		name = flavor_mhg.27.b
+		trigger = {
+			NOT = { tag = ORM }
+		}
+		2999 = {
+			add_core = FROM
+		}
+		add_prestige = 25
+		FROM = {
+			country_event = {
+				id = flavor_mhg.29
+			}
+		}
+		custom_tooltip = flavor_mhg.27.b.tt
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				has_opinion = {
+					who = FROM
+					value = 75
+				}			
+			}
+		}
+	}
+	
+	option = {	#We should seek the protection of this jinn
+		name = flavor_mhg.27.d
+		trigger = {
+			tag = ORM
+		}
+		2999 = {
+			add_base_tax = 3
+			add_base_production = 3
+			add_base_manpower = 2
+		}
+		add_treasury = 1000
+		FROM = {
+			country_event = {
+				id = flavor_mhg.30
+			}
+		}
+		custom_tooltip = flavor_mhg.27.d.tt
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = 75					
+					}
+				}				
+			}
+		}
+	}
+	
+	option = {	#We cannot trust her
+		name = flavor_mhg.27.c
+		trigger = {
+			tag = ORM
+		}
+		2999 = {
+			add_core = FROM
+		}
+		FROM = {
+			country_event = {
+				id = flavor_mhg.31
+			}
+		}
+		custom_tooltip = flavor_mhg.27.c.tt
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				has_opinion = {
+					who = FROM
+					value = 75
+				}			
+			}
+		}
+	}
+}
+
+#Mayohiga gets Hormuz
+country_event = {
+	id = flavor_mhg.28
+	title = flavor_mhg.28.t
+	desc = flavor_mhg.28.desc
+	picture = THMIDDLEEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Lovely
+		name = flavor_mhg.28.a
+		2999 = {
+			add_base_tax = 3
+			add_base_production = 3
+			add_base_manpower = 2
+		}
+		custom_tooltip = flavor_mhg.28.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Mayohiga gets not Hormuz
+country_event = {
+	id = flavor_mhg.29
+	title = flavor_mhg.29.t
+	desc = flavor_mhg.29.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Screw you then
+		name = flavor_mhg.29.a
+		add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 300
+		}
+		custom_tooltip = flavor_mhg.29.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Mayohiga gets Hormuz as puppet state
+country_event = {
+	id = flavor_mhg.30
+	title = flavor_mhg.30.t
+	desc = flavor_mhg.30.desc
+	picture = THMIDDLEEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Lovely
+		name = flavor_mhg.30.a
+		create_subject = {
+			subject_type = th_yukari_puppet_state
+			subject = ORM
+		}
+		custom_tooltip = flavor_mhg.30.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Mayohiga gets rejected by Hormuz
+country_event = {
+	id = flavor_mhg.31
+	title = flavor_mhg.31.t
+	desc = flavor_mhg.31.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#They will be my subject - one way or the other
+		name = flavor_mhg.31.a
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			target = ORM
+			months = 900
+		}
+		custom_tooltip = flavor_mhg.31.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Yukari visits Babylon			CURRENTLY NOT USED
+country_event = {
+	id = flavor_mhg.32
+	title = flavor_mhg.32.t
+	desc = flavor_mhg.32.desc
+	picture = THMIDDLEEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#They will be my subject - one way or the other
+		name = flavor_mhg.32.a
+		add_treasury = 2000
+		2312 = {
+			change_trade_goods = gold
+			add_permanent_province_modifier = {
+				name = mhg_the_golden_city_of_uruk
+				duration = -1
+			}
+		}
+		custom_tooltip = flavor_mhg.32.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+		if = {
+			limit = {
+				MAM = {
+					is_subject = NO
+				}
+			}
+			add_casus_belli = {
+				target = MAM
+				type = cb_restore_personal_union
+				months = 900
+			}
+		}
+	}
+}
+
+#The Egypt Question				CURRENTLY NOT USED
+country_event = {
+	id = flavor_mhg.33
+	title = flavor_mhg.33.t
+	desc = flavor_mhg.33.desc
+	picture = THMIDDLEEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Make the Mamluks to a puppet state
+		name = flavor_mhg.33.a
+		custom_tooltip = flavor_mhg.33.a.tt
+		hidden_effect = {
+			MAM = {
+				grant_independence = yes
+				add_legitimacy = 100
+			}
+			create_subject = {
+				subject_type = th_yukari_puppet_state
+				subject = MAM				
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Keep Mamluks as a personal union
+		name = flavor_mhg.33.b
+		add_prestige = 10
+		custom_tooltip = flavor_mhg.33.b.tt
+		hidden_effect = {
+			MAM = {
+				add_government_reform = feudalism_reform
+			}
+		}
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Fate of Constantinople
+country_event = {
+	id = flavor_mhg.34
+	title = flavor_mhg.34.t
+	desc = flavor_mhg.34.desc
+	picture = THMIDDLEEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Restore the Byzantine Empire
+		name = flavor_mhg.34.a
+		trigger = {
+			NOT = { exists = BYZ }
+		}
+		custom_tooltip = flavor_mhg.34.a.tt
+		hidden_effect = {
+			151 = {
+				add_core = BYZ
+				change_religion = orthodox
+				change_culture = greek
+				remove_core = ROOT
+			}
+			release = BYZ
+			create_subject = {
+				subject_type = th_yukari_puppet_state
+				subject = BYZ
+			}
+			BYZ = {
+				change_government = monarchy
+				add_government_reform = feudalism_reform
+				add_adm_power = 120
+				add_dip_power = 108
+				add_mil_power = 120
+				set_government_rank = 3
+				set_capital = 151
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+					}
+				}
+			}
+			thrace_area = {
+				limit = {
+					NOT = { is_core = BYZ }
+					NOT = { is_permanent_claim = BYZ }
+				}
+				add_permanent_claim = BYZ
+			}
+			macedonia_area = {
+				limit = {
+					NOT = { is_core = BYZ }
+					NOT = { is_permanent_claim = BYZ }
+				}
+				add_permanent_claim = BYZ
+			}
+			northern_greece_area = {
+				limit = {
+					NOT = { is_core = BYZ }
+					NOT = { is_permanent_claim = BYZ }
+				}
+				add_permanent_claim = BYZ
+			}
+			morea_area = {
+				limit = {
+					NOT = { is_core = BYZ }
+					NOT = { is_permanent_claim = BYZ }
+				}
+				add_permanent_claim = BYZ
+			}
+			country_event = {
+				id = flavor_mhg.35
+			}
+		}
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	#Restore the Sultante of Rum
+		name = flavor_mhg.34.b
+		trigger = {
+			NOT = { exists = RUM }
+		}
+		custom_tooltip = flavor_mhg.34.b.tt
+		hidden_effect = {
+			151 = {
+				add_core = RUM
+				change_religion = sunni
+				change_culture = turkish
+				remove_core = ROOT
+			}
+			release = RUM
+			create_subject = {
+				subject_type = th_yukari_puppet_state
+				subject = RUM
+			}
+			RUM = {
+				change_government = monarchy
+				add_government_reform = ottoman_government
+				add_adm_power = 120
+				add_dip_power = 108
+				add_mil_power = 120
+				set_government_rank = 3
+				define_ruler = {
+					name = "Mehmet II Fatih"
+					dynasty = "Osmanoglu"
+					adm = 6
+					dip = 4
+					mil = 6
+					age = 20
+					fixed = yes
+					claim = 100
+				}
+				add_accepted_culture = greek
+				add_accepted_culture = bulgarian
+				add_ruler_personality = conqueror_personality
+				set_capital = 151
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+					}
+				}
+			}			
+			anatolia_region = {
+				limit = {
+					NOT = { is_core = RUM }
+					NOT = { is_permanent_claim = RUM }
+				}
+				add_permanent_claim = RUM
+			}
+			thrace_area = {
+				limit = {
+					NOT = { is_core = RUM }
+					NOT = { is_permanent_claim = RUM }
+				}
+				add_permanent_claim = RUM
+			}
+			macedonia_area = {
+				limit = {
+					NOT = { is_core = RUM }
+					NOT = { is_permanent_claim = RUM }
+				}
+				add_permanent_claim = RUM
+			}
+			northern_greece_area = {
+				limit = {
+					NOT = { is_core = RUM }
+					NOT = { is_permanent_claim = RUM }
+				}
+				add_permanent_claim = RUM
+			}
+			morea_area = {
+				limit = {
+					NOT = { is_core = RUM }
+					NOT = { is_permanent_claim = RUM }
+				}
+				add_permanent_claim = RUM
+			}
+		}
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	#Keep the city for yourself
+		name = flavor_mhg.34.c
+		add_prestige = 50
+		add_accepted_culture = greek
+		add_accepted_culture = turkish
+		151 = {
+			change_religion = ROOT
+		}
+		custom_tooltip = flavor_mhg.34.c.tt
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Choose the ruler - Byzantine
+country_event = {
+	id = flavor_mhg.35
+	title = flavor_mhg.35.t
+	desc = flavor_mhg.35.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#I know he isn't a real basileus, but Constantine would be great
+		name = flavor_mhg.35.a
+		custom_tooltip = flavor_mhg.35.a.tt
+		BYZ = {
+			define_ruler = {
+				name = "Constantine I"
+				dynasty = "Constantinian"
+				adm = 6
+				dip = 4
+				mil = 4
+				age = 25
+				fixed = yes
+				claim = 100
+				culture = roman
+			}
+		}
+		ai_chance = { 
+			factor = 33
+		}
+	}
+	
+	option = {	#Justinian is a great basileus
+		name = flavor_mhg.35.b
+		custom_tooltip = flavor_mhg.35.b.tt
+		BYZ = {
+			define_ruler = {
+				name = "Justinian I"
+				dynasty = "Justinian"
+				adm = 4
+				dip = 4
+				mil = 6
+				age = 25
+				fixed = yes
+				claim = 100
+			}
+		}
+		ai_chance = { 
+			factor = 33
+		}
+	}
+	
+	option = {	#Theodora would be perfect
+		name = flavor_mhg.35.c
+		custom_tooltip = flavor_mhg.35.c.tt
+		BYZ = {
+			define_ruler = {
+				name = "Theodora"
+				dynasty = "Amorian"
+				adm = 4
+				dip = 6
+				mil = 4
+				age = 25
+				fixed = yes
+				claim = 100
+				female = yes
+			}
+		}
+		ai_chance = { 
+			factor = 33
+		}
+	}
+}
+
+#Choose the ruler - Turkish		CURRENTLY NOT USED
+country_event = {
+	id = flavor_mhg.36
+	title = flavor_mhg.36.t
+	desc = flavor_mhg.36.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#I know he isn't a real basileus, but Constantine would be great
+		name = flavor_mhg.35.a
+		custom_tooltip = flavor_mhg.35.a.tt
+		RUM = {
+			define_ruler = {
+				name = "Constantine I"
+				dynasty = "Constantinian"
+				adm = 6
+				dip = 4
+				mil = 4
+				age = 25
+				fixed = yes
+				claim = 100
+			}
+		}
+		ai_chance = { 
+			factor = 33
+		}
+	}
+	
+	option = {	#Justinian is a great basileus
+		name = flavor_mhg.35.b
+		custom_tooltip = flavor_mhg.35.b.tt
+		RUM = {
+			define_ruler = {
+				name = "Justinian I"
+				dynasty = "Justinian"
+				adm = 4
+				dip = 4
+				mil = 6
+				age = 25
+				fixed = yes
+				claim = 100
+			}
+		}
+		ai_chance = { 
+			factor = 33
+		}
+	}
+	
+	option = {	#Theodora would be perfect
+		name = flavor_mhg.35.c
+		custom_tooltip = flavor_mhg.35.c.tt
+		RUM = {
+			define_ruler = {
+				name = "Theodora"
+				dynasty = "Amorian"
+				adm = 4
+				dip = 6
+				mil = 4
+				age = 25
+				fixed = yes
+				claim = 100
+				female = yes
+			}
+		}
+		ai_chance = { 
+			factor = 33
+		}
+	}
+}
+
+#Meeting with the Oracle
+country_event = {
+	id = flavor_mhg.37
+	title = flavor_mhg.37.t
+	desc = flavor_mhg.37.desc
+	picture = THGREEK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_mhg.37.a
+		add_country_modifier = {
+			name = mhg_oracle_service
+			duration = 9125
+		}
+		custom_tooltip = flavor_mhg.37.a.tt
+		custom_tooltip = mhg_got_treasure_from_outworld
+		hidden_effect = {
+			set_country_flag = mhg_gift_from_outworld_friends
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+####EUROPE EVENTS###
+
+
+#Yukari tries to buy Gibraltar
+country_event = {
+	id = flavor_mhg.38
+	title = flavor_mhg.38.t
+	desc = flavor_mhg.38.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Try to convince them with our good relation
+		name = flavor_mhg.38.a
+		custom_tooltip = flavor_mhg.38.a.tt
+		hidden_effect = {
+			set_country_flag = mhg_flavor_mhg_38_gr
+		}
+		226 = {
+			owner = {
+				country_event = {
+					id = flavor_mhg.39					
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Give them a little bit of money
+		name = flavor_mhg.38.b
+		custom_tooltip = flavor_mhg.38.b.tt
+		hidden_effect = {
+			set_country_flag = mhg_flavor_mhg_38_okr
+		}
+		226 = {
+			owner = {
+				country_event = {
+					id = flavor_mhg.39					
+				}
+			}
+		}
+		add_treasury = -500
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Make a fair offer
+		name = flavor_mhg.38.c
+		custom_tooltip = flavor_mhg.38.c.tt
+		hidden_effect = {
+			set_country_flag = mhg_flavor_mhg_38_fo
+		}
+		226 = {
+			owner = {
+				country_event = {
+					id = flavor_mhg.39					
+				}
+			}
+		}
+		add_treasury = -1000
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Make a friendly offer
+		name = flavor_mhg.38.d
+		custom_tooltip = flavor_mhg.38.d.tt
+		hidden_effect = {
+			set_country_flag = mhg_flavor_mhg_38_fro
+		}
+		226 = {
+			owner = {
+				country_event = {
+					id = flavor_mhg.39					
+				}
+			}
+		}
+		add_treasury = -1500
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Just buy this damn province
+		name = flavor_mhg.38.e
+		custom_tooltip = flavor_mhg.38.e.tt
+		hidden_effect = {
+			set_country_flag = mhg_flavor_mhg_38_jb
+		}
+		226 = {
+			owner = {
+				country_event = {
+					id = flavor_mhg.39					
+				}
+			}
+		}
+		add_treasury = -2000
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Nah
+		name = flavor_mhg.38.f
+		custom_tooltip = flavor_mhg.38.e.tt
+		add_prestige = -5
+		add_mercantilism = 1
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Mayohiga tries to buy Gibraltar (due good relations)
+country_event = {	
+	id = flavor_mhg.39
+	title = flavor_mhg.39.t
+	desc = flavor_mhg.39.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#We should trust her
+		name = flavor_mhg.39.a
+		trigger = {
+			FROM = {
+				has_country_flag = mhg_flavor_mhg_38_gr
+			}
+		}
+		226 = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+		}
+		add_dip_power = 200
+		FROM = {
+			country_event = {
+				id = flavor_mhg.40
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = 120					
+					}
+				}				
+			}
+		}
+	}
+	
+	option = {	#Well, a little bit of money always helps
+		name = flavor_mhg.39.b
+		trigger = {
+			FROM = {
+				has_country_flag = mhg_flavor_mhg_38_okr
+			}
+		}
+		226 = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+		}
+		add_dip_power = 150
+		add_treasury = 500
+		FROM = {
+			country_event = {
+				id = flavor_mhg.40
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = 70
+					}
+				}				
+			}
+		}
+	}
+	
+	option = {	#A fair offer
+		name = flavor_mhg.39.c
+		trigger = {
+			FROM = {
+				has_country_flag = mhg_flavor_mhg_38_fo
+			}
+		}
+		226 = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+		}
+		add_dip_power = 100
+		add_treasury = 1000
+		FROM = {
+			country_event = {
+				id = flavor_mhg.40
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = 0
+					}
+				}				
+			}
+		}
+	}
+	
+	option = {	#We can't decline such a nice offer
+		name = flavor_mhg.39.d
+		trigger = {
+			FROM = {
+				has_country_flag = mhg_flavor_mhg_38_fro
+			}
+		}
+		226 = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+		}
+		add_dip_power = 50
+		add_treasury = 1500
+		FROM = {
+			country_event = {
+				id = flavor_mhg.40
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = -100
+					}
+				}				
+			}
+		}
+	}
+	
+	option = {	#Thanks for the money
+		name = flavor_mhg.39.e
+		trigger = {
+			FROM = {
+				has_country_flag = mhg_flavor_mhg_38_jb
+			}
+		}
+		226 = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+		}
+		add_treasury = 2000
+		FROM = {
+			country_event = {
+				id = flavor_mhg.40
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Gibraltar remains ours
+		name = flavor_mhg.39.f
+		226 = {
+			add_core = FROM
+		}
+		add_prestige = 25
+		add_stability_or_adm_power = yes
+		FROM = {
+			country_event = {
+				id = flavor_mhg.41
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						FROM = {
+							has_country_flag = mhg_flavor_mhg_38_gr
+						}
+						has_opinion = {
+							who = FROM
+							value = 120
+						}
+					}
+					AND = {
+						FROM = {
+							has_country_flag = mhg_flavor_mhg_38_okr
+						}
+						has_opinion = {
+							who = FROM
+							value = 70
+						}
+					}
+					AND = {
+						FROM = {
+							has_country_flag = mhg_flavor_mhg_38_fo
+						}
+						has_opinion = {
+							who = FROM
+							value = 0
+						}
+					}
+					AND = {
+						FROM = {
+							has_country_flag = mhg_flavor_mhg_38_fro
+						}
+						has_opinion = {
+							who = FROM
+							value = -100
+						}
+					}
+					FROM = {
+						has_country_flag = mhg_flavor_mhg_38_jb
+					}
+				}	
+			}
+		}
+	}
+}
+
+#Yukari gets Gibraltar
+country_event = {
+	id = flavor_mhg.40
+	title = flavor_mhg.40.t
+	desc = flavor_mhg.40.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Lovely
+		name = flavor_mhg.40.a
+		226 = {
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 2
+			center_of_trade = 1
+		}
+		custom_tooltip = flavor_mhg.40.a.tt
+		hidden_effect = {
+			clr_country_flag = mhg_flavor_mhg_38_gr
+			clr_country_flag = mhg_flavor_mhg_38_okr
+			clr_country_flag = mhg_flavor_mhg_38_fo
+			clr_country_flag = mhg_flavor_mhg_38_fro
+			clr_country_flag = mhg_flavor_mhg_38_jb
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Mayohiga gets not Gibraltar
+country_event = {
+	id = flavor_mhg.41
+	title = flavor_mhg.41.t
+	desc = flavor_mhg.41.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Screw you then
+		name = flavor_mhg.41.a
+		add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 300
+		}
+		custom_tooltip = flavor_mhg.41.a.tt
+		hidden_effect = {
+			clr_country_flag = mhg_flavor_mhg_38_gr
+			clr_country_flag = mhg_flavor_mhg_38_okr
+			clr_country_flag = mhg_flavor_mhg_38_fo
+			clr_country_flag = mhg_flavor_mhg_38_fro
+			clr_country_flag = mhg_flavor_mhg_38_jb
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Prussian Fate
+country_event = {
+	id = flavor_mhg.42
+	title = flavor_mhg.42.t
+	desc = flavor_mhg.42.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Create Prussia
+		name = flavor_mhg.42.a
+		trigger = {
+			NOT = { exists = PRU }
+		}
+		custom_tooltip = flavor_mhg.42.a.tt
+		hidden_effect = {
+			41 = {
+				add_core = PRU
+				add_base_tax = 4
+				add_base_production = 4
+				add_base_manpower = 3
+				if = {
+					limit = {
+						is_religion_enabled = protestant
+					}
+					change_religion = protestant
+				}
+				change_culture = prussian
+				remove_core = ROOT
+			}
+			release = PRU
+			create_subject = {
+				subject_type = th_yukari_puppet_state
+				subject = PRU
+			}
+			PRU = {
+				change_government = monarchy
+				add_government_reform = prussian_monarchy
+				if = {
+					limit = {
+						is_religion_enabled = protestant
+					}
+					change_religion = protestant
+				}
+				add_adm_power = 120
+				add_dip_power = 120
+				add_mil_power = 120
+				set_government_rank = 2
+				define_ruler = {
+					name = "Friedrich II der Grosse"
+					dynasty = "von Hohenzollern"
+					adm = 6
+					dip = 6
+					mil = 6
+					age = 20
+					fixed = yes
+					claim = 100
+				}
+
+				add_ruler_personality = strict_personality
+				add_ruler_personality = martial_educator_personality
+				add_ruler_personality = lawgiver_personality
+				set_capital = 41
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+					}
+				}
+				if = {		#To prevent Brandenburg of getting the PU over Prussia
+					limit = {
+						exists = BRA
+					}
+					add_opinion = {
+						who = BRA
+						modifier = th_yukaris_propaganda
+					}
+					reverse_add_opinion = {
+						who = BRA
+						modifier = th_yukaris_propaganda
+					}
+				}
+			}
+			east_prussia_area = {
+				limit = {
+					NOT = { is_core = PRU }
+					NOT = { is_permanent_claim = PRU }
+				}
+				add_permanent_claim = PRU
+			}
+			west_prussia_area = {
+				limit = {
+					NOT = { is_core = PRU }
+					NOT = { is_permanent_claim = PRU }
+				}
+				add_permanent_claim = PRU
+			}
+		}
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	#Restore the Teutons
+		name = flavor_mhg.42.b
+		trigger = {
+			NOT = { exists = TEU }
+		}
+		custom_tooltip = flavor_mhg.42.b.tt
+		hidden_effect = {
+			41 = {
+				add_core = TEU
+				add_base_tax = 4
+				add_base_production = 4
+				add_base_manpower = 3
+				if = {
+					limit = {
+						is_religion_enabled = protestant
+					}
+					change_religion = protestant
+				}
+				change_culture = prussian
+				remove_core = ROOT
+			}
+			release = TEU
+			create_subject = {
+				subject_type = th_yukari_puppet_state
+				subject = TEU
+			}
+			TEU = {
+				change_government = theocracy
+				add_government_reform = monastic_order_reform
+				if = {
+					limit = {
+						is_religion_enabled = protestant
+					}
+					change_religion = protestant
+				}
+				add_adm_power = 108
+				add_dip_power = 108
+				add_mil_power = 108
+				set_government_rank = 1
+				define_ruler = {
+					name = "Dietrich"
+					dynasty = "von Altenburg"
+					adm = 5
+					dip = 5
+					mil = 5
+					age = 20
+					fixed = yes
+					claim = 100
+				}
+
+				add_ruler_personality = conqueror_personality
+				set_capital = 41
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+					}
+				}
+			}
+			east_prussia_area = {
+				limit = {
+					NOT = { is_core = TEU }
+					NOT = { is_permanent_claim = TEU }
+				}
+				add_permanent_claim = TEU
+			}
+			west_prussia_area = {
+				limit = {
+					NOT = { is_core = TEU }
+					NOT = { is_permanent_claim = TEU }
+				}
+				add_permanent_claim = TEU
+			}
+		}
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	#Keep the city for yourself
+		name = flavor_mhg.42.c
+		add_prestige = 50
+		add_accepted_culture = prussian
+		41 = {
+			change_religion = ROOT
+			add_base_tax = 4
+			add_base_production = 4
+			add_base_manpower = 3
+		}
+		add_country_modifier = {
+			name = mhg_prussian_mercs
+			duration = 3650
+		}
+		custom_tooltip = flavor_mhg.42.c.tt
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Meet the old nordic youkais
+
+country_event = {
+	id = flavor_mhg.43
+	title = flavor_mhg.43.t
+	desc = flavor_mhg.43.desc
+	picture = YUKARI_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_mhg.43.a
+		if = {
+			limit = {
+				exists = SWE
+			}
+			add_casus_belli = {
+				target = SWE
+				type = cb_vassalize_mission
+				months = 900
+			}
+		}
+		if = {
+			limit = {
+				exists = NOR
+			}
+			add_casus_belli = {
+				target = NOR
+				type = cb_vassalize_mission
+				months = 900
+			}
+		}
+		if = {
+			limit = {
+				exists = DAN
+			}
+			add_casus_belli = {
+				target = DAN
+				type = cb_vassalize_mission
+				months = 900
+			}
+		}
+		if = {
+			limit = {
+				exists = FIN
+			}
+			add_casus_belli = {
+				target = FIN
+				type = cb_vassalize_mission
+				months = 900
+			}
+		}
+		add_navy_tradition = 33
+		add_army_tradition = 33
+		add_corruption = -10
+		custom_tooltip = flavor_mhg.43.a.tt
+		custom_tooltip = mhg_got_treasure_from_outworld
+		hidden_effect = {
+			set_country_flag = mhg_gift_from_outworld_friends
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+###ADDITIONAL EVENTS###
+
+#Conclusion of the Snow Spring Incident
+country_event = {
+	id = flavor_mhg.44
+	title = flavor_mhg.44.t
+	desc = {
+		trigger = { NOT = { has_global_flag = th_deactivated_incidents } }
+		desc = "flavor_mhg.44.desc.1"
+	}
+	desc = {
+		trigger = { has_global_flag = th_deactivated_incidents }
+		desc = "flavor_mhg.44.desc.2"
+	}
+	picture = YUYUKO_eventPicture
+	
+	trigger = {
+		is_year = 1490
+		OR = {
+			has_global_flag = th_deactivated_incidents
+			has_global_flag = th_cherry_blossom_incident_solved
+		}
+		exists = NET
+		tag = MHG
+		NOT = { exists = NMG }
+		is_free_or_tributary_trigger = yes
+		NET = {
+			is_free_or_tributary_trigger = yes
+		}
+	}
+
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler_flag = MHG_yukari_in_charge
+				}
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 500
+				}
+			}
+			else = {
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 0
+				}
+			}
+			#Yuyukos base diplo fight skills
+			set_variable = {
+				which = th_yuyuko_diplo_skills
+				value = 1250
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_yuyuko_diplo_skills
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_incident_had_info_diplo }
+					NOT = { has_global_flag = th_deactivated_incidents }
+				}
+				country_event = {
+					id = th_incidents_event.20
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {	#Yuyuko is no longer capable of ruling her realm! I have to fight her!
+		name = flavor_mhg.44.a
+		trigger = {
+			NOT = { has_global_flag = th_deactivated_incidents }
+		}
+		highlight = yes
+		custom_tooltip = flavor_mhg.44.a.tt
+		th_danmaku_diplo_fight_ruler_and_opponent = yes
+		hidden_effect = {
+			set_country_flag = MHG_diplo_fight_with_yuyuko
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#We have to take over the throne!
+		name = flavor_mhg.44.b
+		custom_tooltip = flavor_mhg.44.b.tt
+		declare_war_with_cb = {
+			who = NET
+			casus_belli = cb_restore_personal_union
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#We have a claim on Yuyukos throne
+		name = flavor_mhg.44.c
+		custom_tooltip = flavor_mhg.44.c.tt
+		add_casus_belli = {
+			target = NET
+			type = cb_restore_personal_union
+			months = 900
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#I trust in Yuyuko's judgement
+		name = flavor_mhg.44.d
+		custom_tooltip = flavor_mhg.44.d.tt
+		add_opinion = {
+			who = NET
+			modifier = mhg_high_trust
+		}
+		reverse_add_opinion = {
+			who = NET
+			modifier = mhg_high_trust
+		}
+		add_trust = {
+			who = NET
+			value = 25
+			mutual = yes
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Result of the diplo fight between Yukari and Yuyuko - Draw or better
+country_event = {
+	id = flavor_mhg.45
+	title = flavor_mhg.45.t
+	desc = flavor_mhg.45.desc
+	picture = YUYUKOANDYUKARI_eventPicture
+	
+	trigger = {
+		has_country_flag = MHG_diplo_fight_with_yuyuko
+		has_country_flag = th_incident_last_diplo_fight_won
+	}
+
+	mean_time_to_happen = {
+		days = 20
+	}
+
+	immediate = {
+		clr_country_flag = MHG_diplo_fight_with_yuyuko
+	}
+	
+	option = {	#I hope Yuyuko recovers from the incident while I take care over Netherworld
+		name = flavor_mhg.45.a
+		custom_tooltip = flavor_mhg.45.a.tt
+		create_subject = {
+			subject_type = personal_union
+			subject = NET
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Result of the diplo fight between Yukari and Yuyuko - Defeat
+country_event = {
+	id = flavor_mhg.46
+	title = flavor_mhg.46.t
+	desc = flavor_mhg.46.desc
+	picture = YUKARIFIGHT_eventPicture
+	
+	trigger = {
+		has_country_flag = MHG_diplo_fight_with_yuyuko
+		has_country_flag = th_incident_last_diplo_fight_won
+	}
+
+	mean_time_to_happen = {
+		days = 20
+	}
+
+	immediate = {
+		clr_country_flag = MHG_diplo_fight_with_yuyuko
+	}
+	
+	option = {	#I misjudged Yuyuko. She is still capable of controling over Netherworld
+		name = flavor_mhg.46.a
+		custom_tooltip = flavor_mhg.46.a.tt		
+		add_casus_belli = {
+			target = NET
+			type = cb_restore_personal_union
+			months = 900
+		}
+		NET = {			
+			add_casus_belli = {
+				target = MHG
+				type = cb_restore_personal_union
+				months = 900
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Integrate all gensokyan tributaries	NOT USED
+country_event = {
+	id = flavor_mhg.61
+	title = flavor_mhg.61.t
+	desc = flavor_mhg.61.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Long live the new emperor
+		name = flavor_mhg.61.a
+		FROM = {
+			inherit = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#We will never be Yukari's subjects
+		name = flavor_mhg.61.b
+		grant_independence = yes
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+###FLAVOR RELATED EVENTS###
+
+#Yukari falls asleep
+country_event = {
+	id = flavor_mhg.100
+	title = flavor_mhg.100.t
+	desc = flavor_mhg.100.desc
+	picture = YUKARI_eventPicture
+	
+	mean_time_to_happen = {
+		months = 600
+	}
+	
+	trigger = {
+		has_ruler_flag = MHG_yukari_in_charge
+		OR = {
+			has_dlc = "Rights of Man"
+			has_global_flag = TH_setting_rights_of_man_checked
+		}
+		NOT = { has_country_flag = MHG_yukari_retired }
+		NOT = { has_country_flag = mhg_end_mission_achieved }
+		NOT = { has_country_modifier = mhg_yukari_just_awakened }
+		OR = {
+			tag = MHG
+			was_tag = MHG
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			set_country_flag = MHG_yukari_retired
+			exile_ruler_as = sleeping_yukari
+		}
+	}
+	
+	option = {	#Farewell, hag lady
+		name = flavor_mhg.100.a
+		custom_tooltip = flavor_mhg.100.tt
+	}
+}
+
+#Yukari returns
+country_event = {
+	id = flavor_mhg.101
+	title = flavor_mhg.101.t
+	desc = flavor_mhg.101.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = MHG_yukari_retired
+		}
+	}
+	
+	option = {	#WB
+		name = flavor_mhg.101.a
+		#custom_tooltip = flavor_mhg.101.a.tt
+		hidden_effect = {
+			set_ruler = sleeping_yukari
+			
+			define_heir = {
+				name = "Ran"
+				dynasty = "Yakumo"
+				age = 15
+				adm = 5
+				dip = 5
+				mil = 5
+				fixed = yes
+				claim = 95
+				female = yes
+				no_consort_with_heir = yes
+			}
+			add_heir_personality = immortal_personality
+			set_heir_flag = touhou_character_ruler
+		}
+	}
+}

@@ -1,0 +1,306 @@
+########################################
+# Flavor Events for Chireiden
+########################################
+
+namespace = flavor_crd
+
+#Question of religious direction
+country_event = {
+	id = flavor_crd.1
+	title = flavor_crd.1.t
+	desc = flavor_crd.1.desc
+	picture = SHRINE_eventPicture
+	
+	fire_only_once = yes
+	major = yes
+	
+	trigger = {
+		OR = {
+			tag = CRD
+			tag = SCD
+		}
+		capital_scope = { 
+			religion = Moriya_Shintoism 
+		} 
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+	}
+	
+	option = {	#Send the Shrine Maidens! I can't tolerate any heretics in my land!
+		name = flavor_crd.1.a
+		
+		every_heretic_province = {
+			add_province_modifier = { 
+				name = th_banned_heretics
+				duration = 1825
+			}
+		}
+		reverse_add_opinion = {
+			who = HKR
+			modifier = th_follows_our_religion
+		}
+		add_adm_power = -50
+		
+		ai_chance = { 
+			factor = 40
+		}
+	}
+	
+	option = {	#I guess I can tolerate them for now
+		name = flavor_crd.1.b
+		
+		add_country_modifier = { 
+			name = th_heretical_tolerance
+			duration = 5475
+		}
+		
+		ai_chance = { 
+			factor = 20
+		}
+	}
+	
+	option = {	#You know what, I will trust Koishi
+		name = flavor_crd.1.c
+		
+		add_stability = -1
+		change_religion = Moriya_Shintoism
+		
+		add_country_modifier = { 
+			name = th_converted_to_moriya
+			duration = 5475
+		}
+		reverse_add_opinion = {
+			who = MRY
+			modifier = th_follows_our_religion
+		}
+		
+		ai_chance = { 
+			factor = 40
+		}
+	}
+}
+
+
+#Satori's vassal becomes specific vassal
+country_event = {
+	id = flavor_crd.2
+	title = flavor_crd.2.t
+	desc = flavor_crd.2.desc
+	picture = YUKARI_eventPicture
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+	
+	trigger = {
+		OR = {
+			tag = CRD
+			was_tag = CRD
+			has_country_flag = TH_komeiji_monarchy_nd
+		}
+		num_of_subjects = 1 
+		OR = {
+			any_subject_country = { is_subject_of_type = vassal }
+			any_subject_country = { is_subject_of_type = daimyo_vassal }
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			every_subject_country = { 
+				limit = { 
+					OR = { 
+						is_subject_of_type = vassal 
+						is_subject_of_type = daimyo_vassal
+					}
+					NOT = { is_subject_of_type = th_satori_vassal }
+				} 
+				country_event = { id = flavor_crd.3 }
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_crd.2.a
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Vassal becomes Satori's vassal
+country_event = {
+	id = flavor_crd.3
+	title = flavor_crd.3.t
+	desc = flavor_crd.3.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.3.a
+		grant_independence = yes
+		FROM = {
+			create_subject = {
+				subject_type = th_satori_vassal
+				subject = ROOT
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Satori gets to decide her pet's destinies
+country_event = {
+	id = flavor_crd.4
+	title = flavor_crd.4.t
+	desc = flavor_crd.4.desc
+	picture = SATORIPETS_eventPicture
+
+	fire_only_once = yes
+	major = yes
+
+	trigger = {
+		OR = {
+			tag = CRD
+			tag = SCD
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 4
+	}
+
+	after = {
+		hidden_effect = {
+			ORN = {
+				change_religion = Gensokyan
+			}
+			OKU = {
+				if = {
+					limit = {
+						ROOT = {
+							religion = Moriya_Shintoism
+						}
+					}
+					change_religion = Moriya_Shintoism
+				}
+				else = {
+					change_religion = Gensokyan
+				}
+			}
+		}
+	}
+
+
+	option = {  #Releasing Orin and Okuu both
+		name = flavor_crd.4.a
+		th_crd_release_orn_and_okuu = yes
+		hidden_effect = {
+			add_truce_with = OKU
+			add_truce_with = ORN
+		}
+	
+		ai_chance = {
+			factor = 10
+		}
+
+	}
+
+	option = {  #Let them but under watch
+		name = flavor_crd.4.b
+		th_crd_release_orn_and_okuu = yes
+		create_subject = {
+			subject_type = th_satori_vassal
+			subject = OKU
+		}
+		create_subject = {
+			subject_type = th_satori_vassal
+			subject = ORN
+		}
+	
+	    ai_chance = {
+			factor = 40
+		}
+	}
+
+	option = {  #Release and play as Okuu
+		name = flavor_crd.4.c
+		th_crd_release_orn_and_okuu = yes
+		switch_tag = OKU
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+    option = {  #Release and play as Orin
+		name = flavor_crd.4.d
+		th_crd_release_orn_and_okuu = yes
+		switch_tag = ORN
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	option = {  #Refuse
+	    name = flavor_crd.4.e
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+
+#Kanakos Gift
+country_event = {
+	id = flavor_crd.5
+	title = flavor_crd.5.t
+	desc = flavor_crd.5.desc
+	picture = KANAKOBOSS_eventPicture
+	
+	trigger = {
+		OR = {
+			tag = OKU
+			was_tag = OKU
+		}
+		is_lesser_in_union = no
+		has_ruler = "Utsuho"
+		dynasty = "Reiuji"
+		NOT = { adm = 3 }
+		has_ruler_flag = touhou_character_ruler
+		religion = Moriya_Shintoism
+		former_hell_region = {
+			religion = Moriya_Shintoism
+			type = all
+		}
+		OR = {
+			has_idea_group = innovativeness_ideas
+			innovativeness = 10
+		}
+	}
+
+	fire_only_once = yes
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {	#Level adm up
+		name = flavor_crd.5.a
+		change_adm = 1
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}

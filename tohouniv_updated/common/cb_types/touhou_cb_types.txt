@@ -1,0 +1,176 @@
+# INSTRUCTIONS:
+# -------------
+# is_triggered_only - Triggered from within the code or by event effects. DO NOT REMOVE THE STOCK ONES.
+# months - The number of months this CB will be valid. Only works for triggered CBs.
+# prerequisites - A condition that automatically activates a CB. Does not work for triggered CBs.
+# no_opinion_hit - If yes you get no negative opinion from this
+#
+# ROOT = attacker
+# FROM = target
+#
+# NOTE: The order in which the peace options are listed is the order in which the AI will normally prioritize them in peace treaties
+#
+# TRIGGERED - Triggered from within the code or by event effects
+# --------------------------------------------------------------
+
+
+# AUTOMATIC - Constantly in effect while 'prerequisites' is true
+# --------------------------------------------------------------
+
+#Fairy War
+cb_touhou_fairy_war = {
+	valid_for_subject = no
+
+	prerequisites = {
+		is_free_or_tributary_trigger = yes
+		primary_culture = Fairy
+		OR = {
+			tag = CIN
+			tag = TFR
+			tag = LAR
+			tag = LIL
+			tag = CLP
+			tag = FTP
+			is_playing_custom_nation = yes 
+		}
+		
+		FROM = {
+			NOT = { is_subject_of = ROOT }
+			primary_culture = Fairy
+		}
+		is_neighbor_of = FROM
+	}
+
+	war_goal = superiority_fairy_war
+}
+
+#Kaguya and Mokou War
+cb_touhou_eit_fuj_war = {
+	valid_for_subject = no
+	
+	prerequisites = {
+		is_free_or_tributary_trigger = yes
+		OR = {
+			tag = EIT
+			tag = FUJ
+		}
+		
+		FROM = {
+			NOT = { is_subject_of = ROOT }
+			OR = {
+				tag = EIT
+				tag = FUJ
+			}
+		}
+	}
+	
+	war_goal = th_annexation_war_eit_fuj
+}
+
+#Kaguya and Mokou Mission War
+cb_touhou_mission_eit_fuj_war = {
+	valid_for_subject = no
+
+	is_triggered_only = yes
+	months = 900
+
+	war_goal = th_superiority_war_mission_eit_fuj
+}
+
+#Moriya anti heretic cb
+cb_touhou_enforce_religon = {
+	valid_for_subject = no
+
+	prerequisites = {
+		OR = {
+			tag = MRY
+			was_tag = MRY
+		}
+		NOT = { religion_group = FROM }
+		NOT = {	has_matching_religion = FROM }
+		is_revolutionary = no
+		always = no
+	}
+
+	war_goal = th_spread_true_faith
+}
+
+#Enforce Religious Tributary
+cb_touhou_force_religious_tributary = {
+	valid_for_subject = no
+
+	prerequisites = {
+		has_country_flag = th_enable_religious_tributary_war
+		FROM = { 
+			is_subject = no 
+			is_revolutionary = no
+			is_emperor_of_china = no
+			is_emperor = no
+		}
+		has_matching_religion = FROM
+		is_revolutionary = no
+	}
+
+	war_goal = th_superiority_force_religious_tributary
+}
+
+#Religious Superiority cb
+cb_touhou_religious_superiority_war = {
+	valid_for_subject = no
+
+	prerequisites = {
+		has_country_flag = th_enable_domination_war
+		FROM = { 
+			is_subject = no 
+			is_revolutionary = no
+			is_emperor_of_china = no
+			is_emperor = no
+			NOT = { has_country_modifier = th_pledged_to_remain_religious }
+		}
+		has_matching_religion = FROM
+		is_revolutionary = no
+	}
+
+	attacker_disabled_po = {
+		po_demand_provinces
+		po_release_vassals
+		po_release_annexed
+		po_return_cores
+		po_become_vassal
+		po_become_tributary_state
+		po_form_personal_union
+		po_transfer_vassals
+	}
+
+	war_goal = th_religious_superiority_war
+}
+
+#Pledging to religion cb
+cb_touhou_religious_pledge_war = {
+	valid_for_subject = no
+
+	is_triggered_only = yes
+	months = 1200
+
+	war_goal = th_pledge_to_religion_war
+}
+
+#Penance for pledge breaking cb
+cb_touhou_penance_war = {
+	valid_for_subject = no
+
+	is_triggered_only = yes
+	months = 1200
+
+	war_goal = th_penance_war
+}
+
+#Touhou Spread Religion War
+cb_touhou_crusade = {
+	valid_for_subject = no
+
+	is_triggered_only = yes
+	months = 1200
+
+	war_goal = th_superiority_crusade
+}

@@ -1,0 +1,220 @@
+#MHG Provocate War
+th_set_target_as_aggressor = {
+	category = covert
+
+	require_acceptance = no
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		OR = {
+			tag = MHG
+			has_reform = TH_puppet_master_reform
+		}
+		FROM = {
+			NOT = { has_country_flag = th_is_planned_aggressor_of_@ROOT }
+		}
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 80
+		}
+		dip_tech = 9
+		FROM = {
+			is_free_or_tributary_trigger = yes
+			NOT = { had_recent_war = 5 }
+			has_any_disaster = no 
+			primitives = no
+			is_at_war = no
+			custom_trigger_tooltip = {
+				tooltip = th_set_target_as_aggressor_spcial_condition
+				OR = {
+					is_rival = ROOT
+					is_enemy = ROOT
+					total_development = 250
+					total_development = ROOT
+					great_power_rank = 1
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_already_a_planned_aggressor
+			NOT = { has_country_flag = th_has_already_a_planned_aggressor }
+		}
+	}
+
+	on_accept = {
+		set_country_flag = th_has_already_a_planned_aggressor
+		FROM = {
+			set_country_flag = th_is_planned_aggressor_of_@ROOT
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -80			
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_remove_target_as_aggressor = {
+	category = covert
+
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_has_already_a_planned_aggressor
+		FROM = {
+			has_country_flag = th_is_planned_aggressor_of_@ROOT
+		}
+	}
+
+	is_allowed = {
+		always = yes
+	}
+
+	on_accept = {
+		clr_country_flag = th_has_already_a_planned_aggressor
+		FROM = {
+			clr_country_flag = th_is_planned_aggressor_of_@ROOT
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_provocate_war_against_target = {
+	category = covert
+
+	require_acceptance = no
+
+	is_visible = {
+		dip_tech = 9
+		is_free_or_tributary_trigger = yes
+		OR = {
+			tag = MHG
+			has_reform = TH_puppet_master_reform
+		}
+		FROM = {
+			NOT = { has_country_flag = th_is_planned_aggressor_of_@ROOT }
+		}		
+	}
+
+	is_allowed = {
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_needs_a_planned_aggressor
+			has_country_flag = th_has_already_a_planned_aggressor
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_still_cooldown
+			NOT = { has_country_modifier = th_provocated_war }
+		}
+		has_spy_network_in = {
+			who = FROM
+			value = 20
+		}
+		FROM = {
+			is_free_or_tributary_trigger = yes
+			NOT = { had_recent_war = 5 }
+			has_any_disaster = no
+			custom_trigger_tooltip = {
+				tooltip = th_provocate_war_against_target_condition
+				OR = {
+					is_rival = ROOT
+					is_enemy = ROOT
+					total_development = 100
+					total_development = ROOT
+					great_power_rank = 1
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		country_event = {
+			id = th_diplo_events.1
+			days = 1
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -20
+		}
+		FROM = {
+			set_country_flag = th_target_for_planned_war
+		}
+		add_country_modifier = {
+			name = th_provocated_war
+			duration = 1825
+			hidden = yes	
+		}
+	}
+}
+
+th_break_vassal_alliance = {
+	category = influence
+
+	require_acceptance = no
+
+	is_visible = {
+		FROM = {
+			is_subject_of = ROOT
+			OR = {
+				is_subject_of_type = th_yukari_daimyo 
+				is_subject_of_type = th_special_march 
+				is_subject_of_type = th_yukari_puppet_state
+			}
+		}
+	}
+
+	is_allowed = {
+		FROM = {
+			num_of_allies = 1
+			any_ally = {
+				is_subject = false
+			}
+		}
+	}
+
+	on_accept = {
+		FROM = {
+			every_ally = {
+				limit = {
+					is_subject = false
+				}
+				add_opinion = {
+					who = FROM
+					modifier = th_forced_alliance_break
+					years = 5
+				}
+				reverse_add_opinion = {
+					who = FROM
+					modifier = th_forced_alliance_break
+					years = 5
+				}
+				add_opinion = {
+					who = FROM
+					modifier = th_forced_alliance_break_2
+					years = 5
+				}
+				reverse_add_opinion = {
+					who = FROM
+					modifier = th_forced_alliance_break_2
+					years = 5
+				}
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = th_overlord_forced_alliance_break				
+			}
+			add_country_modifier = {
+				name = th_alliance_breaker
+				duration = 365
+			}
+		}
+	}
+}

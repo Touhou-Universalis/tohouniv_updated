@@ -1,0 +1,1154 @@
+########################################
+# Touhou Buddhism Events
+########################################
+
+namespace = th_buddhism_events
+
+
+#Low Harmony
+
+#Advisor resigns
+country_event = {
+	id = th_buddhism_events.1
+	title = th_buddhism_events.1.t
+	desc = th_buddhism_events.1.d
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {				
+		OR = {
+			advisor = philosopher
+			advisor = natural_scientist
+			advisor = artist
+			advisor = treasurer
+			advisor = theologian
+			advisor = master_of_mint
+			advisor = inquisitor
+		}
+		NOT = { harmony = 45 }
+		OR = {
+			NOT = { has_country_flag = th_buddhism_bad_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_bad_event_cd
+				days = 720
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_bad_event }
+	}
+
+	immediate = {
+		set_country_flag = th_buddhism_getting_bad_event
+		clr_country_flag = th_buddhism_bad_event_cd
+	}
+
+	after = {
+		clr_country_flag = th_buddhism_getting_bad_event
+		set_country_flag = th_buddhism_bad_event_cd
+	}
+	
+	mean_time_to_happen = {
+		months = 36
+		modifier = {
+			factor = 0.9
+			NOT = { harmony = 30 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { harmony = 20 }
+		}
+	}
+	
+	option = {
+		name = th_buddhism_events.1.a #
+		reduce_meritocracy_effect = yes
+		if = {
+			limit = {
+				advisor = philosopher
+			}
+			kill_advisor = philosopher
+		}
+		if = {
+			limit = {
+				advisor = natural_scientist
+			}
+			kill_advisor = natural_scientist
+		}
+		if = {
+			limit = {
+				advisor = artist
+			}
+			kill_advisor = artist
+		}
+		if = {
+			limit = {
+				advisor = treasurer
+			}
+			kill_advisor = treasurer
+		}
+		if = {
+			limit = {
+				advisor = theologian
+			}
+			kill_advisor = theologian
+		}
+		if = {
+			limit = {
+				advisor = master_of_mint
+			}
+			kill_advisor = master_of_mint
+		}
+		if = {
+			limit = {
+				advisor = inquisitor
+			}
+			kill_advisor = inquisitor
+		}
+		if = {
+			limit = {
+				advisor = th_advisor_keine
+			}
+			kill_advisor = th_advisor_keine
+		}
+		if = {
+			limit = {
+				advisor = th_advisor_eirin
+			}
+			kill_advisor = th_advisor_eirin
+		}
+	}
+}
+
+#Monasteries deteriorating
+province_event = {
+	id = th_buddhism_events.2
+	title = th_buddhism_events.2.t
+	desc = th_buddhism_events.2.d
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {
+		OR = {
+			religion = buddhism ##Theravada 
+			religion = Toho_Buddhist
+			religion = vajrayana
+			religion = mahayana
+		}
+		owner = {
+			religion = Toho_Buddhist			
+			NOT = { harmony = 45 }
+			OR = {
+				NOT = { has_country_flag = th_buddhism_bad_event_cd }
+				had_country_flag = {
+					flag = th_buddhism_bad_event_cd
+					days = 720
+				}
+			}
+			NOT = { has_country_flag = th_buddhism_getting_bad_event }
+		}
+	}
+
+	immediate = {
+		owner = {
+			set_country_flag = th_buddhism_getting_bad_event
+			clr_country_flag = th_buddhism_bad_event_cd
+		}
+	}
+
+	after = {
+		owner = {
+			clr_country_flag = th_buddhism_getting_bad_event
+			set_country_flag = th_buddhism_bad_event_cd
+		}
+	}
+	
+	is_mtth_scaled_to_size = 1
+	
+	mean_time_to_happen = {
+		months = 96
+		modifier = {
+			factor = 0.9
+			NOT = { owner = { harmony = 30 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { harmony = 20 } }
+		}
+	}
+	
+	option = {
+		name = th_buddhism_events.2.a #We must do all we can!
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 0
+				NOT = { owner = { years_of_income = 0.2 } }
+			}
+		}
+		owner = {
+			add_years_of_income = -0.3
+			add_harmony = 10
+		}
+		if = {
+			limit = {
+				owner = { has_estate = estate_church }
+			}
+			owner = {
+				add_estate_loyalty = {
+					estate = estate_church
+					loyalty = 10
+				}
+			}
+		}
+	}
+	option = {
+		name = th_buddhism_events.2.b #Perhaps now the land will come to better use.
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				owner = { has_estate = estate_church }
+				owner = {
+					NOT = {
+						estate_loyalty = {
+							estate = estate_church
+							loyalty = 40
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = { has_estate = estate_church }
+			}
+			owner = {
+				add_estate_loyalty = {
+					estate = estate_church
+					loyalty = -10
+				}
+				add_years_of_income = 0.1
+			}
+		}
+	}
+}
+
+#Pretender
+country_event = {
+	id = th_buddhism_events.3
+	title = th_buddhism_events.3.t
+	desc = th_buddhism_events.3.d
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {
+		religion = Toho_Buddhist
+		NOT = { harmony = 45 }
+		NOT = {
+			any_owned_province = {
+				has_rebel_faction = pretender_rebels
+			}
+		}
+		OR = {
+			NOT = { has_country_flag = th_buddhism_bad_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_bad_event_cd
+				days = 720
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_bad_event }
+	}
+
+	immediate = {
+		set_country_flag = th_buddhism_getting_bad_event
+		clr_country_flag = th_buddhism_bad_event_cd
+	}
+
+	after = {
+		clr_country_flag = th_buddhism_getting_bad_event
+		set_country_flag = th_buddhism_bad_event_cd
+	}
+	
+	mean_time_to_happen = {
+		months = 60
+		modifier = {
+			factor = 0.8
+			NOT = { harmony = 30 }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { harmony = 20 }
+		}
+	}
+	
+	option = {
+		name = th_buddhism_events.3.a #"This is an outrage!"
+		random_owned_province = {
+			limit = {
+				is_capital = no
+			}
+			spawn_rebels = {
+				type = pretender_rebels
+				religion = Toho_Buddhist
+				size = 1
+			}
+		}
+	}
+}
+
+#Shou's Fury
+country_event = {
+	id = th_buddhism_events.4
+	title = th_buddhism_events.4.t
+	desc = th_buddhism_events.4.d
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {
+		religion = Toho_Buddhist
+		harmony = 80
+		OR = {
+			NOT = { has_country_flag = th_buddhism_shou_flag }
+			had_country_flag = {
+				flag = th_buddhism_shou_flag
+				days = 7300
+			}
+		}
+		is_at_war = yes
+	}
+
+	immediate = {
+		clr_country_flag = th_buddhism_shou_flag
+	}
+	
+	mean_time_to_happen = {
+		months = 300
+		modifier = {
+			factor = 0.1
+			NOT = { war_score = 0 }
+		}
+		modifier = {
+			factor = 0.1
+			NOT = { war_score = -25 }
+		}
+		modifier = {
+			factor = 0.1
+			any_country = {
+				offensive_war_with = ROOT
+			}
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_buddhism_shou_flag
+		}
+	}
+	
+	# Every foe will regret setting foot on my land!
+	option = {
+		name = th_buddhism_events.4.a
+		add_harmony = -30
+		add_army_tradition = 30
+		add_country_modifier = {
+			name = th_buddhism_shous_fury
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_at_war = no
+			}
+		}
+	}
+	
+	# We cannot let rage consume our heart
+	option = {
+		name = th_buddhism_events.4.b
+		add_harmony = 5
+		add_dip_power = 30
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_at_war = no
+			}
+		}
+	}
+}
+
+
+#Choices to affect Karma
+#Choices to go higher or lower with added aspects that may or may not be tempting.
+
+#Soldiers fleeing their military service to join Monasteries
+country_event = {
+	id = th_buddhism_events.9
+	title = th_buddhism_events.9.t
+	desc = th_buddhism_events.9.d
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {		
+		is_at_war = yes
+		religion = Toho_Buddhist
+		num_of_cities = 3
+		war_exhaustion = 2
+		OR = {
+			NOT = { has_country_flag = th_buddhism_manpower_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_manpower_event_cd
+				days = 7300
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_event }
+	}
+
+	immediate = {
+		clr_country_flag = th_buddhism_manpower_event_cd
+		set_country_flag = th_buddhism_getting_event
+	}
+
+	after = {
+		set_country_flag = th_buddhism_manpower_event_cd
+		clr_country_flag = th_buddhism_getting_event
+	}
+	
+	mean_time_to_happen = {
+		months = 36
+		modifier = {
+			factor = 0.9
+			war_exhaustion = 5
+		}
+	}
+	
+	option = {
+		name = th_buddhism_events.9.a #We must remember to be gentle.
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				NOT = { harmony = 45 }
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = 10
+			}
+		}
+		add_harmony = 10
+		add_war_exhaustion = -1
+	}
+	option = {
+		name = th_buddhism_events.9.b #Demand that the Monasteries release these 'Monks' to us.
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				harmony = 50
+			}
+			modifier = {
+				factor = 0
+				has_estate = estate_church
+				NOT = {
+					estate_loyalty = {
+						estate = estate_church
+						loyalty = 40
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_estate = estate_church
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = -10
+			}
+		}
+		add_harmony = -10
+		add_yearly_manpower = 1.5
+	}
+}
+
+#Buddhism and Trading
+country_event = {
+	id = th_buddhism_events.11
+	title = "th_buddhism_events.11.t"
+	desc = "th_buddhism_events.11.d"
+	picture = TOUHOUBUDDHISM_eventPicture
+
+	trigger = {
+		religion = Toho_Buddhist
+		OR = {
+			NOT = { has_country_flag = th_buddhism_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_event_cd
+				days = 3650
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_event }
+	}
+
+	immediate = {
+		clr_country_flag = th_buddhism_event_cd
+		set_country_flag = th_buddhism_getting_event
+	}
+
+	after = {
+		set_country_flag = th_buddhism_event_cd
+		clr_country_flag = th_buddhism_getting_event
+	}
+
+	mean_time_to_happen = {
+		months = 60
+	}
+
+	#This is not the right way to salvation
+	option = {
+		name = "th_buddhism_events.11.a"
+		add_harmony = 5
+		add_adm_power = 50
+		ai_chance = {
+			factor = 50
+		}
+	}
+
+	#The teachings stop when money is in the game
+	option = {
+		name = "th_buddhism_events.11.b"
+		add_harmony = -5
+		add_mercantilism = 1
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+
+#Volunteers for the army
+country_event = {
+	id = th_buddhism_events.12
+	title = "th_buddhism_events.12.t"
+	desc = "th_buddhism_events.12.d"
+	picture = TOUHOUBUDDHISM_eventPicture
+
+	trigger = {
+		religion = Toho_Buddhist
+		OR = {
+			is_at_war = yes
+			NOT = { manpower_percentage = 0.3 }
+		}
+		OR = {
+			NOT = { has_country_flag = th_buddhism_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_event_cd
+				days = 3650
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_event }
+	}
+
+	immediate = {
+		clr_country_flag = th_buddhism_event_cd
+		set_country_flag = th_buddhism_getting_event
+	}
+
+	after = {
+		set_country_flag = th_buddhism_event_cd
+		clr_country_flag = th_buddhism_getting_event
+	}
+
+	mean_time_to_happen = {
+		months = 60
+	}
+
+	#They should rather stay with their families
+	option = {
+		name = "th_buddhism_events.12.a"
+		add_harmony = 5
+		add_war_exhaustion = -1
+		ai_chance = {
+			factor = 50
+		}
+	}
+
+	#We need every man possible
+	option = {
+		name = "th_buddhism_events.12.b"
+		add_harmony = -5
+		add_yearly_manpower = 0.5
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+
+# Water Margin
+country_event = {
+	id = th_buddhism_events.13
+	title = "th_buddhism_events.13.t"
+	desc = "th_buddhism_events.13.d"
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {
+		religion = Toho_Buddhist
+		OR = {
+			NOT = { has_country_flag = th_buddhism_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_event_cd
+				days = 3650
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_event }
+		OR = {
+			NOT = { has_country_flag = th_buddhism_book_timer }
+			had_country_flag = {
+				flag = th_buddhism_book_timer
+				days = 5475
+			}
+		}
+		NOT = { has_country_modifier = harmony_banned_book }
+	}
+
+	immediate = {
+		clr_country_flag = th_buddhism_event_cd
+		set_country_flag = th_buddhism_getting_event
+		clr_country_flag = th_buddhism_book_timer
+	}
+
+	after = {
+		set_country_flag = th_buddhism_event_cd
+		clr_country_flag = th_buddhism_getting_event
+	}
+
+	mean_time_to_happen = {
+		months = 60
+	}
+	
+	option = {
+		name = "th_buddhism_events.13.a"
+		add_harmony = 5
+		add_country_modifier = {
+			name = "harmony_banned_book"
+			duration = 1825
+		}
+	}
+	option = {
+		name = "th_buddhism_events.13.b"
+		add_harmony = -5
+		set_country_flag = th_buddhism_book_timer
+	}
+}
+
+#Civil Service
+country_event = {
+	id = th_buddhism_events.14
+	title = "th_buddhism_events.14.t"
+	desc = "th_buddhism_events.14.d"
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {
+		religion = Toho_Buddhist
+		OR = {
+			NOT = { has_country_flag = th_buddhism_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_event_cd
+				days = 3650
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_event }
+	}
+
+	immediate = {
+		clr_country_flag = th_buddhism_event_cd
+		set_country_flag = th_buddhism_getting_event
+	}
+
+	after = {
+		set_country_flag = th_buddhism_event_cd
+		clr_country_flag = th_buddhism_getting_event
+	}
+
+	mean_time_to_happen = {
+		months = 60
+	}
+	
+	option = {
+		name = "th_buddhism_events.14.a"
+		add_years_of_income = -0.4
+		add_harmony = 5
+		add_meritocracy_effect = yes
+	}
+	option = {
+		name = "th_buddhism_events.14.b"
+		add_harmony = -5
+		reduce_meritocracy_effect = yes
+	}
+}
+
+# Dana / Charity 
+country_event = {
+	id = th_buddhism_events.15
+	title = th_buddhism_events.15.t
+	desc = th_buddhism_events.15.d
+	picture = BYAKUREN_eventPicture
+	
+	trigger = {	
+		religion = Toho_Buddhist
+		NOT = { has_country_modifier = grain_for_the_poor }
+		NOT = { has_country_modifier = grain_reserves }		
+		stability = 1
+		is_at_war = no
+		NOT = { num_of_rebel_armies = 1 }
+		OR = {
+			NOT = { has_country_flag = th_buddhism_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_event_cd
+				days = 3650
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_event }
+	}
+
+	immediate = {
+		clr_country_flag = th_buddhism_event_cd
+		set_country_flag = th_buddhism_getting_event
+	}
+
+	after = {
+		set_country_flag = th_buddhism_event_cd
+		clr_country_flag = th_buddhism_getting_event
+	}
+
+	mean_time_to_happen = {
+		months = 180
+	}
+	
+	option = {
+		name = th_buddhism_events.15.a #
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				NOT = { harmony = 45 }
+			}
+		}
+		add_harmony = 5
+		add_country_modifier = {
+			name = "grain_for_the_poor"
+			duration = 3650
+		}
+	}
+	option = {
+		name = th_buddhism_events.15.b #
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				harmony = 90
+			}
+		}
+		add_adm_power = 150
+		add_country_modifier = {
+			name = "grain_reserves"
+			duration = 3650
+		}
+		add_harmony = -15
+	}
+}
+
+#Vicious Words?
+province_event = {
+	id = th_buddhism_events.16
+	title = th_buddhism_events.16.t
+	desc = th_buddhism_events.16.d
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {
+		religion = Toho_Buddhist
+		is_capital = no
+		local_autonomy = 50
+		is_colony = no
+		is_state = yes
+		owner = {
+			religion = Toho_Buddhist
+			OR = {
+				NOT = { has_country_flag = th_buddhism_province_event_cd }
+				had_country_flag = {
+					flag = th_buddhism_province_event_cd
+					days = 10950
+				}
+			}
+			NOT = { has_country_flag = th_buddhism_getting_event }
+		}
+	}
+
+	immediate = {
+		owner = {
+			clr_country_flag = th_buddhism_province_event_cd
+			set_country_flag = th_buddhism_getting_event
+		}
+	}
+
+	after = {
+		owner = {
+			set_country_flag = th_buddhism_province_event_cd
+			clr_country_flag = th_buddhism_getting_event
+		}
+	}
+
+	is_mtth_scaled_to_size = 1
+	
+	mean_time_to_happen = {
+		months = 60
+	}
+	
+	option = {
+		name = th_buddhism_events.16.a #
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				owner = { NOT = { harmony = 45 } }
+			}
+		}
+		owner = {
+			add_prestige = 5
+			add_harmony = 10
+		}
+	}
+	option = {
+		name = th_buddhism_events.16.b #
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				owner = { harmony = 90 }
+			}
+		}
+		owner = {
+			add_harmony = -10
+		}
+		add_local_autonomy = -20
+	}
+}
+
+#Plight of [Root.GetName]
+province_event = {
+	id = th_buddhism_events.22
+	title = th_buddhism_events.22.t
+	desc = th_buddhism_events.22.d
+	picture = BYAKUREN_eventPicture
+	
+	trigger = {
+		NOT = { development = 24 }
+		NOT = { has_province_modifier = th_buddhism_improvement_program }
+		owner = {
+			religion = Toho_Buddhist
+			OR = {
+				NOT = { has_country_flag = th_buddhism_province_event_cd }
+				had_country_flag = {
+					flag = th_buddhism_province_event_cd
+					days = 10950
+				}
+			}
+			NOT = { has_country_flag = th_buddhism_getting_event }
+		}
+	}
+
+	immediate = {
+		owner = {
+			clr_country_flag = th_buddhism_province_event_cd
+			set_country_flag = th_buddhism_getting_event
+		}
+	}
+
+	after = {
+		owner = {
+			set_country_flag = th_buddhism_province_event_cd
+			clr_country_flag = th_buddhism_getting_event
+		}
+	}
+
+	is_mtth_scaled_to_size = 1
+	
+	mean_time_to_happen = {
+		months = 60
+	}
+	
+	option = {
+		name = th_buddhism_events.22.a #
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				owner = { NOT = { harmony = 45 } }
+			}
+		}
+		owner = {
+			add_harmony = 5
+			add_years_of_income = -0.3
+		}
+		add_province_modifier = {
+			name = "th_buddhism_improvement_program"
+			duration = 1825
+		}
+	}
+	option = {
+		name = th_buddhism_events.22.b #
+		ai_chance = {
+			factor = 50
+		}
+		owner = { add_adm_power = 50 }
+	}
+}
+
+#Pilgrims settle in [Root.GetName]
+province_event = {
+	id = th_buddhism_events.23
+	title = th_buddhism_events.23.t
+	desc = th_buddhism_events.23.d
+	picture = BYAKUREN_eventPicture
+	
+	trigger = {
+		OR = {
+			religion = Toho_Buddhist
+			owner = {
+				has_harmonized_with = ROOT
+			}
+		}
+		owner = {
+			religion = Toho_Buddhist
+			OR = {
+				NOT = { has_country_flag = th_buddhism_province_event_cd }
+				had_country_flag = {
+					flag = th_buddhism_province_event_cd
+					days = 10950
+				}
+			}
+			NOT = { has_country_flag = th_buddhism_getting_event }
+		}
+	}
+
+	immediate = {
+		owner = {
+			clr_country_flag = th_buddhism_province_event_cd
+			set_country_flag = th_buddhism_getting_event
+		}
+	}
+
+	after = {
+		owner = {
+			set_country_flag = th_buddhism_province_event_cd
+			clr_country_flag = th_buddhism_getting_event
+		}
+	}
+
+	is_mtth_scaled_to_size = 1
+	
+	mean_time_to_happen = {
+		months = 60
+	}
+	
+	option = {	#Settle the Human Pilgrims there
+		name = th_buddhism_events.23.a #
+		ai_chance = {
+			factor = 33
+		}
+		owner = {
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 10
+			}
+		}
+		add_base_production = 2
+	}
+	
+	option = {	#Settle the Youkai Pilgrims there
+		name = th_buddhism_events.23.b #
+		ai_chance = {
+			factor = 33
+		}
+		owner = {
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 10
+			}
+		}
+		add_base_manpower = 2
+	}
+	
+	option = {	#Settle a mix of both there
+		name = th_buddhism_events.23.c #
+		ai_chance = {
+			factor = 33
+		}
+		owner = {
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 5
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 5
+			}
+		}
+		add_base_production = 1
+		add_base_manpower = 1
+	}
+}
+
+#Khanti
+country_event = {
+	id = th_buddhism_events.29
+	title = th_buddhism_events.29.t
+	desc = th_buddhism_events.29.d
+	picture = TOUHOUBUDDHISM_eventPicture
+	
+	trigger = {
+		religion = Toho_Buddhist		
+		any_neighbor_country = {
+			NOT = {
+				alliance_with = ROOT
+				war_with = ROOT
+			}
+		}
+		OR = {
+			NOT = { has_country_flag = th_buddhism_event_cd }
+			had_country_flag = {
+				flag = th_buddhism_event_cd
+				days = 3650
+			}
+		}
+		NOT = { has_country_flag = th_buddhism_getting_event }
+	}
+
+	immediate = {
+		clr_country_flag = th_buddhism_event_cd
+		set_country_flag = th_buddhism_getting_event
+	}
+
+	after = {
+		set_country_flag = th_buddhism_event_cd
+		clr_country_flag = th_buddhism_getting_event
+	}
+
+	mean_time_to_happen = {
+		months = 60
+	}
+	
+	option = {
+		name = th_buddhism_events.29.a #Demand that they compensate you for the Insult
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				harmony = 90
+			}
+		}
+		add_harmony = -10
+		random_neighbor_country = {
+			limit = {
+				NOT = {
+					alliance_with = ROOT
+					war_with = ROOT
+				}
+			}
+			ROOT = {
+				add_casus_belli = {
+					target = PREV
+					type = cb_insult
+					months = 24
+				}
+			}
+		}
+	}
+	option = {
+		name = th_buddhism_events.29.b #We must never loose our temper.
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				NOT = { harmony = 45 }
+			}
+		}
+		add_harmony = 10
+		add_prestige = 10
+	}
+}
+
+# Ajjava
+province_event = {
+	id = th_buddhism_events.30
+	title = th_buddhism_events.30.t
+	desc = th_buddhism_events.30.d
+	picture = BYAKUREN_eventPicture
+	
+	trigger = {
+		NOT = { has_province_modifier = governor_replaced }
+		NOT = { has_province_modifier = buddhist_nepotism }
+		owner = {
+			religion = Toho_Buddhist
+			OR = {
+				NOT = { has_country_flag = th_buddhism_province_event_cd }
+				had_country_flag = {
+					flag = th_buddhism_province_event_cd
+					days = 10950
+				}
+			}
+			NOT = { has_country_flag = th_buddhism_getting_event }
+		}
+	}
+
+	immediate = {
+		owner = {
+			clr_country_flag = th_buddhism_province_event_cd
+			set_country_flag = th_buddhism_getting_event
+		}
+	}
+
+	after = {
+		owner = {
+			set_country_flag = th_buddhism_province_event_cd
+			clr_country_flag = th_buddhism_getting_event
+		}
+	}
+
+	is_mtth_scaled_to_size = 1
+	
+	mean_time_to_happen = {
+		months = 60
+	}
+	
+	option = {
+		name = th_buddhism_events.30.a #
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				owner = { harmony = 90 }
+			}
+		}
+		owner = {
+			add_harmony = -10
+		}
+		add_base_tax = 2
+	}
+	option = {
+		name = th_buddhism_events.30.b #
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				owner = { NOT = { harmony = 45 } }
+			}
+		}
+		owner = {
+			add_harmony = 10
+		}
+		add_province_modifier = {
+			name = "governor_replaced"
+			duration = 3650
+		}
+	}
+}

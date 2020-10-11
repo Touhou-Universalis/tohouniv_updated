@@ -1,0 +1,303 @@
+########################################
+# Flavor Events for Moriya Clan
+########################################
+
+namespace = flavor_mry
+
+
+#Visit of Suwako Moriya in Higan 
+country_event = {
+	id = flavor_mry.1
+	title = flavor_mry.1.t
+	desc = flavor_mry.1.desc
+	picture = SUWAKO_eventPicture
+	
+	fire_only_once = yes
+	major = yes
+	
+	is_triggered_only = yes
+	
+	option = {	#Try to convince Eiki to convert
+		name = flavor_mry.1.a
+		
+		if = {
+			limit = {
+				alliance_with = HIG
+			}
+			HIG = {
+				country_event = {
+					id = flavor_mry.2
+				}
+			}
+		}
+		else = {
+			every_heretic_province = {
+				limit = {
+					region = hell_region
+				}
+				add_province_modifier = { 
+					name = th_yof_banned_heretics
+					duration = 1825
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Not worth it
+		name = flavor_mry.1.b
+		
+		add_adm_power = 100
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Visit of Suwako Moriya in Higan (for HIG)
+country_event = {
+	id = flavor_mry.2
+	title = flavor_mry.2.t
+	desc = flavor_mry.2.desc
+	picture = SUWAKO_eventPicture
+	
+	fire_only_once = yes
+	major = yes
+	
+	is_triggered_only = yes
+	
+	option = {	#Send the Shrine Maidens! I can't tolerate any heretics in my land!
+		name = flavor_mry.2.a
+		
+		change_religion = Moriya_Shintoism		
+		add_country_modifier = { 
+			name = th_converted_to_moriya
+			duration = 5475
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_follows_our_religion
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Nah
+		name = flavor_mry.2.b
+		
+		add_prestige = 5
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Clear incited zealot flag of target country
+country_event = {
+	id = flavor_mry.100
+	title = flavor_mry.100.t
+	desc = flavor_mry.100.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		name = flavor_mry.100.a
+		clr_country_flag = th_has_already_incited_zealots
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Automatically convert province with MRY`s claim
+province_event = {
+	id = flavor_mry.101
+	title = "flavor_mry.101.t"
+	desc = "flavor_mry.101.desc"
+	picture = SCARLETT_eventPicture
+	
+	trigger = {
+		OR = {
+			is_claim = MRY
+			AND = {   #If MRY formed GNK, GNK should keep this ability
+				is_claim = GNK
+				GNK = { was_tag = MRY }
+			}
+		}
+		NOT = { religion = Moriya_Shintoism }
+		NOT = { is_permanent_claim = MRY }
+		NOT = { is_permanent_claim = GNK }
+		is_reformation_center = no
+		NOT = {	has_province_modifier = religious_zeal_at_conv }
+		NOT = {	has_province_modifier = th_religious_center }
+		NOT = {	has_province_modifier = religious_center }
+		is_empty = no
+		has_missionary = no
+		NOT = { has_state_edict = edict_religion_enforced }
+		NOT = { has_province_flag = th_has_been_converted }
+		owner = {
+			NOT = { tag = MRY }
+			NOT = { was_tag = MRY }
+			NOT = { is_subject_of = MRY }
+		}
+		OR = {
+			MRY = {
+				religion = Moriya_Shintoism
+				has_reform = Gensokyan_shrine_theocracy
+			}
+			GNK = {
+				was_tag = MRY
+				religion = Moriya_Shintoism
+				has_reform = Gensokyan_shrine_theocracy
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {		#Convert people here to the only one true faith!
+		name = "flavor_mry.101.a"
+		change_religion = Moriya_Shintoism
+		set_province_flag = th_has_been_converted
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Automatically convert colony province with colonist of MRY
+province_event = {
+	id = flavor_mry.102
+	title = "flavor_mry.102.t"
+	desc = "flavor_mry.102.desc"
+	picture = SCARLETT_eventPicture
+	
+	trigger = {
+		is_colony = yes
+		has_colonist = yes
+		NOT = { religion = Moriya_Shintoism }
+		owner = {
+			OR = {
+				tag = MRY
+				was_tag = MRY
+			}
+		}
+		is_reformation_center = no
+		NOT = {	has_province_modifier = religious_zeal_at_conv }
+		NOT = {	has_province_modifier = th_religious_center }
+		NOT = {	has_province_modifier = religious_center }
+		has_missionary = no
+		OR = {
+			MRY = {
+				religion = Moriya_Shintoism
+				has_reform = Gensokyan_shrine_theocracy
+			}
+			GNK = {
+				was_tag = MRY
+				religion = Moriya_Shintoism
+				has_reform = Gensokyan_shrine_theocracy
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {		#Convert people here to the only one true faith!
+		name = "flavor_mry.102.a"
+		change_religion = Moriya_Shintoism
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#lose every religious tributary if MRY changed tag or changed government or changed religion
+country_event = {
+	id = flavor_mry.103
+	title = flavor_mry.103.t
+	desc = flavor_mry.103.desc
+	picture = KANAKOBOSS_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	trigger = {
+		any_subject_country = { is_subject_of_type = th_religious_tributary }
+		OR = {
+			AND = {
+				NOT = { tag = MRY }
+				NOT = { tag = GNK }
+			}
+			NOT = {	has_reform = Gensokyan_shrine_theocracy }
+			NOT = { religion = Moriya_Shintoism }
+		}
+
+		num_of_subjects = 1 
+	}
+	
+	immediate = {
+		hidden_effect = {
+			every_subject_country = { 
+				limit = { is_subject_of_type = th_religious_tributary } 
+				country_event = { id = flavor_mry.104 }
+			}
+		}
+	}
+	
+	option = {	#Well, we shouldn`t abandon our old tradition.
+		name = flavor_mry.103.a
+		custom_tooltip = flavor_mry.103.a.tt
+	}
+}
+
+#Moriya`s tributaries get independent
+country_event = {
+	id = flavor_mry.104
+	title = flavor_mry.104.t
+	desc = flavor_mry.104.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		is_subject = yes
+		is_subject_of_type = th_religious_tributary
+		overlord = {
+			OR = {
+				AND = {
+					NOT = { tag = MRY }
+					NOT = { tag = GNK }
+				}
+				NOT = {	has_reform = Gensokyan_shrine_theocracy }
+				NOT = { religion = Moriya_Shintoism }
+			}
+		}
+	}
+	
+	option = {	#We should not follow these evil gods any longer!
+		name = flavor_mry.104.a
+		grant_independence = yes
+	}
+}
