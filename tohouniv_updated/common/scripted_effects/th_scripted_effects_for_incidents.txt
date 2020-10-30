@@ -547,6 +547,27 @@ th_incident_set_investigator = {
 	}
 }
 
+th_incident_pick_random_player_for_biased_investigator = {
+	if = {
+		limit = {
+			ai = no
+			has_country_flag = th_eligible_investigator
+			NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+		}
+		set_country_flag = th_incident_random_player_investigator
+	}
+	else = {
+		random_country = {
+			limit = {
+				ai = no
+				has_country_flag = th_eligible_investigator
+				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+			}
+			set_country_flag = th_incident_random_player_investigator
+		}
+	}
+}
+
 th_incident_forbids_to_become_investigator = {
 	clr_country_flag = th_eligible_investigator
 	set_country_flag = th_is_not_valid_for_investiagtor_role
@@ -566,7 +587,16 @@ th_incident_search_for_eligible_investigator = {
 }
 
 th_incident_setup_investigator = {
-	if = {	#HKR always becomes investigator
+	if = {	#Player always becomes investigator if the choice is biased
+		limit = {
+			has_global_flag = th_biased_incident_active
+			NOT = { tag = HKR }
+			NOT = { was_tag = HKR }
+		}
+		set_country_flag = th_incident_investigating
+		save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+	}
+	else_if = {	#HKR always becomes investigator
 		limit = {
 			OR = {
 				tag = HKR
@@ -748,13 +778,6 @@ th_incident_setup_investigator = {
 
 th_incident_clear_all_limited_flags = {	
 	clr_global_flag = th_incident_introduced
-	clr_global_flag = th_current_incident_scarlet_mists
-	clr_global_flag = th_current_incident_cherry_blossom
-	clr_global_flag = th_current_incident_eternal_night
-	clr_global_flag = th_current_incident_mountain_of_faith
-	clr_global_flag = th_PCB_incident_end
-	clr_global_flag = th_EN_incident_end
-	clr_global_flag = th_MOF_incident_end
 	clr_global_flag = th_minor_player_asked
 	clr_country_flag = th_incident_investigating
 	clr_country_flag = th_incident_last_fight_won
@@ -763,6 +786,7 @@ th_incident_clear_all_limited_flags = {
 	clr_country_flag = th_eligible_investigator
 	clr_country_flag = th_is_not_valid_for_investiagtor_role
 	clr_country_flag = th_refused_investigator
+	clr_country_flag = th_incident_random_player_investigator
 	every_country = {
 		limit = {
 			OR = {
@@ -773,6 +797,7 @@ th_incident_clear_all_limited_flags = {
 				has_country_flag = th_eligible_investigator
 				has_country_flag = th_is_not_valid_for_investiagtor_role
 				has_country_flag = th_refused_investigator
+				has_country_flag = th_incident_random_player_investigator
 			}
 		}
 		clr_country_flag = th_incident_investigating
@@ -782,6 +807,7 @@ th_incident_clear_all_limited_flags = {
 		clr_country_flag = th_eligible_investigator
 		clr_country_flag = th_is_not_valid_for_investiagtor_role
 		clr_country_flag = th_refused_investigator
+		clr_country_flag = th_incident_random_player_investigator
 	}
 	every_province = {
 		limit = {
@@ -826,6 +852,7 @@ th_incident_clear_about_flags_sdm = {
 		clr_country_flag = th_SDM_inci_about_to_beat_remilia
 		clr_country_flag = th_SDM_inci_about_to_get_final
 	}
+	clr_global_flag = th_current_incident_scarlet_mists
 	clr_global_flag = th_SDM_inci_started
 	clr_global_flag = th_SDM_inci_rumia_encountered
 	clr_global_flag = th_SDM_inci_cirno_encountered
@@ -871,6 +898,7 @@ th_incident_clear_about_flags_pcb = {
 		clr_country_flag = th_PCB_inci_about_to_beat_yuyuko
 		clr_country_flag = th_PCB_inci_about_to_get_final
 	}
+	clr_global_flag = th_current_incident_cherry_blossom
 	clr_global_flag = th_PCB_inci_started
 	clr_global_flag = th_PCB_inci_letty_encountered
 	clr_global_flag = th_PCB_inci_chen_encountered
@@ -878,6 +906,7 @@ th_incident_clear_about_flags_pcb = {
 	clr_global_flag = th_PCB_inci_prismriver_encountered
 	clr_global_flag = th_PCB_inci_youmu_encountered
 	clr_global_flag = th_PCB_inci_yuyuko_encountered
+	clr_global_flag = th_PCB_incident_end
 	every_province = {
 		limit = {
 			OR = {
@@ -943,6 +972,7 @@ th_incident_clear_about_flags_en = {
 		clr_country_flag = th_EN_has_rising_youkai_flag
 		clr_country_flag = th_EN_had_recent_youkai_unrest_flag
 	}
+	clr_global_flag = th_current_incident_eternal_night
 	clr_global_flag = th_EN_inci_started
 	clr_global_flag = th_EN_inci_wriggle_encountered
 	clr_global_flag = th_EN_inci_mystia_encountered
@@ -952,6 +982,7 @@ th_incident_clear_about_flags_en = {
 	clr_global_flag = th_EN_inci_eirin_encountered
 	clr_global_flag = th_EN_inci_kaguya_encountered
 	clr_global_flag = th_EN_inci_lengthened_night
+	clr_global_flag = th_EN_incident_end
 	every_province = {
 		limit = {
 			has_province_modifier = th_EN_unrested_youkais
@@ -1006,6 +1037,7 @@ th_incident_clear_about_flags_mof = {
 		}
 		clr_province_flag = th_religious_zeal_event_happend
 	}
+	clr_global_flag = th_current_incident_mountain_of_faith
 	clr_global_flag = th_MOF_inci_started
 	clr_global_flag = th_MOF_inci_aki_encountered
 	clr_global_flag = th_MOF_inci_hina_encountered
@@ -1013,6 +1045,7 @@ th_incident_clear_about_flags_mof = {
 	clr_global_flag = th_MOF_inci_aya_encountered
 	clr_global_flag = th_MOF_inci_sanae_encountered
 	clr_global_flag = th_MOF_inci_kanako_encountered
+	clr_global_flag = th_MOF_incident_end
 }
 
 ###GENERAL EFFECTS###
