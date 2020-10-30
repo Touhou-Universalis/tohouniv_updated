@@ -205,8 +205,8 @@ country_event = {
 	picture = THFEST_eventPicture
 
 	trigger = {	
-		has_country_flag = th_eligible_investigator
-		has_global_flag = th_active_incident
+		th_incident_can_become_investigator = yes
+		th_incident_has_incident_active = yes
 		OR = {
 			NOT = {
 				capital_scope = {
@@ -241,8 +241,8 @@ country_event = {
 	picture = THFEST_eventPicture
 
 	trigger = {
-		NOT = { has_country_flag = th_eligible_investigator }
-		has_global_flag = th_active_incident
+		th_incident_can_not_become_investigator = yes
+		th_incident_has_incident_active = yes
 		NOT = { has_global_flag = th_current_incident_mountain_of_faith }
 		capital_scope = {
 			superregion = gensokyo_superregion
@@ -282,16 +282,16 @@ country_event = {
 	picture = THFEST_eventPicture	
 
 	trigger = {
-		has_global_flag = th_active_incident
+		th_incident_has_incident_active = yes
 		has_global_flag = th_incident_introduced
 		NOT = { has_global_flag = th_global_is_already_asking }
-		has_country_flag = th_eligible_investigator
+		th_incident_can_become_investigator = yes
 		NOT = {	has_country_flag = th_incident_investigating }
 		NOT = { has_country_flag = th_country_is_already_asking }
 		OR = {
 			any_known_country = {
 				has_country_flag = th_incident_investigating
-				NOT = { has_country_flag = th_eligible_investigator }
+				th_incident_can_not_become_investigator = yes
 			}
 			all_known_country = {
 				NOT = {	has_country_flag = th_incident_investigating }
@@ -323,14 +323,14 @@ country_event = {
 		trigger = {
 			NOT = { has_global_flag = th_minor_player_asked }	#make sure the player was only asked one time
 			any_known_country = {		#there must be eligible minor character player existing
-				has_country_flag = th_eligible_investigator	
+				th_incident_can_become_investigator = yes	
 				ai = no
 			}
 		}
 		random_country = {
 			limit = {
 				ai = no
-				has_country_flag = th_eligible_investigator
+				th_incident_can_become_investigator = yes
 				NOT = { has_country_flag = th_is_currently_choosing_to_be_investigator_or_not }
 			}
 			country_event = {
@@ -356,7 +356,7 @@ country_event = {
 				all_known_country = {
 					OR = {
 						AND = {
-							NOT = { has_country_flag = th_eligible_investigator }
+							th_incident_can_not_become_investigator = yes
 							ai = no
 						}
 						ai = yes
@@ -377,7 +377,7 @@ country_event = {
 				AND = {
 					NOT = { has_global_flag = th_minor_player_asked }
 					any_known_country = {	#there must be eligible minor character player existing
-						has_country_flag = th_eligible_investigator		
+						th_incident_can_become_investigator = yes		
 						ai = no
 					}					
 				}
@@ -415,7 +415,7 @@ country_event = {
 		name = "th_incidents_event.11.b"
 		trigger = {
 			any_known_country = {  #Must have another eligible investigator country
-				has_country_flag = th_eligible_investigator	
+				th_incident_can_become_investigator = yes	
 			}	
 		}
 		custom_tooltip = th_incidents_event.11.b.tt
@@ -490,7 +490,7 @@ country_event = {
 	
 	trigger = {
 		is_year = 1450
-		NOT = { has_global_flag = th_active_incident }
+		NOT = { th_incident_has_incident_active = yes }
 		NOT = { has_global_flag = th_deactivated_incidents }
 		has_global_flag = th_random_incident_active
 		OR = {
@@ -534,7 +534,39 @@ country_event = {
 	
 }
 
+#General Incident - Clean ALL flags after each incident
+country_event = {
+	id = th_incidents_event.15
+	title = "th_incidents_event.15.t"
+	desc = "th_incidents_event.15"
+	picture = YUKARI_eventPicture
 
+	trigger = {
+		NOT = { has_global_flag = th_active_incident }
+		NOT = { has_global_flag = th_incident_cleaned_all_flags }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		set_global_flag = th_incident_cleaned_all_flags
+	}
+
+	option = {
+		th_incident_clear_all_limited_flags = yes
+		th_incident_clear_about_flags_sdm = yes
+		th_incident_clear_about_flags_pcb = yes
+		th_incident_clear_about_flags_en = yes
+		th_incident_clear_about_flags_mof = yes
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
 
 
 #General Incident - Introduction into diplo fights
