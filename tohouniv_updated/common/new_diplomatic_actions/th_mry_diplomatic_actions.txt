@@ -1,71 +1,3 @@
-#MRY incite Moriya zealots
-th_incite_moriya_zealots = {
-	category = covert
-
-	require_acceptance = no
-
-	is_visible = {
-		is_free_or_tributary_trigger = yes
-		OR = {
-			tag = MRY
-			was_tag = MRY
-		}
-		has_reform = Gensokyan_shrine_theocracy
-		religion = Moriya_Shintoism #Just to make it easier
-		FROM = {
-			NOT = { religion = ROOT }
-			any_owned_province = { religion = ROOT }
-		}
-	}
-
-	is_allowed = {
-		has_spy_network_in = {
-			who = FROM
-			value = 50
-		}
-		dip_tech = 9
-		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_has_already_incited_zealots
-			FROM = {				
-				OR = {
-					NOT = { has_country_flag = th_has_already_incited_zealots }
-					had_country_flag = {
-						flag = th_has_already_incited_zealots
-						days = 1825
-					}
-				}
-			}
-		}
-	}
-
-	on_accept = {
-		FROM = {
-			set_country_flag = th_has_already_incited_zealots
-			every_owned_province = { 
-				limit = {
-					religion = ROOT
-				}
-				add_province_modifier = { 
-    				name = th_incited_zealots
-    				duration = 1825  
-				}
-			}
-			country_event = {
-				id = flavor_mry.100
-				days = 1825
-			}
-		}
-		add_spy_network_in = {
-			who = FROM
-			value = -50			
-		}
-	}
-
-	ai_will_do = {
-		always = no
-	}
-}
-
 #MRY request another country to convert
 th_request_conversion = {
 	category = influence
@@ -84,6 +16,7 @@ th_request_conversion = {
 		FROM = {
 			NOT = { religion = ROOT }
 			any_owned_province = { religion = ROOT }
+			NOT = { tag = PAP }
 		}
 	}
 
@@ -100,10 +33,10 @@ th_request_conversion = {
 		else = {
 			has_reform = TH_feudal_shrine_reform
 		}
-		#has activated incidents and Mountain of faith incident had happened(doesn`t have to end, but the introduction event must trigger)
-		#or had deactivated incidents and has feudal shrine theocracy government reform
-		#the target country has half of total development or number of province following moriya shinto
-		#the target country is independent or a tributary.they mustn`t be subject of MRY either.
+		FROM = {
+			dominant_religion = Moriya_Shintoism
+			is_free_or_tributary_trigger = yes
+		}
 	}
 
 	on_accept = {
@@ -111,32 +44,32 @@ th_request_conversion = {
 		FROM = {
 			change_religion = ROOT
 			add_opinion = {
-    				who = ROOT
-    				modifier = th_great_guider
+    			who = ROOT
+    			modifier = th_great_guider
 			}
 		}
 		add_opinion = {
-    			who = FROM
-    			modifier = th_new_follower
+    		who = FROM
+    		modifier = th_new_follower
 		}		
 	}
 
 	on_decline = {
 		FROM = {
 			add_opinion = {
-    				who = ROOT
-    				modifier = th_instigator
+    			who = ROOT
+    			modifier = th_instigator
 			}
 		}
 		add_opinion = {
-    			who = FROM
-    			modifier = th_refused_conversion
+    		who = FROM
+    		modifier = th_refused_conversion
 		}
 	}
 
     ai_acceptance = {
         add_entry = {
-            name = DIPLO_OPINION
+            name = TH_DIPLO_OPPINION
 			export_to_variable = {
 				variable_name = ai_value
 				value = opinion
@@ -149,7 +82,7 @@ th_request_conversion = {
 			}
         }
 		add_entry = {
-			name = DIPLO_TRUST_WITH
+			name = TH_DIPLO_TRUST_WITH
 			export_to_variable = {
 				variable_name = ai_value
 				value = trust
@@ -167,7 +100,7 @@ th_request_conversion = {
 			}
 		}
 		add_entry = {
-			name = DIPLO_TOTAL_DEVELOPMENT
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
 			export_to_variable = {
 				variable_name = ai_value
 				value = total_development
@@ -312,6 +245,19 @@ th_request_conversion = {
 				value = -100
 			}
 		}
+		add_entry = {
+			name = DIPLO_BORDER_DISTANCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = border_distance
+				who = FROM
+			}
+			#1 dev = -0.5
+			multiply_variable = {
+				which = ai_value
+				value = -0.25
+			}
+		}
     }
 	ai_will_do = {
 		always = no
@@ -342,6 +288,7 @@ th_establish_religious_tributaries = {
 		FROM = {
 			religion = ROOT
 			is_at_war = no
+			is_free_or_tributary_trigger = yes
 		}
 		OR = {
 			FROM = { 
@@ -366,7 +313,7 @@ th_establish_religious_tributaries = {
 	}
     ai_acceptance = {
         add_entry = {
-            name = DIPLO_OPINION
+            name = TH_DIPLO_OPPINION
 			export_to_variable = {
 				variable_name = ai_value
 				value = opinion
@@ -379,7 +326,7 @@ th_establish_religious_tributaries = {
 			}
         }
 		add_entry = {
-			name = DIPLO_TRUST_WITH
+			name = TH_DIPLO_TRUST_WITH
 			export_to_variable = {
 				variable_name = ai_value
 				value = trust
@@ -397,7 +344,7 @@ th_establish_religious_tributaries = {
 			}
 		}
 		add_entry = {
-			name = DIPLO_TOTAL_DEVELOPMENT
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
 			export_to_variable = {
 				variable_name = ai_value
 				value = total_development
@@ -410,7 +357,7 @@ th_establish_religious_tributaries = {
 			}
 		}
 		add_entry = {
-			name = TH_DIPLO_IS_SUBJECT
+			name = DIPLO_IS_SUBJECT
 			limit = {
 				FROM = {
 					is_subject_of = ROOT
@@ -576,6 +523,35 @@ th_establish_religious_tributaries = {
 				value = -100
 			}
 		}
+		add_entry = {
+			name = DIPLO_BORDER_DISTANCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = border_distance
+				who = FROM
+			}
+			multiply_variable = {
+				which = ai_value
+				value = -0.25
+			}
+		}
+		add_entry = {
+			name = DIPLO_IN_HRE
+			
+			limit = {
+				FROM = { is_part_of_hre = yes }
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -75
+			}
+		}
 	}
 	
 	ai_will_do = {
@@ -683,11 +659,15 @@ th_revoke_religious_tributaries = {
 		create_subject = {
 			subject_type = vassal
 			subject = FROM
-		}	
+		}
+		add_opinion = {
+			who = ROOT
+			modifier = th_evil_god
+		}
 	}
     ai_acceptance = {
         add_entry = {
-            name = DIPLO_OPINION
+            name = TH_DIPLO_OPPINION
 			export_to_variable = {
 				variable_name = ai_value
 				value = opinion
@@ -700,7 +680,7 @@ th_revoke_religious_tributaries = {
 			}
         }
 		add_entry = {
-			name = DIPLO_TRUST_WITH
+			name = TH_DIPLO_TRUST_WITH
 			export_to_variable = {
 				variable_name = ai_value
 				value = trust
@@ -718,7 +698,7 @@ th_revoke_religious_tributaries = {
 			}
 		}
 		add_entry = {
-			name = DIPLO_TOTAL_DEVELOPMENT
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
 			export_to_variable = {
 				variable_name = ai_value
 				value = total_development
@@ -834,6 +814,74 @@ th_cancel_religious_tributaries = {
 				who = ROOT
 				modifier = th_evil_god
 			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#MRY incite Moriya zealots
+th_incite_moriya_zealots = {
+	category = covert
+
+	require_acceptance = no
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		OR = {
+			tag = MRY
+			was_tag = MRY
+		}
+		has_reform = Gensokyan_shrine_theocracy
+		religion = Moriya_Shintoism #Just to make it easier
+		FROM = {
+			NOT = { religion = ROOT }
+			any_owned_province = { religion = ROOT }
+		}
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 50
+		}
+		dip_tech = 9
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_already_incited_zealots
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_has_already_incited_zealots }
+					had_country_flag = {
+						flag = th_has_already_incited_zealots
+						days = 1825
+					}
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		FROM = {
+			set_country_flag = th_has_already_incited_zealots
+			every_owned_province = { 
+				limit = {
+					religion = ROOT
+				}
+				add_province_modifier = { 
+    				name = th_incited_zealots
+    				duration = 1825  
+				}
+			}
+			country_event = {
+				id = flavor_mry.100
+				days = 1825
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -50			
 		}
 	}
 
