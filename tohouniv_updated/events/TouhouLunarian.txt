@@ -332,7 +332,7 @@ country_event = {
 		NOT = { is_year = 1445 }
 		NOT = { has_country_modifier = th_the_lunarian_threat }
 		capital_scope = {
-			region = moon_region
+			superregion = gensokyo_orbit_superregion
 		}
 		ai = yes
 	}
@@ -373,7 +373,7 @@ country_event = {
 		hidden_effect = {
 			every_country = {
 				limit = {
-					#capital_scope = { region = moon_region }
+					#capital_scope = { superregion = gensokyo_orbit_superregion }
 					OR = {
 						tag = LCU
 						tag = HEC
@@ -394,6 +394,19 @@ country_event = {
 	option = {	#A war on Lunarian Sovereign Territory is indeed suicide
 		name = "TH_lunarian_events.9.a"
 		custom_tooltip = TH_lunarian_events.9.tt 
+		custom_tooltip = th_lunarian_add_navy_defense_to_every_province
+		hidden_effect = {		
+			every_province = {
+				limit = {
+					superregion = gensokyo_orbit_superregion
+				}
+				add_permanent_province_modifier = {
+					name = th_unlandable_moon_province
+					duration = -1
+					desc = th_unlandable_moon_province_tt
+				}
+			}
+		}
 		ai_chance = {
 			factor = 100
 		}
@@ -418,12 +431,10 @@ country_event = {
 			duration = 1
 		}
 		any_country = {
-			OR = {
-				capital_scope = { 
-					NOT = { region = moon_region }
-				}
-				NOT = { has_country_flag = th_able_to_attack_lunarian_flag }
+			capital_scope = { 
+				NOT = { superregion = gensokyo_orbit_superregion }
 			}
+			NOT = { has_country_flag = th_able_to_attack_lunarian_flag }
 			offensive_war_with = ROOT
 		}
 	}
@@ -447,19 +458,6 @@ country_event = {
 			name = th_anti_earth_weapons_modifier
 			duration = -1  
 			desc = th_anti_earth_weapons_modifier_duration
-		}
-		custom_tooltip = th_lunarian_add_navy_defense_to_every_province
-		hidden_effect = {		
-			every_owned_province = {
-				limit = {
-					region = moon_region
-				}
-				add_province_modifier = {
-					name = th_unlandable_moon_province
-					duration = -1
-					desc = th_unlandable_moon_province_tt
-				}
-			}
 		}
 		ai_chance = {
 			factor = 100
@@ -530,13 +528,20 @@ country_event = {
 			has_country_flag = th_activated_anti_earth_weapons
 			has_country_flag = TH_has_anti_earth_weapons
 		}
-		is_year = 1550
-		NOT = { has_global_flag = th_lunarian_are_attackable_now_flag }
+		OR = {
+			is_year = 1550
+			has_global_flag = th_lunarian_are_attackable_now_flag
+		}
 	}
 	
 	immediate = {
 		hidden_effect = {
-			set_global_flag = th_lunarian_are_attackable_now_flag 
+			if = {
+				limit = {
+					NOT = { has_global_flag = th_lunarian_are_attackable_now_flag }
+				}
+				set_global_flag = th_lunarian_are_attackable_now_flag 
+			}
 		}
 	}
 	
@@ -562,7 +567,14 @@ country_event = {
 			}
 			remove_country_modifier = th_anti_earth_weapons_modifier
 			clr_country_flag = th_activated_anti_earth_weapons
-			clr_country_flag = TH_has_anti_earth_weapons
+			clr_country_flag = TH_has_anti_earth_weapons		
+			every_province = {
+				limit = {
+					has_province_modifier = th_unlandable_moon_province
+				}
+				remove_province_modifier = th_unlandable_moon_province
+			}
+
 		}
 		
 		ai_chance = {
@@ -585,83 +597,6 @@ country_event = {
 		name = "TH_lunarian_events.13.a"
 		change_technology_group = tech_gensokyan_lunarian
 		change_unit_type = tech_gensokyan_lunarian
-		
-		ai_chance = {
-			factor = 100
-		}
-	}
-}
-
-#Make provinces almost unlandable
-country_event = {
-	id = TH_lunarian_events.14
-	title = "TH_lunarian_events.14.t"
-	desc = "TH_lunarian_events.14.desc"
-	picture = LUNARWAR_eventPicture
-	
-	hidden = yes
-
-	trigger = {
-		has_country_modifier = th_anti_earth_weapons_modifier
-		any_owned_province = {
-			NOT = { has_province_modifier = th_unlandable_moon_province }
-			region = moon_region
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	option = {
-		name = "TH_lunarian_events.14.a"
-		
-		every_owned_province = {
-			limit = {
-				region = moon_region
-			}
-			add_province_modifier = {
-				name = th_unlandable_moon_province
-				duration = -1
-				desc = th_unlandable_moon_province_tt
-			}
-		}
-		
-		ai_chance = {
-			factor = 100
-		}
-	}
-}
-
-#Make provinces landable again
-country_event = {
-	id = TH_lunarian_events.15
-	title = "TH_lunarian_events.15.t"
-	desc = "TH_lunarian_events.15.desc"
-	picture = LUNARWAR_eventPicture
-	
-	hidden = yes
-
-	trigger = {
-		NOT = { has_country_modifier = th_anti_earth_weapons_modifier }
-		any_owned_province = {
-			has_province_modifier = th_unlandable_moon_province
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	option = {
-		name = "TH_lunarian_events.15.a"
-		
-		every_owned_province = {
-			limit = {
-				has_province_modifier = th_unlandable_moon_province
-			}
-			remove_province_modifier = th_unlandable_moon_province
-		}
 		
 		ai_chance = {
 			factor = 100
