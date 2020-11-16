@@ -7,6 +7,6 @@ tags={
 	"Map"
 	"Loading Screen"
 }
-name="Touhou Universalis Updated"
+name="Touhou Universalis Test"
 supported_version="1.30.*"
 remote_file_id="1537902566"
