@@ -181,6 +181,10 @@ country_event = {
 				1292 = {
 					discover_country = FLR
 				}
+				#add_country_modifier = {
+				#	name = th_flr_lvl1_flan
+				#	duration = -1
+				#}
 			}
 			90 = {
 				add_base_tax = 2
@@ -205,34 +209,34 @@ country_event = {
 	fire_only_once = yes
 	is_triggered_only = yes
 	
-		immediate = {
+	immediate = {
 		hidden_effect = {
 			set_country_flag = flr_flanclone_created
+			set_country_flag = flr_first_flanclone
 		}
 	}
+
 	option = {		
 		name = flavor_flr.2.a
-			define_general = {
-				shock = 5
-				fire = 4
-				manuever = 4
-				siege = 2
-				name = "Flandres clone"
-				female = yes
-			}
-			add_country_modifier = { 
+		define_general = {
+			shock = 5
+			fire = 4
+			manuever = 4
+			siege = 2
+			name = "Flandres clone"
+			female = yes
+		}
+		add_country_modifier = { 
 			name = th_FLR_mistress_leading_army
 			duration = 3650
-			}
-			hidden_effect = {
+		}
+		hidden_effect = {
 			country_event = {  		#Clear event after 30 years
-			id = flavor_flr.202
-			days = 10950
+				id = flavor_flr.202
+				days = 10950
 			}
 		}
-	}
-	
-	
+	}	
 }
 
 country_event = {
@@ -836,7 +840,6 @@ country_event = {
 }
 
 #Flan gets the oppurtinity to return to Hakurei Shintoism
-
 country_event = {
 	id = flavor_flr.9
 	title = "flavor_flr.9.t"
@@ -866,14 +869,14 @@ country_event = {
 
 	option = {
 		name = flavor_flr.9.a
-		change_religion = Gensokyan
+		change_religion = th_hakureishinto
 		add_country_modifier = {
 			name = th_FLR_gensokyan_conversion
 			duration = 7300
 		}
 		capital_scope = {
 			area = {
-				change_religion = Gensokyan
+				change_religion = th_hakureishinto
 			}
 		}
 		
@@ -887,6 +890,237 @@ country_event = {
 		
 		ai_chance = { 
 			factor = 50
+		}
+	}
+}
+
+#Find origins of Sakuya instead
+country_event = {
+	id = flavor_flr.10
+	title = "flavor_flr.10.t"
+	desc = "flavor_flr.10.desc"
+	picture = SAKUDIO_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_flr.10.a
+		add_prestige = 30
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#It's a mask... it's literally trash
+country_event = {
+	id = flavor_flr.11
+	title = "flavor_flr.11.t"
+	desc = "flavor_flr.11.desc"
+	picture = STONEMASK_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_flr.11.a
+		if = {
+			limit = {
+				has_advisor = yes
+			}
+			kill_advisor = random
+		}
+		add_mil_power = 100
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Flandre's Decision of Faith
+country_event = {
+	id = flavor_flr.12
+	title = "flavor_flr.12.t"
+	desc = "flavor_flr.12.desc"
+	picture = FLANDRECHURCH_eventPicture
+	
+	trigger = {
+		is_year = 1550
+		is_religion_enabled = reformed
+		NOT = { has_country_flag = flr_had_religion_question_event }
+		NOT = { has_country_flag = flr_has_made_the_choice }
+		always = no
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = flr_had_religion_question_event
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			set_country_flag = flr_has_made_the_choice
+			clr_country_flag = flr_had_religion_question_event
+		}
+	}
+
+	#Catholic Flan
+	option = {
+		name = flavor_flr.12.a
+		trigger = {
+			religion_group = christian
+		}
+		custom_tooltip = flavor_flr.12.a.tt
+		hidden_effect = {
+			set_country_flag = flr_catholic_path
+			clr_country_flag = flr_reformation_path
+			clr_country_flag = flr_shinto_path
+			clr_country_flag = flr_tolerance_path
+		}
+		if = {
+			limit = {
+				OR = {
+					religion = protestant
+					religion = reformed
+				}
+			}
+			change_religion = catholic
+		}
+		add_country_modifier = {
+			name = flr_religious_flan
+			duration = 7300
+		}
+	}
+
+	#Reformation Flan
+	option = {
+		name = flavor_flr.12.b
+		trigger = {
+			religion_group = christian
+		}
+		custom_tooltip = flavor_flr.12.b.tt
+		hidden_effect = {
+			clr_country_flag = flr_catholic_path
+			set_country_flag = flr_reformation_path
+			clr_country_flag = flr_shinto_path
+			clr_country_flag = flr_tolerance_path
+		}
+		if = {
+			limit = {
+				religion = catholic
+			}
+			change_religion = protestant
+		}
+		add_country_modifier = {
+			name = flr_religious_flan
+			duration = 7300
+		}
+	}
+
+	#Shintoism Flan
+	option = {
+		name = flavor_flr.12.c
+		trigger = {
+			religion_group = Touhou
+		}
+		custom_tooltip = flavor_flr.12.c.tt
+		hidden_effect = {
+			clr_country_flag = flr_catholic_path
+			clr_country_flag = flr_reformation_path
+			set_country_flag = flr_shinto_path
+			clr_country_flag = flr_tolerance_path
+		}
+		add_country_modifier = {
+			name = flr_religious_flan
+			duration = 7300
+		}
+	}
+
+	#Tolerant Flan
+	option = {
+		name = flavor_flr.12.d
+		custom_tooltip = flavor_flr.12.d.tt
+		hidden_effect = {
+			clr_country_flag = flr_catholic_path
+			clr_country_flag = flr_reformation_path
+			clr_country_flag = flr_shinto_path
+			set_country_flag = flr_tolerance_path
+		}
+		add_country_modifier = {
+			name = flr_tolerant_flan
+			duration = 7300
+		}
+	}
+}
+
+#Flandre demands religious peace!
+country_event = {
+	id = flavor_flr.13
+	title = "flavor_flr.13.t"
+	desc = "flavor_flr.13.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+
+	#Accept her demands
+	option = {
+		name = flavor_flr.13.a
+		set_hre_religion_treaty = yes 
+		add_imperial_influence = 5
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#Nah
+	option = {
+		name = flavor_flr.13.b
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Religious Peace
+country_event = {
+	id = flavor_flr.14
+	title = "flavor_flr.14.t"
+	desc = "flavor_flr.14.desc"
+	picture = HRE_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+
+	#Make it so
+	option = {
+		name = flavor_flr.14.a
+		set_hre_religion_treaty = yes
+		add_country_modifier = {
+			name = flr_tolerant_reformer_of_the_hre
+			duration = -1
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#Nah
+	option = {
+		name = flavor_flr.14.b
+		add_imperial_influence = -10
+
+		ai_chance = {
+			factor = 0
 		}
 	}
 }
