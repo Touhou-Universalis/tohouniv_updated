@@ -788,7 +788,7 @@ country_event = {
 	}
 }
 
-country_event = {	#Incident - Non-th_hakureishinto declares war upon Gensokyo
+country_event = {	#Incident - Non-Gensokyan declares war upon Gensokyo
 	id = touhou_theocracy.2
 	title = touhou_theocracy.2.t
 	desc = touhou_theocracy.2.desc
@@ -810,9 +810,13 @@ country_event = {	#Incident - Non-th_hakureishinto declares war upon Gensokyo
 				defender_leader = THIS
 			}
 		}
-		any_country = {
-			capital_scope = { continent = gensokyo_continent }
-			has_reform = Gensokyan_shrine_theocracy
+		calc_true_if = {
+			all_country = {
+				is_free_or_tributary_trigger = yes
+				has_government_attribute = enables_call_to_defensive_war
+				capital_scope = { continent = gensokyo_continent }
+			}
+			amount = 1
 		}
 	}
 	
@@ -829,10 +833,7 @@ country_event = {	#Incident - Non-th_hakureishinto declares war upon Gensokyo
 						attacker_leader = ROOT
 						defender_leader = THIS
 					}
-					OR = {
-						is_subject = no
-						is_subject_of_type = tributary_state
-					}
+					is_free_or_tributary_trigger = yes
 				}
 				country_event = { id = touhou_theocracy.3 }
 				set_country_flag = TH_asked_for_help_against_@ROOT
@@ -855,7 +856,7 @@ country_event = {	#Incident - Gensokyo get attacked by none-gensokyan
 	option = {		#Call the Shrine Maidens for help
 		name = touhou_theocracy.3.a
 		trigger = {
-			NOT = { has_reform = Gensokyan_shrine_theocracy }
+			NOT = { has_government_attribute = enables_call_to_defensive_war }
 		}
 		custom_tooltip = touhou_theocracy.3.a.tt
 		hidden_effect = {
@@ -867,7 +868,7 @@ country_event = {	#Incident - Gensokyo get attacked by none-gensokyan
 			}
 			every_known_country = {
 				limit = {
-					has_reform = Gensokyan_shrine_theocracy
+					has_government_attribute = enables_call_to_defensive_war
 					NOT = { war_with = ROOT }
 					NOT = { war_with = FROM }
 					capital_scope = { continent = gensokyo_continent }
@@ -887,7 +888,7 @@ country_event = {	#Incident - Gensokyo get attacked by none-gensokyan
 	option = {		#If the defender is already shrine theocracy
 		name = touhou_theocracy.3.b
 		trigger = {
-			has_reform = Gensokyan_shrine_theocracy
+			has_government_attribute = enables_call_to_defensive_war
 		}
 		add_devotion = 15
 		add_prestige = 15
@@ -914,6 +915,10 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 	picture = SHRINE_eventPicture
 	
 	is_triggered_only = yes
+
+	trigger = {
+		is_free_or_tributary_trigger = yes
+	}
 	
 	option = {
 		name = "touhou_theocracy.4.a"
@@ -961,6 +966,10 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 					war_exhaustion = 10
 				}
 			}
+			modifier = {
+				factor = 0
+				is_subject_other_than_tributary_trigger = yes
+			}
 		}
 	}
 	
@@ -982,11 +991,34 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 					NOT = { war_exhaustion = 10 }
 				}
 			}
+			modifier = {
+				factor = 0
+				is_subject_other_than_tributary_trigger = yes
+			}
+		}
+	}	
+	
+	option = { # stay out of this
+		name = "touhou_theocracy.4.c"
+		trigger = {
+			ai = yes
+			is_subject_other_than_tributary_trigger = yes
+		}
+
+		ai_chance = { 
+			factor = 1000
+			modifier = {
+				factor = 0
+				OR = {
+					is_bankrupt = no
+					NOT = { war_exhaustion = 10 }
+				}
+			}
 		}
 	}	
 }
 
-country_event = {	#Incident - Non-th_hakureishinto finishes war with th_hakureishinto
+country_event = {	#Incident - Non-Gensokyan finishes war with Gensokyan
 	id = touhou_theocracy.5
 	title = touhou_theocracy.5.t
 	desc = touhou_theocracy.5.desc

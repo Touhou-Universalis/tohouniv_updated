@@ -1,0 +1,68 @@
+#HKR youkai hunting
+th_hunt_youkais = {
+	category = influence
+
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_enable_youkai_hunt
+	}
+
+	is_allowed = {
+		adm_power = 30
+		mil_power = 15
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_already_youkai_hunted
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_has_already_youkai_hunted }
+					had_country_flag = {
+						flag = th_has_already_youkai_hunted
+						days = 1826
+					}
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_youkai_hunt_has_one_charge
+			check_variable = {
+				which = th_youkai_hunt_charges
+				value = 1
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_youkai_hunt_currently_on_their_way
+			NOT = { has_country_modifier = th_sent_youkai_hunter }
+		}
+	}
+
+	on_accept = {
+		add_adm_power = -30
+		add_mil_power = -15
+		subtract_variable = {
+			which = th_youkai_hunt_charges
+			value = 1
+		}
+		add_country_modifier = {
+			name = th_sent_youkai_hunter
+			duration = 30
+			hidden = yes
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = th_youkai_hunt_charger_flag }
+			}
+			set_country_flag = th_youkai_hunt_charger_flag
+		}
+		FROM = {
+			clr_country_flag = th_has_already_youkai_hunted
+			country_event = {
+				id = th_diplo_events.18
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}

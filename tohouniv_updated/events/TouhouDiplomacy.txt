@@ -4,6 +4,7 @@
 
 namespace = th_diplo_events
 
+###MHG DIPLO ACTIONS###
 #Provocate War
 country_event = {
     id = th_diplo_events.1
@@ -153,7 +154,7 @@ country_event = {
     }
 }
 
-#Clear flag
+#Clear flag for aggressor
 country_event = {
     id = th_diplo_events.3
 	title = th_diplo_events.3.t
@@ -228,6 +229,7 @@ country_event = {
     }
 }
 
+###EIT DIPLO ACTIONS###
 #Set counter of aggressors for EIT
 country_event = {
     id = th_diplo_events.5
@@ -462,6 +464,7 @@ country_event = {
     }
 }
 
+###HKR DIPLO ACTIONS###
 #Nation broke peldging
 country_event = {
     id = th_diplo_events.10
@@ -527,4 +530,540 @@ country_event = {
             factor = 100
         }
     }
+}
+
+###MRY DIPLO ACTIONS###
+#Information about incited rebels
+country_event = {
+	id = th_diplo_events.12
+	title = th_diplo_events.12.t
+	desc = th_diplo_events.12.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.12.a
+        custom_tooltip = th_diplo_events.12.a.tt
+        hidden_effect = {
+			country_event = {
+				id = th_diplo_events.13
+				days = 1825
+			}
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_has_incited_rebels
+        }
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Clear flag for Moriya incited rebels in target country
+country_event = {
+	id = th_diplo_events.13
+	title = th_diplo_events.13.t
+	desc = th_diplo_events.13.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		name = th_diplo_events.13.a
+		clr_country_flag = th_has_already_incited_zealots
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+###FOM DIPLO ACTIONS###
+#Information about Marisa stealing from your treasury
+country_event = {
+	id = th_diplo_events.14
+	title = th_diplo_events.14.t
+	desc = th_diplo_events.14.desc
+	picture = MARISA_eventPicture
+	
+    is_triggered_only = yes
+    
+    immediate = {
+        hidden_effect = {
+            export_to_variable = {
+                which = th_money_to_steal
+                value = monthly_income
+                who = ROOT
+            }            
+            export_to_variable = {
+                which = th_money_available
+                value = treasury
+                who = ROOT
+            }
+            multiply_variable = {
+                which = th_money_to_steal
+                value = 6
+            }
+            if = {
+                limit = {
+                    # Is th_money_to_steal greater than th_money_available
+                    check_variable = {
+                        which = th_money_to_steal
+                        which = th_money_available
+                    }
+                }                
+                # Set th_money_to_steal to th_money_available's value, as th_money_to_steal was greater than th_money_available
+                set_variable = {
+                    which = th_money_to_steal 
+                    which = th_money_available 
+                }
+            }
+            set_variable = {
+                which = th_money_report
+                which = th_money_to_steal 
+            }
+            set_variable = {
+                which = th_money_decimals
+                which = th_money_to_steal 
+            }
+        }
+    }
+	
+	option = {
+        name = th_diplo_events.14.a
+        custom_tooltip = th_diplo_events.14.a.tt
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_money_to_steal
+                    value = 1
+                }
+            }
+            add_treasury = -1
+            FROM = { add_treasury = 1 }
+            subtract_variable = {
+                which = th_money_to_steal
+                value = 1
+            }
+            subtract_variable = {
+                which = th_money_decimals
+                value = 1
+            }
+        }
+        hidden_effect = {
+            multiply_variable = {
+                which = th_money_decimals
+                value = 100
+            }
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_has_stolen_treasury
+        }
+        hidden_effect = {
+			country_event = {
+				id = th_diplo_events.15
+				days = 9125
+            }
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.16
+                }
+            }
+        }
+		
+		ai_chance = { 
+			factor = 100
+		}
+    }
+    
+    after = {
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_money_decimals
+                    value = 1
+                }
+            }
+            add_treasury = -0.01
+            FROM = { add_treasury = 0.01 }
+            subtract_variable = {
+                which = th_money_decimals
+                value = 1
+            }
+        }
+    }
+}
+
+#Clear flag for being already looted in target country
+country_event = {
+	id = th_diplo_events.15
+	title = th_diplo_events.15.t
+	desc = th_diplo_events.15.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		name = th_diplo_events.15.a
+		clr_country_flag = th_has_been_already_looted_by_spies
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Feedback of the heist
+country_event = {
+	id = th_diplo_events.16
+	title = th_diplo_events.16.t
+	desc = th_diplo_events.16.desc
+	picture = MARISA_eventPicture
+	
+    is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.16.a
+        custom_tooltip = th_diplo_events.16.a.tt
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+###HKR DIPLO ACTIONS
+#Recharger for Youkai hunts
+country_event = {
+	id = th_diplo_events.17
+	title = th_diplo_events.17.t
+	desc = th_diplo_events.17.desc
+    picture = REIMU_eventPicture
+    
+    hidden = yes
+    trigger = {
+        OR = {
+            NOT = { has_country_flag = th_youkai_hunt_charger_flag }
+            had_country_flag = {
+                flag = th_youkai_hunt_charger_flag
+                days = 1825
+            }
+        }
+        NOT = {
+            check_variable = {
+                which = th_youkai_hunt_charges
+                value = 5
+            }
+        }
+    }
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    immediate = {
+        clr_country_flag = th_youkai_hunt_charger_flag
+    }
+	
+	option = {
+        name = th_diplo_events.17.a
+        change_variable = {
+            which = th_youkai_hunt_charges
+            value = 1
+        }
+		
+		ai_chance = { 
+			factor = 100
+		}
+    }
+
+    after = {
+        set_country_flag = th_youkai_hunt_charger_flag
+    }
+}
+
+#Youkai Hunt - Danmaku fight Setup
+country_event = {
+	id = th_diplo_events.18
+	title = th_diplo_events.18.t
+	desc = th_diplo_events.18.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+    is_triggered_only = yes
+    #hidden = yes
+    major = yes
+	
+	immediate = {
+        export_to_variable = {
+            which = th_youkai_hunt_own_development
+            value = total_development
+            who = ROOT
+        }
+        FROM = {
+            set_variable = {
+                which = th_youkai_hunt_youkai_development
+                value = 0
+            }
+        }
+	}
+	
+	option = {
+        name = th_diplo_events.18.a
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_youkai_hunt_own_development
+                    value = 1
+                }
+            }
+            FROM = {
+                change_variable = {
+                    which = th_youkai_hunt_youkai_development
+                    value = 1
+                }
+            }
+            subtract_variable = {
+                which = th_youkai_hunt_own_development
+                value = 1
+            }
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+    
+    after = {
+        FROM = {
+            country_event = {
+                id = th_diplo_events.19
+                days = 7
+            }
+        }
+    }
+}
+
+#Youkai Hunt - Danmaku fight
+country_event = {
+	id = th_diplo_events.19
+	title = th_diplo_events.19.t
+	desc = th_diplo_events.19.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill_no_mil = {
+				SKILL_BONI = 0
+            }            
+			set_variable = {
+				which = th_youkai_hunt_youkai_combat_skills
+				value = 800
+            }
+            change_variable = {
+                which = th_youkai_hunt_youkai_combat_skills
+                which = th_youkai_hunt_youkai_development
+            }
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_youkai_hunt_youkai_combat_skills
+			}
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = th_diplo_events.19.a
+		custom_tooltip = th_diplo_events.19.a.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = yes
+		hidden_effect = {
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.20
+                    days = 10
+                }
+            }
+		}			
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+    
+    option = {  #Stupid idea
+        name = th_diplo_events.19.b
+        custom_tooltip = th_diplo_events.19.b.tt
+        FROM = {
+            add_opinion = {
+                who = ROOT
+                modifier = th_betrayed_their_contract
+            }
+        }
+    }
+}
+
+#Youkai Hunt fight evulator
+country_event = {
+	id = th_diplo_events.20
+	title = th_diplo_events.20.t
+	desc = th_diplo_events.20.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+    hidden = yes
+	
+	immediate = {
+        export_to_variable = {
+            which = th_youkai_hunt_own_development
+            value = total_development
+        }
+        FROM = {
+            set_variable = {
+                which = th_youkai_cash
+                value = 0
+            }
+        }
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_youkai_hunt_own_development
+                    value = 1
+                }
+            }
+            FROM = { 
+                change_variable = {
+                    which = th_youkai_cash
+                    value = 1
+                }
+            }
+            subtract_variable = {
+                which = th_youkai_hunt_own_development
+                value = 1
+            }
+        }
+	}
+
+	option = {
+		name = th_diplo_events.20.a
+		if = {
+			limit = {
+                FROM = {
+                    has_country_flag = th_normal_last_fight_won
+                }
+            }
+            set_country_flag = th_has_already_youkai_hunted
+            add_opinion = {
+                who = FROM
+                modifier = th_fulfilled_their_contract
+            }
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.21
+                }
+            }
+		}
+		else = {
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.22
+                }
+            }
+            add_opinion = {
+                who = FROM
+                modifier = th_failed_their_contract
+            }
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Youkai Hunt - Victory
+country_event = {
+	id = th_diplo_events.21
+	title = th_diplo_events.21.t
+	desc = th_diplo_events.21.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+    is_triggered_only = yes
+    
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = {
+                    has_country_flag = th_increased_youkai_hunt_income
+                }
+                multiply_variable = {
+                    which = th_youkai_cash
+                    value = 4
+                }
+            }
+            else = {
+                multiply_variable = {
+                    which = th_youkai_cash
+                    value = 2
+                }
+            }
+            change_variable = {
+                which = th_youkai_cash
+                value = 50
+            }
+            set_variable = {
+                which = th_youkai_cash_show
+                which = th_youkai_cash
+            }
+        }
+    }
+	
+	option = {
+        name = th_diplo_events.21.a
+        custom_tooltip = th_diplo_events.21.a.tt
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_youkai_cash
+                    value = 1
+                }
+            }
+            add_treasury = 1
+            subtract_variable = {
+                which = th_youkai_cash
+                value = 1
+            }
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Youkai Hunt - Defeat
+country_event = {
+	id = th_diplo_events.22
+	title = th_diplo_events.22.t
+	desc = th_diplo_events.22.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = th_diplo_events.22.a
+		custom_tooltip = th_diplo_events.22.a.tt
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
 }

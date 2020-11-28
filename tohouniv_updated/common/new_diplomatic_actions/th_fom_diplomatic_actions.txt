@@ -1,0 +1,53 @@
+#FOM steal treasury
+th_loot_from_treasury = {
+	category = covert
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_enable_burgling_action
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 50
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_already_looted_treasury
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_has_been_already_looted_by_spies }
+					had_country_flag = {
+						flag = th_has_been_already_looted_by_spies
+						days = 9126
+					}
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_cant_loot_from_allies
+			NOT = { alliance_with = FROM }
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_not_truce_with_target
+			NOT = { truce_with = FROM }
+		}
+	}
+
+	on_accept = {
+		FROM = {
+			set_country_flag = th_has_been_already_looted_by_spies
+			country_event = {
+				id = th_diplo_events.14
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -50			
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
