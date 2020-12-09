@@ -1,0 +1,892 @@
+###################################################
+# Flavor Events for level ups of stats for a ruler
+# Originally part of flavorCIN, but got replaced
+# with the newer, for all fairies working respawn
+# system. This file exists, because the code might
+# come handy for a future level up mechanic.
+###################################################
+
+namespace = levelup_events
+
+#General Stats variable setup
+country_event = {
+	id = levelup_events.1
+	title = levelup_events.1.t
+	desc = levelup_events.1.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		always = no
+		NOT = { has_country_flag = levelup_setup }
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	hidden = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = {
+				which = levelup_bonus_stats
+				value = 0
+			}
+			set_country_flag = levelup_setup
+		}
+	}
+	
+	option = {
+		name = levelup_events.1.a
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Ruler respawns
+country_event = {
+	id = levelup_events.2
+	title = levelup_events.2.t
+	desc = levelup_events.2.desc
+	picture = CIRNO_eventPicture
+	
+	trigger = {
+		always = no
+		is_lesser_in_union = no
+		NOT = { has_ruler_flag = levelup_made_ruler_decision }
+		NOT = { government = republic }
+		always = no
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_ruler_flag = levelup_made_ruler_decision
+		}
+	}
+	
+	option = {	#Bring back ruler
+		name = levelup_events.2.a
+		th_respawn_ruler_effect = yes
+		add_stability = 1
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Nah
+		name = levelup_events.2.b
+		add_legitimacy = -5
+		add_prestige = 25
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Ruler general levelup
+country_event = {
+	id = levelup_events.3
+	title = levelup_events.3.t
+	desc = levelup_events.3.desc
+	picture = CIRNO_eventPicture
+	
+	trigger = {
+		always = no
+		is_lesser_in_union = no
+		OR = {
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Cirno"
+					}
+					has_ruler_flag = th_fairy_repub_cirno
+				}
+				NOT = { adm = 4 }
+				NOT = { dip = 5 }
+				NOT = { mil = 6 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Daiyousei"
+					}
+					has_ruler_flag = th_fairy_repub_daiyousei
+				}
+				NOT = { adm = 6 }
+				NOT = { dip = 4 }
+				NOT = { mil = 5 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "White"
+						has_ruler = "Lily"
+					}
+					has_ruler_flag = th_fairy_repub_lily
+				}
+				NOT = { adm = 5 }
+				NOT = { dip = 6 }
+				NOT = { mil = 4 }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1200
+		
+		modifier = {
+			factor = 0.9
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 1
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 2
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 2
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 3
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 3
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 4
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.45
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 4
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 5
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.3
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 5
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 6
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.15
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 6
+				}
+			}
+		}
+	}
+	
+	option = {	#Focus on admin
+		name = levelup_events.3.a
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					NOT = { adm = 4 }
+				}
+				AND = {
+					has_ruler = "Lily"
+					NOT = { adm = 5 }
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					NOT = { adm = 6 }
+				}
+			}
+		}
+		change_adm = 1 
+		add_years_of_income = -0.15
+	}
+	
+	option = {	#Focus on dip
+		name = levelup_events.3.b
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					NOT = { dip = 5 }
+				}
+				AND = {
+					has_ruler = "Lily"
+					NOT = { dip = 6 }
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					NOT = { dip = 4 }
+				}
+			}
+		}
+		change_dip = 1 
+		add_prestige = -10
+		add_legitimacy = -10
+	}
+	
+	option = {	#Focus on mil
+		name = levelup_events.3.c
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					NOT = { mil = 6 }
+				}
+				AND = {
+					has_ruler = "Lily"
+					NOT = { mil = 4 }
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					NOT = { mil = 5 }
+				}
+			}
+		}
+		change_mil = 1 
+		add_yearly_manpower = -0.1 
+	}
+	
+	option = {	#Let her rest
+		name = levelup_events.3.d
+		add_adm_power = 10
+		add_dip_power = 10
+		add_mil_power = 10
+	}
+}
+
+#Ruler admin level
+country_event = {
+	id = levelup_events.4
+	title = levelup_events.4.t
+	desc = levelup_events.4.desc
+	picture = CIRNO_eventPicture
+	
+	trigger = {
+		always = no
+		is_lesser_in_union = no
+		OR = {
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Cirno"
+					}
+					has_ruler_flag = th_fairy_repub_cirno
+				}
+				NOT = { adm = 4 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Daiyousei"
+					}
+					has_ruler_flag = th_fairy_repub_daiyousei
+				}
+				NOT = { adm = 6 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "White"
+						has_ruler = "Lily"
+					}
+					has_ruler_flag = th_fairy_repub_lily
+				}
+				NOT = { adm = 5 }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 400
+		
+		modifier = {
+			factor = 0.9
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 1
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 2
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 2
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 3
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 3
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 4
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.45
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 4
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 5
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.3
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 5
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 6
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.15
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 6
+				}
+			}
+		}
+	}
+	
+	option = {	#Level adm up
+		name = levelup_events.4.a
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					NOT = { adm = 4 }
+				}
+				AND = {
+					has_ruler = "Lily"
+					NOT = { adm = 5 }
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					NOT = { adm = 6 }
+				}
+			}
+		}
+		change_adm = 1
+		add_years_of_income = -0.15
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Max adm level
+		name = levelup_events.4.b
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					adm = 4
+				}
+				AND = {
+					has_ruler = "Lily"
+					adm = 5
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					adm = 6
+				}
+			}
+		}
+		add_adm_power = 75
+		add_years_of_income = -0.15
+	}
+	
+	option = {	#Spare the money for something else
+		name = levelup_events.4.c		
+		add_years_of_income = 0.15
+	}
+}
+
+#Ruler diplo level
+country_event = {
+	id = levelup_events.5
+	title = levelup_events.5.t
+	desc = levelup_events.5.desc
+	picture = CIRNO_eventPicture
+	
+	trigger = {
+		always = no
+		is_lesser_in_union = no
+		OR = {
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Cirno"
+					}
+					has_ruler_flag = th_fairy_repub_cirno
+				}
+				NOT = { dip = 5 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Daiyousei"
+					}
+					has_ruler_flag = th_fairy_repub_daiyousei
+				}
+				NOT = { dip = 4 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "White"
+						has_ruler = "Lily"
+					}
+					has_ruler_flag = th_fairy_repub_lily
+				}
+				NOT = { dip = 6 }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 400
+		
+		modifier = {
+			factor = 0.9
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 1
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 2
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 2
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 3
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 3
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 4
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.45
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 4
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 5
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.3
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 5
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 6
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.15
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 6
+				}
+			}
+		}
+	}
+	
+	option = {	#Level dip up
+		name = levelup_events.5.a
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					NOT = { dip = 5 }
+				}
+				AND = {
+					has_ruler = "Lily"
+					NOT = { dip = 6 }
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					NOT = { dip = 4 }
+				}
+			}
+		}
+		change_dip = 1
+		add_legitimacy = -10
+		add_prestige = -10
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Max dip level
+		name = levelup_events.5.b
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					dip = 5
+				}
+				AND = {
+					has_ruler = "Lily"
+					dip = 6
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					dip = 4
+				}
+			}
+		}
+		add_dip_power = 75
+		add_legitimacy = -5
+		add_prestige = -5
+	}
+	
+	option = {	#Spare the effort for something else
+		name = levelup_events.5.c
+		add_legitimacy = 10
+		add_prestige = 10
+	}
+}
+
+#Ruler military level
+country_event = {
+	id = levelup_events.6
+	title = levelup_events.6.t
+	desc = levelup_events.6.desc
+	picture = CIRNO_eventPicture
+	
+	trigger = {
+		always = no
+		is_lesser_in_union = no
+		OR = {
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Cirno"
+					}
+					has_ruler_flag = th_fairy_repub_cirno
+				}
+				NOT = { mil = 6 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Daiyousei"
+					}
+					has_ruler_flag = th_fairy_repub_daiyousei
+				}
+				NOT = { mil = 5 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "White"
+						has_ruler = "Lily"
+					}
+					has_ruler_flag = th_fairy_repub_lily
+				}
+				NOT = { mil = 4 }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 400
+		
+		modifier = {
+			factor = 0.9
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 1
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 2
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 2
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 3
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 3
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 4
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.45
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 4
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 5
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.3
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 5
+				}
+				NOT = {
+					check_variable = {
+						which = levelup_bonus_stats
+						value = 6
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.15
+			AND = {
+				check_variable = {
+					which = levelup_bonus_stats
+					value = 6
+				}
+			}
+		}
+	}
+	
+	option = {	#Level adm up
+		name = levelup_events.6.a
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					NOT = { mil = 6 }
+				}
+				AND = {
+					has_ruler = "Lily"
+					NOT = { mil = 4 }
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					NOT = { mil = 5 }
+				}
+			}
+		}
+		change_mil = 1
+		add_yearly_manpower = -0.1 
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Max adm level
+		name = levelup_events.6.b
+		trigger = {
+			OR = {
+				AND = {
+					has_ruler = "Cirno"
+					mil = 6
+				}
+				AND = {
+					has_ruler = "Lily"
+					mil = 4
+				}
+				AND = {
+					has_ruler = "Daiyousei"
+					mil = 5
+				}
+			}
+		}
+		add_mil_power = 75
+		add_yearly_manpower = -0.1 
+	}
+	
+	option = {	#Spare the soldiers for something else
+		name = levelup_events.6.c
+		add_yearly_manpower = 0.1
+	}
+}
