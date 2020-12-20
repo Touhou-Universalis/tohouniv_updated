@@ -1,0 +1,324 @@
+namespace = th_hellfairy_events
+
+#Recruit from occupied province
+country_event = {
+	id = th_hellfairy_events.1
+	title = "th_hellfairy_events.1.t"
+	desc = "th_hellfairy_events.1.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+
+	hidden = yes
+	
+	trigger = {
+		any_province = {
+			NOT = { has_province_flag = th_mpc_already_got_recruited_by_@ROOT }
+			controlled_by = ROOT
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			owner = {
+				war_with = ROOT
+			}
+		}
+		has_government_attribute = th_overload_and_gain_mp
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {		#Standard
+		name = th_hellfairy_events.1.a
+		
+		every_province = {
+			limit = {
+				NOT = { has_province_flag = th_mpc_already_got_recruited_by_@ROOT }
+				controlled_by = ROOT
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				owner = {
+					war_with = ROOT
+				}
+			}
+			if = {
+				limit = {
+					fort_level = 9
+				}
+				ROOT = {
+					add_yearly_manpower = 0.10
+				}
+			}
+			else_if = {
+				limit = {
+					fort_level = 8
+				}
+				ROOT = {
+					add_yearly_manpower = 0.09
+				}
+			}
+			else_if = {
+				limit = {
+					fort_level = 7
+				}
+				ROOT = {
+					add_yearly_manpower = 0.08
+				}
+			}
+			else_if = {
+				limit = {
+					fort_level = 6
+				}
+				ROOT = {
+					add_yearly_manpower = 0.07
+				}
+			}
+			else_if = {
+				limit = {
+					fort_level = 5
+				}
+				ROOT = {
+					add_yearly_manpower = 0.06
+				}
+			}
+			else_if = {
+				limit = {
+					fort_level = 4
+				}
+				ROOT = {
+					add_yearly_manpower = 0.05
+				}
+			}
+			else_if = {
+				limit = {
+					fort_level = 3
+				}
+				ROOT = {
+					add_yearly_manpower = 0.04
+				}
+			}
+			else_if = {
+				limit = {
+					fort_level = 2
+				}
+				ROOT = {
+					add_yearly_manpower = 0.03
+				}
+			}
+			else_if = {
+				limit = {
+					fort_level = 1
+				}
+				ROOT = {
+					add_yearly_manpower = 0.02
+				}
+			}
+			else = {
+				ROOT = {
+					add_yearly_manpower = 0.01
+				}
+			}
+			set_province_flag = th_mpc_already_got_recruited_by_@ROOT
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Clear province flag
+country_event = {
+	id = th_hellfairy_events.2
+	title = "th_hellfairy_events.2.t"
+	desc = "th_hellfairy_events.2.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		any_province = {
+			has_province_flag = th_mpc_already_got_recruited_by_@ROOT
+			owner = {
+				NOT = { war_with = ROOT }
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {		#Standard
+		name = th_hellfairy_events.2.a
+		every_province = {
+			limit = {
+				has_province_flag = th_mpc_already_got_recruited_by_@ROOT
+				owner = {
+					NOT = { war_with = ROOT }
+				}
+			}
+			clr_province_flag = th_mpc_already_got_recruited_by_@ROOT
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Province overload - add debuff
+country_event = {
+	id = th_hellfairy_events.3
+	title = "th_hellfairy_events.3.t"
+	desc = "th_hellfairy_events.3.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		has_government_attribute = th_overload_and_gain_mp
+		any_owned_province = {
+			has_province_flag = th_overloaded_province
+			NOT = { has_province_modifier = th_province_overload }
+			NOT = { has_province_modifier = th_province_overloaded }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {		#Standard
+		name = th_hellfairy_events.3.a
+		every_province = {
+			limit = {
+				has_province_flag = th_overloaded_province
+				NOT = { has_province_modifier = th_province_overload }
+				NOT = { has_province_modifier = th_province_overloaded }
+			}
+			add_province_modifier = {
+				name = th_province_overloaded
+				duration = 3650
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Province overload - remove everything with the flag
+country_event = {
+	id = th_hellfairy_events.4
+	title = "th_hellfairy_events.4.t"
+	desc = "th_hellfairy_events.4.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		NOT = { has_government_attribute = th_overload_and_gain_mp }
+		any_owned_province = {
+			has_province_flag = th_overloaded_province
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {		#Standard
+		name = th_hellfairy_events.4.a
+		every_province = {
+			limit = {
+				has_province_flag = th_overloaded_province
+			}
+			clr_province_flag = th_overloaded_province
+			remove_province_modifier = th_province_overload
+			remove_province_modifier = th_province_overloaded
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Province overload - flag expires
+country_event = {
+	id = th_hellfairy_events.5
+	title = "th_hellfairy_events.5.t"
+	desc = "th_hellfairy_events.5.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		any_owned_province = {
+			had_province_flag = {
+				flag = th_overloaded_province
+				days = 5475
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {		#Standard
+		name = th_hellfairy_events.5.a
+		every_province = {
+			limit = {
+				had_province_flag = {
+					flag = th_overloaded_province
+					days = 5475
+				}
+			}
+			clr_province_flag = th_overloaded_province
+			remove_province_modifier = th_province_overload
+			remove_province_modifier = th_province_overloaded
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Remove overload country flag if government doesn't match
+country_event = {
+	id = th_hellfairy_events.6
+	title = "th_hellfairy_events.6.t"
+	desc = "th_hellfairy_events.6.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		has_country_flag = th_activated_province_overload
+		NOT = { has_government_attribute = th_overload_and_gain_mp }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {		#Standard
+		name = th_hellfairy_events.6.a
+		clr_country_flag = th_activated_province_overload
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Overload information
+country_event = {
+	id = th_hellfairy_events.7
+	title = "th_hellfairy_events.7.t"
+	desc = "th_hellfairy_events.7.desc"
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {		#Standard
+		name = th_hellfairy_events.7.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

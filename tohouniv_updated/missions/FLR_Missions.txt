@@ -481,70 +481,7 @@ flr_vampiric_branch = {
 			country_event = {
 				id = flavor_flr.11
 			}
-			hidden_effect = {
-				home_trade_node_effect_scope = {
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							is_capital = yes
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							development = CAPITAL
-							is_capital = no
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							development = CAPITAL
-							is_capital = no
-							development = 20
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							development = CAPITAL
-							is_capital = no
-							development = 25
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							development = CAPITAL
-							is_capital = no
-							development = 30
-						}
-						save_event_target_as = reward_province
-					}
-				}
-			}
-			if = {
-				limit = { has_saved_event_target = reward_province }
-				event_target:reward_province = {
-					add_province_modifier = {
-						name = "dominant_trade_hub"
-						duration = -1
-					}
-				}
-			}
-			else = {
-				custom_tooltip = dominant_home_node_reward_tooltip
-			}
+			th_get_default_permanent_province_buff = yes
 		}
 	}
 }
@@ -565,10 +502,6 @@ flr_identity_branch = {
 		position = 1
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = th_FLR_choose_religion_tt
-				has_country_flag = th_FLR_choose_religion
-			}
-			custom_trigger_tooltip = {
 				tooltip = th_flr_any_country_likes_us_tt
 				any_country = {
 					capital_scope = {
@@ -585,6 +518,9 @@ flr_identity_branch = {
 			has_advisor = yes
 		}
 		effect = {
+			country_event = {
+				id = flavor_scr.5
+			}
 			add_stability = 2
 		}
 	}
@@ -701,6 +637,7 @@ flr_identity_branch = {
 		effect = {
 			custom_tooltip = flr_the_imperial_test_tt
 			hidden_effect = {
+				override_country_name = FLANDRISH_EMPIRE
 				remove_country_modifier = flr_lvl4_flan
 				add_country_modifier = {
 					name = flr_lvl5_flan
@@ -751,16 +688,16 @@ flr_religion_branch = {
 				}
 				if = {
 					limit = {
-						has_country_flag = flr_reformation
+						has_country_flag = flr_reformation_path
 					}
 					clr_country_flag = flr_reformation
 					set_country_flag = flr_reformation_path_mission
 				}
 				if = {
 					limit = {
-						has_country_flag = flr_shinto
+						has_country_flag = flr_shinto_path
 					}
-					clr_country_flag = flr_shinto
+					clr_country_flag = flr_shinto_path
 					set_country_flag = flr_shinto_path_mission
 				}
 				if = {
@@ -948,12 +885,20 @@ flr_shinto_branch = {
 				}
 				amount = 3
 			}
-			calc_true_if = {
-				all_country = {
-					technology_group = western
-					religion_group = Touhou
+			OR = {
+				calc_true_if = {
+					all_country = {
+						technology_group = western
+						religion_group = Touhou
+					}
+					amount = 10
 				}
-				amount = 10
+				calc_true_if = {
+					all_province = {
+						religion_group = Touhou
+					}
+					amount = 100
+				}
 			}
 		}
 		effect = {
@@ -1049,6 +994,7 @@ flr_tolerant_branch = {
 			OR = {
 				NOT = { hre_size = 1 }
 				hre_religion_locked = yes
+				hre_religion_treaty = yes
 			}
 		}
 		effect = {
@@ -1177,13 +1123,28 @@ flr_slot2_branch = {
 		required_missions = { flr_imperial_crown_of_germany }
 		position = 9
 		provinces_to_highlight = {
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			OR = {
+				is_part_of_hre = no
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			}
 			region = italy_region
 		}
 		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 40
-				region = italy_region
+			OR = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 40
+					region = italy_region
+				}
+				AND = {
+					is_emperor = yes
+					calc_true_if = {
+						all_province = {
+							is_part_of_hre = yes
+							region = italy_region
+						}
+						amount = 40
+					}
+				}
 			}
 		}
 		effect = {
