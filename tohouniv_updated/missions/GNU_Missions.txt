@@ -306,7 +306,7 @@ gnu_missions_outer_world_eastwards_slot = {
 	}					
 	GNU_devil_sunset_invasion = {
 		icon = mission_gengetsu_invasion
-		required_missions = { GNU_dominate_the_new_world }
+		required_missions = { GNU_dominate_the_new_world GNU_ivory_coast }
 		position = 8
 		
 		provinces_to_highlight = {
@@ -384,7 +384,7 @@ GNU_missions_expandPC98_slot = {
 	GNU_reclaim_the_dream_land = {
 		icon = mission_touhou_yuuka_ominous
 		required_missions = { GNU_build_up_army }
-		position = 2
+		position = 4
 		provinces_to_highlight = {
 			OR = {
 				area = Sunny_plains
@@ -430,7 +430,7 @@ GNU_missions_expandPC98_slot = {
 	GNU_to_the_phantom_world = {
 		icon = mission_touhou_mima
 		required_missions = { GNU_reclaim_the_dream_land }
-		position = 6
+		position = 5
 		provinces_to_highlight = {
 			OR = {
 				area = World_of_fantasies
@@ -476,7 +476,7 @@ GNU_missions_expandPC98_slot = {
 	GNU_claim_makai_throne = {
 		icon = mission_touhou_shinki
 		required_missions = { GNU_to_the_phantom_world }
-		position = 7
+		position = 6
 		trigger = {
 			is_subject = no
 			has_casus_belli_against = MKI
@@ -528,7 +528,7 @@ GNU_missions_expandPC98_slot = {
 	GNU_innocent_devil_elis = {
 		icon = mission_elis
 		required_missions = { GNU_claim_makai_throne }
-		position = 8
+		position = 7
 		provinces_to_highlight = {
 			OR = {
 				province_id = 4868
@@ -553,6 +553,27 @@ GNU_missions_expandPC98_slot = {
 				name = "Elis"
 				female = yes
 			}
+		}
+	}
+	GNU_koakuma = {
+		icon = mission_koakuma
+		required_missions = { GNU_innocent_devil_elis }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4920
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+				owns_core_province = 4920					
+		}
+		effect = {
+			change_adm = 1 
+			change_heir_adm = 1
+			change_innovativeness = 6
 		}
 	}
 }
@@ -627,7 +648,7 @@ GNU_missions_expand_north_slot = {
 				add_permanent_claim = ROOT
 			}
 		}
-	}
+	} 
 	GNU_unify_all_dream_worlds = {
 		icon = mission_dream_world_windows
 		required_missions = {GNU_invade_heaven  }
@@ -645,6 +666,95 @@ GNU_missions_expand_north_slot = {
 			change_heir_adm = 1
 			add_prestige=50
 			add_stability=3
+		}
+	} 
+	GNU_colonize_australia = {
+		icon = mission_iberian_conquistador
+		required_missions = { GNU_attract_kedama_settlers }
+		position = 5
+		trigger = { 	
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 5
+					colonial_region = colonial_australia
+					is_city = yes
+				}
+			}	
+		effect = {
+			if = {
+				limit = {
+					1998 = {
+						is_empty = yes
+					}
+				}
+				1998 = {
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+					cede_province = ROOT
+					change_culture = ROOT
+					change_religion = ROOT
+					add_core = ROOT
+				}
+			}
+			else = {
+				1998 = {
+					add_permanent_claim = ROOT
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+				}
+			}
+			south_africa_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	GNU_cape_of_good_hope = {
+		icon = mission_trade_company_region_abroad
+		required_missions = { GNU_colonize_australia }
+		position = 6
+		trigger = { 
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 10
+				region = south_africa_region
+				is_city = yes
+			}
+		}
+		effect = {
+			guinea_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			kongo_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	} 
+	GNU_ivory_coast = {
+		icon = mission_trade_company_region_abroad
+		required_missions = { GNU_cape_of_good_hope }
+		position = 7
+		trigger = {  
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 15
+				region = guinea_region
+				is_city = yes
+			}
+		}
+		effect = {
+			change_mil = 1 
+			change_heir_mil = 1
 		}
 	}
 }
@@ -757,7 +867,12 @@ GNU_missions_empire_slot = {
 		add_adm_power = 600
 		add_dip_power = 600
 		add_mil_power = 600
-		add_prestige=100	
+		add_prestige=100
+		capital_scope = {
+				add_base_tax = 10
+				add_base_production = 10
+				add_base_manpower = 10	
+			}	
 		}
 	}
 	GNU_form_dream_empire = {
@@ -846,6 +961,30 @@ GNU_missions_realm_growth_slot = {
 				name = "gnu_unite_home_region"
 				duration = 9125
 			}
+		}
+	}
+	GNU_gain_kurumis_favor = {
+		icon = mission_kurumi
+		required_missions = { GNU_reclaim_the_dream_land }
+		position = 5		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4850
+			}
+			NOT = { development = 30 }
+		}
+		trigger = {
+			4850 = { development = 30 }
+		}
+		effect = {
+			add_adm_power = 50
+			add_dip_power = 50
+			add_mil_power = 50
+			add_country_modifier = {
+				name = "gnu_kurumis_favor"
+				duration = -1
+			}
+			
 		}
 	}
 }
