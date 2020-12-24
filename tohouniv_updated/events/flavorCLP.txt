@@ -4,7 +4,7 @@
 
 namespace = flavor_clp
 
-#
+#Ask JNK for freedom
 country_event = {	
 	id = flavor_clp.1
 	title = flavor_clp.1.t
@@ -24,6 +24,7 @@ country_event = {
 	}
 }
 
+#JNK gets asked
 country_event = {	
 	id = flavor_clp.2
 	title = flavor_clp.2.t
@@ -37,13 +38,13 @@ country_event = {
 	option = {	
 		name = flavor_clp.2.a
 		
-		From = { country_event = { id = flavor_clp.3 } }
+		FROM = { country_event = { id = flavor_clp.3 } }
 		
 		ai_chance = {
 			factor = 100
 			modifier = {
 				factor = 0
-				From = { ai = yes }
+				FROM = { ai = yes }
 			}
 		}
 	}
@@ -54,12 +55,13 @@ country_event = {
 			factor = 100
 			modifier = {
 				factor = 0
-				From = { ai = no }
+				FROM = { ai = no }
 			}
 		}
 	}
 }
 
+#CLP becomes free
 country_event = {	
 	id = flavor_clp.3
 	title = flavor_clp.3.t
@@ -90,6 +92,7 @@ country_event = {
 	}
 }
 
+#CLP asks Hecatia to get her land
 country_event = {	
 	id = flavor_clp.4
 	title = flavor_clp.4.t
@@ -132,7 +135,6 @@ country_event = {
 	
 	option = {	
 		name = flavor_clp.4.b
-		custom_tooltip = flavor_clp.4.b.tt		
 		
 		create_alliance = HEC
 		add_trust = {
@@ -171,6 +173,7 @@ country_event = {
 	}
 }	
 
+#Hecatia is angry
 country_event = {	
 	id = flavor_clp.5
 	title = flavor_clp.5.t
@@ -214,6 +217,7 @@ country_event = {
 	}
 }
 
+#Hecatia forgives us
 country_event = {	
 	id = flavor_clp.6
 	title = flavor_clp.6.t
@@ -251,6 +255,7 @@ country_event = {
 	}
 }
 
+#Hecatia and Junko bless Clownpiece for her achievements
 country_event = {	
 	id = flavor_clp.7
 	title = flavor_clp.7.t
@@ -261,14 +266,23 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			clr_country_flag = clp_pledging_to_believe_hecatia
 			set_country_flag = clp_dominate_the_moon
 		}
 	}
 
 	option = {	
 		name = flavor_clp.7.a
-		custom_tooltip = flavor_clp.7.a.tt
+		if = {
+			limit = {
+				has_country_flag = clp_pledging_to_believe_hecatia
+			}
+			custom_tooltip = flavor_clp.7.a.tt
+			hidden_effect = {
+				clr_country_flag = clp_pledging_to_believe_hecatia
+				clr_country_flag = clp_anger_of_hecatia
+				remove_country_modifier = clp_anger_of_hecatia
+			}
+		}
 		
 		add_country_modifier = {
 			name = clp_bless_of_hecatia_and_junko
@@ -281,6 +295,7 @@ country_event = {
 	}
 }
 
+#CLP moves to the US
 country_event = {	
 	id = flavor_clp.8
 	title = flavor_clp.8.t
@@ -325,6 +340,7 @@ country_event = {
 	}
 }
 
+#Danmaku fight with Junko
 country_event = {
 	id = flavor_clp.9
 	title = flavor_clp.9.t
@@ -361,8 +377,8 @@ country_event = {
 		hidden_effect = {
 			if = {
 				limit = {
-							has_ruler = "Clownpiece"
-							dynasty = "of Clownsville"
+					has_ruler = "Clownpiece"
+					dynasty = "of Clownsville"
 				}
 				th_getruler_diplomatic_skill = {
 					SKILL_BONI = 300
@@ -386,9 +402,13 @@ country_event = {
 
 	option = {
 		name = flavor_clp.9.a
-
-		JNK = {
-			vassalize = ROOT
+		highlight = yes
+		custom_tooltip = flavor_clp.9.a.tt
+		th_danmaku_diplo_fight_ruler_and_opponent = {
+			win_event = flavor_clp.91
+			draw_event = flavor_clp.91
+			defeat_event = flavor_clp.92
+			days = 10
 		}
 		
 		ai_chance = { 
@@ -399,11 +419,8 @@ country_event = {
 	option = {
 		name = flavor_clp.9.b
 
-		highlight = yes
-		custom_tooltip = flavor_clp.9.b.tt
-		th_danmaku_diplo_fight_ruler_and_opponent = yes
-		hidden_effect = {
-			set_country_flag = CLP_diplo_fight_with_junko
+		JNK = {
+			vassalize = ROOT
 		}
 		
 		ai_chance = { 
@@ -437,24 +454,14 @@ country_event = {
 	}
 }
 
+#Victory against Junko
 country_event = {
 	id = flavor_clp.91
 	title = flavor_clp.91.t
 	desc = flavor_clp.91.desc
 	picture = CLOWNPIECE_eventPicture
 	
-	trigger = {
-		has_country_flag = CLP_diplo_fight_with_junko
-		has_country_flag = th_incident_last_diplo_fight_won
-	}
-
-	mean_time_to_happen = {
-		days = 10
-	}
-
-	immediate = {
-		clr_country_flag = CLP_diplo_fight_with_junko
-	}
+	is_triggered_only = yes
 	
 	option = {
 		name = flavor_clp.91.a
@@ -469,24 +476,14 @@ country_event = {
 	}
 }
 
+#Defeat against Junko
 country_event = {
 	id = flavor_clp.92
 	title = flavor_clp.92.t
 	desc = flavor_clp.92.desc
 	picture = JUNKO2_eventPicture
 	
-	trigger = {
-		has_country_flag = CLP_diplo_fight_with_junko
-		has_country_flag = th_incident_last_diplo_fight_lost
-	}
-
-	mean_time_to_happen = {
-		days = 10
-	}
-
-	immediate = {
-		clr_country_flag = CLP_diplo_fight_with_junko
-	}
+	is_triggered_only = yes
 	
 	option = {	
 		name = flavor_clp.92.a
@@ -536,6 +533,7 @@ country_event = {
 	}
 }
 
+#Danmaku fight with Hecatia
 country_event = {
 	id = flavor_clp.10
 	title = flavor_clp.10.t
@@ -598,8 +596,13 @@ country_event = {
 	option = {
 		name = flavor_clp.10.a
 
-		HEC = {
-			vassalize = ROOT
+		highlight = yes
+		custom_tooltip = flavor_clp.10.a.tt
+		th_danmaku_diplo_fight_ruler_and_opponent = {
+			win_event = flavor_clp.101
+			draw_event = flavor_clp.101
+			defeat_event = flavor_clp.102
+			days = 10
 		}
 		
 		ai_chance = { 
@@ -610,11 +613,8 @@ country_event = {
 	option = {
 		name = flavor_clp.10.b
 
-		highlight = yes
-		custom_tooltip = flavor_clp.10.b.tt
-		th_danmaku_diplo_fight_ruler_and_opponent = yes
-		hidden_effect = {
-			set_country_flag = CLP_diplo_fight_with_hecatia
+		HEC = {
+			vassalize = ROOT
 		}
 		
 		ai_chance = { 
@@ -648,24 +648,14 @@ country_event = {
 	}
 }
 
+#Victory against Hecatia
 country_event = {
 	id = flavor_clp.101
 	title = flavor_clp.101.t
 	desc = flavor_clp.101.desc
 	picture = CLOWNPIECE_eventPicture
 	
-	trigger = {
-		has_country_flag = CLP_diplo_fight_with_hecatia
-		has_country_flag = th_incident_last_diplo_fight_won
-	}
-
-	mean_time_to_happen = {
-		days = 10
-	}
-
-	immediate = {
-		clr_country_flag = CLP_diplo_fight_with_hecatia
-	}
+	is_triggered_only = yes
 	
 	option = {
 		name = flavor_clp.101.a
@@ -680,24 +670,14 @@ country_event = {
 	}
 }
 
+#Defeat against Hecatia
 country_event = {
 	id = flavor_clp.102
 	title = flavor_clp.102.t
 	desc = flavor_clp.102.desc
 	picture = HECATIA2_eventPicture
 	
-	trigger = {
-		has_country_flag = CLP_diplo_fight_with_hecatia
-		has_country_flag = th_incident_last_diplo_fight_lost
-	}
-
-	mean_time_to_happen = {
-		days = 10
-	}
-
-	immediate = {
-		clr_country_flag = CLP_diplo_fight_with_hecatia
-	}
+	is_triggered_only = yes
 	
 	option = {	
 		name = flavor_clp.102.a
@@ -747,6 +727,7 @@ country_event = {
 	}
 }
 
+#Human Capital gets blown up
 country_event = {
 	id = flavor_clp.11
 	title = flavor_clp.11.t
@@ -778,6 +759,7 @@ country_event = {
 	}
 }
 
+#Government change
 country_event = {
 	id = flavor_clp.12
 	title = flavor_clp.12.t
@@ -801,6 +783,118 @@ country_event = {
 	option = {
 		name = flavor_clp.12.b
 		add_prestige = 5
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Ask fairies to become Clownpiece's vassals
+country_event = {
+	id = flavor_clp.13
+	title = flavor_clp.13.t
+	desc = flavor_clp.13.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_clp.13.a
+		FROM = {
+			vassalize = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				total_development = 100
+				factor = 0
+			}
+			modifier = {
+				NOT = { alliance_with = FROM }
+				factor = 0
+			}
+		}
+	}
+
+	option = {
+		name = flavor_clp.13.b
+		if = {
+			limit = {
+				government = monarchy
+			}
+			FROM = {
+				add_casus_belli = {
+					type = cb_touhou_mission_personal_union_war
+					target = ROOT
+					months = 600
+				}
+			}
+		}
+		else = {
+			FROM = {
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = ROOT
+					months = 600
+				}
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = {
+					id = flavor_clp.14
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				NOT = { total_development = 100 }
+				factor = 0
+			}
+			modifier = {
+				alliance_with = FROM
+				factor = 0
+			}
+		}
+	}
+}
+
+#Fairy nation refuses
+country_event = {
+	id = flavor_clp.14
+	title = flavor_clp.14.t
+	desc = flavor_clp.14.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_clp.14.a
+		tooltip = {
+			FROM = {
+				if = {
+					limit = {
+						government = monarchy
+					}
+					reverse_add_casus_belli = {
+						type = cb_touhou_mission_personal_union_war
+						target = ROOT
+						months = 600
+					}
+				}
+				else = {
+					reverse_add_casus_belli = {
+						type = cb_vassalize_mission
+						target = ROOT
+						months = 600
+					}
+				}
+			}
+		}
 		
 		ai_chance = { 
 			factor = 100

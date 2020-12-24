@@ -1,0 +1,592 @@
+########################################
+# Flavor Events for Jasmine Path
+########################################	
+
+namespace = flavor_lil
+
+#Discovery Event
+country_event = {
+	id = flavor_lil.1
+	title = flavor_lil.1.t
+	desc = flavor_lil.1.desc
+	picture = SHRINE_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.1.a
+		add_country_modifier = {
+			name = "lil_benevolent_being"
+			duration = 9125
+		}
+		define_conquistador = {
+			shock = 2
+			fire = 2
+			manuever = 4
+			siege = 2
+			name = "White Fairy Scout"
+			female = yes
+		}
+	}
+}
+
+#Establishing first colony event
+country_event = {
+	id = flavor_lil.2
+	title = flavor_lil.2.t
+	desc = flavor_lil.2.desc
+	picture = Lily_First_Colony
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.2.a
+		change_adm = 1
+		add_treasury = 400
+		add_country_modifier = {
+			name = "lil_new_dawn"
+			duration = 7300
+		}
+		australia_region = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+	}
+}
+
+
+#Friendship Event
+country_event = {
+	id = flavor_lil.3
+	title = flavor_lil.3.t
+	desc = flavor_lil.3.desc
+	picture = Lily_satori_friendship
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.3.a
+		if = {
+			limit = {
+				NOT = { alliance_with = CRD }
+			}
+			create_alliance = CRD
+		}
+		add_trust = {
+			who = CRD
+			value = 10
+			mutual = yes
+		}
+	}
+}
+
+#Scarlet Doomed
+country_event = {
+	id = flavor_lil.4
+	title = flavor_lil.4.t
+	desc = flavor_lil.4.desc
+	picture = Scarlet_Doomed
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.4.a
+		add_mil_power = 100
+		add_prestige = 20
+	}
+}
+
+#Treaty of Misty Coast
+country_event = {
+	id = flavor_lil.5
+	title = flavor_lil.5.t
+	desc = flavor_lil.5.desc
+	picture = Satori_Treaty
+
+	major = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.5.a  #Accept Treaty
+		custom_tooltip = lil_partition_scr.tt
+		lil_accept_land_sharing = yes
+		white_peace = SCR
+		custom_tooltip = lily_satori_union.tt
+		add_historical_friend = CRD
+		CRD = {
+			add_historical_friend = LIL
+		}
+		hidden_effect = {
+			add_trust = {
+				who = CRD
+				value = 10
+				mutual = yes
+			}
+			set_country_flag = LIL_CRD_Deal
+		}
+		change_dip = 1
+		add_dip_power = 100
+		
+		ai_chance = {
+			factor = 50
+		}
+	}
+
+	option = {
+		name = flavor_lil.5.b #Reject Treaty
+		custom_tooltip = lil_swallow_scr.tt
+		lil_reject_land_sharing = yes
+		white_peace = SCR
+		custom_tooltip = lily_satori_feud.tt
+		reverse_add_opinion = {
+			who = CRD
+			modifier = th_deal_breaker
+		}
+		hidden_effect = {
+			add_trust = {
+				who = CRD
+				value = -40
+				mutual = no
+			}
+		}
+		change_mil = 1
+		add_prestige = -10
+		add_power_projection = {
+			type = mission_rewards_power_projection
+			amount = 40
+		}
+		add_treasury = 500 #Take all the land for yourself
+		ai_chance = {
+			factor = 15
+		}
+	}
+}
+
+namespace = reform_lwe
+
+#Gov Reform Mechanic
+country_event = {
+	id = reform_lwe.1
+	title = reform_lwe.1.t
+	desc = reform_lwe.1.desc
+	picture = DIPLOMACY_eventPicture
+	hidden = yes
+
+	trigger = {
+		has_government_attribute = enables_fairy_bloom
+		OR = {
+			AND = {
+				stability = 1
+				NOT = { stability = 2 }
+				NOT = { has_country_modifier = th_colonial_stability_1 }
+			}
+			AND = {
+				stability = 2
+				NOT = { stability = 3 }
+				NOT = { has_country_modifier = th_colonial_stability_2 }
+			}
+			AND = {
+				stability = 3
+				NOT = { has_country_modifier = th_colonial_stability_3 }
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+    option = {
+		name = reform_lwe_1.a
+
+		if = {
+			limit = {
+				stability = 1
+				NOT = { stability = 2 }
+			}
+			add_country_modifier = {
+				name = th_colonial_stability_1
+				duration = -1
+			}
+			remove_country_modifier = th_colonial_stability_2
+			remove_country_modifier = th_colonial_stability_3
+		}
+
+		if = {
+			limit = {
+				stability = 2
+				NOT = { stability = 3 }
+			}
+			add_country_modifier = {
+				name = th_colonial_stability_2
+				duration = -1
+			}
+			remove_country_modifier = th_colonial_stability_1
+			remove_country_modifier = th_colonial_stability_3
+		}
+		if = {
+			limit = {
+				stability = 3
+			}
+			add_country_modifier = {
+				name = th_colonial_stability_3
+				duration = -1
+			}
+			remove_country_modifier = th_colonial_stability_1
+			remove_country_modifier = th_colonial_stability_2
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+country_event = {
+	id = reform_lwe.2
+	title = reform_lwe.2.t
+	desc = reform_lwe.2.desc
+	picture = WESTERNISATION_eventPicture
+	hidden = yes
+	
+
+	trigger = {
+		NOT = { has_government_attribute = enables_fairy_bloom }
+		OR = {
+			has_country_modifier = th_colonial_stability_1
+			has_country_modifier = th_colonial_stability_2
+			has_country_modifier = th_colonial_stability_3
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		remove_country_modifier = th_colonial_stability_1
+		remove_country_modifier = th_colonial_stability_2
+		remove_country_modifier = th_colonial_stability_3
+	}
+	
+	option = {
+		name = reform_lwe.2.a
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+namespace = disaster_lwe
+
+###Lily's Disaster###
+country_event = {
+	id = disaster_lwe.1
+	title = disaster_lwe.1.t
+	desc = disaster_lwe.1.d
+	picture = CIVIL_WAR_eventPicture
+
+	major = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_country_flag = had_spring_crashed
+		hidden_effect = {
+			random_owned_province = {
+				spawn_rebels = {
+				type = particularist_rebels
+				size = 2
+				religion = ROOT
+				}
+			}
+ 		 }
+	}
+	option = {
+		name = disaster_lwe.1.a
+		add_prestige = -15
+		add_stability = -2
+  	}
+}
+###Lily Saves Spring###
+country_event = {
+	id = disaster_lwe.2
+	title = disaster_lwe.2.t
+	desc = disaster_lwe.2.d
+	picture = ANGRY_MOB_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = disaster_lwe.2.a
+		add_legitimacy = 50
+		add_stability = 2
+		add_prestige = 15
+		set_country_flag = lily_saved_spring
+		remove_country_modifier = lwe_disaster_mod_3
+	}
+}
+
+###Lily's Subjects Revolt###
+country_event = {
+	id = disaster_lwe.3
+	title = disaster_lwe.3.t
+	desc = disaster_lwe.3.d
+	picture = ANGRY_MOB_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = disaster_lwe.3.a
+		add_country_modifier = {
+			name = lwe_disaster_mod_3
+			duration = -1
+		}
+	}
+}
+
+
+###More Revolts!###
+country_event = {
+	id = disaster_lwe.4
+	title = disaster_lwe.4.t
+	desc = disaster_lwe.4.d
+	picture = ANGRY_MOB_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = disaster_lwe.4.a
+		capital_scope = {
+			spawn_rebels = {
+				type = particularist_rebels
+				size = 3
+				religion = ROOT
+			}
+       }
+    }
+ }
+
+ namespace = flavor_lwe
+
+##Satori joins Lily##
+country_event = {
+	id = flavor_lwe.2
+	title = flavor_lwe.2.t
+	desc = flavor_lwe.2.d
+	picture = Satori_Lily_PU
+
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = lwe_invested_crd
+		alliance_with = CRD
+	}
+
+	mean_time_to_happen = {
+		months = 4
+	}
+
+	option = { #Accept her
+		name = flavor_lwe.2.a
+		custom_tooltip = lwe_welcomes_crd.tt
+		create_union = CRD
+		add_country_modifier = {
+			name = lwe_crd_union
+			duration = -1
+		}
+		ai_chance = {
+			factor = 60
+		}
+	}
+	option = {
+		name = flavor_lwe.2.b
+		custom_tooltip = lwe_friendzone_crd.tt
+		add_dip_power = 200
+		add_country_modifier = {
+			name = lwe_crd_partners
+			duration = -1
+		}
+		ai_chance = {
+			factor = 40
+		}
+	}
+}
+
+###Sack of Chireiden Event###
+country_event = {
+	id = flavor_lwe.3
+	title = flavor_lwe.3.t
+	desc = flavor_lwe.3.d
+	picture = Chireiden_Sacking
+
+	fire_only_once = yes
+	major = yes
+	is_triggered_only = yes
+	mean_time_to_happen = {
+	   days = 1
+	}
+
+	trigger = {
+		CRD = {
+			war_with = ROOT
+			owns_or_non_sovereign_subject_of = 4855
+	   	}
+		4855 = {
+			controlled_by = ROOT
+		}
+	}
+
+	option = {
+		name = flavor_lwe.3.a
+		add_army_professionalism = -0.05
+		add_treasury = 1000
+		add_army_tradition = 25
+		add_prestige = -20
+		add_power_projection = {
+		   type = mission_rewards_power_projection
+		   amount = 40
+	   	}
+		4855 = {
+			add_devastation = 80
+			add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1
+		}
+		reverse_add_opinion = {
+			who = CRD
+			modifier = lwe_barbarians
+		}
+	}
+}
+
+##Lily's Eternal Rule## 
+#Well.. Localization needs change to be added, like finally done control of spring power and make spring really keeps in her realm
+country_event = {
+	id = flavor_lwe.7
+	title = flavor_lwe.7.t
+	desc = flavor_lwe.7.d
+	picture = Lily_Eternal
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = flavor_lwe.7.a
+		change_mil = 1
+	}
+}
+##Lily's Atlas##
+country_event = {
+	id = flavor_lwe.8
+	title = flavor_lwe.8.t
+	desc = flavor_lwe.8.d
+	picture = Lily_Atlas
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = flavor_lwe.8.a
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+		change_adm = 1
+		custom_tooltip = lwe_charts_world.tt
+		hidden_effect = {
+			north_america = {
+				discover_country = ROOT
+			}
+			africa = {
+				discover_country = ROOT
+			}
+			europe = {
+				discover_country = ROOT
+			}
+		}
+	}
+}
+
+##Control of Saigyou Ayakashi##
+country_event = {
+	id = flavor_lwe.9
+	title = flavor_lwe.9.t
+	desc = flavor_lwe.9.d
+	picture = Lily_Atlas
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lwe.9.a
+		change_mil = 1
+		#Unlock of special ability#
+	}
+}
+
+##Gain buff in spring##
+country_event = {
+	id = flavor_lwe.10
+	title = flavor_lwe.10.t
+	desc = flavor_lwe.10.d
+	picture = Lily_Atlas
+
+	hidden = yes
+
+	trigger = {
+		OR = {
+			tag = LIL
+			was_tag = LIL
+		}
+		is_month = 2
+		NOT = { is_month = 4 }
+		#Maybe need unlock by government or somewhat
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_lwe.10.a
+		if = {
+			limit = {
+				has_country_flag = lil_extend_spring_lv3
+			}
+			add_country_modifier = {
+				name = lil_spring_buff_lv4
+				duration = 365
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = lil_extend_spring_lv2
+			}
+			add_country_modifier = {
+				name = lil_spring_buff_lv3
+				duration = 270
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = lil_extend_spring_lv1
+			}
+			add_country_modifier = {
+				name = lil_spring_buff_lv2
+				duration = 180
+			}
+		}	
+		else = {
+			add_country_modifier = {
+				name = lil_spring_buff_lv1
+				duration = 90
+			}
+		}
+	}
+}

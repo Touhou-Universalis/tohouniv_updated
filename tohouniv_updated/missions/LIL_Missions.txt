@@ -1,10 +1,1406 @@
-lil_first_mission_slot = {
+LIL_voyage_missions_1 = {
 	slot = 1
 	generic = no
 	ai = yes
 	potential = {
 		tag = LIL
-		NOT = { map_setup = map_setup_random }
+		always = no #localizations are currently way too cringe
 	}
 	has_country_shield = yes
+
+	LIL_discover_beyond = {
+		icon = LIL_armada
+		required_missions = { }
+        provinces_to_highlight = {
+			region = oceanea_region
+		    NOT = { Has_discovered = ROOT }
+		}
+
+		trigger = {
+			num_of_explorers = 1
+			custom_trigger_tooltip = {
+                tooltip = lil_discovering_land.tooltip
+                oceanea_region = { has_discovered = ROOT }
+			}
+		}   
+
+		effect = {
+			add_prestige = 10
+			add_dip_power = 50
+			if = {
+				limit = {
+					1993 = {
+						is_empty = yes
+					}
+				}
+				1993 = {
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+					cede_province = ROOT
+					change_culture = ROOT
+					change_religion = ROOT
+					add_core = ROOT
+				}
+			}
+			else = {
+				1993 = {
+					add_permanent_claim = ROOT
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+				}
+			}
+			add_country_modifier = {
+				name = "lil_seeking_land"
+				duration = 7300
+			}
+		}
+	}
+
+	LIL_colonize_spice = {
+		icon = LIL_too_hot
+		position = 2
+		required_missions = { LIL_discover_beyond }
+		provinces_to_highlight = {
+			region = moluccas_region
+		}
+		
+		trigger = {
+			moluccas_region = { has_discovered = ROOT }
+			num_of_owned_provinces_with = {
+				value = 2
+				region = moluccas_region
+			}
+		}
+
+		effect = {
+			add_treasury = 200
+		}
+	}
+
+	LIL_discover_Australia = {
+		icon = LIL_aussie
+		position = 3
+		required_missions = { LIL_colonize_spice }
+		provinces_to_highlight = {
+			colonial_region = colonial_australia
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			OR = {
+				colonial_australia = { has_discovered = ROOT }
+				australia_region = { has_discovered = ROOT }
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_lil.1 }
+		}
+	}
+
+	LIL_colonize_australia = {
+		icon = LIL_closer_aussie
+		position = 4
+		required_missions = { LIL_discover_Australia }
+		provinces_to_highlight = {
+			colonial_region = colonial_australia
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			has_discovered = ROOT
+		}
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 5
+				colonial_region = colonial_australia
+				is_city = yes
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_lil.2 }
+		}
+	}
+
+	LIL_continue_voyage = {
+		icon = LIL_more_trips
+		position = 6
+		required_missions = { LIL_colonize_australia }
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = LIL_new_land.tt
+			}
+		}
+
+		effect = {
+			indonesia_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			south_africa_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			moluccas_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { area = luzon_area }
+					NOT = { area = southern_luzon_area }
+					NOT = { area = visayas_area }
+					NOT = { area = palawan_area }
+					NOT = { area = mindanao_area }
+					NOT = { area = west_mindanao_area }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	LIL_conquer_indo = {
+		icon = LIL_indonesia
+		position = 7
+		required_missions = { LIL_continue_voyage }
+		provinces_to_highlight = {
+			region = moluccas_region
+			NOT = { area = luzon_area }
+			NOT = { area = southern_luzon_area }
+			NOT = { area = visayas_area }
+			NOT = { area = palawan_area }
+			NOT = { area = mindanao_area }
+			NOT = { area = west_mindanao_area }			
+			NOT = {	country_or_non_sovereign_subject_holds = ROOT }
+			has_discovered = ROOT
+		}
+
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					region = moluccas_region
+					country_or_non_sovereign_subject_holds = ROOT
+					is_city = yes
+				}
+				amount = 7
+			}
+		}
+
+		effect = {
+			add_treasury = 350
+		}
+	}
+
+	LIL_get_node = {
+		icon = LIL_malacca_node
+		position = 8
+		required_missions = { LIL_conquer_indo }
+		provinces_to_highlight = {
+			province_id = 1357
+		}
+		trigger = {
+			1357 = {
+				is_strongest_trade_power = ROOT
+			}
+		}
+
+		effect = {
+			add_mercantilism = 10
+		}
+	}
+
+	LIL_world_explorer = {
+		icon = LIL_reinforce_fleet
+		position = 9
+		required_missions = { LIL_get_node LIL_cape_company LIL_mexican_gold }
+
+		trigger = {
+			colony = 3
+			num_of_strong_trade_companies = 3
+			home_trade_node = {
+				highest_value_trade_node = yes
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = LIL_atlas_fairy
+				duration = -1
+			}
+			country_event = { id = flavor_lwe.8 }
+		}
+	}	
+}
+				
+LIL_diplo_missions_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = LIL
+		always = no #localizations are currently way too cringe
+	}
+	has_country_shield = yes
+
+	LIL_satori_friend = {
+		icon = LIL_best_ship
+		position = 1
+		required_missions = {}
+		trigger = {
+			OR = {
+				AND = {
+					marriage_with = CRD
+					reverse_has_opinion = {
+						who = CRD
+						value = 100
+					}
+				}
+				NOT = { exists = CRD }
+				alliance_with = CRD
+			}
+		}
+
+		effect = {
+			Add_country_modifier = {
+				name = "lil_kind_gesture"
+				duration = 1825
+			}
+			if = {
+				limit = {
+					exists = CRD
+				}
+				country_event = { id = flavor_lil.3 }
+			}
+		}
+	}
+
+	LIL_gather_allies = {
+		icon = LIL_best_ship
+		position = 2
+		required_missions = {LIL_satori_friend}
+		trigger = {
+			num_of_allies = 2
+		}
+
+		effect = {
+			Scarlet_island = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Scarlet_mountain = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Scarlett_domain = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_prestige = 15
+		}
+	}
+	
+	LIL_satori_question = {
+		icon = LIL_satori_question
+		position = 4
+		required_missions = { LIL_gather_allies }
+	
+		trigger = {
+			mission_completed = LIL_split_realm
+			#is_year = 1525
+		}
+		effect = {
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = LIL_CRD_Deal
+						alliance_with = CRD
+						CRD = {
+							trust = {
+								who = ROOT 
+								value = 50 
+							}
+						}
+					}
+					set_country_flag = LIL_befriend_satori
+				}
+				else = {
+					set_country_flag = LIL_hate_satori
+				}
+				swap_non_generic_missions = yes
+			}
+			custom_tooltip = LIL_mission_choice.tt
+		}
+	}	
+}
+
+LIL_conquest_missions_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = LIL
+		always = no #localizations are currently way too cringe
+	}
+	has_country_shield = yes
+
+	LIL_build_fort = {
+		icon = LIL_fort
+		position = 2
+		required_missions = { LIL_gather_troops }
+
+		trigger = {
+			capital_scope = {
+				has_building = fort_15th
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = "lil_defend_capital"
+				duration = 3650	
+			}
+		}
+	}
+
+	LIL_attack_the_devil = {
+		icon = LIL_beat_showoff
+		position = 3
+		required_missions = { LIL_build_fort LIL_gather_allies }
+		trigger = {
+			custom_trigger_tooltip = {
+			tooltip = lil_break_the_devil.tooltip
+				is_in_war = {
+					attacker_leader = ROOT
+					defender_leader = SCR
+					participants = CRD
+				}
+			}
+		}
+			
+		effect = {
+			add_country_modifier = {
+				name = "lil_spring_zeal"
+				duration = 3650
+			}
+		}			
+	}
+		
+	LIL_split_realm = {
+		icon = LIL_split_fang
+		position = 4
+		required_missions = { LIL_attack_the_devil }
+		provinces_to_highlight = {
+			OR = {
+				owned_by = SCR
+				province_id = 4816
+			}
+			NOT = {	country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			OR = {
+				is_in_war = {
+					attacker_leader = ROOT
+					defender_leader = SCR
+					participants = CRD
+					war_score = 75
+				}
+				NOT = { exists = SCR}
+				SCR = { is_subject_of = ROOT }
+			}
+			4816 = {
+				OR = {
+					controlled_by = ROOT
+					controlled_by = CRD
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					exists = SCR
+					NOT = { SCR = { is_subject_of = ROOT } }
+				}
+				country_event = { id = flavor_lil.5 }
+			}
+			else = {
+				add_stability_or_adm_power = yes
+			}
+		}
+	}
+		
+	LIL_form_my_empire = {
+		icon = LIL_my_empire
+		required_missions = { LIL_colonize_australia LIL_more_ports }
+		position = 5
+		trigger = {
+			total_development = 300
+			colony = 2
+		}
+		effect = {
+			add_country_modifier = {
+				name = "lil_my_empire"
+				duration = -1
+			}
+		}
+	}
+			
+	LIL_colonial_california = {
+		icon = LIL_america
+		position = 7
+		required_missions = { LIL_continue_voyage }
+		provinces_to_highlight = {
+			OR = {
+				colonial_region = colonial_alaska
+				colonial_region = colonial_california
+				colonial_region = colonial_mexico
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = MHG_colonize_north_america.tooltip
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 5
+					OR = {
+						colonial_region = colonial_alaska
+						colonial_region = colonial_california
+						colonial_region = colonial_mexico
+					}
+					is_city = yes
+				}
+			}
+		}
+
+		effect = {
+			add_years_of_income = 2
+			add_country_modifier = { #New modifier. Need localization
+				name = LIL_spring_in_new_world
+				duration = 7300
+			}
+			central_america_region = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	LIL_mexican_gold = { #Need change in localization. Cocoa and gems instead
+		icon = LIL_mexico_gold
+		position = 8
+		required_missions = { LIL_colonial_california } 
+		provinces_to_highlight = {
+			region = central_america_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					region = central_america_region
+					country_or_non_sovereign_subject_holds = ROOT
+					is_city = yes
+				}
+				amount = 10
+			}
+		}
+
+		effect = {
+			change_price = {  #Need localization
+				trade_goods = cocoa
+				key = gensokyan_cocoa
+				value = 0.5
+				duration = 7300
+			}
+			change_price = {
+				trade_goods = gems
+				key = magical_gems
+				value = 0.5
+				duration = 7300
+			}
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = colony
+				}
+				add_country = {
+					name = LIL_transport_of_spring_power
+					duration = 18250
+				}
+			}
+		}
+	}
+}
+
+LIL_empire_missions_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = LIL
+		always = no #localizations are currently way too cringe
+	}
+	has_country_shield = yes
+
+	LIL_gather_troops = {
+		icon = LIL_gather_troops
+		required_missions = { }
+		trigger = {
+			army_size_percentage = 1
+			num_of_generals = 1
+		}
+		
+		effect = {
+			Fairy_land = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			4931 = {
+				if = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			4932 = {
+				if = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+	
+	LIL_conquer_fairies = {
+		icon = LIL_conquer_fairies
+		position = 2
+		required_missions = { LIL_gather_troops }
+		provinces_to_highlight = {
+			OR = {
+				area = Fairy_land
+				area = Northern_fairy_land
+			}
+			NOT = { province_id = 4822 }
+			NOT = {	country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 5
+				OR = {
+					area = Fairy_land
+					area = Northern_fairy_land
+				}
+			}
+		}
+
+		effect = {
+			add_stability = 1
+			add_country_modifier = {
+				name = "lil_fairies_united"
+				duration = 1825
+			}
+			Forest_of_magic = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Forest_edge_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Forest_coast_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}	
+		}
+	}
+
+	LIL_revenge_maiden = {
+		icon = LIL_reimu_bad
+		position = 5
+		required_missions = { LIL_conquer_fairies }
+		provinces_to_highlight = {
+			OR = {
+				area = Forest_of_magic
+				area = Forest_edge_state
+				area = Forest_coast_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					OR = {
+						area = Forest_of_magic
+						area = Forest_edge_state
+						area = Forest_coast_state
+					}
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				amount = 6
+			}
+		}
+		effect = {
+			add_mil_power = 75
+			add_country_modifier = { #Change modifier and localization. 
+				name = LIL_miko_troops
+				duration = 9125
+			}
+			netherworld_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	LIL_control_hakurei_node = {  #Control Saigyou Ayakashi instead. Need lots of change in localization
+		icon = mission_touhou_saigyou
+		position = 6
+		required_missions = { LIL_revenge_maiden }
+		provinces_to_highlight = {
+			province_id = 4954
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			owns_or_subject_of = 4954
+			if = {
+				limit = { has_global_flag = th_deactivated_incidents }
+				is_year = 1490
+			}
+			else = {
+				has_global_flag = th_cherry_blossom_incident_solved
+			}
+		}
+		effect = {
+			country_event = { id = flavor_lwe.9 }
+		}
+	}
+
+	LIL_build_flagship = {
+		icon = LIL_flagship
+		position = 7
+		required_missions = { }
+
+		trigger = {
+			num_of_ports = 12
+			naval_reformer = 2
+			navy_tradition = 70
+		}
+		effect = {
+			define_admiral = {
+				shock = 3
+				fire = 3
+				manuever = 5
+				siege = 2
+				name = "White Fairy Admiral"
+				female = yes
+			}
+			add_country_modifier = { #localization needs change
+				name = LIL_prep_armada
+				duration = 9125
+			}
+		}
+	}
+
+	LIL_naval_dominance = {
+		icon = LIL_naval_power
+		position = 8
+		required_missions = { LIL_build_flagship }
+
+		trigger = {
+			if = {
+				limit = {
+					has_dlc = "Golden Century"
+				}
+				has_flagship = yes
+			}
+			navy_size = 100
+			OR = {
+				num_of_heavy_ship = 20
+				num_of_light_ship = 40
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = LIL_battle_ready
+				duration = -1
+			}			
+		}
+	}		
+}
+
+LIL_navy_missions_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = LIL
+		always = no #localizations are currently way too cringe
+	}
+	has_country_shield = yes
+
+	LIL_build_navy = {
+		icon = LIL_build_navy
+		position = 1
+		required_missions = { }
+		trigger = {
+			navy_size_percentage = 1
+			num_of_admirals = 1
+		}
+
+		effect = {
+			add_dip_power = 50
+			add_country_modifier = {
+				name = "lil_first_steps"
+				duration = 3650
+			}
+			4822 = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	LIL_get_mansion = {
+		icon = LIL_music_hotel
+		position = 2
+		required_missions = { LIL_build_navy }
+		provinces_to_highlight = {
+			province_id = 4822
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_core_province = 4822
+		}
+
+		effect = {
+			4822 = {
+				add_province_modifier = {
+					name = "lil_mansion_dock"
+					duration = -1
+				}
+			}
+		}
+	}
+			
+	LIL_dev_mansion = {
+		icon = LIL_more_music
+		position = 3
+		required_missions = { LIL_get_mansion }
+
+		trigger = {
+			if = {
+				limit = {
+					has_dlc = "Dharma"
+				}
+				4822 = {
+					province_has_center_of_trade_of_level = 2
+				}
+			}
+			else = {
+				4822 = {
+					OR = {
+						has_building = marketplace
+						has_building = trade_depot
+						has_building = stock_exchange
+					}
+				}
+			}
+			4822 = {
+				num_of_times_improved = 2
+			}
+		}
+
+		effect = {
+			4822 = {
+				add_building = dock
+				change_province_name = "Spring Mansion"
+				add_trade_modifier = {
+					who = ROOT
+					duration = 5475
+					power = 20
+					key = Secured_Mansion_For_Fairies
+				}
+			}
+			add_country_modifier = {
+				name = "lil_New_Fairy_Hub"
+				duration = 7300
+			}		
+		}
+	}
+
+	LIL_more_ports = {
+		icon = LIL_ports
+		position = 4
+		required_missions = {LIL_dev_mansion}
+
+		trigger = {
+			num_of_total_ports = 5
+			navy_size_percentage = 1
+		}
+		effect = {
+			add_navy_tradition = 35
+			add_country_modifier = {
+				name = LIL_readying_ships
+				duration = 7300
+			}
+			define_explorer = {
+				shock = 1
+				fire = 1
+				manuever = 4
+				siege = 0
+				name = "White Fairy Explorer"
+				female = yes
+			}
+		}
+	}
+
+	LIL_improve_capital = {
+		icon = LIL_capital
+		position = 6
+		required_missions = {}
+
+		trigger = {
+			capital_scope = {
+				num_of_times_improved = 6
+				OR = {
+					has_building = marketplace
+					has_building = trade_depot
+					has_building = stock_exchange
+				}
+				is_prosperous = yes
+			}
+		}
+		effect = {
+			4932 = {
+				center_of_trade = 3
+				add_permanent_province_modifier = {
+					name = LIL_spring_capital
+					duration = -1
+				}
+			}
+		}
+	}
+
+	LIL_crown_of_spring = { #localization needs rewrite
+		icon = LIL_crown
+		position = 7
+		required_missions = { }
+
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					trade_goods = gems
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				amount = 3
+			}
+			calc_true_if = {
+				all_province = {
+					trade_goods = cocoa
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				amount = 8
+			}
+			if = {
+				limit = {
+					has_global_flag = trade_goods_exapanded_mod_active
+				}
+				num_of_owned_provinces_with = {
+					value = 1
+					trade_goods = jade
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = lil_extend_spring_lv1
+					}
+					set_country_flag = lil_extend_spring_lv2
+				}
+				else = {
+					set_country_flag = lil_extend_spring_lv1
+				}
+			}
+			#extend spring buff's duration
+		}
+	}
+
+	LIL_court_of_spring = {   #localization needs rewrite
+		icon = LIL_court
+		position = 8
+		required_missions = { }
+
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					trade_goods = incense
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				amount = 5
+			}
+			calc_true_if = {
+				all_province = {
+					trade_goods = spices
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				amount = 6
+			}
+			if = {
+				limit = {
+					has_global_flag = trade_goods_exapanded_mod_active
+				}
+				num_of_owned_provinces_with = {
+					value = 2
+					trade_goods = silver
+				}
+				num_of_owned_provinces_with = {
+					value = 1
+					trade_goods = pearls
+				}
+			}
+		}
+		effect = {
+			add_prestige = 5
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = lil_extend_spring_lv1
+					}
+					set_country_flag = lil_extend_spring_lv2
+				}
+				else = {
+					set_country_flag = lil_extend_spring_lv1
+				}
+			}
+			#extend spring buff's duration
+		}
+	}
+
+
+	LIL_Spring_Eternal = {
+		icon = LIL_supreme_being
+		position = 9
+		required_missions = { }
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = LIL_has_controled_spring
+				4932 = {
+					owned_by = ROOT
+				}
+				4954 = {
+					owned_by = ROOT
+				}		
+				mission_completed = LIL_crown_of_spring  
+				mission_completed =	LIL_court_of_spring 
+			}
+		}
+		effect = {
+			#extend spring buff's duration
+			hidden_effect = {
+				set_country_flag = lil_extend_spring_lv3
+			}
+			country_event = {
+				id = flavor_lwe.7
+			}
+		}
+	}
+}
+
+LIL_CRD_friendship_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		has_country_flag = LIL_befriend_satori
+		tag = LIL
+		always = no #localizations are currently way too cringe
+	}
+	has_country_shield = yes
+
+	LIL_pet_for_satori = {
+		icon = LIL_pet_satori
+		position = 5
+		required_missions = { LIL_satori_question }
+
+		trigger = {
+			if = {
+				limit = {
+					has_global_flag = trade_goods_exapanded_mod_active
+				}
+				calc_true_if = {
+					all_province = {
+						trade_goods = exotic_animals
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					amount = 2
+				}
+			}
+			else = {
+				calc_true_if = {
+					all_province = {
+						trade_goods = gems
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					amount = 3
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						has_global_flag = trade_goods_expanded_mod_active
+						has_global_flag = trade_goods_exapanded_mod_active
+					}
+				}
+				5128 = {
+					change_trade_goods = exotic_animals
+					add_province_modifier = {
+						name = LIL_crd_lovely_pet
+						duration = -1
+					}
+				}
+			}
+			else = {
+				5128 = {
+					change_trade_goods = gems
+					add_province_modifier = {
+						name = LIL_crd_lavish_gems
+						duration = -1
+					}
+				}
+			}
+			reverse_add_opinion = {
+				who = CRD
+				modifier = LIL_brought_gifts
+			}
+			hidden_effect = {
+				add_trust = {
+					who = CRD
+					value = 30
+					mutual = yes
+				}
+			}
+		}
+	}
+
+	LIL_chireiden_market = {
+		icon = LIL_with_love
+		position = 6
+		required_missions = { LIL_pet_for_satori }
+
+		trigger = {
+			treasury = 2000
+			total_development = CRD
+			CRD = {
+				trust = {
+					who = ROOT 
+					value = 80 
+				}
+			}
+		}
+		effect = {
+			add_treasury = -2000
+			CRD = { 
+				add_country_modifier = {
+					name = "LIL_crd_chire_market"
+					duration = 18250
+				}		
+			}
+			add_country_modifier = {  #To be changed
+				name = "LIL_crd_chire_market"
+				duration = -1
+			}
+			change_dip = 1
+			4855 = {
+				add_building = trade_depot
+			}
+			custom_tooltip = LIL_satori_pleased.tt
+			hidden_effect = {
+				set_country_flag = LIL_invested_crd
+			}
+			Road_to_hell_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Chireiden_canal_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Oni_exclave_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Yuugi_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Blazing_hell_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Chireiden = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}	
+	}	
+}
+
+LIL_CRD_rivalry_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		has_country_flag = LIL_hate_satori
+		tag = LIL
+		always = no #localizations are currently way too cringe
+	}
+	has_country_shield = yes
+
+	LIL_finish_scarlet = {
+		icon = LIL_bat_vampire
+		position = 5
+		required_missions = { LIL_satori_question }
+		provinces_to_highlight = {
+			owned_by = SCR
+			NOT = {	country_or_non_sovereign_subject_holds = ROOT }
+		}
+					
+		trigger = {
+			OR = {
+				NOT = { exists = SCR }
+				SCR = {
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = {
+			Road_to_hell_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Chireiden_canal_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Oni_exclave_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Yuugi_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Blazing_hell_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Chireiden = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = LIL_betrayal
+				duration = 9125
+			}
+		}
+	}
+
+	LIL_CRD_invasion = {
+		icon = LIL_hit_chire
+		position = 6
+		required_missions = { LIL_finish_scarlet }
+		provinces_to_highlight = {
+			owned_by = CRD
+			NOT = {	country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			4855 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			calc_true_if = {
+				all_province = {
+					OR = {
+						area = Road_to_hell_state
+						area = Chireiden_canal_state
+						area = Oni_exclave_state
+						area = Yuugi_state
+						area = Blazing_hell_state
+						area = Chireiden
+					}
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				amount = 6
+			}
+		}
+		effect = {
+			change_mil = 1
+			add_country_modifier = {
+				name = LIL_fearsome
+				duration = -1
+			}
+		}
+	}
+}
+			
+LIL_colony_missions_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = LIL
+		always = no #localizations are currently way too cringe
+	}
+	has_country_shield = yes
+
+	LIL_colonize_hope = {
+		icon = LIL_colonial_hope
+		position = 7
+		required_missions = { LIL_continue_voyage }
+		provinces_to_highlight = {
+			region = south_africa_region
+			NOT = {	country_or_non_sovereign_subject_holds = ROOT }
+			has_discovered = ROOT
+		}
+				
+		trigger = {
+			owns_core_province = 1177
+			num_of_owned_provinces_with = {
+				value = 5
+				region = south_africa_region
+			}
+		}
+				
+		effect = {
+			1177 = {
+				add_base_tax = 2
+				add_base_manpower = 2
+				add_base_production = 2
+				add_province_modifier = {
+					name = LIL_cape_bloom
+					duration = -1
+				}
+			}
+		}
+	}
+			
+	LIL_cape_company = {
+		icon = LIL_cape_company
+		position = 8
+		required_missions = { LIL_colonize_hope }
+		provinces_to_highlight = {
+			OR = {
+				area = cape_of_good_hope_area
+				area = south_african_plateau_area
+			}
+			NOT = {	country_or_non_sovereign_subject_holds = ROOT }
+			has_discovered = ROOT
+		}
+			
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = LIL_build_company.tt
+				trade_company_south_africa = {
+					owned_by = ROOT
+					is_city = yes
+					trade_company_size = 5
+				}
+			}
+			1460 = { 
+				trade_share = {
+					country = LIL
+					share = 50
+				}
+			}
+		}
+			
+		effect = {
+			add_mercantilism = 10
+			add_country_modifier = {
+				name = LIL_rich_company
+				duration = 7300
+			}
+		}
+	}
 }
