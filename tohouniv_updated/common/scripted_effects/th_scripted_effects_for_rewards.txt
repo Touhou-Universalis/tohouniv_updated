@@ -122,6 +122,72 @@ th_enable_youkai_hunt_effect = {
 	}
 }
 
+th_enable_university_education = {
+	custom_tooltip = th_enable_university_education_tt
+	hidden_effect = {
+		set_country_flag = th_university_education_enabled
+	}
+}
+
+th_enable_fairy_university_education = {
+	custom_tooltip = th_enable_university_education_tt
+	hidden_effect = {
+		set_country_flag = th_fairy_university_education_enabled
+	}
+}
+
+th_enable_spring_power_effect = {
+	custom_tooltip = th_enable_spring_power_effect_tt
+	hidden_effect = {
+		set_country_flag = th_power_of_spring_enabled
+	}
+}
+
+th_increase_spring_power_effect = {
+	if = {
+		limit = {
+			has_country_flag = lil_extend_spring_lv2
+		}
+		custom_tooltip = th_increase_spring_power_effect_end
+		tooltip = {
+			add_country_modifier = {
+				name = lil_spring_buff_lv4
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			set_country_flag = lil_extend_spring_lv3
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = lil_extend_spring_lv1
+		}
+		custom_tooltip = th_increase_spring_power_effect_boundless
+		tooltip = {
+			add_country_modifier = {
+				name = lil_spring_buff_lv3
+				duration = 270
+			}
+		}
+		hidden_effect = {
+			set_country_flag = lil_extend_spring_lv2
+		}
+	}
+	else = {
+		custom_tooltip = th_increase_spring_power_effect_boundless
+		tooltip = {
+			add_country_modifier = {
+				name = lil_spring_buff_lv2
+				duration = 180
+			}
+		}
+		hidden_effect = {
+			set_country_flag = lil_extend_spring_lv1
+		}
+	}
+}
+
 th_add_manufactory = {
 	if = {
 		limit = {
@@ -321,5 +387,75 @@ th_get_default_permanent_province_buff = {
 	}
 	else = {
 		custom_tooltip = dominant_home_node_reward_tooltip
+	}
+}
+
+
+###CIN specific reward###
+cin_tolerate_or_purge_culture = {
+	if = {
+		limit = {
+			has_country_flag = cin_tolerant_path_mission
+		}
+		if = {
+			limit = {
+				NOT = { accepted_culture = $culture$ }
+			}
+			add_accepted_culture = $culture$
+		}
+		custom_tooltip = CIN_tolerant_effect_tt
+		tooltip = {
+			add_country_modifier = {
+				name = $tolerance_modifier$
+				duration = $tolerance_duration$
+			}
+		}
+		hidden_effect = {
+			every_province = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+					culture = $culture$
+					NOT = { culture = ROOT }
+				}
+				add_province_modifier = {
+					name = $tolerance_modifier$
+					duration = $tolerance_duration$
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = cin_vengeance_path_mission
+		}
+		custom_tooltip = CIN_vengeance_effect_tt
+		tooltip = {
+			random_province = {
+				limit = {
+					culture = $culture$
+					NOT = { culture = ROOT }
+				}
+				add_province_modifier = {
+					name = $vengeance_modifier$
+					duration = $vengeance_duration$
+				}
+			}
+		}
+		hidden_effect = {
+			every_province = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+					culture = $culture$
+					NOT = { culture = ROOT }
+				}
+				add_province_modifier = {
+					name = $vengeance_modifier$
+					duration = $vengeance_duration$
+				}
+			}
+		}
+	}
+	else = {		
+		custom_tooltip = CIN_path_depended_reward
 	}
 }
