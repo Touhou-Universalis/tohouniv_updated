@@ -18,7 +18,7 @@ country_event = {
 				war_with = ROOT
 			}
 		}
-		has_government_attribute = th_overload_and_gain_mp
+		has_government_attribute = th_gains_mp_from_occupations
 	}
 	mean_time_to_happen = {
 		days = 1
@@ -169,7 +169,7 @@ country_event = {
 	
 	hidden = yes
 	trigger = {
-		has_government_attribute = th_overload_and_gain_mp
+		has_government_attribute = th_can_overload_provinces
 		any_owned_province = {
 			has_province_flag = th_overloaded_province
 			NOT = { has_province_modifier = th_province_overload }
@@ -210,7 +210,7 @@ country_event = {
 	
 	hidden = yes
 	trigger = {
-		NOT = { has_government_attribute = th_overload_and_gain_mp }
+		NOT = { has_government_attribute = th_can_overload_provinces }
 		any_owned_province = {
 			has_province_flag = th_overloaded_province
 		}
@@ -288,7 +288,7 @@ country_event = {
 	hidden = yes
 	trigger = {
 		has_country_flag = th_activated_province_overload
-		NOT = { has_government_attribute = th_overload_and_gain_mp }
+		NOT = { has_government_attribute = th_can_overload_provinces }
 	}
 
 	mean_time_to_happen = {
@@ -316,6 +316,207 @@ country_event = {
 
 	option = {		#Standard
 		name = th_hellfairy_events.7.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#All normal provinces get a first stack of berserk
+country_event = {
+	id = th_hellfairy_events.8
+	title = "th_hellfairy_events.8.t"
+	desc = "th_hellfairy_events.8.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		has_government_attribute = th_own_provinces_go_berserk
+		any_owned_province = {
+			NOT = { nationalism = 1 }
+			is_core = ROOT
+			hellfairy_has_no_stack = yes
+			NOT = { has_province_flag = th_hellfairy_province_has_conquest_debuff }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = th_hellfairy_events.8.a
+		every_owned_province = {
+			limit = {
+				NOT = { nationalism = 1 }
+				is_core = ROOT
+				hellfairy_has_no_stack = yes
+				NOT = { has_province_flag = th_hellfairy_province_has_conquest_debuff }
+			}
+			hellfairy_add_berserk_stack = yes
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Stack natural growth
+country_event = {
+	id = th_hellfairy_events.9
+	title = "th_hellfairy_events.9.t"
+	desc = "th_hellfairy_events.9.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		has_government_attribute = th_own_provinces_go_berserk
+		any_owned_province = {
+			hellfairy_had_stack_for_duration = {
+				days = 1825
+			}
+			hellfairy_has_not_reached_maximum = yes
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = th_hellfairy_events.9.a
+		every_owned_province = {
+			limit = {
+				hellfairy_had_stack_for_duration = {
+					days = 10
+				}
+				hellfairy_has_not_reached_maximum = yes
+			}
+			hellfairy_add_berserk_stack = yes
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#On conquered provinces, get a debuff first
+country_event = {
+	id = th_hellfairy_events.10
+	title = "th_hellfairy_events.10.t"
+	desc = "th_hellfairy_events.10.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		has_government_attribute = th_own_provinces_go_berserk
+		any_owned_province = {
+			nationalism = 1
+			NOT = { has_province_flag = th_hellfairy_province_has_conquest_debuff }
+			hellfairy_has_no_stack = yes
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = th_hellfairy_events.10.a
+		every_owned_province = {
+			limit = {
+				nationalism = 1
+				NOT = { has_province_flag = th_hellfairy_province_has_conquest_debuff }
+				hellfairy_has_no_stack = yes
+			}
+			hellfairy_add_conquest_debuff = {
+				days = 1825
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Debuff vanishes after a while and gets replaced with first stack
+country_event = {
+	id = th_hellfairy_events.11
+	title = "th_hellfairy_events.11.t"
+	desc = "th_hellfairy_events.11.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		has_government_attribute = th_own_provinces_go_berserk
+		any_owned_province = {
+			NOT = { has_province_modifier = th_hellfairy_province_resistance }
+			has_province_flag = th_hellfairy_province_has_conquest_debuff
+			hellfairy_has_no_stack = yes
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = th_hellfairy_events.11.a
+		every_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = th_hellfairy_province_resistance }
+				has_province_flag = th_hellfairy_province_has_conquest_debuff
+				hellfairy_has_no_stack = yes
+			}
+			clr_province_flag = th_hellfairy_province_has_conquest_debuff
+			hellfairy_add_berserk_stack = yes
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Somebody else takes over province
+country_event = {
+	id = th_hellfairy_events.12
+	title = "th_hellfairy_events.12.t"
+	desc = "th_hellfairy_events.12.desc"
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	hidden = yes
+	trigger = {
+		NOT = { has_government_attribute = th_own_provinces_go_berserk }
+		any_owned_province = {
+			hellfairy_has_any_flag = yes
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = th_hellfairy_events.12.a
+		every_owned_province = {
+			limit = {
+				hellfairy_has_any_flag = yes
+			}
+			if = {
+				limit = {
+					has_province_flag = th_hellfairy_province_has_positive_berserk
+				}
+				hellfairy_add_negative_berserk = {
+					days = 1825
+				}
+			}
+			hellfairy_remove_all_berserk_stack = yes
+		}
 
 		ai_chance = {
 			factor = 100
