@@ -29,12 +29,56 @@ th_build_uptodate_fort = {
 }
 
 th_colonize_dev_province = {
+	$province$ = {
+		if = {
+			limit = {
+				is_empty = yes
+			}
+			cede_province = PREV
+			add_core = PREV		
+			change_religion = PREV
+			change_culture = PREV
+		}
+		else_if = {
+			limit = {
+				owner = {
+					OR = { 
+						tag = PREV
+						is_subject_of = PREV
+					}
+				}
+			}
+			add_base_tax = 1
+			add_base_production = 1
+			add_base_manpower = 1
+			if = {
+				limit = {
+					NOT = { religion = PREV }
+				}
+				change_religion = PREV
+			}
+			if = {
+				limit = {
+					NOT = { culture = PREV }
+				}
+				change_culture = PREV
+			}
+		}
+		else = {
+			add_permanent_claim = PREV
+		}
+	}
+}
+
+th_colonize_province_for_country = {	
 	if = {
 		limit = {
 			is_empty = yes
 		}
 		cede_province = $who$
-		add_core = $who$
+		add_core = $who$		
+		change_religion = $who$
+		change_culture = $who$
 	}
 	else_if = {
 		limit = {
@@ -48,6 +92,18 @@ th_colonize_dev_province = {
 		add_base_tax = 1
 		add_base_production = 1
 		add_base_manpower = 1
+		if = {
+			limit = {
+				NOT = { religion = $who$ }
+			}
+			change_religion = $who$
+		}
+		if = {
+			limit = {
+				NOT = { culture = $who$ }
+			}
+			change_culture = $who$
+		}
 	}
 	else = {
 		add_permanent_claim = $who$
@@ -132,6 +188,12 @@ th_enable_university_education = {
 	custom_tooltip = th_enable_university_education_tt
 	hidden_effect = {
 		set_country_flag = th_university_education_enabled
+		if = {
+			limit = {
+				has_country_flag = th_fairy_university_education_enabled
+			}
+			clr_country_flag = th_fairy_university_education_enabled
+		}
 	}
 }
 
@@ -139,6 +201,12 @@ th_enable_fairy_university_education = {
 	custom_tooltip = th_enable_university_education_tt
 	hidden_effect = {
 		set_country_flag = th_fairy_university_education_enabled
+		if = {
+			limit = {
+				has_country_flag = th_university_education_enabled
+			}
+			clr_country_flag = th_university_education_enabled
+		}
 	}
 }
 
@@ -219,6 +287,15 @@ th_enable_colonial_maintenance_reduction_effect = {
 				which = th_allowed_colonies_for_reduction
 				value = 1
 			}
+		}
+	}
+}
+
+th_remove_autonomy_from_all_provinces_effect = {
+	custom_tooltip = th_remove_autonomy_from_all_provinces
+	hidden_effect = {
+		every_owned_province = {
+			add_local_autonomy = -100
 		}
 	}
 }
@@ -492,5 +569,71 @@ cin_tolerate_or_purge_culture = {
 	}
 	else = {		
 		custom_tooltip = CIN_path_depended_reward
+	}
+}
+
+###LAR specific reward###
+lar_improve_eternitys_god_level = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = lar_rised_to_godhood }
+		}
+		hidden_effect = {
+			set_country_flag = lar_rised_to_godhood
+		}
+		add_country_modifier = {
+			name = lar_acknowledgement_as_goddess_lv1
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = lar_acknowledgement_as_goddess_lv1
+		}
+		remove_country_modifier = lar_acknowledgement_as_goddess_lv1
+		add_country_modifier = {
+			name = lar_acknowledgement_as_goddess_lv2
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = lar_acknowledgement_as_goddess_lv2
+		}
+		remove_country_modifier = lar_acknowledgement_as_goddess_lv2
+		add_country_modifier = {
+			name = lar_acknowledgement_as_goddess_lv3
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = lar_acknowledgement_as_goddess_lv3
+		}
+		remove_country_modifier = lar_acknowledgement_as_goddess_lv3
+		add_country_modifier = {
+			name = lar_acknowledgement_as_goddess_lv4
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = lar_acknowledgement_as_goddess_lv4
+		}
+		remove_country_modifier = lar_acknowledgement_as_goddess_lv4
+		add_country_modifier = {
+			name = lar_acknowledgement_as_goddess_lv5
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = lar_acknowledgement_as_goddess_lv5
+		}
+		remove_country_modifier = lar_acknowledgement_as_goddess_lv5
+		add_country_modifier = {
+			name = lar_acknowledgement_as_goddess_lv6
+			duration = -1
+		}
 	}
 }

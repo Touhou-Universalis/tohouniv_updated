@@ -111,3 +111,93 @@ on_battle_lost_unit = {
 		}
     }
 }
+
+# country
+on_new_term_election = {
+	events = {
+		700		# Election event
+		elections.720		# Dutch Republic
+		pirates.1
+		fairy_elections.1
+		fairy_elections.3
+	}
+}
+
+# country
+on_death_election = {
+	if = {
+		limit = { has_reform = presidential_despot_reform }
+		remove_government_reform = presidential_despot_reform
+	}
+	if = {
+		limit = {
+			has_reform = pirate_republic_reform
+		}
+		set_country_flag = pirate_death_election
+		country_event = { id = pirates.1 }
+	}
+	events = {
+		701		# Election event
+		elections.721		# Dutch Republic
+		elections.800	# Lottery election
+		flavor_tus.16 #Savonarola Leaves This World
+		fairy_elections.2
+		fairy_elections.4
+	}
+}
+
+# THIS = Raiding country, FROM = Sea province
+on_raid_coast = {
+	if = {
+		limit = {
+			has_faction = pr_buccaneers
+		}
+		add_faction_influence = {
+			faction = pr_buccaneers
+			influence = 1
+		}
+	}
+	if = {
+		limit = {
+			has_estate = estate_fairy_pirates
+		}
+		add_estate_loyalty = {
+			estate = estate_fairy_pirates
+			loyalty = 5
+		}
+		add_estate_influence_modifier = {
+			estate = estate_fairy_pirates
+			desc = EST_VAL_TH_RAIDED_COASTS
+			influence = 1
+			duration = -1
+		}
+		add_estate_influence_modifier = {
+			estate = estate_fairy_pirates
+			desc = EST_VAL_TH_RAIDED_COASTS
+			influence = 1
+			duration = -1
+		}
+	}
+}
+
+# province:  spawned whenever a new owner takes over the province
+# FROM = The previous owner.
+on_conquest = {
+	remove_named_unrest = estate_land_seized
+	if = {
+		limit = {
+			owner = {
+				has_estate = estate_fairy_pirates
+			}
+			development = 10
+		}
+		owner = {
+			add_estate_influence_modifier = {
+				estate = estate_fairy_pirates
+				desc = EST_VAL_TH_CONQUERED_PROVINCE
+				influence = 2
+				duration = -1
+			}
+		}
+	}
+}
