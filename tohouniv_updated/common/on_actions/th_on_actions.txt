@@ -1,0 +1,203 @@
+#When adding effects directly in on_actions always consider if it would be best to do so through a scripted effect. on_actions with a lot of script in them are harder to get an overview of.
+
+# country
+on_harmonized_Touhou = {
+	events = {
+		th_confucian_events.1
+	}
+}
+on_harmonized_th_hakureishinto = {
+	events = {
+		th_confucian_events.2
+	}
+}
+on_harmonized_th_moriyashinto = {
+	events = {
+		th_confucian_events.3
+	}
+}
+on_harmonized_th_taoist = {
+	events = {
+		th_confucian_events.4
+	}
+}
+on_harmonized_eastern = {
+	events = {
+		th_confucian_events.5
+	}
+}
+on_harmonized_th_oldhakurei = {
+	events = {
+		th_confucian_events.6
+	}
+}
+on_harmonized_th_shinkism = {
+	events = {
+		th_confucian_events.7
+	}
+}
+on_harmonized_th_christian = {
+	events = {
+		th_confucian_events.8
+	}
+}
+on_harmonized_th_lunarian_religion = {
+	events = {
+		th_confucian_events.9
+	}
+}
+
+# province
+on_mil_development = {
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = th_can_overload_provinces
+				has_country_flag = th_activated_province_overload
+			}
+			NOT = { has_province_flag = th_overloaded_province }
+		}
+		add_province_modifier = {
+			name = th_province_overload
+			duration = 1825
+		}
+		set_province_flag = th_overloaded_province
+	}
+}
+
+# #Unit Scope OnAction for Battle Lost
+on_battle_lost_unit = {
+    if = {
+        limit = {
+            unit_owner = {
+                tag = MNG
+                has_ruler_flag = mng_militry_incompetence
+            }
+            is_ruler_commanding_unit = yes
+			enemy_unit = {
+				unit_owner = {
+					tag = OIR
+				}
+			}
+        }
+        OIR = {
+            country_event = { id = flavor_oir.2 }
+        }
+    }
+    if = {
+        limit = {
+            unit_owner = {
+				th_is_or_was_tag = {
+					tag = FUJ
+				}
+            }
+            is_ruler_commanding_unit = yes
+			enemy_unit = {
+				unit_owner = {
+					th_is_or_was_tag = {
+						tag = CIN
+					}
+					NOT = { has_country_flag = cin_has_won_battle_against_mokou }
+				}
+			}
+		}
+		random_country = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = CIN
+				}
+			}
+			set_country_flag = cin_has_won_battle_against_mokou
+		}
+    }
+}
+
+# country
+on_new_term_election = {
+	events = {
+		700		# Election event
+		elections.720		# Dutch Republic
+		pirates.1
+		fairy_elections.1
+		fairy_elections.3
+	}
+}
+
+# country
+on_death_election = {
+	if = {
+		limit = { has_reform = presidential_despot_reform }
+		remove_government_reform = presidential_despot_reform
+	}
+	if = {
+		limit = {
+			has_reform = pirate_republic_reform
+		}
+		set_country_flag = pirate_death_election
+		country_event = { id = pirates.1 }
+	}
+	events = {
+		701		# Election event
+		elections.721		# Dutch Republic
+		elections.800	# Lottery election
+		flavor_tus.16 #Savonarola Leaves This World
+		fairy_elections.2
+		fairy_elections.4
+	}
+}
+
+# THIS = Raiding country, FROM = Sea province
+on_raid_coast = {
+	if = {
+		limit = {
+			has_faction = pr_buccaneers
+		}
+		add_faction_influence = {
+			faction = pr_buccaneers
+			influence = 1
+		}
+	}
+	if = {
+		limit = {
+			has_estate = estate_fairy_pirates
+		}
+		add_estate_loyalty = {
+			estate = estate_fairy_pirates
+			loyalty = 5
+		}
+		add_estate_influence_modifier = {
+			estate = estate_fairy_pirates
+			desc = EST_VAL_TH_RAIDED_COASTS
+			influence = 1
+			duration = -1
+		}
+		add_estate_influence_modifier = {
+			estate = estate_fairy_pirates
+			desc = EST_VAL_TH_RAIDED_COASTS
+			influence = 1
+			duration = -1
+		}
+	}
+}
+
+# province:  spawned whenever a new owner takes over the province
+# FROM = The previous owner.
+on_conquest = {
+	remove_named_unrest = estate_land_seized
+	if = {
+		limit = {
+			owner = {
+				has_estate = estate_fairy_pirates
+			}
+			development = 10
+		}
+		owner = {
+			add_estate_influence_modifier = {
+				estate = estate_fairy_pirates
+				desc = EST_VAL_TH_CONQUERED_PROVINCE
+				influence = 2
+				duration = -1
+			}
+		}
+	}
+}

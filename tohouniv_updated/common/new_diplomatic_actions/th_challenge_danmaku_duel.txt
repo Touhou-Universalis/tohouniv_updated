@@ -1,0 +1,69 @@
+#Challenge to Danmaku Duel
+th_challenge_to_danmaku_duel = {
+	category = influence
+
+	require_acceptance = no
+
+	is_visible = {
+		th_has_touhou_technology = yes
+		is_free_or_tributary_trigger = yes
+		FROM = {
+			is_free_or_tributary_trigger = yes
+			th_has_touhou_technology = yes
+			has_regency = no
+		}
+	}
+
+	is_allowed = {
+		mil_power = 25
+		custom_trigger_tooltip = {
+			tooltip = th_challenge_to_danmaku_duel_has_been_challenged_tt
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_was_already_danmaku_challenged_by_@ROOT }
+					had_country_flag = {
+						flag = th_was_already_danmaku_challenged_by_@ROOT
+						days = 7300
+					}
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_challenge_to_danmaku_duel_on_their_way
+			NOT = { has_country_modifier = th_was_in_danmaku_duel }
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_challenge_to_danmaku_duel_not_with_allies
+			NOT = { alliance_with = FROM }
+		}
+		has_regency = no
+		FROM = {
+			NOT = { war_with = ROOT }
+		}
+	}
+
+	on_accept = {
+		add_mil_power = -25
+		add_country_modifier = {
+			name = th_was_in_danmaku_duel
+			duration = 30
+			hidden = yes
+		}
+		th_getruler_fighting_skill = {
+			SKILL_BONI = 0
+		}
+		th_danmaku_set_compare_variable = yes
+		FROM = {
+			clr_country_flag = th_was_already_danmaku_challenged_by_@ROOT
+            clr_country_flag = th_danmaku_duel_lost_against_@FROM
+			country_event = {
+				id = th_diplo_events.23
+				days = 1
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}

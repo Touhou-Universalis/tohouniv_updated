@@ -16,19 +16,18 @@ clp_slot1_branch = {
 		
 		trigger = {
 			OR = {
-				AND = {
-					reverse_has_opinion = {
-						who = JNK
-						value = 150
-					}
-					army_size_percentage = 1
+				reverse_has_opinion = {
+					who = JNK
+					value = 150
 				}
 				is_subject = no
 			}
 		}
 		
 		effect = {
-			change_dip = 1
+			th_increase_fairy_dip_stat = {
+				dip = 1
+			}
 			if = {
 				limit = {
 					ROOT = { is_subject_of = JNK }
@@ -41,7 +40,7 @@ clp_slot1_branch = {
 	CLP_goddess_of_the_hell = {		
 		icon = mission_touhou_hecatia
 		required_missions = { CLP_resetting_of_relationship }
-		position = 3
+		position = 2
 		
 		trigger = {
 			OR = {
@@ -83,7 +82,7 @@ clp_slot1_branch = {
 	CLP_invade_lunar_capital = {
 		icon = mission_touhou_lunarian_throne
 		required_missions = { CLP_goddess_of_the_hell }
-		position = 5
+		position = 3
 
 		provinces_to_highlight = {
 			OR = {
@@ -128,7 +127,7 @@ clp_slot1_branch = {
 	CLP_chase_lunarian_remnant = {
 		icon = mission_touhou_develop_bamboo_forest
 		required_missions = { CLP_invade_lunar_capital }
-		position = 6
+		position = 4
 		
 		provinces_to_highlight = {
 			OR = {
@@ -167,8 +166,10 @@ clp_slot1_branch = {
 					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
+			}			
+			th_increase_fairy_adm_stat = {
+				adm = 1
 			}
-			change_adm = 1
 			add_country_modifier = {
 				name = clp_legacy_of_moon_brain
 				duration = 7300
@@ -179,7 +180,7 @@ clp_slot1_branch = {
 	CLP_looking_for_fairy_on_the_earth = {
 		icon = mission_touhou_bamboo_forest
 		required_missions = { CLP_chase_lunarian_remnant }
-		position = 7
+		position = 5
 
 		provinces_to_highlight = {
 			province_id = 4828
@@ -201,9 +202,9 @@ clp_slot1_branch = {
 		}
 		
 		effect = {
-			custom_tooltip = cin_mission_cores_on_fairy_provinces
+			custom_tooltip = CLP_looking_for_fairy_on_the_earth_tt
 			hidden_effect = {
-				gensokyo_region = {
+				Northern_fairy_land = {
 					limit = {
 						NOT = { is_core = ROOT }
 						culture = Fairy
@@ -213,7 +214,7 @@ clp_slot1_branch = {
 					}
 					add_core = ROOT
 				}
-				gensokyan_forest_region = {
+				Fairy_land = {
 					limit = {
 						NOT = { is_core = ROOT }
 						culture = Fairy
@@ -223,6 +224,13 @@ clp_slot1_branch = {
 					}
 					add_core = ROOT
 				}
+			}
+			Land_of_the_black_doors = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
 			add_country_modifier = {
 				name = clp_fever_for_the_liberation_of_fairies
@@ -234,7 +242,7 @@ clp_slot1_branch = {
 	CLP_liberation_of_fairy = {
 		icon = mission_touhou_fairies
 		required_missions = { CLP_looking_for_fairy_on_the_earth }
-		position = 8
+		position = 6
 		
 		provinces_to_highlight = {
 			culture = Fairy
@@ -269,76 +277,240 @@ clp_slot1_branch = {
 						}
 					}
 				}
-				amount = 11
+				amount = 7
 			}
 		}
 		
 		effect = {
 			add_country_modifier = {
 				name = clp_liberation_of_fairies
-				duration = -1
+				duration = 9125
 			}
-			Land_of_the_black_doors = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			custom_tooltip = CLP_liberation_of_fairy
-			if = {
-				limit = {
-					exists = CIN
-					CIN = {
-						alliance_with = ROOT
+			custom_tooltip = CLP_liberation_of_fairy_tt
+			hidden_effect = {
+				every_country = {
+					limit = {
 						is_subject = no
-						NOT = { development = 100 }
+						primary_culture = Fairy
+						NOT = { tag = ROOT }
+						alliance_with = ROOT
+					}
+					country_event = {
+						id = flavor_clp.13
 					}
 				}
-				vassalize = CIN
-			}
-			if = {
-				limit = {
-					exists = TFR
-					TFR = {
-						alliance_with = ROOT
-						is_subject = no
-						NOT = { development = 100 }
-					}
-				}
-				vassalize = TFR
-			}
-			if = {
-				limit = {
-					exists = LAR
-					LAR = {
-						alliance_with = ROOT
-						is_subject = no
-						NOT = { development = 100 }
-					}
-				}
-				vassalize = LAR
-			}
-			if = {
-				limit = {
-					exists = LIL
-					LIL = {
-						alliance_with = ROOT
-						is_subject = no
-						NOT = { development = 100 }
-					}
-				}
-				vassalize = LIL
 			}
 			hidden_effect = {
 				set_country_flag = clp_liberate_earth_fairy
 			}
 		}
 	}
+	
+	CLP_paradise_of_fairy = {
+		icon = mission_touhou_fairies_bunch
+		required_missions = { CLP_liberation_of_fairy }
+		position = 8
+		
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 30
+				continent = gensokyo_continent
+				culture = Fairy
+			}
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = clp_prosperity_of_fairies
+				duration = -1
+			}
+		}
+	}
+}
+
+clp_slot2_branch = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = CLP
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	CLP_clownsland = {
+		icon = mission_touhou_lunar_barrier
+		required_missions = {  }
+		position = 1
+
+		trigger = {
+			crown_land_share = 50
+		}
+
+		effect = {
+			country_event = {
+				id = flavor_clp.12
+			}
+			th_colonize_dev_province = {
+				province = 5186
+			}
+			add_years_of_income = 1.5
+		}
+	}
+
+	CLP_berserk_provinces = {
+		icon = mission_touhou_clownpiecetorch2
+		required_missions = { CLP_clownsland }
+		position = 2
+
+		trigger = {
+			calc_true_if = {
+				all_owned_province = {
+					has_province_modifier = th_hellfairy_berserk_10
+				}
+				amount = 10
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = clp_dancing_moon_fairies
+				duration = 9125
+			}
+		}
+	}
+
+	CLP_carnival_never_ends = {
+		icon = mission_touhou_clownpiecetorch
+		required_missions = { CLP_berserk_provinces }
+		position = 3
+
+		trigger = {
+			calc_true_if = {
+				all_owned_province = {
+					has_province_modifier = th_hellfairy_berserk_10
+				}
+				amount = 40
+			}
+		}
+
+		effect = {
+			th_increase_berserk_spreading_effect = yes
+			th_increase_fairy_adm_stat = {
+				adm = 1
+			}
+		}
+	}
+	
+	CLP_new_dominator_of_the_moon = { 
+		icon = mission_touhou_hecajunkopiece
+		required_missions = { CLP_invade_lunar_capital }
+		position = 4
+
+		provinces_to_highlight = {
+			OR = {
+				owner = {
+					tag = LCU
+				}
+				AND = {
+					region = moon_region
+					OR = {
+						is_empty = yes
+						owner = {
+							NOT = { technology_group = tech_lunarian }
+							NOT = { technology_group = tech_gensokyan_lunarian }
+						}
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = CLP_new_dominator_of_the_moon_tt
+				moon_region = {
+					type = all
+					OR = {
+						owner = {
+							OR = {
+								technology_group = tech_lunarian
+								technology_group = tech_gensokyan_lunarian
+							}
+						}
+						is_empty = yes
+					}
+				}
+			}
+			NOT = { exists = LCU }
+		}
+		
+		effect = {
+			if = {
+				limit = {
+					exists = JNK
+				}
+				reverse_add_opinion = {
+					who = JNK
+					modifier = th_victory_over_the_lunarian
+				}
+			}
+			if = {
+				limit = {
+					exists = HEC
+				}
+				reverse_add_opinion = {
+					who = HEC
+					modifier = th_victory_over_the_lunarian
+				}
+			}
+			moon_region = {
+				limit = {
+					owned_by = ROOT
+					NOT = { culture = Fairy }
+				}
+				add_province_modifier = {
+					name = "clp_moon_fulfilled_with_life"
+					duration = 18250
+				}
+			}
+		}
+	}
+	
+	CLP_exile_the_lunarian = {
+		icon = mission_touhou_hell_and_heaven
+		required_missions = { CLP_new_dominator_of_the_moon }
+		position = 5
+	
+		provinces_to_highlight = {
+			owned_by = ROOT
+			region = moon_region
+			NOT = { culture = Fairy }
+		}	
+	
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = CLP_exile_the_lunarian_tt
+				all_owned_province = {
+					OR = {
+						AND = {
+							region = moon_region
+							culture = Fairy
+						}
+						NOT = { region = moon_region }
+					}
+				}
+			}
+		}
+		
+		effect = {
+			country_event = { id = flavor_clp.7 }
+		}
+	}
+
 	CLP_goddess_of_the_earth = {
 		icon = mission_touhou_okina
 		required_missions = { CLP_liberation_of_fairy }
-		position = 9
+		position = 7
 		
 		provinces_to_highlight = {
 			area = Land_of_the_black_doors
@@ -364,129 +536,6 @@ clp_slot1_branch = {
 	}
 }
 
-
-clp_slot2_branch = {
-	slot = 2
-	generic = no
-	ai = yes
-	potential = {
-		tag = CLP
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-
-	
-	CLP_new_dominator_of_the_moon = { 
-		icon = mission_touhou_hecajunkopiece
-		required_missions = { CLP_invade_lunar_capital }
-		position = 6
-		
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = CLP_new_dominator_of_the_moon_tt
-				NOT = { exists = LCU }
-				capital_scope = {
-					region_for_scope_province = {
-						type = all
-						owner = {
-							OR = {
-								technology_group = tech_lunarian
-								technology_group = tech_gensokyan_lunarian
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		effect = {
-			if = {
-				limit = {
-					exists = JNK
-				}
-				reverse_add_opinion = {
-					who = JNK
-					modifier = th_victory_over_the_lunarian
-				}
-			}
-			if = {
-				limit = {
-					exists = HEC
-				}
-				reverse_add_opinion = {
-					who = HEC
-					modifier = th_victory_over_the_lunarian
-				}
-			}
-			moon_region = {
-				limit = {
-					owned_by = ROOT
-				}
-				add_province_modifier = {
-					name = "clp_moon_fulfilled_with_life"
-					duration = 7300
-				}
-			}
-		}
-	}
-	
-	CLP_exile_the_lunarian = {
-		icon = mission_touhou_hell_and_heaven
-		required_missions = { CLP_new_dominator_of_the_moon }
-		position = 7
-	
-		provinces_to_highlight = {
-			owned_by = ROOT
-			region = moon_region
-			NOT = { culture = Fairy }
-		}	
-	
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = CLP_exile_the_lunarian_tt
-				all_owned_province = {
-					OR = {
-						AND = {
-							region = moon_region
-							culture = Fairy
-						}
-						NOT = { region = moon_region }
-					}
-				}
-			}
-		}
-		
-		effect = {
-			add_country_modifier = {
-				name = clp_dancing_moon_fairies
-				duration = 7300
-			}
-			country_event = { id = flavor_clp.7 }
-		}
-	}
-	
-	CLP_paradise_of_fairy = {
-		icon = lil_conquer_fairies
-		required_missions = { CLP_exile_the_lunarian }
-		position = 8
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 40
-				continent = gensokyo_continent
-				culture = Fairy
-			}
-		}
-		
-		effect = {
-			add_country_modifier = {
-				name = clp_prosperity_of_fairies
-				duration = -1
-			}
-		}
-	}
-}
-
 clp_slot3_branch = {
 	slot = 3
 	generic = no
@@ -497,9 +546,237 @@ clp_slot3_branch = {
 	}
 	has_country_shield = yes
 
+	CLP_the_joy_of_fighting = {
+		icon = mission_touhou_mad_clownpiece
+		required_missions = {  }
+		position = 1
+
+		trigger = {
+			is_subject = no
+			num_of_generals = 1
+			army_size_percentage = 1
+		}
+
+		effect = {
+			th_colonize_dev_province = {
+				province = 5185
+			}
+			add_army_tradition = 15
+			add_army_professionalism = 0.05
+		}
+	}
+
+	CLP_secure_the_moon_lands = {
+		icon = mission_touhou_moon_land
+		required_missions = {
+			CLP_clownsland
+			CLP_the_joy_of_fighting
+			CLP_the_many_agendas_of_hell_fairies
+		}
+		position = 2
+
+		provinces_to_highlight = {
+			area = Uncolonized_moon_state
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			Uncolonized_moon_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			development_in_provinces = {
+				value = 75
+				area = Uncolonized_moon_state
+			}
+		}
+
+		effect = {
+			5184 = {
+				add_province_modifier = {
+					name = clp_make_moon_great_again
+					duration = 9125
+				}
+			}
+			5185 = {
+				add_province_modifier = {
+					name = clp_make_moon_great_again
+					duration = 9125
+				}
+			}
+			5186 = {
+				add_province_modifier = {
+					name = clp_make_moon_great_again
+					duration = 9125
+				}
+			}
+			capital_scope = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+				area = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = "growth_of_capital"
+						duration = 9125 #25 years
+					}
+				}
+			}
+		}
+	}
+
+	CLP_the_lunatic_prankster = {
+		icon = mission_touhou_clownpiece_spellcard
+		required_missions = {  }
+		position = 3
+
+		trigger = {
+			calc_true_if = {
+				custom_trigger_tooltip = {
+					tooltip = CLP_the_lunatic_prankster_tt
+					all_country = {
+						has_country_flag = th_was_pranked_by_@ROOT
+					}
+				}
+				amount = 4
+			}
+		}
+
+		effect = {
+			add_prestige = 25
+			Perfect_cut_coast = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Gengetsu_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	CLP_clownish_invasion = {
+		icon = mission_touhou_yuuka_and_dw_sisters
+		required_missions = { CLP_the_lunatic_prankster }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				area = Perfect_cut_coast
+				area = Gengetsu_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			calc_true_if = {
+				all_owned_province = {
+					OR = {
+						area = Perfect_cut_coast
+						area = Gengetsu_state
+					}
+				}
+				amount = 6
+			}
+		}
+
+		effect = {
+			Kourindou_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Human_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	CLP_the_great_human_pranking = {
+		icon = mission_touhou_greek_fire
+		required_missions = { CLP_clownish_invasion }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				area = Kourindou_state
+				area = Human_state
+				province_id = 4826
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					OR = {
+						area = Kourindou_state
+						area = Human_state
+					}
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				amount = 6
+			}
+			owns_or_non_sovereign_subject_of = 4826
+		}
+
+		effect = {
+			country_event = {
+				id = flavor_clp.11
+			}
+			add_years_of_income = 5
+			add_prestige = 25
+		}
+	}
+
+	CLP_clowpiece_superiority = {
+		icon = mission_touhou_clownpiece
+		required_missions = { CLP_the_great_human_pranking }
+		position = 6
+		trigger = {
+			NOT = { great_power_rank = 2 }
+			technology_group = tech_gensokyan_lunarian
+			OR = {
+				calc_true_if = {
+					all_country = {
+						guaranteed_by = ROOT
+						total_development = 100
+					}
+					amount = 5
+				}
+				num_of_subjects = 4
+				hidden_trigger = {
+					has_country_modifier = th_achievement_insanity
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
+			add_country_modifier = {
+				name = clp_power_of_insanity
+				duration = -1
+			}
+		}
+	}
 	
 	CLP_empire_of_the_moon_fairy = {	
-		icon = mission_touhou_clownpiece
+		icon = mission_touhou_queen_clownpiece
 		required_missions = {  }
 		position = 7
 		
@@ -530,11 +807,59 @@ clp_slot4_branch = {
 	}
 	has_country_shield = yes
 
+	CLP_the_many_agendas_of_hell_fairies = {
+		icon = mission_touhou_hell_fairies
+		required_missions = {  }
+		position = 1
+
+		trigger = {
+			OR = {
+				num_of_estate_agendas_completed = {
+					estate = estate_church
+					value = 1
+				}
+				NOT = { has_estate = estate_church }
+			}
+			OR = {
+				num_of_estate_agendas_completed = {
+					estate = estate_burghers
+					value = 1
+				}
+				NOT = { has_estate = estate_burghers }
+			}
+			OR = {
+				num_of_estate_agendas_completed = {
+					estate = estate_nobles
+					value = 1
+				}				
+				NOT = { has_estate = estate_nobles }
+			}
+		}
+
+		effect = {
+			th_colonize_dev_province = {
+				province = 5184
+			}
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = 15
+			}
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 15
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 15
+			}
+		}
+	}
+
 	
 	CLP_fairy_of_the_madness = {	
-		icon = mission_touhou_clownpiecetorch2
-		required_missions = { CLP_fleet_of_moon_fairy }
-		position = 6
+		icon = mission_touhou_expanded_navy
+		required_missions = { CLP_fairies_of_the_sea }
+		position = 2
 		
 		trigger = {
 			num_ships_privateering = 30
@@ -549,9 +874,9 @@ clp_slot4_branch = {
 	}
 	
 	CLP_madness_that_infectious = {	
-		icon = mission_touhou_clownpiecetorch
+		icon = mission_sea_battles
 		required_missions = { CLP_fairy_of_the_madness }
-		position = 7
+		position = 3
 		
 		trigger = {
 			if = {
@@ -570,7 +895,7 @@ clp_slot4_branch = {
 							share = 20
 						}
 					}
-				amount = 2
+					amount = 2
 				}
 			}
 			else = {
@@ -581,7 +906,7 @@ clp_slot4_branch = {
 							share = 20
 						}
 					}
-				amount = 2
+					amount = 2
 				}	
 			}
 		}
@@ -614,7 +939,7 @@ clp_slot4_branch = {
 	CLP_bring_madness_to_the_heaven = {
 		icon = mission_touhou_tenshi_stress
 		required_missions = { CLP_madness_that_infectious }
-		position = 8
+		position = 4
 
 		provinces_to_highlight = {
 			OR = {
@@ -646,11 +971,74 @@ clp_slot4_branch = {
 		}
 		
 		effect = {
-			change_mil = 1
+			th_increase_fairy_mil_stat = {
+				mil = 1
+			}
 			add_country_modifier = {
 				name = clp_unstoppable_madness
 				duration = -1
 			}
+		}
+	}
+	
+	CLP_break_the_barrier = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = { CLP_fleet_of_moon_fairy }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+		}
+	}
+	
+	CLP_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { CLP_break_the_barrier }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
+			}
+			country_event = { id = TH_mission_events.4 }			
 		}
 	}
 }
@@ -692,44 +1080,22 @@ clp_slot5_branch = {
 	CLP_harbor_of_the_moon = {
 		icon = mission_touhou_hakurai_barrier
 		required_missions = { CLP_fairies_of_the_sea }
-		position = 3
+		position = 2
+
+		provinces_to_highlight = {
+			province_id = 5171
+			NOT = { owned_by = ROOT }
+			NOT = { is_core = ROOT }
+		}
 		
 		trigger = {
-			if = {
-				limit = {
-					exists = LCU
-				}
-				num_of_ports = LCU
-			}
-			else = {
-				num_of_ports = 6
-			}
+			num_of_ports = 6
+			owns_core_province = 5171
 		}
 		
 		effect = {
 			add_country_modifier = {
 				name = clp_preparation_for_moon_fairy_navy
-				duration = 7300
-			}
-		}
-	}
-
-	CLP_fleet_of_moon_fairy = {
-		icon = mission_establish_high_seas_navy
-		required_missions = { CLP_harbor_of_the_moon }
-		position = 5
-		
-		trigger = {
-			OR = {
-				num_of_heavy_ship = 10
-				num_of_light_ship = 20
-			}
-			sailors_percentage = 0.5
-		}
-		
-		effect = {
-			add_country_modifier = {
-				name = clp_hecatias_support
 				duration = 7300
 			}
 			define_explorer = {
@@ -742,11 +1108,36 @@ clp_slot5_branch = {
 			}
 		}
 	}
+
+	CLP_fleet_of_moon_fairy = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { CLP_harbor_of_the_moon }
+		position = 4
+		
+		trigger = {
+			OR = {
+				num_of_heavy_ship = 10
+				num_of_light_ship = 20
+			}
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = clp_hecatias_support
+				duration = 7300
+			}
+		}
+	}
 	
 	CLP_pierrot_of_the_star_spangled_banner = {	
 		icon = mission_touhou_clownpiecebanner
 		required_missions = { CLP_fleet_of_moon_fairy }
-		position = 6
+		position = 5
+
+		provinces_to_highlight = {
+			region = california_region
+			NOT = { has_discovered = ROOT }
+		}
 		
 		trigger = {
 			california_region = { has_discovered = ROOT }
@@ -770,7 +1161,7 @@ clp_slot5_branch = {
 	CLP_a_land_fulfilled_of_life = {
 		icon = mission_retake_ceuta
 		required_missions = { CLP_pierrot_of_the_star_spangled_banner }
-		position = 7
+		position = 6
 
 		provinces_to_highlight = {
 			province_id = 4637
@@ -898,7 +1289,7 @@ clp_slot5_branch = {
 	CLP_new_paradise_of_the_fairy = {
 		icon = mission_caribbean_cn
 		required_missions = { CLP_a_land_fulfilled_of_life }
-		position = 8
+		position = 7
 		
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
@@ -912,7 +1303,7 @@ clp_slot5_branch = {
 		}
 		
 		effect	= {
-			custom_tooltip = CLP_new_paradise_of_the_fairy
+			custom_tooltip = CLP_new_paradise_of_the_fairy_tt
 			hidden_effect = {
 				northeast_america_region = {
 					limit = {
@@ -1012,29 +1403,27 @@ clp_slot5_branch = {
 	CLP_manifest_destiny_of_the_fairy = {
 		icon = mission_touhou_clownpieceamerica
 		required_missions = { CLP_new_paradise_of_the_fairy }
-		position = 9
+		position = 8
+
+		provinces_to_highlight = {
+			continent = north_america
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		
 		trigger = {
+			owns_or_non_sovereign_subject_of = 953
+			owns_or_non_sovereign_subject_of = 965
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 80
+				value = 50
 				continent = north_america
 				is_city = yes
-			}
-			custom_trigger_tooltip = {
-				tooltip = CLP_manifest_destiny_of_the_fairy_tt
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					value = 10
-					OR = {
-						region = northeast_america_region
-						region = southeast_america_region
-					}
-					is_city = yes
-					has_port = yes
-				}
 			}
 		}
 		
 		effect	= {
+			th_increase_fairy_dip_stat = {
+				dip = 1
+			}
 			add_country_modifier = {
 				name = clp_paradise_of_the_fairy
 				duration = -1

@@ -2,20 +2,20 @@
 # Flavor Events for Shinkism
 ########################################
 
-namespace = shinkism_events
+namespace = th_shinkism_events
 
 # Shinkism conversion event
 country_event = {
-	id = shinkism_events.1
-	title = shinkism_events.1.t
-	desc = shinkism_events.1.desc
+	id = th_shinkism_events.1
+	title = th_shinkism_events.1.t
+	desc = th_shinkism_events.1.desc
 	picture = SHINKISM_eventPicture
 	
 	major = yes
 	
 	trigger = {
 		is_lesser_in_union = no
-		NOT = { has_country_flag = had_shinkism_question }
+		NOT = { has_country_flag = had_th_shinkism_question }
 		is_subject = no
 		is_year = 1500
 		religion_group = Touhou
@@ -41,11 +41,11 @@ country_event = {
 	}
 	
 	immediate = {
-		set_country_flag = had_shinkism_question
+		set_country_flag = had_th_shinkism_question
 	}
 		
 	option = { # just convert
-		name = shinkism_events.1.a
+		name = th_shinkism_events.1.a
 		ai_chance = {
 			factor = 100
 		}
@@ -67,7 +67,7 @@ country_event = {
 			}
 			add_years_of_income = 1.0
 		}
-		custom_tooltip = th_shinkism_convert_all_makai_provinces
+		custom_tooltip = th_th_shinkism_convert_all_makai_provinces
 		hidden_effect = {
 			every_owned_province = {
 				limit = {
@@ -105,13 +105,126 @@ country_event = {
 	}
 	
 	option = { # dont convert
-		name = shinkism_events.1.b
-		custom_tooltip = shinkism_events.1.b.tt
+		name = th_shinkism_events.1.b
+		custom_tooltip = th_shinkism_events.1.b.tt
 		hidden_effect = {
 			enable_religion = th_shinkism
 		}
 		ai_chance = {
 			factor = 0
+		}
+	}
+}
+
+
+# Join Shinki
+country_event = {
+	id = th_shinkism_events.2
+	title = th_shinkism_events.2.t
+	desc = th_shinkism_events.2.desc
+	picture = SHINKISM_eventPicture
+	
+	major = yes
+	
+	trigger = {
+		is_lesser_in_union = no
+		NOT = { has_country_flag = had_th_shinkism_question }
+		OR = {
+			is_subject = no
+			is_subject_of = MKI
+		}
+		is_religion_enabled = th_shinkism
+		OR = {
+			religion = th_oldhakurei
+			religion = th_hakureishinto
+		}
+		if = {
+			limit = {
+				religion = th_oldhakurei
+				has_dlc = "Third Rome"
+			}
+			current_icon = old_hakurei_icon_shinki
+		}
+		else_if = {
+			limit = {
+				religion = th_oldhakurei
+				has_dlc = "Wealth of Nations"
+			}
+			has_personal_deity = Shinki
+		}
+		if = {
+			limit = {
+				exists = MKI
+			}
+			MKI = {
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+			}
+		}
+		else = {
+			calc_true_if = {
+				all_owned_province = {
+					religion = th_shinkism
+				}
+				amount = 6
+			}
+		}
+		NOT = { tag = OKR }
+		NOT = { was_tag = OKR }
+	}
+
+	mean_time_to_happen = {
+		months = 6
+	}
+	
+	immediate = {
+		set_country_flag = had_th_shinkism_question
+	}
+		
+	option = { # just convert
+		name = th_shinkism_events.1.a
+		enable_religion = th_shinkism
+		every_neighbor_country = {
+			limit = {
+				religion_group = Touhou
+				NOT = { religion = th_shinkism }
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = renounced_as_heretics
+			}
+		}
+		change_religion = th_shinkism
+		custom_tooltip = th_th_shinkism_convert_all_makai_provinces
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					culture = Makaian
+				}
+				change_religion = th_shinkism
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 9000
+				}
+			}
+		} 
+		add_country_modifier = {
+			name = "conversion_zeal"
+			duration = 3650
+		}
+		th_set_touhou_school = yes
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = { # dont convert
+		name = th_shinkism_events.2.b
+		custom_tooltip = th_shinkism_events.2.b.tt
+		ai_chance = {
+			factor = 100
 		}
 	}
 }

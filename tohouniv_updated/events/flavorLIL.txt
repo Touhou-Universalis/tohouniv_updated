@@ -1,0 +1,593 @@
+########################################
+# Flavor Events for Jasmine Path
+########################################	
+
+namespace = flavor_lil
+
+#Request CRD for help against SCR
+country_event = {
+	id = flavor_lil.1
+	title = flavor_lil.1.t
+	desc = flavor_lil.1.desc
+	picture = FORMERHELL_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.1.a
+		custom_tooltip = flavor_lil.1.a.tt
+		if = {
+			limit = {
+				exists = CRD
+			}
+			CRD = {
+				country_event = {
+					id = flavor_lil.2
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				is_subject = yes
+			}
+			modifier = {
+				factor = 100
+				AND = {
+					marriage_with = FROM
+					has_opinion = {
+						who = FROM
+						value = 100
+					}
+				}
+			}
+			modifier = {
+				factor = 100
+				alliance_with = FROM
+			}
+		}
+	}
+
+	option = {
+		name = flavor_lil.1.b
+		custom_tooltip = flavor_lil.1.b.tt
+
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 0
+				AND = {
+					marriage_with = FROM
+					has_opinion = {
+						who = FROM
+						value = 100
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				alliance_with = FROM
+			}
+		}
+	}
+}
+
+#CRD gets asked by LIL for help
+country_event = {
+	id = flavor_lil.2
+	title = flavor_lil.2.t
+	desc = flavor_lil.2.desc
+	picture = LILYWHITE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.2.a
+		custom_tooltip = flavor_lil.2.a.tt
+		FROM = {
+			country_event = {
+				id = flavor_lil.3
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	option = {
+		name = flavor_lil.2.b
+		custom_tooltip = flavor_lil.2.b.tt
+		FROM = {
+			country_event = {
+				id = flavor_lil.4
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Friendship Event
+country_event = {
+	id = flavor_lil.3
+	title = flavor_lil.3.t
+	desc = flavor_lil.3.desc
+	picture = SATORI_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.3.a
+		if = {
+			limit = {
+				NOT = { alliance_with = FROM }
+			}
+			create_alliance = FROM
+		}
+		add_trust = {
+			who = FROM
+			value = 10
+			mutual = yes
+		}
+		hidden_effect = {
+			set_country_flag = lil_owes_satori_a_favor
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#CRD declines
+country_event = {
+	id = flavor_lil.4
+	title = flavor_lil.4.t
+	desc = flavor_lil.4.desc
+	picture = SATORI_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.4.a
+		add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 240
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#CRD demands LIL's subjugation
+country_event = {
+	id = flavor_lil.5
+	title = flavor_lil.5.t
+	desc = flavor_lil.5.desc
+	picture = SATORI_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = LIL
+		}
+		OR = {
+			AND = {
+				exists = SCR
+				total_development = SCR
+			}
+			AND = {
+				NOT = { exists = SCR }
+				total_development = 150
+			}
+		}
+		has_country_flag = lil_owes_satori_a_favor
+		NOT = { has_country_flag = lil_had_satori_demanded_favor_event }
+		OR = {
+			exists = CRD
+			AND = {
+				exists = SCD
+				SCD = {
+					was_tag = CRD
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 4
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = lil_had_satori_demanded_favor_event
+			if = {
+				limit = {
+					exists = SCD
+					SCD = {
+						was_tag = CRD
+					}
+				}
+				SCD = {
+					save_event_target_as = lil_crd_tag
+				}
+			}
+			else = {
+				CRD = {
+					save_event_target_as = lil_crd_tag
+				}
+			}
+		}
+	}
+
+	option = {	#We accept Satori's demands
+		name = flavor_lil.5.a
+		event_target:lil_crd_tag = {
+			create_subject = {
+				subject_type = th_satori_vassal
+				subject = ROOT
+			}
+			add_trust = {
+				who = ROOT
+				value = 50
+				mutual = yes
+			}
+		}
+		add_historical_friend = event_target:lil_crd_tag
+		add_country_modifier = {
+			name = th_lil_satoris_newest_servant
+			duration = -1
+		}
+		
+		ai_chance = {
+			factor = 90
+		}
+	}
+
+	option = {
+		name = flavor_lil.5.b #Reject Treaty
+		event_target:lil_crd_tag = {
+			add_trust = {
+				who = ROOT
+				value = -40
+				mutual = yes
+			}
+		}
+		add_country_modifier = {
+			name = th_lil_betrayal
+			duration = 3650
+		}
+
+
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+##Control of Saigyou Ayakashi##
+country_event = {
+	id = flavor_lil.6
+	title = flavor_lil.6.t
+	desc = flavor_lil.6.desc
+	picture = SAIGYOU_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.6.a
+		th_increase_fairy_adm_stat = {
+			adm = 1
+		}
+		th_enable_spring_power_effect = yes
+		country_event = {
+			id = flavor_lil.100
+		}
+	}
+}
+
+##Gain buff in spring##
+country_event = {
+	id = flavor_lil.7
+	title = flavor_lil.7.t
+	desc = flavor_lil.7.d
+	picture = SAIGYOU2_eventPicture
+
+	hidden = yes
+
+	trigger = {
+		is_month = 2
+		NOT = { is_month = 4 }
+		has_country_flag = th_power_of_spring_enabled
+		NOT = { has_country_modifier = lil_spring_buff_lv4 }
+		NOT = { has_country_modifier = lil_spring_buff_lv3 }
+		NOT = { has_country_modifier = lil_spring_buff_lv2 }
+		NOT = { has_country_modifier = lil_spring_buff_lv1 }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_lil.7.a
+		if = {
+			limit = {
+				has_country_flag = lil_extend_spring_lv3
+			}
+			add_country_modifier = {
+				name = lil_spring_buff_lv4
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = lil_extend_spring_lv2
+			}
+			add_country_modifier = {
+				name = lil_spring_buff_lv3
+				duration = 270
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = lil_extend_spring_lv1
+			}
+			add_country_modifier = {
+				name = lil_spring_buff_lv2
+				duration = 180
+			}
+		}	
+		else = {
+			add_country_modifier = {
+				name = lil_spring_buff_lv1
+				duration = 90
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#The evil tree powers grow too large in Lily!
+country_event = {
+	id = flavor_lil.8
+	title = flavor_lil.8.t
+	desc = flavor_lil.8.desc
+	picture = SAIGYOU2_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.8.a
+		custom_tooltip = LIL_enable_lily_black_fight
+		hidden_effect = {
+			set_country_flag = lil_can_fight_lily_black
+		}
+		th_increase_spring_power_effect = yes
+	}
+}
+
+#Fight with Lily Black
+country_event = {
+	id = flavor_lil.9
+	title = flavor_lil.9.t
+	desc = flavor_lil.9.desc
+	picture = LILYBLACK_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			set_variable = {
+				which = th_lil_lily_black_combat_skills
+				value = 1400
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_lil_lily_black_combat_skills
+			}
+			clr_country_flag = lil_can_fight_lily_black
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = flavor_lil.9.a
+		custom_tooltip = flavor_lil.9.a.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_lil.10
+			draw_event = flavor_lil.10
+			defeat_event = flavor_lil.11
+			days = 3
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Victory over Lily Black
+country_event = {
+	id = flavor_lil.10
+	title = flavor_lil.10.t
+	desc = flavor_lil.10.desc
+	picture = LILYBLACKANDWHITE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_lil.10.a
+		custom_tooltip = flavor_lil.10.a.tt
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 200
+		hidden_effect = {
+			set_country_flag = LIL_defeated_lily_black
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Defeat against Lily Black
+country_event = {
+	id = flavor_lil.11
+	title = flavor_lil.11.t
+	desc = flavor_lil.11.desc
+	picture = LILYBLACK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_lil.11.a
+		custom_tooltip = flavor_lil.11.a.tt
+		hidden_effect = {
+			set_country_flag = lil_can_fight_lily_black
+			set_country_flag = lil_lost_against_lily_black
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#The purge of Saigyou Ayakashi
+country_event = {
+	id = flavor_lil.12
+	title = flavor_lil.12.t
+	desc = flavor_lil.12.desc
+	picture = PURGEDSAIGYOU_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.12.a
+		th_increase_spring_power_effect = yes
+		4954 = {
+			area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_prosperity = 100
+				add_devastation = -100
+			}
+		}
+	}
+}
+
+#Mastered the power of Saigyou Ayakashi
+country_event = {
+	id = flavor_lil.13
+	title = flavor_lil.13.t
+	desc = flavor_lil.13.desc
+	picture = LILYASCENDED_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lil.13.a
+		th_increase_spring_power_effect = yes
+	}
+}
+
+#The Fairy Atlas
+country_event = {
+	id = flavor_lil.14
+	title = flavor_lil.14.t
+	desc = flavor_lil.14.desc
+	picture = TOUHOUMAPS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = flavor_lil.14.a
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+		th_increase_fairy_adm_stat = {
+			adm = 1
+		}
+		custom_tooltip = flavor_lil.14.a.tt
+		hidden_effect = {
+			north_america = {
+				discover_country = ROOT
+			}
+			africa = {
+				discover_country = ROOT
+			}
+			europe = {
+				discover_country = ROOT
+			}
+		}
+	}
+}
+
+#Spring Power information
+country_event = {
+	id = flavor_lil.100
+	title = "flavor_lil.100.t"
+	desc = "flavor_lil.100.desc"
+	picture = LILYASPRING_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {		#Standard
+		name = flavor_lil.100.a
+		tooltip = {
+			if = {
+				limit = {
+					has_country_flag = lil_extend_spring_lv3
+				}
+				add_country_modifier = {
+					name = lil_spring_buff_lv4
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_flag = lil_extend_spring_lv2
+				}
+				add_country_modifier = {
+					name = lil_spring_buff_lv3
+					duration = 270
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_flag = lil_extend_spring_lv1
+				}
+				add_country_modifier = {
+					name = lil_spring_buff_lv2
+					duration = 180
+				}
+			}	
+			else = {
+				add_country_modifier = {
+					name = lil_spring_buff_lv1
+					duration = 90
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

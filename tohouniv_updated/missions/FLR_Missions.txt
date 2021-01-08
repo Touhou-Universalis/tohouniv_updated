@@ -16,8 +16,8 @@ flr_slot1_branch = {
 		trigger = {
 			is_subject = no
 			OR = {
-			BUR = { war_with = ROOT }
-			NOT = { exists = BUR }
+				BUR = { war_with = ROOT }
+				NOT = { exists = BUR }
 			}
 		}
 		effect = {
@@ -112,8 +112,8 @@ flr_slot1_branch = {
 						}
 						hidden_effect = { BUR = { free_vassal = prev } }
 						ROOT = { vassalize = prev }
-						}
 					}
+				}
 			}
 		}
 	}
@@ -147,11 +147,11 @@ flr_slot1_branch = {
 		position = 4
 		trigger = {
 			ROOT = {
-						NOT = { unrest = 2 }
-						NOT = { num_of_loans = 1 }
-						manpower_percentage = 0.8
-					}
-				}
+				NOT = { unrest = 2 }
+				NOT = { num_of_loans = 1 }
+				manpower_percentage = 0.8
+			}
+		}
 		effect = {
 			add_country_modifier = {
 				name = "th_FLR_mistress_lowlands"
@@ -382,7 +382,6 @@ flr_vampiric_branch = {
 	potential = {
 		tag = FLR
 		NOT = { map_setup = map_setup_random }
-		always = no
 	}
 	has_country_shield = yes
 	
@@ -406,7 +405,7 @@ flr_vampiric_branch = {
 			}
 			home_counties_area = {
 				limit = {
-					NOT = { core = ROOT }
+					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
@@ -482,70 +481,7 @@ flr_vampiric_branch = {
 			country_event = {
 				id = flavor_flr.11
 			}
-			hidden_effect = {
-				home_trade_node_effect_scope = {
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							is_capital = yes
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							development = CAPITAL
-							is_capital = no
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							development = CAPITAL
-							is_capital = no
-							development = 20
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							development = CAPITAL
-							is_capital = no
-							development = 25
-						}
-						save_event_target_as = reward_province
-					}
-					random_trade_node_member_province = {
-						limit = {
-							owned_by = ROOT
-							development = CAPITAL
-							is_capital = no
-							development = 30
-						}
-						save_event_target_as = reward_province
-					}
-				}
-			}
-			if = {
-				limit = { has_saved_event_target = reward_province }
-				event_target:reward_province = {
-					add_province_modifier = {
-						name = "dominant_trade_hub"
-						duration = -1
-					}
-				}
-			}
-			else = {
-				custom_tooltip = dominant_home_node_reward_tooltip
-			}
+			th_get_default_permanent_province_buff = yes
 		}
 	}
 }
@@ -557,7 +493,6 @@ flr_identity_branch = {
 	potential = {
 		tag = FLR
 		NOT = { map_setup = map_setup_random }
-		always = no
 	}
 	has_country_shield = yes
 	
@@ -566,10 +501,6 @@ flr_identity_branch = {
 		required_missions = {  }
 		position = 1
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_FLR_choose_religion_tt
-				has_country_flag = th_FLR_choose_religion
-			}
 			custom_trigger_tooltip = {
 				tooltip = th_flr_any_country_likes_us_tt
 				any_country = {
@@ -587,6 +518,9 @@ flr_identity_branch = {
 			has_advisor = yes
 		}
 		effect = {
+			country_event = {
+				id = flavor_scr.5
+			}
 			add_stability = 2
 		}
 	}
@@ -623,7 +557,7 @@ flr_identity_branch = {
 		required_missions = { flr_build_the_scarlet_force }
 		position = 3
 		trigger = {
-			crown_land_share = 0.45
+			crown_land_share = 45
 			legitimacy = 95
 			prestige = 30
 		}
@@ -636,12 +570,7 @@ flr_identity_branch = {
 					duration = -1
 				}
 			}
-			custom_tooltip = th_remove_autonomy_from_all_provinces
-			hidden_effect = {
-				every_owned_province = {
-					add_local_autonomy = -100
-				}
-			}
+			th_remove_autonomy_from_all_provinces_effect = yes
 			add_country_modifier = {
 				name = "hegemonic_ambition"
 				duration = 7300 #20 years
@@ -703,6 +632,7 @@ flr_identity_branch = {
 		effect = {
 			custom_tooltip = flr_the_imperial_test_tt
 			hidden_effect = {
+				override_country_name = FLANDRISH_EMPIRE
 				remove_country_modifier = flr_lvl4_flan
 				add_country_modifier = {
 					name = flr_lvl5_flan
@@ -727,7 +657,6 @@ flr_religion_branch = {
 	potential = {
 		tag = FLR
 		NOT = { map_setup = map_setup_random }
-		always = no
 	}
 	has_country_shield = yes
 	
@@ -754,16 +683,16 @@ flr_religion_branch = {
 				}
 				if = {
 					limit = {
-						has_country_flag = flr_reformation
+						has_country_flag = flr_reformation_path
 					}
 					clr_country_flag = flr_reformation
 					set_country_flag = flr_reformation_path_mission
 				}
 				if = {
 					limit = {
-						has_country_flag = flr_shinto
+						has_country_flag = flr_shinto_path
 					}
-					clr_country_flag = flr_shinto
+					clr_country_flag = flr_shinto_path
 					set_country_flag = flr_shinto_path_mission
 				}
 				if = {
@@ -951,12 +880,20 @@ flr_shinto_branch = {
 				}
 				amount = 3
 			}
-			calc_true_if = {
-				all_country = {
-					technology_group = western
-					religion_group = Touhou
+			OR = {
+				calc_true_if = {
+					all_country = {
+						technology_group = western
+						religion_group = Touhou
+					}
+					amount = 10
 				}
-				amount = 10
+				calc_true_if = {
+					all_province = {
+						religion_group = Touhou
+					}
+					amount = 100
+				}
 			}
 		}
 		effect = {
@@ -1052,6 +989,7 @@ flr_tolerant_branch = {
 			OR = {
 				NOT = { hre_size = 1 }
 				hre_religion_locked = yes
+				hre_religion_treaty = yes
 			}
 		}
 		effect = {
@@ -1180,13 +1118,28 @@ flr_slot2_branch = {
 		required_missions = { flr_imperial_crown_of_germany }
 		position = 9
 		provinces_to_highlight = {
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			OR = {
+				is_part_of_hre = no
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			}
 			region = italy_region
 		}
 		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 40
-				region = italy_region
+			OR = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 40
+					region = italy_region
+				}
+				AND = {
+					is_emperor = yes
+					calc_true_if = {
+						all_province = {
+							is_part_of_hre = yes
+							region = italy_region
+						}
+						amount = 40
+					}
+				}
 			}
 		}
 		effect = {
@@ -1261,23 +1214,23 @@ flr_slot3_branch = {
 	flr_hegemony_in_germany = {
 		icon = ger_kaiserreich
 		required_missions = {
-				flr_entrance_of_north_germany
-				flr_lex_salica
+			flr_entrance_of_north_germany
+			flr_lex_salica
 		}
 		position = 7
 		trigger = {
 			OR = {
 				AND = {
 					ROOT = {
-					is_emperor = yes
-					if = {
-						limit = {
-							has_dlc = "Emperor"
-							}
-						hre_reform_passed = emperor_perpetual_diet
+						is_emperor = yes
+						if = {
+							limit = {
+								has_dlc = "Emperor"
+								}
+							hre_reform_passed = emperor_perpetual_diet
 						}
-					else = {
-						hre_reform_passed = landfriede
+						else = {
+							hre_reform_passed = landfriede
 						}
 					}
 				}
@@ -1317,8 +1270,8 @@ flr_slot3_branch = {
 	flr_imperial_crown_of_germany = {
 		icon = spread_the_von_wettins
 		required_missions = {
-				flr_brandenburg_electorate
-				flr_hegemony_in_germany
+			flr_brandenburg_electorate
+			flr_hegemony_in_germany
 		}
 		provinces_to_highlight = {
 			OR = {
@@ -1329,13 +1282,27 @@ flr_slot3_branch = {
 		}
 		position = 8
 		trigger = {
+			OR = {
+				AND = {
+					is_emperor = yes
+					if = {
+						limit = {
+							has_dlc = "Emperor"
+						}
+						hre_reform_passed = emperor_geteilte_macht
+					}
+					else = {
+						hre_reform_passed = privilegia_de_non_appelando
+					}
+				}
 				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 100
+					value = 100
 					OR = {
 						region = north_german_region
 						region = south_german_region
 					}
 				}
+			}
 		}
 		effect = {
 			france_region = {

@@ -1,0 +1,586 @@
+#################################################
+# Flavor Events for the Royal Fairy Challenge
+# Warning ahead: the events here are highly
+# overengineered and probably will never unleash
+# their full potential as most fairy nations die
+# within the first year anyway. It is however
+# expandable on its own, meaning it works for 2
+# fairy nations just as good as for 25
+#################################################
+
+namespace = rfc_events
+
+###CIN Flavor events###
+
+#Invitation to the Royal Fairy Challenge
+country_event = {
+	id = rfc_events.1
+	title = "rfc_events.1.t"
+	desc = "rfc_events.1.desc"
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+
+	#I will win these games!
+	option = {
+		name = rfc_events.1.a
+		custom_tooltip = rfc_events.1.a.tt
+		hidden_effect = {
+			set_country_flag = th_participates_royal_fairy_challenge
+			set_country_flag = th_rfc_start_cooldown
+			set_variable = {
+				which = th_royal_fairy_challenge_points
+				value = 0
+			}
+			set_variable = {
+				which = th_rfc_own_high_score
+				value = 0
+			}			
+			#Variable for checking of how long RFC is going
+			set_variable = {
+				which = th_rfc_current_cycle_of_challenge
+				value = 0
+			}
+			country_event = {
+				id = rfc_events.2
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				is_subject = yes
+			}
+		}
+	}
+
+	#I don't have the time for that
+	option = {
+		name = rfc_events.1.b
+		custom_tooltip = rfc_events.1.b.tt
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				is_subject = no
+			}
+		}
+	}
+}
+
+#Explanation of the Royal Fairy Challenge
+country_event = {
+	id = rfc_events.2
+	title = "rfc_events.2.t"
+	desc = "rfc_events.2.desc"
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+
+	#I will win these games!
+	option = {
+		name = rfc_events.2.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Reset the cd
+country_event = {
+	id = rfc_events.3
+	title = "rfc_events.3.t"
+	desc = "rfc_events.3.desc"
+	picture = FAIRYFIGHT_eventPicture
+	
+	trigger = {
+		OR = {
+			had_country_flag = {
+				flag = th_rfc_start_cooldown
+				days = 30
+			}
+			#3 years = 1 cycle
+			had_country_flag = {
+				flag = th_rfc_next_cooldown
+				days = 1095
+			}
+		}
+		th_rfc_has_not_reached_max_cyles = yes
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		clr_country_flag = th_rfc_start_cooldown
+		clr_country_flag = th_rfc_next_cooldown
+		th_rfc_clean_the_bakas = yes
+	}
+
+	#I will win these games!
+	option = {
+		name = rfc_events.3.a
+		set_country_flag = th_rfc_next_cooldown
+		change_variable = {
+			which = th_rfc_current_cycle_of_challenge
+			value = 1
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	after = {
+		country_event = {
+			id = rfc_events.4
+		}
+	}
+}
+
+#Generate the bakas
+country_event = {
+	id = rfc_events.4
+	title = "rfc_events.4.t"
+	desc = "rfc_events.4.desc"
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			th_rfc_select_the_bakas = yes
+		}
+	}
+
+	#I will win these games!
+	option = {
+		name = rfc_events.4.a
+		th_rfc_show_the_bakas = yes
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#General clean up after RFC is over
+country_event = {
+	id = rfc_events.5
+	title = "rfc_events.5.t"
+	desc = "rfc_events.5.desc"
+	picture = FAIRYFIGHT_eventPicture
+	
+	hidden = yes
+
+	trigger = {
+		NOT = { has_global_flag = th_royal_fairy_challenge_has_begun }
+		NOT = { has_global_flag = th_royal_fairy_challenge_calculating_result }
+		OR = {
+			has_country_flag = th_rfc_is_compared
+			has_country_flag = th_participates_royal_fairy_challenge
+			has_country_flag = th_rfc_start_cooldown
+			has_country_flag = th_rfc_next_cooldown
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = rfc_events.5.a
+		clr_country_flag = th_rfc_is_compared
+		clr_country_flag = th_participates_royal_fairy_challenge
+		clr_country_flag = th_rfc_start_cooldown
+		clr_country_flag = th_rfc_next_cooldown
+		th_rfc_clean_the_bakas = yes
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Rulebook Overview
+country_event = {
+	id = rfc_events.6
+	title = "rfc_events.6.t"
+	desc = "rfc_events.6.desc"
+	picture = FAIRYFIGHT_eventPicture
+
+	is_triggered_only = yes
+
+	#Rules please
+	option = {
+		name = rfc_events.6.a
+		country_event = {
+			id = rfc_events.2
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#Who are the bakas again?
+	option = {
+		name = rfc_events.6.b
+		th_rfc_show_the_bakas = yes
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#How many points to I have?
+	option = {
+		name = rfc_events.6.c
+		th_rfc_show_the_scores = yes
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Finish the Challenge
+country_event = {
+	id = rfc_events.7
+	title = "rfc_events.7.t"
+	desc = "rfc_events.7.desc"
+	picture = FAIRYFIGHT_eventPicture
+	
+	trigger = {
+		has_global_flag = th_royal_fairy_challenge_has_begun
+		th_rfc_has_reached_max_cycles = yes
+		has_country_flag = th_participates_royal_fairy_challenge
+		all_country = {
+			OR = {
+				AND = {
+					has_country_flag = th_participates_royal_fairy_challenge
+					th_rfc_has_reached_max_cycles = yes
+				}
+				NOT = { has_country_flag = th_participates_royal_fairy_challenge }
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 50
+		modifier = {
+			factor = 0.02
+			ai = no
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_variable = {
+				which = th_rfc_high_score
+				which = th_royal_fairy_challenge_points
+			}
+			save_global_event_target_as = th_rfc_winner
+			set_country_flag = th_rfc_calculator
+			set_country_flag = th_rfc_is_compared
+			set_global_flag = th_royal_fairy_challenge_calculating_result
+			clr_country_flag = th_participates_royal_fairy_challenge
+			clr_global_flag = th_royal_fairy_challenge_has_begun
+		}
+	}
+	
+	option = {
+		name = rfc_events.7.a
+		custom_tooltip = rfc_events.7.a.tt
+		hidden_effect = {
+			random_country = {
+				limit = {
+					has_country_flag = th_participates_royal_fairy_challenge
+				}
+				country_event = {
+					id = rfc_events.8
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Let comparator know your own high score
+country_event = {
+	id = rfc_events.8
+	title = "rfc_events.8.t"
+	desc = "rfc_events.8.desc"
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		clr_country_flag = th_participates_royal_fairy_challenge
+		FROM = {
+			set_variable = {
+				which = th_royal_fairy_compare_points
+				value = 0
+			}
+		}
+	}
+	
+	option = {
+		name = rfc_events.8.a
+		th_set_countrys_compare_variable_to_own_variable = {
+			who = FROM
+			root_counting_variable = th_royal_fairy_challenge_points
+			who_counting_variable = th_royal_fairy_compare_points
+		}
+		set_country_flag = th_rfc_is_compared
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	after = {
+		FROM = {
+			country_event = {
+				id = rfc_events.9
+				days = 5
+			}
+		}
+	}
+}
+
+#Decide if there is a new high score + if comparing is finished
+country_event = {
+	id = rfc_events.9
+	title = rfc_events.9.t
+	desc = rfc_events.9.desc
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {	#TAKE THIS
+		name = rfc_events.9.a
+		if = {
+			limit = {
+				check_variable = {
+					which = th_royal_fairy_compare_points
+					which = th_rfc_high_score
+				}
+			}
+			FROM = {
+				save_global_event_target_as = th_rfc_winner
+			}
+			set_variable = {
+				which = th_rfc_high_score
+				which = th_royal_fairy_compare_points
+			}
+		}
+		if = {
+			limit = {
+				any_country = {
+					has_country_flag = th_participates_royal_fairy_challenge
+				}
+			}
+			random_country = {
+				limit = {
+					has_country_flag = th_participates_royal_fairy_challenge
+				}
+				country_event = {
+					id = rfc_events.8
+				}
+			}
+		}
+		else = {
+			country_event = {
+				id = rfc_events.10
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Winner will be public!
+country_event = {
+	id = rfc_events.10
+	title = rfc_events.10.t
+	desc = rfc_events.10.desc
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Official Winner!
+		name = rfc_events.10.a
+		event_target:th_rfc_winner = {
+			country_event = {
+				id = rfc_events.11
+			}
+		}
+		hidden_effect = {
+			clr_global_flag = th_royal_fairy_challenge_calculating_result
+			clr_country_flag = th_rfc_calculator
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Winner event!
+country_event = {
+	id = rfc_events.11
+	title = rfc_events.11.t
+	desc = rfc_events.11.desc
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Official Winner!
+		name = rfc_events.11.a
+		add_country_modifier = {
+			name = th_won_the_royal_fairy_challenge
+			duration = -1
+		}
+		hidden_effect = {
+			clear_global_event_target = th_rfc_winner
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Winner gets randomized if calculator dies in process
+country_event = {
+	id = rfc_events.12
+	title = rfc_events.12.t
+	desc = rfc_events.12.desc
+	picture = FAIRYFIGHT_eventPicture
+	
+	trigger = {
+		has_global_flag = th_royal_fairy_challenge_calculating_result
+		NOT = { has_country_flag = th_rfc_calculator }
+		all_country = {
+			NOT = { has_country_flag = th_rfc_calculator }
+		}
+		OR = {
+			has_country_flag = th_rfc_is_compared
+			has_country_flag = th_participates_royal_fairy_challenge
+		}
+	}
+
+	major = yes
+	
+	option = {	#Official Winner!
+		name = rfc_events.12.a
+		if = {
+			limit = {
+				exists = event_target:th_rfc_winner
+			}
+			event_target:th_rfc_winner = {
+				country_event = {
+					id = rfc_events.11
+				}
+			}
+		}
+		else = {
+			random_country = {
+				limit = {
+					OR = {
+						has_country_flag = th_rfc_is_compared
+						has_country_flag = th_participates_royal_fairy_challenge
+					}
+				}
+				country_event = {
+					id = rfc_events.11
+				}
+			}
+		}
+		hidden_effect = {
+			clr_global_flag = th_royal_fairy_challenge_calculating_result
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Gets told to share scores
+country_event = {
+	id = rfc_events.13
+	title = rfc_events.13.t
+	desc = rfc_events.13.desc
+	picture = FAIRYFIGHT_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {	#Official Winner!
+		name = rfc_events.13.a
+		FROM = {
+			country_event = {
+				id = rfc_events.14
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Gets told to share scores
+country_event = {
+	id = rfc_events.14
+	title = rfc_events.14.t
+	desc = rfc_events.14.desc
+	picture = FAIRYFIGHT_eventPicture
+
+	is_triggered_only = yes
+	
+	option = {	#Official Winner!
+		name = rfc_events.14.a
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Generic information event of the trigger
+country_event = {
+	id = rfc_events.15
+	title = rfc_events.15.t
+	desc = rfc_events.15.desc
+	picture = FAIRYFIGHT_eventPicture
+
+	is_triggered_only = yes
+	
+	option = {	#Official Winner!
+		name = rfc_events.15.a
+		th_rfc_initiate_challenge = yes
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
