@@ -245,6 +245,10 @@ sff_slot1_branch = {
 					}
 				}
 			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
 		}
 		effect = {
 			capital_scope = {
@@ -255,6 +259,7 @@ sff_slot1_branch = {
 			# Change number of found plant = 1 Need a variable to count found plants here. Sorry I'm too lazy to write it
 			custom_tooltip = th_sff_has_collected_higan_flower		#SFF's core area gain permanent provincial buff
 			hidden_effect = {
+				th_sff_increment_flower_counter = yes
 				set_country_flag = sff_has_collected_higan_flower
 			}
 		}
@@ -266,13 +271,52 @@ sff_slot1_branch = {
 		position = 10
 
 		provinces_to_highlight = {
+			OR = {
+				owned_by = ASK
+				province_id = 1020
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					exists = ASK
+				}
+				ASK = {
+					OR = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+						is_subject_of = ROOT
+					}
+				}
+			}
+			else = {
+				1020 = {
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+				}
+			}
+			prestige = 40
+			dip_power = 500
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
 		}
 		effect = {
-			add_prestige = 5
+			country_event = {
+				id = flavor_sff.109
+			}
 		}
 	}
 }
@@ -364,13 +408,6 @@ sff_slot2_branch = {
 					duration = 7300
 				}
 			}
-			Raiko_Seki_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
 			if = {
 				limit = {
 					exists = RAI
@@ -391,14 +428,7 @@ sff_slot2_branch = {
 					months = 900
 				}
 			}
-			World_of_fantasies = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Rika_state = {
+			sunflower_region = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -698,13 +728,16 @@ sff_slot2_branch = {
 		required_missions = {  }
 		position = 7
 		trigger = {
-			OR = {
-				tag = GNK
-				government_rank = 3
-			}
 			total_development = 650
+			stability = 2
 		}
 		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
 			add_country_modifier = {
 				name = sff_empire_of_the_sunflower
 				duration = -1
@@ -727,6 +760,10 @@ sff_slot2_branch = {
 			815 = {
 				country_or_non_sovereign_subject_holds = ROOT
 			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
 		}
 		effect = {
 			capital_scope = {
@@ -737,6 +774,7 @@ sff_slot2_branch = {
 			# Change number of found plant = 1 Need a variable to count found plants here. Sorry I'm too lazy to write it
 			custom_tooltip = th_sff_has_collected_amazon_flower		#SFF's core area gain permanent provincial buff
 			hidden_effect = {
+				th_sff_increment_flower_counter = yes
 				set_country_flag = sff_has_collected_amazon_flower
 			}
 			coastal_kongo = {
@@ -778,6 +816,10 @@ sff_slot2_branch = {
 					}
 				}
 			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
 		}
 		effect = {
 			if = {
@@ -806,6 +848,7 @@ sff_slot2_branch = {
 			# Change number of found plant = 1 Need a variable to count found plants here. Sorry I'm too lazy to write it
 			custom_tooltip = th_sff_has_collected_congo_flower		#SFF's core area gain permanent provincial buff
 			hidden_effect = {
+				th_sff_increment_flower_counter = yes
 				set_country_flag = sff_has_collected_congo_flower
 			}
 			karelia_area = {
@@ -847,6 +890,10 @@ sff_slot2_branch = {
 					}
 				}
 			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
 		}
 		effect = {
 			if = {
@@ -875,6 +922,7 @@ sff_slot2_branch = {
 			# Change number of found plant = 1 Need a variable to count found plants here. Sorry I'm too lazy to write it
 			custom_tooltip = th_sff_has_collected_finnish_flower		#SFF's core area gain permanent provincial buff
 			hidden_effect = {
+				th_sff_increment_flower_counter = yes
 				set_country_flag = sff_has_collected_finnish_flower
 			}
 		}
@@ -938,8 +986,7 @@ sff_slot3_branch = {
 	SFF_upgrade_sun_garden_lv2 = {
 		icon = mission_touhou_yuuka_garden3
 		required_missions = {  }
-		position = 4
-		
+		position = 4		
 		provinces_to_highlight = {
 			province_id = 5000
 		}
@@ -949,12 +996,14 @@ sff_slot3_branch = {
 				is_capital_of = ROOT
 				development = 30
 			}
-		}
-		effect = {
-			custom_tooltip = th_sff_gain_lv2_sun_garden_buff		#SFF's core area gain permanent provincial buff
-			hidden_effect = {
-				set_country_flag = sff_sun_garden_lv2
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
 			}
+		}
+
+		effect = {
+			th_sff_increment_sun_garden_counter = yes
 		}
 	}
 
@@ -973,12 +1022,13 @@ sff_slot3_branch = {
 				development = 40
 			}
 			num_of_cities = 20
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
 		}
 		effect = {
-			custom_tooltip = th_sff_gain_lv3_sun_garden_buff		#SFF's core area gain permanent provincial buff
-			hidden_effect = {
-				set_country_flag = sff_sun_garden_lv3
-			}
+			th_sff_increment_sun_garden_counter = yes
 		}
 	}
 
@@ -1000,13 +1050,16 @@ sff_slot3_branch = {
 				development = 60
 			}
 			num_of_cities = 40
-			#Number of collected plants = 2   Use variable here
+			custom_trigger_tooltip = {
+				tooltip = SFF_upgrade_sun_garden_lv4_tt
+				th_sff_compare_flower_count = {
+					value = 2
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = th_sff_gain_lv4_sun_garden_buff		#SFF's core area gain permanent provincial buff
-			hidden_effect = {
-				set_country_flag = sff_sun_garden_lv4
-			}
+			th_sff_increment_sun_garden_counter = yes
+			sff_enable_drain_nature_action = yes
 		}
 	}
 
@@ -1026,13 +1079,15 @@ sff_slot3_branch = {
 			}
 			num_of_cities = 80
 			has_country_modifier = sff_garden_of_the_nature
-			#Number of collected plants = 4   Use variable here
+			custom_trigger_tooltip = {
+				tooltip = SFF_upgrade_sun_garden_lv5_tt
+				th_sff_compare_flower_count = {
+					value = 4
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = th_sff_gain_lv5_sun_garden_buff		#SFF's core area gain permanent provincial buff
-			hidden_effect = {
-				set_country_flag = sff_sun_garden_lv5
-			}
+			th_sff_increment_sun_garden_counter = yes
 			country_event = {
 				id = flavor_sff.14
 			}
@@ -1061,12 +1116,7 @@ sff_slot4_branch = {
 					area = Perfect_cut_coast
 				}
 				value = 2
-				OR = {
-					has_building = fort_15th
-					has_building = fort_16th
-					has_building = fort_17th
-					has_building = fort_18th
-				}
+				province_has_current_tech_fort_trigger = yes
 			}
 		}
 		effect = {
@@ -1187,7 +1237,7 @@ sff_slot4_branch = {
 				OR = {
 					colonial_colombia = { has_discovered = ROOT }
 					colonial_peru = { has_discovered = ROOT }
-					colonial_region = colonial_la_plata
+					colonial_la_plata = { has_discovered = ROOT }
 				}
 			}
 		}

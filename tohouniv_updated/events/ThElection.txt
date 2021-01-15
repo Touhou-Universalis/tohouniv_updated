@@ -10,11 +10,19 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {
-		has_reform = Gensokyan_republic_fairy_government
+		OR = {
+			has_reform = Gensokyan_republic_fairy_government
+			has_reform = Gensokyan_tfr_pirate_government
+		}
 	}
 	
 	immediate = {
 		hidden_effect = {
+			export_to_variable = {
+				variable_name = th_random_candidate_bonus_tooltip_variable
+				value = modifier:candidate_random_bonus
+				who = ROOT
+			}
 			define_exiled_ruler = {
 				exiled_as = lottery_candidate_a_@ROOT
 				name = "Daiyousei"
@@ -67,44 +75,95 @@ country_event = {
 				female = yes
 				option = 3
 			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_e_@ROOT
-				name = "Sunny"
-				dynasty = "Milk"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 3
-				mil = 4
-				fixed = yes
-				female = yes
-				option = 4
+			if = {
+				limit = {
+					OR = {
+						th_is_or_was_tag = {
+							tag = FTP
+						}
+						is_playing_custom_nation = yes
+					}
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_e_@ROOT
+					name = "Sunny"
+					dynasty = "Milk"
+					min_age = 60
+					max_age = 65
+					adm = 4
+					dip = 3
+					mil = 4
+					fixed = yes
+					female = yes
+					option = 4
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_f_@ROOT
+					name = "Star"
+					dynasty = "Sapphire"
+					min_age = 60
+					max_age = 65
+					adm = 4
+					dip = 4
+					mil = 3
+					fixed = yes
+					female = yes
+					option = 5
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_g_@ROOT
+					name = "Luna"
+					dynasty = "Child"
+					min_age = 60
+					max_age = 65
+					adm = 5
+					dip = 2
+					mil = 4
+					fixed = yes
+					female = yes
+					option = 6
+				}
 			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_f_@ROOT
-				name = "Star"
-				dynasty = "Sapphire"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 4
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 5
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_g_@ROOT
-				name = "Luna"
-				dynasty = "Child"
-				min_age = 60
-				max_age = 65
-				adm = 5
-				dip = 2
-				mil = 4
-				fixed = yes
-				female = yes
-				option = 6
+			else = {
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_e_@ROOT
+					name = "Sunny"
+					dynasty = "Milk"
+					min_age = 60
+					max_age = 65
+					adm = 3
+					dip = 3
+					mil = 3
+					fixed = yes
+					female = yes
+					option = 4
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_f_@ROOT
+					name = "Star"
+					dynasty = "Sapphire"
+					min_age = 60
+					max_age = 65
+					adm = 2
+					dip = 4
+					mil = 3
+					fixed = yes
+					female = yes
+					option = 5
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_g_@ROOT
+					name = "Luna"
+					dynasty = "Child"
+					min_age = 60
+					max_age = 65
+					adm = 4
+					dip = 2
+					mil = 3
+					fixed = yes
+					female = yes
+					option = 6
+				}
 			}
 			define_exiled_ruler = {
 				exiled_as = lottery_candidate_h_@ROOT
@@ -160,9 +219,15 @@ country_event = {
 			}		
 		}
 		custom_tooltip = remains_ruler
-		change_adm = 1
-		change_dip = 1
-		change_mil = 1
+		if = {
+			limit = {
+				government = republic
+				NOT = { republican_tradition = 20 }	
+			}
+			lose_reforms = 7
+			change_government = monarchy
+			add_government_reform = Gensokyan_monarchy_fairy_government	
+		}
 		if = {
 			limit = {
 				has_country_flag = strengthened_signoria_flag
@@ -191,6 +256,12 @@ country_event = {
 	option = {	#Choose Daiyousei
 		trigger = {
 			NOT = { has_ruler_flag = th_fairy_repub_daiyousei }
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
 		}
 		name = fairy_elections.1.a
 		ai_chance = {
@@ -203,12 +274,19 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_daiyousei
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Lily
 		name = fairy_elections.1.b
 		trigger = {
 			NOT = { has_ruler_flag = th_fairy_repub_lily }
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
 		}
 		ai_chance = {
 			factor = 0
@@ -220,12 +298,19 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_lily
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Cirno
 		name = fairy_elections.1.c
 		trigger = {			
 			NOT = { has_ruler_flag = th_fairy_repub_cirno }
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
 		}
 		ai_chance = {
 			factor = 0
@@ -237,12 +322,19 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_cirno
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Clownpiece
 		name = fairy_elections.1.d
 		trigger = {			
 			NOT = { has_ruler_flag = th_fairy_repub_clownpiece }
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
 		}
 		ai_chance = {
 			factor = 0
@@ -254,7 +346,8 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_clownpiece
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Sunny Milk
 		name = fairy_elections.1.e
@@ -271,7 +364,8 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_sunny
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Star Sapphire
 		name = fairy_elections.1.f
@@ -288,7 +382,8 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_star
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Luna Child
 		name = fairy_elections.1.g
@@ -305,12 +400,19 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_luna
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Eternity Larva
 		name = fairy_elections.1.h
 		trigger = {			
 			NOT = { has_ruler_flag = th_fairy_repub_eternity }
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
 		}
 		ai_chance = {
 			factor = 0
@@ -322,181 +424,257 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_eternity
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = { # lottery
 		name = fairy_elections.1.i
 		ai_chance = {
 			factor = 90
 		}
-		random_list = {
-			12.5 = { 
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_daiyousei
+		if = {
+			limit = {
+				OR = {
+					th_is_or_was_tag = {
+						tag = FTP
 					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {					
-					set_ruler = lottery_candidate_a_@ROOT
-					hidden_effect = { 
-						add_ruler_personality = immortal_personality 
-						th_add_random_ruler_personality_republic = yes
-						th_add_random_ruler_personality_republic = yes
-						set_ruler_flag = th_fairy_repub_daiyousei
-					}
+					is_playing_custom_nation = yes
 				}
 			}
-			12.5 = { 
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_lily
+			random_list = {
+				12.5 = { 
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_daiyousei
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
 					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_b_@ROOT
-					hidden_effect = { 
-						add_ruler_personality = immortal_personality 
-						th_add_random_ruler_personality_republic = yes
-						th_add_random_ruler_personality_republic = yes
-						set_ruler_flag = th_fairy_repub_lily
-					}
-				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_cirno
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_c_@ROOT 
-					hidden_effect = { 
-						add_ruler_personality = immortal_personality 
-						th_add_random_ruler_personality_republic = yes
-						th_add_random_ruler_personality_republic = yes
-						set_ruler_flag = th_fairy_repub_cirno
+					else = {					
+						set_ruler = lottery_candidate_a_@ROOT
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_daiyousei
+						}
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_clownpiece
+				12.5 = { 
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_lily
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
 					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_d_@ROOT 
-					hidden_effect = { 
-						add_ruler_personality = immortal_personality 
-						th_add_random_ruler_personality_republic = yes
-						th_add_random_ruler_personality_republic = yes
-						set_ruler_flag = th_fairy_repub_clownpiece
-					}
-				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_sunny
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_e_@ROOT 
-					hidden_effect = { 
-						add_ruler_personality = immortal_personality 
-						th_add_random_ruler_personality_republic = yes
-						th_add_random_ruler_personality_republic = yes
-						set_ruler_flag = th_fairy_repub_sunny
+					else = {	
+						set_ruler = lottery_candidate_b_@ROOT
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_lily
+						}
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_star
+				12.5 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_cirno
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
 					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_f_@ROOT 
-					hidden_effect = { 
-						add_ruler_personality = immortal_personality 
-						th_add_random_ruler_personality_republic = yes
-						th_add_random_ruler_personality_republic = yes
-						set_ruler_flag = th_fairy_repub_star
-					}
-				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_luna
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_g_@ROOT 
-					hidden_effect = { 
-						add_ruler_personality = immortal_personality 
-						th_add_random_ruler_personality_republic = yes
-						th_add_random_ruler_personality_republic = yes
-						set_ruler_flag = th_fairy_repub_luna
+					else = {	
+						set_ruler = lottery_candidate_c_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_cirno
+						}
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_eternity
+				12.5 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_clownpiece
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
 					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
+					else = {	
+						set_ruler = lottery_candidate_d_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_clownpiece
+						}
+					}
 				}
-				else = {	
-					set_ruler = lottery_candidate_h_@ROOT 
-					hidden_effect = { 
-						add_ruler_personality = immortal_personality 
-						th_add_random_ruler_personality_republic = yes
-						th_add_random_ruler_personality_republic = yes
-						set_ruler_flag = th_fairy_repub_eternity
+				12.5 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_sunny
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
+					}
+					else = {	
+						set_ruler = lottery_candidate_e_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_sunny
+						}
+					}
+				}
+				12.5 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_star
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
+					}
+					else = {	
+						set_ruler = lottery_candidate_f_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_star
+						}
+					}
+				}
+				12.5 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_luna
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
+					}
+					else = {	
+						set_ruler = lottery_candidate_g_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_luna
+						}
+					}
+				}
+				12.5 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_eternity
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
+					}
+					else = {	
+						set_ruler = lottery_candidate_h_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_eternity
+						}
 					}
 				}
 			}
 		}
-		add_republican_tradition = 5
+		else = {	#Three Fairies only
+			random_list = {
+				33.3 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_sunny
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
+					}
+					else = {	
+						set_ruler = lottery_candidate_e_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_sunny
+						}
+					}
+				}
+				33.3 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_star
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
+					}
+					else = {	
+						set_ruler = lottery_candidate_f_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_star
+						}
+					}
+				}
+				33.3 = {
+					if = {
+						limit = {
+							has_ruler_flag = th_fairy_repub_luna
+						}
+						custom_tooltip = remains_ruler
+						change_adm = 1
+						change_dip = 1
+						change_mil = 1
+					}
+					else = {	
+						set_ruler = lottery_candidate_g_@ROOT 
+						hidden_effect = { 
+							add_ruler_personality = immortal_personality 
+							th_add_random_ruler_personality_republic = yes
+							th_add_random_ruler_personality_republic = yes
+							set_ruler_flag = th_fairy_repub_luna
+						}
+					}
+				}
+			}
+		}
+		add_scaled_republican_tradition = 5
 		add_karma = 10
+		th_show_random_candidate_bonus_plural = yes
 	}
 }
 
-# Election!
+# Death Election!
 country_event = {
 	id = fairy_elections.2
 	title = "EVTNAME700"
@@ -506,11 +684,19 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {
-		has_reform = Gensokyan_republic_fairy_government
+		OR = {
+			has_reform = Gensokyan_republic_fairy_government
+			has_reform = Gensokyan_tfr_pirate_government
+		}
 	}
 	
 	immediate = {
 		hidden_effect = {
+			export_to_variable = {
+				variable_name = th_random_candidate_bonus_tooltip_variable
+				value = modifier:candidate_random_bonus
+				who = ROOT
+			}
 			define_exiled_ruler = {
 				exiled_as = lottery_candidate_a_@ROOT
 				name = "Daiyousei"
@@ -563,44 +749,95 @@ country_event = {
 				female = yes
 				option = 3
 			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_e_@ROOT
-				name = "Sunny"
-				dynasty = "Milk"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 3
-				mil = 4
-				fixed = yes
-				female = yes
-				option = 4
+			if = {
+				limit = {
+					OR = {
+						th_is_or_was_tag = {
+							tag = FTP
+						}
+						is_playing_custom_nation = yes
+					}
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_e_@ROOT
+					name = "Sunny"
+					dynasty = "Milk"
+					min_age = 60
+					max_age = 65
+					adm = 4
+					dip = 3
+					mil = 4
+					fixed = yes
+					female = yes
+					option = 4
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_f_@ROOT
+					name = "Star"
+					dynasty = "Sapphire"
+					min_age = 60
+					max_age = 65
+					adm = 4
+					dip = 4
+					mil = 3
+					fixed = yes
+					female = yes
+					option = 5
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_g_@ROOT
+					name = "Luna"
+					dynasty = "Child"
+					min_age = 60
+					max_age = 65
+					adm = 5
+					dip = 2
+					mil = 4
+					fixed = yes
+					female = yes
+					option = 6
+				}
 			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_f_@ROOT
-				name = "Star"
-				dynasty = "Sapphire"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 4
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 5
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_g_@ROOT
-				name = "Luna"
-				dynasty = "Child"
-				min_age = 60
-				max_age = 65
-				adm = 5
-				dip = 2
-				mil = 4
-				fixed = yes
-				female = yes
-				option = 6
+			else = {
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_e_@ROOT
+					name = "Sunny"
+					dynasty = "Milk"
+					min_age = 60
+					max_age = 65
+					adm = 3
+					dip = 3
+					mil = 3
+					fixed = yes
+					female = yes
+					option = 4
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_f_@ROOT
+					name = "Star"
+					dynasty = "Sapphire"
+					min_age = 60
+					max_age = 65
+					adm = 2
+					dip = 4
+					mil = 3
+					fixed = yes
+					female = yes
+					option = 5
+				}
+				define_exiled_ruler = {
+					exiled_as = lottery_candidate_g_@ROOT
+					name = "Luna"
+					dynasty = "Child"
+					min_age = 60
+					max_age = 65
+					adm = 4
+					dip = 2
+					mil = 3
+					fixed = yes
+					female = yes
+					option = 6
+				}
 			}
 			define_exiled_ruler = {
 				exiled_as = lottery_candidate_h_@ROOT
@@ -633,6 +870,14 @@ country_event = {
 	
 	option = {	#Choose Daiyousei
 		name = fairy_elections.1.a
+		trigger = {
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
+		}
 		ai_chance = {
 			factor = 0
 		}
@@ -643,10 +888,19 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_daiyousei
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Lily
 		name = fairy_elections.1.b
+		trigger = {
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
+		}
 		ai_chance = {
 			factor = 0
 		}
@@ -657,10 +911,19 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_lily
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Cirno
 		name = fairy_elections.1.c
+		trigger = {
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
+		}
 		ai_chance = {
 			factor = 0
 		}
@@ -671,10 +934,19 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_cirno
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Clownpiece
 		name = fairy_elections.1.d
+		trigger = {
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
+		}
 		ai_chance = {
 			factor = 0
 		}
@@ -685,7 +957,8 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_clownpiece
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Sunny Milk
 		name = fairy_elections.1.e
@@ -699,7 +972,8 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_sunny
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Star Sapphire
 		name = fairy_elections.1.f
@@ -713,7 +987,8 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_star
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Luna Child
 		name = fairy_elections.1.g
@@ -727,10 +1002,19 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_luna
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = {	#Choose Eternity Larva
 		name = fairy_elections.1.h
+		trigger = {
+			OR = {
+				th_is_or_was_tag = {
+					tag = FTP
+				}
+				is_playing_custom_nation = yes
+			}
+		}
 		ai_chance = {
 			factor = 0
 		}
@@ -741,432 +1025,25 @@ country_event = {
 			th_add_random_ruler_personality_republic = yes
 			set_ruler_flag = th_fairy_repub_eternity
 		}
-		add_republican_tradition = -10
+		add_scaled_republican_tradition = -10
+		th_show_random_candidate_bonus = yes
 	}
 	option = { # lottery
 		name = fairy_elections.1.i
 		ai_chance = {
 			factor = 90
 		}
-		random_list = {
-			12.5 = { 
-				set_ruler = lottery_candidate_a_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_daiyousei
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_b_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_lily
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_c_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_cirno
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_d_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_clownpiece
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_e_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_sunny
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_f_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_star
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_g_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_luna
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_h_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_eternity
-				}
-			}
-		}
-		add_karma = 10
-	}
-}
-
-# Pirate Election!
-country_event = {
-	id = fairy_elections.3
-	title = "EVTNAME700"
-	picture = FAIRYCOURT_eventPicture
-	desc = fairy_elections.1.desc
-	
-	is_triggered_only = yes
-	
-	trigger = {
-		has_reform = Gensokyan_tfr_pirate_government
-	}
-	
-	immediate = {
-		hidden_effect = {
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_a_@ROOT
-				name = "Daiyousei"
-				dynasty = "of Cirnia"
-				min_age = 60
-				max_age = 65
-				adm = 5
-				dip = 3
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 0
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_b_@ROOT
-				name = "Lily"
-				dynasty = "White"
-				min_age = 60
-				max_age = 65
-				adm = 3
-				dip = 5
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 1
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_c_@ROOT
-				name = "Cirno"
-				dynasty = "of Cirnia"
-				min_age = 60
-				max_age = 65
-				adm = 3
-				dip = 3
-				mil = 5
-				fixed = yes
-				female = yes
-				option = 2
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_d_@ROOT
-				name = "Clownpiece"
-				dynasty = "Hell Fairy"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 1
-				mil = 6
-				fixed = yes
-				female = yes
-				option = 3
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_e_@ROOT
-				name = "Sunny"
-				dynasty = "Milk"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 3
-				mil = 4
-				fixed = yes
-				female = yes
-				option = 4
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_f_@ROOT
-				name = "Star"
-				dynasty = "Sapphire"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 4
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 5
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_g_@ROOT
-				name = "Luna"
-				dynasty = "Child"
-				min_age = 60
-				max_age = 65
-				adm = 5
-				dip = 2
-				mil = 4
-				fixed = yes
-				female = yes
-				option = 6
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_h_@ROOT
-				name = "Eternity"
-				dynasty = "Larva"
-				min_age = 60
-				max_age = 65
-				adm = 2
-				dip = 6
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 7
-			}
-		}
-	}
-
-	after = {
-		clr_country_flag = caretaker_revolutionary_government
-		clear_exiled_ruler = lottery_candidate_a_@ROOT
-		clear_exiled_ruler = lottery_candidate_b_@ROOT
-		clear_exiled_ruler = lottery_candidate_c_@ROOT
-		clear_exiled_ruler = lottery_candidate_d_@ROOT
-		clear_exiled_ruler = lottery_candidate_e_@ROOT
-		clear_exiled_ruler = lottery_candidate_f_@ROOT
-		clear_exiled_ruler = lottery_candidate_g_@ROOT
-		clear_exiled_ruler = lottery_candidate_h_@ROOT
-	}
-
-	option = {
-		name = "EVTOPTA700"	# Current ruler stays
-		trigger = {
-			has_regency = no
-			NOT = { has_ruler_flag = leader_has_been_pushed_out }
-		}
-		ai_chance = { 
-			factor = 60
-			modifier = {
-				factor = 0
-				NOT = { republican_tradition = 25 }
-			}	
-			modifier = {
-				factor = 0.5
-				NOT = { republican_tradition = 50 }
-			}				
-			modifier = {
-				factor = 0.5
-				NOT = { republican_tradition = 75 }
-			}	
-			modifier = {
-				factor = 2.0
-				republican_tradition = 90
-			}		
-		}
-		custom_tooltip = remains_ruler
-		change_adm = 1
-		change_dip = 1
-		change_mil = 1
 		if = {
 			limit = {
-				has_country_flag = strengthened_signoria_flag
-			}
-			custom_tooltip = strengthened_signoria_election_tt
-			clr_country_flag = strengthened_signoria_flag
-		}
-		else = {
-			add_scaled_republican_tradition = -10
-		}
-		random_list = {
-			10 = {
-				add_adm_power = 50
-			}
-			10 = {
-				add_dip_power = 50
-			}
-			10 = {
-				add_mil_power = 50
-			}
-		}
-		add_karma = -5
-	}
-	#TOUHOU
-	
-	option = {	#Choose Daiyousei
-		trigger = {
-			NOT = { has_ruler_flag = th_fairy_repub_daiyousei }
-		}
-		name = fairy_elections.1.a
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_a_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_daiyousei
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Lily
-		name = fairy_elections.1.b
-		trigger = {
-			NOT = { has_ruler_flag = th_fairy_repub_lily }
-		}
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_b_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_lily
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Cirno
-		name = fairy_elections.1.c
-		trigger = {			
-			NOT = { has_ruler_flag = th_fairy_repub_cirno }
-		}
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_c_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_cirno
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Clownpiece
-		name = fairy_elections.1.d
-		trigger = {			
-			NOT = { has_ruler_flag = th_fairy_repub_clownpiece }
-		}
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_d_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_clownpiece
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Sunny Milk
-		name = fairy_elections.1.e
-		trigger = {			
-			NOT = { has_ruler_flag = th_fairy_repub_sunny }
-		}
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_e_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_sunny
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Star Sapphire
-		name = fairy_elections.1.f
-		trigger = {			
-			NOT = { has_ruler_flag = th_fairy_repub_star }
-		}
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_f_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_star
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Luna Child
-		name = fairy_elections.1.g
-		trigger = {			
-			NOT = { has_ruler_flag = th_fairy_repub_luna }
-		}
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_g_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_luna
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Eternity Larva
-		name = fairy_elections.1.h
-		trigger = {			
-			NOT = { has_ruler_flag = th_fairy_repub_eternity }
-		}
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_h_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_eternity
-		}
-		add_republican_tradition = -10
-	}
-	option = { # lottery
-		name = fairy_elections.1.i
-		ai_chance = {
-			factor = 90
-		}
-		random_list = {
-			12.5 = { 
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_daiyousei
+				OR = {
+					th_is_or_was_tag = {
+						tag = FTP
 					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
+					is_playing_custom_nation = yes
 				}
-				else = {					
+			}
+			random_list = {
+				12.5 = { 
 					set_ruler = lottery_candidate_a_@ROOT
 					hidden_effect = { 
 						add_ruler_personality = immortal_personality 
@@ -1175,18 +1052,7 @@ country_event = {
 						set_ruler_flag = th_fairy_repub_daiyousei
 					}
 				}
-			}
-			12.5 = { 
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_lily
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
+				12.5 = { 
 					set_ruler = lottery_candidate_b_@ROOT
 					hidden_effect = { 
 						add_ruler_personality = immortal_personality 
@@ -1195,19 +1061,8 @@ country_event = {
 						set_ruler_flag = th_fairy_repub_lily
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_cirno
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_c_@ROOT 
+				12.5 = { 
+					set_ruler = lottery_candidate_c_@ROOT
 					hidden_effect = { 
 						add_ruler_personality = immortal_personality 
 						th_add_random_ruler_personality_republic = yes
@@ -1215,19 +1070,8 @@ country_event = {
 						set_ruler_flag = th_fairy_repub_cirno
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_clownpiece
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_d_@ROOT 
+				12.5 = { 
+					set_ruler = lottery_candidate_d_@ROOT
 					hidden_effect = { 
 						add_ruler_personality = immortal_personality 
 						th_add_random_ruler_personality_republic = yes
@@ -1235,19 +1079,8 @@ country_event = {
 						set_ruler_flag = th_fairy_repub_clownpiece
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_sunny
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_e_@ROOT 
+				12.5 = { 
+					set_ruler = lottery_candidate_e_@ROOT
 					hidden_effect = { 
 						add_ruler_personality = immortal_personality 
 						th_add_random_ruler_personality_republic = yes
@@ -1255,19 +1088,8 @@ country_event = {
 						set_ruler_flag = th_fairy_repub_sunny
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_star
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_f_@ROOT 
+				12.5 = { 
+					set_ruler = lottery_candidate_f_@ROOT
 					hidden_effect = { 
 						add_ruler_personality = immortal_personality 
 						th_add_random_ruler_personality_republic = yes
@@ -1275,19 +1097,8 @@ country_event = {
 						set_ruler_flag = th_fairy_repub_star
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_luna
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_g_@ROOT 
+				12.5 = { 
+					set_ruler = lottery_candidate_g_@ROOT
 					hidden_effect = { 
 						add_ruler_personality = immortal_personality 
 						th_add_random_ruler_personality_republic = yes
@@ -1295,19 +1106,8 @@ country_event = {
 						set_ruler_flag = th_fairy_repub_luna
 					}
 				}
-			}
-			12.5 = {
-				if = {
-					limit = {
-						has_ruler_flag = th_fairy_repub_eternity
-					}
-					custom_tooltip = remains_ruler
-					change_adm = 1
-					change_dip = 1
-					change_mil = 1
-				}
-				else = {	
-					set_ruler = lottery_candidate_h_@ROOT 
+				12.5 = { 
+					set_ruler = lottery_candidate_h_@ROOT
 					hidden_effect = { 
 						add_ruler_personality = immortal_personality 
 						th_add_random_ruler_personality_republic = yes
@@ -1317,337 +1117,39 @@ country_event = {
 				}
 			}
 		}
-		add_republican_tradition = 5
+		else = {	#Three Fairies only
+			random_list = {
+				33.3 = { 
+					set_ruler = lottery_candidate_e_@ROOT
+					hidden_effect = { 
+						add_ruler_personality = immortal_personality 
+						th_add_random_ruler_personality_republic = yes
+						th_add_random_ruler_personality_republic = yes
+						set_ruler_flag = th_fairy_repub_sunny
+					}
+				}
+				33.3 = { 
+					set_ruler = lottery_candidate_f_@ROOT
+					hidden_effect = { 
+						add_ruler_personality = immortal_personality 
+						th_add_random_ruler_personality_republic = yes
+						th_add_random_ruler_personality_republic = yes
+						set_ruler_flag = th_fairy_repub_star
+					}
+				}
+				33.3 = { 
+					set_ruler = lottery_candidate_g_@ROOT
+					hidden_effect = { 
+						add_ruler_personality = immortal_personality 
+						th_add_random_ruler_personality_republic = yes
+						th_add_random_ruler_personality_republic = yes
+						set_ruler_flag = th_fairy_repub_luna
+					}
+				}
+			}
+		}
+		add_scaled_republican_tradition = 5
 		add_karma = 10
-	}
-}
-
-# Pirate Election!
-country_event = {
-	id = fairy_elections.4
-	title = "EVTNAME700"
-	picture = FAIRYCOURT_eventPicture
-	desc = fairy_elections.2.desc
-	
-	is_triggered_only = yes
-	
-	trigger = {
-		has_reform = Gensokyan_tfr_pirate_government
-	}
-	
-	immediate = {
-		hidden_effect = {
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_a_@ROOT
-				name = "Daiyousei"
-				dynasty = "of Cirnia"
-				min_age = 60
-				max_age = 65
-				adm = 5
-				dip = 3
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 0
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_b_@ROOT
-				name = "Lily"
-				dynasty = "White"
-				min_age = 60
-				max_age = 65
-				adm = 3
-				dip = 5
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 1
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_c_@ROOT
-				name = "Cirno"
-				dynasty = "of Cirnia"
-				min_age = 60
-				max_age = 65
-				adm = 3
-				dip = 3
-				mil = 5
-				fixed = yes
-				female = yes
-				option = 2
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_d_@ROOT
-				name = "Clownpiece"
-				dynasty = "Hell Fairy"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 1
-				mil = 6
-				fixed = yes
-				female = yes
-				option = 3
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_e_@ROOT
-				name = "Sunny"
-				dynasty = "Milk"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 3
-				mil = 4
-				fixed = yes
-				female = yes
-				option = 4
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_f_@ROOT
-				name = "Star"
-				dynasty = "Sapphire"
-				min_age = 60
-				max_age = 65
-				adm = 4
-				dip = 4
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 5
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_g_@ROOT
-				name = "Luna"
-				dynasty = "Child"
-				min_age = 60
-				max_age = 65
-				adm = 5
-				dip = 2
-				mil = 4
-				fixed = yes
-				female = yes
-				option = 6
-			}
-			define_exiled_ruler = {
-				exiled_as = lottery_candidate_h_@ROOT
-				name = "Eternity"
-				dynasty = "Larva"
-				min_age = 60
-				max_age = 65
-				adm = 2
-				dip = 6
-				mil = 3
-				fixed = yes
-				female = yes
-				option = 7
-			}
-		}
-	}
-	
-	after = {
-		clear_exiled_ruler = lottery_candidate_a_@ROOT
-		clear_exiled_ruler = lottery_candidate_b_@ROOT
-		clear_exiled_ruler = lottery_candidate_c_@ROOT
-		clear_exiled_ruler = lottery_candidate_d_@ROOT
-		clear_exiled_ruler = lottery_candidate_e_@ROOT
-		clear_exiled_ruler = lottery_candidate_f_@ROOT
-		clear_exiled_ruler = lottery_candidate_g_@ROOT
-		clear_exiled_ruler = lottery_candidate_h_@ROOT
-	}
-
-	#TOUHOU
-	
-	option = {	#Choose Daiyousei
-		name = fairy_elections.1.a
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_a_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_daiyousei
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Lily
-		name = fairy_elections.1.b
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_b_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_lily
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Cirno
-		name = fairy_elections.1.c
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_c_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_cirno
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Clownpiece
-		name = fairy_elections.1.d
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_d_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_clownpiece
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Sunny Milk
-		name = fairy_elections.1.e
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_e_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_sunny
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Star Sapphire
-		name = fairy_elections.1.f
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_f_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_star
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Luna Child
-		name = fairy_elections.1.g
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_g_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_luna
-		}
-		add_republican_tradition = -10
-	}
-	option = {	#Choose Eternity Larva
-		name = fairy_elections.1.h
-		ai_chance = {
-			factor = 0
-		}
-		set_ruler = lottery_candidate_h_@ROOT
-		hidden_effect = { 
-			add_ruler_personality = immortal_personality 
-			th_add_random_ruler_personality_republic = yes
-			th_add_random_ruler_personality_republic = yes
-			set_ruler_flag = th_fairy_repub_eternity
-		}
-		add_republican_tradition = -10
-	}
-	option = { # lottery
-		name = fairy_elections.1.i
-		ai_chance = {
-			factor = 90
-		}
-		random_list = {
-			12.5 = { 
-				set_ruler = lottery_candidate_a_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_daiyousei
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_b_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_lily
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_c_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_cirno
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_d_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_clownpiece
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_e_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_sunny
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_f_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_star
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_g_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_luna
-				}
-			}
-			12.5 = { 
-				set_ruler = lottery_candidate_h_@ROOT
-				hidden_effect = { 
-					add_ruler_personality = immortal_personality 
-					th_add_random_ruler_personality_republic = yes
-					th_add_random_ruler_personality_republic = yes
-					set_ruler_flag = th_fairy_repub_eternity
-				}
-			}
-		}
-		add_karma = 10
+		th_show_random_candidate_bonus_plural = yes
 	}
 }
