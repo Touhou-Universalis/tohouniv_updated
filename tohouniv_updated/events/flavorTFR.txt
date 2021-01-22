@@ -1,0 +1,1047 @@
+########################################
+# Flavor Events for Sangetsusei
+########################################
+
+namespace = flavor_tfr
+
+#Forest of Fairies
+country_event = {
+	id = flavor_tfr.1
+	title = "flavor_tfr.1.t"
+	desc = "flavor_tfr.1.desc"
+	picture = FAIRYFOREST_eventPicture
+	
+	is_triggered_only = yes
+
+	#Settle the forest!
+	option = {
+		name = flavor_tfr.1.a
+		4942 = {
+			change_province_name = "Forest of Fairies"
+			rename_capital = "Forest of Fairies"
+			add_core = ROOT
+			add_base_tax = 4
+			add_base_production = 4
+			add_base_manpower = 3
+			change_culture = ROOT
+			center_of_trade = 2
+		}
+		set_capital = 4942
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#We will stay in [Root.Capital.Getname]
+	option = {
+		name = flavor_tfr.1.b
+		capital_scope = {
+			add_base_tax = 4
+			add_base_production = 4
+			add_base_manpower = 3
+			if = {
+				limit = {
+					province_has_center_of_trade_of_level = 1
+				}
+				add_center_of_trade_level = 1
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Ask Cirno if she wants support
+country_event = {
+	id = flavor_tfr.2
+	title = "flavor_tfr.2.t"
+	desc = "flavor_tfr.2.desc"
+	picture = CIRNOHOPE_eventPicture
+	
+	is_triggered_only = yes
+
+	#Declare now war against SCR
+	option = {
+		name = flavor_tfr.2.a
+		custom_tooltip = flavor_tfr.2.a.tt
+		CIN = {
+			country_event = {
+				id = flavor_tfr.3
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#Support CIN's independence
+	option = {
+		name = flavor_tfr.2.b
+		custom_tooltip = flavor_tfr.2.b.tt
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = flavor_cin.20.a.ct
+				OR = {
+					has_dlc = "Conquest of Paradise"
+					has_dlc = "El Dorado"
+				}
+			}
+		}
+		CIN = {
+			country_event = {
+				id = flavor_tfr.4
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#BY MAGIC AND FLOWERS WE WILL CONQUER CIN BY OUR OWN
+	option = {
+		name = flavor_tfr.2.c
+		custom_tooltip = flavor_tfr.2.c.tt
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#TFR offers war against Overlord
+country_event = {
+	id = flavor_tfr.3
+	title = "flavor_tfr.3.t"
+	desc = "flavor_tfr.3.desc"
+	picture = THREEFAIRIES_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			overlord = {
+				save_event_target_as = cin_overlord
+			}
+		}
+	}
+
+	#TO ARMS! TODAY THE SCARLET DEVIL WILL FALL
+	option = {
+		name = flavor_tfr.3.a
+		hidden_effect = {
+			set_country_flag = tfr_cin_will_join
+			FROM = {
+				set_country_flag = tfr_tfr_will_get_cin
+			}
+		}
+		grant_independence = yes
+		create_alliance = FROM
+		FROM = {
+			declare_war_with_cb = {
+				casus_belli = cb_touhou_fairy_war
+				who = event_target:cin_overlord
+			}
+		}
+		join_all_offensive_wars_of = FROM
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				event_target:cin_overlord = {
+					OR = {
+						ai = no
+						was_player = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				FROM = {
+					ai = yes
+					was_player = no
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_tfr.3.b
+		custom_tooltip = flavor_tfr.3.b.tt
+		FROM = {
+			country_event = {
+				id = flavor_tfr.5
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				event_target:cin_overlord = {
+					ai = yes
+					was_player = no
+				}
+				FROM = {
+					OR = {
+						ai = no
+						was_player = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+#TFR offers independence support
+country_event = {
+	id = flavor_tfr.4
+	title = "flavor_tfr.4.t"
+	desc = "flavor_tfr.4.desc"
+	picture = THREEFAIRIES_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			overlord = {
+				save_event_target_as = cin_overlord
+			}
+		}
+	}
+
+	#TO ARMS! TODAY THE SCARLET DEVIL WILL FALL
+	option = {
+		name = flavor_tfr.4.a
+		FROM = {
+			support_independence_of = ROOT
+		}
+		hidden_effect = {
+			set_country_flag = tfr_cin_will_join
+			FROM = {
+				set_country_flag = tfr_tfr_will_get_cin
+			}
+		}
+		add_country_modifier = {
+			name = tfr_security_for_cin
+			duration = 9125
+		}
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				event_target:cin_overlord = {
+					OR = {
+						ai = no
+						was_player = yes
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_tfr.4.b
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				event_target:cin_overlord = {
+					ai = yes
+					was_player = no
+				}
+			}
+		}
+	}
+}
+
+#Cirno refuses help
+country_event = {
+	id = flavor_tfr.5
+	title = "flavor_tfr.5.t"
+	desc = "flavor_tfr.5.desc"
+	picture = CIRNO_eventPicture
+	
+	is_triggered_only = yes
+
+	#Her funeral
+	option = {
+		name = flavor_tfr.5.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Cirno joins TFR
+country_event = {
+	id = flavor_tfr.6
+	title = "flavor_tfr.6.t"
+	desc = "flavor_tfr.6.desc"
+	picture = FAIRYCOURT_eventPicture
+	
+	trigger = {
+		has_country_flag = tfr_cin_will_join
+		any_country = {
+			has_country_flag = tfr_tfr_will_get_cin
+		}
+		is_at_war = no
+		is_subject = no
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_country_modifier = tfr_security_for_cin
+				}
+				remove_country_modifier = tfr_security_for_cin
+			}
+			clr_country_flag = tfr_cin_will_join
+			random_country = {
+				limit = {
+					has_country_flag = tfr_tfr_will_get_cin
+				}
+				clr_country_flag = tfr_tfr_will_get_cin
+				save_event_target_as = cin_new_overlord
+			}
+		}
+	}
+
+	#TFR is strong, we should join them!
+	option = {
+		name = flavor_tfr.6.a
+		event_target:cin_new_overlord = {
+			country_event = {
+				id = flavor_tfr.7
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				was_player = yes
+			}
+		}
+	}
+
+	#CIN remains independent!
+	option = {
+		name = flavor_tfr.6.b
+		event_target:cin_new_overlord = {
+			country_event = {
+				id = flavor_tfr.8
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				was_player = no
+			}
+		}
+	}
+}
+
+#Cirno joins us!
+country_event = {
+	id = flavor_tfr.7
+	title = "flavor_tfr.7.t"
+	desc = "flavor_tfr.7.desc"
+	picture = FAIRYCOURT_eventPicture
+	
+	is_triggered_only = yes
+
+	#Nice
+	option = {
+		name = flavor_tfr.7.a
+		create_subject = {
+			subject_type = vassal
+			subject = FROM
+		}
+		add_trust = {
+			who = FROM
+			value = 15
+			mutual = yes
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Cirno refuses to join us!
+country_event = {
+	id = flavor_tfr.8
+	title = "flavor_tfr.8.t"
+	desc = "flavor_tfr.8.desc"
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+
+	#Her funeral
+	option = {
+		name = flavor_tfr.8.a
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			target = FROM
+		}
+		FROM = {
+			every_owned_province = {
+				limit = {
+					culture = Fairy
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Cirno and the Three Fairies
+country_event = {
+	id = flavor_tfr.9
+	title = "flavor_tfr.9.t"
+	desc = "flavor_tfr.9.desc"
+	picture = CIRNOANDTHREEFAIRIES_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_tfr.9.a
+		if = {
+			limit = {
+				exists = CIN
+			}
+			CIN = {
+				add_trust = {
+					who = ROOT
+					value = 20
+					mutual = yes
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = th_united_fairies
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = th_united_fairies
+				}
+			}
+		}
+		add_country_modifier = {
+			name = tfr_strength_in_unity
+			duration = 9125
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#The Mother of all Bombs
+country_event = {
+	id = flavor_tfr.10
+	title = "flavor_tfr.10.t"
+	desc = {
+		trigger = {
+			NOT = { owns = 4803 }
+		}
+		desc = "flavor_tfr.10.desc.1"
+	}
+	desc = {
+		trigger = {
+			owns = 4803
+		}
+		desc = "flavor_tfr.10.desc.2"
+	}
+	picture = {
+		trigger = {
+			NOT = { owns = 4803 }
+		}
+		picture = NUKE_eventPicture
+	}
+	picture = {
+		trigger = {
+			NOT = { owns = 4803 }
+		}
+		picture = SHRINE_eventPicture
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_tfr.10.a
+		4803 = {
+			if = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_devastation = 100
+				add_base_tax = -2
+				add_base_production = -2
+				add_base_manpower = -1
+				remove_loot = {
+					who = ROOT
+					amount = 100
+				}
+				owner = {
+					add_war_exhaustion = 5
+				}
+				ROOT = {
+					capital_scope = {
+						add_base_tax = 2
+						add_base_production = 2
+						add_base_manpower = 1
+					}
+				}
+			}
+			else = {
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
+			}
+		}
+		add_country_modifier = {
+			name = tfr_studying_of_technology
+			duration = -1
+		}
+		th_pirate_increase_fame_by_10 = yes
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Kaguya approves of mini Kaguya
+country_event = {
+	id = flavor_tfr.11
+	title = "flavor_tfr.11.t"
+	desc = "flavor_tfr.11.desc"
+	picture = KAGUSTAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_tfr.11.a
+		add_country_modifier = {
+			name = tfr_kaguyas_approval
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Declare an official Fairy Pirate Republic
+country_event = {
+	id = flavor_tfr.12
+	title = "flavor_tfr.12.t"
+	desc = "flavor_tfr.12.desc"
+	picture = PIRATESHIP_eventPicture
+	
+	is_triggered_only = yes
+
+	#We are all pirates now!
+	option = {
+		name = flavor_tfr.12.a
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Sunny"
+					dynasty = "Milk"
+				}
+				set_ruler_flag = th_fairy_repub_sunny
+			}
+			if = {
+				limit = {
+					has_ruler = "Luna"
+					dynasty = "Child"
+				}
+				set_ruler_flag = th_fairy_repub_luna
+			}
+		}
+		if = {
+			limit = {
+				NOT = { government = republic }
+			}
+			change_government = republic
+		}
+		add_government_reform = Gensokyan_tfr_pirate_government
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Clean Fairy Pirate Crownland up
+country_event = {
+	id = flavor_tfr.13
+	title = "flavor_tfr.13.t"
+	desc = "flavor_tfr.13.desc"
+	picture = PIRATESHIP_eventPicture
+
+	hidden = yes
+	
+	trigger = {
+		estate_territory = {
+			estate = estate_fairy_pirates
+			territory = 0.1
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_tfr.13.a
+		change_estate_land_share = {
+			estate = estate_fairy_pirates
+			share = -100
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#TREASURE FOR TFR
+country_event = {
+	id = flavor_tfr.14
+	title = "flavor_tfr.14.t"
+	desc = "flavor_tfr.14.desc"
+	picture = TREASURE_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_tfr.14.a
+		if = {
+			limit = {
+				monthly_income = 125
+			}
+			add_years_of_income = 2
+		}
+		else = {
+			add_treasury = 3000
+		}
+		capital_scope = {
+			change_trade_goods = coffee
+			add_base_tax = 2
+			add_base_production = 4
+			add_province_modifier = {
+				name = tfr_alcoholic_coffee_makers
+				duration = -1
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Confrontation with Clownpiece
+country_event = {
+	id = flavor_tfr.15
+	title = "flavor_tfr.15.t"
+	desc = "flavor_tfr.15.desc"
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_tfr.15.a
+		custom_tooltip = flavor_tfr.15.a.tt
+		hidden_effect = {
+			every_province = {
+				limit = {
+					is_core = CLP
+				}
+				add_core = ROOT
+			}
+		}
+		if = {
+			limit = {
+				exists = CLP
+			}
+			CLP = {
+				grant_independence = yes
+			}
+			create_subject = {
+				subject_type = vassal
+				subject = CLP
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Sack of x
+country_event = {
+	id = flavor_tfr.16
+	title = flavor_tfr.16.t
+	desc = flavor_tfr.16.desc
+	picture = THREEFAIRIES_eventPicture
+	goto = from
+
+	trigger = {
+		has_reform = Gensokyan_tfr_pirate_government
+		NOT = {
+			has_country_modifier = enemies_sacked_city
+		}
+		OR = {
+			NOT = { has_country_flag = had_living_of_the_land }
+			had_country_flag = { flag = had_living_of_the_land days = 12775 } #35 Years
+		}
+		FROM = {			
+			th_has_fort_building = yes
+			OR = {
+				NOT = { has_province_flag = was_magdeburgerized }
+				had_province_flag = { flag = was_magdeburgerized days = 18250 } #50 Years
+			}
+			owner = {
+				OR = {
+					NOT = { has_country_flag = was_plundered }
+					had_country_flag = { flag = was_plundered days = 14600 } #40 Years
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = had_living_of_the_land
+			FROM = {
+				set_province_flag = was_magdeburgerized
+				owner = {
+					save_event_target_as = attacked_country
+					set_country_flag = was_plundered
+				} #For prettier tooltip
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_tfr.16.a #Don't go too ham
+		add_army_professionalism = 0.05
+		FROM = {
+			province_event = { id = flavor_tfr.17 }
+			tooltip = {
+				add_devastation = 50
+			}
+		}
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 100
+				OR = {
+					ruler_has_personality = benevolent_personality
+					ruler_has_personality = kind_hearted_personality
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					ruler_has_personality = sinner_personality
+					ruler_has_personality = malevolent_personality
+				}
+			}
+		}
+	}
+
+	option = {
+		name = flavor_tfr.16.b #DESTROY THEIR CASTLE
+		add_army_professionalism = -0.05
+		add_estate_loyalty = {
+			estate = estate_fairy_pirates
+			loyalty = 15
+		}
+		add_loot_from_province_effect = yes
+		FROM = {
+			province_event = { id = flavor_tfr.18 }
+			tooltip = {
+				add_devastation = 100
+				add_base_production = -2
+				if = {
+					limit = {
+						has_building = fort_18th
+					}
+					remove_building = fort_18th
+				}
+				else_if = {
+					limit = {
+						has_building = fort_17th
+					}
+					remove_building = fort_17th
+				}
+				else_if = {
+					limit = {
+						has_building = fort_16th
+					}
+					remove_building = fort_16th
+				}
+				else_if = {
+					limit = {
+						has_building = fort_15th
+					}
+					remove_building = fort_15th
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_dlc = "Emperor"
+				FROM = {
+					is_capital = yes
+					owned_by = PAP
+				}
+			}
+			add_treasury = 1000
+		}
+		tooltip = {
+			if = {
+				limit = {
+					FROM = {
+						is_capital = yes
+						owned_by = PAP
+					}
+				}
+				reduce_curia_treasury_big_effect = yes
+			}
+			event_target:attacked_country = {
+				add_opinion = {
+					who = ROOT
+					modifier = sack_of_x
+				}
+				add_country_modifier = {
+					name = "enemies_sacked_city"
+					duration = 3650
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_core = FROM
+			}
+			modifier = {
+				factor = 0
+				primary_culture = FROM
+			}
+			modifier = {
+				factor = 100
+				OR = {
+					ruler_has_personality = sinner_personality
+					ruler_has_personality = malevolent_personality
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					ruler_has_personality = benevolent_personality
+					ruler_has_personality = kind_hearted_personality
+				}
+			}
+		}
+	}
+}
+
+#Sack of X
+province_event = {
+	id = flavor_tfr.17
+	title = army_professionalism_events.2.t
+	desc = army_professionalism_events.2.d
+	picture = NOT_DISCIPLINED_SOLDIERS_eventPicture
+	goto = root
+
+	is_triggered_only = yes
+
+	option = {
+		name = army_professionalism_events.2.a #Barbarians!
+		add_devastation = 50
+		owner = {
+			add_opinion = {
+				who = FROM
+				modifier = sack_of_x
+			}
+		}
+	}
+}
+
+#The total destruction of X
+province_event = {
+	id = flavor_tfr.18
+	title = army_professionalism_events.3.t
+	desc = {
+		trigger = {
+			owner = { NOT = { tag = PAP } }
+		}
+		desc = army_professionalism_events.3.d
+	}
+	desc = {
+		trigger = {
+			owner = { tag = PAP }
+		}
+		desc = army_professionalism_events.3.d2
+	}
+	picture = NOT_DISCIPLINED_SOLDIERS_eventPicture
+	goto = root
+
+	is_triggered_only = yes
+
+	option = {
+		name = army_professionalism_events.3.a #Barbarians!
+		trigger = {
+			NOT = { 
+				owner = { tag = PAP }
+				has_dlc = "Emperor"
+			}
+		}
+		add_devastation = 100
+		add_base_production = -2
+		if = {
+			limit = {
+				has_building = fort_18th
+			}
+			remove_building = fort_18th
+		}
+		else_if = {
+			limit = {
+				has_building = fort_17th
+			}
+			remove_building = fort_17th
+		}
+		else_if = {
+			limit = {
+				has_building = fort_16th
+			}
+			remove_building = fort_16th
+		}
+		else_if = {
+			limit = {
+				has_building = fort_15th
+			}
+			remove_building = fort_15th
+		}
+		owner = {
+			add_country_modifier = {
+				name = "enemies_sacked_city"
+				duration = 3650
+			}
+			add_opinion = {
+				who = FROM
+				modifier = sack_of_x
+			}
+		}
+	}
+	option = {
+		name = army_professionalism_events.3.b
+		trigger = {
+			owner = { tag = PAP }
+			has_dlc = "Emperor"
+		}
+		add_devastation = 100
+		add_base_production = -2
+		reduce_curia_treasury_big_effect = yes
+		if = {
+			limit = {
+				has_building = fort_18th
+			}
+			remove_building = fort_18th
+		}
+		else_if = {
+			limit = {
+				has_building = fort_17th
+			}
+			remove_building = fort_17th
+		}
+		else_if = {
+			limit = {
+				has_building = fort_16th
+			}
+			remove_building = fort_16th
+		}
+		else_if = {
+			limit = {
+				has_building = fort_15th
+			}
+			remove_building = fort_15th
+		}
+		owner = {
+			add_country_modifier = {
+				name = "enemies_sacked_city"
+				duration = 3650
+			}
+			add_opinion = {
+				who = FROM
+				modifier = sack_of_x
+			}
+		}
+	}
+}
+
+#Initialize influence variable
+country_event = {
+	id = flavor_tfr.19
+	title = "flavor_tfr.19.t"
+	desc = "flavor_tfr.19.desc"
+	picture = PIRATESHIP_eventPicture
+
+	hidden = yes
+	
+	trigger = {
+		NOT = { has_country_flag = th_initiated_pirate_influence_variable }
+		has_reform = Gensokyan_tfr_pirate_government
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_tfr.19.a
+		set_country_flag = th_initiated_pirate_influence_variable
+		th_pirate_initialize_variables = yes
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

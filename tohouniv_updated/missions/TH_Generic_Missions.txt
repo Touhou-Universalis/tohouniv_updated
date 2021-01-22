@@ -1,0 +1,139 @@
+th_gen_gensokyo = {
+	slot = 5
+	generic = yes
+	ai = yes
+	
+	potential = {
+		capital_scope = {
+			th_gensokyo_or_moon_continent = yes
+		}
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = no
+	
+	th_gen_gensokyo_form_navy = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
+		position = 1
+		trigger = {
+			num_of_total_ports = 10
+			navy_size_percentage = 0.9
+		}
+		effect = {
+			add_prestige = 15
+			create_explorer = { tradition = 30 }
+		}
+	}
+	
+	th_gen_gensokyo_break_the_barrier = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { th_gen_gensokyo_form_navy }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+		}
+	}
+
+	th_gen_training_ocean_navy = {
+		icon = mission_corsairs_of_the_north_sea
+		required_missions = { th_gen_gensokyo_break_the_barrier }
+		position = 3
+		trigger = {
+			num_of_total_ports = 20
+			sailors_percentage = 0.6
+			OR = {
+				num_of_heavy_ship = 30
+				num_of_light_ship = 50
+			}
+			if = {
+				limit = {
+					has_dlc = "Golden Century"
+				}
+				has_flagship = yes
+			}
+			else = {
+				navy_tradition = 40
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = touhou_ocean_navy
+				duration = 9125
+			}
+			create_explorer = { tradition = 50 }
+		}
+	}
+	
+	th_gen_gensokyo_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { th_gen_training_ocean_navy }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
+			}
+			country_event = { id = TH_mission_events.4 }			
+		}
+	}
+
+	th_gen_gensokyo_form_an_empire = {
+		icon = mission_touhou_human_capital
+		required_missions = {  }
+		position = 5
+		
+		trigger = {
+			OR = {
+				tag = GNK
+				government_rank = 3
+			}
+			total_development = 650
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = touhou_an_own_empire
+				duration = -1
+			}
+		}
+	}
+}

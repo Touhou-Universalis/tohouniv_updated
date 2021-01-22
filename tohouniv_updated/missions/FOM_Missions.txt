@@ -1,0 +1,2094 @@
+fom_missions_discover_europe_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	FOM_form_the_magical_navy = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
+		trigger = {
+			num_of_total_ports = 7
+			navy_size_percentage = 0.9
+		}
+		effect = {
+			add_prestige = 15
+			add_country_modifier = {
+				name = "fom_witches_curiosity"
+				duration = 7300
+			}
+			define_explorer = {
+				shock = 0
+				fire = 6
+				manuever = 6
+				siege = 1
+				name = "Doll Explorer"
+				female = yes
+			}
+		}
+	}
+	
+	FOM_beyond_the_barrier = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { FOM_form_the_magical_navy }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+		}
+	}
+	
+	FOM_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { FOM_beyond_the_barrier }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
+			}
+			country_event = { id = TH_mission_events.4 }			
+		}
+	}
+}
+
+fom_missions_mystia_wriggle_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_peace_between_witches_and_foresters = {
+		icon = mission_touhou_marisa_alice
+		required_missions = {  }
+		position = 1
+		trigger = {
+			OR = {
+				estate_loyalty = {
+					estate = estate_nobles
+					loyalty = 70
+				}
+				has_reform = TH_the_razing_and_looting_witch_reform
+			}
+		}
+		effect = {
+			Land_of_the_black_doors = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Black_door_border_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_rumia_of_the_forest = {
+		icon = mission_touhou_sweet_rumia
+		required_missions = { FOM_peace_between_witches_and_foresters }
+		position = 2
+		provinces_to_highlight = {
+			province_id = 4979
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 4979
+		}
+		effect = {
+			country_event = {
+				id = flavor_fom.16
+			}
+			Shining_needle_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_mystias_food_center = {
+		icon = mission_touhou_mystia
+		required_missions = { FOM_rumia_of_the_forest }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4883
+				province_id = 5048
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			OR = {
+				AND = {
+					owns_or_non_sovereign_subject_of = 4883
+					owns_or_non_sovereign_subject_of = 5048
+				}
+				4883 = {
+					owner = {
+						custom_trigger_tooltip = {
+							tooltip = FOM_protagonist_marisa_lvl3_tooltip
+							has_country_flag = th_has_been_already_looted_by_spies_of_@ROOT
+						}
+					}
+				}
+				hidden_trigger = {
+					AND = {
+						ai = yes
+						was_player = no
+					}
+				}
+			}
+		}
+		effect = {
+			
+			add_country_modifier = {
+				name = "fom_grilled_lamprey"
+				duration = 7300 #20 years
+			}
+		}
+	}
+	
+	FOM_wriggle_rights = {
+		icon = mission_touhou_wriggle
+		required_missions = { FOM_mystias_food_center }
+		position = 4
+		provinces_to_highlight = {
+			culture = Youkai
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { development = 20 }
+			}
+		}
+		trigger = {
+			stability = 2
+			calc_true_if = {
+				all_owned_province = {
+					culture = Youkai
+					development = 20
+				}
+				amount = 10
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { accepted_culture = Youkai }
+				}
+				add_accepted_culture = Youkai
+			}
+			add_country_modifier = {
+				name = "fom_wriggles_law"
+				duration = -1
+			}
+		}
+	}
+	
+	FOM_uniting_the_foresters = {
+		icon = mission_touhou_forest_of_magic
+		required_missions = { FOM_wriggle_rights }
+		position = 5
+		provinces_to_highlight = {
+			region = gensokyan_forest_region
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			gensokyan_forest_region = {
+				type = all
+				owned_by = ROOT #Subjects won't count, empty provinces will need to be colonized.
+			}
+		}
+		effect = {
+			add_dip_power = 150
+			add_adm_power = 150
+			add_mil_power = 150
+			add_country_modifier = {
+				name = "hegemonic_ambition"
+				duration = 9125 #25 years
+			}
+		}
+	}
+}
+
+fom_missions_patchouli_yuki_mai_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_book_theft = {
+		icon = mission_touhou_patchy_books
+		required_missions = {  }
+		position = 1
+		provinces_to_highlight = {
+			owned_by = SCR
+		}
+		trigger = {
+			OR = {
+				has_spy_network_in = {
+					who = SCR
+					value = 30
+				}
+				NOT = { exists = SCR }
+			}
+		}
+		effect = {
+			capital_scope = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+				area = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = "growth_of_capital"
+						duration = 7300 #20 years
+					}
+				}
+			}
+		}
+	}
+	
+	FOM_witchery_ideas = {
+		icon = mission_touhou_patchouli
+		required_missions = { FOM_book_theft }
+		position = 2
+		trigger = {
+			has_institution = renaissance
+			treasury = 250
+		}
+		effect = {
+			add_treasury = -250
+			country_event = {
+				id = flavor_fom.5
+			}
+			add_country_modifier = {
+				name = "influential_diplomacy"
+				duration = 7300 #20 years
+			}
+
+		}
+	}
+	
+	FOM_recruit_ellen = {
+		icon = mission_touhou_ellen
+		required_missions = { FOM_witchery_ideas }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4936
+				province_id = 5029
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_core_province = 4936
+			OR = {
+				owns_or_non_sovereign_subject_of = 5029
+				AND = {
+					treasury = 750
+					home_trade_node = {
+						trade_share = {
+							country = ROOT
+							share = 75
+						}
+					}
+					5029 = {
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			add_treasury = -750
+			country_event = {
+				id = flavor_fom.6
+			}
+			custom_tooltip = FOM_enable_mai_yuki_fight
+			hidden_effect = {
+				set_country_flag = fom_can_fight_mai_yuki
+			}
+			custom_tooltip = FOM_recruit_ellen_tt
+			tooltip = {
+				5029 = {
+					add_base_tax = 2
+					add_base_production = 2
+					add_base_manpower = 1
+				}
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						owns_or_non_sovereign_subject_of = 5029
+					}
+					5029 = {
+						add_base_tax = 2
+						add_base_production = 2
+						add_base_manpower = 1
+					}
+				}
+			}
+		}
+	}
+	
+	FOM_recruit_mai_and_yuki = {
+		icon = mission_touhou_mai_yuki
+		required_missions = { FOM_recruit_ellen }
+		position = 4
+		provinces_to_highlight = {
+			province_id = 4870
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = FOM_recruit_mai_and_yuki_alice_rules
+					has_ruler = "Alice"
+					dynasty = "Margatroid"
+					has_ruler_flag = touhou_character_ruler
+				}
+				diplomatic_reputation = 5
+			}
+			legitimacy_or_horde_unity = 95
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = FOM_defeated_mai_and_yuki_tt
+					has_country_flag = FOM_defeated_mai_and_yuki
+				}
+				owns_or_non_sovereign_subject_of = 4870
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_fom.9
+			}
+		}
+	}
+	
+	FOM_establish_mage_council = {
+		icon = mission_touhou_three_witches
+		required_missions = { 
+			FOM_recruit_mai_and_yuki
+			FOM_narumis_jizo
+		}
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4920
+				province_id = 4938
+				province_id = 4824
+				province_id = 4936
+				province_id = 4941
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { has_building = university }
+			}
+		}
+		trigger = {
+			owns_core_province = 4938
+			owns_core_province = 4920
+			owns_core_province = 4824
+			owns_core_province = 4936
+			owns_core_province = 4941
+			4938 = {
+				has_building = university
+				development = 30
+			}
+			4920 = {
+				has_building = university
+			}
+			4824 = {
+				has_building = university
+			}
+			4936 = {
+				has_building = university
+			}
+			4941 = {
+				has_building = university
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_fom.10
+			}
+		}
+	}
+}
+
+fom_missions_narumi_and_byakuren_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_protagonist_marisa_lvl1 = {
+		icon = mission_touhou_marisa_theft
+		required_missions = {  }
+		position = 1
+		trigger = { 
+			OR = {
+				calc_true_if = {
+					all_country = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 30
+						}
+					}
+					amount = 2
+				}
+				calc_true_if = {
+					all_province = {
+						NOT = { country_or_non_sovereign_subject_holds = ROOT }
+						controlled_by = ROOT
+						is_looted = yes
+					}
+					amount = 10
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "growing_economy"
+				duration = 9125 #25 years
+			}
+			add_years_of_income = 2.5
+		}
+	}
+	
+	FOM_protagonist_marisa_lvl2 = {
+		icon = mission_touhou_marisa_magic
+		required_missions = { FOM_protagonist_marisa_lvl1 }
+		position = 2
+		trigger = { 
+			4938 = {
+				has_manpower_building_trigger = yes
+				owned_by = ROOT
+			}
+			treasury = 100
+		}
+		effect = {
+			add_treasury = -100
+			4938 = {
+				add_building = training_fields
+				add_permanent_province_modifier = {
+					name = fom_marisas_training_fields
+					duration = -1
+				}
+			}
+			add_country_modifier = {
+				name = fom_mini_hakkero
+				duration = -1
+			}
+			th_enable_burgling_action_effect = yes
+		}
+	}
+	
+	FOM_protagonist_marisa_lvl3 = {
+		icon = mission_touhou_marisa_master_spark
+		required_missions = { FOM_protagonist_marisa_lvl2 }
+		position = 3
+		trigger = { 
+			government_rank = 3
+			OR = {
+				calc_true_if = {
+					all_country = {
+						th_has_lost_danmaku_duel_against_scope = yes
+					}
+					amount = 3
+				}
+				calc_true_if = {
+					all_country = {
+						custom_trigger_tooltip = {
+							tooltip = FOM_protagonist_marisa_lvl3_robbery
+							has_country_flag = th_has_been_already_looted_by_spies_of_@ROOT
+						}
+					}
+					amount = 3
+				}
+				hidden_trigger = {
+					AND = {
+						ai = yes
+						was_player = no
+					}
+				}
+			}
+		}
+		effect = {
+			add_prestige = 30
+			add_dip_power = 50
+			add_adm_power = 50
+			add_mil_power = 50
+			add_country_modifier = {
+				name = "hegemonic_ambition"
+				duration = 9125 #25 years
+			}
+			add_country_modifier = {
+				name = "imperial_ambition"
+				duration = 9125
+			}
+			add_country_modifier = {
+				name = fom_master_spark_proficiency
+				duration = -1
+			}
+		}
+	}
+	
+	FOM_narumis_jizo = {
+		icon = mission_touhou_narumi
+		required_missions = { FOM_recruit_ellen }
+		position = 4
+		provinces_to_highlight = {
+			province_id = 4824
+		}
+		trigger = {
+			owns_core_province = 4824
+			4824 = {
+				development = 20
+				OR = {
+					has_building = workshop
+					has_building = counting_house
+				}
+				OR = {
+					has_building = temple
+					has_building = cathedral
+				}
+				prosperity = 1
+			}
+		}
+		effect = {
+			Myouren_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Northern_myouren_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_myouren_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			country_event = {
+				id = flavor_fom.7
+			}
+		}
+	}
+	
+	FOM_byakurens_magic = {
+		icon = mission_touhou_byakurens_scroll
+		required_missions = { FOM_narumis_jizo }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				area = Myouren_state
+				area = Eastern_myouren_state
+				area = Northern_myouren_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			OR = {
+				calc_true_if = {
+					all_province = {
+						custom_trigger_tooltip = {
+							tooltip = FOM_byakurens_magic_tt
+							OR = {
+								area = Myouren_state
+								area = Eastern_myouren_state
+								area = Northern_myouren_state
+							}
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+					amount = 10
+				}
+				AND = {
+					treasury = 2000
+					MYO = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = FOM_byakurens_magic_tooltip
+			if = {
+				limit = {
+					calc_true_if = {
+						all_province = {
+							OR = {
+								area = Myouren_state
+								area = Eastern_myouren_state
+								area = Northern_myouren_state
+							}
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+						amount = 10
+					}
+				}
+				add_mil_power = 200
+			}
+			else = {
+				add_treasury = -2000
+				add_dip_power = 200
+			}
+			country_event = {
+				id = flavor_fom.8
+			}
+		}
+	}
+}
+
+fom_missions_marisa_slot = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_friendship_with_reimu = {
+		icon = mission_touhou_reimu
+		required_missions = {  }
+		position = 1
+		trigger = {
+			OR = {
+				AND = {
+					alliance_with = HKR
+					reverse_has_opinion = {
+						who = HKR
+						value = 150
+					}
+				}
+				is_rival = HKR
+				NOT = { exists = HKR }
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					alliance_with = HKR
+				}
+				HKR = {
+					add_opinion = {
+						who = ROOT
+						modifier = th_maiden_and_witch_friendship
+					}
+				}
+			}
+			Fairy_land = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Northern_fairy_land = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_breach_to_the_lake = {
+		icon = mission_touhou_scarlet_mansion
+		required_missions = { FOM_friendship_with_reimu }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				area = Fairy_land
+				area = Northern_fairy_land				
+			}
+			culture = Fairy
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = FOM_breach_to_the_lake.tooltip
+				num_of_owned_provinces_with = {
+					value = 2
+					OR = {
+						area = Fairy_land
+						area = Northern_fairy_land
+					}
+				}
+			}
+			OR = {
+				owns_or_subject_of = 4844
+				owns_or_subject_of = 4929
+				owns_or_subject_of = 4932
+			}
+		}
+		effect = {
+			Great_youkai_forest = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_youkai_forest = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_yearly_manpower = 1
+		}
+	}
+	
+	FOM_annex_youkai_forest = {
+		icon = mission_touhou_youkai_forest
+		required_missions = { FOM_breach_to_the_lake }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				area = Great_youkai_forest
+				area = Eastern_youkai_forest				
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = FOM_annex_youkai_forest.tooltip
+				num_of_owned_provinces_with = {
+					value = 3
+					OR = {
+						area = Great_youkai_forest
+						area = Eastern_youkai_forest
+					}
+				}
+			}
+		}
+		effect = {
+			capital_scope = {
+				add_base_tax = 4
+				add_base_production = 4
+				add_base_manpower = 3
+			}
+			random_owned_province = {
+				limit = {
+					OR = {
+						area = Great_youkai_forest
+						area = Eastern_youkai_forest
+					}
+				}
+				add_permanent_province_modifier = { 
+					name = fom_sources_for_exotic_ingredients
+					duration = -1
+				}				
+			}
+			Scarlet_island = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_get_full_access_to_voile_library = {
+		icon = mission_touhou_scarlet_library
+		required_missions = { FOM_annex_youkai_forest }
+		position = 5
+		
+		provinces_to_highlight = {
+			province_id = 4920
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			4920 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
+			Human_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Kourindou_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Youkai_Mountains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = "fom_full_access_to_voile"
+				duration = 7300
+			}
+			change_government_reform_progress = 150
+		}
+	}
+	
+	FOM_rinnosukes_shop = {
+		icon = mission_touhou_merchant
+		required_missions = { FOM_get_full_access_to_voile_library }
+		position = 6
+		
+		provinces_to_highlight = {
+			province_id = 4969
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			4969 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			4969 = {
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
+				add_permanent_province_modifier = { 
+					name = fom_witches_wares
+					duration = -1
+				}
+			}
+			Rika_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_accepted_culture = Gensokyo_human
+		}
+	}
+	
+	FOM_unite_gensokyos_humans = {
+		icon = mission_touhou_human_capital
+		required_missions = { FOM_rinnosukes_shop }
+		position = 8
+		
+		provinces_to_highlight = {
+			OR = {
+				area = Rika_state
+				area = Old_hakurei_shrine_state
+				area = Eastern_old_hakurei_shrine_state
+				area = Human_state
+				area = Kourindou_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			Human_state = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Kourindou_state = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Rika_state = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Old_hakurei_shrine_state = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			Eastern_old_hakurei_shrine_state = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_stability = 1 
+			add_adm_power = 100
+			add_dip_power = 100
+			add_mil_power = 100
+		}
+	}
+}
+
+fom_missions_magic_research = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_establish_the_youkai_labrority = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { FOM_get_full_access_to_voile_library }
+		position = 6
+		provinces_to_highlight = {
+			province_id = 4811
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			4811 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_adm_power = 150
+			Moriya_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Kappa_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Kappa_delta = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Yumemi_space_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			4811 = {
+				add_permanent_province_modifier = { 
+					name = fom_mountain_lab
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					exists = KPP
+				}
+				add_casus_belli = {
+					target = KPP
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+			if = {
+				limit = {
+					exists = YUM
+				}
+				add_casus_belli = {
+					target = YUM
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+		}
+	}
+	
+	FOM_results_of_magic_and_technology = {
+		icon = mission_touhou_kappas
+		required_missions = { FOM_establish_the_youkai_labrority }
+		position = 7
+		
+		provinces_to_highlight = {
+			OR = {
+				area = Kappa_state
+				area = Yumemi_space_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			OR = {
+				Kappa_state = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				Yumemi_space_state = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}				
+			}
+			treasury = 3500
+		}
+		effect = {
+			add_treasury = -3500
+			add_country_modifier = {
+				name = "fom_kappa_tech"
+				duration = 7300
+			}
+		}
+	}
+}
+
+fom_missions_alice_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_train_the_doll_army = {
+		icon = mission_touhou_alice_doll_army
+		required_missions = {  }
+		position = 4
+		trigger = {
+			army_size_percentage = 1
+			manpower_percentage = 0.3
+			num_of_generals = 1
+		}
+		effect = {
+			add_country_modifier = {
+				name = "fom_shanghais_offense"
+				duration = 9125
+			}
+			Eientei_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Bamboo_forest_of_the_lost = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Fujiwara_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_expand_the_ingredient_sources = {
+		icon = mission_touhou_bamboo_forest
+		required_missions = { FOM_train_the_doll_army }
+		position = 5
+		
+		provinces_to_highlight = {
+			OR = {
+				area = Eientei_state
+				area = Bamboo_forest_of_the_lost
+				area = Fujiwara_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = FOM_expand_the_ingredient_sources.tooltip
+				num_of_owned_provinces_with = {
+					value = 6
+					OR = {
+						area = Eientei_state
+						area = Bamboo_forest_of_the_lost
+						area = Fujiwara_state
+					}
+				}
+			}
+		}
+		effect = {
+			add_adm_power = 50
+			add_country_modifier = {
+				name = "fom_more_doll_material"
+				duration = 7300
+			}
+			Sunny_plains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Perfect_cut_coast = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_eliminate_the_yuuka_threat = {
+		icon = mission_touhou_yuuka_ominous
+		required_missions = { FOM_expand_the_ingredient_sources }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				area = Sunny_plains
+				area = Perfect_cut_coast	
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = FOM_eliminate_the_yuuka_threat.tooltip
+				num_of_owned_provinces_with = {
+					value = 6
+					OR = {
+						area = Sunny_plains
+						area = Perfect_cut_coast
+					}
+				}
+			}
+		}
+		effect = {
+			World_of_fantasies = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_mountains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Mayohiga_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Ran_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_overthrow_mima = {
+		icon = mission_touhou_mima
+		required_missions = { FOM_eliminate_the_yuuka_threat }
+		position = 7
+		
+		provinces_to_highlight = {
+			area = World_of_fantasies
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		
+		trigger = {
+			World_of_fantasies = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			Makai = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Makai_peninsula_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Western_makai_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Makai_coast_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					MKI = {
+						is_subject = NO
+					}
+				}
+				add_casus_belli = {
+					target = MKI
+					type = cb_restore_personal_union
+					months = 900
+				}
+			}
+			add_reform_progress_medium_effect = yes
+		}
+	}
+	
+	FOM_annex_makai = {
+		icon = mission_touhou_shinki
+		required_missions = { FOM_overthrow_mima }
+		position = 8
+		
+		provinces_to_highlight = {
+			area = Makai
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		
+		trigger = {
+			Makai = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_adm_power = 100 
+			add_dip_power = 100 
+			add_mil_power = 100 
+			add_country_modifier = {
+				name = "fom_makais_magical_items"
+				duration = -1
+			}
+		}
+	}
+}
+
+fom_missions_hakurei_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_stop_yukaris_shenanigans = {
+		icon = mission_touhou_ominous_yukari
+		required_missions = { }
+		position = 6
+		provinces_to_highlight = {
+			owned_by = MHG
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				NOT = { exists = MHG }
+				MHG = {
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = {
+			Hakurei_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = HKR
+				}
+				add_casus_belli = {
+					target = HKR
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+			add_reform_progress_small_effect = yes
+		}
+	}
+	
+	FOM_take_control_over_the_shrine = {
+		icon = mission_touhou_shrines
+		required_missions = { FOM_stop_yukaris_shenanigans }
+		position = 7
+		
+		provinces_to_highlight = {
+			area = Hakurei_state
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			Hakurei_state = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		effect = {
+			add_prestige = 25
+			add_country_modifier = {
+				name = "fom_integrated_shrine_maiden"
+				duration = 7300
+			}
+		}
+	}
+}
+
+fom_missions_empire_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_create_an_empire = {
+		required_missions = {  }
+		icon = mission_touhou_empress_alice
+		position = 6
+		trigger = {
+			OR = {
+				#tag = GMK
+				tag = GNK
+				government_rank = 3
+				is_revolution_target = yes 
+			}
+			total_development = 650
+		}
+		effect = {
+			add_country_modifier = {
+				name = "fom_magician_empire"
+				duration = -1
+			}
+		}
+	}
+}
+
+
+fom_on_the_hunt_after_immortality_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_start_the_quest = {
+		icon = mission_touhou_marisa_alchemy
+		required_missions = { 
+			FOM_results_of_magic_and_technology
+			FOM_take_control_over_the_shrine
+			FOM_overthrow_mima		
+		}
+		position = 8
+		trigger = {
+			num_of_total_ports = 20
+			navy_size_percentage = 0.9
+		}
+		effect = {			
+			add_country_modifier = {
+				name = "fom_seek_after_immortality"
+				duration = 7300
+			}
+			define_explorer = {
+				shock = 3
+				fire = 6
+				manuever = 6
+				siege = 3
+				name = "Marisas Mirror Image"
+				female = yes
+			}
+			kinai_area = {		#Japan - Flask
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			guangdong_area = {		#China - Coast
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			hunan_area = {		#China - Magical Gold
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			west_bengal_area = {	#India - Silk for the shell
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			basra_area = {	#Mesopotania - Immortality Plant
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			normandy_area = {	#France - Coast
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			ile_de_france_area = {	#France - Lunar Catalysator
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_gilgameshs_plant = {
+		icon = mission_touhou_gilgamesh_immortaility
+		required_missions = { FOM_start_the_quest }
+		position = 9
+		provinces_to_highlight = {
+			province_id = 2312
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					2312 = {
+						owner = {
+							war_with = ROOT
+						}
+					}
+					war_score = 70
+					controls = 2312
+				}
+				2312 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		effect = {
+			2312 = {
+				add_base_tax = 4
+				add_base_production = 4
+				add_base_manpower = 3
+				add_permanent_province_modifier = { 
+					name = fom_gilgamesh_statue
+					duration = -1
+				}
+			}
+			thrace_area = {		#Byzantium - Greek Fire
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			iraq_arabi_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			al_jazira_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_greek_fire = {
+		icon = mission_touhou_greek_fire
+		required_missions = { 
+			FOM_gilgameshs_plant
+			FOM_magical_gold
+			FOM_magical_silk_shell
+		}
+		position = 10
+		provinces_to_highlight = {
+			province_id = 151
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					151 = {
+						owner = {
+							war_with = ROOT
+						}
+					}
+					war_score = 70
+					controls = 151
+				}
+				151 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		effect = {
+			151 = {
+				add_permanent_province_modifier = { 
+					name = fom_center_of_greek_fire
+					duration = -1
+				}
+			}
+			macedonia_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			northern_greece_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			morea_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_prestige = 25
+		}
+	}
+	
+	FOM_finish_the_quest = {
+		icon = mission_touhou_full_potion
+		required_missions = { 
+			FOM_seouls_brewing_stand
+			FOM_greek_fire
+			FOM_lunar_stone_second_half
+		}
+		position = 11
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4823
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				AND = {
+					province_id = 4811
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+			}
+		}
+		trigger = {
+			owns_core_province = 4823
+			owns_core_province = 4811
+		}
+		effect = {
+			add_mercantilism = 5
+			add_stability = 6
+			add_prestige = 200
+			add_country_modifier = {
+				name = "fom_magician_hourai_elixir"
+				duration = -1
+			}
+			country_event = { id = flavor_fom.1 }
+		}
+	}
+}
+
+fom_immortality_flask_slot = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_flask_from_the_tenno = {
+		icon = mission_touhou_empty_potion
+		required_missions = { FOM_start_the_quest }
+		position = 9
+		provinces_to_highlight = {
+			province_id = 1020
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					1020 = {
+						owner = {
+							war_with = ROOT
+						}
+					}
+					war_score = 70
+					controls = 1020
+				}
+				1020 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		effect = {
+			change_adm = 1 
+			change_heir_adm = 1 
+			western_korea_area = {		#Korea - Brewing Stand
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			japan_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	FOM_seouls_brewing_stand = {
+		icon = mission_touhou_brewing_stand
+		required_missions = { FOM_flask_from_the_tenno }
+		position = 10
+		provinces_to_highlight = {
+			province_id = 735
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					735 = {
+						owner = {
+							war_with = ROOT
+						}
+					}
+					war_score = 70
+					controls = 735
+				}
+				735 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		effect = {
+			change_dip = 1 
+			change_heir_dip = 1 
+			add_prestige = 25
+			country_event = { id = TH_mission_events.3 }
+			korea_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+}
+
+fom_immortality_gold_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_magical_gold = {
+		icon = mission_war_chest
+		required_missions = { FOM_start_the_quest }
+		position = 9
+		provinces_to_highlight = {
+			province_id = 2174
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					2174 = {
+						owner = {
+							war_with = ROOT
+						}
+					}
+					war_score = 70
+					controls = 2174
+				}
+				2174 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		effect = {
+			2174 = {
+				add_base_tax = 4
+				add_base_production = 4
+				add_permanent_province_modifier = { 
+					name = fom_magical_gold_modifier
+					duration = -1
+				}
+			}
+			south_china_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_prestige = 25
+		}
+	}
+}
+
+fom_immortality_shell_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_magical_silk_shell = {
+		icon = mission_indian_stateman
+		required_missions = { FOM_start_the_quest }
+		position = 9
+		provinces_to_highlight = {
+			province_id = 561
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					561 = {
+						owner = {
+							war_with = ROOT
+						}
+					}
+					war_score = 70
+					controls = 561
+				}
+				561 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		effect = {
+			add_years_of_income = 1
+			add_prestige = 25
+			east_bengal_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			orissa_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+}
+
+fom_immortality_catalysator_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = FOM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	FOM_lunar_stone_first_half = {
+		icon = mission_touhou_moon_saphire
+		required_missions = { FOM_start_the_quest }
+		position = 9
+		provinces_to_highlight = {
+			province_id = 183
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					183 = {
+						owner = {
+							war_with = ROOT
+						}
+					}
+					war_score = 70
+					controls = 183
+				}
+				183 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		effect = {
+			lazio_area = {		#Rom - Lunar Stone second half
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			brittany_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			loire_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_mercantilism = 5
+		}
+	}
+	
+	FOM_lunar_stone_second_half = {
+		icon = mission_touhou_moon_ruby
+		required_missions = { FOM_lunar_stone_first_half }
+		position = 10
+		provinces_to_highlight = {
+			province_id = 118
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					118 = {
+						owner = {
+							war_with = ROOT
+						}
+					}
+					war_score = 70
+					controls = 118
+				}
+				118 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		effect = {
+			add_prestige = 25
+			change_mil = 1
+			change_heir_mil = 1 			
+			naples_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			central_italy_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			calabria_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			sicily_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+}

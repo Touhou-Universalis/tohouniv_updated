@@ -1,0 +1,333 @@
+
+
+namespace = yuyus_food_hunt
+
+#Gets a new province with a never met culture
+country_event = {
+	id = yuyus_food_hunt.1
+	title = "yuyus_food_hunt.1.t"
+	desc = "yuyus_food_hunt.1.desc"
+	picture = YUYUKO_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_yuyukos_food_hunt
+		has_country_flag = th_yuyus_food_hunt_active
+		num_of_owned_provinces_with = {
+			value = 1
+			NOT = { culture_group = ROOT }
+			NOT = { has_province_flag = th_yuyu_known_culture@ROOT }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		random_province = {
+			limit = {
+				NOT = { culture_group = ROOT }
+				NOT = { has_province_flag = th_yuyu_known_culture@ROOT }
+				owned_by = ROOT
+			}
+			export_to_variable = {
+				value = culture
+				variable_name = th_province_culture
+			}
+			set_province_flag = th_yuyu_known_culture@ROOT
+			save_event_target_as = th_compare_province
+		}
+	}
+
+	option = {
+		name = "yuyus_food_hunt.1"
+
+		every_province = {
+			limit = {
+				culture = event_target:th_compare_province
+				NOT = { has_province_flag = th_yuyu_known_culture@ROOT }
+			}
+			set_province_flag = th_yuyu_known_culture@ROOT
+		}
+
+		every_owned_province = {
+			limit = {
+				culture = event_target:th_compare_province
+				NOT = { has_province_flag = th_yuyu_owned_by_@ROOT }
+			}
+			set_province_flag = th_yuyu_owned_by_@ROOT
+		}
+
+		add_th_yuyus_food_buff = yes
+
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#When culture switch, remove every new culture flag from provinces in the new culture group
+country_event = {
+	id = yuyus_food_hunt.2
+	title = "yuyus_food_hunt.2.t"
+	desc = "yuyus_food_hunt.2.desc"
+	picture = YUYUKO_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_yuyukos_food_hunt
+		has_country_flag = th_yuyus_food_hunt_active
+		any_province = {
+			has_province_flag = th_yuyu_known_culture@ROOT
+			culture_group = ROOT
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		random_province = {
+			limit = {
+				culture_group = ROOT
+				has_province_flag = th_yuyu_known_culture@ROOT
+			}
+			export_to_variable = {
+				value = culture
+				variable_name = th_province_culture
+			}
+			clr_province_flag = th_yuyu_known_culture@ROOT
+			save_event_target_as = th_compare_province
+		}
+	}
+
+	option = {
+		name = "yuyus_food_hunt.2.a"
+		every_province = {
+			limit = {
+				culture = ROOT
+				has_province_flag = th_yuyu_known_culture@ROOT
+			}
+			clr_province_flag = th_yuyu_known_culture@ROOT
+		}
+		remove_th_yuyus_food_buff = yes
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Remove all owned markers for provinces in Yuyuko's culture group
+country_event = {
+	id = yuyus_food_hunt.3
+	title = "yuyus_food_hunt.3.t"
+	desc = "yuyus_food_hunt.3.desc"
+	picture = YUYUKO_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_yuyukos_food_hunt
+		has_country_flag = th_yuyus_food_hunt_active
+		num_of_owned_provinces_with = {
+			value = 1
+			culture_group = ROOT
+			has_province_flag = th_yuyu_owned_by_@ROOT
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		every_owned_province = {
+			limit = {
+				has_province_flag = th_yuyu_owned_by_@ROOT
+				culture_group = ROOT
+			}
+			clr_province_flag = th_yuyu_owned_by_@ROOT
+		}
+	}
+
+	option = {
+		name = "yuyus_food_hunt.3.a"
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#If Yuyuko loses a previously owned province with a known culture
+country_event = {
+	id = yuyus_food_hunt.4
+	title = "yuyus_food_hunt.4.t"
+	desc = "yuyus_food_hunt.4.desc"
+	picture = YUYUKO_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_yuyukos_food_hunt
+		has_country_flag = th_yuyus_food_hunt_active
+		NOT = { has_country_flag = th_yuyu_loses_culture_event }
+		any_province = {
+			has_province_flag = th_yuyu_owned_by_@ROOT
+			NOT = { owned_by = ROOT }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		set_country_flag = th_yuyu_loses_culture_event
+		random_province = {
+			limit = {
+				has_province_flag = th_yuyu_owned_by_@ROOT
+				NOT = { owned_by = ROOT }
+			}
+			export_to_variable = {
+				value = culture
+				variable_name = th_province_culture
+			}
+			clr_province_flag = th_yuyu_owned_by_@ROOT
+			save_event_target_as = th_compare_province
+		}
+	}
+
+	option = {
+		name = "yuyus_food_hunt.4.a"
+
+		if = {
+			limit = {
+				NOT = {
+					num_of_owned_provinces_with = {
+						value = 1
+						has_province_flag = th_yuyu_owned_by_@ROOT
+						culture = event_target:th_compare_province
+						has_province_flag = th_yuyu_known_culture@ROOT
+						owned_by = ROOT
+					}
+				}	
+			}
+			every_province = {
+				limit = {
+					culture = event_target:th_compare_province
+					has_province_flag = th_yuyu_known_culture@ROOT
+				}
+				clr_province_flag = th_yuyu_known_culture@ROOT
+			}
+			remove_th_yuyus_food_buff = yes
+			set_variable = {
+				which = th_yuyus_culture_counter
+				value = 0
+			}
+		}
+		every_province = {
+			limit = {
+				culture = event_target:th_compare_province
+				has_province_flag = th_yuyu_owned_by_@ROOT
+				NOT = { owned_by = ROOT }
+			}
+			clr_province_flag = th_yuyu_owned_by_@ROOT
+		}
+
+		clr_country_flag = th_yuyu_loses_culture_event
+
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+
+#Set up for Yuyus food hunt
+country_event = {
+	id = yuyus_food_hunt.5
+	title = "yuyus_food_hunt.5.t"
+	desc = "yuyus_food_hunt.5.desc"
+	picture = YUYUKO_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_yuyukos_food_hunt
+		NOT = { has_country_flag = th_yuyus_food_hunt_active }
+	}
+
+	immediate = {
+		set_country_flag = th_yuyus_food_hunt_active
+		set_variable = {
+			which = th_yuyus_culture_counter
+			value = 0
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		name = "yuyus_food_hunt.5.a"
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#If Yuyuko switches government then remove every stack and every flag
+country_event = {
+	id = yuyus_food_hunt.6
+	title = "yuyus_food_hunt.6.t"
+	desc = "yuyus_food_hunt.6.desc"
+	picture = YUYUKO_eventPicture
+
+	trigger = {
+		NOT = { has_government_attribute = enables_yuyuko_food_hunt }
+		has_country_flag = th_yuyus_food_hunt_active
+		NOT = { has_reform = Gensokyan_ghost_monarchy }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		clr_country_flag = th_yuyus_food_hunt_active
+		every_province = {
+			limit = {
+				has_province_flag = th_yuyu_owned_by_@ROOT
+			}
+			clr_province_flag = th_yuyu_owned_by_@ROOT
+		}
+		every_province = {
+			limit = {
+				has_province_flag = th_yuyu_known_culture@ROOT
+			}
+			clr_province_flag = th_yuyu_known_culture@ROOT
+		}
+		remove_all_th_yuyus_food_buff = yes
+	}
+
+	option = {
+		name = "yuyus_food_hunt.6.a"
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+

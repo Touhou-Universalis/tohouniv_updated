@@ -1,0 +1,907 @@
+########################################
+# Flavor Events for Clownpiecia
+########################################
+
+namespace = flavor_clp
+
+#Ask JNK for freedom
+country_event = {	
+	id = flavor_clp.1
+	title = flavor_clp.1.t
+	desc = flavor_clp.1.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = flavor_clp.1.a
+		
+		if = {
+			limit = {
+				OR = {
+					ai = no
+					was_player = yes
+				}
+			}
+			JNK = { country_event = { id = flavor_clp.2 } }
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#JNK gets asked
+country_event = {	
+	id = flavor_clp.2
+	title = flavor_clp.2.t
+	desc = flavor_clp.2.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = flavor_clp.2.a
+		
+		FROM = { country_event = { id = flavor_clp.3 } }
+		
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				is_subject_other_than_tributary_trigger = yes
+			}
+		}
+	}
+	option = {	
+		name = flavor_clp.2.b
+		
+		FROM = { country_event = { id = flavor_clp.31 } }
+		
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				is_free_or_tributary_trigger = yes
+			}
+		}
+	}
+}
+
+#CLP becomes free
+country_event = {	
+	id = flavor_clp.3
+	title = flavor_clp.3.t
+	desc = flavor_clp.3.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = flavor_clp.3.a
+		
+		JNK = { 
+			free_vassal = ROOT
+			create_alliance = ROOT
+			add_historical_friend = ROOT
+		}
+		add_historical_friend = JNK
+		every_owned_province = {
+			limit = {
+				culture = Lunarian_culture
+			}
+			change_culture = Fairy
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#CLP becomes free
+country_event = {	
+	id = flavor_clp.31
+	title = flavor_clp.31.t
+	desc = flavor_clp.31.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = flavor_clp.31.a
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#CLP asks Hecatia to get her land
+country_event = {	
+	id = flavor_clp.4
+	title = flavor_clp.4.t
+	desc = flavor_clp.4.desc
+	picture = HECATIA2_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = flavor_clp.4.a
+		custom_tooltip = flavor_clp.4.a.tt
+		
+		inherit = HEC
+		every_province = {
+			limit = {
+				is_core = HEC
+			}
+			remove_core = HEC
+		}
+		change_religion = th_hakureishinto
+		set_ruler_religion = th_hakureishinto
+		hidden_effect = {
+			every_owned_province = {
+				change_religion = ROOT
+			}
+			set_country_flag = clp_pledging_to_believe_hecatia
+		}
+		change_personal_deity = Hecatia
+		every_owned_province = {
+			limit = {
+				culture = Lunarian_culture
+				area = Hecetias_colony
+			}
+			change_culture = Fairy
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	
+		name = flavor_clp.4.b
+		
+		create_alliance = HEC
+		add_trust = {
+			who = HEC
+			value = 15
+			mutual = yes
+		}	
+		change_religion = th_hakureishinto
+		set_ruler_religion = th_hakureishinto
+		hidden_effect = {
+			every_owned_province = {
+				change_religion = ROOT
+			}
+		}
+		HEC = { 
+			add_historical_friend = ROOT
+		}
+		add_historical_friend = HEC
+		add_country_modifier = {
+			name = clp_support_to_common_goal
+			duration = 7300
+		}
+
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	
+		name = flavor_clp.4.c
+		custom_tooltip = flavor_clp.4.c.tt
+		
+		ai_chance = { 
+			factor = 50
+		}
+	}
+}	
+
+#Hecatia is angry
+country_event = {	
+	id = flavor_clp.5
+	title = flavor_clp.5.t
+	desc = flavor_clp.5.desc
+	picture = ANGERHECATIA_eventPicture
+	
+	trigger = {
+		has_country_flag = clp_pledging_to_believe_hecatia
+		NOT = { has_country_flag = clp_anger_of_hecatia }
+		NOT = {
+			AND = {
+				religion = th_hakureishinto
+				has_personal_deity = Hecatia
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 0
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = clp_anger_of_hecatia
+			clr_country_flag = clp_pledging_to_believe_hecatia
+		}
+	}
+	
+	option = {	
+		name = flavor_clp.5.a
+		custom_tooltip = flavor_clp.5.a.tt
+		
+		add_country_modifier = {
+			name = clp_anger_of_hecatia
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Hecatia forgives us
+country_event = {	
+	id = flavor_clp.6
+	title = flavor_clp.6.t
+	desc = flavor_clp.6.desc
+	picture = HECATIA2_eventPicture
+	
+	trigger = {
+		has_country_flag = clp_anger_of_hecatia
+		NOT = { has_country_flag = clp_pledging_to_believe_hecatia }
+		AND = {
+			religion = th_hakureishinto
+			has_personal_deity = Hecatia
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 0
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = clp_pledging_to_believe_hecatia
+			clr_country_flag = clp_anger_of_hecatia
+		}
+	}
+	
+	option = {	
+		name = flavor_clp.6.a
+		
+		remove_country_modifier = clp_anger_of_hecatia
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Hecatia and Junko bless Clownpiece for her achievements
+country_event = {	
+	id = flavor_clp.7
+	title = flavor_clp.7.t
+	desc = flavor_clp.7.desc
+	picture = JUNKOHECATIA_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = clp_dominate_the_moon
+		}
+	}
+
+	option = {	
+		name = flavor_clp.7.a
+		if = {
+			limit = {
+				has_country_flag = clp_pledging_to_believe_hecatia
+			}
+			custom_tooltip = flavor_clp.7.a.tt
+			hidden_effect = {
+				clr_country_flag = clp_pledging_to_believe_hecatia
+				clr_country_flag = clp_anger_of_hecatia
+				remove_country_modifier = clp_anger_of_hecatia
+			}
+		}
+		
+		add_country_modifier = {
+			name = clp_bless_of_hecatia_and_junko
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#CLP moves to the US
+country_event = {	
+	id = flavor_clp.8
+	title = flavor_clp.8.t
+	desc = flavor_clp.8.desc
+	picture = NEWCONTINENT_eventPicture
+	
+    is_triggered_only = yes
+	
+	option = {	
+		name = flavor_clp.8.a
+		
+		4637 = {
+			add_base_tax = 3
+			add_base_production = 3
+			add_base_manpower = 3
+			add_center_of_trade_level = 2
+			move_capital_effect = yes
+			change_culture = Fairy
+			change_religion = ROOT
+			change_province_name = "New Clownpiecia"
+		}
+		add_country_modifier = {
+			name = clp_settlement_into_the_new_world
+			duration = -1
+		}
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	
+		name = flavor_clp.8.b
+		
+		add_country_modifier = {
+			name = clp_fairies_heading_for_the_new_world
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku fight with Junko
+country_event = {
+	id = flavor_clp.9
+	title = flavor_clp.9.t
+	desc = flavor_clp.9.desc
+	picture = JUNKO2_eventPicture
+   
+  	trigger = {
+		has_country_flag = clp_liberate_earth_fairy
+		has_country_flag = clp_dominate_the_moon
+		NOT = { has_country_flag = clp_calling_of_junko }
+		ROOT = {
+			is_free_or_tributary_trigger = yes
+		}
+		JNK = {
+			exists = yes
+			is_free_or_tributary_trigger = yes
+			capital_scope = {
+				region = moon_region
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 60
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = clp_calling_of_junko
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Clownpiece"
+					dynasty = "of Clownsville"
+				}
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 300
+				}
+			}
+			else = {
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 0
+				}
+			}
+			#Clownpieces base diplo fight skills
+			set_variable = {
+				which = th_junko_diplo_skills
+				value = 1600
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_junko_diplo_skills
+			}
+		}
+	}
+
+	option = {
+		name = flavor_clp.9.a
+		highlight = yes
+		custom_tooltip = flavor_clp.9.a.tt
+		th_danmaku_diplo_fight_ruler_and_opponent = {
+			win_event = flavor_clp.91
+			draw_event = flavor_clp.91
+			defeat_event = flavor_clp.92
+			days = 10
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = {
+		name = flavor_clp.9.b
+
+		JNK = {
+			vassalize = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = {
+		name = flavor_clp.9.c
+
+		remove_historical_friend = JNK
+		JNK = { 
+			remove_historical_friend = ROOT
+		}		
+		reverse_add_opinion = {
+			who = JNK
+			modifier = th_refuse_to_calling
+		}
+		moon_region = {
+			limit = {
+				NOT = { is_permanent_claim = ROOT }
+				NOT = { is_core = ROOT }
+				owned_by = JNK
+			}
+			add_permanent_claim = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Victory against Junko
+country_event = {
+	id = flavor_clp.91
+	title = flavor_clp.91.t
+	desc = flavor_clp.91.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_clp.91.a
+		create_subject = {
+			subject_type = personal_union
+			subject = JNK
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Defeat against Junko
+country_event = {
+	id = flavor_clp.92
+	title = flavor_clp.92.t
+	desc = flavor_clp.92.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = flavor_clp.92.a
+
+		add_prestige = -20
+		remove_historical_friend = JNK
+		JNK = { 
+			remove_historical_friend = ROOT
+		}		
+		JNK = {
+			vassalize = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = flavor_clp.92.b
+
+		add_prestige = -20
+		remove_historical_friend = JNK
+		JNK = { 
+			remove_historical_friend = ROOT
+		}
+		add_historical_rival = JNK
+		JNK = { 
+			add_historical_rival = ROOT
+		}
+		reverse_add_opinion = {
+			who = JNK
+			modifier = th_refuse_to_calling
+		}
+		moon_region = {
+			limit = {
+				NOT = { is_permanent_claim = ROOT }
+				NOT = { is_core = ROOT }
+				owned_by = JNK
+			}
+			add_permanent_claim = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku fight with Hecatia
+country_event = {
+	id = flavor_clp.10
+	title = flavor_clp.10.t
+	desc = flavor_clp.10.desc
+	picture = HECATIA2_eventPicture
+   
+  	trigger = {
+		has_country_flag = clp_liberate_earth_fairy
+		has_country_flag = clp_dominate_the_moon
+		NOT = { has_country_flag = clp_calling_of_hecatia }
+		ROOT = {
+			is_free_or_tributary_trigger = yes
+		}
+		HEC = {
+			exists = yes
+			is_free_or_tributary_trigger = yes
+			capital_scope = {
+				region = moon_region
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 60
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = clp_calling_of_hecatia
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Clownpiece"
+					dynasty = "of Clownsville"
+				}
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 300
+				}
+			}
+			else = {
+				th_getruler_diplomatic_skill = {
+					SKILL_BONI = 0
+				}
+			}
+			#Clownpieces base diplo fight skills
+			set_variable = {
+				which = th_hecatia_diplo_skills
+				value = 1600
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_hecatia_diplo_skills
+			}
+		}
+	}
+
+	option = {
+		name = flavor_clp.10.a
+
+		highlight = yes
+		custom_tooltip = flavor_clp.10.a.tt
+		th_danmaku_diplo_fight_ruler_and_opponent = {
+			win_event = flavor_clp.101
+			draw_event = flavor_clp.101
+			defeat_event = flavor_clp.102
+			days = 10
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = {
+		name = flavor_clp.10.b
+
+		HEC = {
+			vassalize = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = {
+		name = flavor_clp.10.c
+
+		remove_historical_friend = HEC
+		HEC = { 
+			remove_historical_friend = ROOT
+		}		
+		reverse_add_opinion = {
+			who = HEC
+			modifier = th_refuse_to_calling
+		}
+		moon_region = {
+			limit = {
+				NOT = { is_permanent_claim = ROOT }
+				NOT = { is_core = ROOT }
+				owned_by = HEC
+			}
+			add_permanent_claim = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Victory against Hecatia
+country_event = {
+	id = flavor_clp.101
+	title = flavor_clp.101.t
+	desc = flavor_clp.101.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_clp.101.a
+		create_subject = {
+			subject_type = personal_union
+			subject = HEC
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Defeat against Hecatia
+country_event = {
+	id = flavor_clp.102
+	title = flavor_clp.102.t
+	desc = flavor_clp.102.desc
+	picture = HECATIA2_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = flavor_clp.102.a
+
+		add_prestige = -20
+		remove_historical_friend = HEC
+		HEC = { 
+			remove_historical_friend = ROOT
+		}		
+		HEC = {
+			vassalize = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = flavor_clp.102.b
+
+		add_prestige = -20
+		remove_historical_friend = HEC
+		HEC = { 
+			remove_historical_friend = ROOT
+		}
+		add_historical_rival = HEC
+		HEC = { 
+			add_historical_rival = ROOT
+		}
+		reverse_add_opinion = {
+			who = HEC
+			modifier = th_refuse_to_calling
+		}
+		moon_region = {
+			limit = {
+				NOT = { is_permanent_claim = ROOT }
+				NOT = { is_core = ROOT }
+				owned_by = HEC
+			}
+			add_permanent_claim = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Human Capital gets blown up
+country_event = {
+	id = flavor_clp.11
+	title = flavor_clp.11.t
+	desc = flavor_clp.11.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = flavor_clp.11.a
+		4826 = {
+			add_devastation = 100
+			add_permanent_province_modifier = {
+				name = clp_clown_fireworks
+				duration = -1
+			}
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Government change
+country_event = {
+	id = flavor_clp.12
+	title = flavor_clp.12.t
+	desc = flavor_clp.12.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_clp.12.a
+		add_government_reform = Gensokyan_clownpiece_tribal_government
+		country_event = {
+			id = th_hellfairy_events.7
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Ask fairies to become Clownpiece's vassals
+country_event = {
+	id = flavor_clp.13
+	title = flavor_clp.13.t
+	desc = flavor_clp.13.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_clp.13.a
+		FROM = {
+			vassalize = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				total_development = 100
+				factor = 0
+			}
+		}
+	}
+
+	option = {
+		name = flavor_clp.13.b
+		if = {
+			limit = {
+				government = monarchy
+			}
+			FROM = {
+				add_casus_belli = {
+					type = cb_touhou_mission_personal_union_war
+					target = ROOT
+					months = 600
+				}
+			}
+		}
+		else = {
+			FROM = {
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = ROOT
+					months = 600
+				}
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = {
+					id = flavor_clp.14
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				NOT = { total_development = 100 }
+				factor = 0
+			}
+		}
+	}
+}
+
+#Fairy nation refuses
+country_event = {
+	id = flavor_clp.14
+	title = flavor_clp.14.t
+	desc = flavor_clp.14.desc
+	picture = CLOWNPIECE_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_clp.14.a
+		tooltip = {
+			FROM = {
+				if = {
+					limit = {
+						government = monarchy
+					}
+					reverse_add_casus_belli = {
+						type = cb_touhou_mission_personal_union_war
+						target = ROOT
+						months = 600
+					}
+				}
+				else = {
+					reverse_add_casus_belli = {
+						type = cb_vassalize_mission
+						target = ROOT
+						months = 600
+					}
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}

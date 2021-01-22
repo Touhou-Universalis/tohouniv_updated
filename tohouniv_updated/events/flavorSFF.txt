@@ -1,0 +1,1458 @@
+########################################
+# Flavor Events for Sunflower Fields
+########################################
+
+namespace = flavor_sff
+
+#Question of religious direction
+country_event = {
+	id = flavor_sff.1
+	title = flavor_sff.1.t
+	desc = flavor_sff.1.desc
+	picture = SHRINE_eventPicture
+	
+	fire_only_once = yes
+	major = yes
+	
+	trigger = {
+		tag = SFF
+		5004 = { 
+			religion = th_oldhakurei 
+		} 
+	}
+	
+	mean_time_to_happen = {
+		months = 3
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = sff_has_chosen_religious_path
+		}
+	}
+
+	option = {	#Hakurei Traditions is a relict of old time. Shintoism is the future.
+		name = flavor_sff.1.a
+		
+		every_heretic_province = {
+			add_province_modifier = { 
+				name = th_banned_heretics
+				duration = 1825
+			}
+		}
+		add_adm_power = -50
+		
+		ai_chance = { 
+			factor = 70
+		}
+	}
+	
+	option = {	#I guess I can tolerate them for now
+		name = flavor_sff.1.b
+		
+		add_country_modifier = { 
+			name = th_heretical_tolerance
+			duration = 5475
+		}
+		
+		ai_chance = { 
+			factor = 10
+		}
+	}
+	
+	option = {	#You know what, those were better times...
+		name = flavor_sff.1.c
+		th_ds_excuse_religion_swapping = yes
+		add_stability = -1
+		change_religion = th_oldhakurei
+		
+		add_country_modifier = { 
+			name = th_converted_to_moriya
+			duration = 5475
+		}
+		
+		ai_chance = { 
+			factor = 20
+		}
+	}
+}
+
+#fight Shinki
+country_event = {
+	id = flavor_sff.2
+	title = flavor_sff.2.t
+	desc = flavor_sff.2.desc
+	picture = SHINKI_eventPicture
+	
+	trigger = {
+		tag = SFF
+		exists = MKI
+		NOT = { has_country_flag = fight_with_shinki }
+		MKI = { is_subject = NO }
+		is_in_war = {
+			attacker_leader = ROOT
+			defender_leader = MKI
+			war_score = 75
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = fight_with_shinki
+			if = {
+				limit = {
+					has_ruler = "Yuuka"
+					dynasty = "Kazami"
+				}
+				th_getruler_fighting_skill = {
+					SKILL_BONI = 600
+				}
+			}
+			else = {
+				th_getruler_fighting_skill = {
+					SKILL_BONI = 0
+				}
+			}
+			#Yuukas base fight skills
+			set_variable = {
+				which = th_sff_shinkis_combat_skills
+				value = 1800
+			}
+			#'Desperate' Fighting Skills
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_sff_shinkis_combat_skills
+			}	
+		}
+	}
+
+	option = {
+		name = flavor_sff.2.a
+		highlight = yes
+		custom_tooltip = flavor_sff.2.a.tt
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_sff.21
+			draw_event = flavor_sff.21
+			defeat_event = flavor_sff.20
+			days = 10
+		}	
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = {
+		name = flavor_sff.2.b
+		custom_tooltip = flavor_sff.2.b.tt
+		add_prestige = 25
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Result of the fight between Yuuka and Shinki - Draw or better
+country_event = {
+	id = flavor_sff.21
+	title = flavor_sff.21.t
+	desc = flavor_sff.21.desc
+	picture = YUUKAWINNING_eventPicture
+
+	is_triggered_only = yes
+		
+	major = yes
+	
+	option = {	#puny god
+		name = flavor_sff.21.a
+		custom_tooltip = flavor_sff.21.a.tt
+		
+		add_prestige = 50
+		add_country_modifier = { 
+		name = sff_defeat_the_goddess
+		duration = 7300
+		}	
+		MKI = {
+			add_stability = -3
+			add_legitimacy = -100
+			add_country_modifier = { 
+				name = sff_fall_of_authority_of_goddess
+				duration = 7300
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#fight Yukari
+country_event = {
+	id = flavor_sff.3
+	title = flavor_sff.3.t
+	desc = flavor_sff.3.desc
+	picture = YUKARI2_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Yuuka"
+					dynasty = "Kazami"
+				}
+				th_getruler_fighting_skill = {
+					SKILL_BONI = 600
+				}
+			}
+			else = {
+				th_getruler_fighting_skill = {
+					SKILL_BONI = 0
+				}
+			}
+			#Yuukas base fight skills
+			set_variable = {
+				which = th_sff_yukaris_combat_skills
+				value = 2000
+			}
+			#'Desperate' Fighting Skills
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_sff_yukaris_combat_skills
+			}	
+		}
+	}
+
+	option = {
+		name = flavor_sff.3.a
+		highlight = yes
+		custom_tooltip = flavor_sff.3.a.tt
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_sff.31
+			draw_event = flavor_sff.31
+			defeat_event = flavor_sff.20
+			days = 10
+		}		
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = {
+		name = flavor_sff.3.b
+		custom_tooltip = flavor_sff.3.b.tt
+		add_prestige = 10
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Result of the fight between Yuuka and Yukari - Draw or better  #change localization
+country_event = {
+	id = flavor_sff.31
+	title = flavor_sff.31.t
+	desc = flavor_sff.31.desc
+	picture = YUKARI2_eventPicture
+
+	is_triggered_only = yes
+
+	option = {	#Forced obedience
+		name = flavor_sff.31.a
+		custom_tooltip = flavor_sff.31.a.tt
+
+		if = {
+			limit = {
+				exists = NMG
+				war_with = NMG
+			}
+			white_peace = NMG
+			create_subject = {
+				subject_type = th_yuuka_gatekeeper
+				subject = NMG
+			}
+			NMG = {
+				add_country_modifier = { 
+					name = sff_resistance_to_obedience
+					duration = 10950
+				}
+				kill_ruler = yes
+			}
+		}
+		else_if = {
+			limit = {
+				exists = MHG
+				war_with = MHG
+			}
+			white_peace = MHG
+			create_subject = {
+				subject_type = th_yuuka_gatekeeper
+				subject = MHG
+			}
+			MHG = {
+				add_country_modifier = { 
+					name = sff_resistance_to_obedience
+					duration = 10950
+				}
+				kill_ruler = yes
+			}
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}		
+	}	
+	
+	option = {	#raze Mayohiga
+		name = flavor_sff.31.b
+		custom_tooltip = flavor_sff.31.b.tt
+		
+		if = {
+			limit = {
+				4837 = { development = 30 }
+			}
+			4837 = {
+				add_base_tax = -5
+				add_base_production = -5
+				add_base_manpower = -5
+			}
+			capital_scope = {
+				add_base_tax = 5
+				add_base_production = 5
+				add_base_manpower = 5
+			}
+		}
+		4837 = { add_devastation = 100 }
+		
+		if = {
+			limit = {
+				exists = NMG
+				war_with = NMG
+			}
+			add_treasury = 1000
+			add_historical_rival = NMG
+			NMG = {
+				add_treasury = -1000
+				add_historical_rival = ROOT
+			}
+		}
+		else_if = {
+			limit = {
+				exists = MHG
+				war_with = MHG
+			}
+			add_treasury = 1000
+			add_historical_rival = MHG
+			MHG = {
+				add_treasury = -1000
+				add_historical_rival = ROOT
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#Result of the fight between Yuuka and Shinki/Yukari - defeat
+country_event = {
+	id = flavor_sff.20
+	title = flavor_sff.20.t
+	desc = flavor_sff.20.desc
+	picture = SCARLETT_eventPicture
+
+	is_triggered_only = yes
+	
+	option = {	#I shouldn't did
+		name = flavor_sff.20.a
+		
+		add_country_modifier = { 
+			name = sff_unnessecery_defeat
+			duration = 7300
+		}	
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#claim to peru
+country_event = {
+	id = flavor_sff.8
+	title = flavor_sff.8.t
+	desc = flavor_sff.8.desc
+	picture = YUUKATHINKING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #vassalize cusco
+		name = flavor_sff.8.a
+		trigger = {
+			exists = CSU
+			NOT = { exists = INC }
+		}
+		add_casus_belli = {
+			target = CSU
+			type = cb_vassalize_mission
+			months = 900
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}	
+	}
+	
+	option = { #vassalize inca
+		name = flavor_sff.8.b
+		trigger = {
+			exists = INC
+		}
+		add_casus_belli = {
+			target = INC
+			type = cb_vassalize_mission
+			months = 900
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}	
+	}	
+
+	option = { #conquer directly
+		name = flavor_sff.8.c
+		peru_region = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		upper_peru_region = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+
+		ai_chance = { 
+			factor = 100
+		}	
+	}	
+}
+
+#for cusco
+country_event = {
+	id = flavor_sff.9
+	title = flavor_sff.9.t
+	desc = flavor_sff.9.desc
+	picture = LATINNATIVE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_sff.9.a
+		custom_tooltip = th_modernize_the_natives
+		create_subject = {
+			subject_type = th_yuuka_gatekeeper
+			subject = CSU
+		}
+		CSU = {
+			hidden_effect = {
+				change_religion = ROOT
+				every_owned_province = {
+					add_institution_embracement = {
+						which = feudalism
+						value = 100
+					}
+					add_next_institution_embracement = 10
+				}
+				change_government = monarchy
+				add_government_reform = feudalism_reform
+				adopt_reform_progress = ROOT
+				set_government_rank = 2
+			}
+			peru_region = {
+				limit = {
+					NOT = { is_core = CSU }
+					NOT = { is_permanent_claim = CSU }
+				}
+				add_permanent_claim = CSU
+			}
+			upper_peru_region = {
+				limit = {
+					NOT = { is_core = CSU }
+					NOT = { is_permanent_claim = CSU }
+				}
+				add_permanent_claim = CSU
+			}
+			add_country_modifier = {
+				name = sff_convert_to_gensokyan_faith
+				duration = 7300
+			}	
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#for inca
+country_event = {
+	id = flavor_sff.10
+	title = flavor_sff.10.t
+	desc = flavor_sff.10.desc
+	picture = LATINNATIVE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_sff.10.a
+		custom_tooltip = th_modernize_the_natives
+		create_subject = {
+			subject_type = th_yuuka_gatekeeper
+			subject = INC
+		}
+		INC = {
+			hidden_effect = {
+				change_religion = ROOT
+				every_owned_province = {
+					add_institution_embracement = {
+						which = feudalism
+						value = 100
+					}
+					add_next_institution_embracement = 10
+				}
+				change_government = monarchy
+				add_government_reform = feudalism_reform
+				adopt_reform_progress = ROOT
+				set_government_rank = 2
+			}
+			peru_region = {
+				limit = {
+					NOT = { is_core = INC }
+					NOT = { is_permanent_claim = INC }
+				}
+				add_permanent_claim = INC
+			}
+			upper_peru_region = {
+				limit = {
+					NOT = { is_core = INC }
+					NOT = { is_permanent_claim = INC }
+				}
+				add_permanent_claim = INC
+			}
+			add_country_modifier = {
+				name = sff_convert_to_gensokyan_faith
+				duration = 7300
+			}	
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#Sunflower Invasion
+country_event = {
+	id = flavor_sff.13
+	title = flavor_sff.13.t
+	desc = flavor_sff.13.desc
+	picture = YUUKAWINNING_eventPicture
+
+	is_triggered_only = yes
+	
+	option = {	#for battle
+		name = flavor_sff.13.a
+		add_country_modifier = {
+			name = sff_conquer_of_europe
+			duration = 9125
+		}
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#Garden of the World
+country_event = {
+	id = flavor_sff.14
+	title = flavor_sff.14.t
+	desc = flavor_sff.14.desc
+	picture = YUUKAGARDENS_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_sff.14.a
+		th_immunity_against_the_plague = yes
+		5000 = {
+			remove_province_modifier = Sun_Garden_controlled
+			add_permanent_province_modifier = {
+				name = sff_garden_of_the_world
+				duration = -1
+			}
+			change_province_name = "Garden of the World"
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Reduce governing capacity for SFF
+country_event = {
+	id = flavor_sff.99
+	title = flavor_sff.99.t
+	desc = flavor_sff.99.desc
+	picture = YUUKATHINKING_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = SFF
+		}
+		NOT = { has_country_flag = sff_has_variables_set }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = sff_has_variables_set
+			th_sff_initiate_flower_counter = yes
+			th_sff_initiate_sun_garden_counter = yes
+		}
+	}
+
+	option = {
+		name = flavor_sff.99.a
+		custom_tooltip = flavor_sff.99.a.tt
+		add_country_modifier = {
+			name = sff_focus_on_garden
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to Sun garden - Higan Flower
+province_event = {
+	id = flavor_sff.100
+	title = flavor_sff.100.t
+	desc = flavor_sff.100.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		province_id = 5000
+		NOT = { has_province_modifier = sff_higan_flower_buff }
+		owner = {
+			has_country_flag = sff_has_collected_higan_flower
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.100.a
+		add_province_modifier = {
+			name = sff_higan_flower_buff
+			duration = -1
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to Sun garden - Amazon plants
+province_event = {
+	id = flavor_sff.101
+	title = flavor_sff.101.t
+	desc = flavor_sff.101.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		province_id = 5000
+		NOT = { has_province_modifier = sff_amazon_plants_buff }
+		owner = {
+			has_country_flag = sff_has_collected_amazon_flower
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.101.a
+		add_province_modifier = {
+			name = sff_amazon_plants_buff
+			duration = -1
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to Sun garden - Kongo plants
+province_event = {
+	id = flavor_sff.102
+	title = flavor_sff.102.t
+	desc = flavor_sff.102.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		province_id = 5000
+		NOT = { has_province_modifier = sff_congo_rainforest_buff }
+		owner = {
+			has_country_flag = sff_has_collected_congo_flower
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.102.a
+		add_province_modifier = {
+			name = sff_congo_rainforest_buff
+			duration = -1
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to Sun garden - Finnish plants
+province_event = {
+	id = flavor_sff.103
+	title = flavor_sff.103.t
+	desc = flavor_sff.103.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		province_id = 5000
+		NOT = { has_province_modifier = sff_finnish_wood_buff }
+		owner = {
+			has_country_flag = th_sff_has_collected_finnish_flower
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.103.a
+		add_province_modifier = {
+			name = sff_finnish_wood_buff
+			duration = -1
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to Sun garden - Japanese plants
+province_event = {
+	id = flavor_sff.104
+	title = flavor_sff.104.t
+	desc = flavor_sff.104.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		province_id = 5000
+		NOT = { has_province_modifier = sff_ikebana_flowers_buff }
+		owner = {
+			has_country_flag = th_sff_has_collected_japanese_flower
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.104.a
+		add_province_modifier = {
+			name = sff_ikebana_flowers_buff
+			duration = -1
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to SFF's core areas - Level 2
+province_event = {
+	id = flavor_sff.105
+	title = flavor_sff.105.t
+	desc = flavor_sff.105.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		NOT = { has_province_modifier = sff_sun_garden_lv2 }
+		region = sunflower_region
+		owner = {
+			th_sff_compare_sun_garden_power = {
+				value = 2
+			}
+			NOT = {
+				th_sff_compare_sun_garden_power = {
+					value = 3
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.105.a
+		add_province_modifier = {
+			name = sff_sun_garden_lv2
+			duration = -1
+		}
+		remove_province_modifier = sff_sun_garden_lv3
+		remove_province_modifier = sff_sun_garden_lv4
+		remove_province_modifier = sff_sun_garden_lv5
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to SFF's core areas - Level 3
+province_event = {
+	id = flavor_sff.106
+	title = flavor_sff.106.t
+	desc = flavor_sff.106.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		NOT = { has_province_modifier = sff_sun_garden_lv3 }
+		region = sunflower_region
+		owner = {
+			th_sff_compare_sun_garden_power = {
+				value = 3
+			}
+			NOT = {
+				th_sff_compare_sun_garden_power = {
+					value = 4
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.106.a
+		add_province_modifier = {
+			name = sff_sun_garden_lv3
+			duration = -1
+		}
+		remove_province_modifier = sff_sun_garden_lv2
+		remove_province_modifier = sff_sun_garden_lv4
+		remove_province_modifier = sff_sun_garden_lv5
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to SFF's core areas - Level 4
+province_event = {
+	id = flavor_sff.107
+	title = flavor_sff.107.t
+	desc = flavor_sff.107.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		NOT = { has_province_modifier = sff_sun_garden_lv4 }
+		region = sunflower_region
+		owner = {
+			th_sff_compare_sun_garden_power = {
+				value = 4
+			}
+			NOT = {
+				th_sff_compare_sun_garden_power = {
+					value = 5
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.107.a
+		add_province_modifier = {
+			name = sff_sun_garden_lv4
+			duration = -1
+		}
+		remove_province_modifier = sff_sun_garden_lv2
+		remove_province_modifier = sff_sun_garden_lv3
+		remove_province_modifier = sff_sun_garden_lv5
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give permanent buff to SFF's core areas - Level 5
+province_event = {
+	id = flavor_sff.108
+	title = flavor_sff.108.t
+	desc = flavor_sff.108.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		NOT = { has_province_modifier = sff_sun_garden_lv5 }
+		region = sunflower_region
+		owner = {
+			th_sff_compare_sun_garden_power = {
+				value = 5
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+
+	option = {
+		name = flavor_sff.108.a
+		add_province_modifier = {
+			name = sff_sun_garden_lv5
+			duration = -1
+		}
+		remove_province_modifier = sff_sun_garden_lv2
+		remove_province_modifier = sff_sun_garden_lv3
+		remove_province_modifier = sff_sun_garden_lv4
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Yuuka meets the Ikebana Master Ashikaga
+country_event = {
+	id = flavor_sff.109
+	title = flavor_sff.109.t
+	desc = {
+		trigger = {
+			exists = ASK
+			ASK = {
+				has_ruler = "Yoshimasa"
+			}
+		}
+		desc = flavor_sff.109.desc1
+	}
+	desc = {
+		trigger = {
+			OR = {
+				NOT = { exists = ASK }
+				ASK = {
+					NOT = { has_ruler = "Yoshimasa" }
+				}
+			}
+		}
+		desc = flavor_sff.109.desc2
+	}
+	picture = YUUKAGARDENS_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_sff.109.a
+		custom_tooltip = th_sff_has_collected_japans_flower		#SFF's core area gain permanent provincial buff
+		hidden_effect = {
+			th_sff_increment_flower_counter = yes
+			set_country_flag = th_sff_has_collected_japanese_flower
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = { exists = ASK }
+					ASK = {
+						NOT = { has_ruler = "Yoshimasa" }
+					}
+				}
+			}
+			define_advisor = {
+				name = "Yoshimasa Ashikaga"
+				type = artist
+				culture = japanese
+				religion = shinto
+				skill = 3
+				cost_multiplier = 0.25
+			}
+		}
+		else = {
+			custom_tooltip = flavor_sff.109.a.tt
+			hidden_effect = {
+				set_country_flag = sff_shogun_has_yet_to_come
+			}
+		}
+		add_legitimacy = 20
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Yuuka meets the Ikebana Master Ashikaga
+country_event = {
+	id = flavor_sff.110
+	title = flavor_sff.110.t
+	desc = flavor_sff.110.desc
+	picture = SHOGUNATE_AUTHORITY_INCIDENT_eventPicture
+
+	trigger = {
+		has_country_flag = sff_shogun_has_yet_to_come
+		OR = {
+			NOT = { exists = ASK }
+			ASK = {
+				NOT = { has_ruler = "Yoshimasa" }
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	option = {
+		name = flavor_sff.110.a
+		define_advisor = {
+			name = "Yoshimasa Ashikaga"
+			type = artist
+			culture = japanese
+			religion = shinto
+			skill = 3
+			cost_multiplier = 0.25
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Drain development
+#Gets indirectly triggered by the decision to make sure it is indeed a random province
+country_event = {
+	id = flavor_sff.111
+	title = flavor_sff.111.t
+	desc = flavor_sff.111.desc
+	picture = YUUKAGARDENS_eventPicture
+
+	trigger = {
+		has_country_flag = sff_enabled_drain_nature
+		has_country_flag = sff_pressed_decision_button
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = sff_pressed_decision_button
+			set_variable = {
+				which = th_drained_base_tax
+				value = 0
+			}
+			set_variable = {
+				which = th_drained_base_production
+				value = 0
+			}
+			set_variable = {
+				which = th_drained_base_manpower
+				value = 0
+			}
+			set_variable = {
+				which = th_drain_base_tax_tooltip
+				value = 0
+			}
+			set_variable = {
+				which = th_drain_base_production_tooltip
+				value = 0
+			}
+			set_variable = {
+				which = th_drain_base_manpower_tooltip
+				value = 0
+			}
+			set_variable = {
+				which = th_counter
+				value = 0
+			}
+			random_list = {
+				16 = {
+					random_province = {
+						limit = {
+							area = Perfect_cut_coast
+							owned_by = ROOT
+							is_state = yes
+						}
+						save_event_target_as = sff_random_province
+					}
+				}
+				16 = {
+					random_province = {
+						limit = {
+							area = Sunny_plains
+							owned_by = ROOT
+							is_state = yes
+						}
+						save_event_target_as = sff_random_province
+					}
+				}
+				16 = {
+					random_province = {
+						limit = {
+							area = Gengetsu_state
+							owned_by = ROOT
+							is_state = yes
+						}
+						save_event_target_as = sff_random_province
+					}
+				}
+				16 = {
+					random_province = {
+						limit = {
+							area = Raiko_Seki_state
+							owned_by = ROOT
+							is_state = yes
+						}
+						save_event_target_as = sff_random_province
+					}
+				}
+				16 = {
+					random_province = {
+						limit = {
+							area = Rika_state
+							owned_by = ROOT
+							is_state = yes
+						}
+						save_event_target_as = sff_random_province
+					}
+				}
+				16 = {
+					random_province = {
+						limit = {
+							area = World_of_fantasies
+							owned_by = ROOT
+							is_state = yes
+						}
+						save_event_target_as = sff_random_province
+					}
+				}
+			}
+			every_owned_province = {
+				limit = {
+					is_territory = yes
+					NOT = { region = sunflower_region }
+					has_province_modifier = th_province_to_drain
+				}
+				while = {
+					limit = {
+						base_tax = 2
+					}
+					add_base_tax = -1
+					ROOT = {
+						change_variable = {
+							which = th_drained_base_tax
+							value = 1
+						}
+					}
+				}
+				while = {
+					limit = {
+						base_production = 2
+					}
+					add_base_production = -1
+					ROOT = {
+						change_variable = {
+							which = th_drained_base_production
+							value = 1
+						}
+					}
+				}
+				while = {
+					limit = {
+						base_manpower = 2
+					}
+					add_base_manpower = -1
+					ROOT = {
+						change_variable = {
+							which = th_drained_base_manpower
+							value = 1
+						}
+					}
+				}
+				remove_province_modifier = th_province_to_drain
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_drained_base_tax
+						value = 1
+					}
+				}
+				change_variable = {
+					which = th_counter
+					value = 1
+				}
+				subtract_variable = {
+					which = th_drained_base_tax
+					value = 1
+				}
+				if = {
+					limit = {
+						check_variable = {
+							which = th_counter
+							value = 3
+						}
+					}
+					change_variable = {
+						which = th_drain_base_tax_tooltip
+						value = 1
+					}
+					set_variable = {
+						which = th_counter
+						value = 0
+					}
+				}
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_drained_base_production
+						value = 1
+					}
+				}
+				change_variable = {
+					which = th_counter
+					value = 1
+				}
+				subtract_variable = {
+					which = th_drained_base_production
+					value = 1
+				}
+				if = {
+					limit = {
+						check_variable = {
+							which = th_counter
+							value = 3
+						}
+					}
+					change_variable = {
+						which = th_drain_base_production_tooltip
+						value = 1
+					}
+					set_variable = {
+						which = th_counter
+						value = 0
+					}
+				}
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_drained_base_manpower
+						value = 1
+					}
+				}
+				change_variable = {
+					which = th_counter
+					value = 1
+				}
+				subtract_variable = {
+					which = th_drained_base_manpower
+					value = 1
+				}
+				if = {
+					limit = {
+						check_variable = {
+							which = th_counter
+							value = 3
+						}
+					}
+					change_variable = {
+						which = th_drain_base_manpower_tooltip
+						value = 1
+					}
+					set_variable = {
+						which = th_counter
+						value = 0
+					}
+				}
+			}
+		}
+	}
+
+	#Random province gets development
+	option = {
+		name = flavor_sff.111.a
+
+		event_target:sff_random_province = {
+			custom_tooltip = flavor_sff.111.a.tt
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_drain_base_tax_tooltip
+					value = 1
+				}
+			}
+			event_target:sff_random_province = {
+				add_base_tax = 1
+			}
+			subtract_variable = {
+				which = th_drain_base_tax_tooltip
+				value = 1
+			}
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_drain_base_production_tooltip
+					value = 1
+				}
+			}
+			event_target:sff_random_province = {
+				add_base_production = 1
+			}
+			subtract_variable = {
+				which = th_drain_base_production_tooltip
+				value = 1
+			}
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_drain_base_manpower_tooltip
+					value = 1
+				}
+			}
+			event_target:sff_random_province = {
+				add_base_manpower = 1
+			}
+			subtract_variable = {
+				which = th_drain_base_manpower_tooltip
+				value = 1
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Overload information
+country_event = {
+	id = flavor_sff.112
+	title = "flavor_sff.112.t"
+	desc = "flavor_sff.112.desc"
+	picture = YUUKAGARDENS_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {		#Standard
+		name = flavor_sff.112.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Remove marking modifier
+province_event = {
+	id = flavor_sff.113
+	title = "flavor_sff.113.t"
+	desc = "flavor_sff.113.desc"
+	picture = YUUKAGARDENS_eventPicture
+	hidden = yes
+	trigger = {
+		has_province_modifier = th_province_to_mark
+		OR = {
+			is_territory = no
+			owner = {
+				NOT = { has_country_flag = th_activated_province_drain }
+			}
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = flavor_sff.113.a
+		remove_province_modifier = th_province_to_mark
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
