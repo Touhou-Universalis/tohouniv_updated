@@ -417,6 +417,70 @@ on_death_election = {
 	}
 }
 
+# ROOT = New vassal, FROM = Overlord
+on_create_vassal = {
+	if = {
+		limit = {
+			FROM = {
+				OR = {
+					has_reform = Gensokyan_fairy_government
+					has_reform = Gensokyan_clownpiece_tribal_government
+				}
+				is_revolutionary = no
+			}
+			NOT = { tag = PAP }
+			NOT = { culture = Fairy }
+			th_ds_is_not_divine_state_nation = yes
+		}
+		change_government = monarchy
+	}
+	if = {
+		limit = {
+			FROM = {
+				OR = {
+					has_reform = Gensokyan_fairy_government
+					has_reform = Gensokyan_clownpiece_tribal_government
+				}
+				is_revolutionary = no
+			}
+			NOT = { tag = PAP }
+			culture = Fairy
+			th_ds_is_not_divine_state_nation = yes
+		}
+		change_government = tribe
+		add_government_reform = Gensokyan_fairy_government
+		adopt_reform_progress = FROM
+	}
+	if = {
+		limit = {
+			th_ds_is_divine_state_nation = yes
+		}
+		change_government = monarchy
+		add_government_reform = Gensokyan_divine_state
+		adopt_reform_progress = FROM
+	}
+	if = {
+		limit = {
+			has_dlc = "Emperor"
+			FROM = {
+				is_revolutionary = yes
+			}
+		}
+		change_government = republic
+		add_government_reform = junior_revolutionary_republic_reform
+		set_country_flag = had_revolution
+	}
+	if = {
+		limit = {
+			tag = PAP
+		}
+		change_government = theocracy
+		change_religion = catholic
+		add_government_reform = papacy_reform
+		adopt_reform_progress = FROM
+	}
+}
+
 # THIS = Raiding country, FROM = Sea province
 on_raid_coast = {
 	if = {
@@ -437,6 +501,73 @@ on_raid_coast = {
 			loyalty = 5
 		}
 		th_pirate_add_raid_fame = yes
+	}
+}
+
+# this = Released country, FROM = Releasing country
+on_country_released = {
+	if = {
+		limit = {
+			FROM = {
+				OR = {
+					has_reform = Gensokyan_fairy_government
+					has_reform = Gensokyan_clownpiece_tribal_government
+				}
+			}
+			NOT = { tag = PAP }
+			NOT = { culture = Fairy }
+			th_ds_is_not_divine_state_nation = yes
+		}
+		change_government = monarchy
+	}
+	if = {
+		limit = {
+			FROM = {
+				OR = {
+					has_reform = Gensokyan_fairy_government
+					has_reform = Gensokyan_clownpiece_tribal_government
+				}
+			}
+			NOT = { tag = PAP }
+			culture = Fairy
+			th_ds_is_not_divine_state_nation = yes
+		}
+		change_government = tribe
+		add_government_reform = Gensokyan_fairy_government
+		adopt_reform_progress = FROM
+	}
+	if = {
+		limit = {
+			th_ds_is_divine_state_nation = yes
+		}
+		change_government = monarchy
+		add_government_reform = Gensokyan_divine_state
+		adopt_reform_progress = FROM
+	}
+	if = {
+		limit = {
+			tag = PAP
+		}
+		change_government = theocracy
+		change_religion = catholic
+		add_government_reform = papacy_reform
+		adopt_reform_progress = FROM
+	}
+	if = {
+		limit = {
+			FROM = { has_reform = religious_permanent_revolution_reform }
+			NOT = { tag = PAP }
+		}
+		change_religion = FROM
+		adopt_reform_progress = FROM
+		add_country_modifier = {
+			name = global_holy_war_released_modifier
+			duration = 3650
+			hidden = yes
+		}
+		capital_scope = {
+			change_religion = FROM
+		}
 	}
 }
 
