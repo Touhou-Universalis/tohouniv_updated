@@ -27,7 +27,13 @@ country_event = {
 	mean_time_to_happen = {
 		months = 6
 	}
-	
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_has_chosen_religious_path
+		}
+	}
+
 	option = {	#Send the Shrine Maidens! I can't tolerate any heretics in my land!
 		name = flavor_crd.1.a
 		
@@ -155,6 +161,498 @@ country_event = {
 		}
 		
 		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Oni's Request
+country_event = {
+	id = flavor_crd.4
+	title = flavor_crd.4.t
+	desc = flavor_crd.4.desc
+	picture = YUUGI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#promise to oni
+		name = flavor_crd.4.a
+		custom_tooltip = flavor_crd.4.a.tt
+		hidden_effect = {
+			set_country_flag = crd_promise_to_oni
+		}
+		if = {
+			limit = {
+				ONI = {
+					is_subject_of = ROOT
+				}
+			}
+			ONI = {
+				add_opinion = {
+					who = ROOT
+					modifier = th_promised_to_back_mountain
+				}
+			}
+		}
+		add_country_modifier = {
+			name = "crd_backup_of_the_oni"
+			duration = 7300
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#sorry, but can't promise
+		name = flavor_crd.4.b
+		custom_tooltip = flavor_crd.4.b.tt	
+		if = {
+			limit = {
+				NOT = { exists = ONI }
+			}
+			every_owned_province = {
+				limit = {
+					culture = Oni_culture
+				}
+				add_province_modifier = {
+					name = "crd_disappointed_oni"
+					duration = 7300
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				ONI = {
+					is_subject_of = ROOT
+				}
+			}
+			ONI = {
+				add_opinion = {
+					who = ROOT
+					modifier = th_rejected_to_back_mountain
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+# Time to keep promise
+country_event = {
+	id = flavor_crd.5
+	title = flavor_crd.5.t
+	desc = flavor_crd.5.desc
+	picture = YOUKAIMOUNTAIN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#keep promise
+		name = flavor_crd.5.a
+		if = {
+			limit = {
+				NOT = { exists = ONI }
+			}
+			youkai_mountain_region = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_core = ONI
+				remove_core = ROOT
+				change_culture = Oni_culture
+			}
+			release = ONI
+			create_subject = {
+				subject_type = th_satori_vassal
+				subject = ONI
+			}
+			ONI = {
+				override_country_name = TH_ONIGASHIMA
+				youkai_mountain_region = {
+					limit = {
+						NOT = { is_core = ONI }
+						NOT = { is_permanent_claim = ONI }
+					}
+					add_core = ONI
+				}
+				add_country_modifier = {
+					name = "crd_keep_promise"
+					duration = -1
+				}
+				hidden_effect = {
+					change_government = monarchy
+					add_government_reform = Gensokyan_monarchy
+					adopt_reform_progress = ROOT
+					change_primary_culture = Oni_culture
+					change_religion = ROOT
+					add_adm_power = 112
+					add_dip_power = 84
+					add_mil_power = 112
+					add_manpower = 10
+					change_estate_land_share = {
+						estate = estate_nobles
+						share = 29
+					}
+					change_estate_land_share = {
+						estate = estate_church
+						share = 29
+					}
+					change_estate_land_share = {
+						estate = estate_burghers
+						share = 29
+					}	
+					define_ruler = {
+						name = "Yuugi"
+						dynasty = "Hoshiguma"
+						age = "25"
+						adm = 5
+						dip = 3
+						mil = 5
+						fixed = yes
+						female = yes
+						culture = Oni_culture
+						religion = ROOT
+					}
+					set_ruler_flag = touhou_character_ruler
+					set_ruler_flag = touhou_original_ruler
+					add_ruler_personality = immortal_personality
+					set_capital = 4811
+					capital_scope = {
+						build_to_forcelimit = {
+							infantry = 0.6
+							cavalry = 0.3
+						}
+					}
+					former_hell_region = {
+						limit = {
+							owned_by = ONI
+						}
+						cede_province = ROOT
+						add_core = ROOT
+					}
+				}
+			}
+		}
+		else = {
+			youkai_mountain_region = {
+				limit = {
+					owned_by = ROOT
+				}
+				cede_province = ONI
+				add_core = ONI
+				remove_core = ROOT
+				remove_claim = ROOT
+				change_culture = Oni_culture
+			}
+			former_hell_region = {
+				limit = {
+					owned_by = ONI
+				}
+				cede_province = ROOT
+				add_core = ROOT
+			}
+			ONI = {
+				override_country_name = TH_ONIGASHIMA
+				youkai_mountain_region = {
+					limit = {
+						NOT = { is_core = ONI }
+						NOT = { is_permanent_claim = ONI }
+					}
+					add_core = ONI
+				}
+				set_capital = 4811
+				add_country_modifier = {
+					name = "crd_keep_promise"
+					duration = -1
+				}
+			}
+		}
+	}
+	
+	option = {	#think again...
+		name = flavor_crd.5.b
+		custom_tooltip = flavor_crd.5.b.tt
+		youkai_mountain_region = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		add_casus_belli = {
+			target = TGU
+			type = cb_vassalize_mission
+			months = 900
+		}
+		if = {
+			limit = {
+				NOT = { exists = ONI }
+			}
+			random_owned_province = {
+				limit = {
+					area = Oni_exclave_state
+				}
+				spawn_rebels = {
+					type = nationalist_rebels
+					size = 2
+				}
+			}
+			random_owned_province = {
+				limit = {
+					area = Yuugi_state
+				}
+				spawn_rebels = {
+					type = nationalist_rebels
+					size = 2
+				}
+			}		
+			every_owned_province = {
+				limit = {
+					culture = Oni_culture
+				}
+				add_province_modifier = {
+					name = "crd_angry_oni"
+					duration = 18250
+				}	
+			}
+		}
+		else = {
+			ONI = {
+				set_ai_attitude = {
+					who = ROOT
+					attitude = attitude_disloyal
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = th_break_promise
+				}
+				add_country_modifier = { 
+					name = crd_break_promise
+					duration = 18250
+				}				
+			}
+		}
+	}
+}
+
+#remove reputation penalty after have diplomatic hegemon flag	
+country_event = {
+	id = flavor_crd.7
+	title = flavor_crd.7.t
+	desc = flavor_crd.7.desc
+	picture = ORINOKUU_eventPicture	
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+	
+	trigger = {
+		has_country_modifier = annexers_legacy
+		has_country_flag = th_diplomatic_hegemon
+	}
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = annexers_legacy
+		}
+	}
+	
+	option = {
+		name = flavor_crd.7.a
+		
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#lighthouse keeper pet?
+country_event = {
+	id = flavor_crd.6
+	title = flavor_crd.6.t
+	desc = flavor_crd.6.desc
+	picture = ORINOKUU_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#release pets. need Comrade's tag design
+		name = flavor_crd.6.a
+		# okuu
+		taiwan_area = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = OKU
+			remove_core = ROOT
+			change_culture = ROOT
+		}
+		release = OKU
+		create_subject = {
+			subject_type = th_satori_vassal
+			subject = OKU
+		}
+		add_historical_friend = CRD
+		OKU	= {
+			add_historical_friend = ROOT
+			add_country_modifier = {
+				name = "crd_pet_loyalty"
+				duration = -1
+			}
+			hidden_effect = {
+				change_government = monarchy
+				add_government_reform = Gensokyan_monarchy
+				adopt_reform_progress = ROOT
+				change_primary_culture = ROOT
+				change_religion = ROOT
+				add_adm_power = 212
+				add_dip_power = 212
+				add_mil_power = 212
+				add_manpower = 10
+				change_estate_land_share = {
+					estate = estate_nobles
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_church
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_burghers
+					share = 29
+				}	
+				define_ruler = {
+					name = "Utsuho"
+					dynasty = "Reiuji"
+					age = "15"
+					adm = 1
+					dip = 2
+					mil = 6
+					fixed = yes
+					female = yes
+					culture = ROOT
+					religion = ROOT
+				}
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = polynesian
+				set_capital = 2155
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+						light_ship = 0.4
+						transport = 0.5
+					}
+				}
+				2155 = {
+					add_base_tax = 2
+					add_base_manpower = 2
+					add_base_production = 2
+					change_culture = ROOT
+				}
+			}
+		}
+		# orin
+		luzon_area = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = ORN
+			remove_core = ROOT
+			change_culture = ROOT
+		}
+		southern_luzon_area = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = ORN
+			remove_core = ROOT
+			change_culture = ROOT
+		}
+		release = ORN
+		create_subject = {
+			subject_type = th_satori_vassal
+			subject = ORN
+		}
+		add_historical_friend = CRD
+		ORN	= {
+			add_historical_friend = ROOT
+			add_country_modifier = {
+				name = "crd_pet_loyalty"
+				duration = -1
+			}
+			hidden_effect = {
+				change_government = monarchy
+				add_government_reform = Gensokyan_monarchy
+				adopt_reform_progress = ROOT
+				change_primary_culture = ROOT
+				change_religion = ROOT
+				add_adm_power = 212
+				add_dip_power = 212
+				add_mil_power = 212
+				add_manpower = 10
+				change_estate_land_share = {
+					estate = estate_nobles
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_church
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_burghers
+					share = 29
+				}	
+				define_ruler = {
+					name = "Rin"
+					dynasty = "Kaenbyou"
+					age = "15"
+					adm = 4
+					dip = 5
+					mil = 5
+					fixed = yes
+					female = yes
+					culture = ROOT
+					religion = ROOT
+				}
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = filipino
+				set_capital = 658
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+						light_ship = 0.4
+						transport = 0.5
+					}
+				}
+				658 = {
+					add_base_tax = 2
+					add_base_manpower = 2
+					add_base_production = 2
+					change_culture = ROOT
+				}
+			}
+		}		
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {	#assist mistress
+		name = flavor_crd.6.b
+		add_country_modifier = {
+			name = "crd_assistant_pets"
+			duration = -1
+		}
+		ai_chance = {
 			factor = 100
 		}
 	}
