@@ -84,7 +84,12 @@ default = {
 	can_send_missionary_to_subject = yes				# Requires Cradle of Civilization
 	can_union_break = no								# Only works together with has_overlords_ruler
 	overlord_can_fabricate_for = yes
-	
+	does_overlord_size_count_for_warscore_cost = yes
+	is_colony_subtype = no
+	is_march = no
+	forms_trade_companies = yes
+	can_concentrate_development = yes
+
 	max_government_rank = 0								# 0 means no limit
 	cities_required_for_bonuses = 0						# How many cities the subject needs before giving bonuses to overlord
 	trust_on_start = 35									# Overlord and subject will each get this much extra trust with each other at game start
@@ -93,14 +98,21 @@ default = {
 	liberty_desire_negative_prestige = 0.0
 	liberty_desire_development_ratio = 0.0
 	liberty_desire_same_dynasty = 0.0
+	liberty_desire_revolution = 30.0					# Liberty desire at 100% revolution spread in country
 	pays_overlord = 0.0									# 1.0 represents the amount payed by vassals
 	forcelimit_bonus = 0.0								# 1.0 represents bonus from having a vassal
 	forcelimit_to_overlord = 0.0						# Percent of subject FL to use as base for modifiers
+	naval_forcelimit_bonus = 0.0						# 1.0 represents bonus from having a vassal
+	naval_forcelimit_to_overlord = 0.0					# Percent of subject FL to use as base for modifiers
+	manpower_bonus = 0.0								# 1.0 represents bonus from having a vassal
+	manpower_to_overlord = 0.0							# Percent of subject FL to use as base for modifiers
+	sailors_bonus = 0.0									# 1.0 represents bonus from having a vassal
+	sailors_to_overlord = 0.0							# Percent of subject FL to use as base for modifiers
 	military_focus = 1.0								# How much the AI subject should spend etc. on army and forts. 0 should make them spend nothing. Very high values will probably not make a big difference since there will be sanity checks.
 
 	relative_power_class = 1 							# See description above
+	should_quit_wars_on_activation = yes
 	diplomacy_view_class = 1							# See description above
-
 	can_fight = {
 	}
 	can_rival = {
@@ -147,6 +159,11 @@ default = {
 	return_land = no
 	conscript_general = no
 	knowledge_sharing = yes
+	block_settlement_growth = yes
+	allow_settlement_growth = yes
+	change_colonial_type = no
+	upgrade_subject_type = no
+
 	# (special)
 	sword_hunt = no
 	sankin_kotai = no
@@ -176,6 +193,7 @@ vassal = {
 	can_be_annexed = yes
 	has_power_projection = no
 	gets_help_with_rebels = yes
+	forms_trade_companies = no
 
 	max_government_rank = 1
 
@@ -186,7 +204,8 @@ vassal = {
 	forcelimit_to_overlord = 0.1
 
 	relative_power_class = 2
-	
+	should_quit_wars_on_activation = yes
+
 	restoration_cb = cb_disloyal_vassal
 
 	# Subject Interactions:
@@ -223,6 +242,8 @@ march = {
 	base_liberty_desire = -15.0
 	can_be_annexed = no
 	forcelimit_to_overlord = 0.2
+	is_march = yes
+	forms_trade_companies = no
 
 	# Subject Interactions:
 	scutage = no
@@ -264,6 +285,8 @@ daimyo_vassal = {
 	separatists_become_subjects = yes
 	allows_taking_land_without_independence = yes
 	can_use_claims = no
+	forms_trade_companies = no
+	can_concentrate_development = no
 
 	trust_on_start = 0
 	
@@ -271,6 +294,7 @@ daimyo_vassal = {
 	military_focus = 1.2
 
 	relative_power_class = 1
+	should_quit_wars_on_activation = yes
 
 	can_fight = {
 		same_overlord = daimyo_vassal
@@ -342,11 +366,13 @@ personal_union = {
 	can_have_subjects_of_other_types = yes
 	can_union_break = yes
 	transfer_subjects_when_made = yes
+	can_concentrate_development = no
 
 	liberty_desire_negative_prestige = 1.0
 	military_focus = 0.66
 
 	relative_power_class = 1
+	should_quit_wars_on_activation = yes
 
 	restoration_cb = cb_restore_personal_union
 	
@@ -377,6 +403,7 @@ client_vassal = {
 	created_by_overlord = yes
 
 	base_liberty_desire = -25.0
+	liberty_desire_revolution = 0
 
 	# Subject Interactions:
 	customize_subject = yes
@@ -394,10 +421,12 @@ client_march = {
 	created_by_overlord = yes
 
 	base_liberty_desire = -40.0
+	liberty_desire_revolution = 0
 
 	# Subject Interactions:
 	customize_subject = yes
 }
+
 
 colony = {
 	copy_from = default
@@ -420,6 +449,8 @@ colony = {
 	overlord_enforce_peace_attacking = yes
 	can_transfer_in_peace = no
 	press_sailors = yes
+	transfer_trade_power = yes
+	can_concentrate_development = no
 	
 	liberty_desire_development_ratio = 0.1
 
@@ -547,7 +578,6 @@ self_governing_colony = {
 	sailors_to_overlord = 0.05
 
 	# Subject Interactions:
-	transfer_trade_power = no
 	replace_governor = no
 	block_settlement_growth = no
 	allow_settlement_growth = no
@@ -562,6 +592,7 @@ self_governing_colony = {
 		modifier = self_governing_colony_subject
 	}
 }
+
 
 tributary_state = {
 	#If similar subject added check if it needs to be added to these scripted triggers:
@@ -579,7 +610,11 @@ tributary_state = {
 			has_reform = celestial_empire
 			is_nomad = yes
 			religion_group = eastern
+			#TOUHOU
 			has_government_attribute = th_enables_tributaries
+			#END TOUHOU
+			technology_group = chinese
+			technology_group = polynesian_tech
 		}
 	}
 	
@@ -589,7 +624,6 @@ tributary_state = {
 	diplomacy_subject_sprite = GFX_diplomacy_amtributary
 
 	# Properties:
-	transfer_trade_power = no
 	can_fight_independence_war = no
 	joins_overlords_wars = no
 	joins_colonial_wars = no
@@ -598,6 +632,7 @@ tributary_state = {
 	takes_diplo_slot = no
 	base_liberty_desire = -5
 	relative_power_class = 1
+	should_quit_wars_on_activation = no
 	can_send_tribute = yes
 	can_have_subjects_of_other_types = yes
 	uses_military_focus = no
@@ -609,6 +644,8 @@ tributary_state = {
 	can_set_mil_focus = no
 	can_send_missionary_to_subject = no
 	overlord_can_fabricate_for = no
+	does_overlord_size_count_for_warscore_cost = no
+	can_concentrate_development = no
 	
 	liberty_desire_development_ratio = 0.175
 	trust_on_start = 0
@@ -645,6 +682,8 @@ tributary_state = {
 	send_additional_troops = yes
 	demand_artifacts = yes
 	demand_additional_tribute = yes
+	block_settlement_growth = no
+	allow_settlement_growth = no
 	placate_rulers = no
 	knowledge_sharing = no
 	# (continuous)
