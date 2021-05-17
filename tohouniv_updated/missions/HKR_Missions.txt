@@ -59,7 +59,7 @@ hakurei_missions_discover_europe_slot = {
 			add_dip_power = 75
 			add_navy_tradition = 35
 			th_colonize_dev_province_for_root = {
-				province = 1997
+				province = 1995
 			}
 		}
 	}
@@ -259,7 +259,6 @@ hakurei_missions_spellcard_system_slot = {
 		tag = HKR
 		NOT = { was_tag = OKR }
 		NOT = { map_setup = map_setup_random }
-		has_country_flag = th_debug_mode_has_access_to_wip_missions
 	}
 	has_country_shield = yes
 	
@@ -278,10 +277,6 @@ hakurei_missions_spellcard_system_slot = {
 			country_event = {
 				id = flavor_hkr.25
 			}
-			add_country_modifier = {
-				name = hkr_gohei_staff
-				duration = -1
-			}
 		}
 	}
 	
@@ -298,20 +293,29 @@ hakurei_missions_spellcard_system_slot = {
 		}
 		trigger = {
 			army_size = 30
-			OR = {
-				NOT = { exists = MIM }
-				war_with = MIM
-				alliance_with = MIM
-				owns_or_non_sovereign_subject_of = 5033
+			if = {
+				limit = {
+					exists = MIM
+				}
+				OR = {
+					war_with = MIM
+					alliance_with = MIM
+				}
+			}
+			else = {
+				5033 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
 			}
 		}
 		effect = {
 			country_event = {
 				id = flavor_hkr.27
-			}
-			add_country_modifier = {
-				name = hkr_yin_yang_orbs
-				duration = -1
 			}
 		}
 	}
@@ -324,12 +328,22 @@ hakurei_missions_spellcard_system_slot = {
 			government_reform_progress = 50
 			has_institution = renaissance
 			adm_tech = 6
-			OR = {
-				NOT = { exists = YUM }
-				YUM = {
-					has_opinion = {
-						who = ROOT
-						value = 75
+			if = {
+				limit = {
+					exists = YUM
+				}
+				has_opinion = {
+					who = ROOT
+					value = 75
+				}
+			}
+			else = {
+				5301 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
 					}
 				}
 			}
@@ -340,7 +354,7 @@ hakurei_missions_spellcard_system_slot = {
 			}
 			add_country_modifier = {
 				name = hkr_ruukoto_robot
-				duration = -1
+				duration = 18250
 			}
 			Sunny_plains = {
 				limit = {
@@ -355,15 +369,6 @@ hakurei_missions_spellcard_system_slot = {
 					NOT = { is_core = ROOT }
 				}
 				add_permanent_claim = ROOT
-			}
-			if = {
-				limit = {
-					exists = SFF
-				}
-				add_casus_belli = {
-					type = cb_vassalize_mission
-					target = SFF
-				}
 			}
 		}
 	}
@@ -389,7 +394,7 @@ hakurei_missions_spellcard_system_slot = {
 			}
 			add_country_modifier = {
 				name = hkr_dream_lotus
-				duration = -1
+				duration = 9125
 			}
 		}
 	}
@@ -451,7 +456,6 @@ hakurei_missions_many_visitors_slot = {
 		tag = HKR
 		NOT = { was_tag = OKR }
 		NOT = { map_setup = map_setup_random }
-		has_country_flag = th_debug_mode_has_access_to_wip_missions
 	}
 	has_country_shield = yes
 
@@ -481,13 +485,13 @@ hakurei_missions_many_visitors_slot = {
 					}
 					add_country_modifier = {
 						name = hkr_reimu_and_the_crownland
-						duration = 14600
+						duration = 7300
 					}
 				}
 				else = {
 					add_country_modifier = {
 						name = hkr_reimu_and_the_estates
-						duration = 14600
+						duration = 7300
 					}
 				}
 			}
@@ -556,6 +560,14 @@ hakurei_missions_many_visitors_slot = {
 		icon = mission_touhou_aunn
 		required_missions = { HKR_harness_shions_power }
 		position = 4
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4955
+				province_id = 4956
+			}
+			NOT = { is_core = ROOT }
+			NOT = { owned_by = ROOT }
+		}
 		trigger = {
 			home_trade_node = {
 				trade_share = {
@@ -563,12 +575,21 @@ hakurei_missions_many_visitors_slot = {
 					share = 75
 				}
 			}
+			owns_core_province = 4955
+			owns_core_province = 4956
 		}
 		effect = {
-			th_get_default_permanent_province_buff = yes
-			add_country_modifier = {
-				name = hkr_happy_aunn
-				duration = -1
+			4955 = {
+				add_permanent_province_modifier = {
+					name = hkr_happy_aunn
+					duration = -1
+				}
+			}
+			4956 = {
+				add_permanent_province_modifier = {
+					name = hkr_happy_aunn
+					duration = -1
+				}
 			}
 		}
 	}
@@ -582,7 +603,6 @@ hakurei_missions_handle_the_curse_slot = {
 		tag = HKR
 		NOT = { was_tag = OKR }
 		NOT = { map_setup = map_setup_random }
-		has_country_flag = th_debug_mode_has_access_to_wip_missions
 	}
 	has_country_shield = yes
 
@@ -597,7 +617,7 @@ hakurei_missions_handle_the_curse_slot = {
 			th_enable_youkai_hunt_effect = yes
 			add_country_modifier = {
 				name = "influential_diplomacy"
-				duration = 9125 #25 years
+				duration = 7300 #20 years
 			}
 		}
 	}
@@ -662,18 +682,26 @@ hakurei_missions_handle_the_curse_slot = {
 		}
 	}
 
-	HKR_explore_east_pacific = {
+	HKR_explore_eastern_indian_ocean = {
 		icon = mission_galleys_in_port
 		required_missions = { HKR_beyond_the_barrier }
 		position = 3
 		provinces_to_highlight = {
-			area = eastern_polynesia_area
+			OR = {
+				area = western_indian_ocean_area
+				area = south_indian_ocean_area
+				area = eastern_indian_ocean_area
+			}
 			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = HKR_explore_east_pacific_tt
-				eastern_polynesia_area = { has_discovered = ROOT }
+				tooltip = HKR_explore_eastern_indian_ocean_tt
+				OR = {
+					western_indian_ocean_area = { has_discovered = ROOT }
+					south_indian_ocean_area = { has_discovered = ROOT }
+					eastern_indian_ocean_area = { has_discovered = ROOT }
+				}
 			}
 		}
 		effect = {
@@ -682,124 +710,123 @@ hakurei_missions_handle_the_curse_slot = {
 				duration = 9125
 			}
 			th_colonize_dev_province_for_root = {
-				province = 1988
-			}
-			peruan_coast = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-					NOT = { country_or_non_sovereign_subject_holds = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			northern_chile_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-					NOT = { country_or_non_sovereign_subject_holds = ROOT }
-				}
-				add_permanent_claim = ROOT
+				province = 1998
 			}
 		}
 	}
 
-	HKR_colonize_south_america = {
-		icon = mission_iberian_conquistador
-		required_missions = { HKR_explore_east_pacific }
+	HKR_create_trade_colonies = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { HKR_explore_eastern_indian_ocean }
 		position = 4
-		provinces_to_highlight = {
-			OR = {
-				area = peruan_coast
-				area = northern_chile_area
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
+
 		trigger = {
-			calc_true_if = {
-				all_province = {
-					OR = {
-						area = peruan_coast
-						area = northern_chile_area
+			custom_trigger_tooltip = {
+				tooltip = trade_company_region_abroad_tooltip
+				calc_true_if = {
+					all_trade_node = {
+						calc_true_if = {
+							all_trade_node_member_province = {
+								owned_by = ROOT
+								is_node_in_trade_company_region = yes
+								NOT = { continent = CAPITAL }
+							}
+							amount = 5
+						}
 					}
-					country_or_non_sovereign_subject_holds = ROOT
+					amount = 3
 				}
-				amount = 5
 			}
 		}
 		effect = {
-			jujuy_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-					NOT = { country_or_non_sovereign_subject_holds = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			potosi_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-					NOT = { country_or_non_sovereign_subject_holds = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			upper_peru = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-					NOT = { country_or_non_sovereign_subject_holds = ROOT }
-				}
-				add_permanent_claim = ROOT
+			add_country_modifier = {
+				name = "east_india_trade_rush"
+				duration = 9125 #25 years
 			}
 		}
 	}
 
-	HKR_incas_gold = {
+	HKR_produce_your_own_gold = {
 		icon = mission_war_chest
-		required_missions = { HKR_colonize_south_america }
+		required_missions = { HKR_create_trade_colonies }
 		position = 5
 		provinces_to_highlight = {
-			OR = {
-				area = jujuy_area
-				area = potosi_area
-				area = upper_peru
-				province_id = 795
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			th_has_valuable_resource = yes
+			NOT = { owned_by = ROOT }
+			NOT = { is_core = ROOT }
+			NOT = { continent = north_america }
+			NOT = { continent = south_america }
+			NOT = { continent = moon_continent }
+			NOT = { continent = gensokyo_continent }
+			NOT = { colonial_region = colonial_australia }
+			NOT = { continent = new_world }
 		}
 		trigger = {
-			calc_true_if = {
-				all_province = {
+			custom_trigger_tooltip = {
+				tooltip = HKR_produce_your_own_gold_tt
+				any_owned_province = {
+					is_core = ROOT
+					th_has_valuable_resource = yes
+					NOT = { continent = north_america }
+					NOT = { continent = south_america }
+					NOT = { continent = moon_continent }
+					NOT = { continent = gensokyo_continent }
+					NOT = { colonial_region = colonial_australia }
+					NOT = { continent = new_world }
 					OR = {
-						area = jujuy_area
-						area = potosi_area
-						area = upper_peru
+						has_building = temple
+						has_building = cathedral
 					}
-					country_or_non_sovereign_subject_holds = ROOT
 				}
-				amount = 10
 			}
-			owns_or_non_sovereign_subject_of = 795
 		}
 		effect = {
 			add_years_of_income = 2
-			795 = {
-				add_base_tax = 4
-				add_base_tax = 4
-				add_base_tax = 2
-				change_religion = ROOT
-				add_permanent_province_modifier = {
-					name = hkr_potosis_silver_mine
-					duration = -1
+			if = {
+				limit = {
+					any_owned_province = {
+						is_core = ROOT
+						th_has_valuable_resource = yes
+						NOT = { continent = north_america }
+						NOT = { continent = south_america }
+						NOT = { continent = moon_continent }
+						NOT = { continent = gensokyo_continent }
+						NOT = { colonial_region = colonial_australia }
+						NOT = { continent = new_world }
+						OR = {
+							has_building = temple
+							has_building = cathedral
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						is_core = ROOT
+						th_has_valuable_resource = yes
+						NOT = { continent = north_america }
+						NOT = { continent = south_america }
+						NOT = { continent = moon_continent }
+						NOT = { continent = gensokyo_continent }
+						NOT = { colonial_region = colonial_australia }
+						NOT = { continent = new_world }
+						OR = {
+							has_building = temple
+							has_building = cathedral
+						}
+					}
+					add_base_tax = 4
+					add_base_production = 4
+					add_base_manpower = 2
+					change_religion = ROOT
+					add_local_autonomy = -100
+					add_permanent_province_modifier = {
+						name = hkr_potosis_silver_mine
+						duration = -1
+					}
 				}
 			}
-			peru_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-					NOT = { country_or_non_sovereign_subject_holds = ROOT }
-				}
-				add_permanent_claim = ROOT
+			else = {
+				custom_tooltip = HKR_produce_your_own_gold_ct
 			}
 		}
 	}
