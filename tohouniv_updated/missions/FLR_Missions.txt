@@ -9,15 +9,15 @@ flr_slot1_branch = {
 	has_country_shield = yes
 	
 	flr_restore_our_sovereignty = {
-		icon = assert_our_sovereignty
+		icon = mission_touhou_flan_royal_fighter
 		required_missions = {  }
 		position = 1
 		
 		trigger = {
 			is_subject = no
 			OR = {
-			BUR = { war_with = ROOT }
-			NOT = { exists = BUR }
+				BUR = { war_with = ROOT }
+				NOT = { exists = BUR }
 			}
 		}
 		effect = {
@@ -76,10 +76,8 @@ flr_slot1_branch = {
 			181 = {
 				if = {
 					limit = {
-						NOT = {
-							is_permanent_claim = ROOT
-							is_core = ROOT
-						}
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
 					}
 					add_permanent_claim = ROOT
 				}
@@ -87,10 +85,8 @@ flr_slot1_branch = {
 			191 = {
 				if = {
 					limit = {
-						NOT = {
-							is_permanent_claim = ROOT
-							is_core = ROOT
-						}
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
 					}
 					add_permanent_claim = ROOT
 				}
@@ -112,8 +108,8 @@ flr_slot1_branch = {
 						}
 						hidden_effect = { BUR = { free_vassal = prev } }
 						ROOT = { vassalize = prev }
-						}
 					}
+				}
 			}
 		}
 	}
@@ -123,7 +119,7 @@ flr_slot1_branch = {
 		required_missions = { flr_dominance_in_low_countries }
 		position = 3
 		provinces_to_highlight = {
-			region = low_contries_region
+			region = low_countries_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		
@@ -147,11 +143,11 @@ flr_slot1_branch = {
 		position = 4
 		trigger = {
 			ROOT = {
-						NOT = { unrest = 2 }
-						NOT = { num_of_loans = 1 }
-						manpower_percentage = 0.8
-					}
-				}
+				NOT = { unrest = 2 }
+				NOT = { num_of_loans = 1 }
+				manpower_percentage = 0.8
+			}
+		}
 		effect = {
 			add_country_modifier = {
 				name = "th_FLR_mistress_lowlands"
@@ -375,6 +371,709 @@ flr_slot1_branch = {
 	}
 }
 
+flr_vampiric_branch = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = FLR
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	flr_create_the_scarlet_navy = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { flr_get_used_to_europe }
+		position = 2
+		trigger = {
+			num_of_heavy_ship = 10 
+			if = {
+				limit = {
+					has_dlc = "Golden Century"
+				}
+				has_flagship = yes
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "naval_enthusiasm_mission"
+				duration = 9125 #25 years
+			}
+			home_counties_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	flr_first_clue_scarlet = {
+		icon = mission_rb_control_the_hansa
+		required_missions = { flr_create_the_scarlet_navy }
+		position = 3
+		provinces_to_highlight = {
+			province_id = 236
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			OR = {
+				owns_or_non_sovereign_subject_of = 236
+				custom_trigger_tooltip = {
+					tooltip = flr_first_clue_scarlet_trigger
+					236 = {
+						owner = {
+							NOT = { is_subject_of = ROOT }
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = flr_first_clue_scarlet_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						owns_or_non_sovereign_subject_of = 236
+					}
+					add_adm_power = 100
+					add_country_modifier = {
+						name = "imperial_ambition"
+						duration = 9125
+					}
+				}
+				else = {
+					add_dip_power = 100
+					add_country_modifier = {
+						name = "influential_diplomacy"
+						duration = 9125 #25 years
+					}
+				}
+			}
+			country_event = {
+				id = flavor_flr.10
+			}
+		}
+	}
+	
+	flr_origin_of_vampirism = {
+		icon = mission_touhou_stone_mask
+		required_missions = { flr_first_clue_scarlet }
+		position = 4
+		trigger = {
+			home_trade_node = {
+				trade_share = {
+					country = ROOT
+					share = 75
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_flr.11
+			}
+			th_get_default_permanent_province_buff = yes
+		}
+	}
+}
+
+flr_identity_branch = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = FLR
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	flr_get_used_to_europe = {
+		icon = mission_touhou_noobie_flan_throne
+		required_missions = {  }
+		position = 1
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_flr_any_country_likes_us_tt
+				any_country = {
+					capital_scope = {
+						superregion = europe_superregion
+					}
+					NOT = { overlord_of = ROOT }
+					is_free_or_tributary_trigger = yes
+					has_opinion = {
+						who = ROOT
+						value = 125
+					}
+				}
+			}
+			has_advisor = yes
+		}
+		effect = {
+			country_event = {
+				id = flavor_scr.5
+			}
+			add_stability = 2
+		}
+	}
+	
+	flr_build_the_scarlet_force = {
+		icon = mission_touhou_army
+		required_missions = { flr_get_used_to_europe }
+		position = 2
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = flr_first_flanclone_tt
+				has_country_flag = flr_first_flanclone
+			}
+			army_size_percentage = 0.65
+		}
+		effect = {
+			custom_tooltip = flr_build_the_scarlet_force_tt
+			hidden_effect = {
+				remove_country_modifier = th_flr_lvl1_flan
+				add_country_modifier = {
+					name = flr_lvl2_flan
+					duration = -1
+				}
+			}
+			add_country_modifier = {
+				name = flr_scarlet_army
+				duration = 7300
+			}
+		}
+	}
+	
+	flr_get_the_estates_under_control = {
+		icon = mission_alliances
+		required_missions = { flr_build_the_scarlet_force }
+		position = 3
+		trigger = {
+			crown_land_share = 45
+			legitimacy = 95
+			prestige = 30
+		}
+		effect = {
+			custom_tooltip = flr_get_the_estates_under_control_tt
+			hidden_effect = {
+				remove_country_modifier = flr_lvl2_flan
+				add_country_modifier = {
+					name = flr_lvl3_flan
+					duration = -1
+				}
+			}
+			th_remove_autonomy_from_all_provinces_effect = yes
+			add_country_modifier = {
+				name = "hegemonic_ambition"
+				duration = 7300 #20 years
+			}
+		}
+	}
+	
+	flr_learn_about_economics = {
+		icon = mission_high_income
+		required_missions = { flr_get_the_estates_under_control }
+		position = 4
+		trigger = {
+			government_rank = 2
+			share_of_starting_income = 7.5
+			treasury = 1500
+		}
+		effect = {
+			custom_tooltip = flr_learn_about_economics_tt
+			hidden_effect = {
+				remove_country_modifier = flr_lvl3_flan
+				add_country_modifier = {
+					name = flr_lvl4_flan
+					duration = -1
+				}
+			}
+			add_country_modifier = {
+				name = "growing_economy"
+				duration = 7300 #20 years
+			}
+			add_country_modifier = {
+				name = "strong_treasury"
+				duration = 7300
+			}
+		}
+	}
+	
+	flr_the_imperial_test = {
+		icon = mission_touhou_pro_flan_throne
+		required_missions = { flr_learn_about_economics }
+		position = 5
+		provinces_to_highlight = {
+			region_for_scope_province = {
+				is_capital_of = ROOT
+			}
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			OR = {
+				government_rank = 3
+				is_emperor = yes
+			}
+			capital_scope = {
+				region_for_scope_province = {
+					type = all
+					owned_by = ROOT #Subjects won't count, empty provinces will need to be colonized.
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = flr_the_imperial_test_tt
+			hidden_effect = {
+				override_country_name = FLANDRISH_EMPIRE
+				remove_country_modifier = flr_lvl4_flan
+				add_country_modifier = {
+					name = flr_lvl5_flan
+					duration = -1
+				}
+			}
+			add_dip_power = 50
+			add_adm_power = 50
+			add_mil_power = 50
+			add_country_modifier = {
+				name = "hegemonic_ambition"
+				duration = 9125 #25 years
+			}
+		}
+	}
+}
+
+flr_religion_branch = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = FLR
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	flr_question_of_religious_direction = {
+		icon = rhineland_conquest
+		required_missions = { flr_get_used_to_europe }
+		position = 2
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = flr_question_of_religious_direction_trigger
+				has_country_flag = flr_has_made_the_choice
+			}
+		}
+		effect = {
+			add_legitimacy = 15
+			custom_tooltip = flr_question_of_religious_direction_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = flr_catholic_path
+					}
+					clr_country_flag = flr_catholic_path
+					set_country_flag = flr_catholic_path_mission
+				}
+				if = {
+					limit = {
+						has_country_flag = flr_reformation_path
+					}
+					clr_country_flag = flr_reformation
+					set_country_flag = flr_reformation_path_mission
+				}
+				if = {
+					limit = {
+						has_country_flag = flr_shinto_path
+					}
+					clr_country_flag = flr_shinto_path
+					set_country_flag = flr_shinto_path_mission
+				}
+				if = {
+					limit = {
+						has_country_flag = flr_tolerance_path
+					}
+					clr_country_flag = flr_tolerance_path
+					set_country_flag = flr_tolerance_path_mission
+				}
+				swap_non_generic_missions = yes
+			}
+		}
+	}
+}
+
+flr_catholic_branch = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = FLR
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = flr_catholic_path_mission
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+	}
+	has_country_shield = yes
+	
+	flr_praise_man_with_funny_hat = {
+		icon = mission_touhou_pope
+		required_missions = { flr_question_of_religious_direction }
+		position = 3
+		trigger = {
+			OR = {
+				PAP = {
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+				NOT = { exists = PAP }
+			}
+		}
+		effect = {
+			add_papal_influence = 100
+		}
+	}
+	
+	flr_hre_win_for_catholicism = {
+		icon = crush_heretic_strongholds
+		required_missions = { flr_praise_man_with_funny_hat }
+		position = 4
+		trigger = {
+			OR = {
+				NOT = { hre_size = 0 }
+				AND = {
+					hre_religion_locked = yes
+					hre_religion = catholic
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = flr_religious_war_tt
+			if = {
+				limit = {
+					has_country_flag = religious_league_war_on_winning_side
+				}
+				add_country_modifier = {
+					name = flr_teachings_of_the_war
+					duration = 9125
+				}
+			}
+			if = {
+				limit = {
+					is_emperor = yes
+				}
+				add_imperial_influence = 25
+			}
+			else = {
+				add_mil_power = 100
+			}
+		}
+	}
+}
+
+flr_reformation_branch = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = FLR
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = flr_reformation_path_mission
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+	}
+	has_country_shield = yes
+	
+	flr_become_defender_of_reformation = {
+		icon = mission_luther_theses
+		required_missions = { flr_question_of_religious_direction }
+		position = 3
+		trigger = {
+			is_defender_of_faith = yes
+			OR = {
+				religion = protestant
+				religion = reformed
+			}
+			OR = {
+				calc_true_if = {
+					all_country = {
+						religion = ROOT
+					}
+					amount = 20
+				}
+				calc_true_if = {
+					all_province = {
+						religion = ROOT
+					}
+					amount = 300
+				}
+			}
+		}
+		effect = {
+			add_church_power = 100
+			add_fervor = 50
+		}
+	}
+	
+	flr_hre_win_for_reformation = {
+		icon = mission_rb_control_state_religion
+		required_missions = { flr_become_defender_of_reformation }
+		position = 4
+		trigger = {
+			OR = {
+				NOT = { hre_size = 0 }
+				AND = {
+					hre_religion_locked = yes
+					OR = {
+						hre_religion = protestant
+						hre_religion = reformed
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = flr_religious_war_tt
+			if = {
+				limit = {
+					has_country_flag = religious_league_war_on_winning_side
+				}
+				add_country_modifier = {
+					name = flr_teachings_of_the_war
+					duration = 9125
+				}
+			}
+			if = {
+				limit = {
+					is_emperor = yes
+				}
+				add_imperial_influence = 25
+			}
+			else = {
+				add_mil_power = 100
+			}
+		}
+	}
+}
+
+flr_shinto_branch = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = FLR
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = flr_shinto_path_mission
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+	}
+	has_country_shield = yes
+	
+	flr_build_shinto_shrines = {
+		icon = mission_touhou_shrines
+		required_missions = { flr_question_of_religious_direction }
+		position = 3
+		trigger = {
+			calc_true_if = {
+				all_ally = {
+					religion_group = Touhou
+				}
+				amount = 3
+			}
+			OR = {
+				calc_true_if = {
+					all_country = {
+						technology_group = western
+						religion_group = Touhou
+					}
+					amount = 10
+				}
+				calc_true_if = {
+					all_province = {
+						religion_group = Touhou
+					}
+					amount = 100
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 150
+			custom_tooltip = flr_gain_claims_over_vampire_hunters
+			hidden_effect = {
+				236 = {
+					if = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+				}
+				112 = {
+					if = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+				}
+				transylvania_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				southern_transylvania_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+	
+	flr_hunt_the_hunters = {
+		icon = mission_touhou_hellsing
+		required_missions = { flr_build_shinto_shrines }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				province_id = 236
+				province_id = 112
+				province_id = 4127
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = flr_hunt_the_hunters_trigger
+				calc_true_if = {
+					all_province = {
+						continent = europe
+						religion_group = Touhou
+					}
+					amount = 100
+				}
+			}
+			owns_or_non_sovereign_subject_of = 236	#Hellsing Organization, Hellsing
+			owns_or_non_sovereign_subject_of = 112	#Will A. Zeppeli, JoJo
+			owns_or_non_sovereign_subject_of = 4127	#Simon Belmont, Castelvania
+		}
+		effect = {
+			th_allow_shorter_deity_swapping = yes
+			add_prestige = 100
+		}
+	}
+}
+
+flr_tolerant_branch = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = FLR
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = flr_tolerance_path_mission
+		has_country_flag = th_debug_mode_has_access_to_wip_missions
+	}
+	has_country_shield = yes
+	
+	flr_religious_war = {
+		icon = back_the_league
+		required_missions = { flr_question_of_religious_direction }
+		position = 3
+		trigger = {
+			OR = {
+				NOT = { hre_size = 1 }
+				hre_religion_locked = yes
+				hre_religion_treaty = yes
+			}
+		}
+		effect = {
+			custom_tooltip = flr_religious_war_tt
+			if = {
+				limit = {
+					has_country_flag = religious_league_war_on_winning_side
+				}
+				add_country_modifier = {
+					name = flr_teachings_of_the_war
+					duration = 9125
+				}
+			}
+			add_adm_power = 100
+		}
+	}
+	
+	flr_convince_emperor_of_religious_peace = {
+		icon = mission_touhou_flan_peace
+		required_missions = { flr_religious_war }
+		position = 4
+		trigger = {
+			OR = {
+				has_idea = FLR_flans_own_empire
+				has_idea_group = humanist_ideas
+				has_idea_group = innovativeness_ideas
+			}
+			OR = {
+				is_emperor = yes
+				NOT = { hre_size = 1 }
+				if = {
+					limit = {
+						hre_size = 1
+					}
+					calc_true_if = {
+						all_elector = {
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+						}
+						amount = 2
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					hre_size = 1
+					is_emperor = no
+				}
+				emperor = {
+					country_event = {
+						id = flavor_flr.13
+					}
+				}
+				add_country_modifier = {
+					name = flr_tolerant_reformer_of_the_hre
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					hre_size = 1
+					is_emperor = yes
+				}
+				country_event = {
+					id = flavor_flr.14
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = flr_tolerant_reformer_of_the_hre
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
 flr_slot2_branch = {
 	slot = 2
 	generic = no
@@ -422,13 +1121,28 @@ flr_slot2_branch = {
 		required_missions = { flr_imperial_crown_of_germany }
 		position = 9
 		provinces_to_highlight = {
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			OR = {
+				is_part_of_hre = no
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			}
 			region = italy_region
 		}
 		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 40
-				region = italy_region
+			OR = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 40
+					region = italy_region
+				}
+				AND = {
+					is_emperor = yes
+					calc_true_if = {
+						all_province = {
+							is_part_of_hre = yes
+							region = italy_region
+						}
+						amount = 40
+					}
+				}
 			}
 		}
 		effect = {
@@ -458,7 +1172,7 @@ flr_slot3_branch = {
 		}
 		position = 6
 		provinces_to_highlight = {
-			region = low_contries_region
+			region = low_countries_region
 			NOT = { owned_by = ROOT }
 		}
 		trigger = {
@@ -503,23 +1217,23 @@ flr_slot3_branch = {
 	flr_hegemony_in_germany = {
 		icon = ger_kaiserreich
 		required_missions = {
-				flr_entrance_of_north_germany
-				flr_lex_salica
+			flr_entrance_of_north_germany
+			flr_lex_salica
 		}
 		position = 7
 		trigger = {
 			OR = {
 				AND = {
 					ROOT = {
-					is_emperor = yes
-					if = {
-						limit = {
-							has_dlc = "Emperor"
-							}
-						hre_reform_passed = emperor_perpetual_diet
+						is_emperor = yes
+						if = {
+							limit = {
+								has_dlc = "Emperor"
+								}
+							hre_reform_passed = emperor_perpetual_diet
 						}
-					else = {
-						hre_reform_passed = landfriede
+						else = {
+							hre_reform_passed = landfriede
 						}
 					}
 				}
@@ -559,8 +1273,8 @@ flr_slot3_branch = {
 	flr_imperial_crown_of_germany = {
 		icon = spread_the_von_wettins
 		required_missions = {
-				flr_brandenburg_electorate
-				flr_hegemony_in_germany
+			flr_brandenburg_electorate
+			flr_hegemony_in_germany
 		}
 		provinces_to_highlight = {
 			OR = {
@@ -571,13 +1285,27 @@ flr_slot3_branch = {
 		}
 		position = 8
 		trigger = {
+			OR = {
+				AND = {
+					is_emperor = yes
+					if = {
+						limit = {
+							has_dlc = "Emperor"
+						}
+						hre_reform_passed = emperor_geteilte_macht
+					}
+					else = {
+						hre_reform_passed = privilegia_de_non_appelando
+					}
+				}
 				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 100
+					value = 100
 					OR = {
 						region = north_german_region
 						region = south_german_region
 					}
 				}
+			}
 		}
 		effect = {
 			france_region = {
@@ -805,9 +1533,9 @@ flr_slot4_branch = {
 	generic = no
 	ai = yes
 	potential = {
-				tag = FLR
-				NOT = { map_setup = map_setup_random }
-		}
+		tag = FLR
+		NOT = { map_setup = map_setup_random }
+	}
 	has_country_shield = yes
 	
 	flr_economic_base = {
@@ -1069,7 +1797,7 @@ flr_slot5_branch = {
 		required_missions = { flr_controlled_army }
 		position = 8
 		trigger = {
-			has_final_tier_reforms_trigger = yes
+			th_has_final_tier_reforms_trigger = yes
 			if = {
 				limit = {
 					is_revolutionary = no

@@ -207,7 +207,7 @@ country_event = {
 			name = "Suika Ibuki"
 			female = yes
 		}
-		4905 = {
+		5057 = {
 			change_culture = Oni_culture
 		}
 		add_accepted_culture = Oni_culture
@@ -254,7 +254,7 @@ country_event = {
 			name = th_suikas_help
 			duration = 36500
 		}
-		4905 = {
+		5057 = {
 			change_culture = Oni_culture
 		}
 		add_accepted_culture = Oni_culture
@@ -331,6 +331,7 @@ country_event = {
 			name = "Suika"
 			dynasty = "Ibuki"
 			culture = Oni_culture
+			fixed = yes	#TODO change it back to fixed when vanilla EU4 has solved this issue
 			adm = 4
 			dip = 4
 			mil = 6
@@ -341,6 +342,7 @@ country_event = {
 		add_heir_personality = immortal_personality
 		hidden_effect = {
 			set_heir_flag = touhou_character_ruler
+			set_heir_flag = touhou_original_heir
 		}
 
 		ai_chance = { 
@@ -365,6 +367,7 @@ country_event = {
 		add_ruler_personality = immortal_personality
 		hidden_effect = {
 			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
 		}
 
 		ai_chance = { 
@@ -450,73 +453,71 @@ country_event = {
 	}
 }
 
-#Hakurei God's blessing
-country_event = {
-	id = flavor_hkr.102
-	title = flavor_hkr.102.t
-	desc = flavor_hkr.102.desc
-	picture = HAKUREIGOD_eventPicture
-	
-	fire_only_once = yes
-
-	trigger = {
-		has_ruler_flag = th_current_ruler_reimu_hakurei
-		has_global_flag = th_incident_setting_finished
-		NOT = { has_global_flag = th_deactivated_incidents }
-	}	
-	
-	mean_time_to_happen = {
-		months = 3
-	}
-
-	option = {  #I'll do my best
-		name = flavor_hkr.102.a
-		custom_tooltip = flavor_hkr.102.a.tt
-		add_ruler_personality = immortal_personality
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Reimu retires(lose immortality)
-country_event = {
-	id = flavor_hkr.103
-	title = flavor_hkr.103.t
-	desc = flavor_hkr.103.desc
-	picture = HAKUREIGOD_eventPicture
-	
-	fire_only_once = yes
-
-	trigger = {
-		has_ruler_flag = th_current_ruler_reimu_hakurei
-		ruler_has_personality = immortal_personality
-		#all incident has been solved
-		has_global_flag = th_scarlet_mists_incident_solved
-		has_global_flag = th_cherry_blossom_incident_solved
-		has_global_flag = th_eternal_night_incident_solved
-		has_global_flag = th_mountain_of_faith_incident_solved
-		NOT = { has_country_modifier = hkr_blessed_by_hakurei }
-	}	
-	
-	mean_time_to_happen = {
-		months = 36
-	}
-
-	option = {  #It's time to retire
-		name = flavor_hkr.103.a
-		remove_ruler_personality = immortal_personality
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
 
 
 #Mission events#
+
+#Results of the weaponized poverty
+country_event = {
+	id = flavor_hkr.8
+	title = flavor_hkr.8.t
+	desc = flavor_hkr.8.desc
+	picture = SHION_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_country = {
+				limit = {
+					is_rival = ROOT
+					has_spy_network_from = {
+						who = ROOT
+						value = 45
+					}
+					has_been_insulted_by_root = yes
+				}
+				country_event = {
+					id = flavor_hkr.9
+				}
+			}
+		}
+	}
+
+	option = {
+		name = flavor_hkr.8.a
+		add_country_modifier = {
+			name = hkr_powerless_loan_sharks
+			duration = 9125
+		}
+	}
+}
+
+#Results of the weaponized poverty
+country_event = {
+	id = flavor_hkr.9
+	title = flavor_hkr.9.t
+	desc = flavor_hkr.9.desc
+	picture = SHION_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = flavor_hkr.9.a
+		if = {
+			limit = {
+				ai = yes
+				was_player = no
+			}
+			add_years_of_income = -1
+		}
+		else = {
+			custom_tooltip = flavor_hkr.9.a.tt
+			add_treasury = -10
+		}
+	}
+}
 
 #Beating Tenshi up
 country_event = {
@@ -539,13 +540,12 @@ country_event = {
 			}
 			amount = 8
 		}
-		4880 = {
+		5032 = {
 			religion = ROOT
 		}
 		NOT = { was_tag = OKR }
-		OR = {
+		th_is_or_was_tag = {
 			tag = HKR
-			was_tag = HKR
 		}
 	}
 
@@ -626,7 +626,7 @@ country_event = {
 		hidden_effect = {
 			set_country_flag = th_hkr_sake_production
 		}
-		4905 = {
+		5057 = {
 			add_permanent_province_modifier = {
 				name = hkr_sake_production
 				duration = -1
@@ -689,7 +689,9 @@ country_event = {
 			claim = 100
 			female = yes
 		}
-		add_ruler_personality = immortal_personality
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+		}
 		set_ruler_flag = th_current_ruler_reimu_hakurei
 
 		if = {
@@ -708,7 +710,9 @@ country_event = {
 				claim = 100
 				female = yes
 			}
-			add_queen_personality = immortal_personality
+			hidden_effect = {
+				add_queen_personality = immortal_personality
+			}
 		}
 	}
 	
@@ -819,7 +823,7 @@ country_event = {
 	
 	trigger = {
 		is_year = 1515
-		is_religion_enabled = TH_Shinkism
+		is_religion_enabled = th_shinkism
 		has_country_flag = th_hkr_ready_for_mki_war
 	}
 
@@ -836,7 +840,7 @@ country_event = {
 		hidden_effect = {
 			every_province = {
 				limit = {
-					religion = TH_Shinkism
+					religion = th_shinkism
 					NOT = { area = Makai }
 					NOT = { area = Makai_coast_state }
 					NOT = { area = Makai_peninsula_state }
@@ -870,7 +874,7 @@ country_event = {
 		}
 		
 		declare_war_with_cb = {
-			casus_belli = cb_restore_personal_union
+			casus_belli = cb_touhou_mission_personal_union_war
 			who = FOM
 		}
 		ai_chance = {
@@ -882,7 +886,7 @@ country_event = {
 		name = flavor_hkr.17.b
 		
 		add_casus_belli = {
-			type = cb_restore_personal_union
+			type = cb_touhou_mission_personal_union_war
 			target = FOM
 		}
 		ai_chance = {
@@ -1116,6 +1120,630 @@ country_event = {
 		country_event = {
 			id = flavor_hkr.4
 			days = 7
+		}
+	}
+}
+
+
+#Origin story - The beginning Touhou 0
+country_event = {
+	id = flavor_hkr.25
+	title = flavor_hkr.25.t
+	desc = flavor_hkr.25.desc
+	picture = BARRIER_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.25.a
+		add_adm_power = 75
+		country_event = {
+			id = flavor_hkr.26
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Origin story - Touhou 1
+country_event = {
+	id = flavor_hkr.26
+	title = flavor_hkr.26.t
+	desc = flavor_hkr.26.desc
+	picture = REIMUPC98_eventPicture	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.26.a
+		custom_tooltip = flavor_hkr.26.a.tt
+		add_mil_power = 75
+		hidden_effect = {
+			set_country_flag = hkr_duel_with_konngara
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Memory - Fight against Konngara
+country_event = {
+	id = flavor_hkr.261
+	title = flavor_hkr.261.t
+	desc = flavor_hkr.261.desc
+	picture = KONNGARA_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill_no_mil = {
+				SKILL_BONI = 600
+			}
+			#Konngara
+			set_variable = {
+				which = th_hkr_konngara_combat_skills
+				value = 1400
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_hkr_konngara_combat_skills
+			}
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = flavor_hkr.261.a
+		custom_tooltip = flavor_hkr.261.a.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_hkr.100
+			draw_event = flavor_hkr.100
+			defeat_event = flavor_hkr.101
+			days = 10
+		}		
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+#Origin story - Touhou 2
+country_event = {
+	id = flavor_hkr.27
+	title = flavor_hkr.27.t
+	desc = flavor_hkr.27.desc
+	picture = MARISA98_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.27.a
+		custom_tooltip = flavor_hkr.27.a.tt
+		add_country_modifier = {
+			name = hkr_mimas_teachings
+			duration = 9125
+		}
+		hidden_effect = {
+			set_country_flag = hkr_duel_with_mima
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Memory - Fight against Mima
+country_event = {
+	id = flavor_hkr.271
+	title = flavor_hkr.271.t
+	desc = flavor_hkr.271.desc
+	picture = MIMA_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill_no_mil = {
+				SKILL_BONI = 600
+			}
+			#Mima
+			set_variable = {
+				which = th_hkr_mima_combat_skills
+				value = 1600
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_hkr_mima_combat_skills
+			}
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = flavor_hkr.271.a
+		custom_tooltip = flavor_hkr.271.a.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_hkr.100
+			draw_event = flavor_hkr.100
+			defeat_event = flavor_hkr.101
+			days = 10
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+#Origin story - Touhou 3
+country_event = {
+	id = flavor_hkr.28
+	title = flavor_hkr.28.t
+	desc = flavor_hkr.28.desc
+	picture = KANAELLEN_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.28.a
+		custom_tooltip = flavor_hkr.28.a.tt
+		change_innovativeness = 10
+		hidden_effect = {
+			set_country_flag = hkr_duel_with_yumemi
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Memory - Fight against Yumemi
+country_event = {
+	id = flavor_hkr.281
+	title = flavor_hkr.281.t
+	desc = flavor_hkr.281.desc
+	picture = YUMEMIBOSS_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill_no_mil = {
+				SKILL_BONI = 600
+			}
+			#Yumemi
+			set_variable = {
+				which = th_hkr_yumemi_combat_skills
+				value = 1650
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_hkr_yumemi_combat_skills
+			}
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = flavor_hkr.281.a
+		custom_tooltip = flavor_hkr.281.a.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_hkr.100
+			draw_event = flavor_hkr.100
+			defeat_event = flavor_hkr.101
+			days = 10
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+#Origin story - Touhou 4
+country_event = {
+	id = flavor_hkr.29
+	title = flavor_hkr.29.t
+	desc = flavor_hkr.29.desc
+	picture = PC98REIMUMARISA_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.29.a
+		custom_tooltip = flavor_hkr.29.a.tt
+		hidden_effect = {
+			set_country_flag = hkr_duel_with_yuuka
+		}
+		add_army_professionalism = 0.05
+		add_army_tradition = 20
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Memory - Fight against Yuuka
+country_event = {
+	id = flavor_hkr.291
+	title = flavor_hkr.291.t
+	desc = flavor_hkr.291.desc
+	picture = YUUKASWRATH_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill_no_mil = {
+				SKILL_BONI = 600
+			}
+			#Yuuka
+			set_variable = {
+				which = th_hkr_yuuka_combat_skills
+				value = 2000
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_hkr_yuuka_combat_skills
+			}
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = flavor_hkr.291.a
+		custom_tooltip = flavor_hkr.291.a.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_hkr.100
+			draw_event = flavor_hkr.100
+			defeat_event = flavor_hkr.101
+			days = 10
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Origin story - Touhou 5
+country_event = {
+	id = flavor_hkr.30
+	title = flavor_hkr.30.t
+	desc = flavor_hkr.30.desc
+	picture = MAKAI_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.30.a
+		custom_tooltip = flavor_hkr.30.a.tt
+		hidden_effect = {
+			set_country_flag = hkr_duel_with_shinki
+		}
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Memory - Fight against Shinki
+country_event = {
+	id = flavor_hkr.301
+	title = flavor_hkr.301.t
+	desc = flavor_hkr.301.desc
+	picture = SHINKI_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill_no_mil = {
+				SKILL_BONI = 600
+			}
+			#Shinki
+			set_variable = {
+				which = th_hkr_shinki_combat_skills
+				value = 2500
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_hkr_shinki_combat_skills
+			}
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = flavor_hkr.301.a
+		custom_tooltip = flavor_hkr.301.a.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_hkr.100
+			draw_event = flavor_hkr.100
+			defeat_event = flavor_hkr.101
+			days = 10
+		}	
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Origin story - Epilogue for Reimu
+country_event = {
+	id = flavor_hkr.31
+	title = flavor_hkr.31.t
+	desc = flavor_hkr.31.desc
+	picture = YUKARISOFFER_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.31.a
+		add_country_modifier = {
+			name = hkr_conclusion_of_the_meditation
+			duration = -1
+		}
+		country_event = {
+			id = flavor_hkr.32
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Origin story - Epilogue for Spell Cards
+country_event = {
+	id = flavor_hkr.32
+	title = flavor_hkr.32.t
+	desc = flavor_hkr.32.desc
+	picture = SPELLCARD_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.32.a
+		add_stability = 1
+		country_event = {
+			id = flavor_hkr.33
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Origin story - Epilogue for Future Reimu
+country_event = {
+	id = flavor_hkr.33
+	title = flavor_hkr.33.t
+	desc = flavor_hkr.33.desc
+	picture = REIMU_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.33.a
+		add_devotion = 100
+		country_event = {
+			id = flavor_hkr.34
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Origin story - Epilogue for Marisa
+country_event = {
+	id = flavor_hkr.34
+	title = flavor_hkr.34.t
+	desc = flavor_hkr.34.desc
+	picture = MARISA_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_hkr.34.a
+		add_devotion = 100
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Memory - Victory
+country_event = {
+	id = flavor_hkr.100
+	title = flavor_hkr.100.t
+	desc = flavor_hkr.100.desc
+	picture = HAKUREIGOD_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_hkr.100.a
+		add_years_of_income = 3
+		hidden_effect = {
+			if = {
+				limit = {
+					has_country_flag = hkr_dueling_konngara
+				}
+				clr_country_flag = hkr_dueling_konngara
+				set_country_flag = hkr_won_against_konngara
+			}
+			else_if = {
+				limit = {
+					has_country_flag = hkr_dueling_mima
+				}
+				clr_country_flag = hkr_dueling_mima
+				set_country_flag = hkr_won_against_mima
+			}
+			else_if = {
+				limit = {
+					has_country_flag = hkr_dueling_yumemi
+				}
+				clr_country_flag = hkr_dueling_yumemi
+				set_country_flag = hkr_won_against_yumemi
+			}
+			else_if = {
+				limit = {
+					has_country_flag = hkr_dueling_yuuka
+				}
+				clr_country_flag = hkr_dueling_yuuka
+				set_country_flag = hkr_won_against_yuuka
+			}
+			else_if = {
+				limit = {
+					has_country_flag = hkr_dueling_shinki
+				}
+				clr_country_flag = hkr_dueling_shinki
+				set_country_flag = hkr_won_against_shinki
+			}
+			clr_country_flag = hkr_dueling_memory
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Memory - Defeat
+country_event = {
+	id = flavor_hkr.101
+	title = flavor_hkr.101.t
+	desc = flavor_hkr.101.desc
+	picture = HAKUREIGOD_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_hkr.101.a
+		custom_tooltip = flavor_hkr.101.a.tt
+		add_stability = -1
+		hidden_effect = {
+			set_country_flag = hkr_lost_against_memory
+			if = {
+				limit = {
+					has_country_flag = hkr_dueling_konngara
+				}
+				clr_country_flag = hkr_dueling_konngara
+				set_country_flag = hkr_duel_with_konngara
+			}
+			else_if = {
+				limit = {
+					has_country_flag = hkr_dueling_mima
+				}
+				clr_country_flag = hkr_dueling_mima
+				set_country_flag = hkr_duel_with_mima
+			}
+			else_if = {
+				limit = {
+					has_country_flag = hkr_dueling_yumemi
+				}
+				clr_country_flag = hkr_dueling_yumemi
+				set_country_flag = hkr_duel_with_yumemi
+			}
+			else_if = {
+				limit = {
+					has_country_flag = hkr_dueling_yuuka
+				}
+				clr_country_flag = hkr_dueling_yuuka
+				set_country_flag = hkr_duel_with_yuuka
+			}
+			else_if = {
+				limit = {
+					has_country_flag = hkr_dueling_shinki
+				}
+				clr_country_flag = hkr_dueling_shinki
+				set_country_flag = hkr_duel_with_shinki
+			}
+			clr_country_flag = hkr_dueling_memory
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Hakurei God's blessing
+country_event = {
+	id = flavor_hkr.102
+	title = flavor_hkr.102.t
+	desc = flavor_hkr.102.desc
+	picture = HAKUREIGOD_eventPicture
+	
+	fire_only_once = yes
+
+	trigger = {
+		has_ruler_flag = th_current_ruler_reimu_hakurei
+		has_global_flag = th_incident_setting_finished
+		NOT = { has_global_flag = th_deactivated_incidents }
+	}	
+	
+	mean_time_to_happen = {
+		months = 3
+	}
+
+	option = {  #I'll do my best
+		name = flavor_hkr.102.a
+		custom_tooltip = flavor_hkr.102.a.tt
+		add_ruler_personality = immortal_personality
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Reimu retires(lose immortality)
+country_event = {
+	id = flavor_hkr.103
+	title = flavor_hkr.103.t
+	desc = flavor_hkr.103.desc
+	picture = HAKUREIGOD_eventPicture
+	
+	fire_only_once = yes
+
+	trigger = {
+		has_ruler_flag = th_current_ruler_reimu_hakurei
+		ruler_has_personality = immortal_personality
+		#all incident has been solved
+		has_global_flag = th_scarlet_mists_incident_solved
+		has_global_flag = th_cherry_blossom_incident_solved
+		has_global_flag = th_eternal_night_incident_solved
+		has_global_flag = th_mountain_of_faith_incident_solved
+		NOT = { has_country_modifier = hkr_blessed_by_hakurei }
+	}	
+	
+	mean_time_to_happen = {
+		months = 36
+	}
+
+	option = {  #It's time to retire
+		name = flavor_hkr.103.a
+		remove_ruler_personality = immortal_personality
+
+		ai_chance = { 
+			factor = 100
 		}
 	}
 }

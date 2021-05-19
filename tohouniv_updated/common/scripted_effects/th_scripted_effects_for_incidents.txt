@@ -1,4 +1,26 @@
+th_incident_initialize_investigator = {
+	set_country_flag = th_incident_investigating
+	add_country_modifier = {
+		name = th_incident_investigator_modifier
+		duration = -1
+		desc = th_incident_investigator_modifier_tt
+	}
+	#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+	save_global_event_target_as = th_incident_investigator		
+}
+
+th_incident_clr_investigator = {
+	clr_country_flag = th_incident_investigating
+	if = {
+		limit = {
+			has_country_modifier = th_incident_investigator_modifier
+		}
+		remove_country_modifier = th_incident_investigator_modifier
+	}
+}
+
 th_incident_initiate_good_outcome_counter = {
+	set_country_flag = hkr_inci_setup
 	set_variable = {
 		which = th_incident_outcome_counter
 		value = 0
@@ -374,16 +396,15 @@ th_incident_set_country_to_new_investigator = {
 			limit = {
 				has_country_flag = th_incident_investigating
 			}
-			clr_country_flag = th_incident_investigating
+			th_incident_clr_investigator = yes
 		}
-		set_country_flag = th_incident_investigating
-		save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+		th_incident_initialize_investigator = yes
 		if = {
 			limit = {
 				NOT = { has_country_flag = th_incident_had_info }
 			}
 			country_event = {
-				id = th_incidents_event.1
+				id = th_danmaku_event.1
 				days = 1
 			}
 		}
@@ -438,12 +459,12 @@ th_incident_set_country_to_new_investigator = {
 }
 
 th_incident_set_investigator = {	
-	clr_country_flag = th_incident_investigating
+	th_incident_clr_investigator = yes
 	every_country = {
 		limit = {
 			has_country_flag = th_incident_investigating
 		}
-		clr_country_flag = th_incident_investigating
+		th_incident_clr_investigator = yes
 	}
 	if = {
 		limit = {
@@ -456,8 +477,7 @@ th_incident_set_investigator = {
 			}
 		}
 		ROOT = {
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes			
 		}
 	}
 	else_if = {
@@ -474,8 +494,7 @@ th_incident_set_investigator = {
 				has_country_flag = th_eligible_investigator
 				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 			}
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {
@@ -492,8 +511,7 @@ th_incident_set_investigator = {
 				has_country_flag = th_eligible_investigator
 				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 			}
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {
@@ -503,8 +521,7 @@ th_incident_set_investigator = {
 			NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 		}
 		ROOT = {
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {
@@ -521,8 +538,7 @@ th_incident_set_investigator = {
 				has_country_flag = th_eligible_investigator
 				ai = no
 			}
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else = {
@@ -531,8 +547,7 @@ th_incident_set_investigator = {
 				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 				has_country_flag = th_eligible_investigator
 			}
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 
@@ -593,8 +608,7 @@ th_incident_setup_investigator = {
 			NOT = { tag = HKR }
 			NOT = { was_tag = HKR }
 		}
-		set_country_flag = th_incident_investigating
-		save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+		th_incident_initialize_investigator = yes
 	}
 	else_if = {	#HKR always becomes investigator
 		limit = {
@@ -603,8 +617,7 @@ th_incident_setup_investigator = {
 				was_tag = HKR
 			}
 		}
-		set_country_flag = th_incident_investigating
-		save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+		th_incident_initialize_investigator = yes
 	}
 	else_if = {	#FOM becomes investigator, whe HKR doesn't exist. Else HKR investigates
 		limit = {
@@ -624,16 +637,14 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			HKR = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else = {
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {	#MRY becomes investigator, when HKR and FOM are not aviable
@@ -654,11 +665,10 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			HKR = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else_if = {
@@ -672,16 +682,14 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			FOM = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else = {
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {	#SCR and NET shares the same priority
@@ -706,11 +714,10 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			HKR = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else_if = {
@@ -724,11 +731,10 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			FOM = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else_if = {
@@ -742,11 +748,10 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			MRY = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 	}
@@ -779,7 +784,7 @@ th_incident_setup_investigator = {
 th_incident_clear_all_limited_flags = {	
 	clr_global_flag = th_incident_introduced
 	clr_global_flag = th_minor_player_asked
-	clr_country_flag = th_incident_investigating
+	th_incident_clr_investigator = yes
 	clr_country_flag = th_incident_last_fight_won
 	clr_country_flag = th_incident_last_fight_lost
 	clr_country_flag = th_incident_last_fight_terribly_lost
@@ -800,7 +805,7 @@ th_incident_clear_all_limited_flags = {
 				has_country_flag = th_incident_random_player_investigator
 			}
 		}
-		clr_country_flag = th_incident_investigating
+		th_incident_clr_investigator = yes
 		clr_country_flag = th_incident_last_fight_won
 		clr_country_flag = th_incident_last_fight_lost
 		clr_country_flag = th_incident_last_fight_terribly_lost
@@ -993,7 +998,7 @@ th_incident_clear_about_flags_en = {
 	every_country = {
 		limit = {
 			capital_scope = {
-				continent = gensokyo_continent
+				th_gensokyo_or_moon_continent = yes
 			}
 		}
 		disband_rebels = th_youkai_rebels
@@ -1046,6 +1051,217 @@ th_incident_clear_about_flags_mof = {
 	clr_global_flag = th_MOF_inci_sanae_encountered
 	clr_global_flag = th_MOF_inci_kanako_encountered
 	clr_global_flag = th_MOF_incident_end
+}
+
+#IMPORTANT FOR INCIDENTS
+th_incident_major_victory_bonus = {
+	custom_tooltip = th_incident_major_victory_bonus_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_scarlet_mists
+			}
+			change_variable = {
+				which = th_SDM_inci_goodbad_level
+				value = 3
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_cherry_blossom
+			}
+			change_variable = {
+				which = th_PCB_inci_goodbad_level
+				value = 3
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_eternal_night
+			}
+			change_variable = {
+				which = th_EN_inci_goodbad_level
+				value = 3
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_mountain_of_faith
+			}
+			change_variable = {
+				which = th_MOF_inci_goodbad_level
+				value = 3
+			}
+		}
+	}
+}
+
+th_incident_victory_bonus = {
+	custom_tooltip = th_incident_victory_bonus_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_scarlet_mists
+			}
+			change_variable = {
+				which = th_SDM_inci_goodbad_level
+				value = 2
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_cherry_blossom
+			}
+			change_variable = {
+				which = th_PCB_inci_goodbad_level
+				value = 2
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_eternal_night
+			}
+			change_variable = {
+				which = th_EN_inci_goodbad_level
+				value = 2
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_mountain_of_faith
+			}
+			change_variable = {
+				which = th_MOF_inci_goodbad_level
+				value = 2
+			}
+		}
+	}
+}
+
+th_incident_minor_victory_bonus = {
+	custom_tooltip = th_incident_minor_victory_bonus_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_scarlet_mists
+			}
+			change_variable = {
+				which = th_SDM_inci_goodbad_level
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_cherry_blossom
+			}
+			change_variable = {
+				which = th_PCB_inci_goodbad_level
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_eternal_night
+			}
+			change_variable = {
+				which = th_EN_inci_goodbad_level
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_mountain_of_faith
+			}
+			change_variable = {
+				which = th_MOF_inci_goodbad_level
+				value = 1
+			}
+		}
+	}
+}
+
+th_incident_minor_defeat_bonus = {
+	custom_tooltip = th_incident_minor_defeat_bonus_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_scarlet_mists
+			}
+			subtract_variable = {
+				which = th_SDM_inci_goodbad_level
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_cherry_blossom
+			}
+			subtract_variable = {
+				which = th_PCB_inci_goodbad_level
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_eternal_night
+			}
+			subtract_variable = {
+				which = th_EN_inci_goodbad_level
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_mountain_of_faith
+			}
+			subtract_variable = {
+				which = th_MOF_inci_goodbad_level
+				value = 1
+			}
+		}
+	}
+}
+
+th_incident_defeat_bonus = {
+	custom_tooltip = th_incident_defeat_bonus_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_scarlet_mists
+			}
+			subtract_variable = {
+				which = th_SDM_inci_goodbad_level
+				value = 2
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_cherry_blossom
+			}
+			subtract_variable = {
+				which = th_PCB_inci_goodbad_level
+				value = 2
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_eternal_night
+			}
+			subtract_variable = {
+				which = th_EN_inci_goodbad_level
+				value = 2
+			}
+		}
+		if = {
+			limit = {
+				has_global_flag = th_current_incident_mountain_of_faith
+			}
+			subtract_variable = {
+				which = th_MOF_inci_goodbad_level
+				value = 2
+			}
+		}
+	}
 }
 
 ###GENERAL EFFECTS###

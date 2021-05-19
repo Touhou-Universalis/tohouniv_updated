@@ -4,6 +4,7 @@
 
 namespace = th_diplo_events
 
+###MHG DIPLO ACTIONS###
 #Provocate War
 country_event = {
     id = th_diplo_events.1
@@ -153,7 +154,7 @@ country_event = {
     }
 }
 
-#Clear flag
+#Clear flag for aggressor
 country_event = {
     id = th_diplo_events.3
 	title = th_diplo_events.3.t
@@ -228,6 +229,7 @@ country_event = {
     }
 }
 
+###EIT DIPLO ACTIONS###
 #Set counter of aggressors for EIT
 country_event = {
     id = th_diplo_events.5
@@ -462,6 +464,7 @@ country_event = {
     }
 }
 
+###HKR DIPLO ACTIONS###
 #Nation broke peldging
 country_event = {
     id = th_diplo_events.10
@@ -523,6 +526,1184 @@ country_event = {
         name = th_diplo_events.11.a
         remove_country_modifier = th_subjugated_in_penance
 
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+###MRY DIPLO ACTIONS###
+#Information about incited rebels
+country_event = {
+	id = th_diplo_events.12
+	title = th_diplo_events.12.t
+	desc = th_diplo_events.12.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.12.a
+        custom_tooltip = th_diplo_events.12.a.tt
+        hidden_effect = {
+			country_event = {
+				id = th_diplo_events.13
+				days = 1825
+			}
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_has_incited_rebels
+        }
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Clear flag for Moriya incited rebels in target country
+country_event = {
+	id = th_diplo_events.13
+	title = th_diplo_events.13.t
+	desc = th_diplo_events.13.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		name = th_diplo_events.13.a
+		clr_country_flag = th_has_already_incited_zealots
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+###FOM DIPLO ACTIONS###
+#Information about Marisa stealing from your treasury
+country_event = {
+	id = th_diplo_events.14
+	title = th_diplo_events.14.t
+	desc = th_diplo_events.14.desc
+	picture = MARISA_eventPicture
+	
+    is_triggered_only = yes
+    
+    immediate = {
+        hidden_effect = {
+            set_country_flag = th_has_been_already_looted_by_spies_of_@FROM
+            export_to_variable = {
+                which = th_money_to_steal
+                value = monthly_income
+                who = ROOT
+            }            
+            export_to_variable = {
+                which = th_money_available
+                value = treasury
+                who = ROOT
+            }
+            multiply_variable = {
+                which = th_money_to_steal
+                value = 6
+            }
+            if = {
+                limit = {
+                    # Is th_money_to_steal greater than th_money_available
+                    check_variable = {
+                        which = th_money_to_steal
+                        which = th_money_available
+                    }
+                }                
+                # Set th_money_to_steal to th_money_available's value, as th_money_to_steal was greater than th_money_available
+                set_variable = {
+                    which = th_money_to_steal 
+                    which = th_money_available 
+                }
+            }
+            set_variable = {
+                which = th_money_report
+                which = th_money_to_steal 
+            }
+            set_variable = {
+                which = th_money_decimals
+                which = th_money_to_steal 
+            }
+        }
+    }
+	
+	option = {
+        name = th_diplo_events.14.a
+        custom_tooltip = th_diplo_events.14.a.tt
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_money_to_steal
+                    value = 1
+                }
+            }
+            add_treasury = -1
+            FROM = { add_treasury = 1 }
+            subtract_variable = {
+                which = th_money_to_steal
+                value = 1
+            }
+            subtract_variable = {
+                which = th_money_decimals
+                value = 1
+            }
+        }
+        hidden_effect = {
+            multiply_variable = {
+                which = th_money_decimals
+                value = 100
+            }
+        }
+        add_casus_belli = {
+            type = cb_insult
+            target = FROM
+            months = 300
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_has_stolen_treasury
+        }
+        hidden_effect = {
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.16
+                }
+            }
+        }
+		
+		ai_chance = { 
+			factor = 100
+		}
+    }
+    
+    after = {
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_money_decimals
+                    value = 1
+                }
+            }
+            add_treasury = -0.01
+            FROM = { add_treasury = 0.01 }
+            subtract_variable = {
+                which = th_money_decimals
+                value = 1
+            }
+        }
+    }
+}
+
+#Feedback of the heist
+country_event = {
+	id = th_diplo_events.16
+	title = th_diplo_events.16.t
+	desc = th_diplo_events.16.desc
+	picture = MARISA_eventPicture
+	
+    is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.16.a
+        custom_tooltip = th_diplo_events.16.a.tt
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+###HKR DIPLO ACTIONS###
+#Recharger for Youkai hunts
+country_event = {
+	id = th_diplo_events.17
+	title = th_diplo_events.17.t
+	desc = th_diplo_events.17.desc
+    picture = REIMU_eventPicture
+    
+    hidden = yes
+    trigger = {
+        OR = {
+            NOT = { has_country_flag = th_youkai_hunt_charger_flag }
+            had_country_flag = {
+                flag = th_youkai_hunt_charger_flag
+                days = 1825
+            }
+        }
+        NOT = {
+            check_variable = {
+                which = th_youkai_hunt_charges
+                value = 5
+            }
+        }
+        has_country_flag = th_enable_youkai_hunt
+    }
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    immediate = {
+        clr_country_flag = th_youkai_hunt_charger_flag
+    }
+	
+	option = {
+        name = th_diplo_events.17.a
+        change_variable = {
+            which = th_youkai_hunt_charges
+            value = 1
+        }
+		
+		ai_chance = { 
+			factor = 100
+		}
+    }
+
+    after = {
+        set_country_flag = th_youkai_hunt_charger_flag
+    }
+}
+
+#Youkai Hunt - Danmaku fight Setup
+country_event = {
+	id = th_diplo_events.18
+	title = th_diplo_events.18.t
+	desc = th_diplo_events.18.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+    is_triggered_only = yes
+    hidden = yes
+	
+	immediate = {
+        export_to_variable = {
+            which = th_youkai_hunt_own_development
+            value = total_development
+            who = ROOT
+        }
+        FROM = {
+            set_variable = {
+                which = th_youkai_hunt_youkai_development
+                value = 0
+            }
+        }
+	}
+	
+	option = {
+        name = th_diplo_events.18.a
+        th_set_countrys_compare_variable_to_own_variable = {
+            who = FROM
+            root_counting_variable = th_youkai_hunt_own_development
+            who_counting_variable = th_youkai_hunt_youkai_development
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+    
+    after = {
+        FROM = {
+            country_event = {
+                id = th_diplo_events.19
+                days = 7
+            }
+        }
+    }
+}
+
+#Youkai Hunt - Danmaku fight
+country_event = {
+	id = th_diplo_events.19
+	title = th_diplo_events.19.t
+	desc = th_diplo_events.19.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill_no_mil = {
+				SKILL_BONI = 0
+            }            
+			set_variable = {
+				which = th_youkai_hunt_youkai_combat_skills
+				value = 800
+            }
+            change_variable = {
+                which = th_youkai_hunt_youkai_combat_skills
+                which = th_youkai_hunt_youkai_development
+            }
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_youkai_hunt_youkai_combat_skills
+			}
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = th_diplo_events.19.a
+		custom_tooltip = th_diplo_events.19.a.tt
+        highlight = yes
+        #th_danmaku_event.0 because the evulation event has important effects and I am too lazy to replace them
+		th_danmaku_normal_fight_ruler_and_opponent = {
+            win_event = th_danmaku_event.0
+            draw_event = th_danmaku_event.0
+            defeat_event = th_danmaku_event.0
+            days = 1
+        }
+		hidden_effect = {
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.20
+                    days = 10
+                }
+            }
+		}			
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+    
+    option = {  #Stupid idea
+        name = th_diplo_events.19.b
+        custom_tooltip = th_diplo_events.19.b.tt
+        FROM = {
+            add_opinion = {
+                who = ROOT
+                modifier = th_betrayed_their_contract
+            }
+        }
+    }
+}
+
+#Youkai Hunt fight evulator
+country_event = {
+	id = th_diplo_events.20
+	title = th_diplo_events.20.t
+	desc = th_diplo_events.20.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+    hidden = yes
+	
+	immediate = {
+        export_to_variable = {
+            which = th_youkai_hunt_own_development
+            value = total_development
+        }
+        FROM = {
+            set_variable = {
+                which = th_youkai_cash
+                value = 0
+            }
+        }
+        th_set_countrys_compare_variable_to_own_variable = {
+            who = FROM
+            root_counting_variable = th_youkai_hunt_own_development
+            who_counting_variable = th_youkai_cash
+        }
+	}
+
+	option = {
+		name = th_diplo_events.20.a
+		if = {
+			limit = {
+                FROM = {
+                    has_country_flag = th_normal_last_fight_won
+                }
+            }
+            set_country_flag = th_has_already_youkai_hunted
+            add_opinion = {
+                who = FROM
+                modifier = th_fulfilled_their_contract
+            }
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.21
+                }
+            }
+		}
+		else = {
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.22
+                }
+            }
+            add_opinion = {
+                who = FROM
+                modifier = th_failed_their_contract
+            }
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Youkai Hunt - Victory
+country_event = {
+	id = th_diplo_events.21
+	title = th_diplo_events.21.t
+	desc = th_diplo_events.21.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+    is_triggered_only = yes
+    
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = {
+                    has_country_flag = th_increased_youkai_hunt_income
+                }
+                multiply_variable = {
+                    which = th_youkai_cash
+                    value = 4
+                }
+            }
+            else = {
+                multiply_variable = {
+                    which = th_youkai_cash
+                    value = 2
+                }
+            }
+            change_variable = {
+                which = th_youkai_cash
+                value = 50
+            }
+            set_variable = {
+                which = th_youkai_cash_show
+                which = th_youkai_cash
+            }
+        }
+    }
+	
+	option = {
+        name = th_diplo_events.21.a
+        custom_tooltip = th_diplo_events.21.a.tt
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_youkai_cash
+                    value = 1
+                }
+            }
+            add_treasury = 1
+            subtract_variable = {
+                which = th_youkai_cash
+                value = 1
+            }
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Youkai Hunt - Defeat
+country_event = {
+	id = th_diplo_events.22
+	title = th_diplo_events.22.t
+	desc = th_diplo_events.22.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = th_diplo_events.22.a
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+###DANMAKU DUEL ACTION###
+
+#Danmaku Duel - Challenged one can accept
+country_event = {
+    id = th_diplo_events.23
+	title = th_diplo_events.23.t
+	desc = th_diplo_events.23.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+    is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+            set_country_flag = th_was_already_danmaku_challenged_by_@FROM
+            th_getruler_fighting_skill = {
+                SKILL_BONI = 0
+            }
+            FROM = {
+                set_variable = {
+                    which = th_danmaku_duel_enemy_power
+                    value = 0
+                }
+            }
+		}
+	}
+    
+    #BRING IT ON
+    option = {
+        name = th_diplo_events.23.a
+        custom_tooltip = th_diplo_events.23.a.tt
+        hidden_effect = {
+            th_danmaku_set_compare_variable = yes
+            th_set_countrys_compare_variable_to_own_variable = {
+                who = FROM
+                root_counting_variable = th_current_fighting_skills_counter
+                who_counting_variable = th_danmaku_duel_enemy_power
+            }
+        }
+        FROM = {
+            country_event = {
+                id = th_diplo_events.24
+                days = 3
+            }
+        }
+
+        ai_chance = {
+            factor = 0.25
+            modifier = {
+                factor = 3
+                mil = FROM
+            }
+        }
+    }
+
+    #I don't have time for games   
+    option = {
+        name = th_diplo_events.23.b
+        add_power_projection = {
+            type = th_has_declined_danmaku_duel
+            amount = -5
+        }
+        FROM = {
+            country_event = {
+                id = th_diplo_events.25
+                days = 3
+            }
+        }
+        hidden_effect = {
+            set_country_flag = th_danmaku_duel_lost_against_@FROM
+        }
+
+        ai_chance = {
+            factor = 0.75
+            modifier = {
+                factor = 0.33
+                mil = FROM
+            }
+        }
+    }
+}
+
+#Danmaku Duel - Danmaku fight
+country_event = {
+	id = th_diplo_events.24
+	title = th_diplo_events.24.t
+	desc = th_diplo_events.24.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+            th_getruler_fighting_skill = {
+                SKILL_BONI = 0
+            }
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_danmaku_duel_enemy_power
+			}
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = th_diplo_events.24.a
+		custom_tooltip = th_diplo_events.24.a.tt
+        highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+            win_event = th_diplo_events.26
+            draw_event = th_diplo_events.260
+            defeat_event = th_diplo_events.27
+            days = 3
+        }
+		hidden_effect = {
+            FROM = {
+                set_country_flag = th_danmaku_duel_target_for_@ROOT
+            }
+		}
+
+		ai_chance = { 
+			factor = 1
+		}
+    }
+    
+    option = {  #Stupid idea
+        name = th_diplo_events.24.b
+        add_power_projection = {
+            type = th_has_declined_danmaku_duel
+            amount = -5
+        }
+        FROM = {
+            country_event = {
+                id = th_diplo_events.30
+            }
+        }
+
+		ai_chance = { 
+			factor = 0
+		}
+    }
+}
+
+#Danmaku Duel - Target declines duel
+country_event = {
+	id = th_diplo_events.25
+	title = th_diplo_events.25.t
+	desc = th_diplo_events.25.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.25.a
+        add_power_projection = {
+            type = th_enemy_declined_danmaku_duel
+            amount = 5
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku Duel - Victory for the Challenger
+country_event = {
+	id = th_diplo_events.26
+	title = th_diplo_events.26.t
+	desc = th_diplo_events.26.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.26.a
+        add_power_projection = {
+            type = th_won_danmaku_duel_power_projection
+            amount = 30
+        }
+        random_country = {
+            limit = {
+                has_country_flag = th_danmaku_duel_target_for_@ROOT
+            }
+            country_event = {
+                id = th_diplo_events.28
+            }
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku Duel - Draw for the Challenger
+country_event = {
+	id = th_diplo_events.260
+	title = th_diplo_events.260.t
+	desc = th_diplo_events.260.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.260.a
+        custom_tooltip = th_diplo_events.260.a.tt
+        random_country = {
+            limit = {
+                has_country_flag = th_danmaku_duel_target_for_@ROOT
+            }
+            country_event = {
+                id = th_diplo_events.280
+            }
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku Duel - Defeat for the Challenger
+country_event = {
+	id = th_diplo_events.27
+	title = th_diplo_events.27.t
+	desc = th_diplo_events.27.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.27.a
+        add_power_projection = {
+            type = th_lost_danmaku_duel_power_projection
+            amount = -30
+        }
+        random_country = {
+            limit = {
+                has_country_flag = th_danmaku_duel_target_for_@ROOT
+            }
+            country_event = {
+                id = th_diplo_events.29
+            }
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku Duel - Defeat for the Challenged one
+country_event = {
+	id = th_diplo_events.28
+	title = th_diplo_events.28.t
+	desc = th_diplo_events.28.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+    is_triggered_only = yes
+    
+    immediate = {
+        hidden_effect = {
+            clr_country_flag = th_danmaku_duel_target_for_@FROM
+            set_country_flag = th_danmaku_duel_lost_against_@FROM
+        }
+    }
+	
+	option = {
+        name = th_diplo_events.28.a
+        add_power_projection = {
+            type = th_lost_danmaku_duel_power_projection
+            amount = -30
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku Duel - Draw for the Challenged one
+country_event = {
+	id = th_diplo_events.280
+	title = th_diplo_events.280.t
+	desc = th_diplo_events.280.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+    is_triggered_only = yes
+    
+    immediate = {
+        hidden_effect = {
+            clr_country_flag = th_danmaku_duel_target_for_@FROM
+        }
+    }
+	
+	option = {
+        name = th_diplo_events.280.a
+        custom_tooltip = th_diplo_events.280.a.tt
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku Duel - Win for the Challenged one
+country_event = {
+	id = th_diplo_events.29
+	title = th_diplo_events.29.t
+	desc = th_diplo_events.29.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+    is_triggered_only = yes
+    
+    immediate = {
+        hidden_effect = {
+            clr_country_flag = th_danmaku_duel_target_for_@FROM
+        }
+    }
+	
+	option = {
+        name = th_diplo_events.29.a
+        add_power_projection = {
+            type = th_won_danmaku_duel_power_projection
+            amount = 30
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Danmaku Duel - Challenger abandones fight
+country_event = {
+	id = th_diplo_events.30
+	title = th_diplo_events.30.t
+	desc = th_diplo_events.30.desc
+	picture = REIMUMARISABATTLE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.30.a
+        add_power_projection = {
+            type = th_enemy_declined_danmaku_duel
+            amount = 5
+        }
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+###FAIRY PRANKS
+
+#Pranks - Generic for all non-special fairies
+country_event = {
+    id = th_diplo_events.31
+    title = th_diplo_events.31.t
+    desc = th_diplo_events.31.desc
+    picture = ALLFAIRIES_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_was_pranked_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.31.a
+        add_country_modifier = {
+            name = th_they_pranked_us
+            duration = 3650
+        }
+        add_casus_belli = {
+            type = cb_insult
+            target = FROM
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_they_pranked_us_opinion
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Pranks - Cirno
+country_event = {
+    id = th_diplo_events.32
+    title = th_diplo_events.32.t
+    desc = th_diplo_events.32.desc
+    picture = CIRNO_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_was_pranked_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.32.a
+        add_yearly_manpower = -0.15
+        if = {
+            limit = {
+                FROM = {
+                    has_country_flag = cin_letty_empowered_prank
+                }
+            }
+            add_country_modifier = {
+                name = th_cin_icy_winds_lvl2
+                duration = 3650
+            }
+        }
+        else = {
+            add_country_modifier = {
+                name = th_cin_icy_winds
+                duration = 3650
+            }            
+        }
+        add_casus_belli = {
+            type = cb_insult
+            target = FROM
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_they_pranked_us_opinion
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Pranks - Clownpiece
+country_event = {
+    id = th_diplo_events.33
+    title = th_diplo_events.33.t
+    desc = th_diplo_events.33.desc
+    picture = CLOWNPIECE_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_was_pranked_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.33.a
+        capital_scope = {
+            add_devastation = 15
+        }
+        add_country_modifier = {
+            name = th_clp_insanity
+            duration = 3650
+        }
+        add_casus_belli = {
+            type = cb_insult
+            target = FROM
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_they_pranked_us_opinion
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Pranks - Sunny
+country_event = {
+    id = th_diplo_events.34
+    title = th_diplo_events.34.t
+    desc = th_diplo_events.34.desc
+    picture = THREEFAIRIES_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_was_pranked_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.34.a
+        add_war_exhaustion = 0.5
+        add_country_modifier = {
+            name = th_tfr_sunny_fort_illusions
+            duration = 3650
+        }
+        add_casus_belli = {
+            type = cb_insult
+            target = FROM
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_they_pranked_us_opinion
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Pranks - Luna
+country_event = {
+    id = th_diplo_events.35
+    title = th_diplo_events.35.t
+    desc = th_diplo_events.35.desc
+    picture = THREEFAIRIES_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_was_pranked_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.35.a
+        add_prestige = -20
+        add_country_modifier = {
+            name = th_tfr_luna_muted_diplomats
+            duration = 3650
+        }
+        add_casus_belli = {
+            type = cb_insult
+            target = FROM
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_they_pranked_us_opinion
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Pranks - Star
+country_event = {
+    id = th_diplo_events.36
+    title = th_diplo_events.36.t
+    desc = th_diplo_events.36.desc
+    picture = THREEFAIRIES_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_was_pranked_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.36.a
+        add_country_modifier = {
+            name = th_tfr_star_detect_movement
+            duration = 730
+        }
+        custom_tooltip = th_diplo_events.36.a.tt
+        hidden_effect = {
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.360
+                }
+            }
+        }
+        add_casus_belli = {
+            type = cb_insult
+            target = FROM
+        }
+        add_opinion = {
+            who = FROM
+            modifier = th_they_pranked_us_opinion
+        }
+        remove_fow = 24
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Pranks - Star (FoW deleter)
+country_event = {
+    id = th_diplo_events.360
+    title = th_diplo_events.360.t
+    desc = th_diplo_events.360.desc
+    picture = THREEFAIRIES_eventPicture
+    
+    is_triggered_only = yes
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.360.a
+        FROM = {
+            remove_fow = 24
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Pranks - Lily
+country_event = {
+    id = th_diplo_events.37
+    title = th_diplo_events.37.t
+    desc = th_diplo_events.37.desc
+    picture = CLOWNPIECE_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_was_pranked_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.37.a
+        add_opinion = {
+            who = FROM
+            modifier = th_got_informed_about_spring
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Pranks - Larva
+country_event = {
+    id = th_diplo_events.38
+    title = th_diplo_events.38.t
+    desc = th_diplo_events.38.desc
+    picture = CLOWNPIECE_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_was_pranked_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.38.a
+        add_opinion = {
+            who = FROM
+            modifier = th_good_weather_cause
+        }
+        add_country_modifier = {
+            name = th_lrv_amplified_weather
+            duration = 3650
+        }
+        
         ai_chance = {
             factor = 100
         }

@@ -1,11 +1,11 @@
-version="3.1.7"
+version="3.2.4"
 tags={
 	"Alternative History"
 	"Expansion"
-	"New Nations"
 	"Map"
 	"Loading Screen"
+	"New Nations"
 }
-name="Touhou Universalis Test"
-supported_version="1.30.*"
+name="Touhou Universalis Updated"
+supported_version="1.31.*"
 remote_file_id="1537902566"

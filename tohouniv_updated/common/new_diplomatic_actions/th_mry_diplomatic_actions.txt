@@ -1,6 +1,6 @@
 #MRY request another country to convert
 th_request_conversion = {
-	category = influence
+	category = th_diplo_action
 	alert_index = 30
 	alert_tooltip = th_request_conversion_tooltip
 	require_acceptance = yes
@@ -12,7 +12,7 @@ th_request_conversion = {
 			was_tag = MRY
 		}
 		has_reform = Gensokyan_shrine_theocracy
-		religion = Moriya_Shintoism #Just to make it easier
+		religion = th_moriyashinto #Just to make it easier
 		FROM = {
 			NOT = { religion = ROOT }
 			any_owned_province = { religion = ROOT }
@@ -34,8 +34,9 @@ th_request_conversion = {
 			has_reform = TH_feudal_shrine_reform
 		}
 		FROM = {
-			dominant_religion = Moriya_Shintoism
+			dominant_religion = th_moriyashinto
 			is_free_or_tributary_trigger = yes
+			NOT = { tag = PAP }
 		}
 	}
 
@@ -260,14 +261,21 @@ th_request_conversion = {
 		}
     }
 	ai_will_do = {
-		always = no
-		#has_global_flag = MRY INCIDENT
+		has_global_flag = th_current_incident_mountain_of_faith
+		FROM = {
+			NOT = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_instigator
+				}
+			}
+		}
 	}
 }
 
 #MRY establish religious tributaries
 th_establish_religious_tributaries = {
-	category = influence
+	category = th_diplo_action
 
 	require_acceptance = yes
 
@@ -281,14 +289,17 @@ th_establish_religious_tributaries = {
 			was_tag = MRY
 		}
 		has_reform = Gensokyan_shrine_theocracy
-		religion = Moriya_Shintoism #Just to make it easier
+		religion = th_moriyashinto #Just to make it easier
 	}
 
 	is_allowed = {
 		FROM = {
 			religion = ROOT
 			is_at_war = no
-			is_free_or_tributary_trigger = yes
+			OR = {
+				is_subject = no
+				is_subject_of = ROOT
+			}
 		}
 		OR = {
 			FROM = { 
@@ -628,7 +639,7 @@ th_establish_religious_tributaries = {
 
 #MRY revoke religious tributaries
 th_revoke_religious_tributaries = {
-	category = influence
+	category = th_diplo_action
 
 	require_acceptance = yes
 
@@ -639,7 +650,7 @@ th_revoke_religious_tributaries = {
 			was_tag = MRY
 		}
 		has_reform = Gensokyan_shrine_theocracy
-		religion = Moriya_Shintoism #Just to make it easier
+		religion = th_moriyashinto #Just to make it easier
 		FROM = {
 			is_subject_of = ROOT
 			is_subject_of_type = th_religious_tributary
@@ -792,7 +803,7 @@ th_revoke_religious_tributaries = {
 
 #MRY cancel religious tributaries
 th_cancel_religious_tributaries = {
-	category = influence
+	category = th_diplo_action
 
 	require_acceptance = no
 
@@ -824,7 +835,7 @@ th_cancel_religious_tributaries = {
 
 #MRY incite Moriya zealots
 th_incite_moriya_zealots = {
-	category = covert
+	category = th_diplo_action
 
 	require_acceptance = no
 
@@ -835,7 +846,7 @@ th_incite_moriya_zealots = {
 			was_tag = MRY
 		}
 		has_reform = Gensokyan_shrine_theocracy
-		religion = Moriya_Shintoism #Just to make it easier
+		religion = th_moriyashinto #Just to make it easier
 		FROM = {
 			NOT = { religion = ROOT }
 			any_owned_province = { religion = ROOT }
@@ -855,7 +866,7 @@ th_incite_moriya_zealots = {
 					NOT = { has_country_flag = th_has_already_incited_zealots }
 					had_country_flag = {
 						flag = th_has_already_incited_zealots
-						days = 1825
+						days = 1826
 					}
 				}
 			}
@@ -875,8 +886,7 @@ th_incite_moriya_zealots = {
 				}
 			}
 			country_event = {
-				id = flavor_mry.100
-				days = 1825
+				id = th_diplo_events.12
 			}
 		}
 		add_spy_network_in = {

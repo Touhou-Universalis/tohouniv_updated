@@ -17,7 +17,7 @@ country_event = {
 		tag = FUJ
 		NOT = { exists = EIT }
 		NOT = { has_country_flag = fuj_has_adapted_government }
-		owns_core_province = 4845
+		owns_core_province = 4997
 		Eientei_state = {
 			type = all
 			country_or_non_sovereign_subject_holds = ROOT
@@ -75,7 +75,7 @@ country_event = {
 			tag = FUJ
 			was_tag = FUJ
 		}
-		4827 = {
+		4979 = {
 			country_or_non_sovereign_subject_holds = ROOT
 		}
 		NOT = { has_country_flag = fuj_keine_met }
@@ -253,6 +253,7 @@ country_event = {
 
 		custom_tooltip = flavor_fuj.6.tt
 		hidden_effect = {
+			save_event_target_as = th_shogun_mokou
 			japan_region = {
 				limit = {
 					owned_by = ROOT
@@ -340,10 +341,76 @@ country_event = {
 				}
 			}
 			change_religion = FROM
+			set_country_flag = th_fuj_eternal_daimyo
 		}
 		else = {
 			FROM = {
 				add_treasury = 100
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Daimyo returns to Mokou
+country_event = {
+	id = flavor_fuj.70
+	title = flavor_fuj.7.t
+	desc = flavor_fuj.7.desc
+	picture = SHRINE_eventPicture
+
+	hidden = yes
+
+	trigger = {
+		has_country_flag = th_fuj_eternal_daimyo
+		NOT = { war_with = event_target:th_shogun_mokou }
+		NOT = { is_subject_of_type = th_mokou_daimyo }
+		ai = yes
+		was_player = no
+	}
+	
+	mean_time_to_happen = {
+		days = 5
+	}
+	
+	option = {	#Restore order
+		name = flavor_fuj.7.a
+
+		event_target:th_shogun_mokou = {
+			create_subject = {
+				subject_type = th_mokou_daimyo
+				subject = THIS
+			}
+			country_event = {
+				id = flavor_fuj.71
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Daimyo returns to Mokou - info event
+country_event = {
+	id = flavor_fuj.71
+	title = flavor_fuj.7.t
+	desc = flavor_fuj.7.desc
+	picture = SHRINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Welcome back
+		name = flavor_fuj.7.a
+
+		tooltip = {
+			create_subject = {
+				subject_type = th_mokou_daimyo
+				subject = FROM
 			}
 		}
 
@@ -384,8 +451,6 @@ country_event = {
 	
 	option = {	#Shoot at the birds...
 		name = flavor_fuj.9.a
-		
-		custom_tooltip = flavor_fuj.9.att
 		country_event = { id = flavor_fuj.10 }
 
 		ai_chance = { 
@@ -395,8 +460,6 @@ country_event = {
 	
 	option = {	#... or at Kaguya
 		name = flavor_fuj.9.b
-		
-		custom_tooltip = flavor_fuj.9.btt
 		country_event = { id = flavor_fuj.11 }
 
 		ai_chance = { 
@@ -477,42 +540,12 @@ country_event = {
 		name = flavor_fuj.12.a
 		custom_tooltip = flavor_fuj.12.a.tt
 		highlight = yes
-		th_danmaku_fight_ruler_and_opponent = yes
-		hidden_effect = {
-			country_event = {
-				id = flavor_fuj.13
-				days = 10
-			}
-		}			
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Dragon fight result evaluation
-country_event = {
-	id = flavor_fuj.13
-	title = flavor_fuj.13.t
-	desc = flavor_fuj.13.desc
-	picture = MOKOU_eventPicture
-	
-	is_triggered_only = yes
-	hidden = yes
-	
-	option = {
-		name = flavor_fuj.13.a
-
-		if = {
-			limit = {
-				has_country_flag = th_incident_last_fight_won
-			}
-			country_event = { id = flavor_fuj.14 }
-		}
-		else = {
-			country_event = { id = flavor_fuj.15 }
-		}
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_fuj.14
+			draw_event = flavor_fuj.14
+			defeat_event = flavor_fuj.15
+			days = 10
+		}		
 
 		ai_chance = { 
 			factor = 100
@@ -575,6 +608,9 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			hidden_effect = {
+				remove_heir = yes
+			}
 			define_ruler = {
 				name = "Mokou"
 				dynasty = "Fujiwara"
@@ -589,6 +625,7 @@ country_event = {
 			}
 			add_ruler_personality = immortal_personality
 			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
 			set_ruler_flag = FUJ_mokou_in_charge
 			if = {
 				limit = {
@@ -676,16 +713,16 @@ country_event = {
 	}
 
 	option = {
-		name = flavor_fuj.102.a^
+		name = flavor_fuj.102.a
 		if = {
 			limit = {
-				owns = 4827
+				owns = 4979
 			}
 			define_advisor = {
 				type = th_advisor_keine
 				name = "Keine Kamishirasawa"
 				skill = 3
-				location = 4827
+				location = 4979
 				discount = yes
 				female = yes
 				culture = Eientei
@@ -694,13 +731,13 @@ country_event = {
 		}
 		else_if = {
 			limit = {
-				owns = 4845
+				owns = 4997
 			}
 			define_advisor = {
 				type = th_advisor_keine
 				name = "Keine Kamishirasawa"
 				skill = 3
-				location = 4845
+				location = 4997
 				discount = yes
 				female = yes
 				culture = Eientei
@@ -731,7 +768,7 @@ country_event = {
 	}
 }
 
-#clear of flag, make Eirin available for hire again
+#clear of flag, make Keine available for hire again
 country_event = {
 	id = flavor_fuj.103
 	title = flavor_fuj.103.t
@@ -812,6 +849,7 @@ country_event = {
 		}
 		add_ruler_personality = immortal_personality
 		set_ruler_flag = touhou_character_ruler
+		set_ruler_flag = touhou_original_ruler
 		set_ruler_flag = FUJ_mokou_in_charge
 		if = {
 			limit = {
