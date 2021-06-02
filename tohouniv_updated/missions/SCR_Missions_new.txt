@@ -21,10 +21,10 @@ scr_patchouli_slot = {
 				limit = {
 					has_dlc = "Rule Britannia"
 				}
-				change_innovativeness = 10
+				change_innovativeness = 2
 			}
 			else = {
-				add_adm_power = 250
+				add_adm_power = 50
 			}
 			Forest_of_magic = {
 				limit = {
@@ -50,70 +50,102 @@ scr_patchouli_slot = {
 		}
 	}
 
-	SCR_the_dusk_youkai = {
+	SCR_retake_the_books = {
 		icon = mission_assemble_an_army
 		required_missions = { SCR_patchoulis_alchemy }
 		position = 2
+		provinces_to_highlight = {
+			province_id = 5090
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			NOT = { controlled_by = ROOT }
+		}
 		trigger = {
+			owns = 5072
 			OR = {
-				FOM = {
-					has_opinion = {
-						who = ROOT
-						value = 100
-					}
-				}
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					OR = {
-						area = Forest_edge_state
-						area = Forest_of_magic
-						area = Forest_coast_state
-					}
-					value = 5
-				}
+				control = 5090
+				owns_or_non_sovereign_subject_of = 5090
 			}
 		}
 		effect = {
 			country_event = {
-				id = th_test_events.1	#Dummy
+				id = flavor_scr.20
 			}
 		}
 	}
 
-	SCR_ex_rumia_machina = {
+	SCR_koakuma_experiments = {
 		icon = mission_assemble_an_army
-		required_missions = { SCR_the_dusk_youkai }
+		required_missions = { SCR_retake_the_books }
 		position = 3
 		trigger = {
-			always = yes
+			owns = 5072
+			5072 = {
+				has_production_building_trigger = yes
+				renaissance = 100
+			}
+			adm_power = 450
 		}
 		effect = {
 			country_event = {
-				id = th_test_events.1	#Dummy
+				id = flavor_scr.21
 			}
 		}
 	}
 
 	SCR_magical_researches = {
 		icon = mission_assemble_an_army
-		required_missions = { SCR_ex_rumia_machina }
+		required_missions = { SCR_koakuma_experiments }
 		position = 4
 		trigger = {
-			always = yes
+			owns = 5072
+			government_reform_progress = 150
+			5072 = {
+				development = 25
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_scr.18
+			}
+			5072 = {
+				add_building = university
+			}
 		}
 	}
 
 	SCR_investments_in_the_economy = {
 		icon = mission_assemble_an_army
-		required_missions = { SCR_magical_researches }
+		required_missions = {  }
 		position = 5
 		trigger = {
 			always = yes
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_years_of_income = 0.75
+			Kappa_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Kappa_delta = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = KPP
+				}
+				add_casus_belli = {
+					target = KPP
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
 		}
 	}
 
@@ -121,11 +153,29 @@ scr_patchouli_slot = {
 		icon = mission_assemble_an_army
 		required_missions = { SCR_investments_in_the_economy }
 		position = 6
+		
+		provinces_to_highlight = {
+			OR = {
+				area = Kappa_delta
+				area = Kappa_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Kappa_delta
+					area = Kappa_state
+				}
+				value = 3
+			}
+			prestige = 50
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_prestige = -50
+			country_event = {
+				id = 1012
+			}
 		}
 	}
 
@@ -133,8 +183,15 @@ scr_patchouli_slot = {
 		icon = mission_assemble_an_army
 		required_missions = { SCR_technology_of_the_kappas }
 		position = 7
+		provinces_to_highlight = {
+			continent = moon_continent
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				continent = moon_continent
+				value = 5
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -157,8 +214,18 @@ scr_patchouli_slot = {
 		icon = mission_assemble_an_army
 		required_missions = {  }
 		position = 11
+		provinces_to_highlight = {
+			owned_by = ROOT
+			NOT = { controlled_by = ROOT }
+		}
 		trigger = {
-			always = yes
+			total_development = 1500
+			stability = 3
+			prestige = 100
+			NOT = { war_exhaustion = 0.01 }
+			all_owned_province = {
+				controlled_by = ROOT
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -687,7 +754,23 @@ scr_remilia_slot = {
 		required_missions = {  }
 		position = 11
 		trigger = {
-			always = yes
+			OR = {
+				AND = {
+					has_institution = enlightenment
+					absolutism = 50
+				}
+				AND = {
+					num_of_subjects = 7
+					NOT = { current_age = age_of_absolutism }
+					NOT = {
+						any_subject_country = {
+							liberty_desire = 15
+						}
+					}
+					prestige = 75
+				}
+			}
+
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -1105,8 +1188,29 @@ scr_imperial_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
-			#Get CB to assert dominance over Sanae and Marisa TODO
+			if = {
+				limit = {
+					NOT = { owns_or_non_sovereign_subject_of = 4998 }
+				}
+				4998 = {
+					owner = {
+						reverse_add_casus_belli = {
+							type = cb_touhou_mission_dominance_war
+							target = ROOT
+						}
+						hidden_effect = {
+							save_global_event_target_as = scr_assert_domination_target
+						}
+					}
+				}
+				hidden_effect = {
+					set_country_flag = scr_has_target_to_humiliate
+				}
+			}
+			else = {
+				add_legitimacy = 40
+			}
+			add_prestige = 30
 		}
 	}
 
@@ -1115,11 +1219,50 @@ scr_imperial_slot = {
 		required_missions = { SCR_the_investigator_issue }
 		position = 5
 		trigger = {
-			always = yes
-			# TODO has been asserted dominance by Remi
+			if = {
+				limit = {
+					mission_completed = SCR_humiliate_green_reimu
+				}
+				custom_trigger_tooltip = {
+					tooltip = SCR_humiliate_green_reimu_ct
+					always = yes
+				}
+			}
+			else_if = {
+				limit = {
+					mission_completed = SCR_the_investigator_issue
+				}
+				if = {
+					limit = {
+						has_country_flag = scr_has_target_to_humiliate
+					}
+					event_target:scr_assert_domination_target = {
+						OR = {
+							th_has_been_asserted_dominance_by_root = yes
+							exists = no
+						}
+					}
+				}
+				else = {
+					owns_or_non_sovereign_subject_of = 4998
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = SCR_humiliate_green_reimu_tt
+					always = no
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			th_enable_assert_dominance_cb_effect = yes
+			add_adm_power = 100
+			add_dip_power = 100
+			add_mil_power = 100
+			hidden_effect = {
+				clr_country_flag = scr_has_target_to_humiliate
+				clear_global_event_target = scr_assert_domination_target
+			}
 		}
 	}
 
@@ -1127,11 +1270,31 @@ scr_imperial_slot = {
 		icon = mission_assemble_an_army
 		required_missions = {  }
 		position = 6
+		provinces_to_highlight = {
+			owner = {
+				alliance_with = ROOT
+				NOT = { 
+					trust = {
+						who = ROOT
+						value = 70
+					} 
+				}
+			}
+		}
 		trigger = {
-			always = yes
+			calc_true_if = {
+				all_ally = {
+					trust = {
+						who = ROOT
+						value = 70
+					} 
+				}
+				amount = 2
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			th_enable_scarlet_charisma_effect = yes
+			add_dip_power = 75
 		}
 	}
 
@@ -1140,10 +1303,10 @@ scr_imperial_slot = {
 		required_missions = { SCR_power_of_favors }
 		position = 7
 		trigger = {
-			always = yes
+			always = yes	#TODO count the times any of SCR's specific diplo actions has been used
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			th_upgrade_scarlet_charimsa_effect = yes
 		}
 	}
 
