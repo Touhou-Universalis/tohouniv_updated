@@ -1455,7 +1455,7 @@ country_event = {
 		}
 	}
 }
-
+####
 #Remilia vs Yukari
 country_event = {
 	id = flavor_scr.16
@@ -1466,7 +1466,12 @@ country_event = {
 	is_triggered_only = yes
 	
 	option = {
-		name = flavor_scr.16.a
+		name = flavor_scr.16.a		
+		add_country_modifier = {
+			name = scr_repaid_taxes
+			duration = 3650
+		}
+		remove_historical_rival = MHG
 
 		ai_chance = {
 			factor = 1
@@ -1566,7 +1571,7 @@ country_event = {
 	}
 }
 
-#Retake the books from Marisa
+#Experiments with Koakuma
 country_event = {
 	id = flavor_scr.20
 	title = "flavor_scr.20.t"
@@ -1577,6 +1582,8 @@ country_event = {
 
 	option = {
 		name = flavor_scr.20.a
+		scr_enable_koakuma_explorer = yes
+		add_adm_power = -450
 						
 		ai_chance = { 
 			factor = 100
@@ -1584,7 +1591,7 @@ country_event = {
 	}
 }
 
-#Experiments with Koakuma
+#The rocket to the Moon
 country_event = {
 	id = flavor_scr.21
 	title = "flavor_scr.21.t"
@@ -1595,7 +1602,17 @@ country_event = {
 
 	option = {
 		name = flavor_scr.21.a
-		scr_enable_koakuma_explorer = yes
+		th_outdate_moon_defenses = yes
+		moon_continent = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		th_colonize_dev_province_for_root = {
+			province = 5338
+		}
 						
 		ai_chance = { 
 			factor = 100
@@ -1603,7 +1620,7 @@ country_event = {
 	}
 }
 
-#Construct the rocket!
+#Power over the moon!
 country_event = {
 	id = flavor_scr.22
 	title = "flavor_scr.22.t"
@@ -1614,10 +1631,37 @@ country_event = {
 
 	option = {
 		name = flavor_scr.22.a
-		hidden_effect = {
-			country_event = {
-				id = flavor_scr.23
-				days = 150
+		if = {
+			limit = {
+				NOT = { has_country_flag = scr_gained_scarlet_monarchy_flag }
+			}
+			if = {
+				limit = {
+					NOT = { government = monarchy }
+				}
+				change_government = monarchy
+			}
+			add_government_reform = Gensokyan_scr_scarlet_monarchy
+			hidden_effect = {
+				set_country_flag = scr_gained_scarlet_monarchy_flag
+			}
+		}
+		else = {
+			th_upgrade_scarlet_bloodlust_effect = yes
+		}
+		add_country_modifier = {
+			name = scr_scarlet_moon
+			duration = -1
+		}
+		if = {
+			limit = {
+				exists = FLR
+			}
+			FLR = {
+				add_country_modifier = {	#Let's be real: Flandre would benefit as much from it as Remilia does
+					name = scr_scarlet_moon
+					duration = -1
+				}
 			}
 		}
 						
@@ -1627,18 +1671,34 @@ country_event = {
 	}
 }
 
-#Rocket is ready to go!
+#The Scarlet Bloodlust - initialize counter
 country_event = {
 	id = flavor_scr.23
 	title = "flavor_scr.23.t"
 	desc = "flavor_scr.23.desc"
 	picture = PATCHOULI_eventPicture
+	
+	hidden = yes
 
-	is_triggered_only = yes
+	trigger = {
+		th_is_or_was_tag = {
+			tag = SCR
+		}
+		NOT = { has_country_flag = scr_battle_counter_ready }
+		NOT = { has_country_flag = scr_has_enough_victories }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
 
 	option = {
 		name = flavor_scr.23.a
-		custom_tooltip = flavor_scr.23.a.tt
+		set_country_flag = scr_battle_counter_ready
+		set_variable = {
+			which = scr_battle_counter
+			value = 0
+		}
 						
 		ai_chance = { 
 			factor = 100
@@ -1646,7 +1706,7 @@ country_event = {
 	}
 }
 
-#Time to fly to the moon! - Event activated through a decision, will result into an immediate war with the Lunarians
+#The Scarlet Bloodlust - enact the Scarlet Monarchy after 30 victories in battles
 country_event = {
 	id = flavor_scr.24
 	title = "flavor_scr.24.t"
@@ -1655,10 +1715,346 @@ country_event = {
 
 	is_triggered_only = yes
 
-	option = { #Pull the lever, Sakuya!
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = scr_battle_counter_ready
+			set_country_flag = scr_has_enough_victories
+		}
+	}
+
+	option = {
 		name = flavor_scr.24.a
-		custom_tooltip = flavor_scr.24.a.tt
+		if = {
+			limit = {
+				NOT = { has_country_flag = scr_gained_scarlet_monarchy_flag }
+			}
+			if = {
+				limit = {
+					NOT = { government = monarchy }
+				}
+				change_government = monarchy
+			}
+			add_government_reform = Gensokyan_scr_scarlet_monarchy
+			hidden_effect = {
+				set_country_flag = scr_gained_scarlet_monarchy_flag
+			}
+		}
+		else = {
+			th_upgrade_scarlet_bloodlust_effect = yes
+		}
 						
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Choose island to purchase
+country_event = {
+	id = flavor_scr.25
+	title = "flavor_scr.25.t"
+	desc = "flavor_scr.25.desc"
+	picture = PATCHOULI_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = scr_allow_island_purchase_decision
+		}
+	}
+
+	option = { #Try to buy Isle of Man
+		name = flavor_scr.25.a
+		trigger = {
+			NOT = { owns_or_non_sovereign_subject_of = 4365 }
+			4365 = {
+				owner = {
+					is_at_war = no
+				}
+			}
+		}
+		hidden_effect = {
+			4365 = {
+				save_global_event_target_as = scr_island_to_buy
+			}
+		}
+		4365 = {
+			owner = {
+				country_event = {
+					id = flavor_scr.26
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 25
+		}
+	}
+
+	option = { #Try to buy Corsica
+		name = flavor_scr.25.b
+		trigger = {
+			NOT = { owns_or_non_sovereign_subject_of = 1247 }
+			1247 = {
+				owner = {
+					is_at_war = no
+				}
+			}
+		}
+		hidden_effect = {
+			1247 = {
+				save_global_event_target_as = scr_island_to_buy
+			}
+		}
+		1247 = {
+			owner = {
+				country_event = {
+					id = flavor_scr.26
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 25
+		}
+	}
+
+	option = { #Try to buy Scio
+		name = flavor_scr.25.c
+		trigger = {
+			NOT = { owns_or_non_sovereign_subject_of = 2348 }
+			2348 = {
+				owner = {
+					is_at_war = no
+				}
+			}
+		}
+		hidden_effect = {
+			2348 = {
+				save_global_event_target_as = scr_island_to_buy
+			}
+		}
+		2348 = {
+			owner = {
+				country_event = {
+					id = flavor_scr.26
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 25
+		}
+	}
+
+	option = { #Try to buy Minorca
+		name = flavor_scr.25.d
+		trigger = {
+			NOT = { owns_or_non_sovereign_subject_of = 4559 }
+			4559 = {
+				owner = {
+					is_at_war = no
+				}
+			}
+		}
+		hidden_effect = {
+			4559 = {
+				save_global_event_target_as = scr_island_to_buy
+			}
+		}
+		4559 = {
+			owner = {
+				country_event = {
+					id = flavor_scr.26
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 25
+		}
+	}
+
+	option = { #Try to buy Bornholm
+		name = flavor_scr.25.e
+		trigger = {
+			NOT = { owns_or_non_sovereign_subject_of = 1981 }
+			1981 = {
+				owner = {
+					is_at_war = no
+				}
+			}
+		}
+		hidden_effect = {
+			1981 = {
+				save_global_event_target_as = scr_island_to_buy
+			}
+		}
+		1981 = {
+			owner = {
+				country_event = {
+					id = flavor_scr.26
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = { #On the other hand...
+		name = flavor_scr.25.f
+		trigger = {
+			NOT = { owns_or_non_sovereign_subject_of = 4356 }
+			NOT = { owns_or_non_sovereign_subject_of = 1247 }
+			NOT = { owns_or_non_sovereign_subject_of = 2348 }
+			NOT = { owns_or_non_sovereign_subject_of = 4559 }
+			NOT = { owns_or_non_sovereign_subject_of = 1981 }
+		}
+		custom_tooltip = flavor_scr.25.e.tt
+		hidden_effect = {
+			set_country_flag = scr_allow_island_purchase_decision
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = { #Lol I already have them all
+		name = flavor_scr.25.g
+		trigger = {
+			owns_or_non_sovereign_subject_of = 4356
+			owns_or_non_sovereign_subject_of = 1247
+			owns_or_non_sovereign_subject_of = 2348
+			owns_or_non_sovereign_subject_of = 4559
+			owns_or_non_sovereign_subject_of = 1981
+		}
+		add_mercantilism = 5
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Remi's offer
+country_event = {	
+	id = flavor_scr.26
+	title = flavor_scr.26.t
+	desc = flavor_scr.26.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Thanks for the money
+		name = flavor_scr.26.e
+		event_target:scr_island_to_buy = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+		}
+		add_treasury = 2000
+		FROM = {
+			country_event = {
+				id = flavor_scr.27
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					is_rival = FROM
+					is_enemy = FROM
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = 0
+					}
+				}
+			}
+		}
+	}
+	
+	option = {	#Nah
+		name = flavor_scr.26.f
+		FROM = {
+			country_event = {
+				id = flavor_scr.28
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = { is_rival = FROM }
+				NOT = { is_enemy = FROM }
+			}
+			modifier = {
+				factor = 0
+				has_opinion = {
+					who = FROM
+					value = 0
+				}
+			}
+		}
+	}
+}
+
+#Remilia gets the island
+country_event = {
+	id = flavor_scr.27
+	title = flavor_scr.27.t
+	desc = flavor_scr.27.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Lovely
+		name = flavor_scr.27.a
+		add_treasury = -2000
+		tooltip = {
+			event_target:scr_island_to_buy = {
+				remove_core = ROOT
+				add_core = FROM
+				cede_province = FROM
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			clear_global_event_target = scr_island_to_buy
+		}
+	}
+}
+
+#Remilia gets not the island
+country_event = {
+	id = flavor_scr.28
+	title = flavor_scr.28.t
+	desc = flavor_scr.28.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Screw you then
+		name = flavor_scr.28.a
+		add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 300
+		}
+		hidden_effect = {
+			clear_global_event_target = scr_island_to_buy
+		}
 		ai_chance = { 
 			factor = 100
 		}

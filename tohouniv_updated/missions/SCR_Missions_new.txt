@@ -55,20 +55,25 @@ scr_patchouli_slot = {
 		required_missions = { SCR_patchoulis_alchemy }
 		position = 2
 		provinces_to_highlight = {
-			province_id = 5090
+			OR = {
+				province_id = 5072
+				province_id = 5090
+			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 			NOT = { controlled_by = ROOT }
 		}
 		trigger = {
 			owns = 5072
 			OR = {
-				control = 5090
+				controls = 5090
 				owns_or_non_sovereign_subject_of = 5090
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_scr.20
+			add_prestige = 10
+			add_country_modifier = {
+				name = "scr_recovered_magical_books"
+				duration = 7300
 			}
 		}
 	}
@@ -77,6 +82,11 @@ scr_patchouli_slot = {
 		icon = mission_assemble_an_army
 		required_missions = { SCR_retake_the_books }
 		position = 3
+		provinces_to_highlight = {
+			province_id = 5072
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			NOT = { has_production_building_trigger = yes }
+		}
 		trigger = {
 			owns = 5072
 			5072 = {
@@ -87,7 +97,7 @@ scr_patchouli_slot = {
 		}
 		effect = {
 			country_event = {
-				id = flavor_scr.21
+				id = flavor_scr.20
 			}
 		}
 	}
@@ -96,6 +106,10 @@ scr_patchouli_slot = {
 		icon = mission_assemble_an_army
 		required_missions = { SCR_koakuma_experiments }
 		position = 4
+		provinces_to_highlight = {
+			province_id = 5072
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
 			owns = 5072
 			government_reform_progress = 150
@@ -117,8 +131,41 @@ scr_patchouli_slot = {
 		icon = mission_assemble_an_army
 		required_missions = {  }
 		position = 5
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4956
+				province_id = 5090
+				province_id = 4999
+				province_id = 4982
+			}
+		}
 		trigger = {
-			always = yes
+			4956 = {
+				trade_share = {
+					country = ROOT
+					share = 75
+				}
+			}
+			OR = {
+				5090 = {
+					trade_share = {
+						country = ROOT
+						share = 10
+					}
+				}
+				4999 = {
+					trade_share = {
+						country = ROOT
+						share = 10
+					}
+				}
+				4982 = {
+					trade_share = {
+						country = ROOT
+						share = 10
+					}
+				}
+			}
 		}
 		effect = {
 			add_years_of_income = 0.75
@@ -169,12 +216,16 @@ scr_patchouli_slot = {
 				}
 				value = 3
 			}
-			prestige = 50
+			owns_or_non_sovereign_subject_of = 4965
 		}
 		effect = {
-			add_prestige = -50
+			add_prestige = 15
+			add_country_modifier = {
+				name = "scr_kappa_navy_technology"
+				duration = 7300
+			}
 			country_event = {
-				id = 1012
+				id = flavor_scr.21
 			}
 		}
 	}
@@ -194,7 +245,9 @@ scr_patchouli_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_scr.22
+			}
 		}
 	}
 
@@ -340,15 +393,27 @@ scr_meiling_slot = {
 		}
 	}
 
-	SCR_arrive_at_western_europe = {
+	SCR_arrive_at_western_africa = {
 		icon = mission_assemble_an_army
-		required_missions = { SCR_discover_home_land }
+		required_missions = { SCR_push_further_west }
 		position = 6
+		provinces_to_highlight = {
+			province_id = 1139
+			NOT = { has_discovered = ROOT }
+		}
 		trigger = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = SCR_arrive_at_western_africa_tt
+				1139 = { has_discovered = ROOT }
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			th_colonize_dev_province_for_root = {
+				province = 1139
+			}
+			west_african_sea_region = {
+				discover_country = ROOT
+			}
 		}
 	}
 
@@ -670,23 +735,59 @@ scr_remilia_slot = {
 		icon = mission_assemble_an_army
 		required_missions = {  }
 		position = 4
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
 		trigger = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = scr_quest_for_the_west
+				duration = 36500
+			}
+			th_colonize_dev_province_for_root = {
+				province = 1999
+			}
+			eastern_indian_ocean_area = {
+				discover_country = ROOT
+			}
 		}
 	}
 
-	SCR_discover_home_land = {
+	SCR_push_further_west = {
 		icon = mission_assemble_an_army
 		required_missions = { SCR_the_outworld }
 		position = 5
+		provinces_to_highlight = {
+			region = south_africa_region
+			NOT = { has_discovered = ROOT }
+		}
 		trigger = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = SCR_push_further_west_tt
+				south_africa_region = { has_discovered = ROOT }
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			th_colonize_dev_province_for_root = {
+				province = 1098
+			}
+			south_atlantic_region = {
+				discover_country = ROOT
+			}
 		}
 	}
 
@@ -713,8 +814,8 @@ scr_remilia_slot = {
 	SCR_return_to_europe = {
 		icon = mission_assemble_an_army
 		required_missions = {
-			SCR_arrive_at_western_europe
-			SCR_arrive_at_eastern_europe
+			SCR_arrive_at_western_africa
+			SCR_arrive_in_europe
 		}
 		position = 7
 		trigger = {
@@ -864,7 +965,7 @@ scr_sakuya_slot = {
 		}
 	}
 
-	SCR_shikigami_maidens = {
+	SCR_deal_with_yukari = {
 		icon = mission_assemble_an_army
 		required_missions = { SCR_integrate_cirno }
 		position = 3
@@ -876,10 +977,6 @@ scr_sakuya_slot = {
 			owns_or_non_sovereign_subject_of = 4989
 		}
 		effect = {
-			add_country_modifier = {
-				name = scr_shikigami_maidens
-				duration = 9125
-			}
 			country_event = {
 				id = flavor_scr.16
 			}
@@ -888,7 +985,7 @@ scr_sakuya_slot = {
 
 	SCR_sakuya_the_incident_solver = {
 		icon = mission_assemble_an_army
-		required_missions = { SCR_shikigami_maidens }
+		required_missions = { SCR_deal_with_yukari }
 		position = 4
 		trigger = {
 			OR = {
@@ -927,17 +1024,85 @@ scr_sakuya_slot = {
 		}
 	}
 
-	SCR_arrive_at_eastern_europe = {
+	SCR_arrive_in_europe = {
 		icon = mission_assemble_an_army
 		required_missions = {
-			SCR_discover_home_land
+			SCR_push_further_west
 		}
 		position = 6
+		provinces_to_highlight = {
+			OR = {
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
 		trigger = {
-			always = yes
+			mission_completed = SCR_arrive_at_western_africa
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
+			}
+			country_event = { id = TH_mission_events.4 }
+			custom_tooltip = SCR_arrive_in_europe_ct
+			hidden_effect = {
+				set_country_flag = scr_allow_island_purchase_decision
+			}
+			flanders_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			scottish_marches_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			languedoc_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			lazio_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			aydin_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			west_prussia_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 
@@ -1020,9 +1185,9 @@ scr_imperial_slot = {
 			define_explorer = {
 				shock = 1
 				fire = 1
-				manuever = 6
+				manuever = 3
 				siege = 0
-				name = Koakuma
+				name = "Vampiric Explorer"
 				female = yes
 			}
 			Fairy_land = {
@@ -1303,10 +1468,33 @@ scr_imperial_slot = {
 		required_missions = { SCR_power_of_favors }
 		position = 7
 		trigger = {
-			always = yes	#TODO count the times any of SCR's specific diplo actions has been used
+			calc_true_if = {
+				all_country = {
+					custom_trigger_tooltip = {
+						tooltip = SCR_eternal_charisma_ct
+						NOT = { alliance_with = ROOT }
+						NOT = { is_subject_of = ROOT }
+						trust = {
+							who = ROOT
+							value = 65
+						}
+					}
+				}
+				amount = 3
+			}
+			calc_true_if = {
+				all_country = {
+					custom_trigger_tooltip = {
+						tooltip = SCR_eternal_charisma_tt
+						has_country_flag = scr_has_been_target_of_scarlet_charimsa_@ROOT
+					}
+				}
+				amount = 3
+			}
 		}
 		effect = {
 			th_upgrade_scarlet_charimsa_effect = yes
+			add_prestige = 25
 		}
 	}
 
