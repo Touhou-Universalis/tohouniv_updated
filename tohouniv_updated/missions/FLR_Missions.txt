@@ -417,6 +417,7 @@ flr_religion_branch = {
 				tooltip = flr_question_of_religious_direction_trigger
 				has_country_flag = flr_has_made_the_choice
 			}
+			is_year = 1500
 		}
 		effect = {
 			add_legitimacy = 15
@@ -493,7 +494,7 @@ flr_catholic_branch = {
 		position = 4
 		trigger = {
 			OR = {
-				NOT = { hre_size = 0 }
+				NOT = { hre_size = 1 }
 				AND = {
 					hre_religion_locked = yes
 					hre_religion = catholic
@@ -519,6 +520,10 @@ flr_catholic_branch = {
 			}
 			else = {
 				add_mil_power = 100
+			}
+			add_country_modifier = {
+				name = flr_catholic_supramacy
+				duration = 7300
 			}
 		}
 	}
@@ -550,19 +555,23 @@ flr_reformation_branch = {
 					all_country = {
 						religion = ROOT
 					}
-					amount = 20
+					amount = 15
 				}
 				calc_true_if = {
 					all_province = {
 						religion = ROOT
 					}
-					amount = 300
+					amount = 100
 				}
 			}
 		}
 		effect = {
-			add_church_power = 100
-			add_fervor = 50
+			add_church_power = 200
+			add_fervor = 100
+			add_country_modifier = {
+				name = flr_protestant_mission
+				duration = 9125
+			}
 		}
 	}
 	
@@ -572,7 +581,7 @@ flr_reformation_branch = {
 		position = 4
 		trigger = {
 			OR = {
-				NOT = { hre_size = 0 }
+				NOT = { hre_size = 1 }
 				AND = {
 					hre_religion_locked = yes
 					OR = {
@@ -602,6 +611,10 @@ flr_reformation_branch = {
 			else = {
 				add_mil_power = 100
 			}
+			add_country_modifier = {
+				name = flr_reformed_supremacy
+				duration = 7300
+			}
 		}
 	}
 }
@@ -623,8 +636,12 @@ flr_shinto_branch = {
 		position = 3
 		trigger = {
 			calc_true_if = {
-				all_ally = {
+				all_known_country = {
 					religion_group = Touhou
+					OR = {
+						alliance_with = ROOT
+						is_subject_of = ROOT
+					}
 				}
 				amount = 3
 			}
@@ -634,13 +651,13 @@ flr_shinto_branch = {
 						technology_group = western
 						religion_group = Touhou
 					}
-					amount = 10
+					amount = 15
 				}
 				calc_true_if = {
 					all_province = {
 						religion_group = Touhou
 					}
-					amount = 100
+					amount = 70
 				}
 			}
 		}
@@ -681,6 +698,10 @@ flr_shinto_branch = {
 					add_permanent_claim = ROOT
 				}
 			}
+			add_country_modifier = {
+				name = flr_shinto_missoinaries
+				duration = 9125
+			}
 		}
 	}
 	
@@ -704,7 +725,7 @@ flr_shinto_branch = {
 						continent = europe
 						religion_group = Touhou
 					}
-					amount = 100
+					amount = 120
 				}
 			}
 			owns_or_non_sovereign_subject_of = 236	#Hellsing Organization, Hellsing
@@ -713,7 +734,10 @@ flr_shinto_branch = {
 		}
 		effect = {
 			th_allow_shorter_deity_swapping = yes
-			add_prestige = 100
+			add_country_modifier = {
+				name = flr_shinto_supremacy
+				duration = 9125
+			}
 		}
 	}
 }
@@ -735,23 +759,19 @@ flr_tolerant_branch = {
 		position = 3
 		trigger = {
 			OR = {
-				NOT = { hre_size = 1 }
-				hre_religion_locked = yes
-				hre_religion_treaty = yes
+				has_idea = FLR_flans_own_empire
+				has_idea_group = humanist_ideas
+				has_idea_group = innovativeness_ideas
+			}
+			any_ally = {
+				NOT = { religion = ROOT }
 			}
 		}
 		effect = {
-			custom_tooltip = flr_religious_war_tt
-			if = {
-				limit = {
-					has_country_flag = religious_league_war_on_winning_side
-				}
-				add_country_modifier = {
-					name = flr_teachings_of_the_war
-					duration = 9125
-				}
+			add_country_modifier = {
+				name = flr_tolerance_view
+				duration = 9125
 			}
-			add_adm_power = 100
 		}
 	}
 	
@@ -761,59 +781,40 @@ flr_tolerant_branch = {
 		position = 4
 		trigger = {
 			OR = {
-				has_idea = FLR_flans_own_empire
-				has_idea_group = humanist_ideas
-				has_idea_group = innovativeness_ideas
-			}
-			OR = {
-				is_emperor = yes
 				NOT = { hre_size = 1 }
-				if = {
-					limit = {
-						hre_size = 1
-					}
-					calc_true_if = {
-						all_elector = {
-							has_opinion = {
-								who = ROOT
-								value = 150
-							}
-						}
-						amount = 2
-					}
-				}
+				hre_leagues_enabled = yes 
+				hre_religion_treaty = yes
 			}
 		}
 		effect = {
 			if = {
 				limit = {
-					hre_size = 1
-					is_emperor = no
+					hre_leagues_enabled = yes
 				}
-				emperor = {
-					country_event = {
-						id = flavor_flr.13
+				if = {
+					limit = {
+						hre_size = 1
+						is_emperor = no
+					}
+					emperor = {
+						country_event = {
+							id = flavor_flr.13
+						}
 					}
 				}
-				add_country_modifier = {
-					name = flr_tolerant_reformer_of_the_hre
-					duration = -1
+				else_if = {
+					limit = {
+						hre_size = 1
+						is_emperor = yes
+					}
+					country_event = {
+						id = flavor_flr.14
+					}
 				}
 			}
-			else_if = {
-				limit = {
-					hre_size = 1
-					is_emperor = yes
-				}
-				country_event = {
-					id = flavor_flr.14
-				}
-			}
-			else = {
-				add_country_modifier = {
-					name = flr_tolerant_reformer_of_the_hre
-					duration = -1
-				}
+			add_country_modifier = {
+				name = flr_tolerant_reformer_of_the_hre
+				duration = 9125
 			}
 		}
 	}
