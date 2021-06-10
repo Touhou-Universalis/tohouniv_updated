@@ -1317,6 +1317,94 @@ country_event = {
 	}
 }
 
+#Unleash the ZUN
+country_event = {
+	id = th_test_events.50
+	title = "th_test_events.50.t"
+	desc = "th_test_events.50.desc"
+	picture = YUKARI_eventPicture
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_province = {
+				limit = {
+					NOT = { continent = new_world }
+					NOT = { continent = oceania }
+					NOT = { th_gensokyo_or_moon_continent = yes }
+					is_island = no
+				}
+				save_event_target_as = th_zun_spawning_point
+			}
+		}
+	}
+
+	option = {
+		name = "th_test_events.50.a"
+		custom_tooltip = th_test_events.50.a.tt
+		hidden_effect = {
+			event_target:th_zun_spawning_point = {
+				add_core = ZUT
+				cede_province = ZUT
+				change_religion = th_hakureishinto
+				change_culture = Gensokyo_human
+				area = {
+					add_core = ZUT
+					cede_province = ZUT
+					change_religion = th_hakureishinto
+					change_culture = Gensokyo_human
+				}
+			}
+			ZUT = {
+				set_capital = event_target:th_zun_spawning_point
+				add_country_modifier = {
+					name = th_zun_invasion
+					duration = -1
+				}
+				event_target:th_zun_spawning_point = {
+					build_to_forcelimit = {
+						infantry = 0.8
+						cavalry = 0.2
+					}
+					region = {
+						discover_country = ZUT
+					}
+				}
+				define_ruler = {
+					name = "ZUN"
+					dynasty = "of Team Shanghai Alice"
+					adm = 10
+					dip = 10
+					mil = 10
+					age = 44
+					fixed = yes
+				}
+				add_ruler_personality = immortal_personality
+				add_ruler_personality = conqueror_personality
+				set_ruler_flag = touhou_zun_ruler
+				add_treasury = 5000
+				add_manpower = 50
+				add_stability = 3
+				if = {
+					limit = {
+						NOT = { adm_tech = 3 }
+						NOT = { dip_tech = 3 }
+						NOT = { mil_tech = 3 }
+					}
+					add_adm_tech = 2
+					add_dip_tech = 2
+					add_mil_tech = 2
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "th_test_events.no"
+	}
+}
+
 #Swap to WIP mission tree
 country_event = {
 	id = th_test_events.96
@@ -2027,6 +2115,58 @@ country_event = {
 		every_owned_province = {
 			cede_province = ---
 		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#ZUN dislikes everyone
+country_event = {
+	id = th_test_events.1003
+	title = "th_test_events.1003.t"
+	desc = "th_test_events.1003.desc"
+	picture = FLANDRESRIOT_eventPicture
+
+	trigger = {
+		has_country_modifier = th_zun_invasion
+		any_known_country = {
+			NOT = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = opinion_invasion
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		name = "th_test_events.1003.a"
+		every_known_country = {
+			limit = {
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = opinion_invasion
+					}
+				}
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = opinion_invasion
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = opinion_invasion
+			}
+		}
+
 		ai_chance = {
 			factor = 100
 		}
