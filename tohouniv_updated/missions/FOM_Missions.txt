@@ -137,232 +137,123 @@ fom_missions_first_slot = {
 			}
 		}
 	}
-	
-	FOM_byakurens_magic = {
-		icon = mission_touhou_byakurens_scroll
-		required_missions = { 
-			FOM_wriggle_rights
-			FOM_narumis_jizo
-		}
+
+	FOM_form_the_magical_navy = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
 		position = 5
-		provinces_to_highlight = {
-			OR = {
-				area = Myouren_state
-				area = Eastern_myouren_state
-				area = Northern_myouren_state
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
 		trigger = {
-			OR = {
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					OR = {
-						area = Myouren_state
-						area = Eastern_myouren_state
-						area = Northern_myouren_state
-					}
-					value = 6
-				}
-				AND = {
-					treasury = 2000
-					MYO = {
-						has_opinion = {
-							who = ROOT
-							value = 100
-						}
-					}
-				}
-			}
+			num_of_total_ports = 7
+			navy_size_percentage = 0.9
 		}
 		effect = {
-			custom_tooltip = FOM_byakurens_magic_tooltip
-			if = {
-				limit = {
-					calc_true_if = {
-						all_province = {
-							OR = {
-								area = Myouren_state
-								area = Eastern_myouren_state
-								area = Northern_myouren_state
-							}
-							country_or_non_sovereign_subject_holds = ROOT
-						}
-						amount = 10
-					}
-				}
-				add_mil_power = 100
+			add_prestige = 15
+			add_country_modifier = {
+				name = "fom_witches_curiosity"
+				duration = 7300
 			}
-			else = {
-				add_treasury = -2000
-				add_dip_power = 100
-			}
-			country_event = {
-				id = flavor_fom.8
+			define_explorer = {
+				shock = 0
+				fire = 6
+				manuever = 6
+				siege = 1
+				name = "Doll Explorer"
+				female = yes
 			}
 		}
 	}
 	
-	FOM_uniting_the_foresters = {
-		icon = mission_touhou_forest_of_magic
-		required_missions = { FOM_byakurens_magic }
+	FOM_beyond_the_barrier = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { FOM_form_the_magical_navy }
 		position = 6
 		provinces_to_highlight = {
 			OR = {
-				culture = Magician
-				culture = Fairy
-				culture = Youkai
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
 			}
-			OR = {
-				NOT = { owned_by = ROOT }
-				NOT = { prosperity = 1 }
-				nationalism = 0.1
-			}
+			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
-			primary_culture = Magician
-			OR = {
-				government_rank = 3
-				AND = {
-					accepted_culture = Youkai
-					accepted_culture = Fairy
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
 				}
-			}
-			num_of_owned_provinces_with = {
-				culture = Magician
-				prosperity = 1
-				NOT = { nationalism = 0.1 }
-				value = 5
-			}
-			num_of_owned_provinces_with = {
-				culture = Fairy
-				prosperity = 1
-				NOT = { nationalism = 0.1 }
-				value = 5
-			}
-			num_of_owned_provinces_with = {
-				culture = Youkai
-				prosperity = 1
-				NOT = { nationalism = 0.1 }
-				value = 5
 			}
 		}
 		effect = {
-			add_country_modifier = {
-				name = fom_united_forest
-				duration = -1
-			}
+			add_dip_power = 75
+			add_navy_tradition = 35
 		}
 	}
 	
-	FOM_protagonist_marisa_lvl1 = {
-		icon = mission_touhou_marisa_theft
-		required_missions = {  }
+	FOM_discover_india = {
+		icon = mission_invade_england
+		required_missions = { FOM_beyond_the_barrier }
 		position = 7
-		trigger = { 
+		provinces_to_highlight = {
 			OR = {
-				calc_true_if = {
-					all_country = {
-						has_spy_network_from = {
-							who = ROOT
-							value = 30
-						}
-					}
-					amount = 2
-				}
-				calc_true_if = {
-					all_province = {
-						NOT = { country_or_non_sovereign_subject_holds = ROOT }
-						controlled_by = ROOT
-						is_looted = yes
-					}
-					amount = 10
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
 				}
 			}
 		}
 		effect = {
 			add_country_modifier = {
-				name = "growing_economy"
-				duration = 9125 #25 years
+				name = "touhou_discovery_of_europe"
+				duration = 7300
 			}
-			add_years_of_income = 2.5
+			country_event = { id = TH_mission_events.4 }			
 		}
 	}
 	
-	FOM_protagonist_marisa_lvl2 = {
-		icon = mission_touhou_marisa_magic
-		required_missions = { FOM_protagonist_marisa_lvl1 }
+	FOM_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { FOM_discover_india }
 		position = 8
-		trigger = { 
-			5090 = {
-				has_manpower_building_trigger = yes
-				owned_by = ROOT
-			}
-			treasury = 100
-		}
-		effect = {
-			add_treasury = -100
-			5090 = {
-				add_building = training_fields
-				add_permanent_province_modifier = {
-					name = fom_marisas_training_fields
-					duration = -1
-				}
-			}
-			add_country_modifier = {
-				name = fom_mini_hakkero
-				duration = -1
-			}
-			th_enable_burgling_action_effect = yes
-		}
-	}
-	
-	FOM_protagonist_marisa_lvl3 = {
-		icon = mission_touhou_marisa_master_spark
-		required_missions = { FOM_protagonist_marisa_lvl2 }
-		position = 9
-		trigger = { 
-			government_rank = 3
+		provinces_to_highlight = {
 			OR = {
-				calc_true_if = {
-					all_country = {
-						th_has_lost_danmaku_duel_against_root = yes
-					}
-					amount = 3
-				}
-				calc_true_if = {
-					all_country = {
-						custom_trigger_tooltip = {
-							tooltip = FOM_protagonist_marisa_lvl3_robbery
-							has_country_flag = th_has_been_already_looted_by_spies_of_@ROOT
-						}
-					}
-					amount = 3
-				}
-				hidden_trigger = {
-					AND = {
-						ai = yes
-						was_player = no
-					}
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
 				}
 			}
 		}
 		effect = {
-			add_prestige = 30
-			add_dip_power = 50
-			add_adm_power = 50
-			add_mil_power = 50
 			add_country_modifier = {
-				name = "hegemonic_ambition"
-				duration = 9125 #25 years
+				name = "touhou_discovery_of_europe"
+				duration = 7300
 			}
-			add_country_modifier = {
-				name = "imperial_ambition"
-				duration = 9125
-			}
-			add_country_modifier = {
-				name = fom_master_spark_proficiency
-				duration = -1
-			}
+			country_event = { id = TH_mission_events.4 }			
 		}
 	}
 	
@@ -630,123 +521,150 @@ fom_missions_second_slot = {
 			}
 		}
 	}
-
-	FOM_form_the_magical_navy = {
-		icon = mission_rb_a_mighty_fleet
-		required_missions = {  }
+	
+	FOM_byakurens_magic = {
+		icon = mission_touhou_byakurens_scroll
+		required_missions = { 
+			FOM_wriggle_rights
+			FOM_narumis_jizo
+		}
 		position = 5
+		provinces_to_highlight = {
+			OR = {
+				area = Myouren_state
+				area = Eastern_myouren_state
+				area = Northern_myouren_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			num_of_total_ports = 7
-			navy_size_percentage = 0.9
+			OR = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					OR = {
+						area = Myouren_state
+						area = Eastern_myouren_state
+						area = Northern_myouren_state
+					}
+					value = 6
+				}
+				AND = {
+					treasury = 2000
+					MYO = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
 		}
 		effect = {
-			add_prestige = 15
-			add_country_modifier = {
-				name = "fom_witches_curiosity"
-				duration = 7300
+			custom_tooltip = FOM_byakurens_magic_tooltip
+			if = {
+				limit = {
+					calc_true_if = {
+						all_province = {
+							OR = {
+								area = Myouren_state
+								area = Eastern_myouren_state
+								area = Northern_myouren_state
+							}
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+						amount = 10
+					}
+				}
+				add_mil_power = 100
 			}
-			define_explorer = {
-				shock = 0
-				fire = 6
-				manuever = 6
-				siege = 1
-				name = "Doll Explorer"
-				female = yes
+			else = {
+				add_treasury = -2000
+				add_dip_power = 100
+			}
+			country_event = {
+				id = flavor_fom.8
 			}
 		}
 	}
 	
-	FOM_beyond_the_barrier = {
-		icon = mission_establish_high_seas_navy
-		required_missions = { FOM_form_the_magical_navy }
+	FOM_uniting_the_foresters = {
+		icon = mission_touhou_forest_of_magic
+		required_missions = { FOM_byakurens_magic }
 		position = 6
 		provinces_to_highlight = {
 			OR = {
-				region = moluccas_region
-				region = australia_region
-				region = indo_china_region
+				culture = Magician
+				culture = Fairy
+				culture = Youkai
 			}
-			NOT = { has_discovered = ROOT }
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { prosperity = 1 }
+				nationalism = 0.1
+			}
 		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_break_the_barrier_tt
-				OR = {
-					moluccas_region = { has_discovered = ROOT }
-					australia_region = { has_discovered = ROOT }
-					indo_china_region = { has_discovered = ROOT }
+			primary_culture = Magician
+			OR = {
+				government_rank = 3
+				AND = {
+					accepted_culture = Youkai
+					accepted_culture = Fairy
 				}
+			}
+			num_of_owned_provinces_with = {
+				culture = Magician
+				prosperity = 1
+				NOT = { nationalism = 0.1 }
+				value = 5
+			}
+			num_of_owned_provinces_with = {
+				culture = Fairy
+				prosperity = 1
+				NOT = { nationalism = 0.1 }
+				value = 5
+			}
+			num_of_owned_provinces_with = {
+				culture = Youkai
+				prosperity = 1
+				NOT = { nationalism = 0.1 }
+				value = 5
 			}
 		}
 		effect = {
-			add_dip_power = 75
-			add_navy_tradition = 35
+			add_country_modifier = {
+				name = fom_united_forest
+				duration = -1
+			}
 		}
 	}
 	
-	FOM_discover_india = {
-		icon = mission_invade_england
-		required_missions = { FOM_beyond_the_barrier }
+	FOM_eliminate_the_yuuka_threat = {
+		icon = mission_touhou_yuuka_ominous
+		required_missions = { FOM_annex_youkai_forest }
 		position = 7
 		provinces_to_highlight = {
 			OR = {
-				region = iberia_region
-				region = france_region
-				region = low_countries_region
-				region = british_isles_region
+				area = Sunny_plains
+				area = Perfect_cut_coast	
 			}
-			NOT = { has_discovered = ROOT }
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
 		}
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = th_discovers_europe.tooltip
-				OR = {
-					iberia_region = { has_discovered = ROOT }
-					france_region = { has_discovered = ROOT }
-					low_countries_region = { has_discovered = ROOT }
-					british_isles_region = { has_discovered = ROOT }
+				tooltip = FOM_eliminate_the_yuuka_threat.tooltip
+				num_of_owned_provinces_with = {
+					value = 6
+					OR = {
+						area = Sunny_plains
+						area = Perfect_cut_coast
+					}
 				}
 			}
 		}
 		effect = {
-			add_country_modifier = {
-				name = "touhou_discovery_of_europe"
-				duration = 7300
-			}
-			country_event = { id = TH_mission_events.4 }			
-		}
-	}
-	
-	FOM_discover_europe = {
-		icon = mission_invade_england
-		required_missions = { FOM_discover_india }
-		position = 8
-		provinces_to_highlight = {
-			OR = {
-				region = iberia_region
-				region = france_region
-				region = low_countries_region
-				region = british_isles_region
-			}
-			NOT = { has_discovered = ROOT }
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_discovers_europe.tooltip
-				OR = {
-					iberia_region = { has_discovered = ROOT }
-					france_region = { has_discovered = ROOT }
-					low_countries_region = { has_discovered = ROOT }
-					british_isles_region = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = "touhou_discovery_of_europe"
-				duration = 7300
-			}
-			country_event = { id = TH_mission_events.4 }			
+			th_get_default_permanent_province_buff = yes
 		}
 	}
 	
@@ -799,12 +717,62 @@ fom_missions_third_slot = {
 		tag = FOM
 		NOT = { map_setup = map_setup_random }
 	}
-	has_country_shield = yes
+	has_country_shield = yes	
+	
+	FOM_protagonist_marisa_lvl3 = {
+		icon = mission_touhou_marisa_master_spark
+		required_missions = {  }
+		position = 1
+		trigger = { 
+			government_rank = 3
+			OR = {
+				calc_true_if = {
+					all_country = {
+						th_has_lost_danmaku_duel_against_root = yes
+					}
+					amount = 3
+				}
+				calc_true_if = {
+					all_country = {
+						custom_trigger_tooltip = {
+							tooltip = FOM_protagonist_marisa_lvl3_robbery
+							has_country_flag = th_has_been_already_looted_by_spies_of_@ROOT
+						}
+					}
+					amount = 3
+				}
+				hidden_trigger = {
+					AND = {
+						ai = yes
+						was_player = no
+					}
+				}
+			}
+		}
+		effect = {
+			add_prestige = 30
+			add_dip_power = 50
+			add_adm_power = 50
+			add_mil_power = 50
+			add_country_modifier = {
+				name = "hegemonic_ambition"
+				duration = 9125 #25 years
+			}
+			add_country_modifier = {
+				name = "imperial_ambition"
+				duration = 9125
+			}
+			add_country_modifier = {
+				name = fom_master_spark_proficiency
+				duration = -1
+			}
+		}
+	}
 	
 	FOM_create_an_empire = {
-		required_missions = {  }
+		required_missions = { FOM_protagonist_marisa_lvl3 }
 		icon = mission_touhou_empress_alice
-		position = 1
+		position = 2
 		trigger = {
 			OR = {
 				tag = GNK
@@ -924,6 +892,20 @@ fom_missions_third_slot = {
 				add_permanent_claim = ROOT
 			}
 			Fujiwara_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Sunny_plains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Perfect_cut_coast = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -1468,7 +1450,10 @@ fom_missions_fourth_slot = {
 	
 	FOM_recruit_ellen = {
 		icon = mission_touhou_ellen
-		required_missions = {  }
+		required_missions = {
+			FOM_unite_gensokyos_humans
+
+		}
 		position = 5
 		provinces_to_highlight = {
 			OR = {
@@ -1544,7 +1529,10 @@ fom_missions_fourth_slot = {
 	
 	FOM_recruit_mai_and_yuki = {
 		icon = mission_touhou_mai_yuki
-		required_missions = { FOM_recruit_ellen }
+		required_missions = {
+			FOM_recruit_ellen
+			FOM_annex_makai
+		}
 		position = 6
 		provinces_to_highlight = {
 			province_id = 5022
@@ -1609,50 +1597,6 @@ fom_missions_fourth_slot = {
 				name = "fom_more_doll_material"
 				duration = 7300
 			}
-			Sunny_plains = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Perfect_cut_coast = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	FOM_eliminate_the_yuuka_threat = {
-		icon = mission_touhou_yuuka_ominous
-		required_missions = { FOM_expand_the_ingredient_sources }
-		position = 8
-		provinces_to_highlight = {
-			OR = {
-				area = Sunny_plains
-				area = Perfect_cut_coast	
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = FOM_eliminate_the_yuuka_threat.tooltip
-				num_of_owned_provinces_with = {
-					value = 6
-					OR = {
-						area = Sunny_plains
-						area = Perfect_cut_coast
-					}
-				}
-			}
-		}
-		effect = {
-			th_get_default_permanent_province_buff = yes
 		}
 	}
 	
