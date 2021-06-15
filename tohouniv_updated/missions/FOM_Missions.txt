@@ -446,7 +446,6 @@ fom_missions_second_slot = {
 					months = 900
 				}
 			}
-			add_reform_progress_small_effect = yes
 		}
 	}
 	
@@ -534,47 +533,65 @@ fom_missions_second_slot = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			OR = {
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					OR = {
-						area = Myouren_state
-						area = Eastern_myouren_state
-						area = Northern_myouren_state
-					}
-					value = 6
+			if = {
+				limit = {
+					NOT = { religion = th_buddhist }
 				}
-				AND = {
-					treasury = 2000
-					MYO = {
-						has_opinion = {
-							who = ROOT
-							value = 100
+				OR = {
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						OR = {
+							area = Myouren_state
+							area = Eastern_myouren_state
+							area = Northern_myouren_state
+						}
+						value = 6
+					}
+					AND = {
+						treasury = 2000
+						MYO = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
 						}
 					}
 				}
+			}
+			else = {
+				#Byakuren would be more than happy to help somebody who follows her faith - no need to buy the scrolls or burn her land down
+				religion = th_buddhist	
 			}
 		}
 		effect = {
-			custom_tooltip = FOM_byakurens_magic_tooltip
 			if = {
 				limit = {
-					calc_true_if = {
-						all_province = {
-							OR = {
-								area = Myouren_state
-								area = Eastern_myouren_state
-								area = Northern_myouren_state
-							}
-							country_or_non_sovereign_subject_holds = ROOT
-						}
-						amount = 10
-					}
+					NOT = { religion = th_buddhist }
 				}
-				add_mil_power = 100
+				custom_tooltip = FOM_byakurens_magic_tooltip
+				if = {
+					limit = {
+						calc_true_if = {
+							all_province = {
+								OR = {
+									area = Myouren_state
+									area = Eastern_myouren_state
+									area = Northern_myouren_state
+								}
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+							amount = 10
+						}
+					}
+					add_mil_power = 100
+				}
+				else = {
+					add_treasury = -2000
+					add_dip_power = 100
+				}
 			}
-			else = {
-				add_treasury = -2000
-				add_dip_power = 100
+			else = { #Easter egg reward for this one madman who goes Buddhism with FOM
+				add_adm_power = 100
+				add_harmony = 25
 			}
 			country_event = {
 				id = flavor_fom.8
@@ -743,10 +760,6 @@ fom_missions_third_slot = {
 			}
 		}
 		effect = {
-			add_prestige = 30
-			add_dip_power = 50
-			add_adm_power = 50
-			add_mil_power = 50
 			add_country_modifier = {
 				name = fom_master_spark_proficiency
 				duration = 9125
@@ -1008,7 +1021,12 @@ fom_missions_third_slot = {
 	
 	FOM_results_of_magic_and_technology = {
 		icon = mission_touhou_kappas
-		required_missions = { FOM_establish_the_youkai_labrority }
+		required_missions = {
+			FOM_eliminate_the_yuuka_threat
+			FOM_establish_the_youkai_labrority
+			FOM_get_full_access_to_voile_library
+			FOM_expand_the_ingredient_sources
+		}
 		position = 8
 		
 		provinces_to_highlight = {
@@ -1220,8 +1238,8 @@ fom_missions_third_slot = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			owns_core_province = 4975
-			owns_core_province = 4963
+			owns_core_province = 5093
+			owns_core_province = 5090
 		}
 		effect = {
 			add_mercantilism = 5
@@ -1264,6 +1282,7 @@ fom_missions_fourth_slot = {
 			}
 		}
 		effect = {
+			th_enable_book_theft_action_effect = yes
 			custom_tooltip = FOM_razing_and_looting_witch_tt
 			hidden_effect = {
 				set_variable = {
@@ -1310,7 +1329,6 @@ fom_missions_fourth_slot = {
 			}
 		}
 		effect = {
-			change_government_reform_progress = 50
 			World_of_fantasies = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -1658,6 +1676,7 @@ fom_missions_fith_slot = {
 			owns_or_non_sovereign_subject_of = 5149
 		}
 		effect = {
+			fom_enable_goliath_doll_merc = yes
 			Makai = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -1722,7 +1741,7 @@ fom_missions_fith_slot = {
 		effect = {
 			custom_tooltip = FOM_annex_makai_tt
 			hidden_effect = {
-				set_country_flag = fom_can_fight_shinki
+				set_country_flag = fom_can_fight_yumeko
 			}
 			add_adm_power = 100 
 			add_dip_power = 100 
@@ -1735,39 +1754,15 @@ fom_missions_fith_slot = {
 		required_missions = { FOM_annex_makai }
 		position = 6
 
-		provinces_to_highlight = {
-			OR = {
-				area = Makai
-				area = Makai_coast_state
-				area = Makai_peninsula_state
-				area = Western_makai_state
-			}
-			NOT = { development = 10 }
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = FOM_defeat_shinki_tt
-				has_country_flag = FOM_defeated_shinki
-			}
-			custom_trigger_tooltip = {
-				tooltip = FOM_defeat_shinki_ct
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					OR = {
-						area = Makai
-						area = Makai_coast_state
-						area = Makai_peninsula_state
-						area = Western_makai_state
-					}
-					development = 10
-					value = 20
-				}
+				has_country_flag = FOM_defeated_yumeko
 			}
 		}
 		effect = {
 			add_country_modifier = {
-				name = "fom_makais_magical_items"
+				name = fom_doll_master_controller
 				duration = -1
 			}
 			fom_enable_leviathan_doll_merc = yes
@@ -1822,27 +1817,13 @@ fom_missions_fith_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
-			Sunny_plains = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Perfect_cut_coast = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
 		}
 	}
 	
 	FOM_expand_the_ingredient_sources = {
 		icon = mission_touhou_bamboo_forest
-		required_missions = { FOM_annex_youkai_forest }
-		position = 8
+		required_missions = { FOM_breach_to_the_lake }
+		position = 7
 		
 		provinces_to_highlight = {
 			OR = {
@@ -1871,6 +1852,20 @@ fom_missions_fith_slot = {
 			add_country_modifier = {
 				name = "fom_more_doll_material"
 				duration = 7300
+			}
+			Sunny_plains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Perfect_cut_coast = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
 		}
 	}
