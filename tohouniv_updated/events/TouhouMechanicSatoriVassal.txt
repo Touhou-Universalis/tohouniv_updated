@@ -32,8 +32,12 @@ country_event = {
 		}
 		export_to_variable = {
 			which = th_diplo_slot_tracker
-			value = modifier:diplomatic_upkeep
+			value = modifier:vassal_upkeep
 			who = ROOT
+		}
+		multiply_variable = {
+			which = th_diplo_slot_tracker
+			value = 100
 		}
 		every_subject_country = { 
 			limit = { 
@@ -268,6 +272,7 @@ country_event = {
 	
 	option = {
 		name = th_satori_vassal_mechanic.7.a
+		custom_tooltip = th_satori_vassal_mechanic.7.a.tt
 		tooltip = {
 			add_country_modifier = {
 				name = th_too_many_vassals
@@ -404,15 +409,7 @@ country_event = {
 	
 	option = {
 		name = th_satori_vassal_mechanic.10.a
-		tooltip = {
-			remove_country_modifier = th_too_many_vassals
-			every_subject_country = { 
-				limit = { 
-					has_country_modifier = th_desire_for_freedom
-				} 
-				remove_country_modifier = th_desire_for_freedom
-			}
-		}
+		custom_tooltip = th_satori_vassal_mechanic.10.a.tt
 
 		ai_chance = { 
 			factor = 100
@@ -444,6 +441,19 @@ country_event = {
 	}
 
 	hidden = yes
+
+	immediate = {
+		#Update the Slot Tracker
+		export_to_variable = {
+			which = th_diplo_slot_tracker
+			value = modifier:vassal_upkeep
+			who = ROOT
+		}
+		multiply_variable = {
+			which = th_diplo_slot_tracker
+			value = 100
+		}
+	}
 	
 	option = {
 		name = th_satori_vassal_mechanic.11.a
@@ -484,7 +494,7 @@ country_event = {
 	}
 }
 
-#Explanation of the mechanic
+#Explanation of the mechanic - also, updates your tracker manually
 country_event = {
 	id = th_satori_vassal_mechanic.100
 	title = th_satori_vassal_mechanic.100.t
@@ -493,8 +503,54 @@ country_event = {
 
 	is_triggered_only = yes
 
+	immediate = {
+		hidden_effect = {
+			#Update the Slot Tracker
+			export_to_variable = {
+				which = th_diplo_slot_tracker
+				value = modifier:vassal_upkeep
+				who = ROOT
+			}
+			multiply_variable = {
+				which = th_diplo_slot_tracker
+				value = 100
+			}
+			if = {
+				limit = {
+					NOT = { num_of_subjects = 1 }
+				}
+				set_variable = {
+					which = th_subject_tracker
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					which = th_subject_counter
+					value = 0
+				}
+				every_subject_country = {
+					limit = {
+						is_subject_of_type = th_satori_vassal
+					}
+					overlord = {
+						change_variable = {
+							which = th_subject_counter
+							value = 1
+						}
+					}
+				}
+				set_variable = {
+					which = th_subject_tracker
+					which = th_subject_counter
+				}
+			}
+		}
+	}
+
 	option = {
-		name = th_satori_vassal_mechanic.100
+		name = th_satori_vassal_mechanic.100.a
+		custom_tooltip = th_satori_vassal_mechanic.100.a.tt
 
 		ai_chance = {
 			factor = 1
