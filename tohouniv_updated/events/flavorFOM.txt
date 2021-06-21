@@ -14,21 +14,352 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	option = {
-		name = flavor_fom.1.a
-		custom_tooltip = flavor_fom.1.a.tt
-		th_enable_free_respawn = yes
-		th_halve_respawn_cooldown = yes
+	immediate = {
 		hidden_effect = {
-			th_increase_ruler_adm_stat = {
-				adm = 1
-			}
+			set_country_flag = th_fom_currently_chosing_for_ruler			
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			clr_country_flag = th_fom_currently_chosing_for_ruler
+			set_ruler_flag = th_fom_took_potion_descision_flag
+		}	
+	}
+
+	option = {	#Let the current ruler drink it
+		name = flavor_fom.1.a
+		trigger = {
+			NOT = { has_ruler_flag = th_original_marisa }
+			NOT = { has_ruler_flag = th_original_alice }			
 		}
 		add_ruler_personality = immortal_personality
+		if = {
+			limit = {
+				NOT = { has_dlc = "Rights of Man" }
+			}
+			change_adm = 2
+			change_dip = 2 
+			change_mil = 2 
+		}
+		country_event = {
+			id = flavor_fom.2
+			days = 0
+		}
+	}
+	
+	option = {	#Let Marisa drink it
+		name = flavor_fom.1.b
+		trigger = {
+			NOT = { has_ruler_flag = th_original_marisa }
+		}
+		hidden_effect = {
+			set_country_flag = fom_decide_to_respawn_marisa
+		}
+		th_respawn_ruler_with_new_stats_effect = yes
+		if = {
+			limit = {
+				NOT = { has_dlc = "Rights of Man" }
+			}
+			add_mil_power = 75
+		}
+		country_event = {
+			id = flavor_fom.2
+			days = 0
+		}
+	}
+	
+	option = {	#Let Alice drink it
+		name = flavor_fom.1.c		
+		trigger = {
+			NOT = { has_ruler_flag = th_original_alice }
+		}
+		th_respawn_ruler_with_new_stats_effect = yes
+		if = {
+			limit = {
+				NOT = { has_dlc = "Rights of Man" }
+			}
+			add_adm_power = 75
+		}
+		country_event = {
+			id = flavor_fom.2
+			days = 0
+		}
+	}
+	
+	option = {	#Let it be
+		name = flavor_fom.1.d	
 		add_adm_power = 150
 		add_dip_power = 150
 		add_mil_power = 150
 		add_prestige = 15
+		country_event = {
+			id = flavor_fom.2
+			days = 0
+		}
+	}
+}
+
+country_event = {
+	id = flavor_fom.2
+	title = "flavor_fom.2.t"
+	desc = "flavor_fom.2.desc"
+	picture = ALCHEMYMARISA_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_fom_currently_chosing_for_heir			
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			clr_country_flag = th_fom_currently_chosing_for_heir
+			set_heir_flag = th_fom_took_potion_descision_flag
+			set_country_flag = th_fom_hourai_potion
+		}	
+	}
+
+	option = {	#Let the current heir drink it
+		name = flavor_fom.2.a
+		trigger = {
+			has_heir = yes
+			NOT = { has_heir_flag = th_original_alice }
+			NOT = { has_heir_flag = th_original_marisa }			
+		}
+		add_heir_personality = immortal_personality
+		if = {
+			limit = {
+				NOT = { has_dlc = "Rights of Man" }
+			}
+			change_heir_adm  = 2
+			change_heir_dip  = 2 
+			change_heir_mil  = 2 
+		}
+	}
+	
+	option = {	#Let Marisa become heir
+		name = flavor_fom.2.b
+		
+		trigger = {
+			NOT = { has_ruler_flag = th_original_marisa }
+			NOT = { has_heir_flag = th_original_marisa }
+		}		
+		hidden_effect = {
+			set_country_flag = fom_decide_to_respawn_marisa
+		}
+		th_respawn_heir_with_new_stats_effect = yes
+	}
+	
+	option = {	#Let Alice becoma heir
+		name = flavor_fom.2.c
+		trigger = {
+			NOT = { has_ruler_flag = th_original_alice }
+			NOT = { has_heir_flag = th_original_alice }
+		}
+		th_respawn_heir_with_new_stats_effect = yes
+	}
+	
+	option = {	#Let it be
+		name = flavor_fom.2.d
+		add_adm_power = 150
+		add_dip_power = 150
+		add_mil_power = 150
+		add_prestige = 15
+	}
+}
+
+country_event = {
+	id = flavor_fom.3
+	title = "flavor_fom.3.t"
+	desc = "flavor_fom.3.desc"
+	picture = ALCHEMYMARISA_eventPicture
+
+	trigger = {
+		has_country_flag = th_fom_hourai_potion
+		NOT = { has_ruler_flag = th_fom_took_potion_descision_flag }
+		NOT = { has_country_flag = th_fom_currently_chosing_for_ruler }
+		NOT = { has_country_flag = th_fom_currently_chosing_for_heir }
+	}
+
+	mean_time_to_happen = { days = 0 }
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_fom_currently_chosing_for_ruler
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			set_ruler_flag = th_fom_took_potion_descision_flag
+		}		
+	}
+	
+	option = {	#Let the current ruler drink it
+		name = flavor_fom.3.a
+		trigger = {
+			NOT = { has_ruler_flag = th_original_marisa }
+			NOT = { has_ruler_flag = th_original_alice }			
+		}
+		add_ruler_personality = immortal_personality
+		if = {
+			limit = {
+				NOT = { has_dlc = "Rights of Man" }
+			}
+			change_adm = 2
+			change_dip = 2 
+			change_mil = 2 
+		}
+		hidden_effect = {
+			clr_country_flag = th_fom_currently_chosing_for_ruler
+		}
+		country_event = {
+			id = flavor_fom.4
+			days = 0
+		}
+	}
+	
+	option = {	#Let Marisa drink it
+		name = flavor_fom.3.b
+		trigger = {
+			NOT = { has_ruler_flag = th_original_marisa }
+		}
+		hidden_effect = {
+			set_country_flag = fom_decide_to_respawn_marisa
+		}
+		th_respawn_ruler_with_new_stats_effect = yes
+		if = {
+			limit = {
+				NOT = { has_dlc = "Rights of Man" }
+			}
+			add_mil_power = 75
+		}
+		hidden_effect = {
+			clr_country_flag = th_fom_currently_chosing_for_ruler
+		}
+		country_event = {
+			id = flavor_fom.4
+			days = 0
+		}
+	}
+	
+	option = {	#Let Alice drink it
+		name = flavor_fom.3.c		
+		trigger = {
+			NOT = { has_ruler_flag = th_original_alice }
+		}
+		th_respawn_ruler_with_new_stats_effect = yes
+		if = {
+			limit = {
+				NOT = { has_dlc = "Rights of Man" }
+			}
+			add_adm_power = 75
+		}
+		hidden_effect = {
+			clr_country_flag = th_fom_currently_chosing_for_ruler
+		}
+		country_event = {
+			id = flavor_fom.4
+			days = 0
+		}
+	}
+	
+	option = {	#Let it be
+		name = flavor_fom.4.d
+		hidden_effect = {
+			clr_country_flag = th_fom_currently_chosing_for_ruler
+		}
+		country_event = {
+			id = flavor_fom.4
+			days = 0
+		}
+	}
+}
+
+country_event = {
+	id = flavor_fom.4
+	title = "flavor_fom.4.t"
+	desc = "flavor_fom.4.desc"
+	picture = ALCHEMYMARISA_eventPicture
+
+	trigger = {
+		has_country_flag = th_fom_hourai_potion
+		NOT = { has_heir_flag = th_fom_took_potion_descision_flag }
+		NOT = { has_ruler_flag = th_fom_chosed_for_heir }
+		NOT = { has_country_flag = th_fom_currently_chosing_for_ruler }
+		NOT = { has_country_flag = th_fom_currently_chosing_for_heir }
+	}
+
+	mean_time_to_happen = { days = 0 }
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_fom_currently_chosing_for_heir
+		}
+	}
+	
+	after = {
+		hidden_effect = {
+			clr_country_flag = th_fom_currently_chosing_for_heir
+		}		
+	}
+
+	option = {	#Let the current heir drink it
+		name = flavor_fom.4.a
+		trigger = {
+			has_heir = yes
+			NOT = { has_heir_flag = th_original_alice }
+			NOT = { has_heir_flag = th_original_marisa }
+		}
+		add_heir_personality = immortal_personality
+		if = {
+			limit = {
+				NOT = { has_dlc = "Rights of Man" }
+			}
+			change_heir_adm  = 2
+			change_heir_dip  = 2 
+			change_heir_mil  = 2 
+		}
+		hidden_effect = {
+			set_heir_flag = th_fom_took_potion_descision_flag
+		}
+	}
+
+	option = {	#Let Marisa become heir
+		name = flavor_fom.4.b
+		trigger = {
+			NOT = { has_ruler_flag = th_original_marisa }
+			NOT = { has_heir_flag = th_original_marisa }
+		}	
+		hidden_effect = {
+			set_country_flag = fom_decide_to_respawn_marisa
+		}
+		th_respawn_heir_with_new_stats_effect = yes
+		hidden_effect = {
+			set_heir_flag = th_fom_took_potion_descision_flag
+		}
+	}
+
+	option = {	#Let Alice become heir
+		name = flavor_fom.4.c
+		trigger = {
+			NOT = { has_ruler_flag = th_original_alice }
+			NOT = { has_heir_flag = th_original_alice }			
+		}
+		th_respawn_heir_with_new_stats_effect = yes
+		hidden_effect = {
+			set_heir_flag = th_fom_took_potion_descision_flag
+		}
+	}
+	
+	option = {	#Let it be
+		name = flavor_fom.4.d
+		hidden_effect = {
+			set_ruler_flag = th_fom_chosed_for_heir
+		}
 	}
 }
 
