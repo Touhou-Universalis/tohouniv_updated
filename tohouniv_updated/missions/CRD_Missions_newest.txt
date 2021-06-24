@@ -75,15 +75,26 @@ crd_scarlet_diplo_slot = {
 	}
 	has_country_shield = yes
 
-	CRD_the_scarletts_new = {
+	CRD_the_scarletts = {
 		icon = mission_touhou_the_scarlets
 		required_missions = {  }
 		position = 1
 		trigger = {
 			is_subject = no
 			OR = {
-				is_rival = SCR
-				SCR = { is_rival = ROOT }
+				custom_trigger_tooltip = {
+					tooltip = CRD_the_scarletts_tt
+					OR = {
+						AND = {
+							is_rival = SCR
+							trade_embargoing = SCR
+						}
+						AND = {
+							SCR = { is_rival = ROOT }
+							trade_embargoing = SCR
+						}
+					}
+				}
 				alliance_with = SCR
 				NOT = { exists = SCR }
 			}
@@ -118,39 +129,38 @@ crd_scarlet_diplo_slot = {
 				}
 				add_casus_belli = {
 					target = SCR
-					type = cb_restore_personal_union
+					type = cb_touhou_mission_scr_crd_war
 					months = 900
 				}
 			}
 		}
 	}
 	
-	CRD_two_mansions_one_dynasty_new = {
+	CRD_two_mansions_one_dynasty = {
 		icon = mission_touhou_scarlet_komeiji_union
-		required_missions = { CRD_the_scarletts_new }
+		required_missions = { CRD_the_scarletts }
 		position = 2
 		
 		provinces_to_highlight = {
 			OR = {
-				area = Scarlett_domain
-				area = Scarlet_island
-				area = Scarlet_mountain
+				province_id = 4968
+				owner = {
+					tag = SCR
+				}
 			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		
 		trigger = {
-			Scarlett_domain = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			Scarlet_island = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			Scarlet_mountain = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
+			OR = {
+				tag = SCD
+				AND = {
+					NOT = { exists = SCR }
+					owns_or_non_sovereign_subject_of = 4968
+				}
+				SCR = {
+					is_subject_of = ROOT
+				}
 			}
 		}
 		
@@ -165,35 +175,25 @@ crd_scarlet_diplo_slot = {
 	
 	CRD_scarlet_demand = {
 		icon = mission_touhou_flankoi
-		required_missions = { CRD_two_mansions_one_dynasty_new }
+		required_missions = { CRD_two_mansions_one_dynasty }
 		position = 3
+		provinces_to_highlight = {
+			area = Scarlet_island
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			NOT = { base_production = 10 }
+		}
 		trigger = {
-			SCR = {
-				junior_union_with = ROOT
-				NOT = {
-					liberty_desire = 50 
-				}
-				num_of_loans = 0
-				OR = {
-					ai_attitude = {
-						who = ROOT
-						attitude = attitude_loyal
-					}
-					ai_attitude = {
-						who = ROOT
-						attitude = attitude_friendly
-					}
-				}
-			}
-			reverse_has_opinion = {
-				who = SCR
-				value = 150
-			}			
+			Scarlet_island = {
+				country_or_non_sovereign_subject_holds = ROOT
+				base_production = 10
+				type = all
+			}	
 		}
 		effect = {
+			add_dip_power = 100
 			country_event = {
-				id = flavor_scr.1
-			}	
+				id = flavor_crd.14
+			}
 		}
 	}	
 
@@ -201,57 +201,15 @@ crd_scarlet_diplo_slot = {
 		icon = mission_touhou_smug_remilia
 		required_missions = { CRD_scarlet_demand }
 		position = 4
-		provinces_to_highlight = {
-			OR = {
-				province_id = 4989
-				province_id = 5090
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
 		trigger = {
-			4989 = {
-				OR = {
-					owned_by = ROOT
-					AND = {
-						owned_by = SCR
-						SCR = {
-							junior_union_with = ROOT
-						}
-					}
-				}
-			}
-			5090 = {
-				OR = {
-					owned_by = ROOT
-					AND = {
-						owned_by = SCR
-						SCR = {
-							junior_union_with = ROOT
-						}
-					}
-				}
+			custom_trigger_tooltip = {
+				tooltip = CRD_SDM_nuisance_tt
+				has_country_flag = crd_defeated_remilia
 			}
 		}
 		effect = {
-			add_prestige = 25
-			if = {
-				limit = {
-					SCR = {
-						junior_union_with = ROOT
-					}
-				}
-				SCR = {
-					add_treasury = 800
-					add_country_modifier = {
-						name = crd_resolved_nuisance
-						duration = 7300
-					}
-				}
-			}
-			else = {
-				add_treasury = 800
+			country_event = {
+				id = flavor_crd.11
 			}
 		}
 	}
