@@ -1430,18 +1430,20 @@ country_event = {
 }
 
 #Remove marking modifier
-province_event = {
+country_event = {
 	id = flavor_sff.113
 	title = "flavor_sff.113.t"
 	desc = "flavor_sff.113.desc"
 	picture = YUUKAGARDENS_eventPicture
 	hidden = yes
 	trigger = {
-		has_province_modifier = th_province_to_mark
+		any_owned_province = {
+			has_province_modifier = th_province_to_mark
+		}
 		OR = {
-			is_territory = no
-			owner = {
-				NOT = { has_country_flag = th_activated_province_drain }
+			NOT = { has_country_flag = th_activated_province_drain }
+			any_owned_province = {
+				is_territory = no
 			}
 		}
 	}
@@ -1450,7 +1452,47 @@ province_event = {
 	}
 	option = {
 		name = flavor_sff.113.a
-		remove_province_modifier = th_province_to_mark
+		every_owned_province = {
+			limit = {
+				has_province_modifier = th_province_to_mark
+			}
+			remove_province_modifier = th_province_to_mark
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Give new territories mark too
+country_event = {
+	id = flavor_sff.114
+	title = "flavor_sff.114.t"
+	desc = "flavor_sff.114.desc"
+	picture = YUUKAGARDENS_eventPicture
+	hidden = yes
+	trigger = {
+		any_owned_province = {
+			NOT = { has_province_modifier = th_province_to_mark }
+			is_territory = yes
+		}
+		has_country_flag = th_activated_province_drain
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = flavor_sff.114.a
+		every_owned_province = {
+			limit = {
+				NOT = { has_province_modifier = th_province_to_mark }
+				is_territory = yes
+			}
+			add_province_modifier = {
+				name = th_province_to_mark
+				duration = -1
+			}
+		}
 		ai_chance = {
 			factor = 100
 		}

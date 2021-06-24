@@ -583,7 +583,7 @@ country_event = {
 	}
 }
 
-###FOM DIPLO ACTIONS###
+###UNUSED DIPLO ACTIONS###
 #Information about Marisa stealing from your treasury
 country_event = {
 	id = th_diplo_events.14
@@ -722,7 +722,40 @@ country_event = {
 }
 
 
-###HKR DIPLO ACTIONS###
+###FOM DIPLO ACTIONS###
+# Inform target of being robbed
+country_event = {
+	id = th_diplo_events.15
+	title = th_diplo_events.15.t
+	desc = th_diplo_events.15.desc
+	picture = MARISA_eventPicture
+	
+    is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.15.a
+
+        tooltip = {
+            FROM = {
+                add_country_modifier = {
+                    name = th_stolen_books
+                    duration = 1825
+                }
+            }
+        }
+        add_country_modifier = {
+            name = th_has_less_books
+            duration = 1825
+        }
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+###MORE HKR DIPLO ACTIONS###
 #Recharger for Youkai hunts
 country_event = {
 	id = th_diplo_events.17
@@ -789,6 +822,29 @@ country_event = {
             value = total_development
             who = ROOT
         }
+        if = {
+            limit = {
+                total_development = 300
+            }
+            multiply_variable = {
+                which = th_youkai_hunt_own_development
+                value = 1.5
+            }
+            change_variable = {
+                which = th_youkai_hunt_own_development
+                value = 1550
+            }
+        }
+        else = {
+            multiply_variable = {
+                which = th_youkai_hunt_own_development
+                value = 4
+            }
+            change_variable = {
+                which = th_youkai_hunt_own_development
+                value = 800
+            }
+        }
         FROM = {
             set_variable = {
                 which = th_youkai_hunt_youkai_development
@@ -831,12 +887,12 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_getruler_fighting_skill_no_mil = {
+			th_getruler_fighting_skill = {
 				SKILL_BONI = 0
             }            
 			set_variable = {
 				which = th_youkai_hunt_youkai_combat_skills
-				value = 800
+				value = 0
             }
             change_variable = {
                 which = th_youkai_hunt_youkai_combat_skills
@@ -967,13 +1023,13 @@ country_event = {
                 }
                 multiply_variable = {
                     which = th_youkai_cash
-                    value = 4
+                    value = 2
                 }
             }
             else = {
                 multiply_variable = {
                     which = th_youkai_cash
-                    value = 2
+                    value = 1
                 }
             }
             change_variable = {
@@ -1382,7 +1438,7 @@ country_event = {
 	}
 }
 
-###FAIRY PRANKS
+###FAIRY PRANKS###
 
 #Pranks - Generic for all non-special fairies
 country_event = {
@@ -1702,6 +1758,385 @@ country_event = {
         add_country_modifier = {
             name = th_lrv_amplified_weather
             duration = 3650
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+###SATORI'S MIND ABILITY###
+#Event to trigger if there is no noteworthy diplomatic action to copy
+country_event = {
+    id = th_diplo_events.39
+    title = th_diplo_events.39.t
+    desc = th_diplo_events.39.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {
+        name = th_diplo_events.39.a
+        trigger_switch = {
+            on_trigger = has_country_flag
+            th_copied_ability_of_FUJ = { add_country_modifier = { name = th_copy_ability_from_NET duration = 1825 } }
+            th_copied_ability_of_NET = { add_country_modifier = { name = th_copy_ability_from_FUJ duration = 1825 } }
+            th_copied_ability_of_SFF = { add_country_modifier = { name = th_copy_ability_from_SFF duration = 1825 } }
+            th_copied_ability_of_HIG = { add_country_modifier = { name = th_copy_ability_from_HIG duration = 1825 } }
+            th_copied_ability_of_MKI = { add_country_modifier = { name = th_copy_ability_from_MKI duration = 1825 } }
+            th_copied_ability_of_GNU = { add_country_modifier = { name = th_copy_ability_from_GNU duration = 1825 } }
+            th_copied_ability_of_FLR = { add_country_modifier = { name = th_copy_ability_from_FLR duration = 1825 } }
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+
+    after = {
+        hidden_effect = {
+            th_clear_copy_flag = yes
+        }
+    }
+}
+
+#Clear flags when the timer runs out
+country_event = {
+    id = th_diplo_events.40
+    title = th_diplo_events.40.t
+    desc = th_diplo_events.40.desc
+    picture = SATORI_eventPicture
+    
+    trigger = {
+        NOT = { has_country_modifier = th_copied_ability }
+        has_country_flag = th_copied_ability_flag
+    }
+
+    mean_time_to_happen = {
+        days = 0
+    }
+
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.40.a
+        th_clear_copy_flag = yes
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Target country gets manipulated into becoming a vassal of Satori
+country_event = {
+    id = th_diplo_events.41
+    title = th_diplo_events.41.t
+    desc = th_diplo_events.41.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {  #Satori Komeiji commands you: Obey!
+        name = th_diplo_events.41.a
+        FROM = {
+            create_subject = {
+                subject_type = th_satori_vassal
+                subject = ROOT
+            }
+            country_event = {
+                id = th_diplo_events.42
+            }
+        }
+
+        ai_chance = {
+            factor = 0.6
+            modifier = {
+                factor = 2
+                check_variable = {
+                    which = th_spy_progress
+                    value = 1
+                }
+            }
+            modifier = {
+                factor = 2
+                check_variable = {
+                    which = th_spy_progress
+                    value = 2
+                }
+            }
+            modifier = {
+                factor = 2
+                check_variable = {
+                    which = th_spy_progress
+                    value = 3
+                }
+            }
+            modifier = {
+                factor = 2
+                check_variable = {
+                    which = th_spy_progress
+                    value = 4
+                }
+            }
+            modifier = {
+                factor = 2
+                check_variable = {
+                    which = th_spy_progress
+                    value = 5
+                }
+            }
+            modifier = {
+                factor = 2
+                check_variable = {
+                    which = th_spy_progress
+                    value = 6
+                }
+            }
+            modifier = {
+                factor = 2
+                check_variable = {
+                    which = th_spy_progress
+                    value = 7
+                }
+            }
+            modifier = {
+                factor = 2
+                check_variable = {
+                    which = th_spy_progress
+                    value = 8
+                }
+            }
+        }
+    }
+
+    option = {  #We will never follow a tyrann!
+        name = th_diplo_events.41.b
+        FROM = {
+            country_event = {
+                id = th_diplo_events.43
+            }
+        }
+
+        ai_chance = {
+            factor = 0.4
+            modifier = {
+                factor = 0.5
+                check_variable = {
+                    which = th_spy_progress
+                    value = 1
+                }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = {
+                    which = th_spy_progress
+                    value = 2
+                }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = {
+                    which = th_spy_progress
+                    value = 3
+                }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = {
+                    which = th_spy_progress
+                    value = 4
+                }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = {
+                    which = th_spy_progress
+                    value = 5
+                }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = {
+                    which = th_spy_progress
+                    value = 6
+                }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = {
+                    which = th_spy_progress
+                    value = 7
+                }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = {
+                    which = th_spy_progress
+                    value = 8
+                }
+            }
+        }
+    }
+}
+
+#Target country is our vassal!
+country_event = {
+    id = th_diplo_events.42
+    title = th_diplo_events.42.t
+    desc = th_diplo_events.42.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {  #Lovely
+        name = th_diplo_events.42.a
+        tooltip = {
+            create_subject = {
+                subject_type = th_satori_vassal
+                subject = FROM
+            }
+        }
+
+        ai_chance = {
+            factor = 1
+        }
+    }
+}
+
+#Target country refuses!
+country_event = {
+    id = th_diplo_events.43
+    title = th_diplo_events.43.t
+    desc = th_diplo_events.43.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {  #Curses
+        name = th_diplo_events.43.a
+
+        ai_chance = {
+            factor = 1
+        }
+    }
+}
+
+#Target country awakens out of the hypnosis done by Satori!
+country_event = {
+    id = th_diplo_events.44
+    title = th_diplo_events.44.t
+    desc = th_diplo_events.44.desc
+    picture = SATORI_eventPicture
+    
+    trigger = {
+        any_country = {
+            had_country_flag = {
+                flag = th_satoris_command_flag_by_@ROOT
+                days = 1825
+            }
+            NOT = {
+                had_country_flag = {
+                    flag = th_satoris_command_flag_by_@ROOT
+                    days = 5475
+                }
+            }
+            NOT = { has_country_modifier = th_satoris_command }
+            NOT = { has_country_modifier = th_awoken_from_the_hybnosis }
+        }
+    }
+
+    mean_time_to_happen = {
+        days = 1
+    }
+    hidden = yes
+
+    option = {  #Curses
+        name = th_diplo_events.44.a
+        random_country = {
+            limit = {
+                had_country_flag = {
+                    flag = th_satoris_command_flag_by_@ROOT
+                    days = 1825
+                }
+                NOT = {
+                    had_country_flag = {
+                        flag = th_satoris_command_flag_by_@ROOT
+                        days = 5475
+                    }
+                }
+                NOT = { has_country_modifier = th_satoris_command }
+                NOT = { has_country_modifier = th_awoken_from_the_hybnosis }
+            }
+            if = {
+                limit = {
+                    is_subject_of_type = th_satori_vassal
+                }
+                add_country_modifier = {
+                    name = th_awoken_from_the_hybnosis
+                    duration = 3650
+                }
+            }
+        }
+
+        ai_chance = {
+            factor = 1
+        }
+    }
+}
+
+#Read the targets mind and cause trauma
+country_event = {
+    id = th_diplo_events.45
+    title = th_diplo_events.45.t
+    desc = th_diplo_events.45.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_awoken_traumas_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.45.a
+        add_country_modifier = {
+            name = th_awoken_traumas
+            duration = 1825
+        }
+        custom_tooltip = th_diplo_events.36.a.tt
+        hidden_effect = {
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.450
+                }
+            }
+        }
+        remove_fow = 60
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Read the targets mind and cause trauma (FoW deleter)
+country_event = {
+    id = th_diplo_events.450
+    title = th_diplo_events.450.t
+    desc = th_diplo_events.450.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.450.a
+        FROM = {
+            remove_fow = 60
         }
         
         ai_chance = {

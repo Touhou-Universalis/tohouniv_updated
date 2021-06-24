@@ -22,6 +22,7 @@ country_event = {
 		capital_scope = { 
 			religion = th_moriyashinto 
 		} 
+		is_free_or_tributary_trigger = yes
 	}
 	
 	mean_time_to_happen = {
@@ -85,83 +86,6 @@ country_event = {
 		
 		ai_chance = { 
 			factor = 40
-		}
-	}
-}
-
-
-#Satori's vassal becomes specific vassal
-country_event = {
-	id = flavor_crd.2
-	title = flavor_crd.2.t
-	desc = flavor_crd.2.desc
-	picture = YUKARI_eventPicture
-	
-	mean_time_to_happen = {
-		days = 0
-	}
-
-	hidden = yes
-	
-	trigger = {
-		OR = {
-			tag = CRD
-			was_tag = CRD
-			has_country_flag = TH_komeiji_monarchy_nd
-		}
-		num_of_subjects = 1 
-		OR = {
-			any_subject_country = { is_subject_of_type = vassal }
-			any_subject_country = { is_subject_of_type = daimyo_vassal }
-		}
-	}
-	immediate = {
-		hidden_effect = {
-			every_subject_country = { 
-				limit = { 
-					OR = { 
-						is_subject_of_type = vassal 
-						is_subject_of_type = daimyo_vassal
-					}
-					NOT = { is_subject_of_type = th_satori_vassal }
-				} 
-				country_event = { id = flavor_crd.3 }
-			}
-		}
-	}
-	
-	option = {
-		name = flavor_crd.2.a
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Vassal becomes Satori's vassal
-country_event = {
-	id = flavor_crd.3
-	title = flavor_crd.3.t
-	desc = flavor_crd.3.desc
-	picture = GENSOKYOTHRONE_eventPicture
-	
-	is_triggered_only = yes
-
-	hidden = yes
-	
-	option = {
-		name = flavor_crd.3.a
-		grant_independence = yes
-		FROM = {
-			create_subject = {
-				subject_type = th_satori_vassal
-				subject = ROOT
-			}
-		}
-		
-		ai_chance = { 
-			factor = 100
 		}
 	}
 }
@@ -311,7 +235,7 @@ country_event = {
 						adm = 5
 						dip = 3
 						mil = 5
-						fixed = yes
+						#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
 						female = yes
 						culture = Oni_culture
 						religion = ROOT
@@ -438,38 +362,6 @@ country_event = {
 	}
 }
 
-#remove reputation penalty after have diplomatic hegemon flag	
-country_event = {
-	id = flavor_crd.7
-	title = flavor_crd.7.t
-	desc = flavor_crd.7.desc
-	picture = ORINOKUU_eventPicture	
-	
-	mean_time_to_happen = {
-		days = 0
-	}
-
-	hidden = yes
-	
-	trigger = {
-		has_country_modifier = annexers_legacy
-		has_country_flag = th_diplomatic_hegemon
-	}
-	immediate = {
-		hidden_effect = {
-			remove_country_modifier = annexers_legacy
-		}
-	}
-	
-	option = {
-		name = flavor_crd.7.a
-		
-		ai_chance = { 
-			factor = 100
-		}	
-	}
-}
-
 #lighthouse keeper pet?
 country_event = {
 	id = flavor_crd.6
@@ -531,7 +423,7 @@ country_event = {
 					adm = 1
 					dip = 2
 					mil = 6
-					fixed = yes
+					#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
 					female = yes
 					culture = ROOT
 					religion = ROOT
@@ -615,7 +507,7 @@ country_event = {
 					adm = 4
 					dip = 5
 					mil = 5
-					fixed = yes
+					#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
 					female = yes
 					culture = ROOT
 					religion = ROOT
@@ -654,6 +546,527 @@ country_event = {
 		}
 		ai_chance = {
 			factor = 100
+		}
+	}
+}
+
+#remove reputation penalty after have diplomatic hegemon flag	
+country_event = {
+	id = flavor_crd.7
+	title = flavor_crd.7.t
+	desc = flavor_crd.7.desc
+	picture = ORINOKUU_eventPicture	
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+	
+	trigger = {
+		has_country_modifier = annexers_legacy
+		has_country_flag = th_diplomatic_hegemon
+	}
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = annexers_legacy
+		}
+	}
+	
+	option = {
+		name = flavor_crd.7.a
+		
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#Satori and Former Hell do not recognize the Scarlets as their leader
+country_event = {
+	id = flavor_crd.8
+	title = flavor_crd.8.t
+	desc = {
+		trigger = {
+			exists = SCR
+		}
+		desc = flavor_crd.8.desc.a
+	}
+	desc = {
+		trigger = {
+			NOT = { exists = SCR }
+		}
+		desc = flavor_crd.8.desc.b
+	}
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { tag = SCD }
+		OR = {
+			AND = {
+				exists = SCR
+				SCR = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				NOT = { exists = SCR }
+				any_owned_province = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+				}
+			}
+		}
+		NOT = { has_country_flag = crd_not_appealed_remilia }
+		NOT = { has_country_flag = crd_appealed_remilia }
+	}
+
+	mean_time_to_happen = {
+		days = 5
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_eligible_to_see_scd_decision
+			set_country_flag = crd_not_appealed_remilia
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+				}
+				add_province_modifier = {
+					name = scr_crd_not_my_mistress
+					duration = -1
+				}
+			}
+			every_subject_country = {
+				limit = {
+					NOT = { tag = SCR }
+				}
+				every_owned_province = {
+					limit = {
+						OR = {
+							area = Scarlet_island
+							area = Scarlet_mountain
+							area = Scarlett_domain
+						}
+					}
+					add_province_modifier = {
+						name = scr_crd_not_my_mistress
+						duration = -1
+					}
+				}
+			}
+			if = {
+				limit = {
+					SCR = {
+						NOT = { is_subject_of_type = th_rebellious_subject }
+					}
+				}
+				SCR = {
+					grant_independence = yes
+				}
+				ROOT = {
+					create_subject = {
+						subject_type = th_rebellious_subject
+						subject = SCR
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_crd.8.a
+		custom_tooltip = flavor_crd.8.a.tt
+		if = {
+			limit = {
+				exists = SCR
+				SCR = {
+					is_subject_of = ROOT
+				}
+			}
+			custom_tooltip = flavor_crd.8.a.ct
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Event for keeping all hell provinces unusable for SCR
+country_event = {
+	id = flavor_crd.9
+	title = flavor_crd.9.t
+	desc = flavor_crd.9.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { tag = SCD }
+		has_country_flag = crd_not_appealed_remilia
+		NOT = { has_country_flag = crd_appealed_remilia }
+		OR = {
+			any_owned_province = {
+				OR = {
+					area = Scarlet_island
+					area = Scarlet_mountain
+					area = Scarlett_domain
+				}
+				NOT = { has_province_modifier = scr_crd_not_my_mistress }
+			}
+			any_subject_country = {
+				any_owned_province = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+					NOT = { has_province_modifier = scr_crd_not_my_mistress }
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.9.a
+		every_owned_province = {
+			limit = {
+				OR = {
+					area = Scarlet_island
+					area = Scarlet_mountain
+					area = Scarlett_domain
+				}
+			}
+			add_province_modifier = {
+				name = scr_crd_not_my_mistress
+				duration = -1
+			}
+		}
+		every_subject_country = {
+			limit = {
+				NOT = { tag = SCR }
+			}
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+				}
+				add_province_modifier = {
+					name = scr_crd_not_my_mistress
+					duration = -1
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Event for removing all the bad modifiers from the provinces
+country_event = {
+	id = flavor_crd.10
+	title = flavor_crd.10.t
+	desc = flavor_crd.10.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		any_owned_province = {
+			has_province_modifier = scr_crd_not_my_mistress
+		}
+		OR = {
+			AND = {
+				NOT = { th_is_or_was_tag = { tag = CRD } }
+				OR = {
+					is_free_or_tributary_trigger = yes
+					overlord = {
+						OR = {
+							NOT = { th_is_or_was_tag = { tag = CRD } }
+							has_country_flag = crd_appealed_remilia
+						}
+					}
+				}
+			}
+			has_country_flag = crd_appealed_remilia
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.10.a
+		every_owned_province = {
+			limit = {
+				OR = {
+					area = Scarlet_island
+					area = Scarlet_mountain
+					area = Scarlett_domain
+				}
+				has_province_modifier = scr_crd_not_my_mistress
+			}
+			remove_province_modifier = scr_crd_not_my_mistress
+		}
+		every_subject_country = {
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+					has_province_modifier = scr_crd_not_my_mistress
+				}
+				remove_province_modifier = scr_crd_not_my_mistress
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Remilia and the SDM recognize the Komeiji rulers
+country_event = {
+	id = flavor_crd.11
+	title = flavor_crd.11.t
+	desc = {
+		trigger = {
+			exists = SCR
+		}
+		desc = flavor_crd.11.desc.a
+	}
+	desc = {
+		trigger = {
+			NOT = { exists = SCR }
+		}
+		desc = flavor_crd.11.desc.b
+	}
+	picture = KOIFLAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.11.a
+		custom_tooltip = flavor_crd.11.a.tt
+		hidden_effect = {
+			clr_country_flag = crd_not_appealed_remilia
+			set_country_flag = crd_appealed_remilia
+			every_owned_province = {
+				limit = {
+					has_province_modifier = scr_crd_not_my_mistress
+				}
+				remove_province_modifier = scr_crd_not_my_mistress
+			}
+			every_subject_country = {
+				every_owned_province = {
+					limit = {
+						has_province_modifier = scr_crd_not_my_mistress
+					}
+					remove_province_modifier = scr_crd_not_my_mistress
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = SCR
+				SCR = {
+					is_subject_of = ROOT
+				}
+			}
+			custom_tooltip = flavor_crd.11.a.ct
+			hidden_effect = {
+				SCR = {
+					grant_independence = yes
+				}
+				create_union = SCR
+				if = {
+					limit = {
+						has_dlc = "Rights of Man"
+					}
+					set_country_flag = crd_eligible_for_scarlet_consort
+				}
+			}
+			tooltip = {
+				create_union = SCR
+			}
+			ROOT = {
+				add_prestige = 50
+				remove_historical_rival = SCR
+				add_historical_friend = SCR
+				remove_rival = SCR
+			}
+			SCR = {
+				add_prestige = 50
+				remove_historical_rival = ROOT
+				add_historical_friend = ROOT
+				remove_rival = ROOT
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Komeiji-Scarlet Ship event - Remilia and Satori
+country_event = {
+	id = flavor_crd.12
+	title = flavor_crd.12.t
+	desc = flavor_crd.12.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		has_country_flag = crd_eligible_for_scarlet_consort
+		has_ruler_flag = th_original_satori
+		NOT = { has_country_flag = crd_had_remilia_consort_event }
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_had_remilia_consort_event
+		}
+	}
+	
+	option = {	#Marry Remilia
+		name = flavor_crd.12.a
+		define_consort = {
+			name = "Remilia"
+			dynasty = "Scarlet"
+			culture = Scarlett
+			#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+			adm = 4
+			dip = 4
+			mil = 6
+			age = 20
+			female = yes
+			country_of_origin = SCR
+		}
+		hidden_effect = {
+			add_queen_personality = immortal_personality
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+	
+	option = {	#Satori stays single
+		name = flavor_crd.12.b
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Komeiji-Scarlet Ship event - Flandre and Koishi
+country_event = {
+	id = flavor_crd.13
+	title = flavor_crd.13.t
+	desc = flavor_crd.13.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		has_country_flag = crd_eligible_for_scarlet_consort
+		has_ruler_flag = th_original_koishi
+		NOT = { has_country_flag = scr_had_flandre_consort_event }
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = scr_had_flandre_consort_event
+		}
+	}
+	
+	option = {	#Marry Flandre
+		name = flavor_crd.13.a
+		define_consort = {
+			name = "Flandre"
+			dynasty = "Scarlet"
+			culture = Scarlett
+			#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+			adm = 5
+			dip = 3
+			mil = 6
+			age = 18
+			female = yes
+			country_of_origin = SCR
+		}
+		hidden_effect = {
+			add_queen_personality = immortal_personality
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+	
+	option = {	#Koishi stays single
+		name = flavor_crd.13.b
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+###Appeasement Events###
+
+#Remilia is NOT impressed
+country_event = {
+	id = flavor_crd.14
+	title = flavor_crd.14.t
+	desc = flavor_crd.14.desc
+	picture = KOIFLAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Marry Flandre
+		name = flavor_crd.14.a
+		custom_tooltip = flavor_crd.14.a.tt
+		hidden_effect = {
+			set_country_flag = crd_enable_fight_against_remi
+		}
+
+		ai_chance = {
+			factor = 1
 		}
 	}
 }

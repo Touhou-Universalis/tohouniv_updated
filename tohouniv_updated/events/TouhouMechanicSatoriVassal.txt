@@ -1,0 +1,559 @@
+##########################################
+# Events for Scarlet Bloodlust Mechanic
+#########################################
+
+namespace = th_satori_vassal_mechanic
+
+#Initialize mechanic
+country_event = {
+	id = th_satori_vassal_mechanic.1
+	title = th_satori_vassal_mechanic.1.t
+	desc = th_satori_vassal_mechanic.1.desc
+	picture = ORINOKUU_eventPicture
+	
+	trigger = {
+		has_government_attribute = enables_satori_subjects
+		NOT = { has_country_flag = th_initialized_subject_counter }
+	}
+
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+	
+	option = {
+		name = th_satori_vassal_mechanic.1.a
+		set_country_flag = th_initialized_subject_counter
+		set_country_flag = th_checked_for_new_satori_vassals
+		set_variable = {
+			which = th_subject_tracker
+			value = 0
+		}
+		export_to_variable = {
+			which = th_diplo_slot_tracker
+			value = modifier:vassal_upkeep
+			who = ROOT
+		}
+		multiply_variable = {
+			which = th_diplo_slot_tracker
+			value = 100
+		}
+		every_subject_country = { 
+			limit = { 
+				OR = { 
+					is_subject_of_type = vassal
+					is_subject_of_type = march
+				}
+			} 
+			country_event = { id = th_satori_vassal_mechanic.4 }
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Remove mechanic
+country_event = {
+	id = th_satori_vassal_mechanic.2
+	title = th_satori_vassal_mechanic.2.t
+	desc = th_satori_vassal_mechanic.2.desc
+	picture = ORINOKUU_eventPicture
+	
+	trigger = {
+		NOT = { has_government_attribute = enables_satori_subjects }
+		has_country_flag = th_initialized_subject_counter
+	}
+
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+	
+	option = {
+		name = th_satori_vassal_mechanic.2.a
+		clr_country_flag = th_initialized_subject_counter
+		clr_country_flag = th_checked_for_new_satori_vassals
+		remove_country_modifier = th_too_many_vassals
+		every_subject_country = { 
+			limit = { 
+				has_country_modifier = th_desire_for_freedom
+			} 
+			remove_country_modifier = th_desire_for_freedom
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Satori's vassal becomes specific vassal
+country_event = {
+	id = th_satori_vassal_mechanic.3
+	title = th_satori_vassal_mechanic.3.t
+	desc = th_satori_vassal_mechanic.3.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		has_government_attribute = enables_satori_subjects
+		has_country_flag = th_initialized_subject_counter
+		num_of_subjects = 1 
+		any_subject_country = {
+			OR = {
+				is_subject_of_type = vassal
+				is_subject_of_type = march
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+
+	immediate = {
+		every_subject_country = { 
+			limit = { 
+				OR = { 
+					is_subject_of_type = vassal
+					is_subject_of_type = march
+				}
+			} 
+			country_event = { id = th_satori_vassal_mechanic.4 }
+		}
+	}
+	
+	option = {
+		name = th_satori_vassal_mechanic.3.a
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Vassal becomes Satori's vassal
+country_event = {
+	id = th_satori_vassal_mechanic.4
+	title = th_satori_vassal_mechanic.4.t
+	desc = th_satori_vassal_mechanic.4.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		name = th_satori_vassal_mechanic.4.a
+		grant_independence = yes
+		FROM = {
+			create_subject = {
+				subject_type = th_satori_vassal
+				subject = ROOT
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Satori's vassal becomes normal vassal
+country_event = {
+	id = th_satori_vassal_mechanic.5
+	title = th_satori_vassal_mechanic.5.t
+	desc = th_satori_vassal_mechanic.5.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		NOT = { has_government_attribute = enables_satori_subjects }
+		NOT = { has_country_flag = th_initialized_subject_counter }
+		num_of_subjects = 1 
+		any_subject_country = {
+			is_subject_of_type = th_satori_vassal
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+
+	immediate = {
+		every_subject_country = { 
+			limit = {
+				is_subject_of_type = th_satori_vassal
+			}
+			country_event = { id = th_satori_vassal_mechanic.6 }
+		}
+	}
+	
+	option = {
+		name = th_satori_vassal_mechanic.5.a
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Vassal becomes Satori's vassal
+country_event = {
+	id = th_satori_vassal_mechanic.6
+	title = th_satori_vassal_mechanic.6.t
+	desc = th_satori_vassal_mechanic.6.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {
+		name = th_satori_vassal_mechanic.6.a
+		grant_independence = yes
+		FROM = {
+			create_subject = {
+				subject_type = vassal
+				subject = ROOT
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Apply debuff for having too many vassals
+country_event = {
+	id = th_satori_vassal_mechanic.7
+	title = th_satori_vassal_mechanic.7.t
+	desc = th_satori_vassal_mechanic.7.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		has_government_attribute = enables_satori_subjects
+		has_country_flag = th_initialized_subject_counter
+		NOT = {
+			check_variable = {
+				which = th_diplo_slot_tracker
+				which = th_subject_tracker
+			}
+		}
+		NOT = { has_country_modifier = th_too_many_vassals }
+	}
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = th_too_many_vassals
+				duration = -1
+			}
+			every_subject_country = { 
+				limit = { 
+					is_subject_of_type = th_satori_vassal
+				} 
+				add_country_modifier = {
+					name = th_desire_for_freedom
+					duration = -1
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = th_satori_vassal_mechanic.7.a
+		custom_tooltip = th_satori_vassal_mechanic.7.a.tt
+		tooltip = {
+			add_country_modifier = {
+				name = th_too_many_vassals
+				duration = -1
+			}
+			every_subject_country = { 
+				limit = { 
+					is_subject_of_type = th_satori_vassal
+				} 
+				add_country_modifier = {
+					name = th_desire_for_freedom
+					duration = -1
+				}
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Apply debuff for all new vassals over the limit
+country_event = {
+	id = th_satori_vassal_mechanic.8
+	title = th_satori_vassal_mechanic.8.t
+	desc = th_satori_vassal_mechanic.8.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		has_country_modifier = th_too_many_vassals
+		any_subject_country = {
+			is_subject_of_type = th_satori_vassal
+			NOT = { has_country_modifier = th_desire_for_freedom }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+
+	immediate = {
+		every_subject_country = { 
+			limit = { 
+				is_subject_of_type = th_satori_vassal
+			} 
+			add_country_modifier = {
+				name = th_desire_for_freedom
+				duration = -1
+			}
+		}
+	}
+	
+	option = {
+		name = th_satori_vassal_mechanic.8.a
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Remove debuff for all the vassals
+country_event = {
+	id = th_satori_vassal_mechanic.9
+	title = th_satori_vassal_mechanic.9.t
+	desc = th_satori_vassal_mechanic.9.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		has_country_modifier = th_desire_for_freedom
+		OR = {
+			is_subject = no
+			NOT = { is_subject_of_type = th_satori_vassal }
+			overlord = {
+				NOT = { has_country_modifier = th_too_many_vassals }
+			}
+			overlord = {
+				NOT = { has_government_attribute = enables_satori_subjects }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+	
+	option = {
+		name = th_satori_vassal_mechanic.9.a
+		remove_country_modifier = th_desire_for_freedom
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Remove debuff when vassals are lower than diplo slots
+country_event = {
+	id = th_satori_vassal_mechanic.10
+	title = th_satori_vassal_mechanic.10.t
+	desc = th_satori_vassal_mechanic.10.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		has_government_attribute = enables_satori_subjects
+		has_country_flag = th_initialized_subject_counter
+		check_variable = {
+			which = th_diplo_slot_tracker
+			which = th_subject_tracker
+		}
+		has_country_modifier = th_too_many_vassals
+	}
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = th_too_many_vassals
+			every_subject_country = { 
+				limit = { 
+					has_country_modifier = th_desire_for_freedom
+				} 
+				remove_country_modifier = th_desire_for_freedom
+			}
+		}
+	}
+	
+	option = {
+		name = th_satori_vassal_mechanic.10.a
+		custom_tooltip = th_satori_vassal_mechanic.10.a.tt
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Adjust the tracker
+country_event = {
+	id = th_satori_vassal_mechanic.11
+	title = th_satori_vassal_mechanic.11.t
+	desc = th_satori_vassal_mechanic.11.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		has_government_attribute = enables_satori_subjects
+		has_country_flag = th_initialized_subject_counter
+		OR = {
+			NOT = { has_country_flag = th_checked_for_new_satori_vassals }
+			had_country_flag = {
+				flag = th_checked_for_new_satori_vassals
+				days = 30
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+
+	immediate = {
+		#Update the Slot Tracker
+		export_to_variable = {
+			which = th_diplo_slot_tracker
+			value = modifier:vassal_upkeep
+			who = ROOT
+		}
+		multiply_variable = {
+			which = th_diplo_slot_tracker
+			value = 100
+		}
+	}
+	
+	option = {
+		name = th_satori_vassal_mechanic.11.a
+		if = {
+			limit = {
+				NOT = { num_of_subjects = 1 }
+			}
+			set_variable = {
+				which = th_subject_tracker
+				value = 0
+			}
+		}
+		else = {
+			set_variable = {
+				which = th_subject_counter
+				value = 0
+			}
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = th_satori_vassal
+				}
+				overlord = {
+					change_variable = {
+						which = th_subject_counter
+						value = 1
+					}
+				}
+			}
+			set_variable = {
+				which = th_subject_tracker
+				which = th_subject_counter
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Explanation of the mechanic - also, updates your tracker manually
+country_event = {
+	id = th_satori_vassal_mechanic.100
+	title = th_satori_vassal_mechanic.100.t
+	desc = th_satori_vassal_mechanic.100.desc
+	picture = SATORI_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			#Update the Slot Tracker
+			export_to_variable = {
+				which = th_diplo_slot_tracker
+				value = modifier:vassal_upkeep
+				who = ROOT
+			}
+			multiply_variable = {
+				which = th_diplo_slot_tracker
+				value = 100
+			}
+			if = {
+				limit = {
+					NOT = { num_of_subjects = 1 }
+				}
+				set_variable = {
+					which = th_subject_tracker
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					which = th_subject_counter
+					value = 0
+				}
+				every_subject_country = {
+					limit = {
+						is_subject_of_type = th_satori_vassal
+					}
+					overlord = {
+						change_variable = {
+							which = th_subject_counter
+							value = 1
+						}
+					}
+				}
+				set_variable = {
+					which = th_subject_tracker
+					which = th_subject_counter
+				}
+			}
+		}
+	}
+
+	option = {
+		name = th_satori_vassal_mechanic.100.a
+		custom_tooltip = th_satori_vassal_mechanic.100.a.tt
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}

@@ -350,6 +350,53 @@ on_mil_development = {
 	}
 }
 
+# country
+# root = winning country, from = loser country
+on_battle_won_country = {
+	if = {
+		limit = {
+			ROOT = {
+				tag = ALB
+				NOT = { has_country_flag = albanian_victory }
+			}
+			FROM = {
+				tag = TUR
+			}
+		}
+		ROOT = { set_country_flag = albanian_victory }
+	}
+	if = {
+		limit = {
+			ROOT = {
+				has_country_flag = scr_battle_counter_ready
+			}
+		}
+		ROOT = {
+			change_variable = {
+				which = scr_battle_counter
+				value = 1
+			}
+		}
+	}
+	if = {
+		limit = {
+			ROOT = {
+				has_country_flag = scr_battle_counter_ready
+				check_variable = {
+					which = scr_battle_counter
+					value = 30
+				}
+			}
+		}
+		ROOT = {
+			clr_country_flag = scr_battle_counter_ready
+			country_event = {
+				id = flavor_scr.24
+			}
+		}
+	}
+}
+
 # #Unit Scope OnAction for Battle Lost
 on_battle_lost_unit = {
     if = {
@@ -490,6 +537,18 @@ on_create_vassal = {
 		change_religion = catholic
 		add_government_reform = papacy_reform
 		adopt_reform_progress = FROM
+	}
+}
+
+# THIS = Province, FROM = Country
+on_mercenary_recruited = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = th_free_merc_companies }
+		}
+		FROM = {
+			add_army_professionalism = -0.05
+		}
 	}
 }
 

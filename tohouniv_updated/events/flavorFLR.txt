@@ -23,21 +23,7 @@ country_event = {
 		name = flavor_flr.1.b
 		highlight = yes
 		trigger = {
-			NOT = {
-				AND = {
-					has_ruler = "Flandre"
-					dynasty = "Scarlet"
-					is_female = yes
-					OR = {
-						ruler_has_personality = immortal_personality
-						AND = {
-							adm = 5
-							dip = 3
-							mil = 6
-						}
-					}
-				}				
-			}
+			NOT = { has_ruler_flag = th_original_flan }
 		}
 
 		hidden_effect = {
@@ -87,6 +73,7 @@ country_event = {
 				adopt_reform_progress = ROOT
 				change_primary_culture = ROOT
 				change_religion = catholic
+				remove_country_modifier = conversion_zeal
 				set_in_empire = yes
 				define_ruler = {
 					name = "Flandre"
@@ -95,7 +82,7 @@ country_event = {
 					adm = 5
 					dip = 3
 					mil = 6
-					fixed = yes
+					#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
 					female = yes
 					culture = ROOT
 					religion = catholic
@@ -185,10 +172,10 @@ country_event = {
 				1292 = {
 					discover_country = FLR
 				}
-				#add_country_modifier = {
-				#	name = th_flr_lvl1_flan
-				#	duration = -1
-				#}
+				add_country_modifier = {
+					name = th_flr_lvl1_flan
+					duration = -1
+				}
 			}
 			90 = {
 				add_base_tax = 2
@@ -345,6 +332,19 @@ country_event = {
 		every_subject_country = {
 			set_country_flag = BUR_vassal_to_be_given_to_FLR
 			custom_tooltip = THIS_vassalised_by_FROM
+		}
+		if = {
+			limit = {
+				any_country = {
+					has_country_flag = BUR_vassal_to_be_given_to_FLR
+				}
+			}
+			FLR = {
+				add_country_modifier = {
+					name = "th_FLR_new_vassals"
+					duration = 10950
+				}
+			}
 		}
 		every_country = {
 			limit = { has_country_flag = BUR_vassal_to_be_given_to_FLR }
@@ -795,11 +795,9 @@ country_event = {
 	major = yes
 
 	trigger = {
-		has_dlc = "Emperor"
 		tag = FLR
 		is_emperor = yes
 		has_institution = global_trade
-		NOT = { has_global_flag = th_fashion_craze }
 	}
 
 	mean_time_to_happen = {
@@ -955,11 +953,12 @@ country_event = {
 	picture = FLANDRECHURCH_eventPicture
 	
 	trigger = {
-		is_year = 1550
-		is_religion_enabled = reformed
+		OR = {
+			is_religion_enabled = protestant
+			is_year = 1530
+		}
 		NOT = { has_country_flag = flr_had_religion_question_event }
 		NOT = { has_country_flag = flr_has_made_the_choice }
-		has_country_flag = th_debug_mode_has_access_to_wip_missions
 		th_is_or_was_tag = {
 			tag = FLR
 		}
@@ -1015,6 +1014,7 @@ country_event = {
 		name = flavor_flr.12.b
 		trigger = {
 			religion_group = christian
+			is_religion_enabled = protestant
 		}
 		custom_tooltip = flavor_flr.12.b.tt
 		hidden_effect = {
@@ -1086,6 +1086,25 @@ country_event = {
 		name = flavor_flr.13.a
 		set_hre_religion_treaty = yes 
 		add_imperial_influence = 5
+		enable_hre_leagues = no
+		if = {
+			limit = {
+				any_country = {
+					is_in_league_war = yes
+				}
+			}
+			random_country = {
+				limit = {
+					is_in_league_war = yes
+					is_in_war = {
+						attackers = THIS
+						attacker_leader = THIS
+						defender_leader = event_target:Emperor
+					}
+				}
+				white_peace = event_target:Emperor
+			}
+		}
 
 		ai_chance = {
 			factor = 100
@@ -1116,9 +1135,24 @@ country_event = {
 	option = {
 		name = flavor_flr.14.a
 		set_hre_religion_treaty = yes
-		add_country_modifier = {
-			name = flr_tolerant_reformer_of_the_hre
-			duration = -1
+		enable_hre_leagues = no
+		if = {
+			limit = {
+				any_country = {
+					is_in_league_war = yes
+				}
+			}
+			random_country = {
+				limit = {
+					is_in_league_war = yes
+					is_in_war = {
+						attackers = THIS
+						attacker_leader = THIS
+						defender_leader = event_target:Emperor
+					}
+				}
+				white_peace = event_target:Emperor
+			}
 		}
 
 		ai_chance = {

@@ -331,7 +331,7 @@ country_event = {
 			name = "Suika"
 			dynasty = "Ibuki"
 			culture = Oni_culture
-			fixed = yes	#TODO change it back to fixed when vanilla EU4 has solved this issue
+			#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
 			adm = 4
 			dip = 4
 			mil = 6
@@ -343,6 +343,7 @@ country_event = {
 		hidden_effect = {
 			set_heir_flag = touhou_character_ruler
 			set_heir_flag = touhou_original_heir
+			set_country_flag = th_suika_is_ruler
 		}
 
 		ai_chance = { 
@@ -356,7 +357,7 @@ country_event = {
 			name = "Suika"
 			dynasty = "Ibuki"
 			culture = Oni_culture
-			fixed = yes
+			#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
 			adm = 4
 			dip = 4
 			mil = 6
@@ -368,6 +369,7 @@ country_event = {
 		hidden_effect = {
 			set_ruler_flag = touhou_character_ruler
 			set_ruler_flag = touhou_original_ruler
+			set_country_flag = th_suika_is_ruler
 		}
 
 		ai_chance = { 
@@ -437,8 +439,6 @@ country_event = {
 	mean_time_to_happen = {
 		days = 1
 	}
-
-	hidden = yes
 
 	option = {
 		name = flavor_hkr.7.a
@@ -527,21 +527,13 @@ country_event = {
 	picture = TENSHI_eventPicture	
 	
 	trigger = {
-		calc_true_if = {
-			all_province = {
-				OR = {
-					area = Dragon_islands
-					area = Eastern_dragon_islands
-					area = Western_dragon_islands
-				}
-				owner = {
-					religion = ROOT
-				}
+		num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+			OR = {
+				area = Dragon_islands
+				area = Eastern_dragon_islands
+				area = Western_dragon_islands
 			}
-			amount = 8
-		}
-		5032 = {
-			religion = ROOT
+			value = 5
 		}
 		NOT = { was_tag = OKR }
 		th_is_or_was_tag = {
@@ -691,8 +683,11 @@ country_event = {
 		}
 		hidden_effect = {
 			add_ruler_personality = immortal_personality
+			set_ruler_flag = th_current_ruler_reimu_hakurei
+			set_country_flag = th_immortal_reimu
+			set_ruler_flag = touhou_original_ruler
+			clr_country_flag = th_suika_is_ruler
 		}
-		set_ruler_flag = th_current_ruler_reimu_hakurei
 
 		if = {
 			limit = {
@@ -723,9 +718,25 @@ country_event = {
 			has_consort_regency = no
 			NOT = { has_ruler_flag = th_current_ruler_reimu_hakurei }
 		}
-		change_adm = 1
-		change_dip = 1
-		change_mil = 1
+		if = {
+			limit = {
+				has_ruler_flag = HKR_suika_in_charge
+			}
+			th_increase_ruler_adm_stat = {
+				adm = 1
+			}
+			th_increase_ruler_dip_stat = {
+				dip = 1
+			}
+			th_increase_ruler_mil_stat = {
+				mil = 1
+			}
+		}
+		else = {
+			change_adm = 1
+			change_dip = 1
+			change_mil = 1
+		}
 		if = {
 			limit = {
 				NOT = {
@@ -741,9 +752,15 @@ country_event = {
 		trigger = {
 			has_ruler_flag = th_current_ruler_reimu_hakurei
 		}
-		change_adm = 1
-		change_dip = 1
-		change_mil = 1
+		th_increase_ruler_adm_stat = {
+			adm = 1
+		}
+		th_increase_ruler_dip_stat = {
+			dip = 1
+		}
+		th_increase_ruler_mil_stat = {
+			mil = 1
+		}
 		if = {
 			limit = {
 				NOT = {
@@ -751,6 +768,11 @@ country_event = {
 				}
 			}
 			add_ruler_personality = immortal_personality
+		}
+		hidden_effect = {
+			set_country_flag = th_immortal_reimu
+			set_ruler_flag = touhou_original_ruler
+			clr_country_flag = th_suika_is_ruler
 		}
 	}
 	
@@ -832,6 +854,10 @@ country_event = {
 			clr_country_flag = th_hkr_ready_for_mki_war
 		}
 	}
+
+	mean_time_to_happen = {
+		days = 15
+	}
 	
 	option = {	#Get all the claims
 		name = flavor_hkr.16.a
@@ -841,7 +867,7 @@ country_event = {
 			every_province = {
 				limit = {
 					religion = th_shinkism
-					NOT = { area = Makai }
+					NOT = { area = Makai_area }
 					NOT = { area = Makai_coast_state }
 					NOT = { area = Makai_peninsula_state }
 					NOT = { area = Western_makai_state }
@@ -931,7 +957,7 @@ country_event = {
 			NOT = { has_country_flag = th_had_shrine_visitor }
 			had_country_flag = {
 				flag = th_had_shrine_visitor
-				days = 1460
+				days = 1825
 			}
 
 		}
@@ -1180,8 +1206,8 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_getruler_fighting_skill_no_mil = {
-				SKILL_BONI = 600
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
 			}
 			#Konngara
 			set_variable = {
@@ -1249,8 +1275,8 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_getruler_fighting_skill_no_mil = {
-				SKILL_BONI = 600
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
 			}
 			#Mima
 			set_variable = {
@@ -1315,13 +1341,13 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_getruler_fighting_skill_no_mil = {
-				SKILL_BONI = 600
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
 			}
 			#Yumemi
 			set_variable = {
 				which = th_hkr_yumemi_combat_skills
-				value = 1650
+				value = 1800
 			}
 			th_defineopponent_fighting_skill = {
 				VARIABLE = th_hkr_yumemi_combat_skills
@@ -1382,8 +1408,8 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_getruler_fighting_skill_no_mil = {
-				SKILL_BONI = 600
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
 			}
 			#Yuuka
 			set_variable = {
@@ -1449,8 +1475,8 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_getruler_fighting_skill_no_mil = {
-				SKILL_BONI = 600
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
 			}
 			#Shinki
 			set_variable = {
@@ -1560,7 +1586,7 @@ country_event = {
 
 	option = {
 		name = flavor_hkr.34.a
-		add_devotion = 100
+		add_prestige = 25
 
 		ai_chance = { 
 			factor = 100
@@ -1579,7 +1605,9 @@ country_event = {
 	
 	option = {
 		name = flavor_hkr.100.a
-		add_years_of_income = 3
+		add_adm_power = 25
+		add_dip_power = 25
+		add_mil_power = 25
 		hidden_effect = {
 			if = {
 				limit = {

@@ -98,6 +98,9 @@ mughal_government = {
 		japanese_g = {
 			land_morale = 0.1
 		}
+		kamchatkan_g = {
+			hostile_attrition = 1
+		}
 		korean_g = {
 			idea_cost = -0.05
 		}
@@ -119,9 +122,6 @@ mughal_government = {
 		mande = {
 			tolerance_heretic = 1
 		}
-		mon_khmer = {
-			build_cost = -0.05
-		}
 		pacific = {
 			global_sailors_modifier = 0.1
 		}
@@ -130,6 +130,9 @@ mughal_government = {
 		}
 		scandinavian = {
 			mil_advisor_cost = -0.1
+		}
+		southeastasian_group = {
+			development_cost = -0.05
 		}
 		south_slavic = {
 			warscore_cost_vs_other_religion = -0.1
@@ -143,8 +146,8 @@ mughal_government = {
 		tartar = {
 			cavalry_cost = -0.15
 		}
-		thai = {
-			development_cost = -0.05
+		thai_group = {
+			build_cost = -0.05
 		}
 		tibetan_group = {
 			prestige_per_development_from_conversion = 0.5
@@ -168,12 +171,64 @@ mughal_government = {
 }
 
 #Hereditary vs Nobility Touhou
+enforce_privileges_reform = {
+	icon = "people_walking"
+	allow_normal_conversion = yes
+	potential = {
+		is_revolutionary = no
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		global_manpower_modifier = 0.15
+	}
+	ai = {
+		factor = 1
+		modifier = {
+			factor = 2
+			NOT = { max_manpower = 12 }
+		}
+	}
+}
+
+quash_noble_power_reform = {
+	icon = "king_2"
+	allow_normal_conversion = yes
+	potential = {
+		is_revolutionary = no
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		global_tax_modifier = 0.1
+		nobles_influence_modifier = -0.1
+		maratha_exclusive_influence_modifier = -0.1
+		rajput_exclusive_influence_modifier = -0.1
+	}
+	ai = {
+		factor = 1
+		modifier = {
+			factor = 1.5
+			is_in_deficit = yes
+		}
+	}
+}
 
 TH_enforce_shrine_authority_reform = {
 	icon = "clergyman"
 	allow_normal_conversion = yes
 	potential = {
-			culture_group = Gensokyan_culture
+		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		global_missionary_strength = 0.01
@@ -181,14 +236,15 @@ TH_enforce_shrine_authority_reform = {
 	}
 }
 
-TH_enable_danmakue_fighting_style_reform = {
+TH_enable_danmaku_fighting_style_reform = {
 	icon = "soldiers_4"
 	allow_normal_conversion = yes
 	potential = {
-			culture_group = Gensokyan_culture
+		culture_group = Gensokyan_culture
 	}
 	modifiers = {
 		leader_land_fire = 1 
+		danmaku_power_constant = 1
 	}
 }
 
@@ -196,7 +252,11 @@ TH_strengthen_diplomatic_focus_reform = {
 	icon = "asian_scripture"
 	allow_normal_conversion = yes
 	potential = {
-			culture_group = Gensokyan_culture
+		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		diplomatic_upkeep = 1 
@@ -205,11 +265,65 @@ TH_strengthen_diplomatic_focus_reform = {
 
 #Bureaucracy Touhou
 
+centralize_reform = {
+	icon = "paper_with_seal_3"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			is_revolutionary = no
+			NOT = { has_dlc = "Emperor" }
+		}
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		global_autonomy = -0.05
+	}
+}
+
+decentralize_reform = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			is_revolutionary = no
+			NOT = { has_dlc = "Emperor" }
+		}
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		num_accepted_cultures = 2
+	}
+	ai = {
+		factor = 1
+		modifier = {
+			factor = 0.25
+			NOT = {
+				any_owned_province = {
+					has_owner_accepted_culture = no
+					has_owner_culture = no
+				}
+			}
+		}
+	}
+}
+
 TH_fairy_bureaucracy_reform = {
 	icon = "peasants"
 	allow_normal_conversion = yes
 	potential = {
 		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		administrative_efficiency = -0.05
@@ -222,6 +336,10 @@ TH_oni_bureaucracy_reform = {
 	allow_normal_conversion = yes
 	potential = {
 		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		reduced_liberty_desire = 10
@@ -233,6 +351,10 @@ TH_do_it_yourself_bureaucracy_reform = {
 	allow_normal_conversion = yes
 	potential = {
 		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		legitimacy = 1
@@ -242,11 +364,179 @@ TH_do_it_yourself_bureaucracy_reform = {
 
 #Growth of Administration Touhou
 
+clergy_in_administration_reform = {
+	icon = "religious_leader"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			is_revolutionary = no
+			NOT = { has_dlc = "Emperor" }
+		}
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		free_adm_policy = 1
+		
+		brahmins_hindu_influence_modifier = 0.1
+		brahmins_hindu_loyalty_modifier = 0.05
+
+		church_influence_modifier = 0.1
+		church_loyalty_modifier = 0.05
+	}
+	ai = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			OR = {
+				AND = {
+					religion = hinduism
+					estate_influence = {
+						estate = estate_brahmins
+						influence = 90
+					}
+				}
+				estate_influence = {
+					estate = estate_church
+					influence = 90
+				}
+			}
+		}
+	}
+}
+
+of_noble_bearing_reform = {
+	icon = "nobleman"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			is_revolutionary = no
+			NOT = { has_dlc = "Emperor" }
+		}
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+		NOT = {
+			AND = {
+				has_estate = estate_maratha
+				technology_group = indian
+				NOT = { has_estate = estate_nobles }
+			}
+		}
+		NOT = {
+			AND = {
+				has_estate = estate_rajput
+				technology_group = indian
+				NOT = { has_estate = estate_nobles }
+			}
+		}
+	}
+	modifiers = {
+		leader_cost = -0.1
+		nobles_influence_modifier = 0.1
+		maratha_exclusive_influence_modifier = 0.1
+		rajput_exclusive_influence_modifier = 0.1
+		nobles_loyalty_modifier = 0.05
+		maratha_exclusive_loyalty_modifier = 0.05
+		rajput_exclusive_loyalty_modifier = 0.05
+	}
+	ai = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			OR = {
+				AND = {
+					NOT = { has_estate = estate_nobles }
+					OR = {
+						estate_influence = {
+							estate = estate_rajput
+							influence = 90
+						}
+						estate_influence = {
+							estate = estate_maratha
+							influence = 90
+						}
+					}
+				}
+				estate_influence = {
+					estate = estate_nobles
+					influence = 90
+				}
+			}
+		}
+	}
+}
+
+meritocratic_focus_reform = {
+	icon = "merchant"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			is_revolutionary = no
+			NOT = { has_dlc = "Emperor" }
+		}
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		advisor_cost = -0.1
+		maratha_muslim_influence_modifier = 0.1
+		rajput_muslim_influence_modifier = 0.1
+		burghers_influence_modifier = 0.1
+		burghers_loyalty_modifier = 0.05
+		vaisyas_non_muslim_influence_modifier = 0.1
+	}
+	ai = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			OR = {
+				AND = {
+					religion_group = muslim
+					OR = {
+						estate_influence = {
+							estate = estate_rajput
+							influence = 90
+						}
+						estate_influence = {
+							estate = estate_maratha
+							influence = 90
+						}
+					}
+				}
+				AND = {
+					NOT = { religion_group = muslim }
+					estate_influence = {
+						estate = estate_vaisyas
+						influence = 90
+					}
+				}
+				estate_influence = {
+					estate = estate_burghers
+					influence = 90
+				}
+			}
+		}
+	}
+}
+
 TH_generals_in_administration_reform = {
 	icon = "samurai"
 	allow_normal_conversion = yes
 	potential = {
-			culture_group = Gensokyan_culture
+		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		possible_mil_policy = 1
@@ -257,7 +547,11 @@ TH_self_administration_focus_reform = {
 	icon = "map"
 	allow_normal_conversion = yes
 	potential = {
-			culture_group = Gensokyan_culture
+		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		development_cost = -0.05
@@ -269,7 +563,11 @@ TH_mikos_in_administration_reform = {
 	icon = "strength_of_the_khalsa"
 	allow_normal_conversion = yes
 	potential = {
-			culture_group = Gensokyan_culture
+		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		female_advisor_chance = 0.1 
@@ -279,11 +577,75 @@ TH_mikos_in_administration_reform = {
 
 #deliberative_assembly Touhou
 
+royal_decree_reform = {
+	icon = "king"
+	allow_normal_conversion = yes
+	potential = {
+		is_revolutionary = no
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		max_absolutism = 5
+	}
+	ai = {
+		factor = 1
+	}
+}
+
+aristocratic_court_reform = {
+	icon = "soldiers_2"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		army_tradition_decay = -0.003
+	}
+	ai = {
+		factor = 1
+	}
+}
+
+general_estates_reform = {
+	icon = "paper_with_seal"
+	allow_normal_conversion = yes
+	potential = {
+		is_revolutionary = no
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		production_efficiency = 0.1
+	}
+	ai = {
+		factor = 1
+		modifier = {
+			factor = 1.2
+			production_income_percentage = 0.25
+		}
+	}
+}
+
 TH_youkai_decree_reform = {
 	icon = "trading_city"
 	allow_normal_conversion = yes
 	potential = {
 		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		global_unrest = -2
@@ -295,6 +657,10 @@ TH_human_decree_reform = {
 	allow_normal_conversion = yes
 	potential = {
 		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		num_accepted_cultures = 2
@@ -304,11 +670,52 @@ TH_human_decree_reform = {
 
 #absolute_rule_vs_constitutional Touhou
 
+letat_cest_moi_reform = {
+	icon = "queen"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		governing_capacity = 250
+	}
+	ai = {
+		factor = 1.5
+		modifier = {
+			factor = 2
+			tag = FRA
+		}
+	}
+}
+
+regional_representation_reform = {
+	icon = "assembly_hall"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+			has_reform = ottoman_government
+		}
+	}
+	modifiers = {
+		min_autonomy_in_territories = -0.10
+	}
+}
+
 TH_autarchy_reform = {
 	icon = "peasant_republic"
 	allow_normal_conversion = yes
 	potential = {
-			culture_group = Gensokyan_culture
+		culture_group = Gensokyan_culture
+		OR = {
+			government = monarchy
+			has_reform = Gensokyan_shrine_theocracy
+		}
 	}
 	modifiers = {
 		max_absolutism = -75
@@ -319,41 +726,13 @@ TH_autarchy_reform = {
 	}
 }
 
-TH_feudal_shrine_reform = {
-	icon = "mandala_system"
-	allow_normal_conversion = no
-	potential = {
-		AND = {
-			culture_group = Gensokyan_culture
-			has_reform = Gensokyan_shrine_theocracy 
-		}
-	}
-	modifiers = {
-		warscore_cost_vs_other_religion = -0.25
-		global_tax_modifier = 0.25
-		missionaries = 1
-	}
-
-	conditional = {
-		allow = { has_dlc = "Cradle of Civilization" }
-		government_abilities = {
-			feudal_theocracy_mechanic
-		}
-	}
-	ai = {
-		factor = 100
-	}
-}
-
 TH_the_razing_and_looting_witch_reform = {
 	icon = "horde_riding"
 	allow_normal_conversion = no
 	potential = {
 		OR = {
-			tag = FOM
-			AND = {
-				tag = GNK
-				primary_culture = Magician
+			th_is_or_was_tag = {
+				tag = FOM
 			}
 			AND = {
 				is_playing_custom_nation = yes 
@@ -361,20 +740,19 @@ TH_the_razing_and_looting_witch_reform = {
 			}
 		}
 	}
+	trigger = {
+		has_reform = Gensokyan_fom_witch_government
+	}
 	maintain_dynasty = yes 
 	
 	modifiers = {
-		horde_unity = 4
-		cav_to_inf_ratio = 0.25
-		cavalry_power = 0.25
 		movement_speed = 0.1
-		shock_damage_received = -0.1
-		years_of_nationalism = -5 
+		years_of_nationalism = -5
+		core_creation = -0.1
 	}
-
-	conditional = {
-		allow = { has_dlc = "The Cossacks" }
-		nomad = yes		
+	
+	custom_attributes = {
+		enables_magician_expansion_cb = yes
 	}
 	ai = {
 		factor = 100
@@ -386,12 +764,11 @@ TH_scarlett_army_reform = {
 	allow_normal_conversion = no
 	potential = {
 		OR = {
-			tag = SCR
-			tag = SCD
-			tag = FLR
-			AND = {
-				tag = GNK
-				primary_culture = Scarlett
+			th_is_or_was_tag = {
+				tag = SCR
+			}
+			th_is_or_was_tag = {
+				tag = FLR
 			}
 			AND = {
 				is_playing_custom_nation = yes 
@@ -404,7 +781,6 @@ TH_scarlett_army_reform = {
 	modifiers = {
 		max_absolutism = 10
 		infantry_power = 0.1
-		monthly_militarized_society = 1.5
 	}
 
 	conditional = {
@@ -425,8 +801,9 @@ TH_komeiji_diplomacy_reform = {
 	allow_normal_conversion = no
 	potential = {
 		OR = {
-			tag = CRD
-			tag = SCD
+			th_is_or_was_tag = {
+				tag = CRD
+			}
 			primary_culture = Chireidean
 			AND = {
 				is_playing_custom_nation = yes 
@@ -441,15 +818,18 @@ TH_komeiji_diplomacy_reform = {
 		diplomatic_reputation = 1
 		spy_offence = 0.25
 		diplomats = 1 
-		merchants = 1
+	}
+
+	custom_attributes = {
+		enables_satori_mind_manipulation = yes
 	}
 	
-	can_use_trade_post = yes 
+	#can_use_trade_post = yes	#More in theme for an actual trade empire - CRD is not that
 
-	conditional = {
-		allow = { has_dlc = "Common Sense" }
-		has_parliament = yes
-	}
+	#conditional = {
+	#	allow = { has_dlc = "Common Sense" }
+	#	has_parliament = yes	#Satori is not somebody who would not give her absolute power over Former Hell like that
+	#}
 	ai = {
 		factor = 100
 		modifier = {
@@ -464,8 +844,9 @@ TH_heavens_claims_reform = {
 	allow_normal_conversion = no
 	potential = {
 		OR = {
-			tag = HVR
-			primary_culture = Heavenish
+			th_is_or_was_tag = {
+				tag = HVR
+			}
 			AND = {
 				is_playing_custom_nation = yes 
 				primary_culture = Heavenish
@@ -490,11 +871,8 @@ TH_puppet_master_reform = {
 	allow_normal_conversion = no
 	potential = {
 		OR = {
-			tag = MHG
-			tag = NMG
-			AND = {
-				tag = GNK
-				dynasty = "Yakumo"
+			th_is_or_was_tag = {
+				tag = MHG
 			}
 			AND = {
 				is_playing_custom_nation = yes 
@@ -523,10 +901,8 @@ TH_flower_of_japan_reform = {
 	allow_normal_conversion = no
 	potential = {
 		OR = {
-			tag = SFF
-			AND = {
-				tag = GNK
-				dynasty = "Kazami"
+			th_is_or_was_tag = {
+				tag = SFF
 			}
 			AND = {
 				is_playing_custom_nation = yes 
@@ -538,14 +914,15 @@ TH_flower_of_japan_reform = {
 	
 	
 	modifiers = {
-		army_tradition_decay = -0.1
+		army_tradition_decay = -0.03
+		drill_decay_modifier = -0.25
 		discipline = 0.05
 	}
 
 	conditional = {
 		allow = { has_dlc = "Third Rome" }
 		government_abilities = {
-			 russian_mechanic
+			russian_mechanic
 		}
 	}
 	
@@ -585,10 +962,8 @@ TH_devil_realm_reform = {
 	allow_normal_conversion = no
 	potential = {
 		OR = {
-			tag = GNU
-			AND = {
-				tag = GNK
-				dynasty = "of the Dream World"
+			th_is_or_was_tag = {
+				tag = GNU
 			}
 			AND = {
 				is_playing_custom_nation = yes 
@@ -608,6 +983,7 @@ TH_devil_realm_reform = {
 		factor = 100
 	}
 }
+
 TH_magician_coven_reform = {
 	icon = "all_under_tengri_reform"
 	allow_normal_conversion = no
@@ -628,9 +1004,9 @@ TH_magician_coven_reform = {
 	
 	
 	modifiers = {
-				production_efficiency = 0.20
-				development_cost = -0.1
-				fire_damage_received = -0.10
+		production_efficiency = 0.20
+		development_cost = -0.1
+		fire_damage_received = -0.10
 	}
 	
 	ai = {
@@ -644,7 +1020,7 @@ TH_expansion_into_the_outworld_reform = {
 	icon = "compass"
 	allow_normal_conversion = yes
 	potential = {
-			culture_group = Gensokyan_culture
+		culture_group = Gensokyan_culture
 	}
 	modifiers = {
 		colonists = 1 
@@ -656,7 +1032,12 @@ TH_imperial_gensokyo_reform = {
 	icon = "celestial_empire"
 	allow_normal_conversion = yes
 	potential = {
-		tag = GNK
+		OR = {
+			th_is_or_was_tag = {
+				tag = GNK
+			}
+			has_country_flag = th_formed_gensokyo_flag
+		}
 	}
 	modifiers = {
 		max_absolutism = 15 

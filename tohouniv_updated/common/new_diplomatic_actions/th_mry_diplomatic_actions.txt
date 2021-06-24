@@ -8,11 +8,15 @@ th_request_conversion = {
 	is_visible = {
 		is_free_or_tributary_trigger = yes
 		OR = {
-			tag = MRY
-			was_tag = MRY
+			AND = {
+				th_is_or_was_tag = { tag = MRY }
+				has_reform = Gensokyan_shrine_theocracy
+				religion = th_moriyashinto #Just to make it easier
+			}
+			th_has_copied_from_target = {
+				target = MRY
+			}
 		}
-		has_reform = Gensokyan_shrine_theocracy
-		religion = th_moriyashinto #Just to make it easier
 		FROM = {
 			NOT = { religion = ROOT }
 			any_owned_province = { religion = ROOT }
@@ -38,9 +42,27 @@ th_request_conversion = {
 			is_free_or_tributary_trigger = yes
 			NOT = { tag = PAP }
 		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		add_prestige = 10
 		FROM = {
 			change_religion = ROOT
@@ -314,9 +336,27 @@ th_establish_religious_tributaries = {
 			}
 		}
 		is_at_war = no
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		create_subject = {
 			subject_type = th_religious_tributary
 			subject = FROM
@@ -571,36 +611,38 @@ th_establish_religious_tributaries = {
 		treasury = 0
 		monthly_income = 0
 		NOT = {
-			ai_attitude = {
-				who = FROM
-				attitude = attitude_threatened
-			}
-			ai_attitude = {
-				who = FROM
-				attitude = atittude_rivalry
-			}
-			FROM = {
-				overlord = {
-					OR = {
-						AND = {
-							manpower_percentage = 0.5
-							army_size = ROOT
-						}
-						ai_attitude = {
-							who = ROOT
-							attitude = attitude_allied
-						}
-						ai_attitude = {
-							who = ROOT
-							attitude = attitude_friendly
-						}
-						ai_attitude = {
-							who = ROOT
-							attitude = attitude_neutral
+			AND = {
+				ai_attitude = {
+					who = FROM
+					attitude = attitude_threatened
+				}
+				ai_attitude = {
+					who = FROM
+					attitude = atittude_rivalry
+				}
+				FROM = {
+					overlord = {
+						OR = {
+							AND = {
+								manpower_percentage = 0.5
+								army_size = ROOT
+							}
+							ai_attitude = {
+								who = ROOT
+								attitude = attitude_allied
+							}
+							ai_attitude = {
+								who = ROOT
+								attitude = attitude_friendly
+							}
+							ai_attitude = {
+								who = ROOT
+								attitude = attitude_neutral
+							}
 						}
 					}
+					
 				}
-				
 			}
 
 		}
@@ -842,11 +884,15 @@ th_incite_moriya_zealots = {
 	is_visible = {
 		is_free_or_tributary_trigger = yes
 		OR = {
-			tag = MRY
-			was_tag = MRY
+			AND = {
+				th_is_or_was_tag = { tag = MRY }
+				has_reform = Gensokyan_shrine_theocracy
+				religion = th_moriyashinto #Just to make it easier
+			}
+			th_has_copied_from_target = {
+				target = MRY
+			}
 		}
-		has_reform = Gensokyan_shrine_theocracy
-		religion = th_moriyashinto #Just to make it easier
 		FROM = {
 			NOT = { religion = ROOT }
 			any_owned_province = { religion = ROOT }
@@ -874,6 +920,7 @@ th_incite_moriya_zealots = {
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
 			set_country_flag = th_has_already_incited_zealots
 			every_owned_province = { 
