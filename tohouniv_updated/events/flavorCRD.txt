@@ -11,18 +11,15 @@ country_event = {
 	desc = flavor_crd.1.desc
 	picture = SHRINE_eventPicture
 	
-	fire_only_once = yes
 	major = yes
 	
 	trigger = {
-		OR = {
+		th_is_or_was_tag = {
 			tag = CRD
-			tag = SCD
 		}
-		capital_scope = { 
-			religion = th_moriyashinto 
-		} 
+		NOT = { has_country_flag = crd_has_chosen_religious_path }
 		is_free_or_tributary_trigger = yes
+		religion = th_hakureishinto
 	}
 	
 	mean_time_to_happen = {
@@ -165,14 +162,37 @@ country_event = {
 	}
 }
 
-# Time to keep promise
+#Oni want their mountain!
 country_event = {
 	id = flavor_crd.5
 	title = flavor_crd.5.t
 	desc = flavor_crd.5.desc
 	picture = YOUKAIMOUNTAIN_eventPicture
 	
-	is_triggered_only = yes
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		OR = {
+			NOT = { exists = ONI }
+			ONI = {
+				is_subject_of = ROOT
+			}
+		}
+		NOT = { tag = ONI }
+		NOT = { tag = TGU }
+		owns = 4963
+		owns = 5196
+		owns = 4964
+		num_of_owned_provinces_with = {
+			region = youkai_mountain_region
+			value = 10
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
 	
 	option = {	#keep promise
 		name = flavor_crd.5.a
@@ -202,10 +222,7 @@ country_event = {
 					}
 					add_core = ONI
 				}
-				add_country_modifier = {
-					name = "crd_keep_promise"
-					duration = -1
-				}
+				add_historical_friend = ROOT
 				hidden_effect = {
 					change_government = monarchy
 					add_government_reform = Gensokyan_monarchy
@@ -288,10 +305,7 @@ country_event = {
 					add_core = ONI
 				}
 				set_capital = 4811
-				add_country_modifier = {
-					name = "crd_keep_promise"
-					duration = -1
-				}
+				add_historical_friend = ROOT
 			}
 		}
 	}
@@ -299,18 +313,6 @@ country_event = {
 	option = {	#think again...
 		name = flavor_crd.5.b
 		custom_tooltip = flavor_crd.5.b.tt
-		youkai_mountain_region = {
-			limit = {
-				NOT = { is_core = ROOT }
-				NOT = { is_permanent_claim = ROOT }
-			}
-			add_permanent_claim = ROOT
-		}
-		add_casus_belli = {
-			target = TGU
-			type = cb_vassalize_mission
-			months = 900
-		}
 		if = {
 			limit = {
 				NOT = { exists = ONI }
@@ -1002,7 +1004,7 @@ country_event = {
 	trigger = {
 		has_country_flag = crd_eligible_for_scarlet_consort
 		has_ruler_flag = th_original_koishi
-		NOT = { has_country_flag = scr_had_flandre_consort_event }
+		NOT = { has_country_flag = crd_had_flandre_consort_event }
 	}
 
 	mean_time_to_happen = {
@@ -1011,7 +1013,7 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			set_country_flag = scr_had_flandre_consort_event
+			set_country_flag = crd_had_flandre_consort_event
 		}
 	}
 	
@@ -1047,8 +1049,6 @@ country_event = {
 	}
 }
 
-###Appeasement Events###
-
 #Remilia is NOT impressed
 country_event = {
 	id = flavor_crd.14
@@ -1067,6 +1067,222 @@ country_event = {
 
 		ai_chance = {
 			factor = 1
+		}
+	}
+}
+
+#Fight with Remilia
+country_event = {
+	id = flavor_crd.15
+	title = flavor_crd.15.t
+	desc = flavor_crd.15.desc
+	picture = MIMA_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_diplomatic_skill = {
+				SKILL_BONI = 0
+			}
+			#Mima
+			set_variable = {
+				which = th_crd_remilia_diplo_combat_skills
+				value = 1550
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_crd_remilia_diplo_combat_skills
+			}
+			clr_country_flag = crd_enable_fight_against_remi
+		}
+	}
+	
+	option = {	#TAKE THIS
+		name = flavor_crd.15.a
+		custom_tooltip = flavor_crd.15.a.tt
+		highlight = yes
+		th_danmaku_diplo_fight_ruler_and_opponent = {
+			win_event = flavor_crd.16
+			draw_event = flavor_crd.16
+			defeat_event = flavor_crd.17
+			days = 10
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Victory over Remilia
+country_event = {
+	id = flavor_crd.16
+	title = flavor_crd.16.t
+	desc = flavor_crd.16.desc
+	picture = MAIYUKI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.16.a
+		custom_tooltip = flavor_crd.16.a.tt
+		add_dip_power = 150
+		hidden_effect = {
+			set_country_flag = crd_defeated_remilia
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Defeat against Remilia
+country_event = {
+	id = flavor_crd.17
+	title = flavor_crd.17.t
+	desc = flavor_crd.17.desc
+	picture = MAIYUKI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.17.a
+		custom_tooltip = flavor_crd.17.a.tt
+		hidden_effect = {
+			set_country_flag = crd_enable_fight_against_remi
+			set_country_flag = crd_lost_against_remilia
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Conflicts about Hell
+country_event = {
+	id = flavor_crd.18
+	title = flavor_crd.18.t
+	desc = flavor_crd.18.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {		
+		has_mission = CRD_control_the_lone_coast_new
+		has_mission = CRD_expand_infrastructure		
+		mission_completed = CRD_control_the_lone_coast_new
+		mission_completed = CRD_expand_infrastructure
+		NOT = { has_country_flag = crd_had_conflict_event_with_higan }
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_had_conflict_event_with_higan
+		}
+	}
+	
+	option = {	#Hell is now OUR property
+		name = flavor_crd.18.a
+		
+		Higan_state = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		Eastern_higan = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		Higan_southern_coast = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		Western_higan = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		if = {
+			limit = {
+				exists = HIG
+			}
+			add_casus_belli = {
+				target = HIG
+				type = cb_restore_personal_union
+				months = 900
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Beating Tenshi up
+country_event = {
+	id = flavor_crd.19
+	title = flavor_crd.19.t
+	desc = flavor_crd.19.desc
+	picture = TENSHI_eventPicture	
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.19.a
+		custom_tooltip = flavor_crd.19.a.tt
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					religion = ROOT
+					NOT = { tag = HVR }
+					NOT = { alliance_with = HVR }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = th_beat_tenshi_up
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Give Koishi the mask of hope
+country_event = {
+	id = flavor_crd.20
+	title = flavor_crd.20.t
+	desc = flavor_crd.20.desc
+	picture = TENSHI_eventPicture	
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.20.a
+		custom_tooltip = flavor_crd.20.a.tt
+		hidden_effect = {
+			set_global_flag = th_koishi_is_about_to_wander_off
+		}
+		
+		ai_chance = { 
+			factor = 100
 		}
 	}
 }
