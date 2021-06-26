@@ -87,7 +87,181 @@ country_event = {
 	}
 }
 
-#Oni's Request
+#Release Orin at the Red Sea
+country_event = {
+	id = flavor_crd.2
+	title = flavor_crd.2.t
+	desc = flavor_crd.2.desc
+	picture = ORINOKUU_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					region = arabia_region
+					region = egypt_region
+					area = red_sea_coast_area
+				}
+				save_event_target_as = orn_capital_city
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_crd.2.a
+		arabia_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = ORN
+			remove_core = ROOT
+		}
+		egypt_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = ORN
+			remove_core = ROOT
+		}
+		red_sea_coast_area = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = ORN
+			remove_core = ROOT
+		}
+		release = ORN
+		create_subject = {
+			subject_type = th_pet_state
+			subject = ORN
+		}
+		add_historical_friend = ORN
+		ORN	= {
+			add_historical_friend = ROOT
+			add_country_modifier = {
+				name = "crd_pet_loyalty"
+				duration = -1
+			}
+			hidden_effect = {
+				change_government = monarchy
+				add_government_reform = Gensokyan_monarchy
+				adopt_reform_progress = ROOT
+				change_primary_culture = ROOT
+				change_religion = ROOT
+				add_adm_power = 212
+				add_dip_power = 212
+				add_mil_power = 212
+				add_manpower = 10
+				change_estate_land_share = {
+					estate = estate_nobles
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_church
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_burghers
+					share = 29
+				}	
+				define_ruler = {
+					name = "Rin"
+					dynasty = "Kaenbyou"
+					age = "15"
+					adm = 4
+					dip = 5
+					mil = 5
+					#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+					female = yes
+					culture = ROOT
+					religion = ROOT
+				}
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = old_egyptian
+				add_accepted_culture = al_misr_arabic
+				set_capital = event_target:orn_capital_city
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+						light_ship = 0.4
+						transport = 0.5
+					}
+				}
+				event_target:orn_capital_city = {
+					set_base_tax = 6
+					set_base_production = 6
+					set_base_manpower = 5
+					change_culture = ROOT
+					change_religion = ROOT
+				}
+				add_permanent_claim = 361
+				add_permanent_claim = 359
+				add_permanent_claim = 358
+				add_permanent_claim = 363
+				add_permanent_claim = 2316
+				add_permanent_claim = 4316
+			}
+		}
+		hidden_effect = {
+			every_province = {
+				limit = {
+					is_permanent_claim = ROOT
+					OR = {
+						region = arabia_region
+						region = egypt_region
+						area = red_sea_coast_area
+					}
+				}
+				remove_claim = ROOT
+				add_permanent_claim = ORN
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Onis want to get into battle
+country_event = {
+	id = flavor_crd.3
+	title = flavor_crd.3.t
+	desc = flavor_crd.3.desc
+	picture = YUUGI_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_is_counting_battles
+			set_variable = {
+				which = crd_oni_battle_counter
+				value = 0
+			}
+		}
+	}
+	
+	option = {	#promise to oni
+		name = flavor_crd.3.a
+		custom_tooltip = flavor_crd.3.a.tt
+		add_army_professionalism = 0.05
+		add_country_modifier = {
+			name = "crd_backup_of_the_oni"
+			duration = 7300
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Onis appreciate the battle heat
 country_event = {
 	id = flavor_crd.4
 	title = flavor_crd.4.t
@@ -95,65 +269,24 @@ country_event = {
 	picture = YUUGI_eventPicture
 	
 	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_is_counting_battles
+			set_variable = {
+				which = crd_oni_battle_counter
+				value = 0
+			}
+		}
+	}
 	
 	option = {	#promise to oni
 		name = flavor_crd.4.a
 		custom_tooltip = flavor_crd.4.a.tt
-		hidden_effect = {
-			set_country_flag = crd_promise_to_oni
-		}
-		if = {
-			limit = {
-				ONI = {
-					is_subject_of = ROOT
-				}
-			}
-			ONI = {
-				add_opinion = {
-					who = ROOT
-					modifier = th_promised_to_back_mountain
-				}
-			}
-		}
+		add_army_professionalism = 0.05
 		add_country_modifier = {
 			name = "crd_backup_of_the_oni"
 			duration = 7300
-		}
-		
-		ai_chance = { 
-			factor = 0
-		}
-	}
-	
-	option = {	#sorry, but can't promise
-		name = flavor_crd.4.b
-		custom_tooltip = flavor_crd.4.b.tt	
-		if = {
-			limit = {
-				NOT = { exists = ONI }
-			}
-			every_owned_province = {
-				limit = {
-					culture = Oni_culture
-				}
-				add_province_modifier = {
-					name = "crd_disappointed_oni"
-					duration = 7300
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				ONI = {
-					is_subject_of = ROOT
-				}
-			}
-			ONI = {
-				add_opinion = {
-					who = ROOT
-					modifier = th_rejected_to_back_mountain
-				}
-			}
 		}
 		
 		ai_chance = { 
@@ -364,7 +497,7 @@ country_event = {
 	}
 }
 
-#lighthouse keeper pet?
+#Release Okuu in Bengal region
 country_event = {
 	id = flavor_crd.6
 	title = flavor_crd.6.t
@@ -373,20 +506,18 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	option = {	#release pets. need Comrade's tag design
+	option = {
 		name = flavor_crd.6.a
-		# okuu
-		taiwan_area = {
+		india_superregion = {
 			limit = {
 				owned_by = ROOT
 			}
 			add_core = OKU
 			remove_core = ROOT
-			change_culture = ROOT
 		}
 		release = OKU
 		create_subject = {
-			subject_type = th_satori_vassal
+			subject_type = th_pet_state
 			subject = OKU
 		}
 		add_historical_friend = CRD
@@ -433,8 +564,10 @@ country_event = {
 				set_ruler_flag = touhou_character_ruler
 				set_ruler_flag = touhou_original_ruler
 				add_ruler_personality = immortal_personality
-				add_accepted_culture = polynesian
-				set_capital = 2155
+				add_accepted_culture = bengali
+				add_accepted_culture = oriya
+
+				set_capital = 561
 				capital_scope = {
 					build_to_forcelimit = {
 						infantry = 0.6
@@ -443,108 +576,71 @@ country_event = {
 						transport = 0.5
 					}
 				}
-				2155 = {
+				561 = {
 					add_base_tax = 2
 					add_base_manpower = 2
 					add_base_production = 2
 					change_culture = ROOT
 				}
-			}
-		}
-		# orin
-		luzon_area = {
-			limit = {
-				owned_by = ROOT
-			}
-			add_core = ORN
-			remove_core = ROOT
-			change_culture = ROOT
-		}
-		southern_luzon_area = {
-			limit = {
-				owned_by = ROOT
-			}
-			add_core = ORN
-			remove_core = ROOT
-			change_culture = ROOT
-		}
-		release = ORN
-		create_subject = {
-			subject_type = th_satori_vassal
-			subject = ORN
-		}
-		add_historical_friend = CRD
-		ORN	= {
-			add_historical_friend = ROOT
-			add_country_modifier = {
-				name = "crd_pet_loyalty"
-				duration = -1
-			}
-			hidden_effect = {
-				change_government = monarchy
-				add_government_reform = Gensokyan_monarchy
-				adopt_reform_progress = ROOT
-				change_primary_culture = ROOT
-				change_religion = ROOT
-				add_adm_power = 212
-				add_dip_power = 212
-				add_mil_power = 212
-				add_manpower = 10
-				change_estate_land_share = {
-					estate = estate_nobles
-					share = 29
-				}
-				change_estate_land_share = {
-					estate = estate_church
-					share = 29
-				}
-				change_estate_land_share = {
-					estate = estate_burghers
-					share = 29
-				}	
-				define_ruler = {
-					name = "Rin"
-					dynasty = "Kaenbyou"
-					age = "15"
-					adm = 4
-					dip = 5
-					mil = 5
-					#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
-					female = yes
-					culture = ROOT
-					religion = ROOT
-				}
-				set_ruler_flag = touhou_character_ruler
-				set_ruler_flag = touhou_original_ruler
-				add_ruler_personality = immortal_personality
-				add_accepted_culture = filipino
-				set_capital = 658
-				capital_scope = {
-					build_to_forcelimit = {
-						infantry = 0.6
-						cavalry = 0.3
-						light_ship = 0.4
-						transport = 0.5
+				jharkhand_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
 					}
+					add_permanent_claim = OKU
 				}
-				658 = {
-					add_base_tax = 2
-					add_base_manpower = 2
-					add_base_production = 2
-					change_culture = ROOT
+				bihar_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				purvanchal_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				oudh_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				lower_doab_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				katehar_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				upper_doab_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
 				}
 			}
-		}		
-		ai_chance = {
-			factor = 0
 		}
-	}
-	
-	option = {	#assist mistress
-		name = flavor_crd.6.b
-		add_country_modifier = {
-			name = "crd_assistant_pets"
-			duration = -1
+		hidden_effect = {
+			india_superregion = {
+				limit = {
+					is_permanent_claim = ROOT
+				}
+				remove_claim = ROOT
+				add_permanent_claim = OKU
+			}
 		}
 		ai_chance = {
 			factor = 100
@@ -1168,9 +1264,9 @@ country_event = {
 	picture = KOIFLAN_eventPicture
 	
 	trigger = {		
-		has_mission = CRD_control_the_lone_coast_new
+		has_mission = CRD_control_the_lone_coast
 		has_mission = CRD_expand_infrastructure		
-		mission_completed = CRD_control_the_lone_coast_new
+		mission_completed = CRD_control_the_lone_coast
 		mission_completed = CRD_expand_infrastructure
 		NOT = { has_country_flag = crd_had_conflict_event_with_higan }
 	}
