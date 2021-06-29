@@ -10,8 +10,6 @@ country_event = {
 	title = flavor_scr.1.t
 	desc = flavor_scr.1.desc
 	picture = KOIFLAN_eventPicture
-
-	fire_only_once = yes
 	
 	trigger = {
 		tag = SCR
@@ -230,17 +228,6 @@ country_event = {
 			remove_core = ROOT
 			change_religion = ROOT
 		}
-		hidden_effect = {   #Remove all SCR's claim on China. This is to make sure if player switch to HNG, AI SCR will not become hostile
-			china_superregion = {
-				limit = {
-					OR = {
-						is_permanent_claim = ROOT
-						is_claim = ROOT
-					}
-				}
-				remove_claim = ROOT
-			}			
-		}
 		release = HNG
 		switch_tag = HNG
 		HNG = {
@@ -290,6 +277,7 @@ country_event = {
 			add_base_production = 2
 			change_culture = ROOT
 		}
+		
 		ai_chance = { 
 			factor = 0
 		}
@@ -486,17 +474,6 @@ country_event = {
 			add_core = FLR
 			remove_core = ROOT
 		}
-		hidden_effect = {   #Remove all SCR's claim on China. This is to make sure if player switch to HNG, AI SCR will not become hostile
-			low_countries_region = {
-				limit = {
-					OR = {
-						is_permanent_claim = ROOT
-						is_claim = ROOT
-					}
-				}
-				remove_claim = ROOT
-			}
-		}
 		release = FLR
 		if = {
 			limit = {
@@ -616,17 +593,6 @@ country_event = {
 			add_core = FLR
 			remove_core = ROOT
 		}
-		hidden_effect = {   #Remove all SCR's claim on China. This is to make sure if player switch to HNG, AI SCR will not become hostile
-			low_countries_region = {
-				limit = {
-					OR = {
-						is_permanent_claim = ROOT
-						is_claim = ROOT
-					}
-				}
-				remove_claim = ROOT
-			}
-		}		
 		release = FLR
 		ROOT = {
 			define_ruler = {
@@ -920,70 +886,6 @@ country_event = {
 	}
 }
 
-#Later released CRD should still be rebellious vassal
-country_event = {
-	id = flavor_scr.60
-	title = flavor_scr.60.t
-	desc = {
-		trigger = {
-			exists = CRD
-		}
-		desc = flavor_scr.6.desc.a
-	}
-	desc = {
-		trigger = {
-			NOT = { exists = CRD }
-		}
-		desc = flavor_scr.6.desc.b
-	}
-	picture = KOIFLAN_eventPicture
-	
-	trigger = {
-		has_country_flag = scr_not_appealed_satori
-		CRD = {
-			is_subject_of = ROOT
-			NOT = { is_subject_of_type = th_rebellious_subject }
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	immediate = {
-		hidden_effect = {
-			CRD = {
-				grant_independence = yes
-			}
-			ROOT = {
-				create_subject = {
-					subject_type = th_rebellious_subject
-					subject = CRD
-				}
-			}
-		}
-	}
-	
-	option = {
-		name = flavor_scr.60.a
-		custom_tooltip = flavor_scr.6.a.tt
-		if = {
-			limit = {
-				exists = CRD
-				CRD = {
-					is_subject_of = ROOT
-				}
-			}
-			custom_tooltip = flavor_scr.6.a.ct
-		}
-
-		ai_chance = {
-			factor = 1
-		}
-	}
-}
-
-
 #Event for keeping all hell provinces unusable for SCR
 country_event = {
 	id = flavor_scr.7
@@ -1004,7 +906,6 @@ country_event = {
 				NOT = { has_province_modifier = scr_crd_not_my_mistress }
 			}
 			any_subject_country = {
-				NOT = { tag = CRD }
 				any_owned_province = {
 					region = former_hell_region
 					NOT = { has_province_modifier = scr_crd_not_my_mistress }
@@ -1060,11 +961,9 @@ country_event = {
 	
 	trigger = {
 		any_owned_province = {
-			region = former_hell_region
 			has_province_modifier = scr_crd_not_my_mistress
 		}
 		OR = {
-			tag = CRD
 			AND = {
 				NOT = { th_is_or_was_tag = { tag = SCR } }
 				OR = {
@@ -1702,25 +1601,7 @@ country_event = {
 	option = {
 		name = flavor_scr.21.a
 		th_outdate_moon_defenses = yes
-		if = {
-			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 5320 }
-			}
-			5320 = {   
-				owner = {
-					reverse_add_casus_belli = {
-						type = cb_touhou_mission_dominance_war
-						target = ROOT
-					}
-					hidden_effect = {
-						save_global_event_target_as = scr_assert_domination_target
-					}
-				}
-			}
-			hidden_effect = {
-				set_country_flag = scr_has_target_to_humiliate
-			}
-		}
+		#TODO - add "Show Superiority Casus Belli" against the owner of Lunar Capital
 		random_province = {
 			limit = {
 				continent = moon_continent
@@ -2325,6 +2206,15 @@ country_event = {
 	option = {
 		name = flavor_scr.33.a
 		set_papacy_active = no
+		if = {
+			limit = {
+				OR = {
+					religion = th_hakureishinto
+					religion = th_moriyashinto
+				}
+			}
+			th_allow_shorter_deity_swapping = yes
+		}
 		add_country_modifier = {
 			name = scr_eliminated_the_pope
 			duration = 9125
