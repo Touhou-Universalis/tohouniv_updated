@@ -20,6 +20,9 @@ country_event = {
 		NOT = { has_country_flag = crd_has_chosen_religious_path }
 		is_free_or_tributary_trigger = yes
 		religion = th_hakureishinto
+		capital_scope = {
+			religion = th_moriyashinto
+		}
 	}
 	
 	mean_time_to_happen = {
@@ -109,6 +112,7 @@ country_event = {
 		}
 	}
 	
+	#Release Orin
 	option = {
 		name = flavor_crd.2.a
 		arabia_region = {
@@ -140,10 +144,6 @@ country_event = {
 		add_historical_friend = ORN
 		ORN	= {
 			add_historical_friend = ROOT
-			add_country_modifier = {
-				name = "crd_pet_loyalty"
-				duration = -1
-			}
 			hidden_effect = {
 				change_government = monarchy
 				add_government_reform = Gensokyan_monarchy
@@ -226,6 +226,7 @@ country_event = {
 		}
 	}
 	
+	#Play as Orin
 	option = {
 		name = flavor_crd.2.b
 		trigger = {
@@ -340,6 +341,16 @@ country_event = {
 			factor = 0
 		}
 	}
+
+	#Orin stays at home
+	option = {
+		name = flavor_crd.2.c
+		event_target:orn_capital_city = {
+			add_base_tax = 1
+			add_base_production = 1
+			add_base_manpower = 1
+		}
+	}
 }
 
 #Oni want to get into battle
@@ -350,16 +361,6 @@ country_event = {
 	picture = YUUGI_eventPicture
 	
 	is_triggered_only = yes
-
-	immediate = {
-		hidden_effect = {
-			set_country_flag = crd_is_counting_battles
-			set_variable = {
-				which = crd_oni_battle_counter
-				value = 0
-			}
-		}
-	}
 	
 	option = {	#promise to oni
 		name = flavor_crd.3.a
@@ -367,6 +368,25 @@ country_event = {
 		add_country_modifier = {
 			name = "crd_backup_of_the_oni"
 			duration = 7300
+		}
+		if = {
+			limit = {
+				ONI = {
+					exists = yes
+					is_free_or_tributary_trigger = yes
+				}
+			}
+			create_subject = {
+				subject_type = th_satori_vassal
+				subject = ONI
+			}
+			custom_tooltip = flavor_crd.3.a.tt
+			hidden_effect = {
+				add_truce_with = ONI
+				ONI = {
+					add_liberty_desire = 150
+				}
+			}
 		}
 		
 		ai_chance = { 
@@ -398,10 +418,6 @@ country_event = {
 				add_historical_friend = ROOT
 			}
 		}
-		add_country_modifier = {
-			name = crd_oni_support
-			duration = 9125
-		}
 		
 		ai_chance = { 
 			factor = 100
@@ -410,205 +426,205 @@ country_event = {
 }
 
 #Oni want their mountain!
-country_event = {
-	id = flavor_crd.5
-	title = flavor_crd.5.t
-	desc = flavor_crd.5.desc
-	picture = YOUKAIMOUNTAIN_eventPicture
-	
-	trigger = {
-		th_is_or_was_tag = {
-			tag = CRD
-		}
-		OR = {
-			NOT = { exists = ONI }
-			ONI = {
-				is_subject_of = ROOT
-			}
-		}
-		NOT = { tag = ONI }
-		NOT = { tag = TGU }
-		owns = 4963
-		owns = 5196
-		owns = 4964
-		num_of_owned_provinces_with = {
-			region = youkai_mountain_region
-			value = 10
-		}
-	}
-
-	mean_time_to_happen = {
-		months = 30
-	}
-	
-	option = {	#keep promise
-		name = flavor_crd.5.a
-		if = {
-			limit = {
-				NOT = { exists = ONI }
-			}
-			youkai_mountain_region = {
-				limit = {
-					owned_by = ROOT
-				}
-				add_core = ONI
-				remove_core = ROOT
-				change_culture = Oni_culture
-			}
-			release = ONI
-			create_subject = {
-				subject_type = th_satori_vassal
-				subject = ONI
-			}
-			ONI = {
-				override_country_name = TH_ONIGASHIMA
-				youkai_mountain_region = {
-					limit = {
-						NOT = { is_core = ONI }
-						NOT = { is_permanent_claim = ONI }
-					}
-					add_core = ONI
-				}
-				add_historical_friend = ROOT
-				hidden_effect = {
-					change_government = monarchy
-					add_government_reform = Gensokyan_monarchy
-					adopt_reform_progress = ROOT
-					change_primary_culture = Oni_culture
-					change_religion = ROOT
-					add_adm_power = 112
-					add_dip_power = 84
-					add_mil_power = 112
-					add_manpower = 10
-					change_estate_land_share = {
-						estate = estate_nobles
-						share = 29
-					}
-					change_estate_land_share = {
-						estate = estate_church
-						share = 29
-					}
-					change_estate_land_share = {
-						estate = estate_burghers
-						share = 29
-					}	
-					define_ruler = {
-						name = "Yuugi"
-						dynasty = "Hoshiguma"
-						age = "25"
-						adm = 5
-						dip = 3
-						mil = 5
-						#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
-						female = yes
-						culture = Oni_culture
-						religion = ROOT
-					}
-					set_ruler_flag = touhou_character_ruler
-					set_ruler_flag = touhou_original_ruler
-					add_ruler_personality = immortal_personality
-					set_capital = 4811
-					capital_scope = {
-						build_to_forcelimit = {
-							infantry = 0.6
-							cavalry = 0.3
-						}
-					}
-					former_hell_region = {
-						limit = {
-							owned_by = ONI
-						}
-						cede_province = ROOT
-						add_core = ROOT
-					}
-				}
-			}
-		}
-		else = {
-			youkai_mountain_region = {
-				limit = {
-					owned_by = ROOT
-				}
-				cede_province = ONI
-				add_core = ONI
-				remove_core = ROOT
-				remove_claim = ROOT
-				change_culture = Oni_culture
-			}
-			former_hell_region = {
-				limit = {
-					owned_by = ONI
-				}
-				cede_province = ROOT
-				add_core = ROOT
-			}
-			ONI = {
-				override_country_name = TH_ONIGASHIMA
-				youkai_mountain_region = {
-					limit = {
-						NOT = { is_core = ONI }
-						NOT = { is_permanent_claim = ONI }
-					}
-					add_core = ONI
-				}
-				set_capital = 4811
-				add_historical_friend = ROOT
-			}
-		}
-	}
-	
-	option = {	#think again...
-		name = flavor_crd.5.b
-		if = {
-			limit = {
-				NOT = { exists = ONI }
-			}
-			random_owned_province = {
-				limit = {
-					area = Oni_exclave_state
-				}
-				spawn_rebels = {
-					type = nationalist_rebels
-					size = 2
-				}
-			}
-			random_owned_province = {
-				limit = {
-					area = Yuugi_state
-				}
-				spawn_rebels = {
-					type = nationalist_rebels
-					size = 2
-				}
-			}		
-			every_owned_province = {
-				limit = {
-					culture = Oni_culture
-				}
-				add_province_modifier = {
-					name = "crd_angry_oni"
-					duration = 18250
-				}	
-			}
-		}
-		else = {
-			ONI = {
-				set_ai_attitude = {
-					who = ROOT
-					attitude = attitude_disloyal
-				}
-				add_opinion = {
-					who = ROOT
-					modifier = th_break_promise
-				}
-				add_country_modifier = { 
-					name = crd_break_promise
-					duration = 18250
-				}				
-			}
-		}
-	}
-}
+#country_event = {
+#	id = flavor_crd.5
+#	title = flavor_crd.5.t
+#	desc = flavor_crd.5.desc
+#	picture = YOUKAIMOUNTAIN_eventPicture
+#	
+#	trigger = {
+#		th_is_or_was_tag = {
+#			tag = CRD
+#		}
+#		OR = {
+#			NOT = { exists = ONI }
+#			ONI = {
+#				is_subject_of = ROOT
+#			}
+#		}
+#		NOT = { tag = ONI }
+#		NOT = { tag = TGU }
+#		owns = 4963
+#		owns = 5196
+#		owns = 4964
+#		num_of_owned_provinces_with = {
+#			region = youkai_mountain_region
+#			value = 10
+#		}
+#	}
+#
+#	mean_time_to_happen = {
+#		months = 30
+#	}
+#	
+#	option = {	#keep promise
+#		name = flavor_crd.5.a
+#		if = {
+#			limit = {
+#				NOT = { exists = ONI }
+#			}
+#			youkai_mountain_region = {
+#				limit = {
+#					owned_by = ROOT
+#				}
+#				add_core = ONI
+#				remove_core = ROOT
+#				change_culture = Oni_culture
+#			}
+#			release = ONI
+#			create_subject = {
+#				subject_type = th_satori_vassal
+#				subject = ONI
+#			}
+#			ONI = {
+#				override_country_name = TH_ONIGASHIMA
+#				youkai_mountain_region = {
+#					limit = {
+#						NOT = { is_core = ONI }
+#						NOT = { is_permanent_claim = ONI }
+#					}
+#					add_core = ONI
+#				}
+#				add_historical_friend = ROOT
+#				hidden_effect = {
+#					change_government = monarchy
+#					add_government_reform = Gensokyan_monarchy
+#					adopt_reform_progress = ROOT
+#					change_primary_culture = Oni_culture
+#					change_religion = ROOT
+#					add_adm_power = 112
+#					add_dip_power = 84
+#					add_mil_power = 112
+#					add_manpower = 10
+#					change_estate_land_share = {
+#						estate = estate_nobles
+#						share = 29
+#					}
+#					change_estate_land_share = {
+#						estate = estate_church
+#						share = 29
+#					}
+#					change_estate_land_share = {
+#						estate = estate_burghers
+#						share = 29
+#					}	
+#					define_ruler = {
+#						name = "Yuugi"
+#						dynasty = "Hoshiguma"
+#						age = "25"
+#						adm = 5
+#						dip = 3
+#						mil = 5
+#						#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+#						female = yes
+#						culture = Oni_culture
+#						religion = ROOT
+#					}
+#					set_ruler_flag = touhou_character_ruler
+#					set_ruler_flag = touhou_original_ruler
+#					add_ruler_personality = immortal_personality
+#					set_capital = 4811
+#					capital_scope = {
+#						build_to_forcelimit = {
+#							infantry = 0.6
+#							cavalry = 0.3
+#						}
+#					}
+#					former_hell_region = {
+#						limit = {
+#							owned_by = ONI
+#						}
+#						cede_province = ROOT
+#						add_core = ROOT
+#					}
+#				}
+#			}
+#		}
+#		else = {
+#			youkai_mountain_region = {
+#				limit = {
+#					owned_by = ROOT
+#				}
+#				cede_province = ONI
+#				add_core = ONI
+#				remove_core = ROOT
+#				remove_claim = ROOT
+#				change_culture = Oni_culture
+#			}
+#			former_hell_region = {
+#				limit = {
+#					owned_by = ONI
+#				}
+#				cede_province = ROOT
+#				add_core = ROOT
+#			}
+#			ONI = {
+#				override_country_name = TH_ONIGASHIMA
+#				youkai_mountain_region = {
+#					limit = {
+#						NOT = { is_core = ONI }
+#						NOT = { is_permanent_claim = ONI }
+#					}
+#					add_core = ONI
+#				}
+#				set_capital = 4811
+#				add_historical_friend = ROOT
+#			}
+#		}
+#	}
+#	
+#	option = {	#think again...
+#		name = flavor_crd.5.b
+#		if = {
+#			limit = {
+#				NOT = { exists = ONI }
+#			}
+#			random_owned_province = {
+#				limit = {
+#					area = Oni_exclave_state
+#				}
+#				spawn_rebels = {
+#					type = nationalist_rebels
+#					size = 2
+#				}
+#			}
+#			random_owned_province = {
+#				limit = {
+#					area = Yuugi_state
+#				}
+#				spawn_rebels = {
+#					type = nationalist_rebels
+#					size = 2
+#				}
+#			}		
+#			every_owned_province = {
+#				limit = {
+#					culture = Oni_culture
+#				}
+#				add_province_modifier = {
+#					name = "crd_angry_oni"
+#					duration = 18250
+#				}	
+#			}
+#		}
+#		else = {
+#			ONI = {
+#				set_ai_attitude = {
+#					who = ROOT
+#					attitude = attitude_disloyal
+#				}
+#				add_opinion = {
+#					who = ROOT
+#					modifier = th_break_promise
+#				}
+#				add_country_modifier = { 
+#					name = crd_break_promise
+#					duration = 18250
+#				}				
+#			}
+#		}
+#	}
+#}
 
 #Release Okuu in Bengal region
 country_event = {
@@ -636,10 +652,6 @@ country_event = {
 		add_historical_friend = CRD
 		OKU	= {
 			add_historical_friend = ROOT
-			add_country_modifier = {
-				name = "crd_pet_loyalty"
-				duration = -1
-			}
 			hidden_effect = {
 				change_government = monarchy
 				add_government_reform = Gensokyan_monarchy
@@ -761,7 +773,7 @@ country_event = {
 	}
 	
 	option = {
-		name = flavor_crd.6.a
+		name = flavor_crd.6.b
 		trigger = {
 			ai = no
 		}
@@ -779,10 +791,6 @@ country_event = {
 		add_historical_friend = CRD
 		OKU	= {
 			add_historical_friend = ROOT
-			add_country_modifier = {
-				name = "crd_pet_loyalty"
-				duration = -1
-			}
 			hidden_effect = {
 				change_government = monarchy
 				add_government_reform = Gensokyan_monarchy
@@ -902,6 +910,19 @@ country_event = {
 			factor = 0
 		}
 	}
+
+	option = {
+		name = flavor_crd.6.c
+		561 = {
+			add_base_tax = 1
+			add_base_production = 1
+			add_base_manpower = 1
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
 }
 
 #remove reputation penalty after have diplomatic hegemon flag	
@@ -912,7 +933,7 @@ country_event = {
 	picture = SATORI_eventPicture	
 	
 	mean_time_to_happen = {
-		days = 0
+		days = 1
 	}
 
 	hidden = yes
@@ -1058,6 +1079,45 @@ country_event = {
 	}
 }
 
+#Vassal CRD is still rebellious if she gets released later
+country_event = {
+	id = flavor_crd.80
+	title = flavor_crd.80.t
+	desc = flavor_crd.80.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		has_country_flag = crd_not_appealed_remilia
+		SCR = {
+			is_subject_of = ROOT
+			NOT = { is_subject_of_type = th_rebellious_subject }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.80.a
+		SCR = {
+			grant_independence = yes
+		}
+		ROOT = {
+			create_subject = {
+				subject_type = th_rebellious_subject
+				subject = SCR
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
 #Event for keeping all scarlet provinces unusable for CRD
 country_event = {
 	id = flavor_crd.9
@@ -1132,6 +1192,53 @@ country_event = {
 					duration = -1
 				}
 			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#SCR cleans provinces debuffs when owning them
+country_event = {
+	id = flavor_crd.90
+	title = flavor_crd.90.t
+	desc = flavor_crd.90.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = SCR
+		}
+		any_owned_province = {
+			OR = {
+				area = Scarlet_island
+				area = Scarlet_mountain
+				area = Scarlett_domain
+			}
+			has_province_modifier = scr_crd_not_my_mistress
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.90.a
+		every_owned_province = {
+			limit = {
+				OR = {
+					area = Scarlet_island
+					area = Scarlet_mountain
+					area = Scarlett_domain
+				}
+				has_province_modifier = scr_crd_not_my_mistress
+			}
+			remove_province_modifier = scr_crd_not_my_mistress
 		}
 
 		ai_chance = {
@@ -1406,7 +1513,7 @@ country_event = {
 	id = flavor_crd.14
 	title = flavor_crd.14.t
 	desc = flavor_crd.14.desc
-	picture = KOIFLAN_eventPicture
+	picture = REMILIA_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -1428,7 +1535,7 @@ country_event = {
 	id = flavor_crd.15
 	title = flavor_crd.15.t
 	desc = flavor_crd.15.desc
-	picture = MIMA_eventPicture
+	picture = REMILIA_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -1471,7 +1578,7 @@ country_event = {
 	id = flavor_crd.16
 	title = flavor_crd.16.t
 	desc = flavor_crd.16.desc
-	picture = MAIYUKI_eventPicture
+	picture = REMILIA_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -1494,7 +1601,7 @@ country_event = {
 	id = flavor_crd.17
 	title = flavor_crd.17.t
 	desc = flavor_crd.17.desc
-	picture = MAIYUKI_eventPicture
+	picture = REMILIA_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -1508,79 +1615,6 @@ country_event = {
 
 		ai_chance = { 
 			factor = 100
-		}
-	}
-}
-
-#Conflicts about Hell
-country_event = {
-	id = flavor_crd.18
-	title = flavor_crd.18.t
-	desc = flavor_crd.18.desc
-	picture = KOIFLAN_eventPicture
-	
-	trigger = {		
-		has_mission = CRD_control_the_lone_coast
-		has_mission = CRD_expand_infrastructure		
-		mission_completed = CRD_control_the_lone_coast
-		mission_completed = CRD_expand_infrastructure
-		NOT = { has_country_flag = crd_had_conflict_event_with_higan }
-	}
-
-	mean_time_to_happen = {
-		months = 12
-	}
-
-	immediate = {
-		hidden_effect = {
-			set_country_flag = crd_had_conflict_event_with_higan
-		}
-	}
-	
-	option = {	#Hell is now OUR property
-		name = flavor_crd.18.a
-		
-		Higan_state = {
-			limit = {
-				NOT = { is_core = ROOT }
-				NOT = { is_permanent_claim = ROOT }
-			}
-			add_permanent_claim = ROOT
-		}
-		Eastern_higan = {
-			limit = {
-				NOT = { is_core = ROOT }
-				NOT = { is_permanent_claim = ROOT }
-			}
-			add_permanent_claim = ROOT
-		}
-		Higan_southern_coast = {
-			limit = {
-				NOT = { is_core = ROOT }
-				NOT = { is_permanent_claim = ROOT }
-			}
-			add_permanent_claim = ROOT
-		}
-		Western_higan = {
-			limit = {
-				NOT = { is_core = ROOT }
-				NOT = { is_permanent_claim = ROOT }
-			}
-			add_permanent_claim = ROOT
-		}
-		if = {
-			limit = {
-				exists = HIG
-			}
-			add_casus_belli = {
-				target = HIG
-				type = cb_restore_personal_union
-				months = 900
-			}
-		}
-
-		ai_chance = {
-			factor = 1
 		}
 	}
 }

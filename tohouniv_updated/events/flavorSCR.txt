@@ -920,22 +920,11 @@ country_event = {
 	}
 }
 
-#Later released CRD should still be rebellious vassal
+#Vassal CRD is still rebellious if she gets released later
 country_event = {
 	id = flavor_scr.60
 	title = flavor_scr.60.t
-	desc = {
-		trigger = {
-			exists = CRD
-		}
-		desc = flavor_scr.6.desc.a
-	}
-	desc = {
-		trigger = {
-			NOT = { exists = CRD }
-		}
-		desc = flavor_scr.6.desc.b
-	}
+	desc = flavor_scr.60.desc
 	picture = KOIFLAN_eventPicture
 	
 	trigger = {
@@ -950,31 +939,18 @@ country_event = {
 		days = 1
 	}
 
-	immediate = {
-		hidden_effect = {
-			CRD = {
-				grant_independence = yes
-			}
-			ROOT = {
-				create_subject = {
-					subject_type = th_rebellious_subject
-					subject = CRD
-				}
-			}
-		}
-	}
+	hidden = yes
 	
 	option = {
 		name = flavor_scr.60.a
-		custom_tooltip = flavor_scr.6.a.tt
-		if = {
-			limit = {
-				exists = CRD
-				CRD = {
-					is_subject_of = ROOT
-				}
+		CRD = {
+			grant_independence = yes
+		}
+		ROOT = {
+			create_subject = {
+				subject_type = th_rebellious_subject
+				subject = CRD
 			}
-			custom_tooltip = flavor_scr.6.a.ct
 		}
 
 		ai_chance = {
@@ -1043,6 +1019,45 @@ country_event = {
 					duration = -1
 				}
 			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#CRD cleans provinces debuffs when owning them
+country_event = {
+	id = flavor_scr.70
+	title = flavor_scr.70.t
+	desc = flavor_scr.70.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		any_owned_province = {
+			region = former_hell_region
+			has_province_modifier = scr_crd_not_my_mistress
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_scr.70.a
+		every_owned_province = {
+			limit = {
+				region = former_hell_region
+				has_province_modifier = scr_crd_not_my_mistress
+			}
+			remove_province_modifier = scr_crd_not_my_mistress
 		}
 
 		ai_chance = {
@@ -1320,11 +1335,12 @@ country_event = {
 		mission_completed = SCR_unite_the_mansions
 		NOT = { mission_completed = SCR_appeal_to_satori }
 		NOT = { has_country_flag = scr_has_appeased_satori }
-		owns_or_non_sovereign_subject_of = 5007	#Chireiden
-		5007 = {
-			th_has_up_to_date_fort_building = {
-				tag = ROOT
-			}
+		num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+			area = Chireiden_state
+			development = 15
+			has_tax_building_trigger = yes
+			has_production_building_trigger = yes
+			value = 5
 		}
 	}
 
@@ -1365,73 +1381,6 @@ country_event = {
 	}
 }
 
-#Appease Koishi
-country_event = {
-	id = flavor_scr.13
-	title = flavor_scr.13.t
-	desc = flavor_scr.13.desc
-	picture = KOIFLAN_eventPicture
-	
-	trigger = {
-		has_mission = SCR_appeal_to_satori
-		mission_completed = SCR_unite_the_mansions
-		NOT = { mission_completed = SCR_appeal_to_satori }
-		NOT = { has_country_flag = th_has_gotten_kokoros_mask_of_hope }
-		OR = {
-			controls = 5136
-			owns_or_non_sovereign_subject_of = 5136
-			5136 = {
-				owner = {
-					OR = {
-						th_has_lost_danmaku_duel_against_root = yes
-						ROOT = {
-							has_won_war_against = {
-								who = PREV
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 15
-	}
-
-	immediate = {
-		hidden_effect = {
-			set_country_flag = th_has_gotten_kokoros_mask_of_hope
-		}
-	}
-	
-	option = {	#Koishi is happy
-		name = flavor_scr.13.a
-		custom_tooltip = flavor_scr.13.a.tt
-		if = {
-			limit = {
-				exists = CRD
-				CRD = {
-					is_subject_of = ROOT
-				}
-			}
-			CRD = {
-				add_trust = {
-					who = ROOT
-					value = 10
-				}
-			}
-		}
-		else = {
-			add_adm_power = 100
-		}
-
-		ai_chance = {
-			factor = 1
-		}
-	}
-}
-
 #Appease the hell residents
 country_event = {
 	id = flavor_scr.14
@@ -1449,11 +1398,11 @@ country_event = {
 		owns_or_non_sovereign_subject_of = 5282	#Yamane's Place
 		owns_or_non_sovereign_subject_of = 5292	#Orin's Place
 		owns_or_non_sovereign_subject_of = 5295	#Okuu's Place
-		5286 = { num_of_times_improved = 2 }
-		5009 = { num_of_times_improved = 2 }
-		5010 = { num_of_times_improved = 2 }
-		5292 = { num_of_times_improved = 2 }
-		5295 = { num_of_times_improved = 2 }
+		5286 = { development = 15 owner = { controls = PREV } }
+		5009 = { development = 15 owner = { controls = PREV } }
+		5010 = { development = 15 owner = { controls = PREV } }
+		5292 = { development = 15 owner = { controls = PREV } }
+		5295 = { development = 15 owner = { controls = PREV } }
 	}
 
 	mean_time_to_happen = {
@@ -1505,12 +1454,9 @@ country_event = {
 		mission_completed = SCR_unite_the_mansions
 		NOT = { mission_completed = SCR_appeal_to_satori }
 		NOT = { has_country_flag = scr_appeased_the_oni }
-		owns_or_non_sovereign_subject_of = 4963
-		OR = {
-			NOT = { exists = TGU }
-			TGU = {
-				has_been_insulted_by_root = yes
-			}
+		has_global_modifier_value = {
+			which = discipline
+			value = 0.2
 		}
 	}
 
@@ -1712,13 +1658,7 @@ country_event = {
 						type = cb_touhou_mission_dominance_war
 						target = ROOT
 					}
-					hidden_effect = {
-						save_global_event_target_as = scr_assert_domination_target
-					}
 				}
-			}
-			hidden_effect = {
-				set_country_flag = scr_has_target_to_humiliate
 			}
 		}
 		random_province = {

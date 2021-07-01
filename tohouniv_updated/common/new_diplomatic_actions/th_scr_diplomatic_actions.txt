@@ -14,6 +14,7 @@ th_demand_war_support = {
 		}
 		FROM = {
 			is_free_or_tributary_trigger = yes
+			alliance_with = ROOT
 		}
 	}
 
@@ -53,9 +54,15 @@ th_demand_war_support = {
 			}
 		}		
 		custom_trigger_tooltip = {
-			tooltip = th_from_has_at_least_40_trust_tt
+			tooltip = th_from_has_at_least_70_trust_tt
 			FROM = {
-				trust = { who = ROOT value = 40 }
+				trust = { who = ROOT value = 70 }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_from_has_at_least_thousand_man
+			FROM = {
+				manpower = 1
 			}
 		}
 		if = {
@@ -79,111 +86,29 @@ th_demand_war_support = {
 
 	on_accept = {
 		th_clear_copy_flag = yes
-		set_variable = {
-			which = ownManpower
-			value = 1
-		}
 		export_to_variable = {
-			which = ownManpower
-			value = max_manpower
-			who = ROOT
-		}
-		export_to_variable = {
-			which = manpowerToGive
-			value = max_manpower
+			which = th_manpoewr_to_conscript
+			value = manpower
 			who = FROM
 		}
 		divide_variable = {
-			which = manpowerToGive
-			value = 10
-		}
-		set_variable = {
-			which = prestigeVariable
-			which = manpowerToGive
-		}
-		divide_variable = {
-			which = prestigeVariable
-			which = ownManpower
-		}
-		multiply_variable = {
-			which = prestigeVariable
-			value = 100
+			which = th_manpoewr_to_conscript
+			value = 10	#10% of manpower gets transferred to SCR
 		}
 		while = {
 			limit = {
 				check_variable = {
-					which = manpowerToGive
-					value = 0
+					which = th_manpoewr_to_conscript
+					value = 0.1
 				}
 			}
-			if = {
-				limit = {
-					NOT = {
-						mil_tech = 7
-					}
-				}
-				capital_scope = {
-					th_spawn_random_unit = {
-						infantry_chance = 67
-						cavalry_chance = 33
-						artillery_chance = 0
-					}
-				}
+			add_manpower = 0.1
+			FROM = {
+				add_manpower = -0.1
 			}
-			else = {
-				capital_scope = {
-					th_spawn_random_unit = {
-						infantry_chance = 75
-						cavalry_chance = 10
-						artillery_chance = 15
-					}
-				}
-			}
-			if = {
-				limit = {
-					FROM = {
-						manpower = 1
-					}
-				}
-				FROM = {
-					add_manpower = -1
-				}
-				else = {
-					if = {
-						limit = {
-							has_country_flag = th_scarlet_charisma_upgraded
-						}
-						add_war_exhaustion = 0.05
-					}
-					else = {
-						add_war_exhaustion = 0.1
-					}
-				}
-				subtract_variable = {
-					which = manpowerToGive
-					value = 1
-				}
-			}
-			while = {
-				limit = {
-					check_variable = {
-						which = prestigeVariable
-						value = 1
-					}
-				}
-				if = {
-					limit = {
-						has_country_flag = th_scarlet_charisma_upgraded
-					}
-					add_prestige = -0.5
-				}
-				else = {
-					add_prestige = -1
-				}
-				subtract_variable = {
-					which = prestigeVariable
-					value = 1
-				}
+			subtract_variable = {
+				which = th_manpoewr_to_conscript
+				value = 0.1
 			}
 		}
 		if = {
@@ -431,6 +356,7 @@ th_convince_to_join_war = {
 		}
 		FROM = {
 			is_free_or_tributary_trigger = yes
+			alliance_with = ROOT
 		}
 	}
 
@@ -443,7 +369,7 @@ th_convince_to_join_war = {
 					NOT = { has_country_flag = th_was_has_already_joined_wars_of_@ROOT }
 					had_country_flag = {
 						flag = th_was_has_already_joined_wars_of_@ROOT
-						days = 9125
+						days = 5475
 					}
 				}
 			}
@@ -471,9 +397,9 @@ th_convince_to_join_war = {
 			}
 		}
 		custom_trigger_tooltip = {
-			tooltip = th_from_has_at_least_40_trust_tt
+			tooltip = th_from_has_at_least_70_trust_tt
 			FROM = {
-				trust = { who = ROOT value = 40 }
+				trust = { who = ROOT value = 70 }
 			}
 		}
 		if = {
@@ -503,41 +429,20 @@ th_convince_to_join_war = {
 		}
 		if = {
 			limit = {
-				FROM = {
-					alliance_with = ROOT
-					trust = { who = ROOT value = 65 }
-				}
+				has_country_flag = th_scarlet_charisma_upgraded
 			}
-			if = {
-				limit = {
-					has_country_flag = th_scarlet_charisma_upgraded
+			FROM = {
+				add_trust = {
+					who = ROOT
+					value = -10
 				}
-				add_prestige = -5
-			}
-			else = {
-				add_prestige = -10
 			}
 		}
 		else = {
-			if = {
-				limit = {
-					has_country_flag = th_scarlet_charisma_upgraded
-				}
-				add_prestige = -12.5
-				FROM = {
-					add_trust = {
-						who = ROOT
-						value = -10
-					}
-				}
-			}
-			else = {
-				add_prestige = -25
-				FROM = {
-					add_trust = {
-						who = ROOT
-						value = -20
-					}
+			FROM = {
+				add_trust = {
+					who = ROOT
+					value = -20
 				}
 			}
 		}
@@ -815,69 +720,6 @@ th_scarlet_charisma = {
 		}
 		else = {
 			add_prestige = -20
-		}
-	}
-	
-	ai_will_do = {
-		always = no
-	}
-}
-
-#SCR trade off prestige for assert dominance cb
-th_proclaim_assert_dominance_cb = {
-	category = th_diplo_action
-
-	require_acceptance = no
-
-	is_visible = {
-		has_country_flag = th_can_use_assert_dominance_cb
-		FROM = {
-			is_free_or_tributary_trigger = yes
-		}
-	}
-
-	is_allowed = {
-		custom_trigger_tooltip = {
-			tooltip = th_from_is_not_ally_tt
-			NOT = { alliance_with = FROM }
-		}
-		custom_trigger_tooltip = {
-			tooltip = th_from_is_powerful_to_be_worth
-			FROM = {
-				total_development = ROOT
-				NOT = { great_power_rank = 8 }
-			}
-		}
-		if = {
-			limit = {
-				FROM = {
-					OR = {
-						has_country_flag = th_immunity_to_diplomatic_actions
-						has_government_attribute = enables_yama_authority
-					}
-				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
-				FROM = {
-					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
-					NOT = { has_government_attribute = enables_yama_authority }
-				}
-			}
-		}
-	}
-
-	on_accept = {
-		th_clear_copy_flag = yes
-		add_casus_belli = {
-			type = cb_touhou_mission_dominance_war
-			target = FROM
-			months = 60
-		}
-		add_prestige = -10
-		add_trust = {
-			who = FROM
-			value = -5
 		}
 	}
 	

@@ -646,3 +646,66 @@ th_loot_from_treasury = {
 		always = no
 	}
 }
+
+#Trade off prestige for assert dominance cb
+th_proclaim_assert_dominance_cb = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_can_use_assert_dominance_cb
+		FROM = {
+			is_free_or_tributary_trigger = yes
+		}
+	}
+
+	is_allowed = {
+		custom_trigger_tooltip = {
+			tooltip = th_from_is_not_ally_tt
+			NOT = { alliance_with = FROM }
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_from_is_powerful_to_be_worth
+			FROM = {
+				total_development = ROOT
+				NOT = { great_power_rank = 8 }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		add_casus_belli = {
+			type = cb_touhou_mission_dominance_war
+			target = FROM
+			months = 60
+		}
+		add_prestige = -10
+		add_trust = {
+			who = FROM
+			value = -5
+		}
+	}
+	
+	ai_will_do = {
+		always = no
+	}
+}
