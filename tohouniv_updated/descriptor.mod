@@ -1,10 +1,10 @@
 version="3.3.0"
 tags={
 	"Alternative History"
-	"Expansion"
 	"Map"
 	"Loading Screen"
 	"New Nations"
+	"Expansion"
 }
 name="Touhou Universalis Updated"
 supported_version="1.31.*"
