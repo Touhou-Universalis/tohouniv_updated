@@ -184,11 +184,48 @@ th_create_false_memories = {
 				}
 			}
 		}
-		dip_power = 100
+		variable_arithmetic_trigger = {
+			custom_tooltip = th_create_false_memories_tt
+			export_to_variable = {
+				which = th_our_dip_power
+				value = trigger_value:dip_power
+			}
+			export_to_variable = {
+				which = th_from_total_development
+				value = trigger_value:total_development
+				who = FROM
+			}
+			divide_variable = {
+				which = th_from_total_development
+				value = 2
+			}			
+			check_variable = { which = th_our_dip_power which = th_from_total_development }
+		}
 	}
 	on_accept = {
-		add_dip_power = -100
 		th_clear_copy_flag = yes
+		export_to_variable = {
+			which = th_dip_power_cost
+			value = trigger_value:total_development
+			who = FROM
+		}
+		divide_variable = {
+			which = th_dip_power_cost
+			value = 2
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_dip_power_cost
+					value = 1
+				}
+			}
+			add_dip_power = -1
+			subtract_variable = {
+				which = th_dip_power_cost
+				value = 1
+			}
+		}
 		hidden_effect = {
 			add_country_modifier = {
 				name = th_false_memory_cd
@@ -594,6 +631,7 @@ th_influence_vassal = {
 				value = 5
 				mutual = yes
 			}
+			add_liberty_desire = -5
 		}
 	}
 
@@ -756,7 +794,7 @@ th_send_hellish_officers = {
 		FROM = {
 			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
 			add_country_modifier = {
-				name = th_admin_support
+				name = th_hellish_officers
 				duration = -1
 			}
 		}
