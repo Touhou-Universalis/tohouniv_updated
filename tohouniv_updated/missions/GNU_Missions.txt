@@ -17,10 +17,6 @@ gnu_missions_outer_world_eastwards_slot = {
 		}
 		effect = {
 			add_prestige = 15
-			add_country_modifier = {
-				name = "gnu_increased_navy_budget"
-				duration = 7300
-			}
 			define_explorer = {
 				shock = 2
 				fire = 2
@@ -58,7 +54,6 @@ gnu_missions_outer_world_eastwards_slot = {
 			add_navy_tradition = 35
 		}
 	}
-	
 	GNU_discover_europe = {
 		icon = mission_invade_england
 		required_missions = { GNU_break_the_barrier }
@@ -91,13 +86,18 @@ gnu_missions_outer_world_eastwards_slot = {
 			country_event = { id = TH_mission_events.4 }			
 		}
 	}
-
 	GNU_control_doremi = {
 		icon = mission_mugetsu_and_gengetsu_expressionless 
 		position = 4
+		provinces_to_highlight = {
+			province_id = 5318
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
 		required_missions = { GNU_prepare_to_invade_heaven } 
 		trigger = { 
-				owns_core_province = 5318
+			owns_or_subject_of = 5318
 		}
 		effect = {			
 			add_mil_power = 75
@@ -108,50 +108,36 @@ gnu_missions_outer_world_eastwards_slot = {
 		icon = mission_steppe_warriors
 		required_missions = { GNU_control_doremi }
 		position = 5
+		provinces_to_highlight = {
+			region = moon_region 
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = { 	
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					value = 10
-					region = moon_region 
-					is_city = yes
-				}
-				OR = {
-					AND = {
-						5320 = {
-							owner = {
-								war_with = ROOT
-							}
-						}
-						war_score = 70
-						controls = 5320 
-					}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 10
+				region = moon_region 
+				is_city = yes
+			}
+			OR = {
+				AND = {
 					5320 = {
-						owned_by = ROOT
-						is_core = ROOT
+						owner = {
+							war_with = ROOT
+						}
 					}
+					war_score = 70
+					controls = 5320 
 				}
-			}	
+				5320 = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
 		effect = {
-			change_mil = 1 
-			change_heir_mil = 1
-			 5320 = {
-				add_base_tax=-10
-				add_base_production=-10
-				add_base_manpower=-10
-				add_devastation=100
-			}
-			add_adm_power = 600
-			add_dip_power = 600
-			add_mil_power = 600
-			add_prestige=100
-			capital_scope = {
-				add_base_tax = 10
-				add_base_production = 10
-				add_base_manpower = 10	
-			}
-			add_country_modifier = {
-				name = "gnu_ruthless_sisters"
-				duration = -1
-			}		
+			country_event = {
+				id = flavor_gnu.7
+			}	
 		}
 	}
 	GNU_koakuma = {
@@ -167,17 +153,20 @@ gnu_missions_outer_world_eastwards_slot = {
 			}
 		}
 		trigger = {
-				owns_core_province = 5072
+			owns_or_subject_of = 5072
 		}
 		effect = {	
-			change_adm = 1 
-			change_heir_adm = 1
+			th_increase_ruler_adm_stat = {
+				adm = 1
+			}
+			th_increase_heir_adm_stat = {
+				adm = 1
+			}
 			change_innovativeness = 5
 		}
 	}
-
-	
 }
+
 GNU_missions_expandPC98_slot = {
 	slot = 1
 	generic = no
@@ -197,32 +186,26 @@ GNU_missions_expandPC98_slot = {
 			num_of_generals = 1
 		}
 		effect = {
-			Perfect_cut_coast = {
+			if = {
 				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+					exists = SFF
+					mission_completed = GNU_find_allies
 				}
-				add_permanent_claim = ROOT
+				country_event = {
+					id = flavor_gnu.4
+				}
 			}
-			Sunny_plains= {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
+			else = {
+				custom_tooltip = GNU_build_up_army_ct
 			}
-			Gengetsu_state= {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_core = ROOT
-			} 
 			add_country_modifier = {
 				name = "gnu_build_up_army"
 				duration = 9125
+			}	
+			add_country_modifier = {
+				name = "gnu_find_allies"
+				duration = 9125
 			}
-			
 		}
 	}
 	GNU_reclaim_the_dream_land = {
@@ -230,22 +213,15 @@ GNU_missions_expandPC98_slot = {
 		required_missions = { GNU_build_up_army GNU_find_allies }
 		position = 2
 		provinces_to_highlight = {
-			OR = {
-				area = Sunny_plains
-				area = Gengetsu_state
-				area = Perfect_cut_coast 
-			}
+			area = Gengetsu_state
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-				num_of_owned_provinces_with = {
-					value = 4
-					OR = {
-						area = Gengetsu_state
-					}
-				}
-				owns_core_province = 5156
-
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with= {
+				value = 4
+				area = Gengetsu_state
+			}
+			owns_or_subject_of = 5001
 		}
 		effect = {
 			World_of_fantasies = {
@@ -262,13 +238,6 @@ GNU_missions_expandPC98_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
-			Rika_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
 		}
 	}
 	GNU_to_the_phantom_world = {
@@ -279,19 +248,17 @@ GNU_missions_expandPC98_slot = {
 			OR = {
 				area = World_of_fantasies
 				area = Konngaras_state	
-				area = Rika_state	
 			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-				num_of_owned_provinces_with = {
-					value = 4
-					OR = {
-						area = World_of_fantasies
-						area = Konngaras_state	
-						area = Rika_state	
-					}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 4
+				OR = {
+					area = World_of_fantasies
+					area = Konngaras_state	
 				}
+			}
 		}
 		effect = {
 			Old_hakurei_shrine_state= {
@@ -315,21 +282,39 @@ GNU_missions_expandPC98_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
+			Rika_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_prestige = 20
 		}
 	}
 	GNU_claim_old_world = {
 		icon = mission_touhou_yumemi
 		required_missions = { GNU_to_the_phantom_world }
 		position = 4
+		provinces_to_highlight = {
+			OR = {
+				area = Old_hakurei_shrine_state
+				area = Eastern_old_hakurei_shrine_state
+				area = Yumemi_space_state	
+				area = Rika_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-				num_of_owned_provinces_with = {
-					value = 8
-					OR = {
-						area = Old_hakurei_shrine_state
-						area = Eastern_old_hakurei_shrine_state
-						area = Yumemi_space_state
-					}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with= {
+				value = 8
+				OR = {
+					area = Old_hakurei_shrine_state
+					area = Eastern_old_hakurei_shrine_state
+					area = Yumemi_space_state
+					area = Rika_state
 				}
+			}
 		}
 		effect = {
 			Makai_coast_state = {
@@ -353,7 +338,7 @@ GNU_missions_expandPC98_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
-			Makai = {
+			Makai_area = {
 				limit = {
 					NOT = { is_permanent_claim = ROOT	}
 					NOT = { is_core = ROOT	}
@@ -374,7 +359,6 @@ GNU_missions_expandPC98_slot = {
 			}
 		}
 	}
-
 	GNU_claim_makai_throne = {
 		icon = mission_touhou_shinki
 		required_missions = { GNU_claim_old_world }
@@ -384,39 +368,58 @@ GNU_missions_expandPC98_slot = {
 				area = Makai_coast_state 
 				area = Western_makai_state 
 				area = Makai_peninsula_state
-				area = Makai  
+				area = Makai_area  
 			}
-			NOT = { owned_by = ROOT }
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			owns_all_provinces = {
-				OR = {
-					area = Makai_coast_state 
-					area = Western_makai_state 
-					area = Makai_peninsula_state
-					area = Makai  
-				}
+			Makai_coast_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			Western_makai_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			Makai_peninsula_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			Makai_area = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
 			}
 		}
 		effect = {
-			change_mil = 1 
-			change_heir_mil = 1
+			th_increase_ruler_mil_stat = {
+				mil = 1
+			}
+			th_increase_heir_mil_stat = {
+				mil = 1
+			}
 		}
 	}
 	GNU_control_youkai_forest = {
 		icon = mission_touhou_forest_of_magic
 		required_missions = { GNU_title_conflict }
 		position = 6
-		trigger = {
-				num_of_owned_provinces_with = {
-					value = 5
-					OR = {
-						area = Great_youkai_forest 
-						area = Eastern_youkai_forest 
-					}
-				}
-				owns_core_province = 5190
+		provinces_to_highlight = {
+			OR = {
+				area = Great_youkai_forest 
+				area = Eastern_youkai_forest
 			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with= {
+				value = 5
+				OR = {
+					area = Great_youkai_forest 
+					area = Eastern_youkai_forest 
+				}
+			}
+			owns_or_subject_of = 5190
+		}
 		effect = {		 
 			add_country_modifier = {
 				name = "gnu_control_youkai_forest"
@@ -424,8 +427,8 @@ GNU_missions_expandPC98_slot = {
 			}
 		}
 	}
-	
 }
+
 GNU_missions_expand_north_slot = {
 	slot = 4
 	generic = no
@@ -510,18 +513,22 @@ GNU_missions_expand_north_slot = {
 	GNU_challenge_hecatia = {
 		icon = mission_touhou_lunar_barrier
 		required_missions = {GNU_prepare_to_invade_heaven  }
-		position = 4
+		position = 4		
+		provinces_to_highlight = {
+			OR = {
+				area = Hecetias_colony
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = { 
-				num_of_owned_provinces_with = {
-					value = 5
-					OR = {
-						area = Hecetias_colony
-					}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with= {
+				value = 5
+				area = Hecetias_colony
 			}
 		}
 		effect = {
-			add_prestige=50
-			add_stability=1
+			add_prestige = 50
+			add_stability = 1
 		}
 	}
 	GNU_dream_worlds_unified = {
@@ -542,24 +549,18 @@ GNU_missions_expand_north_slot = {
 		required_missions = { }
 		position = 6		
 		provinces_to_highlight = {
-			OR = {
-				province_id = 5002
-			}
+			province_id = 5002
 			NOT = { development = 30 }
 		}
 		trigger = {
-			owns_core_province = 5002
+			owns_or_subject_of = 5002
 			5002 = { development = 30 }
 		}
 		effect = {
-			add_adm_power = 50
-			add_dip_power = 50
-			add_mil_power = 50
 			add_country_modifier = {
 				name = "gnu_kurumis_favor"
-				duration = -9125
+				duration = 9125
 			}
-			
 		}
 	}
 	GNU_unite_all_demons = {
@@ -573,21 +574,18 @@ GNU_missions_expand_north_slot = {
 			}
 			estate_influence = {
 				estate = estate_nobles
-				loyalty = 50
+				influence = 50
 			}
 		}
 		effect = {
-			change_adm = 1 
-			change_heir_adm = 1	
 			add_country_modifier = {
 				name = "gnu_unite_all_demons"
 				duration = -1
 			}
 		}
 	}
-
-
 }
+
 GNU_missions_empire_slot = {
 	slot = 3
 	generic = no
@@ -603,13 +601,14 @@ GNU_missions_empire_slot = {
 		required_missions = { }
 		trigger = { grown_by_development = 75 }
 		effect = {
+			add_country_modifier = {
+				name = "gnu_expand_country"
+				duration = 9125
+			}
 			capital_scope = {
 				add_base_tax = 2
 				add_base_production = 2
 				add_base_manpower = 2
-				area = {
-					limit = { owned_by = ROOT }
-				}
 			}
 		}
 	}
@@ -648,7 +647,7 @@ GNU_missions_empire_slot = {
 		}
 		effect = {
 			add_country_modifier = {
-				name = "gnu_build_manufactories"
+				name = "gnu_build_manufactories_modifier"
 				duration = 9125 #25 years
 			}
 			add_years_of_income = 2
@@ -667,17 +666,23 @@ GNU_missions_empire_slot = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = { 
-				num_of_owned_provinces_with = {
-					value = 5
-					OR = {
-						area = Dragon_islands 
-						area = Western_dragon_islands 
-						area = Eastern_dragon_islands 
-					}
+			num_of_owned_provinces_with = {
+				value = 5
+				OR = {
+					area = Dragon_islands 
+					area = Western_dragon_islands 
+					area = Eastern_dragon_islands 
 				}
+			}
 		}
 		effect = {
-			add_prestige = 30
+			add_country_modifier = {
+				name = gnu_heaven_weapons
+				duration = 9125
+			}
+			country_event = {
+				id = flavor_gnu.6
+			}
 		}
 	} 
 	GNU_innocent_devil_elis = {
@@ -693,31 +698,9 @@ GNU_missions_empire_slot = {
 			}
 		}
 		trigger = {
-				owns_core_province = 5020
+			owns_or_subject_of = 5020
 		}
-		effect = {				
-			Scarlett_domain = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Scarlet_mountain = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Scarlet_island = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-
+		effect = {
 			add_country_modifier = {
 				name = "gnu_collaboration_with_elis"
 				duration = -1
@@ -764,20 +747,21 @@ GNU_missions_empire_slot = {
 		required_missions = { GNU_imperial_ambition_mission }
 		position = 9
 		trigger = { 	
-				army_size = 1000
-				current_income_balance = 750
-				total_development = 2500
-				num_of_heavy_ship = 250
-				num_of_merchants = 5
-			}	
+			army_size = 1000
+			current_income_balance = 750
+			total_development = 2500
+			num_of_heavy_ship = 250
+			num_of_merchants = 5
+		}
 		effect = {
 			add_country_modifier = {
 				name = "gnu_hegemon"
-				duration = -1
+				duration = 10950
 			}		
 		}
 	}
 }
+
 GNU_missions_realm_growth_slot = {
 	slot = 2
 	generic = no
@@ -792,13 +776,53 @@ GNU_missions_realm_growth_slot = {
 		position = 1
 		required_missions = { }
 		trigger = {
-			num_of_allies =2
+			num_of_allies = 2
 		}
-		effect = {		 
-			add_country_modifier = {
-				name = "gnu_find_allies"
-				duration = 9125
+		effect = {
+			if = {
+				limit = {
+					exists = SFF
+					mission_completed = GNU_build_up_army
+				}
+				country_event = {
+					id = flavor_gnu.4
+				}
 			}
+			else = {
+				custom_tooltip = GNU_find_allies_ct
+			}
+			Perfect_cut_coast = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Sunny_plains= {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					5158 = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+				}
+				5158 = {
+					add_permanent_claim = ROOT
+				}
+			}
+			Gengetsu_state= {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_core = ROOT
+			} 
 		}
 	}
 	GNU_finish_the_dream_land = {
@@ -814,14 +838,14 @@ GNU_missions_realm_growth_slot = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-				num_of_owned_provinces_with = {
-					value = 14
-					OR = {
-						area = Sunny_plains
-						area = Gengetsu_state
-						area = Perfect_cut_coast 
-					}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with= {
+				value = 14
+				OR = {
+					area = Sunny_plains
+					area = Gengetsu_state
+					area = Perfect_cut_coast 
 				}
+			}
 		}
 		effect = {
 			add_army_tradition = 20
@@ -835,7 +859,6 @@ GNU_missions_realm_growth_slot = {
 			}
 		}
 	}
-
 	GNU_unite_home_region = {
 		icon = mission_touhou_th_more_shrines
 		position = 4
@@ -850,7 +873,7 @@ GNU_missions_realm_growth_slot = {
 			capital_scope = {
 				region_for_scope_province = {
 					type = all
-					owned_by = ROOT
+					country_or_non_sovereign_subject_holds = ROOT
 				}
 			}
 		}
@@ -885,17 +908,19 @@ GNU_missions_realm_growth_slot = {
 			}
 		}
 	}
-	
 	GNU_title_conflict = {
 		icon = mission_mugetsu_and_gengetsu_expressionless
 		position = 5
-		required_missions = { }
+		required_missions = { GNU_unite_home_region }
 		trigger = {		
-			power_projection = 0
+			power_projection = 50
 			prestige = 50
 		}
 		effect = {
-			set_country_flag = gnu_sisters_event_chain
+			custom_tooltip = GNU_starts_finding_yorigami_tt
+			hidden_effect = {
+				set_country_flag = gnu_sisters_event_chain
+			}
 			Great_youkai_forest = {
 				limit = {
 					NOT = { is_permanent_claim = ROOT	}
@@ -936,10 +961,17 @@ GNU_missions_realm_growth_slot = {
 	GNU_control_hakurei_shrine = {
 		icon = mission_touhou_th_shintoism
 		position = 6
+		provinces_to_highlight = {
+			OR = {	
+				province_id = 4955
+				province_id = 4956
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		required_missions = { GNU_title_conflict }
 		trigger = {			
-				owns_core_province = 4955
-				owns_core_province = 4956
+			owns_or_subject_of = 4955
+			owns_or_subject_of = 4956
 		}
 		effect = {		
 			add_army_tradition = 20
@@ -950,29 +982,50 @@ GNU_missions_realm_growth_slot = {
 		icon = mission_shion_mion
 		required_missions = { GNU_control_youkai_forest GNU_control_hakurei_shrine }
 		position = 7
+		provinces_to_highlight = {
+			OR = {
+				area = Hakurei_state 
+				area = Hakurei_peninsula_state 
+				area = Perfect_cut_coast 
+				area = Great_youkai_forest 
+				area = Eastern_youkai_forest  
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-				num_of_owned_provinces_with = {
-					value = 21
-					OR = {
-						area = Hakurei_state 
-						area = Hakurei_peninsula_state 
-						area = Hakurei_western_coast 
-						area = Great_youkai_forest 
-						area = Eastern_youkai_forest 
-					}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 21
+				OR = {
+					area = Hakurei_state 
+					area = Hakurei_peninsula_state 
+					area = Hakurei_western_coast 
+					area = Great_youkai_forest 
+					area = Eastern_youkai_forest 
 				}
 			}
+		}
 		effect = {	
-
 			country_event = {
 				id = flavor_gnu.3				
 			}
-			change_adm = 1 
-			change_heir_adm = 1		
-			change_dip = 1 
-			change_heir_dip = 1
-			change_mil = 1 
-			change_heir_mil = 1
+			th_increase_ruler_adm_stat = {
+				adm = 1
+			}
+			th_increase_heir_adm_stat = {
+				adm = 1
+			}
+			th_increase_ruler_dip_stat = {
+				dip = 1
+			}
+			th_increase_heir_dip_stat = {
+				dip = 1
+			}
+			th_increase_ruler_mil_stat = {
+				mil = 1
+			}
+			th_increase_heir_mil_stat = {
+				mil = 1
+			}
 		}
 	}
 }

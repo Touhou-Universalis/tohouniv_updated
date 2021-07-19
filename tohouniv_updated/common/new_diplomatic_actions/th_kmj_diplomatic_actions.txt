@@ -1,0 +1,67 @@
+###CRD SUBCONSCIOUS ABILITIES###
+
+#Diplo actions here are just recycled and NOT the final addition
+
+#KMJ awakens trauma of target -> give a debuff to the target + Reveal all target's movements
+th_awaken_trauma = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		has_government_attribute = enables_koishi_subconscious_manipulation
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 25
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_awaken_trauma_cd_tt
+			FROM = {
+				OR = {
+					NOT = { has_country_flag = th_awoken_traumas_by_@ROOT }
+					had_country_flag = {
+						flag = th_awoken_traumas_by_@ROOT
+						days = 5475
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		FROM = {
+			clr_country_flag = th_awoken_traumas_by_@ROOT
+			country_event = {
+				id = th_diplo_events.45
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -25
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}

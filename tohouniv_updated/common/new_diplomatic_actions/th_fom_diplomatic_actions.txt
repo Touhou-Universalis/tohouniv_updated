@@ -1,32 +1,33 @@
-#FOM steal treasury
-th_loot_from_treasury = {
+#FOM steal books
+th_steal_books = {
 	category = th_diplo_action
 	require_acceptance = no
 
 	is_visible = {
-		has_country_flag = th_enable_burgling_action
+		OR = {			
+			th_has_copied_from_target = {
+				target = FOM
+			}
+			has_country_flag = th_enable_book_theft_action
+		}
 	}
 
 	is_allowed = {
 		has_spy_network_in = {
 			who = FROM
-			value = 50
+			value = 25
 		}
 		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_has_already_looted_treasury
+			tooltip = th_diplomacy_has_already_stolen_books
 			FROM = {				
 				OR = {
-					NOT = { has_country_flag = th_has_been_already_looted_by_spies_of_@ROOT }
+					NOT = { has_country_flag = th_has_been_already_book_theft_by_spies_of_@ROOT }
 					had_country_flag = {
-						flag = th_has_been_already_looted_by_spies_of_@ROOT
-						days = 9126
+						flag = th_has_been_already_book_theft_by_spies_of_@ROOT
+						days = 9125
 					}
 				}
 			}
-		}
-		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_cant_loot_from_allies
-			NOT = { alliance_with = FROM }
 		}
 		custom_trigger_tooltip = {
 			tooltip = th_diplomacy_has_not_truce_with_target
@@ -35,15 +36,82 @@ th_loot_from_treasury = {
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
-			clr_country_flag = th_has_been_already_looted_by_spies_of_@ROOT
-			country_event = {
-				id = th_diplo_events.14
+			clr_country_flag = th_has_been_already_book_theft_by_spies_of_@ROOT
+			add_casus_belli = {
+				type = cb_insult
+				target = ROOT
 			}
+			add_opinion = {
+				who = ROOT
+				modifier = th_they_stole_our_books
+			}
+			set_country_flag = th_has_been_already_book_theft_by_spies_of_@ROOT
 		}
 		add_spy_network_in = {
 			who = FROM
-			value = -50			
+			value = -25			
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = th_stolen_books }
+			}
+			random_list = {
+				25 = {
+					#Nothing happens
+				}
+				25 = {
+					add_country_modifier = {
+						name = th_stolen_books
+						duration = 1825
+					}
+					FROM = {
+						country_event = {
+							id = th_diplo_events.15
+						}
+					}
+				}
+				25 = {
+					change_innovativeness = 2
+					FROM = {
+						country_event = {
+							id = th_diplo_events.15
+						}
+					}
+				}
+				25 = {
+					change_government_reform_progress = 10
+					FROM = {
+						country_event = {
+							id = th_diplo_events.15
+						}
+					}
+				}
+			}
+		}
+		else = {
+			random_list = {
+				24 = {
+					#Nothing happens
+				}
+				38 = {
+					change_innovativeness = 2
+					FROM = {
+						country_event = {
+							id = th_diplo_events.15
+						}
+					}
+				}
+				38 = {
+					change_government_reform_progress = 10 
+					FROM = {
+						country_event = {
+							id = th_diplo_events.15
+						}
+					}
+				}
+			}
 		}
 	}
 

@@ -11,17 +11,18 @@ country_event = {
 	desc = flavor_crd.1.desc
 	picture = SHRINE_eventPicture
 	
-	fire_only_once = yes
 	major = yes
 	
 	trigger = {
-		OR = {
+		th_is_or_was_tag = {
 			tag = CRD
-			tag = SCD
 		}
-		capital_scope = { 
-			religion = th_moriyashinto 
-		} 
+		NOT = { has_country_flag = crd_has_chosen_religious_path }
+		is_free_or_tributary_trigger = yes
+		religion = th_hakureishinto
+		capital_scope = {
+			religion = th_moriyashinto
+		}
 	}
 	
 	mean_time_to_happen = {
@@ -89,503 +90,60 @@ country_event = {
 	}
 }
 
-
-#Satori's vassal becomes specific vassal
+#Release Orin at the Red Sea
 country_event = {
 	id = flavor_crd.2
 	title = flavor_crd.2.t
 	desc = flavor_crd.2.desc
-	picture = YUKARI_eventPicture
-	
-	mean_time_to_happen = {
-		days = 0
-	}
+	picture = ORIN_eventPicture
+	goto = orn_capital_city
+	is_triggered_only = yes
 
-	hidden = yes
-	
-	trigger = {
-		OR = {
-			tag = CRD
-			was_tag = CRD
-			has_country_flag = TH_komeiji_monarchy_nd
-		}
-		num_of_subjects = 1 
-		OR = {
-			any_subject_country = { is_subject_of_type = vassal }
-			any_subject_country = { is_subject_of_type = daimyo_vassal }
-		}
-	}
 	immediate = {
 		hidden_effect = {
-			every_subject_country = { 
-				limit = { 
-					OR = { 
-						is_subject_of_type = vassal 
-						is_subject_of_type = daimyo_vassal
-					}
-					NOT = { is_subject_of_type = th_satori_vassal }
-				} 
-				country_event = { id = flavor_crd.3 }
+			random_owned_province = {
+				limit = {
+					region = arabia_region
+					region = egypt_region
+					area = red_sea_coast_area
+				}
+				save_event_target_as = orn_capital_city
 			}
 		}
 	}
 	
+	#Release Orin
 	option = {
 		name = flavor_crd.2.a
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Vassal becomes Satori's vassal
-country_event = {
-	id = flavor_crd.3
-	title = flavor_crd.3.t
-	desc = flavor_crd.3.desc
-	picture = GENSOKYOTHRONE_eventPicture
-	
-	is_triggered_only = yes
-
-	hidden = yes
-	
-	option = {
-		name = flavor_crd.3.a
-		grant_independence = yes
-		FROM = {
-			create_subject = {
-				subject_type = th_satori_vassal
-				subject = ROOT
-			}
-		}
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Oni's Request
-country_event = {
-	id = flavor_crd.4
-	title = flavor_crd.4.t
-	desc = flavor_crd.4.desc
-	picture = YUUGI_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {	#promise to oni
-		name = flavor_crd.4.a
-		custom_tooltip = flavor_crd.4.a.tt
-		hidden_effect = {
-			set_country_flag = crd_promise_to_oni
-		}
-		if = {
-			limit = {
-				ONI = {
-					is_subject_of = ROOT
-				}
-			}
-			ONI = {
-				add_opinion = {
-					who = ROOT
-					modifier = th_promised_to_back_mountain
-				}
-			}
-		}
-		add_country_modifier = {
-			name = "crd_backup_of_the_oni"
-			duration = 7300
-		}
-		
-		ai_chance = { 
-			factor = 0
-		}
-	}
-	
-	option = {	#sorry, but can't promise
-		name = flavor_crd.4.b
-		custom_tooltip = flavor_crd.4.b.tt	
-		if = {
-			limit = {
-				NOT = { exists = ONI }
-			}
-			every_owned_province = {
-				limit = {
-					culture = Oni_culture
-				}
-				add_province_modifier = {
-					name = "crd_disappointed_oni"
-					duration = 7300
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				ONI = {
-					is_subject_of = ROOT
-				}
-			}
-			ONI = {
-				add_opinion = {
-					who = ROOT
-					modifier = th_rejected_to_back_mountain
-				}
-			}
-		}
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-# Time to keep promise
-country_event = {
-	id = flavor_crd.5
-	title = flavor_crd.5.t
-	desc = flavor_crd.5.desc
-	picture = YOUKAIMOUNTAIN_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {	#keep promise
-		name = flavor_crd.5.a
-		if = {
-			limit = {
-				NOT = { exists = ONI }
-			}
-			youkai_mountain_region = {
-				limit = {
-					owned_by = ROOT
-				}
-				add_core = ONI
-				remove_core = ROOT
-				change_culture = Oni_culture
-			}
-			release = ONI
-			create_subject = {
-				subject_type = th_satori_vassal
-				subject = ONI
-			}
-			ONI = {
-				override_country_name = TH_ONIGASHIMA
-				youkai_mountain_region = {
-					limit = {
-						NOT = { is_core = ONI }
-						NOT = { is_permanent_claim = ONI }
-					}
-					add_core = ONI
-				}
-				add_country_modifier = {
-					name = "crd_keep_promise"
-					duration = -1
-				}
-				hidden_effect = {
-					change_government = monarchy
-					add_government_reform = Gensokyan_monarchy
-					adopt_reform_progress = ROOT
-					change_primary_culture = Oni_culture
-					change_religion = ROOT
-					add_adm_power = 112
-					add_dip_power = 84
-					add_mil_power = 112
-					add_manpower = 10
-					change_estate_land_share = {
-						estate = estate_nobles
-						share = 29
-					}
-					change_estate_land_share = {
-						estate = estate_church
-						share = 29
-					}
-					change_estate_land_share = {
-						estate = estate_burghers
-						share = 29
-					}	
-					define_ruler = {
-						name = "Yuugi"
-						dynasty = "Hoshiguma"
-						age = "25"
-						adm = 5
-						dip = 3
-						mil = 5
-						fixed = yes
-						female = yes
-						culture = Oni_culture
-						religion = ROOT
-					}
-					set_ruler_flag = touhou_character_ruler
-					set_ruler_flag = touhou_original_ruler
-					add_ruler_personality = immortal_personality
-					set_capital = 4811
-					capital_scope = {
-						build_to_forcelimit = {
-							infantry = 0.6
-							cavalry = 0.3
-						}
-					}
-					former_hell_region = {
-						limit = {
-							owned_by = ONI
-						}
-						cede_province = ROOT
-						add_core = ROOT
-					}
-				}
-			}
-		}
-		else = {
-			youkai_mountain_region = {
-				limit = {
-					owned_by = ROOT
-				}
-				cede_province = ONI
-				add_core = ONI
-				remove_core = ROOT
-				remove_claim = ROOT
-				change_culture = Oni_culture
-			}
-			former_hell_region = {
-				limit = {
-					owned_by = ONI
-				}
-				cede_province = ROOT
-				add_core = ROOT
-			}
-			ONI = {
-				override_country_name = TH_ONIGASHIMA
-				youkai_mountain_region = {
-					limit = {
-						NOT = { is_core = ONI }
-						NOT = { is_permanent_claim = ONI }
-					}
-					add_core = ONI
-				}
-				set_capital = 4811
-				add_country_modifier = {
-					name = "crd_keep_promise"
-					duration = -1
-				}
-			}
-		}
-	}
-	
-	option = {	#think again...
-		name = flavor_crd.5.b
-		custom_tooltip = flavor_crd.5.b.tt
-		youkai_mountain_region = {
-			limit = {
-				NOT = { is_core = ROOT }
-				NOT = { is_permanent_claim = ROOT }
-			}
-			add_permanent_claim = ROOT
-		}
-		add_casus_belli = {
-			target = TGU
-			type = cb_vassalize_mission
-			months = 900
-		}
-		if = {
-			limit = {
-				NOT = { exists = ONI }
-			}
-			random_owned_province = {
-				limit = {
-					area = Oni_exclave_state
-				}
-				spawn_rebels = {
-					type = nationalist_rebels
-					size = 2
-				}
-			}
-			random_owned_province = {
-				limit = {
-					area = Yuugi_state
-				}
-				spawn_rebels = {
-					type = nationalist_rebels
-					size = 2
-				}
-			}		
-			every_owned_province = {
-				limit = {
-					culture = Oni_culture
-				}
-				add_province_modifier = {
-					name = "crd_angry_oni"
-					duration = 18250
-				}	
-			}
-		}
-		else = {
-			ONI = {
-				set_ai_attitude = {
-					who = ROOT
-					attitude = attitude_disloyal
-				}
-				add_opinion = {
-					who = ROOT
-					modifier = th_break_promise
-				}
-				add_country_modifier = { 
-					name = crd_break_promise
-					duration = 18250
-				}				
-			}
-		}
-	}
-}
-
-#remove reputation penalty after have diplomatic hegemon flag	
-country_event = {
-	id = flavor_crd.7
-	title = flavor_crd.7.t
-	desc = flavor_crd.7.desc
-	picture = ORINOKUU_eventPicture	
-	
-	mean_time_to_happen = {
-		days = 0
-	}
-
-	hidden = yes
-	
-	trigger = {
-		has_country_modifier = annexers_legacy
-		has_country_flag = th_diplomatic_hegemon
-	}
-	immediate = {
-		hidden_effect = {
-			remove_country_modifier = annexers_legacy
-		}
-	}
-	
-	option = {
-		name = flavor_crd.7.a
-		
-		ai_chance = { 
-			factor = 100
-		}	
-	}
-}
-
-#lighthouse keeper pet?
-country_event = {
-	id = flavor_crd.6
-	title = flavor_crd.6.t
-	desc = flavor_crd.6.desc
-	picture = ORINOKUU_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {	#release pets. need Comrade's tag design
-		name = flavor_crd.6.a
-		# okuu
-		taiwan_area = {
-			limit = {
-				owned_by = ROOT
-			}
-			add_core = OKU
-			remove_core = ROOT
-			change_culture = ROOT
-		}
-		release = OKU
-		create_subject = {
-			subject_type = th_satori_vassal
-			subject = OKU
-		}
-		add_historical_friend = CRD
-		OKU	= {
-			add_historical_friend = ROOT
-			add_country_modifier = {
-				name = "crd_pet_loyalty"
-				duration = -1
-			}
-			hidden_effect = {
-				change_government = monarchy
-				add_government_reform = Gensokyan_monarchy
-				adopt_reform_progress = ROOT
-				change_primary_culture = ROOT
-				change_religion = ROOT
-				add_adm_power = 212
-				add_dip_power = 212
-				add_mil_power = 212
-				add_manpower = 10
-				change_estate_land_share = {
-					estate = estate_nobles
-					share = 29
-				}
-				change_estate_land_share = {
-					estate = estate_church
-					share = 29
-				}
-				change_estate_land_share = {
-					estate = estate_burghers
-					share = 29
-				}	
-				define_ruler = {
-					name = "Utsuho"
-					dynasty = "Reiuji"
-					age = "15"
-					adm = 1
-					dip = 2
-					mil = 6
-					fixed = yes
-					female = yes
-					culture = ROOT
-					religion = ROOT
-				}
-				set_ruler_flag = touhou_character_ruler
-				set_ruler_flag = touhou_original_ruler
-				add_ruler_personality = immortal_personality
-				add_accepted_culture = polynesian
-				set_capital = 2155
-				capital_scope = {
-					build_to_forcelimit = {
-						infantry = 0.6
-						cavalry = 0.3
-						light_ship = 0.4
-						transport = 0.5
-					}
-				}
-				2155 = {
-					add_base_tax = 2
-					add_base_manpower = 2
-					add_base_production = 2
-					change_culture = ROOT
-				}
-			}
-		}
-		# orin
-		luzon_area = {
+		arabia_region = {
 			limit = {
 				owned_by = ROOT
 			}
 			add_core = ORN
 			remove_core = ROOT
-			change_culture = ROOT
 		}
-		southern_luzon_area = {
+		egypt_region = {
 			limit = {
 				owned_by = ROOT
 			}
 			add_core = ORN
 			remove_core = ROOT
-			change_culture = ROOT
+		}
+		red_sea_coast_area = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = ORN
+			remove_core = ROOT
 		}
 		release = ORN
 		create_subject = {
-			subject_type = th_satori_vassal
+			subject_type = th_pet_state
 			subject = ORN
 		}
-		add_historical_friend = CRD
+		add_historical_friend = ORN
 		ORN	= {
 			add_historical_friend = ROOT
-			add_country_modifier = {
-				name = "crd_pet_loyalty"
-				duration = -1
-			}
 			hidden_effect = {
 				change_government = monarchy
 				add_government_reform = Gensokyan_monarchy
@@ -611,7 +169,7 @@ country_event = {
 				define_ruler = {
 					name = "Rin"
 					dynasty = "Kaenbyou"
-					age = "15"
+					age = 15
 					adm = 4
 					dip = 5
 					mil = 5
@@ -623,8 +181,9 @@ country_event = {
 				set_ruler_flag = touhou_character_ruler
 				set_ruler_flag = touhou_original_ruler
 				add_ruler_personality = immortal_personality
-				add_accepted_culture = filipino
-				set_capital = 658
+				add_accepted_culture = old_egyptian
+				add_accepted_culture = al_misr_arabic
+				set_capital = event_target:orn_capital_city
 				capital_scope = {
 					build_to_forcelimit = {
 						infantry = 0.6
@@ -633,27 +192,2176 @@ country_event = {
 						transport = 0.5
 					}
 				}
-				658 = {
-					add_base_tax = 2
-					add_base_manpower = 2
-					add_base_production = 2
+				event_target:orn_capital_city = {
+					set_base_tax = 4
+					set_base_production = 4
+					set_base_manpower = 4
 					change_culture = ROOT
+					change_religion = ROOT
 				}
+				add_permanent_claim = 361
+				add_permanent_claim = 359
+				add_permanent_claim = 358
+				add_permanent_claim = 363
+				add_permanent_claim = 2316
+				add_permanent_claim = 4316
 			}
-		}		
-		ai_chance = {
-			factor = 0
 		}
-	}
-	
-	option = {	#assist mistress
-		name = flavor_crd.6.b
-		add_country_modifier = {
-			name = "crd_assistant_pets"
-			duration = -1
+		hidden_effect = {
+			every_province = {
+				limit = {
+					is_permanent_claim = ROOT
+					OR = {
+						region = arabia_region
+						region = egypt_region
+						area = red_sea_coast_area
+					}
+				}
+				remove_claim = ROOT
+				add_permanent_claim = ORN
+			}
 		}
 		ai_chance = {
 			factor = 100
 		}
 	}
+	
+	#Play as Orin
+	option = {
+		name = flavor_crd.2.b
+		trigger = {
+			ai = no
+		}
+		hidden_effect = {
+			arabia_region = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_core = ORN
+				remove_core = ROOT
+			}
+			egypt_region = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_core = ORN
+				remove_core = ROOT
+			}
+			red_sea_coast_area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_core = ORN
+				remove_core = ROOT
+			}
+		}
+		release = ORN
+		switch_tag = ORN
+		add_historical_friend = ORN
+		ORN	= {
+			add_historical_friend = ROOT
+			hidden_effect = {
+				change_government = monarchy
+				add_government_reform = Gensokyan_monarchy
+				adopt_reform_progress = ROOT
+				change_primary_culture = ROOT
+				change_religion = ROOT
+				add_adm_power = 212
+				add_dip_power = 212
+				add_mil_power = 212
+				add_manpower = 10
+				change_estate_land_share = {
+					estate = estate_nobles
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_church
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_burghers
+					share = 29
+				}	
+				define_ruler = {
+					name = "Rin"
+					dynasty = "Kaenbyou"
+					age = 15
+					adm = 4
+					dip = 5
+					mil = 5
+					fixed = yes
+					female = yes
+					culture = ROOT
+					religion = ROOT
+				}
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = old_egyptian
+				add_accepted_culture = al_misr_arabic
+				set_capital = event_target:orn_capital_city
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+						light_ship = 0.4
+						transport = 0.5
+					}
+				}
+				event_target:orn_capital_city = {
+					set_base_tax = 4
+					set_base_production = 4
+					set_base_manpower = 4
+					change_culture = ROOT
+					change_religion = ROOT
+				}
+				add_permanent_claim = 361
+				add_permanent_claim = 359
+				add_permanent_claim = 358
+				add_permanent_claim = 363
+				add_permanent_claim = 2316
+				add_permanent_claim = 4316
+			}
+		}
+		hidden_effect = {
+			every_province = {
+				limit = {
+					is_permanent_claim = ROOT
+					OR = {
+						region = arabia_region
+						region = egypt_region
+						area = red_sea_coast_area
+					}
+				}
+				remove_claim = ROOT
+				add_permanent_claim = ORN
+			}
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#Orin stays at home
+	option = {
+		name = flavor_crd.2.c
+		event_target:orn_capital_city = {
+			add_base_tax = 1
+			add_base_production = 1
+			add_base_manpower = 1
+		}
+	}
 }
+
+#Oni want to get into battle
+country_event = {
+	id = flavor_crd.3
+	title = flavor_crd.3.t
+	desc = flavor_crd.3.desc
+	picture = YUUGI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#promise to oni
+		name = flavor_crd.3.a
+		add_army_professionalism = 0.05
+		add_country_modifier = {
+			name = "crd_backup_of_the_oni"
+			duration = 7300
+		}
+		if = {
+			limit = {
+				ONI = {
+					exists = yes
+					is_free_or_tributary_trigger = yes
+				}
+			}
+			create_subject = {
+				subject_type = th_satori_vassal
+				subject = ONI
+			}
+			custom_tooltip = flavor_crd.3.a.tt
+			hidden_effect = {
+				add_truce_with = ONI
+				ONI = {
+					add_liberty_desire = 150
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Release Okuu in Bengal region
+country_event = {
+	id = flavor_crd.6
+	title = flavor_crd.6.t
+	desc = flavor_crd.6.desc
+	picture = OKUU_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.6.a
+		india_superregion = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = OKU
+			remove_core = ROOT
+		}
+		release = OKU
+		create_subject = {
+			subject_type = th_pet_state
+			subject = OKU
+		}
+		add_historical_friend = CRD
+		OKU	= {
+			add_historical_friend = ROOT
+			hidden_effect = {
+				change_government = monarchy
+				add_government_reform = Gensokyan_monarchy
+				adopt_reform_progress = ROOT
+				change_primary_culture = ROOT
+				change_religion = ROOT
+				add_adm_power = 212
+				add_dip_power = 212
+				add_mil_power = 212
+				add_manpower = 10
+				change_estate_land_share = {
+					estate = estate_nobles
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_church
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_burghers
+					share = 29
+				}	
+				define_ruler = {
+					name = "Utsuho"
+					dynasty = "Reiuji"
+					age = 15
+					adm = 2
+					dip = 3
+					mil = 6
+					fixed = yes
+					female = yes
+					culture = ROOT
+					religion = ROOT
+				}
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = bengali
+				add_accepted_culture = oriya
+
+				set_capital = 561
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+						light_ship = 0.4
+						transport = 0.5
+					}
+				}
+				561 = {
+					add_base_tax = 2
+					add_base_manpower = 2
+					add_base_production = 2
+					change_culture = ROOT
+				}
+				jharkhand_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				bihar_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				purvanchal_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				oudh_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				lower_doab_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				katehar_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				upper_doab_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+			}
+		}
+		hidden_effect = {
+			india_superregion = {
+				limit = {
+					is_permanent_claim = ROOT
+				}
+				remove_claim = ROOT
+				add_permanent_claim = OKU
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = {
+		name = flavor_crd.6.b
+		trigger = {
+			ai = no
+		}
+		hidden_effect = {
+			india_superregion = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_core = OKU
+				remove_core = ROOT
+			}
+		}
+		release = OKU
+		switch_tag = OKU
+		add_historical_friend = CRD
+		OKU	= {
+			add_historical_friend = ROOT
+			hidden_effect = {
+				change_government = monarchy
+				add_government_reform = Gensokyan_monarchy
+				adopt_reform_progress = ROOT
+				change_primary_culture = ROOT
+				change_religion = ROOT
+				add_adm_power = 212
+				add_dip_power = 212
+				add_mil_power = 212
+				add_manpower = 10
+				change_estate_land_share = {
+					estate = estate_nobles
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_church
+					share = 29
+				}
+				change_estate_land_share = {
+					estate = estate_burghers
+					share = 29
+				}	
+				define_ruler = {
+					name = "Utsuho"
+					dynasty = "Reiuji"
+					age = 15
+					adm = 2
+					dip = 3
+					mil = 6
+					fixed = yes
+					female = yes
+					culture = ROOT
+					religion = ROOT
+				}
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = bengali
+				add_accepted_culture = oriya
+
+				set_capital = 561
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+						light_ship = 0.4
+						transport = 0.5
+					}
+				}
+				561 = {
+					add_base_tax = 2
+					add_base_manpower = 2
+					add_base_production = 2
+					change_culture = ROOT
+				}
+				jharkhand_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				bihar_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				purvanchal_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				oudh_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				lower_doab_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				katehar_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				upper_doab_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+			}
+		}
+		hidden_effect = {
+			india_superregion = {
+				limit = {
+					is_permanent_claim = ROOT
+				}
+				remove_claim = ROOT
+				add_permanent_claim = OKU
+			}
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	option = {
+		name = flavor_crd.6.c
+		561 = {
+			add_base_tax = 1
+			add_base_production = 1
+			add_base_manpower = 1
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#remove reputation penalty after have diplomatic hegemon flag	
+country_event = {
+	id = flavor_crd.7
+	title = flavor_crd.7.t
+	desc = flavor_crd.7.desc
+	picture = SATORI_eventPicture	
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	trigger = {
+		has_country_modifier = annexers_legacy
+		has_country_flag = th_diplomatic_hegemon
+	}
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = annexers_legacy
+		}
+	}
+	
+	option = {
+		name = flavor_crd.7.a
+		
+		ai_chance = { 
+			factor = 100
+		}	
+	}
+}
+
+#Remilia and Scarlet Realm do not recognize the Komeijis as their leader
+country_event = {
+	id = flavor_crd.8
+	title = flavor_crd.8.t
+	desc = {
+		trigger = {
+			exists = SCR
+		}
+		desc = flavor_crd.8.desc.a
+	}
+	desc = {
+		trigger = {
+			NOT = { exists = SCR }
+		}
+		desc = flavor_crd.8.desc.b
+	}
+	picture = REMILIA_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { tag = SCD }
+		OR = {
+			AND = {
+				exists = SCR
+				SCR = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				NOT = { exists = SCR }
+				any_owned_province = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+				}
+			}
+		}
+		NOT = { has_country_flag = crd_not_appealed_remilia }
+		NOT = { has_country_flag = crd_appealed_remilia }
+	}
+
+	mean_time_to_happen = {
+		days = 5
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_eligible_to_see_scd_decision
+			set_country_flag = crd_not_appealed_remilia
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+				}
+				add_province_modifier = {
+					name = scr_crd_not_my_mistress
+					duration = -1
+				}
+			}
+			every_subject_country = {
+				limit = {
+					NOT = { tag = SCR }
+				}
+				every_owned_province = {
+					limit = {
+						OR = {
+							area = Scarlet_island
+							area = Scarlet_mountain
+							area = Scarlett_domain
+						}
+					}
+					add_province_modifier = {
+						name = scr_crd_not_my_mistress
+						duration = -1
+					}
+				}
+			}
+			if = {
+				limit = {
+					SCR = {
+						NOT = { is_subject_of_type = th_rebellious_subject }
+					}
+				}
+				SCR = {
+					grant_independence = yes
+				}
+				ROOT = {
+					create_subject = {
+						subject_type = th_rebellious_subject
+						subject = SCR
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_crd.8.a
+		custom_tooltip = flavor_crd.8.a.tt
+		if = {
+			limit = {
+				exists = SCR
+				SCR = {
+					is_subject_of = ROOT
+				}
+			}
+			custom_tooltip = flavor_crd.8.a.ct
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Vassal CRD is still rebellious if she gets released later
+country_event = {
+	id = flavor_crd.80
+	title = flavor_crd.80.t
+	desc = flavor_crd.80.desc
+	picture = REMILIA_eventPicture
+	
+	trigger = {
+		has_country_flag = crd_not_appealed_remilia
+		SCR = {
+			is_subject_of = ROOT
+			NOT = { is_subject_of_type = th_rebellious_subject }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.80.a
+		SCR = {
+			grant_independence = yes
+		}
+		ROOT = {
+			create_subject = {
+				subject_type = th_rebellious_subject
+				subject = SCR
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Event for keeping all scarlet provinces unusable for CRD
+country_event = {
+	id = flavor_crd.9
+	title = flavor_crd.9.t
+	desc = flavor_crd.9.desc
+	picture = REMILIA_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { tag = SCD }
+		has_country_flag = crd_not_appealed_remilia
+		NOT = { has_country_flag = crd_appealed_remilia }
+		OR = {
+			any_owned_province = {
+				OR = {
+					area = Scarlet_island
+					area = Scarlet_mountain
+					area = Scarlett_domain
+				}
+				NOT = { has_province_modifier = scr_crd_not_my_mistress }
+			}
+			any_subject_country = {
+				NOT = { tag = SCR }
+				any_owned_province = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+					NOT = { has_province_modifier = scr_crd_not_my_mistress }
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.9.a
+		every_owned_province = {
+			limit = {
+				OR = {
+					area = Scarlet_island
+					area = Scarlet_mountain
+					area = Scarlett_domain
+				}
+			}
+			add_province_modifier = {
+				name = scr_crd_not_my_mistress
+				duration = -1
+			}
+		}
+		every_subject_country = {
+			limit = {
+				NOT = { tag = SCR }
+			}
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+				}
+				add_province_modifier = {
+					name = scr_crd_not_my_mistress
+					duration = -1
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#SCR cleans provinces debuffs when owning them
+country_event = {
+	id = flavor_crd.90
+	title = flavor_crd.90.t
+	desc = flavor_crd.90.desc
+	picture = REMILIA_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = SCR
+		}
+		any_owned_province = {
+			OR = {
+				area = Scarlet_island
+				area = Scarlet_mountain
+				area = Scarlett_domain
+			}
+			has_province_modifier = scr_crd_not_my_mistress
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.90.a
+		every_owned_province = {
+			limit = {
+				OR = {
+					area = Scarlet_island
+					area = Scarlet_mountain
+					area = Scarlett_domain
+				}
+				has_province_modifier = scr_crd_not_my_mistress
+			}
+			remove_province_modifier = scr_crd_not_my_mistress
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Event for removing all the bad modifiers from the provinces
+country_event = {
+	id = flavor_crd.10
+	title = flavor_crd.10.t
+	desc = flavor_crd.10.desc
+	picture = REMILIA_eventPicture
+	
+	trigger = {
+		any_owned_province = {
+			has_province_modifier = scr_crd_not_my_mistress
+		}
+		OR = {
+			AND = {
+				NOT = { th_is_or_was_tag = { tag = CRD } }
+				OR = {
+					is_free_or_tributary_trigger = yes
+					overlord = {
+						OR = {
+							NOT = { th_is_or_was_tag = { tag = CRD } }
+							has_country_flag = crd_appealed_remilia
+						}
+					}
+				}
+			}
+			has_country_flag = crd_appealed_remilia
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_crd.10.a
+		every_owned_province = {
+			limit = {
+				OR = {
+					area = Scarlet_island
+					area = Scarlet_mountain
+					area = Scarlett_domain
+				}
+				has_province_modifier = scr_crd_not_my_mistress
+			}
+			remove_province_modifier = scr_crd_not_my_mistress
+		}
+		every_subject_country = {
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = Scarlet_island
+						area = Scarlet_mountain
+						area = Scarlett_domain
+					}
+					has_province_modifier = scr_crd_not_my_mistress
+				}
+				remove_province_modifier = scr_crd_not_my_mistress
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Remilia and the SDM recognize the Komeiji rulers
+country_event = {
+	id = flavor_crd.11
+	title = flavor_crd.11.t
+	desc = {
+		trigger = {
+			exists = SCR
+		}
+		desc = flavor_crd.11.desc.a
+	}
+	desc = {
+		trigger = {
+			NOT = { exists = SCR }
+		}
+		desc = flavor_crd.11.desc.b
+	}
+	picture = REMILIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.11.a
+		custom_tooltip = flavor_crd.11.a.tt
+		hidden_effect = {
+			clr_country_flag = crd_not_appealed_remilia
+			set_country_flag = crd_appealed_remilia
+			every_owned_province = {
+				limit = {
+					has_province_modifier = scr_crd_not_my_mistress
+				}
+				remove_province_modifier = scr_crd_not_my_mistress
+			}
+			every_subject_country = {
+				every_owned_province = {
+					limit = {
+						has_province_modifier = scr_crd_not_my_mistress
+					}
+					remove_province_modifier = scr_crd_not_my_mistress
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = SCR
+				SCR = {
+					is_subject_of = ROOT
+				}
+			}
+			custom_tooltip = flavor_crd.11.a.ct
+			hidden_effect = {
+				SCR = {
+					grant_independence = yes
+				}
+				create_union = SCR
+				if = {
+					limit = {
+						has_dlc = "Rights of Man"
+					}
+					set_country_flag = crd_eligible_for_scarlet_consort
+				}
+			}
+			tooltip = {
+				create_union = SCR
+			}
+			ROOT = {
+				add_prestige = 50
+				remove_historical_rival = SCR
+				add_historical_friend = SCR
+				remove_rival = SCR
+			}
+			SCR = {
+				add_prestige = 50
+				remove_historical_rival = ROOT
+				add_historical_friend = ROOT
+				remove_rival = ROOT
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Komeiji-Scarlet Ship event - Remilia and Satori
+country_event = {
+	id = flavor_crd.12
+	title = flavor_crd.12.t
+	desc = flavor_crd.12.desc
+	picture = SATOREMI_eventPicture
+	
+	trigger = {
+		has_country_flag = crd_eligible_for_scarlet_consort
+		has_ruler_flag = th_original_satori
+		NOT = { has_country_flag = crd_had_remilia_consort_event }
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_had_remilia_consort_event
+		}
+	}
+	
+	option = {	#Marry Remilia
+		name = flavor_crd.12.a
+		define_consort = {
+			name = "Remilia"
+			dynasty = "Scarlet"
+			culture = Scarlett
+			fixed = yes
+			adm = 4
+			dip = 4
+			mil = 6
+			age = 20
+			female = yes
+			country_of_origin = SCR
+		}
+		hidden_effect = {
+			add_queen_personality = immortal_personality
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+	
+	option = {	#Satori stays single
+		name = flavor_crd.12.b
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Komeiji-Scarlet Ship event - Flandre and Koishi
+country_event = {
+	id = flavor_crd.13
+	title = flavor_crd.13.t
+	desc = flavor_crd.13.desc
+	picture = KOIFLAN_eventPicture
+	
+	trigger = {
+		has_country_flag = crd_eligible_for_scarlet_consort
+		has_ruler_flag = th_original_koishi
+		NOT = { has_country_flag = crd_had_flandre_consort_event }
+	}
+
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = crd_had_flandre_consort_event
+		}
+	}
+	
+	option = {	#Marry Flandre
+		name = flavor_crd.13.a
+		define_consort = {
+			name = "Flandre"
+			dynasty = "Scarlet"
+			culture = Scarlett
+			fixed = yes
+			adm = 5
+			dip = 3
+			mil = 6
+			age = 18
+			female = yes
+			country_of_origin = SCR
+		}
+		hidden_effect = {
+			add_queen_personality = immortal_personality
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+	
+	option = {	#Koishi stays single
+		name = flavor_crd.13.b
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Remilia is NOT impressed
+country_event = {
+	id = flavor_crd.14
+	title = flavor_crd.14.t
+	desc = flavor_crd.14.desc
+	picture = REMILIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.14.a
+		custom_tooltip = flavor_crd.14.a.tt
+		hidden_effect = {
+			set_country_flag = crd_enable_fight_against_remi
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Fight with Remilia
+country_event = {
+	id = flavor_crd.15
+	title = flavor_crd.15.t
+	desc = flavor_crd.15.desc
+	picture = REMILIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_diplomatic_skill = {
+				SKILL_BONI = 0
+			}
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			set_variable = {
+				which = th_crd_remilia_diplo_combat_skills
+				value = 1550
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_crd_remilia_diplo_combat_skills
+			}
+			clr_country_flag = crd_enable_fight_against_remi
+		}
+	}
+	
+	option = {	#Diplo danmaku fight
+		name = flavor_crd.15.a
+		custom_tooltip = flavor_crd.15.a.tt
+		highlight = yes
+		th_danmaku_diplo_fight_ruler_and_opponent = {
+			win_event = flavor_crd.16
+			draw_event = flavor_crd.16
+			defeat_event = flavor_crd.17
+			days = 10
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	option = {	#Normal danmaku fight
+		name = flavor_crd.15.b
+		custom_tooltip = flavor_crd.15.b.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_crd.16
+			draw_event = flavor_crd.16
+			defeat_event = flavor_crd.17
+			days = 10
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Victory over Remilia
+country_event = {
+	id = flavor_crd.16
+	title = flavor_crd.16.t
+	desc = flavor_crd.16.desc
+	picture = REMILIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.16.a
+		custom_tooltip = flavor_crd.16.a.tt
+		add_dip_power = 150
+		hidden_effect = {
+			set_country_flag = crd_defeated_remilia
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Defeat against Remilia
+country_event = {
+	id = flavor_crd.17
+	title = flavor_crd.17.t
+	desc = flavor_crd.17.desc
+	picture = REMILIA_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.17.a
+		custom_tooltip = flavor_crd.17.a.tt
+		hidden_effect = {
+			set_country_flag = crd_enable_fight_against_remi
+			set_country_flag = crd_lost_against_remilia
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Give Koishi the mask of hope
+country_event = {
+	id = flavor_crd.20
+	title = flavor_crd.20.t
+	desc = flavor_crd.20.desc
+	picture = KOISHI_eventPicture	
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_crd.20.a
+		custom_tooltip = flavor_crd.20.a.tt
+		hidden_effect = {
+			set_global_flag = th_koishi_is_about_to_wander_off	#Used to speed Koishi's emigration up
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+##########################################
+# Detetctive Satori events
+#########################################
+
+###Act One###
+
+#Detective Satori - Introduction
+country_event = {
+	id = flavor_crd.30
+	title = flavor_crd.30.t
+	desc = flavor_crd.30.desc
+	picture = FORMERHELL_eventPicture
+
+	fire_only_once = yes
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		is_at_war = no
+		stability = 1
+		NOT = { has_global_flag = crd_act_one }
+		NOT = { num_of_rebel_controlled_provinces = 1 }
+		#Satori cannot do detective work if her home is on fire
+		total_development = 300
+		#Satori should be somewhat in a safe position to leave the land for a couple of days
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_global_flag = crd_act_one
+		}
+	}
+
+    option = {
+		name = flavor_crd.30.a
+		custom_tooltip = flavor_crd.30.a.tt
+		hidden_effect = {
+			swap_non_generic_missions = yes
+			set_variable = {
+				which = crd_mind_read_charges
+				value = 1
+			}
+			set_variable = {
+				which = crd_correct_accusations
+				value = 0
+			}
+			country_event = {
+				id = flavor_crd.31
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Detective Satori - Orin gets sent
+country_event = {
+	id = flavor_crd.31
+	title = flavor_crd.31.t
+	desc = flavor_crd.31.desc
+	picture = ORIN_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.31.a
+		hidden_effect = {
+			set_global_flag = crd_act_one_first_interview
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Orin reports her investigations back to Satori
+country_event = {
+	id = flavor_crd.32
+	title = flavor_crd.32.t
+	desc = flavor_crd.32.desc
+	picture = SCARLETMANSION_eventPicture
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		has_global_flag = crd_act_one_first_interview
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = crd_act_one_first_interview
+			set_global_flag = crd_act_one_second_interview
+		}
+	}
+
+    option = {	#Marisa, false
+		name = flavor_crd.32.a
+		custom_tooltip = flavor_crd.32.a.tt
+		hidden_effect = {
+			set_global_flag = crd_act_one_accuse_marisa
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+    option = {	#Reimu, false
+		name = flavor_crd.32.b
+		custom_tooltip = flavor_crd.32.b.tt
+		hidden_effect = {
+			set_global_flag = crd_act_one_accuse_reimu
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+    option = {	#Sakuya Izayoi
+		name = flavor_crd.32.c
+		custom_tooltip = flavor_crd.32.c.tt
+		hidden_effect = {
+			set_global_flag = crd_act_one_accuse_sakuya
+			change_variable = {
+				which = crd_correct_accusations
+				value = 1
+			}
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+    option = {	#Cirno, very false
+		name = flavor_crd.32.d
+		trigger = {
+			has_global_flag = crd_cirno_clue
+		}
+		custom_tooltip = flavor_crd.32.d.tt
+		hidden_effect = {
+			set_global_flag = crd_act_one_accuse_cirno
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Information of Cirno having plans to rebel against SCR (false clue for accusing Cirno)
+country_event = {
+	id = flavor_crd.33
+	title = flavor_crd.33.t
+	desc = flavor_crd.33.desc
+	picture = CIRNOANDTHREEFAIRIES_eventPicture
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		has_global_flag = crd_act_one
+		NOT = { has_global_flag = crd_cirno_clue }
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_global_flag = crd_cirno_clue
+		}
+	}
+
+    option = {
+		name = flavor_crd.33.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Orin accuses Sakuya for the first murder
+country_event = {
+	id = flavor_crd.34
+	title = flavor_crd.34.t
+	desc = {
+		desc = flavor_crd.34.desc.a
+		trigger = {
+			has_global_flag = crd_act_one_accuse_marisa
+			NOT = { has_global_flag = crd_act_one_accuse_reimu }
+			NOT = { has_global_flag = crd_act_one_accuse_sakuya }
+			NOT = { has_global_flag = crd_act_one_accuse_cirno }
+		}
+	}
+	desc = {
+		desc = flavor_crd.34.desc.b
+		trigger = {
+			NOT = { has_global_flag = crd_act_one_accuse_marisa }
+			has_global_flag = crd_act_one_accuse_reimu
+			NOT = { has_global_flag = crd_act_one_accuse_sakuya }
+			NOT = { has_global_flag = crd_act_one_accuse_cirno }
+		}
+	}
+	desc = {
+		desc = flavor_crd.34.desc.c
+		trigger = {
+			NOT = { has_global_flag = crd_act_one_accuse_marisa }
+			NOT = { has_global_flag = crd_act_one_accuse_reimu }
+			has_global_flag = crd_act_one_accuse_sakuya
+			NOT = { has_global_flag = crd_act_one_accuse_cirno }
+		}
+	}
+	desc = {
+		desc = flavor_crd.34.desc.d
+		trigger = {
+			NOT = { has_global_flag = crd_act_one_accuse_marisa }
+			NOT = { has_global_flag = crd_act_one_accuse_reimu }
+			NOT = { has_global_flag = crd_act_one_accuse_sakuya }
+			has_global_flag = crd_act_one_accuse_cirno
+		}
+	}
+	desc = {
+		desc = flavor_crd.debug
+		trigger = {
+			NOT = { has_global_flag = crd_act_one_accuse_marisa }
+			NOT = { has_global_flag = crd_act_one_accuse_reimu }
+			NOT = { has_global_flag = crd_act_one_accuse_sakuya }
+			NOT = { has_global_flag = crd_act_one_accuse_cirno }
+		}
+	}
+	picture = MAGICALLIBRARY_eventPicture
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		has_global_flag = crd_act_one_second_interview
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = crd_act_one_second_interview
+			set_global_flag = crd_act_one_finale
+		}
+	}
+
+    option = {
+		name = flavor_crd.34.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Patchouli wakes up!
+country_event = {
+	id = flavor_crd.35
+	title = flavor_crd.35.t
+	desc = flavor_crd.35.desc
+	picture = PATCHOULI_eventPicture
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		has_global_flag = crd_act_one_second_interview
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = crd_act_one_second_interview
+			set_global_flag = crd_act_one_complete
+		}
+	}
+
+    option = {
+		name = flavor_crd.35.a
+		trigger = {
+			has_global_flag = crd_act_one_accuse_sakuya
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+    option = {
+		name = flavor_crd.35.a
+		trigger = {
+			NOT = { has_global_flag = crd_act_one_accuse_sakuya }
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	after = {
+		set_global_flag = crd_act_two
+		swap_non_generic_missions = yes
+	}
+}
+
+###Act Two###
+
+#Back at the office, talking with Orin -> Satori gets the feeling it is not over just yet
+country_event = {
+	id = flavor_crd.40
+	title = flavor_crd.40.t
+	desc = {
+		desc = flavor_crd.40.desc.a
+		trigger = {
+			has_global_flag = crd_act_one_accuse_sakuya
+		}
+	}
+	desc = {
+		desc = flavor_crd.40.desc.b
+		trigger = {
+			NOT = { has_global_flag = crd_act_one_accuse_sakuya }
+		}
+	}
+	picture = SATORIOFFICE_eventPicture
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		has_global_flag = crd_act_two
+		has_global_flag = crd_act_two_talk_with_orin
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = crd_act_two_talk_with_orin
+			set_global_flag = crd_act_two_news_about_containment_breach
+		}
+	}
+
+    option = {
+		name = flavor_crd.40.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Information about a spirit having escaped Former Hell (true clue of the culprit)
+country_event = {
+	id = flavor_crd.41
+	title = flavor_crd.41.t
+	desc = flavor_crd.41.desc
+	picture = MIMA_eventPicture
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		has_global_flag = crd_act_two_news_about_containment_breach
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = crd_act_two_news_about_containment_breach
+			set_global_flag = crd_act_two_melings_body
+		}
+	}
+
+    option = {
+		name = flavor_crd.41.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Information about Koishi having vanished again - and having taken some sleep drugs (false clue for accusing Koishi)
+country_event = {
+	id = flavor_crd.42
+	title = flavor_crd.42.t
+	desc = flavor_crd.42.desc
+	picture = KOISHI_eventPicture
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		has_global_flag = crd_act_two
+		NOT = { has_global_flag = crd_koishi_clue }
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_global_flag = crd_koishi_clue
+		}
+	}
+
+    option = {
+		name = flavor_crd.42.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Satori visits the SDM herself
+country_event = {
+	id = flavor_crd.43
+	title = flavor_crd.43.t
+	desc = flavor_crd.43.desc
+	picture = DETECTIVESATORI_eventPicture
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		has_global_flag = crd_act_two_melings_body
+	}
+
+	mean_time_to_happen = {
+		months = 30
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = crd_act_two_melings_body
+			set_global_flag = crd_act_three
+			set_global_flag = crd_act_two_complete
+		}
+	}
+
+    option = {
+		name = flavor_crd.43.a
+		hidden_effect = {
+			swap_non_generic_missions = yes
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Satori's grand entrance in the SDM 
+#-> accuses Sakuya for the Patchouli case
+#-> accuses Patchouli for the Meiling case
+country_event = {
+	id = flavor_crd.44
+	title = flavor_crd.44.t
+	desc = flavor_crd.44.desc
+	picture = DETECTIVESATORI_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.44.a
+		country_event = {
+			id = flavor_crd.45
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Satori can talk with everyone personally
+country_event = {
+	id = flavor_crd.45
+	title = flavor_crd.45.t
+	desc = flavor_crd.45.desc
+	picture = MAGICALLIBRARY_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {	#Sakuya
+		name = flavor_crd.45.a
+		country_event = {
+			id = flavor_crd.46
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+    option = {	#Patchouli
+		name = flavor_crd.45.b
+		country_event = {
+			id = flavor_crd.47
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+    option = {
+		name = flavor_crd.45.c
+		country_event = {
+			id = flavor_crd.48
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+    option = {
+		name = flavor_crd.45.d
+		country_event = {
+			id = flavor_crd.49
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Chat with Sakuya
+country_event = {
+	id = flavor_crd.46
+	title = flavor_crd.46.t
+	desc = flavor_crd.46.desc
+	picture = SAKUYA_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.return
+		country_event = {
+			id = flavor_crd.45
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#Use mind-reading ability to get truth out of her
+    option = {
+		name = flavor_crd.mindability
+		custom_tooltip = flavor_crd.mindability.tt
+		trigger = {
+			check_variable = {
+				which = crd_mind_read_charges
+				value = 1
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_crd.460
+			}
+			subtract_variable = {
+				which = crd_mind_read_charges
+				value = 1
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Read Sakuya's mind
+country_event = {
+	id = flavor_crd.460
+	title = flavor_crd.460.t
+	desc = flavor_crd.460.desc
+	picture = SAKUYA_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.mindreturn
+		country_event = {
+			id = flavor_crd.45
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Chat with Patchouli
+country_event = {
+	id = flavor_crd.47
+	title = flavor_crd.47.t
+	desc = flavor_crd.47.desc
+	picture = PATCHOULI_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.return
+		country_event = {
+			id = flavor_crd.45
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#Use mind-reading ability to get truth out of her
+    option = {
+		name = flavor_crd.47.a
+		custom_tooltip = flavor_crd.mindability.tt
+		trigger = {
+			check_variable = {
+				which = crd_mind_read_charges
+				value = 1
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_crd.470
+			}
+			subtract_variable = {
+				which = crd_mind_read_charges
+				value = 1
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Read Patchouli's mind
+country_event = {
+	id = flavor_crd.470
+	title = flavor_crd.470.t
+	desc = flavor_crd.470.desc
+	picture = PATCHOULI_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.mindreturn
+		country_event = {
+			id = flavor_crd.45
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Chat with Orin
+country_event = {
+	id = flavor_crd.48
+	title = flavor_crd.48.t
+	desc = flavor_crd.48.desc
+	picture = ORIN_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.return
+		country_event = {
+			id = flavor_crd.45
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Accusation time
+country_event = {
+	id = flavor_crd.49
+	title = flavor_crd.49.t
+	desc = flavor_crd.49.desc
+	picture = SCARLETT_eventPicture	#TODO
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.49.a
+		country_event = {
+			id = flavor_crd.50
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Accusation time
+country_event = {
+	id = flavor_crd.50
+	title = flavor_crd.50.t
+	desc = flavor_crd.50.desc
+	picture = SCARLETT_eventPicture	#TODO
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.50.a
+		country_event = {
+			id = flavor_crd.51
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Accusation time
+country_event = {
+	id = flavor_crd.51
+	title = flavor_crd.51.t
+	desc = flavor_crd.51.desc
+	picture = SCARLETT_eventPicture	#TODO
+	
+	is_triggered_only = yes
+
+    option = {	#Remilia
+		name = flavor_crd.51.a
+		country_event = {
+			id = flavor_crd.52
+		}
+	
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+    option = {	#Mima
+		name = flavor_crd.51.b
+		country_event = {
+			id = flavor_crd.53
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+    option = {	#Koishi
+		name = flavor_crd.51.c
+		country_event = {
+			id = flavor_crd.54
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Remilia is the culprit!
+country_event = {
+	id = flavor_crd.52
+	title = flavor_crd.52.t
+	desc = flavor_crd.52.desc
+	picture = REMILIA_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.52.a
+		custom_tooltip = flavor_crd.finished
+		hidden_effect = {
+			set_global_flag = crd_act_three_complete
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Mima is the culprit!
+country_event = {
+	id = flavor_crd.53
+	title = flavor_crd.53.t
+	desc = flavor_crd.53.desc
+	picture = MIMA_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.53.a
+		custom_tooltip = flavor_crd.finished
+		hidden_effect = {
+			set_global_flag = crd_act_three_complete
+			change_variable = {
+				which = crd_correct_accusations
+				value = 1
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Koishi is the culprit!
+country_event = {
+	id = flavor_crd.54
+	title = flavor_crd.54.t
+	desc = flavor_crd.54.desc
+	picture = KOISHI_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.54.a
+		custom_tooltip = flavor_crd.finished
+		hidden_effect = {
+			set_global_flag = crd_act_three_complete
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Detective Satori
+country_event = {
+	id = flavor_crd.60
+	title = flavor_crd.60.t
+	desc = flavor_crd.60.desc
+	picture = DETECTIVESATORI_eventPicture
+	
+	is_triggered_only = yes
+
+    option = {
+		name = flavor_crd.60.a
+		if = {
+			limit = {
+				check_variable = {
+					which = crd_correct_accusations
+					value = 2
+				}
+			}
+			custom_tooltip = flavor_crd.60.a.tt
+			hidden_effect = {
+				set_country_flag = crd_allowed_to_use_detective_title
+			}
+		}
+
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+###Act Three###
+
+#Big interview - read the minds of everyone here
+
+#Visiting the basement to find Meiling -> Flan choking Meiling as she thinks she is the culprit (false clue for Flan being the culprit / right clue for possessive spirit)
+
+#Satori returns the office -> player gets the decision to gather everyone around and to announce who the culprit is
+
+#If player chooses the correct culprit, CRD will get the ruler title "Detective" for Satori
+
+#Multiple endings possible
+
+#Final event, finishing Act Three and the whole incident
+
+
+
+#Each act has four events where you are talking with a character, which give you a clue. It can be a right or wrong clue
+
+#Act 1 is the introduction and as such gives you all the info of what has happened to Patchouli and who the potential culprit COULD be
+#It ends with Patchouli waking up and accusing Sakuya
+
+#Act 2 starts with a second attempt against Meiling
+#Sakuya gets put into the basement while the investigation continues
+#In there, Flan enters the picture
+#It ends with Flan choking Meiling in the basement as she thinks Meiling is the culprit
+
+#Act 3 starts with the gathering of all the clues you have as well as all the people starting to accuse each other
+#It ends with Satori making the final decision who the culprit is
+
+#Because the interviews are done by Orin (Satori gets the information by second hand), she can NOT read the minds of interview partners
+#However, in Act three, Satori has everyone gathered in SDM. As such, she can read everyone's mind. 
+#To make it more interesting for the player though, she is only able to read the mind of exactly ONE character of the player's choice
+#By mind reading, Satori immediately knows if this character is a) telling the truth and b) might be the culprit or not

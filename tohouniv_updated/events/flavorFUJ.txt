@@ -608,8 +608,19 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			hidden_effect = {
-				remove_heir = yes
+			remove_heir = yes
+			#Mokou gets respawned with additional stats
+			set_variable = {
+				which = th_respawn_adm_stat
+				which = th_ruler_adm_stat
+			}
+			set_variable = {
+				which = th_respawn_dip_stat
+				which = th_ruler_dip_stat
+			}
+			set_variable = {
+				which = th_respawn_mil_stat
+				which = th_ruler_mil_stat
 			}
 			define_ruler = {
 				name = "Mokou"
@@ -626,7 +637,7 @@ country_event = {
 			add_ruler_personality = immortal_personality
 			set_ruler_flag = touhou_character_ruler
 			set_ruler_flag = touhou_original_ruler
-			set_ruler_flag = FUJ_mokou_in_charge
+			set_ruler_flag = th_original_mokou
 			if = {
 				limit = {
 					th_fuj_has_n_volcanos = {
@@ -692,98 +703,73 @@ country_event = {
 
 	option = {	#WB
 		name = flavor_fuj.101.a
-	}
-}
-
-#Hire Keine as an advisor
-country_event = {
-	id = flavor_fuj.102
-	title = flavor_fuj.102.t
-	desc = flavor_fuj.102.desc
-	picture = SHRINE_eventPicture
-	
-	is_triggered_only = yes
-
-	hidden = yes
-
-	immediate = {
 		hidden_effect = {
-			set_country_flag = fuj_keine_hired
-		}
-	}
-
-	option = {
-		name = flavor_fuj.102.a
-		if = {
-			limit = {
-				owns = 4979
+			export_to_variable = {
+				variable_name = th_start_stat_adm
+				value = ADM
+				who = ROOT
 			}
-			define_advisor = {
-				type = th_advisor_keine
-				name = "Keine Kamishirasawa"
-				skill = 3
-				location = 4979
-				discount = yes
-				female = yes
-				culture = Eientei
-				religion = ROOT
+			export_to_variable = {
+				variable_name = th_start_stat_dip
+				value = DIP
+				who = ROOT
 			}
-		}
-		else_if = {
-			limit = {
-				owns = 4997
+			export_to_variable = {
+				variable_name = th_start_stat_mil
+				value = MIL
+				who = ROOT
 			}
-			define_advisor = {
-				type = th_advisor_keine
-				name = "Keine Kamishirasawa"
-				skill = 3
-				location = 4997
-				discount = yes
-				female = yes
-				culture = Eientei
-				religion = ROOT
+			subtract_variable = {
+				which = th_respawn_adm_stat
+				which = th_start_stat_adm
 			}
-		}
-		else = {
-			define_advisor = {
-				type = th_advisor_keine
-				name = "Keine Kamishirasawa"
-				skill = 3
-				discount = yes
-				female = yes
-				culture = Eientei
-				religion = ROOT
+			subtract_variable = {
+				which = th_respawn_dip_stat
+				which = th_start_stat_dip
 			}
-		}
-		hidden_effect = {
-			country_event = {  		#Clear event after 30 years
-				id = flavor_fuj.103
-				days = 18250
+			subtract_variable = {
+				which = th_respawn_mil_stat
+				which = th_start_stat_mil
 			}
-		}
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#clear of flag, make Keine available for hire again
-country_event = {
-	id = flavor_fuj.103
-	title = flavor_fuj.103.t
-	desc = flavor_fuj.103.desc
-	picture = SHRINE_eventPicture
-	
-	is_triggered_only = yes
-	hidden = yes	
-
-	option = {
-		name = flavor_fuj.3.a
-		clr_country_flag = fuj_keine_hired
-
-		ai_chance = { 
-			factor = 100
+			while = {
+				limit = {
+					check_variable = {
+						which = th_respawn_adm_stat
+						value = 1
+					}
+				}
+				change_adm = 1
+				subtract_variable = {
+					which = th_respawn_adm_stat
+					value = 1
+				}
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_respawn_dip_stat
+						value = 1
+					}
+				}
+				change_dip = 1
+				subtract_variable = {
+					which = th_respawn_dip_stat
+					value = 1
+				}
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_respawn_mil_stat
+						value = 1
+					}
+				}
+				change_mil = 1
+				subtract_variable = {
+					which = th_respawn_mil_stat
+					value = 1
+				}
+			}
 		}
 	}
 }
@@ -850,7 +836,7 @@ country_event = {
 		add_ruler_personality = immortal_personality
 		set_ruler_flag = touhou_character_ruler
 		set_ruler_flag = touhou_original_ruler
-		set_ruler_flag = FUJ_mokou_in_charge
+		set_ruler_flag = th_original_mokou
 		if = {
 			limit = {
 				th_fuj_has_n_volcanos = {

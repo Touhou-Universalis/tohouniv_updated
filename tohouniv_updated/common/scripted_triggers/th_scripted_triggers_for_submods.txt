@@ -1,13 +1,60 @@
 #This file is for all submodders, who want to add new cultures, technologies, idea groups or buildings 
 #And want to ensure that the missions of the base mod checks the new added features too
 
-###PROVINCE HAS ANY FORT BUILDING###
+###ACTIVE SUBMOD TRIGGERS###
+th_has_goods_expanded_active = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_goods_expanded_active_tt
+		has_global_flag = trade_goods_exapanded_mod_active
+	}
+}
+
+th_has_ideas_expanded_active = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_ideas_expanded_active_tt
+		has_global_flag = idea_groups_expanded_mod_active
+	}
+}
+
+###PROVINCE HAS FORT BUILDING###
+#Province has any fort building
 th_has_fort_building = {
 	OR = {
 		has_building = fort_15th
 		has_building = fort_16th
 		has_building = fort_17th
 		has_building = fort_18th
+	}
+}
+
+#Province has an up-to-date fort building. As mil tech reference will be the tag used
+th_has_up_to_date_fort_building = {
+	if = {
+		limit = {
+			$tag$ = {
+				mil_tech = 24
+			}
+		}
+		has_building = fort_18th
+	}
+	else_if = {
+		limit = {
+			$tag$ = {
+				mil_tech = 19
+			}
+		}
+		has_building = fort_17th
+	}
+	else_if = {
+		limit = {
+			$tag$ = {
+				mil_tech = 14
+			}
+		}
+		has_building = fort_16th
+	}
+	else = {
+		has_building = fort_15th
 	}
 }
 
@@ -62,9 +109,8 @@ th_has_religious_ideas = {
 th_has_full_religious_ideas = {
 	custom_trigger_tooltip = {
 		tooltip = th_has_full_religious_ideas_tt
-		full_idea_group = religious_ideas
-		#OR = {
-			#full_idea_group = religious_ideas
+		OR = {
+			full_idea_group = religious_ideas
 			#full_idea_group = christian_idea_groups_expanded
 			#full_idea_group = muslim_idea_groups_expanded
 			#full_idea_group = confucian_idea_groups_expanded
@@ -76,7 +122,7 @@ th_has_full_religious_ideas = {
 			#Touhou Christians
 			#Old Hakurei
 			#Shinkism
-		#}
+		}
 	}
 }
 
@@ -230,4 +276,84 @@ th_has_valuable_resource = {
 	#	trade_goods = silver
 	#}
 	trade_goods = gold
+}
+
+#For wine missions / evets
+th_produces_wine_or_champagne = {
+	OR = {
+		trade_goods = wine
+		#trade_goods = champagne
+	}
+}
+
+#For more colony types
+th_num_of_colonies = {
+	if = {
+		limit = {
+			has_dlc = "Leviathan"
+		}
+		calc_true_if = {
+			all_subject_country = {
+				OR = {
+					is_subject_of_type = crown_colony
+					is_subject_of_type = private_enterprise
+					is_subject_of_type = self_governing_colony
+				}
+			}
+			amount = $amount$
+		}
+	}
+	else = {
+		calc_true_if = {
+			all_subject_country = {
+				is_subject_of_type = colony
+			}
+			amount = $amount$
+		}
+	}
+}
+
+th_is_colony = {
+	if = {
+		limit = {
+			has_dlc = "Leviathan"
+		}
+		OR = {
+			is_subject_of_type = crown_colony
+			is_subject_of_type = private_enterprise
+			is_subject_of_type = self_governing_colony
+		}
+	}
+	else = {
+		is_subject_of_type = colony
+	}
+}
+
+#For the case any new tag can recruit explorers / conquistadors naturally
+th_has_not_any_exploration_ideas = {
+	#Vanilla
+	NOT = { has_idea = quest_for_the_new_world }
+	NOT = { has_idea = call_of_our_forefathers }
+	NOT = { has_idea = tonga_oceanic_empire }
+	NOT = { has_idea = samoa_trade }
+	NOT = { has_idea = legendary_voyagers }
+	NOT = { has_idea_group = ICE_ideas }
+	#Touhou
+	NOT = { has_idea = CLP_fairy_paradisation }
+	NOT = { has_idea = TFR_looking_for_new_homes }
+	NOT = { has_idea = KPP_Kappa_curiosity }
+	NOT = { has_idea_group = LIL_ideas }
+}
+
+#For all the religions, who can be DoF, but have not female DoF enabled
+th_has_without_female_dof_religion = {
+	OR = {
+		religion = catholic
+		religion = protestant
+		religion = reformed
+		religion = orthodox
+		religion = coptic
+		religion = hussite
+		religion_group = muslim
+	}
 }

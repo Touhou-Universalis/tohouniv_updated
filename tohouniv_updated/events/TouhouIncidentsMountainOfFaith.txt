@@ -201,6 +201,7 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			th_incident_set_terminate_flag = yes
 			every_country = {
 				#NO exceptions-even MRY itself
 				limit = {
@@ -234,7 +235,6 @@ country_event = {
 
 	option = {		#Set the first investigator
 		name = "th_incidents_mountainoffaith.200.a"
-		custom_tooltip = th_incidents_mountainoffaith_200.a.tt
 		country_event = {
 			id = th_incidents_mountainoffaith.300
 			days = 0
@@ -259,7 +259,8 @@ country_event = {
 	option = {		#find an investigator
 		name = "th_incidents_mountainoffaith.300.a"
 		
-		th_incident_setup_investigator = {
+		th_incident_setup_investigator = yes
+		th_incident_introduction_event = {
 			introduction_event = th_incidents_mountainoffaith.400
 		}
 
@@ -1254,6 +1255,7 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_incident_clr_terminate_flag = yes
 			set_global_flag = th_mountain_of_faith_incident_solved
 			clr_global_flag = th_active_incident
 			set_global_flag = th_MOF_increased_center_duration
@@ -1345,6 +1347,7 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_incident_clr_terminate_flag = yes
 			set_global_flag = th_mountain_of_faith_incident_solved
 			clr_global_flag = th_active_incident
 			set_global_flag = th_MOF_increased_center_duration
@@ -1437,6 +1440,7 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_incident_clr_terminate_flag = yes
 			set_global_flag = th_mountain_of_faith_incident_solved
 			clr_global_flag = th_active_incident
 			clr_country_flag = th_MOF_inci_about_to_get_final
@@ -1447,6 +1451,7 @@ country_event = {
 				th_incident_increase_good_outcome_counter = yes
 				set_country_flag = th_solved_mof_inci
 			}
+			set_country_flag = th_solved_incident
 		}
 	}
 	
@@ -1506,6 +1511,7 @@ country_event = {	#Stage bosses visited Hakurei Shrine
 	
 	immediate = {
 		hidden_effect = {
+			th_incident_clr_terminate_flag = yes
 			set_global_flag = th_mountain_of_faith_incident_solved
 			clr_global_flag = th_active_incident
 			clr_country_flag = th_MOF_inci_about_to_get_final
@@ -1515,6 +1521,7 @@ country_event = {	#Stage bosses visited Hakurei Shrine
 				}
 				th_incident_increase_good_outcome_counter = yes
 			}
+			set_country_flag = th_solved_incident
 		}
 	}
 	
@@ -2473,6 +2480,7 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_incident_clr_terminate_flag = yes
 			set_global_flag = th_mountain_of_faith_incident_solved
 			clr_global_flag = th_active_incident
 		}
@@ -2517,6 +2525,7 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_incident_clr_terminate_flag = yes
 			set_global_flag = th_mountain_of_faith_incident_solved
 			clr_global_flag = th_active_incident
 		}
@@ -2738,5 +2747,79 @@ country_event = {
 		ai_chance = {
 			factor = 100
 		}
+	}
+}
+
+############################TERMINATION############################
+#Mountain of faith Incident - Bad Outcome
+country_event = {
+	id = th_incidents_mountainoffaith.100
+	title = "th_incidents_mountainoffaith.10.t"
+	desc = "th_incidents_mountainoffaith.10.desc"
+	picture = MOUNTAINOFFAITH_eventPicture
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_incident_clr_terminate_flag = yes
+			set_global_flag = th_mountain_of_faith_incident_solved
+			clr_global_flag = th_active_incident
+			set_global_flag = th_MOF_increased_center_duration
+			clr_country_flag = th_MOF_inci_about_to_get_final
+		}
+	}
+
+	major = yes
+	
+	option = {		#Well, I've done what I could.
+		name = "th_incidents_mountainoffaith.10.a"
+		custom_tooltip = th_incidents_mountainoffaith.10.a.tt
+		if = {
+			limit = {
+				exists = MRY
+			}
+			MRY = {
+				add_country_modifier = {
+					name = "th_MOF_unstoppable_trend_of_reformation"
+					duration = 1825
+				}
+			}
+		}
+		random_country = {
+			limit = {
+				capital_scope = {
+					superregion = gensokyo_superregion
+				}
+				th_has_a_religious_center = no
+				OR = {
+					religion = th_hakureishinto
+					religion = th_moriyashinto
+				}
+			}
+			th_create_random_center_of_reform = {
+				superregion = gensokyo_superregion
+				religion = th_moriyashinto
+			}
+		}
+		custom_tooltip = th_incidents_mountainoffaith_penalty_tt
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					capital_scope = {
+						superregion = gensokyo_superregion
+					}
+					NOT = { religion = th_moriyashinto }
+				}
+				add_country_modifier = {
+					name = th_MOF_undermined_authority
+					duration = 1825
+				}
+			}
+		}
+
+		add_adm_power = 100
+		add_prestige = -10
+		add_devotion = -10
 	}
 }

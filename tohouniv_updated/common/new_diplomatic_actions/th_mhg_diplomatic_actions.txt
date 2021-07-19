@@ -5,9 +5,11 @@ th_set_target_as_aggressor = {
 	require_acceptance = no
 
 	is_visible = {
-		is_free_or_tributary_trigger = yes
 		OR = {
-			tag = MHG
+			th_is_or_was_tag = { tag = MHG }
+			th_has_copied_from_target = {
+				target = MHG
+			}
 			has_reform = TH_puppet_master_reform
 		}
 		FROM = {
@@ -41,6 +43,23 @@ th_set_target_as_aggressor = {
 		custom_trigger_tooltip = {
 			tooltip = th_diplomacy_has_already_a_planned_aggressor
 			NOT = { has_country_flag = th_has_already_a_planned_aggressor }
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
 		}
 	}
 
@@ -97,7 +116,10 @@ th_provocate_war_against_target = {
 		dip_tech = 9
 		is_free_or_tributary_trigger = yes
 		OR = {
-			tag = MHG
+			th_is_or_was_tag = { tag = MHG }
+			th_has_copied_from_target = {
+				target = MHG
+			}
 			has_reform = TH_puppet_master_reform
 		}
 		FROM = {
@@ -136,6 +158,7 @@ th_provocate_war_against_target = {
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		country_event = {
 			id = th_diplo_events.1
 			days = 1
@@ -151,70 +174,6 @@ th_provocate_war_against_target = {
 			name = th_provocated_war
 			duration = 1825
 			hidden = yes	
-		}
-	}
-}
-
-th_break_vassal_alliance = {
-	category = th_diplo_action
-
-	require_acceptance = no
-
-	is_visible = {
-		FROM = {
-			is_subject_of = ROOT
-			OR = {
-				is_subject_of_type = th_yukari_daimyo 
-				is_subject_of_type = th_special_march 
-				is_subject_of_type = th_yukari_puppet_state
-			}
-		}
-	}
-
-	is_allowed = {
-		FROM = {
-			num_of_allies = 1
-			any_ally = {
-				is_subject = false
-			}
-		}
-	}
-
-	on_accept = {
-		FROM = {
-			every_ally = {
-				limit = {
-					is_subject = false
-				}
-				add_opinion = {
-					who = FROM
-					modifier = th_forced_alliance_break
-					years = 5
-				}
-				reverse_add_opinion = {
-					who = FROM
-					modifier = th_forced_alliance_break
-					years = 5
-				}
-				add_opinion = {
-					who = FROM
-					modifier = th_forced_alliance_break_2
-					years = 5
-				}
-				reverse_add_opinion = {
-					who = FROM
-					modifier = th_forced_alliance_break_2
-					years = 5
-				}
-			}
-			add_opinion = {
-				who = ROOT
-				modifier = th_overlord_forced_alliance_break				
-			}
-			add_country_modifier = {
-				name = th_alliance_breaker
-				duration = 365
-			}
 		}
 	}
 }
