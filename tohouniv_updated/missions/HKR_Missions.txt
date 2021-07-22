@@ -1,840 +1,3 @@
-hakurei_missions_discover_europe_slot = {
-	slot = 5
-	generic = no
-	ai = yes
-	potential = {
-		tag = HKR
-		NOT = { was_tag = OKR }
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-
-	HKR_form_the_hakurei_navy = {
-		icon = mission_rb_a_mighty_fleet
-		required_missions = {  }
-		trigger = {
-			num_of_total_ports = 20
-			navy_size_percentage = 0.9
-		}
-		effect = {
-			add_prestige = 15
-			add_country_modifier = {
-				name = "hkr_barrier_defender"
-				duration = 7300
-			}
-			define_explorer = {
-				shock = 2
-				fire = 3
-				manuever = 4
-				siege = 0
-				name = "Rin Satsuki"
-				female = yes
-			}
-		}
-	}
-	
-	HKR_beyond_the_barrier = {
-		icon = mission_establish_high_seas_navy
-		required_missions = { HKR_form_the_hakurei_navy }
-		position = 2
-		provinces_to_highlight = {
-			OR = {
-				region = moluccas_region
-				region = australia_region
-				region = indo_china_region
-			}
-			NOT = { has_discovered = ROOT }
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_break_the_barrier_tt
-				OR = {
-					moluccas_region = { has_discovered = ROOT }
-					australia_region = { has_discovered = ROOT }
-					indo_china_region = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			add_dip_power = 75
-			add_navy_tradition = 35
-			th_colonize_dev_province_for_root = {
-				province = 1995
-			}
-		}
-	}
-	
-	HKR_discover_europe = {
-		icon = mission_invade_england
-		required_missions = { HKR_beyond_the_barrier }
-		position = 3
-		provinces_to_highlight = {
-			OR = {
-				region = iberia_region
-				region = france_region
-				region = low_countries_region
-				region = british_isles_region
-			}
-			NOT = { has_discovered = ROOT }
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_discovers_europe.tooltip
-				OR = {
-					iberia_region = { has_discovered = ROOT }
-					france_region = { has_discovered = ROOT }
-					low_countries_region = { has_discovered = ROOT }
-					british_isles_region = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = "touhou_discovery_of_europe"
-				duration = 7300
-			}
-			country_event = { id = TH_mission_events.4 }			
-		}
-	}
-	
-	HKR_friendship_with_marisa = {
-		icon = mission_touhou_marisa
-		required_missions = {  }
-		position = 4
-		trigger = {
-			OR = {
-				AND = {
-					alliance_with = FOM
-					reverse_has_opinion = {
-						who = FOM
-						value = 125
-					}
-				}
-				is_rival = FOM
-				NOT = { exists = FOM }
-			}
-			is_year = 1445
-		}
-		effect = {
-			Forest_of_magic = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Forest_edge_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Forest_coast_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}			
-			if = {
-				limit = {
-					exists = FOM
-				}
-				country_event = {
-					id = flavor_hkr.17
-				}
-			}
-			else = {		
-				define_general = {
-					shock = 4
-					fire = 3
-					manuever = 3
-					siege = 0
-					name = "Red-White Witch"
-					female = yes
-					trait = glory_seeker_personality
-				}
-			}
-		}
-	}
-	
-	HKR_witch_trial = {
-		icon = mission_touhou_witch_trial
-		required_missions = { HKR_friendship_with_marisa }
-		position = 5
-		provinces_to_highlight = {
-			OR = {
-				province_id = 5090	#Marisa's Place
-				province_id = 5093	#Alice's Place
-				province_id = 5094	#Forest of Magic
-
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			OR = {
-				AND = {
-					owns_or_subject_of = 5090
-					owns_or_subject_of = 5093
-					owns_or_subject_of = 5094
-				}
-				NOT = { exists = FOM }
-				FOM = {
-					is_subject_of = ROOT
-				}
-				FOM = {
-					trust = {
-						who = ROOT
-						value = 90
-					}
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = hkr_harmony_with_marisa
-				duration = 7300
-			}
-			Mayohiga_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Ran_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Eastern_mountains = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			if = {
-				limit = {
-					exists = MHG
-				}
-				add_casus_belli = {
-					type = cb_vassalize_mission
-					target = MHG
-					months = 1200
-				}
-			}
-			if = {
-				limit = {
-					exists = FOM
-					FOM = {
-						is_subject_of = ROOT
-					}
-					OR = {
-						NOT = { historical_friend_with = FOM }
-						FOM = {
-							NOT = { historical_friend_with = ROOT }
-						}
-					}
-				}
-				add_historical_friend = FOM
-				FOM = {
-					add_historical_friend = ROOT
-				}
-			}
-		}
-	}
-}
-
-hakurei_missions_spellcard_system_slot = {
-	slot = 2
-	generic = no
-	ai = yes
-	potential = {
-		tag = HKR
-		NOT = { was_tag = OKR }
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-	
-	HKR_origins_of_the_hakurei_clan = {
-		icon = mission_touhou_old_reimu
-		required_missions = {  }
-		position = 1
-		trigger = {
-			adm_tech = 4
-			OR = {
-				advisor = inquisitor
-				advisor = theologian
-			}
-		}
-		effect = {
-			country_event = {
-				id = flavor_hkr.25
-			}
-		}
-	}
-	
-	HKR_touhou_2 = {
-		icon = mission_touhou_mima
-		required_missions = { HKR_origins_of_the_hakurei_clan }
-		position = 2
-		provinces_to_highlight = {
-			OR = {
-				owned_by = MIM
-				province_id = 5033
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			army_size = 30
-			if = {
-				limit = {
-					exists = MIM
-				}
-				OR = {
-					war_with = MIM
-					alliance_with = MIM
-					MIM = {
-						is_subject_of = ROOT
-					}
-				}
-			}
-			else = {
-				5033 = {
-					controller = {
-						OR = {
-							tag = ROOT
-							is_subject_of = ROOT
-						}
-					}
-				}
-			}
-		}
-		effect = {
-			country_event = {
-				id = flavor_hkr.27
-			}
-		}
-	}
-	
-	HKR_touhou_3 = {
-		icon = mission_touhou_yumemi
-		required_missions = { HKR_touhou_2 }
-		position = 3
-		trigger = {
-			government_reform_progress = 50
-			has_institution = renaissance
-			adm_tech = 6
-			if = {
-				limit = {
-					exists = YUM
-				}
-				has_opinion = {
-					who = ROOT
-					value = 75
-				}
-			}
-			else = {
-				5301 = {
-					controller = {
-						OR = {
-							tag = ROOT
-							is_subject_of = ROOT
-						}
-					}
-				}
-			}
-		}
-		effect = {
-			country_event = {
-				id = flavor_hkr.28
-			}
-			add_country_modifier = {
-				name = hkr_ruukoto_robot
-				duration = 18250
-			}
-			Sunny_plains = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Perfect_cut_coast = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	HKR_touhou_4 = {
-		icon = mission_touhou_yuuka_ominous
-		required_missions = { HKR_touhou_3 }
-		position = 4
-		provinces_to_highlight = {
-			OR = {
-				province_id = 5152
-				province_id = 5156
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			owns_or_non_sovereign_subject_of = 5152
-			owns_or_non_sovereign_subject_of = 5156
-		}
-		effect = {
-			country_event = {
-				id = flavor_hkr.29
-			}
-			add_country_modifier = {
-				name = hkr_dream_lotus
-				duration = -1
-			}
-		}
-	}
-	
-	HKR_touhou_5 = {
-		icon = mission_touhou_shinki
-		required_missions = { HKR_touhou_4 }
-		position = 5
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = HKR_touhou_5_tt
-				has_country_flag = hkr_won_against_konngara
-				has_country_flag = hkr_won_against_mima
-				has_country_flag = hkr_won_against_yumemi
-				has_country_flag = hkr_won_against_yuuka
-			}
-			OR = {
-				has_personal_deity = Shinki
-				NOT = { exists = MKI }
-				alliance_with = MKI
-				is_rival = MKI
-			}
-			government_rank = 2
-		}
-		effect = {
-			country_event = {
-				id = flavor_hkr.30
-			}
-			add_country_modifier = {
-				name = hkr_gift_of_shinki
-				duration = -1
-			}
-		}
-	}
-
-	HKR_epilogue = {
-		icon = mission_touhou_old_and_new_reimu
-		required_missions = { HKR_touhou_5 }
-		position = 6
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = HKR_epilogue_tt
-				has_country_flag = hkr_won_against_shinki
-			}
-		}
-		effect = {
-			country_event = {
-				id = flavor_hkr.31
-			}
-		}
-	}
-}
-
-hakurei_missions_many_visitors_slot = {
-	slot = 3
-	generic = no
-	ai = yes
-	potential = {
-		tag = HKR
-		NOT = { was_tag = OKR }
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-
-	HKR_sell_land_to_the_estates = {
-		icon = mission_touhou_hkr_estate
-		required_missions = {  }
-		position = 1
-		trigger = {
-			OR = {
-				AND = {
-					has_disaster = th_cursed_donation_box
-					NOT = { crown_land_share = 15 }
-				}
-				AND = {
-					crown_land_share = 40
-					NOT = { has_disaster = th_cursed_donation_box }
-				}
-			}
-			is_year = 1445
-		}
-		effect = {
-			custom_tooltip = HKR_sell_land_to_the_estates_tt
-			hidden_effect = {
-				if = {
-					limit = {
-						crown_land_share = 40
-					}
-					add_country_modifier = {
-						name = hkr_reimu_and_the_crownland
-						duration = 7300
-					}
-				}
-				else = {
-					add_country_modifier = {
-						name = hkr_reimu_and_the_estates
-						duration = 7300
-					}
-				}
-			}
-		}
-	}
-	
-	HKR_genji_the_turtle = {
-		icon = mission_touhou_genji_needs_healing
-		required_missions = {  }
-		position = 2
-		provinces_to_highlight = {
-			province_id = 5134
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			owner = {
-				NOT = {
-					has_opinion = {
-						who = ROOT
-						value = 115
-					}
-				}
-			}
-		}
-		trigger = {
-			5134 = {
-				OR = {
-					country_or_non_sovereign_subject_holds = ROOT
-					owner = {
-						has_opinion = {
-							who = ROOT
-							value = 115
-						}
-					}
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = hkr_genji_the_defender
-				duration = 7300
-			}
-		}
-	}
-	
-	HKR_harness_shions_power = {
-		icon = mission_touhou_shion
-		required_missions = { HKR_genji_the_turtle }
-		position = 3
-		trigger = {
-			any_rival_country = {
-				has_spy_network_from = {
-					who = ROOT
-					value = 45
-				}
-				has_been_insulted_by_root = yes
-			}
-		}
-		effect = {
-			custom_tooltip = HKR_harness_shions_power_tt
-			country_event = {
-				id = flavor_hkr.8
-			}
-		}
-	}
-	
-	HKR_please_aunn = {
-		icon = mission_touhou_aunn
-		required_missions = { HKR_harness_shions_power }
-		position = 4
-		provinces_to_highlight = {
-			OR = {
-				province_id = 4955
-				province_id = 4956
-			}
-			NOT = { is_core = ROOT }
-			NOT = { owned_by = ROOT }
-		}
-		trigger = {
-			home_trade_node = {
-				trade_share = {
-					country = ROOT
-					share = 75
-				}
-			}
-			owns_core_province = 4955
-			owns_core_province = 4956
-		}
-		effect = {
-			4955 = {
-				add_permanent_province_modifier = {
-					name = hkr_happy_aunn
-					duration = -1
-				}
-			}
-			4956 = {
-				add_permanent_province_modifier = {
-					name = hkr_happy_aunn
-					duration = -1
-				}
-			}
-		}
-	}
-}
-
-hakurei_missions_handle_the_curse_slot = {
-	slot = 4
-	generic = no
-	ai = yes
-	potential = {
-		tag = HKR
-		NOT = { was_tag = OKR }
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-
-	HKR_build_connections = {
-		icon = mission_touhou_build_connections
-		required_missions = {  }
-		position = 1
-		trigger = {
-			has_estate_privilege = estate_church_religious_state
-		}
-		effect = {
-			th_enable_youkai_hunt_effect = yes
-			add_country_modifier = {
-				name = "influential_diplomacy"
-				duration = 7300 #20 years
-			}
-		}
-	}
-
-	HKR_youkai_hunter = {
-		icon = mission_touhou_youkai_exterminator
-		required_missions = { 
-			HKR_sell_land_to_the_estates
-			HKR_build_connections
-		}
-		position = 2
-		provinces_to_highlight = {
-			OR = {
-				province_id = 4978
-				province_id = 5145
-				province_id = 4993
-			}
-			owner = {
-				NOT = { tag = ROOT }
-				NOT = { has_country_flag = th_has_already_youkai_hunted }
-			}
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = HKR_youkai_hunter_tt
-				#Human Capital
-				4978 = {
-					owner = {
-						OR = {
-							tag = ROOT
-							has_country_flag = th_has_already_youkai_hunted
-						}
-					}
-				}
-				#Lingering Snow Road
-				5145 = {
-					owner = {
-						OR = {
-							tag = ROOT
-							has_country_flag = th_has_already_youkai_hunted
-						}
-					}
-				}
-				#Tewi's Rabbit Hole
-				4993 = {
-					owner = {
-						OR = {
-							tag = ROOT
-							has_country_flag = th_has_already_youkai_hunted
-						}
-					}
-				}
-			}
-		}
-		effect = {
-			4955 = {
-				th_add_manufactory = yes
-			}
-			4956 = {
-				th_add_manufactory = yes
-			}
-		}
-	}
-
-	HKR_explore_eastern_indian_ocean = {
-		icon = mission_galleys_in_port
-		required_missions = { HKR_beyond_the_barrier }
-		position = 3
-		provinces_to_highlight = {
-			OR = {
-				area = western_indian_ocean_area
-				area = south_indian_ocean_area
-				area = eastern_indian_ocean_area
-			}
-			NOT = { has_discovered = ROOT }
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = HKR_explore_eastern_indian_ocean_tt
-				OR = {
-					western_indian_ocean_area = { has_discovered = ROOT }
-					south_indian_ocean_area = { has_discovered = ROOT }
-					eastern_indian_ocean_area = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = hkr_search_for_gold
-				duration = 9125
-			}
-			th_colonize_dev_province_for_root = {
-				province = 1998
-			}
-		}
-	}
-
-	HKR_create_trade_colonies = {
-		icon = mission_establish_high_seas_navy
-		required_missions = { HKR_explore_eastern_indian_ocean }
-		position = 4
-
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = trade_company_region_abroad_tooltip
-				calc_true_if = {
-					all_trade_node = {
-						calc_true_if = {
-							all_trade_node_member_province = {
-								owned_by = ROOT
-								is_node_in_trade_company_region = yes
-								NOT = { continent = CAPITAL }
-							}
-							amount = 5
-						}
-					}
-					amount = 3
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = "east_india_trade_rush"
-				duration = 9125 #25 years
-			}
-		}
-	}
-
-	HKR_produce_your_own_gold = {
-		icon = mission_war_chest
-		required_missions = { HKR_create_trade_colonies }
-		position = 5
-		provinces_to_highlight = {
-			th_has_valuable_resource = yes
-			NOT = { owned_by = ROOT }
-			NOT = { is_core = ROOT }
-			NOT = { continent = north_america }
-			NOT = { continent = south_america }
-			NOT = { continent = moon_continent }
-			NOT = { continent = gensokyo_continent }
-			NOT = { colonial_region = colonial_australia }
-			NOT = { continent = new_world }
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = HKR_produce_your_own_gold_tt
-				any_owned_province = {
-					is_core = ROOT
-					th_has_valuable_resource = yes
-					NOT = { continent = north_america }
-					NOT = { continent = south_america }
-					NOT = { continent = moon_continent }
-					NOT = { continent = gensokyo_continent }
-					NOT = { colonial_region = colonial_australia }
-					NOT = { continent = new_world }
-					OR = {
-						has_building = temple
-						has_building = cathedral
-					}
-				}
-			}
-		}
-		effect = {
-			add_years_of_income = 2
-			if = {
-				limit = {
-					any_owned_province = {
-						is_core = ROOT
-						th_has_valuable_resource = yes
-						NOT = { continent = north_america }
-						NOT = { continent = south_america }
-						NOT = { continent = moon_continent }
-						NOT = { continent = gensokyo_continent }
-						NOT = { colonial_region = colonial_australia }
-						NOT = { continent = new_world }
-						OR = {
-							has_building = temple
-							has_building = cathedral
-						}
-					}
-				}
-				random_owned_province = {
-					limit = {
-						is_core = ROOT
-						th_has_valuable_resource = yes
-						NOT = { continent = north_america }
-						NOT = { continent = south_america }
-						NOT = { continent = moon_continent }
-						NOT = { continent = gensokyo_continent }
-						NOT = { colonial_region = colonial_australia }
-						NOT = { continent = new_world }
-						OR = {
-							has_building = temple
-							has_building = cathedral
-						}
-					}
-					add_base_tax = 4
-					add_base_production = 4
-					add_base_manpower = 2
-					change_religion = ROOT
-					add_local_autonomy = -100
-					add_permanent_province_modifier = {
-						name = hkr_potosis_silver_mine
-						duration = -1
-					}
-				}
-			}
-			else = {
-				custom_tooltip = HKR_produce_your_own_gold_ct
-			}
-		}
-	}
-}
-
 hakurei_missions_incidents_slot = {
 	slot = 1
 	generic = no
@@ -850,6 +13,7 @@ hakurei_missions_incidents_slot = {
 	HKR_gensokyos_investigator = {
 		icon = mission_touhou_hkr_1_incidents
 		required_missions = {  }
+		position = 1
 		trigger = {
 			OR = {
 				custom_trigger_tooltip = {
@@ -1110,6 +274,206 @@ hakurei_missions_internal_slot = {
 				hidden_effect = {
 					set_country_flag = hkr_appealed_hakurei_god
 				}
+			}
+		}
+	}
+}
+
+hakurei_missions_spellcard_system_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = HKR
+		NOT = { was_tag = OKR }
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	HKR_origins_of_the_hakurei_clan = {
+		icon = mission_touhou_old_reimu
+		required_missions = {  }
+		position = 1
+		trigger = {
+			adm_tech = 4
+			OR = {
+				advisor = inquisitor
+				advisor = theologian
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_hkr.25
+			}
+		}
+	}
+	
+	HKR_touhou_2 = {
+		icon = mission_touhou_mima
+		required_missions = { HKR_origins_of_the_hakurei_clan }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				owned_by = MIM
+				province_id = 5033
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			army_size = 30
+			if = {
+				limit = {
+					exists = MIM
+				}
+				OR = {
+					war_with = MIM
+					alliance_with = MIM
+					MIM = {
+						is_subject_of = ROOT
+					}
+				}
+			}
+			else = {
+				5033 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_hkr.27
+			}
+		}
+	}
+	
+	HKR_touhou_3 = {
+		icon = mission_touhou_yumemi
+		required_missions = { HKR_touhou_2 }
+		position = 3
+		trigger = {
+			government_reform_progress = 50
+			has_institution = renaissance
+			adm_tech = 6
+			if = {
+				limit = {
+					exists = YUM
+				}
+				has_opinion = {
+					who = ROOT
+					value = 75
+				}
+			}
+			else = {
+				5301 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_hkr.28
+			}
+			add_country_modifier = {
+				name = hkr_ruukoto_robot
+				duration = 18250
+			}
+			Sunny_plains = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Perfect_cut_coast = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	HKR_touhou_4 = {
+		icon = mission_touhou_yuuka_ominous
+		required_missions = { HKR_touhou_3 }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5152
+				province_id = 5156
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 5152
+			owns_or_non_sovereign_subject_of = 5156
+		}
+		effect = {
+			country_event = {
+				id = flavor_hkr.29
+			}
+			add_country_modifier = {
+				name = hkr_dream_lotus
+				duration = -1
+			}
+		}
+	}
+	
+	HKR_touhou_5 = {
+		icon = mission_touhou_shinki
+		required_missions = { HKR_touhou_4 }
+		position = 5
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = HKR_touhou_5_tt
+				has_country_flag = hkr_won_against_konngara
+				has_country_flag = hkr_won_against_mima
+				has_country_flag = hkr_won_against_yumemi
+				has_country_flag = hkr_won_against_yuuka
+			}
+			OR = {
+				has_personal_deity = Shinki
+				NOT = { exists = MKI }
+				alliance_with = MKI
+				is_rival = MKI
+			}
+			government_rank = 2
+		}
+		effect = {
+			country_event = {
+				id = flavor_hkr.30
+			}
+			add_country_modifier = {
+				name = hkr_gift_of_shinki
+				duration = -1
+			}
+		}
+	}
+
+	HKR_epilogue = {
+		icon = mission_touhou_old_and_new_reimu
+		required_missions = { HKR_touhou_5 }
+		position = 6
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = HKR_epilogue_tt
+				has_country_flag = hkr_won_against_shinki
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_hkr.31
 			}
 		}
 	}
@@ -1393,6 +757,158 @@ hakurei_missions_rivalry_slot = {
 			add_country_modifier = {
 				name = hkr_hakurei_domination
 				duration = -1
+			}
+		}
+	}
+}
+
+hakurei_missions_many_visitors_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = HKR
+		NOT = { was_tag = OKR }
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	HKR_sell_land_to_the_estates = {
+		icon = mission_touhou_hkr_estate
+		required_missions = {  }
+		position = 1
+		trigger = {
+			OR = {
+				AND = {
+					has_disaster = th_cursed_donation_box
+					NOT = { crown_land_share = 15 }
+				}
+				AND = {
+					crown_land_share = 40
+					NOT = { has_disaster = th_cursed_donation_box }
+				}
+			}
+			is_year = 1445
+		}
+		effect = {
+			custom_tooltip = HKR_sell_land_to_the_estates_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						crown_land_share = 40
+					}
+					add_country_modifier = {
+						name = hkr_reimu_and_the_crownland
+						duration = 7300
+					}
+				}
+				else = {
+					add_country_modifier = {
+						name = hkr_reimu_and_the_estates
+						duration = 7300
+					}
+				}
+			}
+		}
+	}
+	
+	HKR_genji_the_turtle = {
+		icon = mission_touhou_genji_needs_healing
+		required_missions = {  }
+		position = 2
+		provinces_to_highlight = {
+			province_id = 5134
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			owner = {
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = 115
+					}
+				}
+			}
+		}
+		trigger = {
+			5134 = {
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						has_opinion = {
+							who = ROOT
+							value = 115
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = hkr_genji_the_defender
+				duration = 7300
+			}
+		}
+	}
+	
+	HKR_harness_shions_power = {
+		icon = mission_touhou_shion
+		required_missions = { HKR_genji_the_turtle }
+		position = 3
+		trigger = {
+			if = {
+				limit = {
+					not = { total_development = 1000 }
+				}
+				any_rival_country = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 45
+					}
+					has_been_insulted_by_root = yes
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = HKR_harness_shions_power_tt
+			country_event = {
+				id = flavor_hkr.8
+			}
+		}
+	}
+	
+	HKR_please_aunn = {
+		icon = mission_touhou_aunn
+		required_missions = { HKR_harness_shions_power }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4955
+				province_id = 4956
+			}
+			NOT = { is_core = ROOT }
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			home_trade_node = {
+				trade_share = {
+					country = ROOT
+					share = 75
+				}
+			}
+			owns_core_province = 4955
+			owns_core_province = 4956
+		}
+		effect = {
+			4955 = {
+				add_permanent_province_modifier = {
+					name = hkr_happy_aunn
+					duration = -1
+				}
+			}
+			4956 = {
+				add_permanent_province_modifier = {
+					name = hkr_happy_aunn
+					duration = -1
+				}
 			}
 		}
 	}
@@ -1758,6 +1274,243 @@ hakurei_missions_empire_slot = {
 	}
 }
 
+hakurei_missions_handle_the_curse_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = HKR
+		NOT = { was_tag = OKR }
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	HKR_build_connections = {
+		icon = mission_touhou_build_connections
+		required_missions = {  }
+		position = 1
+		trigger = {
+			has_estate_privilege = estate_church_religious_state
+		}
+		effect = {
+			th_enable_youkai_hunt_effect = yes
+			add_country_modifier = {
+				name = "influential_diplomacy"
+				duration = 7300 #20 years
+			}
+		}
+	}
+
+	HKR_youkai_hunter = {
+		icon = mission_touhou_youkai_exterminator
+		required_missions = { 
+			HKR_sell_land_to_the_estates
+			HKR_build_connections
+		}
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4978
+				province_id = 5145
+				province_id = 4993
+			}
+			owner = {
+				NOT = { tag = ROOT }
+				NOT = { has_country_flag = th_has_already_youkai_hunted }
+			}
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = HKR_youkai_hunter_tt
+				#Human Capital
+				4978 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							has_country_flag = th_has_already_youkai_hunted
+						}
+					}
+				}
+				#Lingering Snow Road
+				5145 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							has_country_flag = th_has_already_youkai_hunted
+						}
+					}
+				}
+				#Tewi's Rabbit Hole
+				4993 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							has_country_flag = th_has_already_youkai_hunted
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			4955 = {
+				th_add_manufactory = yes
+			}
+			4956 = {
+				th_add_manufactory = yes
+			}
+		}
+	}
+
+	HKR_explore_eastern_indian_ocean = {
+		icon = mission_galleys_in_port
+		required_missions = { HKR_beyond_the_barrier }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				area = western_indian_ocean_area
+				area = south_indian_ocean_area
+				area = eastern_indian_ocean_area
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = HKR_explore_eastern_indian_ocean_tt
+				OR = {
+					western_indian_ocean_area = { has_discovered = ROOT }
+					south_indian_ocean_area = { has_discovered = ROOT }
+					eastern_indian_ocean_area = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = hkr_search_for_gold
+				duration = 9125
+			}
+			th_colonize_dev_province_for_root = {
+				province = 1998
+			}
+		}
+	}
+
+	HKR_create_trade_colonies = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { HKR_explore_eastern_indian_ocean }
+		position = 4
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = trade_company_region_abroad_tooltip
+				calc_true_if = {
+					all_trade_node = {
+						calc_true_if = {
+							all_trade_node_member_province = {
+								owned_by = ROOT
+								is_node_in_trade_company_region = yes
+								NOT = { continent = CAPITAL }
+							}
+							amount = 5
+						}
+					}
+					amount = 3
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "east_india_trade_rush"
+				duration = 9125 #25 years
+			}
+		}
+	}
+
+	HKR_produce_your_own_gold = {
+		icon = mission_war_chest
+		required_missions = { HKR_create_trade_colonies }
+		position = 5
+		provinces_to_highlight = {
+			th_has_valuable_resource = yes
+			NOT = { owned_by = ROOT }
+			NOT = { is_core = ROOT }
+			NOT = { continent = north_america }
+			NOT = { continent = south_america }
+			NOT = { continent = moon_continent }
+			NOT = { continent = gensokyo_continent }
+			NOT = { colonial_region = colonial_australia }
+			NOT = { continent = new_world }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = HKR_produce_your_own_gold_tt
+				any_owned_province = {
+					is_core = ROOT
+					th_has_valuable_resource = yes
+					NOT = { continent = north_america }
+					NOT = { continent = south_america }
+					NOT = { continent = moon_continent }
+					NOT = { continent = gensokyo_continent }
+					NOT = { colonial_region = colonial_australia }
+					NOT = { continent = new_world }
+					OR = {
+						has_building = temple
+						has_building = cathedral
+					}
+				}
+			}
+		}
+		effect = {
+			add_years_of_income = 2
+			if = {
+				limit = {
+					any_owned_province = {
+						is_core = ROOT
+						th_has_valuable_resource = yes
+						NOT = { continent = north_america }
+						NOT = { continent = south_america }
+						NOT = { continent = moon_continent }
+						NOT = { continent = gensokyo_continent }
+						NOT = { colonial_region = colonial_australia }
+						NOT = { continent = new_world }
+						OR = {
+							has_building = temple
+							has_building = cathedral
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						is_core = ROOT
+						th_has_valuable_resource = yes
+						NOT = { continent = north_america }
+						NOT = { continent = south_america }
+						NOT = { continent = moon_continent }
+						NOT = { continent = gensokyo_continent }
+						NOT = { colonial_region = colonial_australia }
+						NOT = { continent = new_world }
+						OR = {
+							has_building = temple
+							has_building = cathedral
+						}
+					}
+					add_base_tax = 4
+					add_base_production = 4
+					add_base_manpower = 2
+					change_religion = ROOT
+					add_local_autonomy = -100
+					add_permanent_province_modifier = {
+						name = hkr_potosis_silver_mine
+						duration = -1
+					}
+				}
+			}
+			else = {
+				custom_tooltip = HKR_produce_your_own_gold_ct
+			}
+		}
+	}
+}
+
 hakurei_missions_expand_shintoism_slot = {
 	slot = 4
 	generic = no
@@ -2010,6 +1763,260 @@ hakurei_missions_expand_shintoism_slot = {
 			add_country_modifier = {
 				name = hkr_pacified_estates
 				duration = -1
+			}
+		}
+	}
+}
+
+hakurei_missions_discover_europe_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = HKR
+		NOT = { was_tag = OKR }
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	HKR_form_the_hakurei_navy = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
+		position = 1
+		trigger = {
+			num_of_total_ports = 20
+			navy_size_percentage = 0.9
+		}
+		effect = {
+			add_prestige = 15
+			add_country_modifier = {
+				name = "hkr_barrier_defender"
+				duration = 7300
+			}
+			define_explorer = {
+				shock = 2
+				fire = 3
+				manuever = 4
+				siege = 0
+				name = "Rin Satsuki"
+				female = yes
+			}
+		}
+	}
+	
+	HKR_beyond_the_barrier = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { HKR_form_the_hakurei_navy }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+			th_colonize_dev_province_for_root = {
+				province = 1995
+			}
+		}
+	}
+	
+	HKR_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { HKR_beyond_the_barrier }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
+			}
+			country_event = { id = TH_mission_events.4 }			
+		}
+	}
+	
+	HKR_friendship_with_marisa = {
+		icon = mission_touhou_marisa
+		required_missions = {  }
+		position = 4
+		trigger = {
+			OR = {
+				AND = {
+					alliance_with = FOM
+					reverse_has_opinion = {
+						who = FOM
+						value = 125
+					}
+				}
+				is_rival = FOM
+				NOT = { exists = FOM }
+			}
+			is_year = 1445
+		}
+		effect = {
+			Forest_of_magic = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Forest_edge_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Forest_coast_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}			
+			if = {
+				limit = {
+					exists = FOM
+				}
+				country_event = {
+					id = flavor_hkr.17
+				}
+			}
+			else = {		
+				define_general = {
+					shock = 4
+					fire = 3
+					manuever = 3
+					siege = 0
+					name = "Red-White Witch"
+					female = yes
+					trait = glory_seeker_personality
+				}
+			}
+		}
+	}
+	
+	HKR_witch_trial = {
+		icon = mission_touhou_witch_trial
+		required_missions = { HKR_friendship_with_marisa }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5090	#Marisa's Place
+				province_id = 5093	#Alice's Place
+				province_id = 5094	#Forest of Magic
+
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					owns_or_subject_of = 5090
+					owns_or_subject_of = 5093
+					owns_or_subject_of = 5094
+				}
+				NOT = { exists = FOM }
+				FOM = {
+					is_subject_of = ROOT
+				}
+				FOM = {
+					trust = {
+						who = ROOT
+						value = 90
+					}
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = hkr_harmony_with_marisa
+				duration = 7300
+			}
+			Mayohiga_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Ran_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_mountains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = MHG
+				}
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = MHG
+					months = 1200
+				}
+			}
+			if = {
+				limit = {
+					exists = FOM
+					FOM = {
+						is_subject_of = ROOT
+					}
+					OR = {
+						NOT = { historical_friend_with = FOM }
+						FOM = {
+							NOT = { historical_friend_with = ROOT }
+						}
+					}
+				}
+				add_historical_friend = FOM
+				FOM = {
+					add_historical_friend = ROOT
+				}
 			}
 		}
 	}
