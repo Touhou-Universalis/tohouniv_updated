@@ -87,13 +87,33 @@ country_event = {
 		name = th_states_flavor_con.1.a
 		
 		add_years_of_income = 1
+<<<<<<< Updated upstream
 		add_estate_loyalty = {
 			estate = estate_rival
+=======
+		if = {
+			limit = {
+				th_states_rival_is_in_rage = yes
+			}
+			random_list = {
+				33 = {
+					kill_ruler = yes
+				}
+				67 = {
+				}
+			}
+		}
+		th_add_rival_estate_loyalty = {
+>>>>>>> Stashed changes
 			loyalty = -5
 		}
-		
+
 		ai_chance = { 
 			factor = 50
+			modifier = {
+				factor = 0
+				th_states_rival_is_in_rage = yes
+			}
 		}
 	}
 	
@@ -146,6 +166,9 @@ province_event = {
 		add_province_modifier = {
 			name = th_states_local_workers_are_upset
 			duration = 1095
+		}
+		owner = {
+			change_statists_vs_orangists = -0.1
 		}
 	}
 }
@@ -236,6 +259,9 @@ province_event = {
 			name = th_states_local_supporters_upset
 			duration = 1095
 		}
+		owner = {
+			change_statists_vs_orangists = -0.1
+		}
 	}
 }
 
@@ -274,6 +300,9 @@ province_event = {
 		add_province_modifier = {
 			name = th_states_local_merchants_upset
 			duration = 1095
+		}
+		owner = {
+			change_statists_vs_orangists = 0.1
 		}
 	}
 }
@@ -316,6 +345,7 @@ country_event = {
 				duration = 1095
 			}
 		}
+		change_statists_vs_orangists = 0.1
 	}
 }
 
@@ -356,54 +386,150 @@ country_event = {
 	
 	trigger = {
 		th_has_touhou_estates = yes
+		OR = {
+			had_country_flag = {
+				flag = th_rival_visits_cd
+				days = 1095
+			}
+			NOT = { has_country_flag = th_rival_visits_cd }
+		}
+		NOT = { has_country_flag = th_is_visiting_your_rival }
 	}
 	
 	mean_time_to_happen = {
-		days = 1460
-	}
-	
-	option = {	#Show her our ruling skill
-		name = th_states_flavor_con.8.a
-		custom_tooltip = th_states_flavor_con.8.a.tt
-		
-		change_statists_vs_orangists = 0.20
-		
-		ai_chance = { 
-			factor = 100
-			modifier = {
-				factor = 0
-				statists_vs_orangists = 0.33
+		days = 365
+		modifier = {
+			factor = 0.01
+			had_country_flag = {
+				flag = th_rival_visits_cd
+				days = 2190				
 			}
 		}
 	}
 	
-	option = {	#Ask her for some support
+	immediate = {
+		if = {
+			limit = {
+				has_country_flag = th_rival_visits_cd
+			}
+			clr_country_flag = th_rival_visits_cd
+		}
+		set_country_flag = th_is_visiting_your_rival
+	}
+
+	after = {
+		set_country_flag = th_rival_visits_cd
+		clr_country_flag = th_is_visiting_your_rival
+	}
+
+	option = {	#Welcome her with feast
+		name = th_states_flavor_con.8.a
+		custom_tooltip = th_states_flavor_con.8.a.tt
+		trigger = {
+			is_in_deficit = no
+			is_bankrupt = no
+			NOT = { num_of_loans = 1 }
+		}
+		add_years_of_income = -2
+		th_add_rival_estate_loyalty = {
+			loyalty = 10
+		}
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0.01
+				NOT = { years_of_income = 2 }
+			}
+			modifier = {
+				factor = 5
+				th_states_rival_is_in_rage = yes
+			}
+		}
+	}
+	
+	option = {	#Invite her to hang out
 		name = th_states_flavor_con.8.b
 		custom_tooltip = th_states_flavor_con.8.b.tt
 		
-		change_statists_vs_orangists = -0.20
+		hidden_effect = {
+			country_event = {
+				id = th_states_flavor_date.1
+			}
+		}
 		
 		ai_chance = { 
 			factor = 100
-			modifier = {
-				factor = 0
-				NOT = { statists_vs_orangists = -0.33 }
-			}
 		}
 	}
 	
-	option = {	#And? How was the weather?
+	option = {	#Challenge her danmaku duel
 		name = th_states_flavor_con.8.c
 		custom_tooltip = th_states_flavor_con.8.c.tt
 		
-		add_prestige = 5
+		hidden_effect = {
+			country_event = {
+				id = th_states_flavor_con.39
+			}
+		}
 		
 		ai_chance = { 
 			factor = 100
+		}
+	}
+
+	option = {  #Show strength--Invite her to visit your army
+		name = th_states_flavor_con.8.d
+		custom_tooltip = th_states_flavor_con.8.d.tt
+		change_statists_vs_orangists = 0.20
+		add_prestige = 15
+		random_list = {
+			50 = {
+				th_add_rival_estate_loyalty = {
+					loyalty = -2
+				}
+			}
+			50 = {
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0.5
+				prestige = 50
+			}
 			modifier = {
 				factor = 0
-				th_states_struggle_is_balanced = no
+				prestige = 90
+			}			
+			modifier = {
+				factor = 0
+				th_states_rival_is_in_rage = yes
+			}			
+		}
+	}
+
+	option = {  #Tell her I'm not at home!
+		name = th_states_flavor_con.8.e
+		custom_tooltip = th_states_flavor_con.8.e.tt
+		change_statists_vs_orangists = -0.20
+		random_list = {
+			50 = {
+				th_add_rival_estate_loyalty = {
+					loyalty = -2
+				}
 			}
+			50 = {
+			}
+		}
+
+		ai_chance = { 
+			factor = 100		
+			modifier = {
+				factor = 0
+				th_states_rival_is_in_rage = yes
+			}			
 		}
 	}
 }
@@ -460,48 +586,230 @@ country_event = {
 		clr_country_flag = th_is_visiting_your_rival
 	}
 	
-	option = {	#Show her our ruling skill
+	option = {	#Challenge her danmaku fight
 		name = th_states_flavor_con.9.a
 		custom_tooltip = th_states_flavor_con.9.a.tt
 		
-		change_statists_vs_orangists = 0.20
+		hidden_effect = {
+			country_event = {
+				id = th_states_flavor_con.39
+			}
+		}
 		
 		ai_chance = { 
 			factor = 100
-			modifier = {
-				factor = 0
-				statists_vs_orangists = 0.33
-			}
 		}
 	}
 	
-	option = {	#Ask her for some support
+	option = {	#Send her gift-Mokou
 		name = th_states_flavor_con.9.b
 		custom_tooltip = th_states_flavor_con.9.b.tt
-		
-		change_statists_vs_orangists = -0.20
-		
+		trigger = {
+			has_reform = Gensokyan_mokou_states_reform
+		}
+
+		add_years_of_income = -2
+		th_add_rival_estate_loyalty = {
+			loyalty = 10
+		}
+
 		ai_chance = { 
 			factor = 100
 			modifier = {
 				factor = 0
-				NOT = { statists_vs_orangists = -0.33 }
+				th_states_rival_is_happy = yes
 			}
 		}
 	}
 	
-	option = {	#And? How was the weather?
+	option = {	#Send her gift-Kaguya
 		name = th_states_flavor_con.9.c
 		custom_tooltip = th_states_flavor_con.9.c.tt
-		
-		add_prestige = 5
-		
+		trigger = {
+			has_reform = Gensokyan_kaguya_states_reform
+		}
+
+		add_years_of_income = -2
+		th_add_rival_estate_loyalty = {
+			loyalty = 10
+		}
+
 		ai_chance = { 
 			factor = 100
 			modifier = {
 				factor = 0
-				th_states_struggle_is_balanced = no
+				th_states_rival_is_happy = yes
 			}
+		}
+	}	
+
+	option = {	#Invite her to hang out
+		name = th_states_flavor_con.9.d
+		custom_tooltip = th_states_flavor_con.9.d.tt
+		
+		hidden_effect = {
+			country_event = {
+				id = th_states_flavor_date.1
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	option = { # Request cash support-Mokou
+		name = th_states_flavor_con.9.e
+		custom_tooltip = th_states_flavor_con.9.e.tt
+		trigger = {
+			has_reform = Gensokyan_mokou_states_reform
+			estate_loyalty = {
+				estate = estate_rival_kaguya
+				loyalty = 40
+			}
+		}
+		add_years_of_income = 1
+		th_add_rival_estate_loyalty = {
+			loyalty = -10
+		}
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = { # Request cash support-Kaguya
+		name = th_states_flavor_con.9.f
+		custom_tooltip = th_states_flavor_con.9.f.tt
+		trigger = {
+			has_reform = Gensokyan_kaguya_states_reform
+			estate_loyalty = {
+				estate = estate_rival_mokou
+				loyalty = 40
+			}
+		}
+		add_years_of_income = 1
+		th_add_rival_estate_loyalty = {
+			loyalty = -10
+		}
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = { #Ask for advisor support-Mokou
+		name = th_states_flavor_con.9.g
+		custom_tooltip = th_states_flavor_con.9.g.tt
+		trigger = {
+			has_reform = Gensokyan_mokou_states_reform
+			estate_loyalty = {
+				estate = estate_rival_kaguya
+				loyalty = 50
+			}
+		}
+		define_advisor = {
+			type = diplomat
+			culture = Eientei
+			religion = ROOT
+			skill = 3
+			cost_multiplier = 0.25
+		}
+		th_add_rival_estate_loyalty = {
+			loyalty = -15
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	option = { #Ask for general support-Kaguya
+		name = th_states_flavor_con.9.h
+		custom_tooltip = th_states_flavor_con.9.h.tt
+		trigger = {
+			has_reform = Gensokyan_kaguya_states_reform
+			estate_loyalty = {
+				estate = estate_rival_mokou
+				loyalty = 50
+			}
+		}
+		create_general = {
+			tradition = 70
+		}
+		th_add_rival_estate_loyalty = {
+			loyalty = -15
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	option = { #Ask for diplo support-Mokou
+		name = th_states_flavor_con.9.i
+		custom_tooltip = th_states_flavor_con.9.i.tt
+		trigger = {
+			has_reform = Gensokyan_mokou_states_reform
+			estate_loyalty = {
+				estate = estate_rival_kaguya
+				loyalty = 60
+			}
+		}
+		add_country_modifier = {
+			name = th_states_kaguyas_edict
+			duration = 3650
+		}
+		th_add_rival_estate_loyalty = {
+			loyalty = -20
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	option = { #Ask for military support-Kaguya
+		name = th_states_flavor_con.9.j
+		custom_tooltip = th_states_flavor_con.9.j.tt
+		trigger = {
+			has_reform = Gensokyan_kaguya_states_reform
+			estate_loyalty = {
+				estate = estate_rival_mokou
+				loyalty = 60
+			}
+		}
+		add_country_modifier = {
+			name = th_states_mokous_edict
+			duration = 3650
+		}
+		th_add_rival_estate_loyalty = {
+			loyalty = -20
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	option = { #Ask to refresh artifact-Mokou
+		name = th_states_flavor_con.9.k
+		custom_tooltip = th_states_flavor_con.9.k.tt
+		trigger = {
+			has_reform = Gensokyan_mokou_states_reform
+			estate_loyalty = {
+				estate = estate_rival_kaguya
+				loyalty = 80
+			}
+			#Is not using artifact and is in CD of artifact
+		}
+		#refresh artifact
+		th_add_rival_estate_loyalty = {
+			loyalty = -50
+		}
+
+		ai_chance = { 
+			factor = 0
 		}
 	}
 }
@@ -597,7 +905,7 @@ country_event = {
 		}
 
 		ai_chance = { 
-			factor = 50
+			factor = 100
 		}
 	}
 	
@@ -611,7 +919,7 @@ country_event = {
 		}
 		
 		ai_chance = { 
-			factor = 50
+			factor = 0
 		}
 	}
 }
@@ -705,10 +1013,6 @@ country_event = {
 		
 		ai_chance = { 
 			factor = 50
-			modifier = {
-				factor = 0
-				NOT = { statists_vs_orangists = 0.33 }
-			}
 		}
 	}
 	
@@ -720,10 +1024,6 @@ country_event = {
 		
 		ai_chance = { 
 			factor = 50
-			modifier = {
-				factor = 0
-				statists_vs_orangists = -0.33
-			}
 		}
 	}
 }
@@ -799,7 +1099,7 @@ country_event = {
 		}
 		modifier = {
 			factor = 0.5
-			statists_vs_orangists = -0.5
+			NOT = { statists_vs_orangists = -0.5 }
 		}
 		modifier = {
 			factor = 0.25
@@ -843,13 +1143,9 @@ country_event = {
 			factor = 50
 			modifier = {
 				factor = 0
-				OR = {
-					AND = {
-						is_at_war = yes
-						NOT = { war_score = 20 }
-					}
-					NOT = { statists_vs_orangists = 0.5 }
-					NOT = { stability = 1 }
+				AND = {
+					is_at_war = yes
+					NOT = { war_score = 20 }
 				}
 			}
 		}
@@ -868,6 +1164,10 @@ country_event = {
 		
 		ai_chance = { 
 			factor = 50
+			modifier = {
+				factor = 0
+				NOT = { stability = 1 }
+			}
 		}
 	}
 }
@@ -956,10 +1256,6 @@ country_event = {
 		
 		ai_chance = { 
 			factor = 50
-			modifier = {
-				factor = 0
-				NOT = { statists_vs_orangists = -0.75 }
-			}
 		}
 	}
 	
@@ -995,7 +1291,6 @@ country_event = {
 						is_at_war = yes
 						NOT = { war_score = 20 }
 					}
-					statists_vs_orangists = 0.25
 					NOT = { legitimacy = 80 }
 				}
 			}
@@ -1074,11 +1369,7 @@ country_event = {
 		}
 
 		ai_chance = { 
-			factor = 100
-			modifier = {
-				factor = 0
-				th_states_kaguya_is_dominating = yes
-			}
+			factor = 50
 		}
 	}
 	
@@ -1094,10 +1385,10 @@ country_event = {
 		}
 
 		ai_chance = { 
-			factor = 100
+			factor = 50
 			modifier = {
 				factor = 0
-				NOT = { statists_vs_orangists = -0.33 }
+				th_states_rival_is_in_rage = yes
 			}
 		}
 	}
@@ -1190,7 +1481,11 @@ country_event = {
 		}
 		
 		ai_chance = { 
-			factor = 50
+			factor = 40
+			modifier = {
+				factor = 0
+				th_states_rival_is_in_rage = yes
+			}
 		}
 	}
 	
@@ -1200,14 +1495,169 @@ country_event = {
 		add_legitimacy = -15
 		
 		ai_chance = { 
-			factor = 50
+			factor = 10
+			modifier = {
+				factor = 0
+				NOT = { legitimacy = 80 }
+			}			
 		}
 	}
 }
 
-
 ###EIT vs FUJ - Danmaku battle###
-country_event = {
+country_event = {   #Challenge rival
+	id = th_states_flavor_con.39
+	title = th_states_flavor_con.39.t
+	desc = {
+		trigger = { has_reform = Gensokyan_mokou_states_reform }
+		desc = "th_states_flavor_con.39.fuj_desc"
+	}
+	desc = {
+		trigger = { has_reform = Gensokyan_kaguya_states_reform }
+		desc = "th_states_flavor_con.39.eit_desc"
+	}
+	desc = {
+		trigger = { 
+			NOT = { has_reform = Gensokyan_mokou_states_reform }
+			NOT = { has_reform = Gensokyan_kaguya_states_reform }
+		}
+		desc = "th_states_flavor_con.debug.desc"
+	}
+	picture = {
+		trigger = {
+			OR = {
+				has_reform = Gensokyan_mokou_states_reform
+				has_reform = Gensokyan_kaguya_states_reform
+			}
+		}
+		picture = KAGUYAVSMOKOU_eventPicture
+	 }
+	picture = {
+		trigger = {
+			NOT = { has_reform = Gensokyan_mokou_states_reform }
+			NOT = { has_reform = Gensokyan_kaguya_states_reform }
+		}
+		picture = YUKARI_eventPicture
+	}
+	
+	trigger = {
+		th_has_touhou_estates = yes
+		NOT = { has_country_flag = th_states_has_now_fight }
+		OR = {
+			NOT = { has_country_flag = th_states_had_fight }
+			had_country_flag = {
+				flag = th_states_had_fight
+				days = 1825
+			}
+		}
+		NOT = { has_country_flag = th_incident_investigating }
+	}
+
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				SKILL_BONI = 0
+			}
+			set_country_flag = th_states_has_now_fight
+			clr_country_flag = th_states_had_fight
+			#Rival's Base Fighting Skills
+			random_list = {
+				15 = {
+					set_variable = {
+						which = th_estates_rival_combat_skills
+						value = 1000
+					}
+				}
+				25 = {
+					set_variable = {
+						which = th_estates_rival_combat_skills
+						value = 1200
+					}
+				}
+				25 = {
+					set_variable = {
+						which = th_estates_rival_combat_skills
+						value = 1400
+					}
+				}
+				25 = {
+					set_variable = {
+						which = th_estates_rival_combat_skills
+						value = 1600
+					}
+				}
+				10 = {
+					set_variable = {
+						which = th_estates_rival_combat_skills
+						value = 1800
+					}
+				}
+			}
+			th_defineopponent_fighting_skill = {
+				VARIABLE = th_estates_rival_combat_skills
+			}	
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 365
+	}
+
+	after = {
+		set_country_flag = th_states_had_fight
+		clr_country_flag = th_states_has_now_fight
+	}
+	
+	option = {	#BRING IT ON
+		name = th_states_flavor_con.40.a
+		highlight = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = th_incident_investigating }
+			}
+			th_danmaku_normal_fight_ruler_and_opponent = {
+				win_event = th_states_flavor_con.42
+				draw_event = th_states_flavor_con.42
+				defeat_event = th_states_flavor_con.43
+				days = 3
+			}
+		}
+		else = {
+			add_mil_power = -75
+		}
+		
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = yes
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = yes
+			}
+		}
+	}
+	
+	option = {	#Nah
+		name = th_states_flavor_con.39.b
+		add_prestige = -15
+		
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = no
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = no
+			}
+		}
+	}
+}
+
+country_event = {   #Been challengd by rival
 	id = th_states_flavor_con.40
 	title = th_states_flavor_con.40.t
 	desc = {
@@ -1264,28 +1714,34 @@ country_event = {
 			clr_country_flag = th_states_had_fight
 			#Rival's Base Fighting Skills
 			random_list = {
-				25 = {
+				15 = {
 					set_variable = {
 						which = th_estates_rival_combat_skills
-						value = 900
+						value = 1000
 					}
 				}
 				25 = {
 					set_variable = {
 						which = th_estates_rival_combat_skills
-						value = 1100
+						value = 1200
 					}
 				}
 				25 = {
 					set_variable = {
 						which = th_estates_rival_combat_skills
-						value = 1300
+						value = 1400
 					}
 				}
 				25 = {
 					set_variable = {
 						which = th_estates_rival_combat_skills
-						value = 1500
+						value = 1600
+					}
+				}
+				10 = {
+					set_variable = {
+						which = th_estates_rival_combat_skills
+						value = 1800
 					}
 				}
 			}
@@ -1364,6 +1820,7 @@ country_event = {
 	
 	option = {	#Dragonborn Mokou
 		name = th_states_flavor_con.42.a
+<<<<<<< Updated upstream
 		change_statists_vs_orangists = 0.2
 		add_prestige = 15
 		add_legitimacy = 15
@@ -1372,6 +1829,22 @@ country_event = {
 		add_mil_power = 50
 		add_estate_loyalty = {
 			estate = estate_rival
+=======
+		add_prestige = 10
+		add_legitimacy = 10
+		random_list = {
+			33 = {
+				add_adm_power = 50
+			}
+			33 = {
+				add_dip_power = 50
+			}
+			33 = {
+				add_mil_power = 50
+			}
+		}
+		th_add_rival_estate_loyalty = {
+>>>>>>> Stashed changes
 			loyalty = 10
 		}
 
@@ -1392,15 +1865,21 @@ country_event = {
 	
 	option = {	#Dragonborn Mokou
 		name = th_states_flavor_con.43.a
+<<<<<<< Updated upstream
 		change_statists_vs_orangists = -0.2
 		add_army_tradition = 15
 		add_navy_tradition = 15
 		add_estate_loyalty = {
 			estate = estate_rival
+=======
+		add_army_tradition = -10
+		add_navy_tradition = -10
+		th_add_rival_estate_loyalty = {
+>>>>>>> Stashed changes
 			loyalty = -5
 		}
 
-		ai_chance = { 
+		ai_chance = {
 			factor = 100
 		}
 	}
@@ -1533,7 +2012,7 @@ country_event = {
 		add_legitimacy = 5
 
 		ai_chance = { 
-			factor = 100
+			factor = 0
 		}
 	}
 }
