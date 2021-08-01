@@ -66,8 +66,9 @@ eientei_missions_mokou_slot = {
 		position = 2
 		provinces_to_highlight = {
 			area = Fujiwara_state
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
 			}
 		}
 		trigger = {
@@ -81,7 +82,7 @@ eientei_missions_mokou_slot = {
 			}
 		}
 		effect = {
-			add_stability = 1
+			add_stability_or_adm_power = yes
 			Fujiwara_state = {
 				limit = {
 					owned_by = ROOT
@@ -290,7 +291,7 @@ eientei_missions_mokou_slot = {
 				province = 1032
 			}
 			country_event = {
-				id = flavor_eit.15
+				id = flavor_eit.10
 			}
 			western_korea_area = {
 				#Korea - Brewing Stand
@@ -395,8 +396,16 @@ eientei_missions_mokou_slot = {
 			else = {
 				custom_tooltip = EIT_need_finish_80_loyalty_ct
 			}
-			country_event = {
-				id = flavor_eit.9
+			if = {
+				limit = { 
+					FUJ = {
+						is_subject_of = ROOT
+						is_subject_other_than_tributary_trigger = yes
+					} 
+				}
+				country_event = {
+					id = flavor_eit.9
+				}
 			}
 			custom_tooltip = eit_tenno_crowning
 			hidden_effect = {
@@ -536,7 +545,9 @@ eientei_lost_brewing_stand_slot = {
 		required_missions = { EIT_subjugate_fujiwara }
 		position = 3
 		trigger = {
-			th_states_rival_has_loyalty = {
+			has_reform = Gensokyan_kaguya_states_reform 
+			estate_loyalty = {
+				estate = estate_rival_mokou
 				loyalty = 30
 			}
 		}
@@ -566,7 +577,9 @@ eientei_lost_brewing_stand_slot = {
 		required_missions = { EIT_defeat_mokou_10_times }
 		position = 7
 		trigger = {
-			th_states_rival_has_loyalty = {
+			has_reform = Gensokyan_kaguya_states_reform 
+			estate_loyalty = {
+				estate = estate_rival_mokou
 				loyalty = 80
 			}
 		}
@@ -826,7 +839,7 @@ eientei_missions_middle_screen_slot = {
 					exists = NET
 				}
 				country_event = {
-					id = flavor_eit.15
+					id = flavor_eit.14
 				}
 			}
 			else = {
@@ -1011,7 +1024,6 @@ eientei_missions_middle_screen_slot = {
 				area = Eastern_mountains
 				area = Mayohiga_state
 				area = Ran_state
-				province_id = 4989
 			}
 			NOT = {
 				country_or_non_sovereign_subject_holds = ROOT
@@ -1150,8 +1162,11 @@ eientei_missions_middle_screen_slot = {
 		trigger = {
 			total_development = 1000
 			moon_region = {
-				is_empty = no
-				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+				OR = {
+					is_empty = yes
+					country_or_non_sovereign_subject_holds = ROOT
+				}
 			}
 			custom_trigger_tooltip = {
 				tooltip = eit_is_crowned_as_tenno
@@ -1229,20 +1244,23 @@ eientei_relations_with_the_moon_slot = {
 		trigger = {
 			calc_true_if = {
 				all_known_country = {
-					NOT = { religion_group = Touhou }
-					NOT = { 
-						capital_scope = {
-							continent = gensokyo_continent
-						} 
-					}
-					NOT = { 
-						capital_scope = {
-							continent = moon_continent
-						} 
-					}
-					has_opinion = {
-						who = ROOT
-						value = 150
+					custom_trigger_tooltip = {
+						tooltip = eit_has_two_foreign_friends
+						NOT = { religion_group = Touhou }
+						NOT = { 
+							capital_scope = {
+								continent = gensokyo_continent
+							} 
+						}
+						NOT = { 
+							capital_scope = {
+								continent = moon_continent
+							} 
+						}
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
 					}
 				}
 				amount = 2
@@ -1476,7 +1494,7 @@ eientei_missions_outworld_slot = {
 		effect = {
 			add_country_modifier = {
 				name = "eit_anti_lunarian_armor"
-				duration = -7300
+				duration = 7300
 			}
 		}
 	}
@@ -1534,16 +1552,11 @@ eientei_missions_outworld_slot = {
 				area = Bamboo_forest_of_the_lost
 				area = Fujiwara_state
 			}
-			OR = {
-				AND = {
-					country_or_non_sovereign_subject_holds = ROOT
-					NOT = {
-						th_has_up_to_date_fort_building = {
-							tag = ROOT
-						}
-					}
+			country_or_non_sovereign_subject_holds = ROOT
+			NOT = {
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
 				}
-				NOT = { country_or_non_sovereign_subject_holds = ROOT }
 			}
 			OR = {
 				has_terrain = forest
@@ -1589,7 +1602,7 @@ eientei_missions_outworld_slot = {
 
 	EIT_fortify_EIT_secretly = {
 		icon = mission_touhou_brewing_stand
-		required_missions = { EIT_fortify_EIT }
+		required_missions = { }
 		position = 6
 		trigger = {
 			advisor = spymaster
