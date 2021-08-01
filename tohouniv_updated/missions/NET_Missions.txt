@@ -8,6 +8,501 @@ NET_missions_gensokyo_slot = {
 	}
 	has_country_shield = yes
 
+	NET_reinforce_the_border = {
+		icon = mission_settlers_north_america
+		required_missions = {  }
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4960
+				province_id = 5100
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { province_has_current_tech_fort_trigger = yes }
+			}
+		}
+		trigger = {
+			4960 = {
+				province_has_current_tech_fort_trigger = yes
+				owned_by = ROOT
+			}
+			5100 = {
+				province_has_current_tech_fort_trigger = yes
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			4960 = {
+				add_permanent_province_modifier = {
+					name = net_netherworld_border
+					duration = -1
+				}
+			}
+			5100 = {
+				add_permanent_province_modifier = {
+					name = net_netherworld_border
+					duration = -1
+				}
+			}
+		}
+	}
+	
+	NET_recover_mystias_cart = {
+		icon = mission_touhou_mystias_cart
+		required_missions = { NET_tighten_the_bound_with_yukari }
+		position = 2
+
+		provinces_to_highlight = {
+			province_id = 4977
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			owns_core_province = 4977
+		}
+
+		effect = { 
+			4977 = {
+				add_permanent_province_modifier = {
+					name = net_mystias_cart
+					duration = -1
+				}
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 2
+			}
+			Eastern_senkai = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					is_core = 5014
+					is_permanent_claim = 5014
+				}
+				add_permanent_claim = 5014
+			}
+		}
+	}
+
+	NET_elimiate_seiga = {
+		icon = mission_settlers_north_america
+		required_missions = { NET_recover_mystias_cart }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5014
+				province_id = 5174
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			NOT = { controlled_by = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = NET_elimiate_seiga_tt	#Seiga event happened
+				always = yes
+			}
+			OR = {
+				owns_or_non_sovereign_subject_of = 5014
+				controls = 5014
+			}
+			OR = {
+				owns_or_non_sovereign_subject_of = 5174
+				controls = 5174
+			}
+		}
+		effect = {
+			#Event about Yuyuko encountering Seiga
+			Senkai_state = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Northern_senkai = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	NET_gardeners_duty = {
+		icon = mission_touhou_gardening_youmu
+		required_missions = {  }
+		position = 4
+		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4957
+				province_id = 4958
+				province_id = 4959
+			}
+		}
+
+		trigger = {
+			owns_core_province = 4957
+			owns_core_province = 4958
+			owns_core_province = 4959
+			4957 = {
+				OR = {
+					has_building = temple
+					has_building = cathedral
+					development = 20
+				}
+			}
+			4958 = {
+				OR = {
+					has_building = temple
+					has_building = cathedral
+					development = 40
+				}
+			}
+			4959 = {
+				OR = {
+					has_building = temple
+					has_building = cathedral
+					development = 30
+				}
+			}
+		}
+		effect = {
+			Netherworld_state = {
+				limit = {
+					is_core = ROOT
+					owned_by = ROOT
+				}
+				add_prosperity = 15
+				add_province_modifier = {
+					name = net_beautiful_gardens
+					duration = 7300
+				}
+			}
+		}
+	}
+	
+	NET_levy_an_army = {
+		icon = mission_touhou_army
+		required_missions = { NET_gardeners_duty }
+		position = 5
+		
+		trigger = {
+			army_size_percentage = 0.9
+			land_forcelimit = 30
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = "net_youmus_military_organization"
+				duration = 7300
+			}
+			add_yearly_manpower = 0.75
+			add_yearly_sailors = 0.75
+		}
+	}
+
+	NET_battle_of_the_swordsmen = {
+		icon = mission_settlers_north_america
+		required_missions = { NET_levy_an_army }
+		position = 6
+		trigger = {
+			always = yes
+			#Win fights against Meira
+		}
+		effect = {
+			custom_tooltip = cool_effect
+		}
+	}
+	
+	NET_train_the_troops = {
+		icon = mission_touhou_general_youmu
+		required_missions = { NET_battle_of_the_swordsmen }
+		position = 7
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = NET_train_the_troops_tt
+				OR = {
+					NOT = {
+						any_country = {
+							total_development = ROOT
+						}
+					}
+					any_country = {
+						total_development = ROOT
+						war_with = ROOT
+						NOT = {
+							war_score_against = {
+								who = ROOT
+								value = -25							
+							}
+						}
+					}
+				}				
+			}
+			army_tradition = 40
+		}
+		
+		effect = {
+			define_general = {
+				name = "Youmu Konpaku"
+				shock = 6
+				fire = 5
+				manuever = 6
+				siege = 4
+				female = yes
+				trait = defensive_planner_personality
+			}
+			if = {
+				limit = {
+					is_at_war = yes
+				}
+				add_war_exhaustion = -5
+			}
+			else = {
+				add_mil_power = 75
+			}
+		}
+	}
+
+	NET_revolutionize_the_ghost_army = {
+		icon = mission_touhou_modern_warfare_youmu
+		required_missions = { NET_train_the_troops }
+		position = 8
+
+		trigger = {
+			mil_tech = 12
+			OR = {
+				barracks = 6
+				training_fields = 6
+			}
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				army_professionalism = 0.4
+			}
+			else = {
+				army_tradition = 50
+			}
+		}
+
+		effect = {
+			th_enable_advisor_youmu = yes
+
+			add_country_modifier = {
+				name = net_youmus_army_organization
+				duration = -1
+			}
+		}
+	}
+}
+
+NET_missions_western_world_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = NET
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	NET_choose_mortal_policy = {
+		icon = mission_settlers_north_america
+		required_missions = { NET_tighten_the_bound_with_yukari }
+		position = 2
+		trigger = {
+			OR = {				
+				has_country_modifier = th_mortal_policy_acceptance
+				has_country_modifier = th_mortal_policy_tolerance
+				has_country_modifier = th_mortal_policy_repression
+				NOT = { has_reform = Gensokyan_ghost_monarchy }
+			}
+		}
+		effect = {
+			add_stability = 1
+		}
+	}
+
+	NET_consolidate_gensokyan_trade = {
+		icon = mission_settlers_north_america
+		required_missions = { NET_choose_mortal_policy }
+		position = 3
+		trigger = {
+			5090 = {
+				trade_share = {
+					country = ROOT
+					share = 75
+				}
+			}
+			4956 = {
+				trade_share = {
+					country = ROOT
+					share = 20
+				}
+			}
+		}
+		effect = {
+			th_get_default_permanent_province_buff = yes
+			random_owned_province = {
+				limit = {
+					NOT = { has_manufactory_trigger = yes }
+					NOT = { th_has_valuable_resource = yes }
+					is_state = yes
+					development = 10
+				}
+				th_add_manufactory = yes
+			}
+		}
+	}
+
+	NET_food_monopoly = {
+		icon = mission_settlers_north_america
+		required_missions = { NET_consolidate_gensokyan_trade }
+		position = 4
+		trigger = {
+			OR = {
+				th_is_trading_in_food = yes
+				th_is_production_leader_of_food = yes
+				num_of_owned_provinces_with = {
+					th_has_mills_trade_goods = yes
+					value = 25
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = net_secured_food_transport
+				duration = -1
+			}
+		}
+	}
+
+	NET_mediterranean_cuisine = {
+		icon = mission_sponsor_piracy
+		required_missions = {  }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				province_id = 219
+				province_id = 121
+				province_id = 146
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				owns_core_province = 219	#Toledo - Churros (chocolate)
+				owns_core_province = 121	#Naples - Pizza
+				owns_core_province = 146	#Athene  - Gyros
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "net_mediterranean_cuisine_for_the_navy"
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = net_city_mission_counter
+					value = 1
+				}
+			}
+		}
+	}
+
+	NET_colonizers_cuisine = {
+		icon = mission_settlers_north_america
+		required_missions = {  }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				province_id = 236
+				province_id = 183
+				province_id = 90
+				province_id = 97
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				owns_core_province = 236	#London - Fish and Chips
+				owns_core_province = 183	#Paris - Baguette (I had to do it)
+				owns_core_province = 90		#Flanders  - Flemish Waffles (and fried chips)
+				owns_core_province = 97		#Amsterdam - Dutch
+			}
+		}
+		effect = {
+			add_mercantilism = 5
+			hidden_effect = {
+				change_variable = {
+					which = net_city_mission_counter
+					value = 1
+				}
+			}
+		}
+	}
+
+	NET_germanic_cuisine = {
+		icon = mission_touhou_yuyuko_cake
+		required_missions = {  }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				province_id = 134
+				province_id = 1869
+				province_id = 12
+				province_id = 93
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				owns_core_province = 134	#Vienna - Wiender Schnitzel
+				owns_core_province = 1869	#Zurich - Switzerland's chocolate
+				owns_core_province = 12		#Sjaelland  - Wienerbrod (Danish pastry)
+				owns_core_province = 93		#Liege - Waffles
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "net_candy_candy_candy"
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = net_city_mission_counter
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+NET_missions_middle_of_the_world_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = NET
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
 	NET_tighten_the_bound_with_yukari = {
 		icon = mission_touhou_yuyukari
 		required_missions = {  }
@@ -82,40 +577,8 @@ NET_missions_gensokyo_slot = {
 					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
-			}	
-		}
-	}
-	
-	NET_solve_the_border_friction = {
-		icon = mission_touhou_mokou_vs_kaguy_childish
-		required_missions = { NET_tighten_the_bound_with_yukari }
-		position = 2
-
-		provinces_to_highlight = {
-			OR = {
-				area = Bamboo_forest_of_the_lost
-				area = Eientei_state
-				area = Fujiwara_state
 			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = NET_solve_the_border_friction.tooltip
-				num_of_owned_provinces_with = {
-					value = 8
-					OR = {
-						area = Bamboo_forest_of_the_lost
-						area = Eientei_state
-						area = Fujiwara_state
-					}
-				}
-			}
-		}
-
-		effect = { 
-			Forest_of_magic = {
+			Forest_coast_state = {
 				limit = {
 					NOT = {	is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -129,13 +592,38 @@ NET_missions_gensokyo_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
-			Forest_coast_state = {
+			Forest_of_magic = {
 				limit = {
 					NOT = {	is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
+		}
+	}
+
+	NET_conquer_fujiwara = {
+		icon = mission_settlers_north_america
+		required_missions = { NET_tighten_the_bound_with_yukari }
+		position = 2
+		provinces_to_highlight = {
+			area = Fujiwara_state
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 3
+				area = Fujiwara_state
+			}
+			FUJ = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+					humiliated_by = ROOT
+				}
+			}
+		}
+		effect = {
 			capital_scope = {
 				add_base_tax = 4
 				add_base_production = 4
@@ -143,32 +631,74 @@ NET_missions_gensokyo_slot = {
 			}
 		}
 	}
-	
-	NET_recover_mystias_cart = {
-		icon = mission_touhou_mystias_cart
-		required_missions = { NET_solve_the_border_friction }
+
+	NET_the_sleepy_gap_youkai = {
+		icon = mission_touhou_sleeping_yukari
+		required_missions = { NET_conquer_fujiwara }
 		position = 3
 
-		provinces_to_highlight = {
-			province_id = 4977
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-
 		trigger = {
-			owns_core_province = 4977
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = HKR_spring_snow_incident_tt
+					has_global_flag = th_cherry_blossom_incident_solved
+				}
+				is_year = 1500
+			}
+			OR = {
+				NOT = { exists = MHG }
+				MHG = {
+					trust = {
+						who = ROOT
+						value = 75
+					}
+				}
+			}
 		}
 
-		effect = { 
-			4977 = {
-				add_permanent_province_modifier = {
-					name = net_mystias_cart
-					duration = -1
+		effect = {
+			if = {
+				limit = {
+					exists = MHG
 				}
-				add_base_tax = 3
-				add_base_production = 3
-				add_base_manpower = 2
+				country_event = {
+					id = flavor_net.1
+				}
 			}
-			Human_state = {
+			else = {
+				add_stability = 2
+			}
+			if = {
+				limit = {
+					exists = HIG
+				}
+				add_casus_belli = {
+					type = cb_touhou_mission_personal_union_war
+					target = HIG
+				}
+			}
+			Higan_southern_coast = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Higan_state = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_higan = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Western_higan = {
 				limit = {
 					NOT = {	is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -178,10 +708,214 @@ NET_missions_gensokyo_slot = {
 		}
 	}
 
+	NET_the_yama_question = {
+		icon = mission_settlers_north_america
+		required_missions = { NET_the_sleepy_gap_youkai }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4983
+				province_id = 4982
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 4982
+			owns_or_non_sovereign_subject_of = 4983
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 100
+			}
+		}
+	}
+	
+	NET_ghost_empire_mission = {
+		icon = mission_touhou_yuyuko_swordswoman
+		required_missions = {  }
+		position = 5
+		trigger = {
+			OR = {
+				tag = NMG
+				tag = GNK
+				government_rank = 3
+			}
+			total_development = 650
+		}
+		effect = {
+			add_country_modifier = {
+				name = "net_ghost_empire"
+				duration = -1
+			}
+		}
+	}
+
+	NET_cuisine_of_the_middle_east = {
+		icon = mission_touhou_sultan_of_the_middle_east
+		required_missions = {  }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				province_id = 410
+				province_id = 362
+				province_id = 317
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				owns_core_province = 410	#Bagdhad - arabian cook book
+				owns_core_province = 362	#Rashid  - eish balad (basically bread)
+				owns_core_province = 317	#Hudavendigar - kebab
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "net_imports_from_the_middle_east"
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = net_city_mission_counter
+					value = 1
+				}
+			}
+		}
+	}
+
+	NET_cuisine_of_east_africa = {
+		icon = mission_trade_company_region_abroad
+		required_missions = {  }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				province_id = 1224
+				province_id = 1201
+				province_id = 1193
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				owns_core_province = 1224	#Gonder - ethiopian bread I guess
+				owns_core_province = 1201	#Zanzibar - something was grilled there
+				owns_core_province = 1193	#Rashid  - lemur
+			}
+		}
+		effect = {
+			add_years_of_income = 2
+			hidden_effect = {
+				change_variable = {
+					which = net_city_mission_counter
+					value = 1
+				}
+			}
+		}
+	}
+
+	NET_cuisine_of_west_africa = {
+		icon = mission_african_gold
+		required_missions = {  }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4080
+				province_id = 1147
+				province_id = 1114
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				owns_core_province = 4080	#Soyo - 
+				owns_core_province = 1147	#Benin - 
+				owns_core_province = 1114	#Gabu  - fufu
+			}
+		}
+		effect = {
+			add_adm_power = 150
+			hidden_effect = {
+				change_variable = {
+					which = net_city_mission_counter
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+NET_missions_far_eastern_world_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = NET
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	NET_solve_the_border_friction = {
+		icon = mission_touhou_mokou_vs_kaguy_childish
+		required_missions = { NET_tighten_the_bound_with_yukari }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				area = Bamboo_forest_of_the_lost
+				area = Eientei_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 5
+				OR = {
+					area = Bamboo_forest_of_the_lost
+					area = Eientei_state
+				}
+			}
+			EIT = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+					humiliated_by = ROOT
+				}
+			}
+		}
+		effect = { 
+			Human_state = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Kourindou_state = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}	
+
 	NET_build_supply_connections = {
 		icon = mission_touhou_human_capital
-		required_missions = { NET_recover_mystias_cart }
-		position = 4
+		required_missions = { NET_solve_the_border_friction }
+		position = 3
 
 		provinces_to_highlight = {
 			province_id = 4978
@@ -223,497 +957,29 @@ NET_missions_gensokyo_slot = {
 				name = net_imported_genoskyo_supplies
 				duration = 7300
 			}
-		}			
+			World_of_fantasies = {
+				limit = {
+					NOT = {	is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
 	}
 
-	NET_the_sleepy_gap_youkai = {
-		icon = mission_touhou_sleeping_yukari
+	NET_conquer_mima = {
+		icon = mission_settlers_north_america
 		required_missions = { NET_build_supply_connections }
-		position = 5
-
-		trigger = {
-			OR = {
-				custom_trigger_tooltip = {
-					tooltip = HKR_spring_snow_incident_tt
-					has_global_flag = th_cherry_blossom_incident_solved
-				}
-				is_year = 1500
-			}
-			OR = {
-				NOT = { exists = MHG }
-				MHG = {
-					trust = {
-						who = ROOT
-						value = 75
-					}
-				}
-			}
-		}
-
-		effect = {
-			if = {
-				limit = {
-					exists = MHG
-				}
-				country_event = {
-					id = flavor_net.1
-				}
-			}
-			else = {
-				add_stability = 2
-			}
-		}
-	}
-
-	NET_gardeners_duty = {
-		icon = mission_touhou_gardening_youmu
-		required_missions = {  }
-		position = 6
-		
+		position = 4
 		provinces_to_highlight = {
-			OR = {
-				province_id = 4957
-				province_id = 4958
-				province_id = 4959
-			}
+			area = World_of_fantasies
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
-
 		trigger = {
-			owns_core_province = 4957
-			owns_core_province = 4958
-			owns_core_province = 4959
-			4957 = {
-				OR = {
-					has_building = temple
-					has_building = cathedral
-					development = 20
-				}
-			}
-			4958 = {
-				OR = {
-					has_building = temple
-					has_building = cathedral
-					development = 40
-				}
-			}
-			4959 = {
-				OR = {
-					has_building = temple
-					has_building = cathedral
-					development = 30
-				}
-			}
-		}
-		effect = {
-			Netherworld_state = {
-				limit = {
-					is_core = ROOT
-					owned_by = ROOT
-				}
-				add_prosperity = 15
-				add_province_modifier = {
-					name = net_beautiful_gardens
-					duration = 7300
-				}
-			}
-		}
-	}
-	
-	NET_levy_an_army = {
-		icon = mission_touhou_army
-		required_missions = { NET_gardeners_duty }
-		position = 7
-		
-		trigger = {
-			army_size_percentage = 0.9
-			land_forcelimit = 30
-		}
-		
-		effect = {
-			add_country_modifier = {
-				name = "net_youmus_military_organization"
-				duration = 7300
-			}
-			add_yearly_manpower = 0.75
-			add_yearly_sailors = 0.75
-		}
-	}
-	
-	NET_train_the_troops = {
-		icon = mission_touhou_general_youmu
-		required_missions = { NET_levy_an_army }
-		position = 8
-		
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = NET_train_the_troops_tt
-				OR = {
-					NOT = {
-						any_country = {
-							total_development = ROOT
-						}
-					}
-					any_country = {
-						total_development = ROOT
-						war_with = ROOT
-						NOT = {
-							war_score_against = {
-								who = ROOT
-								value = -25							
-							}
-						}
-					}
-				}				
-			}
-			army_tradition = 40
-		}
-		
-		effect = {
-			define_general = {
-				name = "Youmu Konpaku"
-				shock = 6
-				fire = 5
-				manuever = 6
-				siege = 4
-				female = yes
-				trait = defensive_planner_personality
-			}
-			if = {
-				limit = {
-					is_at_war = yes
-				}
-				add_war_exhaustion = -5
-			}
-			else = {
-				add_mil_power = 75
-			}
-		}
-	}
-
-	NET_revolutionize_the_ghost_army = {
-		icon = mission_touhou_modern_warfare_youmu
-		required_missions = { NET_train_the_troops }
-		position = 9
-
-		trigger = {
-			mil_tech = 12
-			OR = {
-				barracks = 6
-				training_fields = 6
-			}
-			if = {
-				limit = {
-					has_dlc = "Cradle of Civilization"
-				}
-				army_professionalism = 0.4
-			}
-			else = {
-				army_tradition = 50
-			}
-		}
-
-		effect = {
-			th_enable_advisor_youmu = yes
-
-			add_country_modifier = {
-				name = net_youmus_army_organization
-				duration = -1
-			}
-		}
-	}
-}
-
-NET_missions_western_world_slot = {
-	slot = 2
-	generic = no
-	ai = yes
-	potential = {
-		tag = NET
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-
-	NET_place_holder_2 = {
-		icon = mission_settlers_north_america
-		required_missions = {  }
-		position = 1
-		trigger = {
-			always = yes
-		}
-		effect = {
-			custom_tooltip = cool_effect
-		}
-	}
-
-	NET_mediterranean_cuisine = {
-		icon = mission_sponsor_piracy
-		required_missions = {  }
-		position = 7
-		provinces_to_highlight = {
-			OR = {
-				province_id = 219
-				province_id = 121
-				province_id = 146
-			}
-			NOT = {
+			World_of_fantasies = {
 				country_or_non_sovereign_subject_holds = ROOT
+				type = all
 			}
-		}
-		trigger = {
-			OR = {
-				owns_core_province = 219	#Toledo - Churros (chocolate)
-				owns_core_province = 121	#Naples - Pizza
-				owns_core_province = 146	#Athene  - Gyros
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = "net_mediterranean_cuisine_for_the_navy"
-				duration = 5475
-			}
-			hidden_effect = {
-				change_variable = {
-					which = net_city_mission_counter
-					value = 1
-				}
-			}
-		}
-	}
-
-	NET_colonizers_cuisine = {
-		icon = mission_settlers_north_america
-		required_missions = {  }
-		position = 8
-		provinces_to_highlight = {
-			OR = {
-				province_id = 236
-				province_id = 183
-				province_id = 90
-				province_id = 97
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			OR = {
-				owns_core_province = 236	#London - Fish and Chips
-				owns_core_province = 183	#Paris - Baguette (I had to do it)
-				owns_core_province = 90		#Flanders  - Flemish Waffles (and fried chips)
-				owns_core_province = 97		#Amsterdam - Dutch
-			}
-		}
-		effect = {
-			add_mercantilism = 5
-			hidden_effect = {
-				change_variable = {
-					which = net_city_mission_counter
-					value = 1
-				}
-			}
-		}
-	}
-
-	NET_germanic_cuisine = {
-		icon = mission_touhou_yuyuko_cake
-		required_missions = {  }
-		position = 9
-		provinces_to_highlight = {
-			OR = {
-				province_id = 134
-				province_id = 1869
-				province_id = 12
-				province_id = 93
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			OR = {
-				owns_core_province = 134	#Vienna - Wiender Schnitzel
-				owns_core_province = 1869	#Zurich - Switzerland's chocolate
-				owns_core_province = 12		#Sjaelland  - Wienerbrod (Danish pastry)
-				owns_core_province = 93		#Liege - Waffles
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = "net_candy_candy_candy"
-				duration = 5475
-			}
-			hidden_effect = {
-				change_variable = {
-					which = net_city_mission_counter
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-NET_missions_middle_of_the_world_slot = {
-	slot = 3
-	generic = no
-	ai = yes
-	potential = {
-		tag = NET
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-
-	NET_place_holder_3 = {
-		icon = mission_settlers_north_america
-		required_missions = {  }
-		position = 1
-		trigger = {
-			always = yes
-		}
-		effect = {
-			custom_tooltip = cool_effect
-		}
-	}
-
-	NET_yuyus_bizarres_adventure = {
-		icon = mission_touhou_yuyuko_little_butterfly
-		required_missions = { }
-		position = 6
-		
-		trigger = {
-			owns_core_province = 4667
-			num_of_continents = 4
-			custom_trigger_tooltip = {
-				tooltip = ned_fulfilled_all_food_city_missions
-				check_variable = {
-					which = net_city_mission_counter
-					value = 9
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = net_what_a_long_bizarre_adventure
-				duration = -1
-			}
-		}
-	}
-
-	NET_cuisine_of_the_middle_east = {
-		icon = mission_touhou_sultan_of_the_middle_east
-		required_missions = {  }
-		position = 7
-		provinces_to_highlight = {
-			OR = {
-				province_id = 410
-				province_id = 362
-				province_id = 317
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			OR = {
-				owns_core_province = 410	#Bagdhad - arabian cook book
-				owns_core_province = 362	#Rashid  - eish balad (basically bread)
-				owns_core_province = 317	#Hudavendigar - kebab
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = "net_imports_from_the_middle_east"
-				duration = 5475
-			}
-			hidden_effect = {
-				change_variable = {
-					which = net_city_mission_counter
-					value = 1
-				}
-			}
-		}
-	}
-
-	NET_cuisine_of_east_africa = {
-		icon = mission_trade_company_region_abroad
-		required_missions = {  }
-		position = 8
-		provinces_to_highlight = {
-			OR = {
-				province_id = 1224
-				province_id = 1201
-				province_id = 1193
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			OR = {
-				owns_core_province = 1224	#Gonder - ethiopian bread I guess
-				owns_core_province = 1201	#Zanzibar - something was grilled there
-				owns_core_province = 1193	#Rashid  - lemur
-			}
-		}
-		effect = {
-			add_years_of_income = 2
-			hidden_effect = {
-				change_variable = {
-					which = net_city_mission_counter
-					value = 1
-				}
-			}
-		}
-	}
-
-	NET_cuisine_of_west_africa = {
-		icon = mission_african_gold
-		required_missions = {  }
-		position = 9
-		provinces_to_highlight = {
-			OR = {
-				province_id = 4080
-				province_id = 1147
-				province_id = 1114
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			OR = {
-				owns_core_province = 4080	#Soyo - 
-				owns_core_province = 1147	#Benin - 
-				owns_core_province = 1114	#Gabu  - fufu
-			}
-		}
-		effect = {
-			add_adm_power = 150
-			hidden_effect = {
-				change_variable = {
-					which = net_city_mission_counter
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-NET_missions_far_eastern_world_slot = {
-	slot = 4
-	generic = no
-	ai = yes
-	potential = {
-		tag = NET
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-
-	NET_place_holder_4 = {
-		icon = mission_settlers_north_america
-		required_missions = {  }
-		position = 1
-		trigger = {
-			always = yes
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -723,7 +989,7 @@ NET_missions_far_eastern_world_slot = {
 	NET_the_cuisine_of_asia = {
 		icon = mission_japanese_fort
 		required_missions = {  }
-		position = 7
+		position = 6
 		provinces_to_highlight = {
 			OR = {
 				province_id = 1020
@@ -756,7 +1022,7 @@ NET_missions_far_eastern_world_slot = {
 	NET_spices_of_the_oceans = {
 		icon = mission_rb_colonise_spice_islands
 		required_missions = {  }
-		position = 8
+		position = 7
 		provinces_to_highlight = {
 			OR = {
 				province_id = 649
@@ -788,7 +1054,7 @@ NET_missions_far_eastern_world_slot = {
 	NET_indian_cuisine = {
 		icon = mission_indian_trade_company
 		required_missions = {  }
-		position = 9
+		position = 8
 		provinces_to_highlight = {
 			OR = {
 				province_id = 561
@@ -825,7 +1091,7 @@ NET_missions_far_eastern_world_slot = {
 	}
 }
 
-NET_missions_yuyuko_slot = {
+NET_missions_exploration_slot = {
 	slot = 5
 	generic = no
 	ai = yes
@@ -848,7 +1114,7 @@ NET_missions_yuyuko_slot = {
 			navy_size_percentage = 1.0
 		}
 		effect = {
-			net_enable_explorer_recruitment = yes
+			th_enable_exploration_without_explo_ideas = yes
 			add_country_modifier = {
 				name = "net_the_hunt_for_food"
 				duration = 7300
@@ -1205,7 +1471,7 @@ NET_missions_yuyuko_slot = {
 	NET_cap_of_good_hopes = {
 		icon = mission_west_african_ports
 		required_missions = { NET_arabian_coffee }
-		position = 7
+		position = 6
 		provinces_to_highlight = {
 			OR = {
 				region = east_africa_region
@@ -1304,7 +1570,7 @@ NET_missions_yuyuko_slot = {
 	NET_discover_europe = {
 		icon = mission_invade_england
 		required_missions = { NET_cap_of_good_hopes }
-		position = 8
+		position = 7
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = th_discovers_europe.tooltip
@@ -1455,22 +1721,26 @@ NET_missions_yuyuko_slot = {
 			}
 		}
 	}
-	
-	NET_ghost_empire_mission = {
-		icon = mission_touhou_yuyuko_swordswoman
-		required_missions = {  }
-		position = 9
+
+	NET_yuyus_bizarres_adventure = {
+		icon = mission_touhou_yuyuko_little_butterfly
+		required_missions = { }
+		position = 8
+		
 		trigger = {
-			OR = {
-				tag = NMG
-				tag = GNK
-				government_rank = 3
+			owns_core_province = 4667
+			num_of_continents = 4
+			custom_trigger_tooltip = {
+				tooltip = ned_fulfilled_all_food_city_missions
+				check_variable = {
+					which = net_city_mission_counter
+					value = 9
+				}
 			}
-			total_development = 650
 		}
 		effect = {
 			add_country_modifier = {
-				name = "net_ghost_empire"
+				name = net_what_a_long_bizarre_adventure
 				duration = -1
 			}
 		}
