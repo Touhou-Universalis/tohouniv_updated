@@ -1,9 +1,11 @@
-NET_missions_gensokyo_slot = {
+NET_missions_border_and_cart_slot = {
 	slot = 1
 	generic = no
 	ai = yes
 	potential = {
-		tag = NET
+		th_is_or_was_tag = {
+			tag = NET
+		}
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
@@ -72,22 +74,22 @@ NET_missions_gensokyo_slot = {
 				add_base_production = 3
 				add_base_manpower = 2
 			}
-			Eastern_senkai = {
-				limit = {
-					NOT = {	is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			if = {
-				limit = {
-					is_core = 5014
-					is_permanent_claim = 5014
-				}
-				add_permanent_claim = 5014
-			}
 		}
 	}
+}
+
+NET_missions_seiga_slot = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = NET
+		}
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = net_ambushed_by_seiga
+	}
+	has_country_shield = yes
 
 	NET_elimiate_seiga = {
 		icon = mission_settlers_north_america
@@ -102,10 +104,6 @@ NET_missions_gensokyo_slot = {
 			NOT = { controlled_by = ROOT }
 		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = NET_elimiate_seiga_tt	#Seiga event happened
-				always = yes
-			}
 			OR = {
 				owns_or_non_sovereign_subject_of = 5014
 				controls = 5014
@@ -116,7 +114,10 @@ NET_missions_gensokyo_slot = {
 			}
 		}
 		effect = {
-			#Event about Yuyuko encountering Seiga
+			add_country_modifier = {
+				name = net_seigas_banishment
+				duration = -1
+			}
 			Senkai_state = {
 				limit = {
 					NOT = {	is_core = ROOT }
@@ -133,6 +134,19 @@ NET_missions_gensokyo_slot = {
 			}
 		}
 	}
+}
+
+NET_missions_youmu_slot = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = NET
+		}
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
 
 	NET_gardeners_duty = {
 		icon = mission_touhou_gardening_youmu
@@ -205,6 +219,21 @@ NET_missions_gensokyo_slot = {
 			}
 			add_yearly_manpower = 0.75
 			add_yearly_sailors = 0.75
+			define_general = {
+				name = "Youmu Konpaku"
+				shock = 4
+				fire = 2
+				manuever = 3
+				siege = 2
+				female = yes
+				trait = defensive_planner_personality
+			}
+			hidden_effect = {
+				set_variable = {
+					which = net_battle_counter
+					value = 0
+				}
+			}
 		}
 	}
 
@@ -212,9 +241,36 @@ NET_missions_gensokyo_slot = {
 		icon = mission_settlers_north_america
 		required_missions = { NET_levy_an_army }
 		position = 6
+		provinces_to_highlight = {
+			owner = {
+				tag = OKR
+			}
+		}
 		trigger = {
-			always = yes
-			#Win fights against Meira
+			if = {
+				limit = {
+					mission_completed = NET_levy_an_army
+				}
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = NET_battle_of_the_swordsmen_ct
+						has_country_flag = net_won_battle_against_meira_in_person
+					}
+					custom_trigger_tooltip = {
+						tooltip = NET_battle_of_the_swordsmen_tt
+						check_variable = {
+							which = net_battle_counter
+							value = 25
+						}
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = NET_battle_of_the_swordsmen_at
+					always = no
+				}
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -227,14 +283,9 @@ NET_missions_gensokyo_slot = {
 		position = 7
 		
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = NET_train_the_troops_tt
-				OR = {
-					NOT = {
-						any_country = {
-							total_development = ROOT
-						}
-					}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = NET_train_the_troops_tt
 					any_country = {
 						total_development = ROOT
 						war_with = ROOT
@@ -245,20 +296,47 @@ NET_missions_gensokyo_slot = {
 							}
 						}
 					}
-				}				
-			}
+				}
+				NOT = {
+					any_country = {
+						total_development = ROOT
+					}
+				}
+			}	
 			army_tradition = 40
 		}
 		
 		effect = {
-			define_general = {
-				name = "Youmu Konpaku"
-				shock = 6
-				fire = 5
-				manuever = 6
-				siege = 4
-				female = yes
-				trait = defensive_planner_personality
+			if = {
+				limit = {
+					has_leader = "Youmu Konpaku"
+				}
+				custom_tooltip = NET_train_the_troops_ct
+				hidden_effect = {
+					kill_leader = {
+						type = "Youmu Konpaku"
+					}
+					define_general = {
+						name = "Youmu Konpaku"
+						shock = 6
+						fire = 5
+						manuever = 6
+						siege = 4
+						female = yes
+						trait = defensive_planner_personality
+					}
+				}
+			}
+			else = {
+				define_general = {
+					name = "Youmu Konpaku"
+					shock = 6
+					fire = 5
+					manuever = 6
+					siege = 4
+					female = yes
+					trait = defensive_planner_personality
+				}
 			}
 			if = {
 				limit = {
@@ -296,7 +374,7 @@ NET_missions_gensokyo_slot = {
 
 		effect = {
 			th_enable_advisor_youmu = yes
-
+			net_enable_general_youmu_recruitment = yes
 			add_country_modifier = {
 				name = net_youmus_army_organization
 				duration = -1
@@ -310,7 +388,9 @@ NET_missions_western_world_slot = {
 	generic = no
 	ai = yes
 	potential = {
-		tag = NET
+		th_is_or_was_tag = {
+			tag = NET
+		}
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
@@ -498,7 +578,9 @@ NET_missions_middle_of_the_world_slot = {
 	generic = no
 	ai = yes
 	potential = {
-		tag = NET
+		th_is_or_was_tag = {
+			tag = NET
+		}
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
@@ -862,7 +944,9 @@ NET_missions_far_eastern_world_slot = {
 	generic = no
 	ai = yes
 	potential = {
-		tag = NET
+		th_is_or_was_tag = {
+			tag = NET
+		}
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
@@ -1096,7 +1180,9 @@ NET_missions_exploration_slot = {
 	generic = no
 	ai = yes
 	potential = {
-		tag = NET
+		th_is_or_was_tag = {
+			tag = NET
+		}
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
