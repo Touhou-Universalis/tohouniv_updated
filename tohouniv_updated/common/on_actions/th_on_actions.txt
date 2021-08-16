@@ -110,10 +110,6 @@ on_religion_change = {
 			remove_province_modifier = sufi_shrine
 		}
 	}
-	events = {
-		muslim_school_events.20 #Pick School
-		propagate_religion_events.7 #Propagated Country is now Muslim
-	}
 	if = {
 		limit = {
 			has_government_attribute = th_divine_legitimacy_mechanic
@@ -129,6 +125,10 @@ on_religion_change = {
 				id = th_divine_state.9
 			}
 		}
+	}
+	events = {
+		muslim_school_events.20 #Pick School
+		propagate_religion_events.7 #Propagated Country is now Muslim
 	}
 }
 
@@ -654,10 +654,62 @@ on_mercenary_recruited = {
 		limit = {
 			FROM = {
 				NOT = { has_country_flag = th_free_merc_companies }
+				has_country_flag = th_pay_mil_instead_of_prof
+			}
+		}
+		FROM = {
+			add_mil_power = -10
+		}
+	}
+	else_if = {
+		limit = {
+			FROM = {
+				NOT = { has_country_flag = th_free_merc_companies }
+				has_country_flag = th_enabled_decision_for_mil_cost_for_merc
+			}
+		}
+		FROM = {
+			add_army_professionalism = -0.025
+		}
+	}
+	else_if = {
+		limit = {
+			FROM = {
+				NOT = { has_country_flag = th_free_merc_companies }
 			}
 		}
 		FROM = {
 			add_army_professionalism = -0.05
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				has_country_flag = th_merc_suppress_revolt
+			}
+		}
+		THIS = {
+			add_province_modifier = {
+				name = th_suppresed_revolters
+				duration = 1825
+			}
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				has_country_flag = th_enabled_instant_loot_on_merc_recruitment
+			}
+			THIS = {
+				controlled_by = FROM
+				NOT = { owned_by = FROM }
+			}
+		}
+		THIS = {
+			remove_loot = {
+				who = FROM
+				amount = 250
+			}
 		}
 	}
 }
