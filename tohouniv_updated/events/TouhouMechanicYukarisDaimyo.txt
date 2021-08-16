@@ -1,0 +1,415 @@
+########################################
+# Events for the Yukari daimyos
+########################################
+
+namespace = th_yukari_daimyo_mechanic
+
+#Mayohiga's Daimyos - break vassalization, if Mayohiga changes government reform
+country_event = {
+	id = th_yukari_daimyo_mechanic.1
+	title = th_yukari_daimyo_mechanic.1.t
+	desc = th_yukari_daimyo_mechanic.1.desc
+	picture = YUKARI_eventPicture
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	trigger = {
+		NOT = { has_government_attribute = enables_yukaris_shogunate }
+		num_of_subjects = 1 
+		any_subject_country = { is_subject_of_type = th_yukari_daimyo }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			every_subject_country = { 
+				limit = { is_subject_of_type = th_yukari_daimyo } 
+				country_event = { id = th_yukari_daimyo_mechanic.2 }
+			}
+		}
+	}
+	
+	option = {	#Abuse what?
+		name = th_yukari_daimyo_mechanic.1.a
+	}
+	option = {	#Worth it.
+		name = th_yukari_daimyo_mechanic.1.b
+	}
+	option = {	#Welp, bye Daimyos.
+		name = th_yukari_daimyo_mechanic.1.c
+	}
+	option = {	#You start to getting annoying...
+		name = th_yukari_daimyo_mechanic.1.d
+	}
+	option = {	#Can I have my immersion back, please?
+		name = th_yukari_daimyo_mechanic.1.e
+	}
+}
+
+#Mayohiga's Daimyos get independent
+country_event = {
+	id = th_yukari_daimyo_mechanic.2
+	title = th_yukari_daimyo_mechanic.2.t
+	desc = th_yukari_daimyo_mechanic.2.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		AND = {
+			is_subject = yes
+			is_subject_of_type = th_yukari_daimyo
+		}
+		overlord = {
+			NOT = { has_government_attribute = enables_yukaris_shogunate }
+		}
+	}
+	
+	option = {	#We are now masters of our own fate.
+		name = th_yukari_daimyo_mechanic.2.a
+		grant_independence = yes
+	}
+}
+
+#Mayohiga's vassals become daimyos
+country_event = {
+	id = th_yukari_daimyo_mechanic.3
+	title = th_yukari_daimyo_mechanic.3.t
+	desc = th_yukari_daimyo_mechanic.3.desc
+	picture = YUKARI_eventPicture
+	
+	mean_time_to_happen = {
+		days = 0
+	}
+
+	hidden = yes
+	
+	trigger = {
+		has_government_attribute = enables_yukaris_shogunate
+		num_of_subjects = 1 
+		OR = {
+			any_subject_country = { is_subject_of_type = vassal }
+			any_subject_country = { is_subject_of_type = daimyo_vassal }
+		}		
+	}
+	immediate = {
+		hidden_effect = {
+			every_subject_country = { 
+				limit = { 
+					OR = { 
+						is_subject_of_type = vassal 
+						is_subject_of_type = daimyo_vassal
+					}
+					NOT = { is_subject_of_type = th_yukari_daimyo }
+				} 
+				country_event = { id = th_yukari_daimyo_mechanic.4 }
+			}
+		}
+	}
+	
+	option = {
+		name = th_yukari_daimyo_mechanic.3.a
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Vassal becomes Daimyo
+country_event = {
+	id = th_yukari_daimyo_mechanic.4
+	title = th_yukari_daimyo_mechanic.4.t
+	desc = th_yukari_daimyo_mechanic.4.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {	#Long live Yukari
+		name = th_yukari_daimyo_mechanic.4.a
+		grant_independence = yes
+		FROM = {
+			create_subject = {
+				subject_type = th_yukari_daimyo
+				subject = ROOT
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Daimyo becomes too powerful! - Notification
+country_event = {
+	id = th_yukari_daimyo_mechanic.5
+	title = th_yukari_daimyo_mechanic.5.t
+	desc = th_yukari_daimyo_mechanic.5.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#DAMNIT
+		name = th_yukari_daimyo_mechanic.5.a
+		tooltip = {
+			FROM = {
+				grant_independence = yes
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Daimyo becomes too powerful! - Indpendence
+country_event = {
+	id = th_yukari_daimyo_mechanic.6
+	title = th_yukari_daimyo_mechanic.6.t
+	desc = th_yukari_daimyo_mechanic.6.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	trigger = {
+		is_subject = yes
+		is_subject_of_type = th_yukari_daimyo
+		NOT = { has_ruler_flag = mhg_decided_to_remain_daimyo_flag }
+		overlord = {
+			NOT = { has_country_flag = mhg_no_daimyo_free_independence }
+			variable_arithmetic_trigger = {
+				export_to_variable = {
+					which = mhg_subject_development_variable
+					value = total_development
+					who = ROOT
+				}
+				export_to_variable = {
+					which = mhg_daimyo_capacity_variable
+					value = modifier:daimyo_capacity
+				}
+				check_variable = {
+					which = mhg_subject_development_variable
+					which = mhg_daimyo_capacity_variable
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			overlord = {
+				save_event_target_as = mhg_overlord
+			}
+		}
+	}
+
+	option = {
+		name = th_yukari_daimyo_mechanic.6.a
+		grant_independence = yes
+		hidden_effect = {
+			event_target:mhg_overlord = {				
+				country_event = {
+					id = th_yukari_daimyo_mechanic.5
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = th_yukari_daimyo_mechanic.6.b
+		hidden_effect = {
+			set_ruler_flag = mhg_decided_to_remain_daimyo_flag
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Daimyo becomes too powerful (nerfed)! - Indpendence
+country_event = {
+	id = th_yukari_daimyo_mechanic.7
+	title = th_yukari_daimyo_mechanic.7.t
+	desc = th_yukari_daimyo_mechanic.7.desc
+	picture = GENSOKYOTHRONE_eventPicture
+
+	trigger = {
+		is_subject = yes
+		is_subject_of_type = th_yukari_daimyo
+		NOT = { has_ruler_flag = mhg_decided_to_remain_daimyo_flag }
+		overlord = {
+			has_country_flag = mhg_no_daimyo_free_independence
+			variable_arithmetic_trigger = {
+				export_to_variable = {
+					which = mhg_subject_development_variable
+					value = total_development
+					who = ROOT
+				}
+				export_to_variable = {
+					which = mhg_daimyo_capacity_variable
+					value = modifier:daimyo_capacity
+				}
+				check_variable = {
+					which = mhg_subject_development_variable
+					which = mhg_daimyo_capacity_variable
+				}
+			}
+			NOT = { truce_with = ROOT }
+		}
+		OR = {
+			NOT = { has_country_flag = mhg_had_independence_event }
+			had_country_flag = {
+				flag = mhg_had_independence_event
+				days = 3650
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = mhg_had_independence_event
+			set_country_flag = mhg_had_independence_event
+			overlord = {
+				save_event_target_as = mhg_overlord
+			}
+		}
+	}
+
+	option = {	#We declare war! NOW!
+		name = th_yukari_daimyo_mechanic.7.a
+		declare_war_with_cb = {
+			casus_belli = cb_independence_war
+			who = ROOT
+		}
+		hidden_effect = {
+			event_target:mhg_overlord = {				
+				country_event = {
+					id = th_yukari_daimyo_mechanic.8
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 0.25
+			modifier = {
+				factor = 2
+				army_size = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 2
+				total_development = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 2
+				land_morale = event_target:mhg_overlord
+				mil_tech = event_target:mhg_overlord
+			}
+		}
+	}
+
+	option = {	#We have to wait for the moment to strike!	(get like +50 Liberty Desire, +5 (+25 for daimyos who are close to the limit too) for every other daimyo)
+		name = th_yukari_daimyo_mechanic.7.b
+		add_liberty_desire = 25
+		
+		hidden_effect = {
+			event_target:mhg_overlord = {				
+				country_event = {
+					id = th_yukari_daimyo_mechanic.9
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 0.75
+			modifier = {
+				factor = 0.5
+				army_size = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 0.5
+				total_development = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 0.5
+				land_morale = event_target:mhg_overlord
+				mil_tech = event_target:mhg_overlord
+			}
+		}
+	}
+
+	option = {	#We have to wait for the moment to strike!	(get like +50 Liberty Desire, +5 (+25 for daimyos who are close to the limit too) for every other daimyo)
+		name = th_yukari_daimyo_mechanic.7.c
+		hidden_effect = {
+			set_ruler_flag = mhg_decided_to_remain_daimyo_flag
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Daimyo becomes too powerful (nerfed)! - Notification - WAR
+country_event = {
+	id = th_yukari_daimyo_mechanic.8
+	title = th_yukari_daimyo_mechanic.8.t
+	desc = th_yukari_daimyo_mechanic.8.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#You DARE to dow ME?!
+		name = th_yukari_daimyo_mechanic.8.a
+		tooltip = {
+			FROM = {
+				declare_war_with_cb = {
+					casus_belli = cb_independence_war
+					who = ROOT
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Daimyo becomes too powerful (nerfed)! - Notification - Liberty Desire
+country_event = {
+	id = th_yukari_daimyo_mechanic.9
+	title = th_yukari_daimyo_mechanic.9.t
+	desc = th_yukari_daimyo_mechanic.9.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Pfff
+		name = th_yukari_daimyo_mechanic.9.a
+		tooltip = {
+			FROM = {
+				add_liberty_desire = 25
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
