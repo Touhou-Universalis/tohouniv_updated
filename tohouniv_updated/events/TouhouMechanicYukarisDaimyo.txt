@@ -144,128 +144,19 @@ country_event = {
 	}
 }
 
-#Daimyo becomes too powerful! - Notification
+#Daimyo becomes too powerful and wants more rights!
 country_event = {
 	id = th_yukari_daimyo_mechanic.5
 	title = th_yukari_daimyo_mechanic.5.t
 	desc = th_yukari_daimyo_mechanic.5.desc
 	picture = GENSOKYOTHRONE_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {	#DAMNIT
-		name = th_yukari_daimyo_mechanic.5.a
-		tooltip = {
-			FROM = {
-				grant_independence = yes
-			}
-		}
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Daimyo becomes too powerful! - Indpendence
-country_event = {
-	id = th_yukari_daimyo_mechanic.6
-	title = th_yukari_daimyo_mechanic.6.t
-	desc = th_yukari_daimyo_mechanic.6.desc
-	picture = GENSOKYOTHRONE_eventPicture
 
 	trigger = {
 		is_subject = yes
 		is_subject_of_type = th_yukari_daimyo
 		NOT = { has_ruler_flag = mhg_decided_to_remain_daimyo_flag }
+		total_development = 300
 		overlord = {
-			NOT = { has_country_flag = mhg_no_daimyo_free_independence }
-			variable_arithmetic_trigger = {
-				export_to_variable = {
-					which = mhg_subject_development_variable
-					value = total_development
-					who = ROOT
-				}
-				export_to_variable = {
-					which = mhg_daimyo_capacity_variable
-					value = modifier:daimyo_capacity
-				}
-				check_variable = {
-					which = mhg_subject_development_variable
-					which = mhg_daimyo_capacity_variable
-				}
-			}
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	immediate = {
-		hidden_effect = {
-			overlord = {
-				save_event_target_as = mhg_overlord
-			}
-		}
-	}
-
-	option = {
-		name = th_yukari_daimyo_mechanic.6.a
-		grant_independence = yes
-		hidden_effect = {
-			event_target:mhg_overlord = {				
-				country_event = {
-					id = th_yukari_daimyo_mechanic.5
-				}
-			}
-		}
-
-		ai_chance = {
-			factor = 1
-		}
-	}
-
-	option = {
-		name = th_yukari_daimyo_mechanic.6.b
-		hidden_effect = {
-			set_ruler_flag = mhg_decided_to_remain_daimyo_flag
-		}
-
-		ai_chance = {
-			factor = 0
-		}
-	}
-}
-
-#Daimyo becomes too powerful (nerfed)! - Indpendence
-country_event = {
-	id = th_yukari_daimyo_mechanic.7
-	title = th_yukari_daimyo_mechanic.7.t
-	desc = th_yukari_daimyo_mechanic.7.desc
-	picture = GENSOKYOTHRONE_eventPicture
-
-	trigger = {
-		is_subject = yes
-		is_subject_of_type = th_yukari_daimyo
-		NOT = { has_ruler_flag = mhg_decided_to_remain_daimyo_flag }
-		overlord = {
-			has_country_flag = mhg_no_daimyo_free_independence
-			variable_arithmetic_trigger = {
-				export_to_variable = {
-					which = mhg_subject_development_variable
-					value = total_development
-					who = ROOT
-				}
-				export_to_variable = {
-					which = mhg_daimyo_capacity_variable
-					value = modifier:daimyo_capacity
-				}
-				check_variable = {
-					which = mhg_subject_development_variable
-					which = mhg_daimyo_capacity_variable
-				}
-			}
 			NOT = { truce_with = ROOT }
 		}
 		OR = {
@@ -291,47 +182,12 @@ country_event = {
 		}
 	}
 
-	option = {	#We declare war! NOW!
-		name = th_yukari_daimyo_mechanic.7.a
-		declare_war_with_cb = {
-			casus_belli = cb_independence_war
-			who = ROOT
-		}
-		hidden_effect = {
-			event_target:mhg_overlord = {				
-				country_event = {
-					id = th_yukari_daimyo_mechanic.8
-				}
-			}
-		}
-
-		ai_chance = {
-			factor = 0.25
-			modifier = {
-				factor = 2
-				army_size = event_target:mhg_overlord
-			}
-			modifier = {
-				factor = 2
-				total_development = event_target:mhg_overlord
-			}
-			modifier = {
-				factor = 2
-				land_morale = event_target:mhg_overlord
-				mil_tech = event_target:mhg_overlord
-			}
-		}
-	}
-
-	option = {	#We have to wait for the moment to strike!	(get like +50 Liberty Desire, +5 (+25 for daimyos who are close to the limit too) for every other daimyo)
-		name = th_yukari_daimyo_mechanic.7.b
-		add_liberty_desire = 25
-		
-		hidden_effect = {
-			event_target:mhg_overlord = {				
-				country_event = {
-					id = th_yukari_daimyo_mechanic.9
-				}
+	option = {	#Request for a higher position
+		name = th_yukari_daimyo_mechanic.5.a
+		custom_tooltip = th_yukari_daimyo_mechanic.5.a.tt
+		event_target:mhg_overlord = {				
+			country_event = {
+				id = th_yukari_daimyo_mechanic.6
 			}
 		}
 
@@ -350,11 +206,56 @@ country_event = {
 				land_morale = event_target:mhg_overlord
 				mil_tech = event_target:mhg_overlord
 			}
+			modifier = {
+				factor = 0.25
+				OR = {
+					NOT = { liberty_desire = 25 }
+					has_opinion = {
+						who = event_target:mhg_overlord
+						value = 100
+					}
+				}
+			}
 		}
 	}
 
-	option = {	#We have to wait for the moment to strike!	(get like +50 Liberty Desire, +5 (+25 for daimyos who are close to the limit too) for every other daimyo)
-		name = th_yukari_daimyo_mechanic.7.c
+	option = {	#We have grown too much as we could be Yukari's slave!
+		name = th_yukari_daimyo_mechanic.5.b
+		declare_war_with_cb = {
+			casus_belli = cb_independence_war
+			who = ROOT
+		}
+
+		ai_chance = {
+			factor = 0.25
+			modifier = {
+				factor = 2
+				army_size = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 2
+				total_development = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 2
+				land_morale = event_target:mhg_overlord
+				mil_tech = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					NOT = { liberty_desire = 25 }
+					has_opinion = {
+						who = event_target:mhg_overlord
+						value = 100
+					}
+				}
+			}
+		}
+	}
+
+	option = {	#We should stick with Mayohiga
+		name = th_yukari_daimyo_mechanic.5.c
 		hidden_effect = {
 			set_ruler_flag = mhg_decided_to_remain_daimyo_flag
 		}
@@ -365,7 +266,144 @@ country_event = {
 	}
 }
 
-#Daimyo becomes too powerful (nerfed)! - Notification - WAR
+#Daimyo becomes too powerful! - It asks for Promotion
+country_event = {
+	id = th_yukari_daimyo_mechanic.6
+	title = th_yukari_daimyo_mechanic.6.t
+	desc = th_yukari_daimyo_mechanic.6.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_variable = {
+				which = mhg_num_of_marches
+				value = 0
+			}
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = th_yukari_march
+				}
+				ROOT = {
+					change_variable = {
+						which = mhg_num_of_marches
+						value = 1
+					}
+				}
+			}
+			export_to_variable = {
+				which = mhg_allowed_marches
+				value = modifier:daimyo_capacity
+			}
+		}
+	}
+	
+	option = {	#I suppose one more march is fine
+		name = th_yukari_daimyo_mechanic.6.a
+		hidden_effect = {
+			FROM = { 
+				grant_independence = yes
+				country_event = {
+					id = th_yukari_daimyo_mechanic.7
+				}
+			}
+		}
+		create_subject = {
+			subject_type = th_yukari_march
+			subject = FROM
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = mhg_num_of_marches
+					which = mhg_allowed_marches
+				}
+			}
+			custom_tooltip = th_yukari_daimyo_mechanic.6.a.tt
+		}
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				check_variable = {
+					which = mhg_num_of_marches
+					which = mhg_allowed_marches
+				}
+			}
+		}
+	}
+	
+	option = {	#I demand you to give some land back!
+		name = th_yukari_daimyo_mechanic.6.b
+		FROM = {
+			country_event = {
+				id = th_yukari_daimyo_mechanic.8
+			}
+		}
+		custom_tooltip = th_yukari_daimyo_mechanic.6.b.tt
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = {
+					check_variable = {
+						which = mhg_num_of_marches
+						which = mhg_allowed_marches
+					}
+				}
+			}
+		}
+	}
+	
+	option = {	#They are not worth my time
+		name = th_yukari_daimyo_mechanic.6.c
+		FROM = {
+			grant_independence = yes
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = {
+					id = th_yukari_daimyo_mechanic.9
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Daimyo becomes too powerful! - We are a march now!
+country_event = {
+	id = th_yukari_daimyo_mechanic.7
+	title = th_yukari_daimyo_mechanic.7.t
+	desc = th_yukari_daimyo_mechanic.7.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Nice
+		name = th_yukari_daimyo_mechanic.7.a
+		tooltip = {
+			FROM = {
+				create_subject = {
+					subject_type = th_yukari_march
+					subject = ROOT
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Daimyo becomes too powerful! - MHG demands land!
 country_event = {
 	id = th_yukari_daimyo_mechanic.8
 	title = th_yukari_daimyo_mechanic.8.t
@@ -374,24 +412,40 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	option = {	#You DARE to dow ME?!
+	option = {	#Fiiine
 		name = th_yukari_daimyo_mechanic.8.a
 		tooltip = {
 			FROM = {
-				declare_war_with_cb = {
-					casus_belli = cb_independence_war
-					who = ROOT
+				create_subject = {
+					subject_type = th_yukari_march
+					subject = ROOT
 				}
 			}
 		}
 		
 		ai_chance = { 
-			factor = 100
+			factor = 1
+		}
+	}
+	
+	option = {	#I have a better suggestion: WAR!
+		name = th_yukari_daimyo_mechanic.8.b
+		tooltip = {
+			FROM = {
+				create_subject = {
+					subject_type = th_yukari_march
+					subject = ROOT
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
 		}
 	}
 }
 
-#Daimyo becomes too powerful (nerfed)! - Notification - Liberty Desire
+#Daimyo becomes too powerful! - Independence!
 country_event = {
 	id = th_yukari_daimyo_mechanic.9
 	title = th_yukari_daimyo_mechanic.9.t
@@ -400,16 +454,14 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	option = {	#Pfff
+	option = {	#Nice
 		name = th_yukari_daimyo_mechanic.9.a
 		tooltip = {
-			FROM = {
-				add_liberty_desire = 25
-			}
+			grant_independence = yes
 		}
 		
 		ai_chance = { 
-			factor = 100
+			factor = 1
 		}
 	}
 }
