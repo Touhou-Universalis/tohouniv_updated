@@ -80,7 +80,7 @@ country_event = {
 	picture = YUKARI_eventPicture
 	
 	mean_time_to_happen = {
-		days = 0
+		days = 1
 	}
 
 	hidden = yes
@@ -284,6 +284,7 @@ country_event = {
 			every_subject_country = {
 				limit = {
 					is_subject_of_type = th_yukari_march
+					NOT = { has_country_flag = mhg_is_special_case_march }
 				}
 				ROOT = {
 					change_variable = {
@@ -294,7 +295,11 @@ country_event = {
 			}
 			export_to_variable = {
 				which = mhg_allowed_marches
-				value = modifier:daimyo_capacity
+				value = modifier:march_slots
+			}
+			multiply_variable = {
+				which = mhg_allowed_marches
+				value = 100
 			}
 		}
 	}
@@ -414,33 +419,37 @@ country_event = {
 	
 	option = {	#Fiiine
 		name = th_yukari_daimyo_mechanic.8.a
-		tooltip = {
-			FROM = {
-				create_subject = {
-					subject_type = th_yukari_march
-					subject = ROOT
-				}
+		release_all_subjects = yes
+		random_owned_province = {
+			limit = {
+				is_capital = no
+				is_core = ROOT
 			}
+			cede_province = FROM
 		}
 		
 		ai_chance = { 
 			factor = 1
+			modifier = {
+				factor = 0
+				liberty_desire = 50
+			}
 		}
 	}
 	
 	option = {	#I have a better suggestion: WAR!
 		name = th_yukari_daimyo_mechanic.8.b
-		tooltip = {
-			FROM = {
-				create_subject = {
-					subject_type = th_yukari_march
-					subject = ROOT
-				}
-			}
+		declare_war_with_cb = {
+			casus_belli = cb_independence_war
+			who = FROM
 		}
 		
 		ai_chance = { 
 			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { liberty_desire = 50 }
+			}
 		}
 	}
 }
@@ -459,6 +468,191 @@ country_event = {
 		tooltip = {
 			grant_independence = yes
 		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Monthly check for marches
+country_event = {
+	id = th_satori_vassal_mechanic.10
+	title = th_satori_vassal_mechanic.10.t
+	desc = th_satori_vassal_mechanic.10.desc
+	picture = MASTERSATORI_eventPicture
+	
+	trigger = {
+		has_government_attribute = enables_yukaris_shogunate
+		OR = {
+			NOT = { has_country_flag = mhg_had_march_check }
+			had_country_flag = {
+				flag = mhg_had_march_check
+				days = 29
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = th_satori_vassal_mechanic.10.a
+		clr_country_flag = mhg_had_march_check
+		set_country_flag = mhg_had_march_check
+		set_variable = {
+			which = mhg_num_of_marches
+			value = 0
+		}
+		every_subject_country = {
+			limit = {
+				is_subject_of_type = th_yukari_march
+				NOT = { has_country_flag = mhg_is_special_case_march }
+			}
+			ROOT = {
+				change_variable = {
+					which = mhg_num_of_marches
+					value = 1
+				}
+			}
+		}
+		export_to_variable = {
+			which = mhg_allowed_marches
+			value = modifier:march_slots
+		}
+		multiply_variable = {
+			which = mhg_allowed_marches
+			value = 100
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	after = {
+		if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = mhg_allowed_marches
+						which = mhg_num_of_marches
+					}
+				}
+			}
+			country_event = {
+				id = th_yukari_daimyo_mechanic.11
+			}
+		}
+	}
+}
+
+#Too many marches!
+country_event = {
+	id = th_yukari_daimyo_mechanic.11
+	title = th_yukari_daimyo_mechanic.11.t
+	desc = th_yukari_daimyo_mechanic.11.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Oh no...
+		name = th_yukari_daimyo_mechanic.11.a
+		custom_tooltip = th_yukari_daimyo_mechanic.11.a.tt
+		hidden_effect = {
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = th_yukari_march
+				}
+				country_event = {
+					id = th_yukari_daimyo_mechanic.12
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Too many marches! - March decides what to do!
+country_event = {
+	id = th_yukari_daimyo_mechanic.12
+	title = th_yukari_daimyo_mechanic.12.t
+	desc = th_yukari_daimyo_mechanic.12.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Return to Daimyo
+		name = th_yukari_daimyo_mechanic.12.a
+		trigger = {
+			NOT = { total_development = 300 }
+		}
+		custom_tooltip = th_yukari_daimyo_mechanic.12.a.tt
+		hidden_effect = {
+			grant_independence = yes
+			FROM = {
+				create_subject = {
+					subject_type = th_yukari_daimyo
+					subject = ROOT
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 0.25
+				liberty_desire = 40
+			}
+			modifier = {
+				factor = 0.25
+				liberty_desire = 60
+			}
+			modifier = {
+				factor = 0.25
+				liberty_desire = 80
+			}
+			modifier = {
+				factor = 0
+				liberty_desire = 100
+			}
+		}
+	}
+	
+	option = {	#DoW FROM!
+		name = th_yukari_daimyo_mechanic.12.b
+		declare_war_with_cb = {
+			casus_belli = cb_independence_war
+			who = FROM
+		}
+		
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { liberty_desire = 40 }
+			}
+		}
+	}
+}
+
+#Explanation event
+country_event = {
+	id = th_yukari_daimyo_mechanic.100
+	title = th_yukari_daimyo_mechanic.100.t
+	desc = th_yukari_daimyo_mechanic.100.desc
+	picture = GENSOKYOTHRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = th_yukari_daimyo_mechanic.100.a
 		
 		ai_chance = { 
 			factor = 1
