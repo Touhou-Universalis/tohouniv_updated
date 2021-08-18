@@ -174,7 +174,10 @@ eientei_missions_mokou_slot = {
 					months = 900
 				}
 			}
-			#Increase rival loyalty equilibrium by 10
+			add_country_modifier = {
+				name = eit_placated_phoenix
+				duration = -1
+			}
 		}
 	}
 
@@ -384,7 +387,6 @@ eientei_missions_mokou_slot = {
 				name = eit_the_new_tenno
 				duration = -1
 			}
-			#Increase rival loyalty equilibrium by 10
 			if = {
 				limit = {
 					mission_completed = EIT_80_loyalty
@@ -552,7 +554,16 @@ eientei_lost_brewing_stand_slot = {
 			}
 		}
 		effect = {
-			#Increase rival loyalty equilibrium by 10
+			add_country_modifier = {
+				name = eit_mokou_loyalty_buff
+				duration = -1
+			}
+			hidden_effect = {
+				set_variable = {	#Starts NOW to count, might have to move it to somewhere else if we want to count previous battles too
+					which = eit_defeated_mokou_counter
+					value = 0
+				}
+			}
 		}
 	}
 
@@ -561,10 +572,30 @@ eientei_lost_brewing_stand_slot = {
 		required_missions = { EIT_30_loyalty }
 		position = 5
 		trigger = {
-			#has defeated Mokou in danmaku fight for 10 times
+			if = {
+				limit = {
+					mission_completed = EIT_30_loyalty
+				}
+				custom_trigger_tooltip = {
+					tooltip = EIT_defeat_mokou_10_times_ct
+					check_variable = {
+						which = eit_defeated_mokou_counter
+						value = 10
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {	#Complete prior mission first so you can see what the requirement is
+					tooltip = EIT_defeat_mokou_10_times_tt
+					always = no
+				}
+			}
 		}
 		effect = {
-			#Increase rival loyalty equilibrium by 10
+			add_country_modifier = {
+				name = eit_humiliated_mokou
+				duration = -1
+			}
 			add_power_projection = {
 				type = mission_rewards_power_projection
 				amount = 20
@@ -584,7 +615,10 @@ eientei_lost_brewing_stand_slot = {
 			}
 		}
 		effect = {
-			#Increase rival loyalty equilibrium by 10
+			add_country_modifier = {
+				name = eit_eternal_loyal_mokou
+				duration = -1
+			}
 			if = {
 				limit = {
 					mission_completed = EIT_claim_the_throne_of_the_tenno
@@ -1276,10 +1310,28 @@ eientei_relations_with_the_moon_slot = {
 
 	EIT_influence_outworld = {
 		icon = mission_build_up_to_force_limit
-		required_missions = { EIT_interaction_with_outside_countries EIT_crown_kaguya_to_the_new_ruler_of_the_moon }
+		required_missions = { 
+			EIT_interaction_with_outside_countries 
+			EIT_crown_kaguya_to_the_new_ruler_of_the_moon 
+		}
 		position = 5
 		trigger = {
-			#at least one country been influenced by EIT
+			if = {
+				limit = {
+					OR = {
+						has_dlc = "Rights of Man"
+						has_dlc = "Emperor"
+					}
+				}
+				any_known_country = {
+					th_has_been_influenced_by_root = yes
+				}
+			}
+			else = {
+				any_known_country = {
+					th_has_received_gift_from_root = yes
+				}
+			}
 		}
 		effect = {
 			add_dip_power = 100
@@ -1300,6 +1352,47 @@ eientei_relations_with_the_moon_slot = {
 		}
 		effect = {
 			#not decided yet
+			#An idea from me: the tributaries pay all 1 year worth of their non-devastated provinces of goods to Kaguya
+			#For the implementation: just look at the script below
+			# - Comrade Flan
+			custom_tooltip = EIT_five_tributaries_tt
+			if = {	#Is required or else we hit some serious performance issues when you hover over the mission without having any subject
+				limit = {
+					any_country = {
+						is_subject_of = ROOT
+					}
+				}
+				hidden_effect = {
+					every_subject_country = {
+						limit = {
+							is_subject_of_type = tributary_state
+						}
+						export_to_variable = {
+							which = eit_old_subject_money
+							value = treasury
+						}
+						add_years_of_owned_provinces_production_income = {
+							years = 1
+							trigger = {
+								NOT = { devastation = 1 }
+							}
+						}
+						export_to_variable = {
+							which = eit_new_subject_money
+							value = treasury
+						}
+						subtract_variable = {
+							which = eit_new_subject_money
+							which = eit_old_subject_money
+						}
+						th_transfer_treasury = {
+							giver = THIS
+							taker = ROOT
+							variable = eit_new_subject_money
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -1324,6 +1417,7 @@ eientei_relations_with_the_moon_slot = {
 		position = 8
 		trigger = {
 			#Not decided yet
+			#Maybe something about having more influence in trade nodes outside of Gensokyo?
 		}
 		effect = {
 			th_increase_ruler_adm_stat = {
@@ -1539,6 +1633,8 @@ eientei_missions_outworld_slot = {
 			hidden_effect = {
 				set_country_flag = eit_lunarian_crowning_flag
 			}
+			eit_enable_influencing_outworld = yes
+			eit_enable_outworld_tributary = yes
 		}
 	}
 
