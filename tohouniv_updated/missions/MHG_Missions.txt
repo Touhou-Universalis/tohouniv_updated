@@ -1084,35 +1084,10 @@ mhg_missions_daimyo_middle_east_slot = {
 	}
 	has_country_shield = yes
 
-	MHG_might_of_the_gap_hag = {
-		icon = mission_invade_england
-		required_missions = {  }
-		position = 1
-		trigger = {
-			th_has_reached_government_reform_tier = {
-				tier_6 = yes
-			}
-		}
-		effect = {
-			add_government_reform = Gensokyan_mhg_puppet_master
-		}
-	}
-
-	MHG_reform_government = {
-		icon = mission_touhou_mastermind_yukari
-		required_missions = { MHG_might_of_the_gap_hag }
-		position = 2
-		trigger = {
-			always = yes
-		}
-		effect = {
-		}
-	}
-
 	MHG_gensokyan_daimyos = {
 		icon = mission_touhou_mastermind_yukari
-		required_missions = { MHG_reform_government }
-		position = 3
+		required_missions = {  }
+		position = 1
 		trigger = {
 			always = yes
 		}
@@ -1123,20 +1098,147 @@ mhg_missions_daimyo_middle_east_slot = {
 	MHG_great_rival_humiliation = {
 		icon = mission_touhou_mastermind_yukari
 		required_missions = { MHG_gensokyan_daimyos }
-		position = 4
+		position = 2
+		provinces_to_highlight = {
+			owner = {
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				OR = {
+					AND = {
+						OR = {
+							has_dlc = "Rights of Man"
+							has_dlc = "Emperor"
+						}
+						NOT = { great_power_rank = 9 }
+					}
+					AND = {
+						NOT = { has_dlc = "Rights of Man" }
+						NOT = { has_dlc = "Emperor" }
+						total_own_and_non_tributary_subject_development = ROOT
+					}
+				}
+			}
+		}
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					OR = {
+						has_dlc = "Rights of Man"
+						has_dlc = "Emperor"
+					}
+				}
+				if = {
+					limit = {
+						any_country = {
+							is_great_power = yes
+							NOT = { tag = ROOT }
+						}
+					}
+					any_country = {
+						is_great_power = yes
+						NOT = { tag = ROOT }
+						war_with = ROOT
+						NOT = {
+							war_score_against = {
+								who = ROOT
+								value = -50
+							}
+						}
+					}
+				}
+				else = {
+					custom_trigger_tooltip = {
+						tooltip = MHG_great_rival_humiliation_tt
+						always = yes
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						any_country = {
+							NOT = { tag = ROOT }
+							total_own_and_non_tributary_subject_development = ROOT
+						}
+					}
+					any_country = {
+						total_own_and_non_tributary_subject_development = ROOT
+						NOT = { tag = ROOT }
+						war_with = ROOT
+						NOT = {
+							war_score_against = {
+								who = ROOT
+								value = -50
+							}
+						}
+					}
+				}
+				else = {
+					custom_trigger_tooltip = {
+						tooltip = MHG_great_rival_humiliation_tt
+						always = yes
+					}
+				}
+			}
 		}
 		effect = {
 		}
 	}
 
+	MHG_the_spies_of_yukari = {
+		icon = mission_touhou_mastermind_yukari
+		required_missions = { MHG_zashiki_espionage }
+		position = 3
+		trigger = {
+			calc_true_if = {
+				all_country = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 35
+					}
+				}
+				amount = 3
+			}
+			spymaster = 1
+		}
+		effect = {
+			mhg_enable_provocate_war_action = yes
+		}
+	}
+
+	MHG_might_of_the_gap_hag = {
+		icon = mission_invade_england
+		required_missions = { MHG_the_spies_of_yukari }
+		position = 4
+		trigger = {
+			th_has_reached_government_reform_tier = {
+				tier_6 = yes
+			}
+		}
+		effect = {
+			add_government_reform = Gensokyan_mhg_puppet_master
+		}
+	}
+
 	MHG_daimyo_collector = {
 		icon = mission_touhou_mastermind_yukari
-		required_missions = { MHG_great_rival_humiliation }
+		required_missions = { MHG_might_of_the_gap_hag }
 		position = 5
 		trigger = {
-			always = yes
+			calc_true_if = {
+				all_subject_country = {
+					OR = {
+						is_subject_of_type = th_yukari_march
+						is_subject_of_type = th_yukari_daimyo
+						is_subject_of_type = th_yukari_puppet_state
+						is_subject_of_type = colony
+						is_subject_of_type = crown_colony
+						is_subject_of_type = self_governing_colony
+						is_subject_of_type = private_enterprise
+					}
+				}
+				amount = 40
+			}
 		}
 		effect = {
 		}
