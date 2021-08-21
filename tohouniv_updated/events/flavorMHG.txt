@@ -2429,9 +2429,9 @@ country_event = {
 ###Add Flag for not having any special Yukari merc active###
 country_event = {
 	id = flavor_mhg.47
-	title = "flavor_mhg.47.t"
-	desc = "flavor_mhg.47.desc"
-	picture = ALICE2_eventPicture
+	title = none
+	desc = none
+	picture = none
 
 	trigger = {
 		mhg_has_not_hired_any_special_mercs = yes
@@ -2448,7 +2448,6 @@ country_event = {
 	hidden = yes
 
 	option = {
-		name = flavor_mhg.47.a
 		th_mhg_set_merc_flags = yes
 						
 		ai_chance = { 
@@ -2460,9 +2459,9 @@ country_event = {
 ###Remove Flag for having any special Yukari merc###
 country_event = {
 	id = flavor_mhg.48
-	title = "flavor_mhg.48.t"
-	desc = "flavor_mhg.48.desc"
-	picture = ALICE2_eventPicture
+	title = none
+	desc = none
+	picture = none
 
 	trigger = {
 		mhg_has_hired_any_special_mercs = yes
@@ -2475,9 +2474,99 @@ country_event = {
 	hidden = yes
 
 	option = {
-		name = flavor_mhg.47.a
 		th_mhg_refund_costs_for_mercs = yes
 		
+						
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+###Add opinion to any new subject country###
+country_event = {
+	id = flavor_mhg.49
+	title = none
+	desc = none
+	picture = none
+
+	trigger = {
+		has_country_flag = mhg_has_increased_subject_opinion
+		any_subject_country = {
+			NOT = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_mhg_master_puppeteer
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		every_subject_country = {
+			limit = {
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_mhg_master_puppeteer
+					}
+				}
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = th_mhg_master_puppeteer
+			}
+		}		
+						
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+###Remove opinion if no longer subject###
+country_event = {
+	id = flavor_mhg.50
+	title = none
+	desc = none
+	picture = none
+
+	trigger = {
+		any_country = {
+			reverse_has_opinion_modifier = {
+				who = ROOT
+				modifier = th_mhg_master_puppeteer
+			}
+			NOT = { overlord_of = ROOT }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		every_subject_country = {
+			limit = {
+				reverse_has_opinion_modifier = {
+					who = ROOT
+					modifier = th_mhg_master_puppeteer
+				}
+				NOT = { overlord_of = ROOT }
+			}
+			reverse_remove_opinion = {
+				who = ROOT
+				modifier = th_mhg_master_puppeteer
+			}
+		}		
 						
 		ai_chance = { 
 			factor = 1
@@ -2516,6 +2605,12 @@ country_event = {
 		hidden_effect = {
 			set_country_flag = MHG_yukari_retired
 			exile_ruler_as = sleeping_yukari
+			if = {
+				limit = {
+					has_country_flag = mhg_no_stab_hits_on_sleep
+				}
+				add_stability = 1
+			}
 		}
 	}
 	
