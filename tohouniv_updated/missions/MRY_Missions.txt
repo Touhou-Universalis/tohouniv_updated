@@ -412,23 +412,48 @@ moriya_missions_west_and_north_slot = {
 		icon = mission_touhou_moriya_shrine
 		required_missions = { MRY_religious_prestige }
 		position = 2
+		provinces_to_highlight = {
+			province_id = 4998
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				NOT = { controlled_by = ROOT }
+			}
+		}
 		trigger = {
 			treasury = 1000
+			owns_core_province = 4998
+			controls = 4998
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_treasury = -1000
+			4998 = {
+				add_permanent_province_modifier = {
+					name = mry_great_shrine
+					duration = -1
+				}
+				th_add_manufactory = yes
+				add_building = cathedral
+			}
 		}
 	}
 
 	MRY_danmaku_barracks = {
 		icon = mission_touhou_moriya_shrine
 		required_missions = { MRY_religious_treasury }
-		position = 2
+		position = 3
+		provinces_to_highlight = {
+			has_manpower_building_trigger = no
+			owned_by = ROOT
+		}
 		trigger = {
-			always = yes
+			num_of_owned_provinces_with = {
+				has_manpower_building_trigger = yes
+				value = 8
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_yearly_manpower = 3
 		}
 	}
 
@@ -437,10 +462,15 @@ moriya_missions_west_and_north_slot = {
 		required_missions = { MRY_danmaku_barracks }
 		position = 4
 		trigger = {
-			always = yes
+			calc_true_if = {
+				all_country = {
+					th_has_lost_danmaku_duel_against_root = yes
+				}
+				amount = 3
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_mil_power = 300
 		}
 	}
 
@@ -448,11 +478,29 @@ moriya_missions_west_and_north_slot = {
 		icon = mission_touhou_moriya_shrine
 		required_missions = { MRY_danmaku_fights }
 		position = 5
+		provinces_to_highlight = {
+			OR = {
+				religion = th_hakureishinto
+				religion = th_oldhakurei
+			}
+			th_gensokyo_or_moon_continent = yes
+		}
 		trigger = {
-			always = yes
+			NOT = {
+				any_province = {
+					OR = {
+						religion = th_hakureishinto
+						religion = th_oldhakurei
+					}
+					th_gensokyo_or_moon_continent = yes
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			custom_tooltip = MRY_eradicate_hakurei_tt
+			hidden_effect = {
+				set_country_flag = mry_discipline_through_tributaries
+			}
 		}
 	}
 
@@ -910,18 +958,20 @@ moriya_missions_europe_slot = {
 		required_missions = {  }
 		position = 1
 		trigger = {
-			OR = {
-				tag = GNK
-				government_rank = 3
+			calc_true_if = {
+				all_country = {
+					NOT = { is_subject_of = ROOT }
+					has_spy_network_from = {
+						who = ROOT
+						value = 20
+					}
+				}
+				amount = 3
 			}
-			total_development = 650
 		}
 		effect = {
+			th_allow_incinite_religious_rebels = yes
 			th_allow_converting_on_claim = {
-				th_moriyashinto = yes
-				shrine_only = yes
-			}
-			th_allow_converting_on_colonization = {
 				th_moriyashinto = yes
 				shrine_only = yes
 			}
@@ -936,7 +986,10 @@ moriya_missions_europe_slot = {
 			always = yes
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			th_allow_converting_on_colonization = {
+				th_moriyashinto = yes
+				shrine_only = yes
+			}
 		}
 	}
 	
