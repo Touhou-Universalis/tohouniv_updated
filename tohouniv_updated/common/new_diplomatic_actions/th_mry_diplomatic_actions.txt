@@ -9,9 +9,48 @@ th_request_conversion = {
 		is_free_or_tributary_trigger = yes
 		OR = {
 			AND = {
-				th_is_or_was_tag = { tag = MRY }
-				has_reform = Gensokyan_shrine_theocracy
-				religion = th_moriyashinto #Just to make it easier
+				OR = {
+					AND = { 
+						has_country_flag = th_enabled_hakurei_ask_conversion
+						religion = th_hakureishinto
+					}
+					AND = { 
+						has_country_flag = th_enabled_taoist_ask_conversion
+						religion = th_taoist
+					}
+					AND = { 
+						has_country_flag = th_enabled_buddhist_ask_conversion
+						religion = th_buddhist
+					}
+					AND = { 
+						has_country_flag = th_enabled_moriya_ask_conversion
+						religion = th_moriyashinto
+					}
+					AND = { 
+						has_country_flag = th_enabled_oldhakurei_ask_conversion
+						religion = th_oldhakurei
+					}
+					AND = { 
+						has_country_flag = th_enabled_shinkism_ask_conversion
+						religion = th_shinkism
+					}
+					AND = { 
+						has_country_flag = th_enabled_christian_ask_conversion
+						religion = th_christian
+					}
+					AND = { 
+						has_country_flag = th_enabled_lunarian_ask_conversion
+						religion = th_lunarian_religion
+					}
+					has_country_flag = th_enabled_ask_conversion
+				}
+				OR = {
+					AND = {
+						has_reform = Gensokyan_shrine_theocracy
+						has_country_flag = th_enabled_ask_conversion_for_shrines
+					}
+					has_country_flag = th_enabled_ask_conversion_without_restriction
+				}
 			}
 			th_has_copied_from_target = {
 				target = MRY
@@ -25,20 +64,8 @@ th_request_conversion = {
 	}
 
 	is_allowed = {
-		if = {
-			limit = {
-				th_has_incidents_enabled = yes
-			}
-			custom_trigger_tooltip = {
-				tooltip = th_mry_conversion_enabled_tt
-				has_global_flag = th_mry_conversion_enabled
-			}
-		}
-		else = {
-			has_reform = TH_feudal_shrine_reform
-		}
 		FROM = {
-			dominant_religion = th_moriyashinto
+			dominant_religion = ROOT
 			is_free_or_tributary_trigger = yes
 			NOT = { tag = PAP }
 		}
@@ -884,7 +911,7 @@ th_incite_moriya_zealots = {
 	is_visible = {
 		is_free_or_tributary_trigger = yes
 		OR = {
-			has_country_flag = th_enabled_incinite_religious_rebels
+			has_country_flag = th_enabled_incite_religious_rebels
 			th_has_copied_from_target = {
 				target = MRY
 			}
@@ -934,6 +961,85 @@ th_incite_moriya_zealots = {
 		add_spy_network_in = {
 			who = FROM
 			value = -30
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Faith Power - Call for Crusade
+th_call_for_crusade = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			mry_uses_faith_power = yes
+			th_has_copied_from_target = {
+				target = MRY
+			}
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				mry_uses_faith_power = yes
+			}
+			check_variable = {
+				which = faith_power
+				value = 200
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		FROM = {
+			NOT = { religion = ROOT }
+		}
+		NOT = {
+			any_country = {
+				has_country_modifier = th_mry_crusade_target
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		subtract_variable = {
+			which = faith_power
+			value = 200
+		}
+		FROM = {
+			add_country_modifier = {
+				name = th_mry_crusade_target
+				duration = 18250
+			}
+		}
+		every_known_country = {
+			limit = {
+				religion = ROOT
+			}
+			country_event = {
+				id = th_diplo_events.47
+			}
 		}
 	}
 
