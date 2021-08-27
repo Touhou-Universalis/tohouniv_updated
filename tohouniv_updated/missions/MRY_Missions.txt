@@ -756,7 +756,7 @@ moriya_missions_empire_and_religion_slot = {
 		}
 	}
 	
-	MRY_crusader_mikos = {
+	MRY_mof_incident = {
 		icon = mission_touhou_sanae
 		required_missions = { MRY_reform_the_shrine }
 		position = 3
@@ -784,7 +784,7 @@ moriya_missions_empire_and_religion_slot = {
 	
 	MRY_moriya_dominance = {
 		icon = mission_touhou_sanae
-		required_missions = { MRY_crusader_mikos }
+		required_missions = { MRY_mof_incident }
 		position = 4
 		trigger = {
 			calc_true_if = {
@@ -994,6 +994,14 @@ moriya_missions_europe_slot = {
 				th_moriyashinto = yes
 				shrine_only = yes
 			}
+			define_advisor = {
+				type = spymaster
+				skill = 2
+				female = yes
+				religion = ROOT
+				culture = ROOT
+				discount = yes
+			}
 		}
 	}
 	
@@ -1001,50 +1009,114 @@ moriya_missions_europe_slot = {
 		icon = mission_touhou_sanae
 		required_missions = { MRY_espionage }
 		position = 2
+		provinces_to_highlight = {
+			province_id = 4998
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				NOT = { prosperity = 100 }
+			}
+		}
 		trigger = {
-			always = yes
+			owns_core_province = 4998
+			4998 = {
+				prosperity = 100
+			}
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { num_of_rebel_controlled_provinces = 1 }
 		}
 		effect = {
 			th_allow_converting_on_colonization = {
 				th_moriyashinto = yes
 				shrine_only = yes
 			}
+			add_adm_power = 50
+			add_dip_power = 50
+			add_mil_power = 50
 		}
 	}
 	
-	MRY_robot_sighting = {
+	MRY_army_quality = {
 		icon = mission_touhou_sanae
 		required_missions = { MRY_moriya_festival }
 		position = 3
 		trigger = {
-			always = yes
+			army_tradition = 50
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				army_professionalism = 40
+			}
+			else = {
+				th_has_full_professional_land_army_ideas = yes
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_mil_power = 200
+			define_general = {
+				name = "Kanako Yasaka"
+				shock = 6
+				fire = 6
+				manuever = 2
+				siege = 5
+				female = yes
+				trait = defensive_planner_personality
+			}
 		}
 	}
 	
-	MRY_hisoutensoku = {
+	MRY_suwako_organizing = {
 		icon = mission_touhou_sanae
-		required_missions = { MRY_robot_sighting }
+		required_missions = { MRY_army_quality }
 		position = 4
 		trigger = {
-			always = yes
+			monthly_adm = 15
+			mry_uses_faith_power = yes
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			mry_enable_purchase_deity_advisor = yes
 		}
 	}
 	
-	MRY_robot_goes_brrrr = {
+	MRY_abundance_of_mana = {
 		icon = mission_touhou_sanae
-		required_missions = { MRY_hisoutensoku }
+		required_missions = { MRY_suwako_organizing }
 		position = 5
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				OR = {
+					th_advisor_kanako = 5
+					th_advisor_suwako = 5
+				}
+			}
+			else = {
+				OR = {
+					th_advisor_kanako = 3
+					th_advisor_suwako = 3
+				}
+			}
+			monthly_adm = 12
+			monthly_dip = 12
+			monthly_mil = 12
+			if = {
+				limit = {
+					mry_uses_faith_power = yes
+				}
+				has_global_modifier_value = {
+					which = monthly_faith_power
+					value = 1
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = mry_blessed_donation_box
+				duration = -1
+			}
 		}
 	}
 	
