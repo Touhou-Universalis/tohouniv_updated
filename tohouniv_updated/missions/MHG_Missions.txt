@@ -47,25 +47,34 @@ mhg_missions_gensokyo_slot = {
 		icon = mission_touhou_zashiki
 		required_missions = { MHG_improve_relations_with_yuyuko }
 		position = 2
+		provinces_to_highlight = {
+			owner = {
+				OR = {
+					tag = HKR
+					tag = FOM
+				}
+				NOT = { is_subject_of = ROOT }
+			}
+		}
 		trigger = {
-			OR = {
-				has_spy_network_in = {
-					who = HKR
-					value = 30
-				}
-				has_spy_network_in = {
-					who = FOM
-					value = 30
-				}
-				AND = {
-					NOT = { exists = HKR }
-					NOT = { exists = FOM }
-				}
-				FOM = {
+			HKR = {
+				OR = {
 					is_subject_of = ROOT
+					exists = no
+					has_spy_network_from = {
+						who = ROOT
+						value = 30
+					}
 				}
-				HKR = {
+			}
+			FOM = {
+				OR = {
 					is_subject_of = ROOT
+					exists = no
+					has_spy_network_from = {
+						who = ROOT
+						value = 30
+					}
 				}
 			}
 		}
@@ -181,14 +190,51 @@ mhg_missions_gensokyo_slot = {
 				add_base_tax = 1 
 				add_base_manpower = 1
 			}
-			add_mil_power = 100
+			if = {
+				limit = {
+					mission_completed = MHG_vassalize_marisa
+				}
+				Scarlett_domain = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+				Scarlet_island = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+				Scarlet_mountain = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			else = {
+				custom_tooltip = MHG_vassalize_reimu_tt
+			}
 		}
 	}
 
 	MHG_humilate_the_devil = {
 		icon = mission_touhou_remilia
-		required_missions = { MHG_vassalize_reimu }
+		required_missions = { 
+			MHG_vassalize_reimu
+			MHG_vassalize_marisa
+		}
 		position = 4
+		provinces_to_highlight = {
+			OR = {
+				owned_by = SCR
+				owned_by = SCD
+			}
+		}
 		trigger = {
 			OR = {
 				AND = {
@@ -289,6 +335,26 @@ mhg_missions_gensokyo_slot = {
 				}
 				add_claim = ROOT
 			}
+			add_permanent_claim = 5191
+			add_permanent_claim = 5132
+			if = {
+				limit = {
+					exists = KSE
+				}
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = KSE
+				}
+			}
+			if = {
+				limit = {
+					exists = OKI
+				}
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = OKI
+				}
+			}
 		}
 	}
 
@@ -296,7 +362,6 @@ mhg_missions_gensokyo_slot = {
 		icon = mission_touhou_hakurai_barrier
 		required_missions = { 
 			MHG_humilate_the_devil
-			MHG_eliminate_the_lunarian 
 		}
 		position = 5
 		provinces_to_highlight = {
@@ -333,16 +398,19 @@ mhg_missions_gensokyo_slot = {
 			}
 		}
 		effect = {
-			add_adm_power = 75	#Yukari
-			add_dip_power = 75	#Okina
-			add_mil_power = 75	#Kasen
+			country_event = {
+				id = flavor_mhg.51
+			}
 		}
 	}
 
 	MHG_collect_resources = {
 		icon = mission_touhou_hakurai_barrier
-		required_missions = { MHG_the_great_sages_of_gensokyo }
-		position = 7
+		required_missions = {
+			MHG_eliminate_the_lunarian
+			MHG_the_great_sages_of_gensokyo
+		}
+		position = 6
 		provinces_to_highlight = {
 			OR = {
 				AND = {
@@ -462,15 +530,21 @@ mhg_missions_gensokyo_slot = {
 	MHG_restore_the_hakurei_barrier = {
 		icon = mission_touhou_hakurai_barrier
 		required_missions = { MHG_collect_resources }
-		position = 9
+		position = 8
+		provinces_to_highlight = {
+			continent = gensokyo_continent
+			owner = {
+				NOT = { technology_group = tech_gensokyan }
+			}
+		}
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = hkr_expel_the_foreigners_no_strangers_in_gensokyo_tooltip
-				capital_scope = {
-					region_for_scope_province = {
-						type = all
+				NOT = {
+					any_province = {
+						continent = gensokyo_continent
 						owner = {
-							technology_group = tech_gensokyan
+							NOT = { technology_group = tech_gensokyan }
 						}
 					}
 				}
@@ -495,14 +569,13 @@ mhg_missions_gensokyo_slot = {
 		}
 		effect = {
 			country_event = { id = flavor_mhg.8 }
-			add_prestige = 25
 		}
 	}
 
 	MHG_take_control_over_gensokyo = {
 		icon = mission_touhou_yukari_throne
 		required_missions = { MHG_restore_the_hakurei_barrier }
-		position = 11
+		position = 10
 		provinces_to_highlight = {
 			th_gensokyo_or_moon_continent = yes
 			NOT = { owned_by = ROOT }
@@ -700,32 +773,35 @@ mhg_missions_lunarian_european_slot = {
 				limit = {
 					exists = LEM
 				}
-				has_won_war_against = {
-					who = LEM
-					max_years_since = 20
-				}
-				if = {
-					limit = {
-						tag = MHG
+				custom_trigger_tooltip = {
+					tooltip = MHG_annihilate_the_lunarians_at
+					has_won_war_against = {
+						who = LEM
+						max_years_since = 20
 					}
-					LEM = {
-						NOT = {
-							has_won_war_against = {
-								who = MHG
-								max_years_since = 20
+					if = {
+						limit = {
+							tag = MHG
+						}
+						LEM = {
+							NOT = {
+								has_won_war_against = {
+									who = MHG
+									max_years_since = 20
+								}
 							}
 						}
 					}
-				}
-				else_if = {
-					limit = {
-						tag = NMG
-					}
-					LEM = {
-						NOT = {
-							has_won_war_against = {
-								who = NMG
-								max_years_since = 20
+					else_if = {
+						limit = {
+							tag = NMG
+						}
+						LEM = {
+							NOT = {
+								has_won_war_against = {
+									who = NMG
+									max_years_since = 20
+								}
 							}
 						}
 					}
@@ -734,36 +810,40 @@ mhg_missions_lunarian_european_slot = {
 			else = {
 				OR = {
 					NOT = { exists = LCU }
-					has_won_war_against = {
-						who = LCU
-						max_years_since = 20
+					custom_trigger_tooltip = {
+						tooltip = MHG_annihilate_the_lunarians_bt
+						has_won_war_against = {
+							who = LCU
+							max_years_since = 20
+						}
 					}
-					LCU = {
-						is_subject_of = ROOT
-					}
+					LCU = { is_subject_of = ROOT }
 				}
-				if = {
-					limit = {
-						tag = MHG
-					}
-					LCU = {
-						NOT = {
-							has_won_war_against = {
-								who = MHG
-								max_years_since = 20
+				custom_trigger_tooltip = {
+					tooltip = MHG_annihilate_the_lunarians_ct
+					if = {
+						limit = {
+							tag = MHG
+						}
+						LCU = {
+							NOT = {
+								has_won_war_against = {
+									who = MHG
+									max_years_since = 20
+								}
 							}
 						}
 					}
-				}
-				else_if = {
-					limit = {
-						tag = NMG
-					}
-					LCU = {
-						NOT = {
-							has_won_war_against = {
-								who = NMG
-								max_years_since = 20
+					else_if = {
+						limit = {
+							tag = NMG
+						}
+						LCU = {
+							NOT = {
+								has_won_war_against = {
+									who = NMG
+									max_years_since = 20
+								}
 							}
 						}
 					}
@@ -779,9 +859,8 @@ mhg_missions_lunarian_european_slot = {
 			#}
 			add_power_projection = {
 				type = mission_rewards_power_projection
-				amount = 100
+				amount = 40
 			}
-			add_war_exhaustion = -20
 		}
 	}
 
@@ -820,34 +899,42 @@ mhg_missions_lunarian_european_slot = {
 				add_base_tax = 1 
 				add_base_manpower = 1
 			}
-			Scarlett_domain = {
+			if = {
 				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
+					mission_completed = MHG_vassalize_reimu
 				}
-				add_permanent_claim = ROOT
+				Scarlett_domain = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+				Scarlet_island = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+				Scarlet_mountain = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
 			}
-			Scarlet_island = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-			Scarlet_mountain = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
+			else = {
+				custom_tooltip = MHG_vassalize_marisa_tt
 			}
 		}
 	}
 
 	MHG_eliminate_the_lunarian = {
 		icon = mission_touhou_yukari_vs_eirin
-		required_missions = { MHG_vassalize_marisa }
-		position = 4
+		required_missions = { MHG_humilate_the_devil }
+		position = 5
 		trigger = {
 			NOT = { exists = EIT }
 		}
@@ -911,16 +998,12 @@ mhg_missions_lunarian_european_slot = {
 				}
 				treasury = 2000
 			}
-			diplomatic_reputation = 2
+			diplomatic_reputation = 4
 		}
 		effect = {
 			if = {
 				limit = {
-					226 = {
-						owner = {
-							NOT = { tag = ROOT }
-						}
-					}
+					NOT = { owns_or_non_sovereign_subject_of = 226 }
 				}
 				country_event = {
 					id = flavor_mhg.38
@@ -1101,7 +1184,6 @@ mhg_missions_daimyo_middle_east_slot = {
 		effect = {
 			mhg_remove_stab_hit_from_yukari_sleep = yes
 			4989 = {
-				remove_building = courthouse
 				add_permanent_province_modifier = {
 					name = mhg_shikigami_office
 					duration = -1
@@ -1149,15 +1231,21 @@ mhg_missions_daimyo_middle_east_slot = {
 							NOT = { tag = ROOT }
 						}
 					}
-					any_country = {
-						is_great_power = yes
-						NOT = { tag = ROOT }
-						war_with = ROOT
-						NOT = {
-							war_score_against = {
-								who = ROOT
-								value = -50
+					custom_trigger_tooltip = {
+						tooltip = MHG_great_rival_humiliation_at
+						calc_true_if = {
+							all_country = {
+								is_great_power = yes
+								NOT = { tag = ROOT }
+								war_with = ROOT
+								NOT = {
+									war_score_against = {
+										who = ROOT
+										value = -50
+									}
+								}
 							}
+							amount = 2
 						}
 					}
 				}
@@ -1176,15 +1264,21 @@ mhg_missions_daimyo_middle_east_slot = {
 							total_own_and_non_tributary_subject_development = ROOT
 						}
 					}
-					any_country = {
-						total_own_and_non_tributary_subject_development = ROOT
-						NOT = { tag = ROOT }
-						war_with = ROOT
-						NOT = {
-							war_score_against = {
-								who = ROOT
-								value = -50
+					custom_trigger_tooltip = {
+						tooltip = MHG_great_rival_humiliation_bt
+						calc_true_if = {
+							all_country = {
+								total_own_and_non_tributary_subject_development = ROOT
+								NOT = { tag = ROOT }
+								war_with = ROOT
+								NOT = {
+									war_score_against = {
+										who = ROOT
+										value = -50
+									}
+								}
 							}
+							amount = 2
 						}
 					}
 				}
@@ -1197,7 +1291,6 @@ mhg_missions_daimyo_middle_east_slot = {
 			}
 		}
 		effect = {
-			th_remove_annexation_penalty = yes
 			custom_tooltip = MHG_great_rival_humiliation_ct
 			hidden_effect = {
 				add_power_projection = {
@@ -1226,13 +1319,9 @@ mhg_missions_daimyo_middle_east_slot = {
 		}
 		effect = {
 			mhg_enable_provocate_war_action = yes
-			define_advisor = {
-				type = th_advisor_chen
-				name = "Chen"
-				female = yes
-				skill = 1
-				culture = Youkai
-				religion = ROOT
+			add_country_modifier = {
+				name = mhg_expanded_spies
+				duration = 7300
 			}
 		}
 	}
@@ -1260,7 +1349,7 @@ mhg_missions_daimyo_middle_east_slot = {
 				all_country = {
 					is_subject_of = ROOT
 				}
-				amount = 40
+				amount = 20
 			}
 		}
 		effect = {
@@ -1578,8 +1667,8 @@ mhg_missions_merc_china_india_slot = {
 		effect = {
 			define_general = {
 				name = "Chen, the General"
-				shock = 4
-				fire = 2
+				shock = 0
+				fire = 3
 				manuever = 5
 				siege = 0
 				female = yes
@@ -1597,7 +1686,6 @@ mhg_missions_merc_china_india_slot = {
 		}
 		effect = {
 			th_eighty_percent_merc_army_professionalism_cost = yes
-			th_enable_population_suppression_on_merc_recruitment = yes
 		}
 	}
 
@@ -1611,7 +1699,6 @@ mhg_missions_merc_china_india_slot = {
 			NOT = { num_of_loans = 1 }
 		}
 		effect = {
-			th_allow_insta_loot_on_merc_recruitment = yes
 			th_enable_merc_mil_decision = yes
 		}
 	}
@@ -1621,20 +1708,429 @@ mhg_missions_merc_china_india_slot = {
 		required_missions = { MHG_great_merc_army }
 		position = 4
 		trigger = {
-			calc_true_if = {
-				any_hired_mercenary_company = {
-					is_foreign_company = yes
-					home_province = {
-						th_gensokyo_or_moon_continent = no
-					}
-					hired_for_months = 12
-				}
-				amount = 4
-			}
+			num_of_hired_mercenary_companies = 5
+			army_professionalism = 0.25
 			army_tradition = 50
 		}
 		effect = {
 			mhg_enable_elite_mercenaries = yes
+		}
+	}
+	
+	MHG_travel_eastwards = {
+		icon = mission_aragonese_navy
+		required_missions = {  }
+		position = 6
+		
+		provinces_to_highlight = {
+			OR = {
+				colonial_region = colonial_california
+				colonial_region = colonial_mexico
+				colonial_region = colonial_alaska
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			has_discovered = ROOT
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = mhg_discover_american_colonial_regions.tooltip
+				OR = {
+					colonial_california = { has_discovered = ROOT }
+					colonial_mexico = { has_discovered = ROOT }
+					colonial_alaska = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					4637 = {
+						OR = {
+							is_empty = yes
+							owner = {
+								primitives = yes
+								ai = yes
+								was_player = no
+							}
+						}
+					}
+				}
+				4637 = {
+					cede_province = ROOT
+					change_culture = ROOT
+					change_religion = ROOT
+					add_core = ROOT
+					add_base_manpower = 1
+					add_base_production = 1
+					add_base_tax = 1
+					change_province_name = "New Mayohiga"
+					rename_capital = "New Mayohiga"
+					add_center_of_trade_level = 1
+				}
+			}
+			else = {
+				4637 = {
+					add_permanent_claim = ROOT
+				}
+			}
+			define_conquistador = {
+				name = "Chen"
+				shock = 3
+				fire = 3
+				manuever = 6
+				siege = 0
+				female = yes
+			}
+		}
+	}
+	
+	MHG_colonize_north_america = {
+		icon = mission_iberian_conquistador
+		required_missions = { MHG_travel_eastwards }
+		position = 7
+		
+		provinces_to_highlight = {
+			OR = {
+				colonial_region = colonial_alaska
+				colonial_region = colonial_california
+				colonial_region = colonial_mexico
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = MHG_colonize_north_america.tooltip
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 5
+					OR = {
+						colonial_region = colonial_alaska
+						colonial_region = colonial_california
+						colonial_region = colonial_mexico
+					}
+					is_city = yes
+				}
+			}
+		}
+		effect = {
+			mexico_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = AZT
+				}
+				add_casus_belli = {
+					target = AZT
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+		}
+	}
+	
+	MHG_subjugate_the_aztecs = {
+		icon = mission_mayan_conquest
+		required_missions = { MHG_colonize_north_america }
+		position = 9
+		
+		provinces_to_highlight = {
+			province_id = 852
+		}
+		trigger = {
+			OR = {
+				AZT = {
+					is_subject_of = ROOT
+				}
+				owns_or_subject_of = 852
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mhg.11
+				days = 0
+			}
+			country_event = {
+				id = flavor_mhg.12
+				days = 0
+			}
+			add_treasury = 800
+			central_america_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_claim = ROOT
+			}
+		}
+	}
+	
+	MHG_meet_the_pagan_gods = {
+		icon = mission_touhou_quetzalcoatl
+		required_missions = { MHG_subjugate_the_aztecs }
+		position = 10
+		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2644
+				province_id = 852
+				province_id = 846
+			}
+		}
+		trigger = {
+			owns_or_subject_of = 2644
+			owns_or_subject_of = 852
+			owns_or_subject_of = 846
+			custom_trigger_tooltip = {
+				tooltip = MHG_meet_the_pagan_gods.tooltip
+				has_country_flag = mhg_meeting_with_the_pagan_gods_ended
+			}
+		}
+		effect = {
+			add_prestige = 75
+		}
+	}
+}
+
+mhg_missions_outer_world_eastwards_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = MHG
+		}
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	MHG_found_the_yakumo_navy = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
+		trigger = {
+			navy_size_percentage = 1
+			sailors_percentage = 0.6
+			treasury = 100
+		}
+		effect = {
+			add_treasury = -75
+			add_prestige = 15
+			add_country_modifier = {
+				name = "mhg_increased_navy_budget"
+				duration = 7300
+			}
+			random_core_province = {
+				limit = {
+					is_state = yes
+				}
+				add_base_tax = 1 
+				add_base_production = 1
+				add_base_manpower = 1
+			}
+			define_explorer = {
+				shock = 3
+				fire = 2
+				manuever = 5
+				siege = 0
+				name = "Chen, the Explorer"
+				female = yes
+			}
+		}
+	}
+	
+	MHG_map_out_indochina = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { MHG_found_the_yakumo_navy }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+			th_colonize_dev_province_for_root = {
+				province = 1235
+			}
+			add_country_modifier = {
+				name = "mhg_island_colonizer"
+				duration = 9125
+			}
+			luzon_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			southern_luzon_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	MHG_settle_in_the_phillipines = {
+		icon = mission_las_islas_filipinas
+		required_missions = { MHG_map_out_indochina }
+		position = 3
+		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4348
+				province_id = 657
+				province_id = 658
+				province_id = 2699
+			}
+		}
+
+		trigger = {
+			OR = {
+				owns_core_province = 4348
+				owns_core_province = 657
+				owns_core_province = 658
+			}
+			owns_core_province = 2699
+		}
+		effect = {
+			2699 = {
+				change_religion = ROOT
+				if = {
+					limit = {
+						NOT = { province_has_center_of_trade_of_level = 2 }
+					}
+					center_of_trade = 2
+				}
+			}
+			visayas_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			mindanao_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			west_mindanao_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			spice_islands_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			kutai_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+			brunei_area = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	MHG_increase_influence_in_spice_trading = {
+		icon = mission_rb_colonise_spice_islands
+		required_missions = { MHG_settle_in_the_phillipines }
+		position = 4
+		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 1397
+				province_id = 1357
+				province_id = 1361
+			}
+		}
+		trigger = {
+			1397 = {
+				trade_share = {
+					country = ROOT
+					share = 20
+				}
+			}
+			1357 = {
+				trade_share = {
+					country = ROOT
+					share = 20
+				}
+			}
+			1361 = {
+				trade_share = {
+					country = ROOT
+					share = 20
+				}
+			}
+		}
+		effect = {
+			add_mercantilism = 5
+		}
+	}
+	
+	MHG_found_the_yakumo_embassy = {
+		icon = mission_touhou_human_capital
+		required_missions = { MHG_increase_influence_in_spice_trading }
+		position = 5
+		trigger = {
+			treasury = 600
+			stability = 2
+			is_at_war = no
+		}
+		effect = {
+			add_prestige = 25
+			add_treasury = -500
+			capital_scope = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+				if = {
+					limit = {
+						NOT = { province_has_center_of_trade_of_level = 2 }
+					}
+					center_of_trade = 2
+				}
+				add_province_modifier = {
+					name = mhg_yakumos_embassy
+					duration = -1
+				}
+			}
 		}
 	}
 	
@@ -1857,26 +2353,6 @@ mhg_missions_merc_china_india_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
-			if = {
-				limit = {
-					exists = ORI
-				}
-				add_casus_belli = {
-					target = ORI
-					type = cb_vassalize_mission
-					months = 900
-				}
-			}
-			if = {
-				limit = {
-					exists = YOR
-				}
-				add_casus_belli = {
-					target = YOR
-					type = cb_vassalize_mission
-					months = 900
-				}
-			}
 		}
 	}
 	
@@ -1895,7 +2371,7 @@ mhg_missions_merc_china_india_slot = {
 			1340 = {
 				trade_share = {
 					country = ROOT
-					share = 60
+					share = 20
 				}
 			}
 			1343 = {
@@ -1935,6 +2411,35 @@ mhg_missions_merc_china_india_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
+			malabar_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			kanara_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			ahmedabad_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			sindh_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_permanent_claim = 2099
 		}
 	}
 	
@@ -1974,428 +2479,6 @@ mhg_missions_merc_china_india_slot = {
 				add_base_production = 3
 				add_base_manpower = 2
 			}
-		}
-	}
-}
-
-mhg_missions_outer_world_eastwards_slot = {
-	slot = 5
-	generic = no
-	ai = yes
-	potential = {
-		th_is_or_was_tag = {
-			tag = MHG
-		}
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-
-	MHG_found_the_yakumo_navy = {
-		icon = mission_rb_a_mighty_fleet
-		required_missions = {  }
-		trigger = {
-			navy_size_percentage = 1
-			sailors_percentage = 0.6
-			treasury = 100
-		}
-		effect = {
-			add_treasury = -75
-			add_prestige = 15
-			add_country_modifier = {
-				name = "mhg_increased_navy_budget"
-				duration = 7300
-			}
-			random_core_province = {
-				limit = {
-					is_state = yes
-				}
-				add_base_tax = 1 
-				add_base_production = 1
-				add_base_manpower = 1
-			}
-			define_explorer = {
-				shock = 3
-				fire = 2
-				manuever = 5
-				siege = 0
-				name = "Chen, the Explorer"
-				female = yes
-			}
-		}
-	}
-	
-	MHG_map_out_indochina = {
-		icon = mission_establish_high_seas_navy
-		required_missions = { MHG_found_the_yakumo_navy }
-		position = 2
-		provinces_to_highlight = {
-			OR = {
-				region = moluccas_region
-				region = australia_region
-				region = indo_china_region
-			}
-			NOT = { has_discovered = ROOT }
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_break_the_barrier_tt
-				OR = {
-					moluccas_region = { has_discovered = ROOT }
-					australia_region = { has_discovered = ROOT }
-					indo_china_region = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			add_dip_power = 75
-			add_navy_tradition = 35
-			th_colonize_dev_province_for_root = {
-				province = 1235
-			}
-			add_country_modifier = {
-				name = "mhg_island_colonizer"
-				duration = 9125
-			}
-			luzon_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-			southern_luzon_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	MHG_settle_in_the_phillipines = {
-		icon = mission_las_islas_filipinas
-		required_missions = { MHG_map_out_indochina }
-		position = 3
-		
-		provinces_to_highlight = {
-			OR = {
-				province_id = 4348
-				province_id = 657
-				province_id = 658
-				province_id = 2699
-			}
-		}
-
-		trigger = {
-			OR = {
-				owns_core_province = 4348
-				owns_core_province = 657
-				owns_core_province = 658
-			}
-			owns_core_province = 2699
-		}
-		effect = {
-			2699 = {
-				change_religion = ROOT
-				if = {
-					limit = {
-						NOT = { province_has_center_of_trade_of_level = 2 }
-					}
-					center_of_trade = 2
-				}
-			}
-			visayas_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-			mindanao_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-			west_mindanao_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-			spice_islands_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-			kutai_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-			brunei_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	MHG_increase_influence_in_spice_trading = {
-		icon = mission_rb_colonise_spice_islands
-		required_missions = { MHG_settle_in_the_phillipines }
-		position = 4
-		
-		provinces_to_highlight = {
-			OR = {
-				province_id = 1397
-				province_id = 1357
-				province_id = 1361
-			}
-		}
-		trigger = {
-			OR = {
-				AND = {
-					1397 = {
-						trade_share = {
-							country = ROOT
-							share = 20
-						}
-					}
-					1357 = {
-						trade_share = {
-							country = ROOT
-							share = 20
-						}
-					}
-					1361 = {
-						trade_share = {
-							country = ROOT
-							share = 20
-						}
-					}
-				}
-			}
-		}
-		effect = {
-			add_mercantilism = 5
-		}
-	}
-	
-	MHG_found_the_yakumo_embassy = {
-		icon = mission_touhou_human_capital
-		required_missions = { MHG_increase_influence_in_spice_trading }
-		position = 5
-		trigger = {
-			treasury = 600
-			stability = 2
-			is_at_war = no
-		}
-		effect = {
-			add_prestige = 25
-			add_treasury = -500
-			capital_scope = {
-				add_base_tax = 1
-				add_base_production = 1
-				add_base_manpower = 1
-				if = {
-					limit = {
-						NOT = { province_has_center_of_trade_of_level = 2 }
-					}
-					center_of_trade = 2
-				}
-				add_permanent_province_modifier = {
-					name = mhg_yakumos_embassy
-					duration = -1
-				}
-			}
-		}
-	}
-	
-	MHG_travel_eastwards = {
-		icon = mission_aragonese_navy
-		required_missions = { MHG_found_the_yakumo_embassy }
-		position = 6
-		
-		provinces_to_highlight = {
-			OR = {
-				colonial_region = colonial_california
-				colonial_region = colonial_mexico
-				colonial_region = colonial_alaska
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = mhg_discover_american_colonial_regions.tooltip
-				OR = {
-					colonial_california = { has_discovered = ROOT }
-					colonial_mexico = { has_discovered = ROOT }
-					colonial_alaska = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			if = {
-				limit = {
-					4637 = {
-						OR = {
-							is_empty = yes
-							owner = {
-								primitives = yes
-								ai = yes
-								was_player = no
-							}
-						}
-					}
-				}
-				4637 = {
-					cede_province = ROOT
-					change_culture = ROOT
-					change_religion = ROOT
-					add_core = ROOT
-					add_base_manpower = 1
-					add_base_production = 1
-					add_base_tax = 1
-					change_province_name = "New Mayohiga"
-					rename_capital = "New Mayohiga"
-					add_center_of_trade_level = 1
-				}
-			}
-			else = {
-				4637 = {
-					add_permanent_claim = ROOT
-				}
-			}
-			define_conquistador = {
-				name = "Chen"
-				shock = 3
-				fire = 3
-				manuever = 6
-				siege = 0
-				female = yes
-			}
-		}
-	}
-	
-	MHG_colonize_north_america = {
-		icon = mission_iberian_conquistador
-		required_missions = { MHG_travel_eastwards }
-		position = 7
-		
-		provinces_to_highlight = {
-			OR = {
-				colonial_region = colonial_alaska
-				colonial_region = colonial_california
-				colonial_region = colonial_mexico
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = MHG_colonize_north_america.tooltip
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					value = 5
-					OR = {
-						colonial_region = colonial_alaska
-						colonial_region = colonial_california
-						colonial_region = colonial_mexico
-					}
-					is_city = yes
-				}
-			}
-		}
-		effect = {
-			mexico_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_claim = ROOT
-			}
-			if = {
-				limit = {
-					exists = AZT
-				}
-				add_casus_belli = {
-					target = AZT
-					type = cb_vassalize_mission
-					months = 900
-				}
-			}
-			add_treasury = 300
-		}
-	}
-	
-	MHG_subjugate_the_aztecs = {
-		icon = mission_mayan_conquest
-		required_missions = { MHG_colonize_north_america }
-		position = 9
-		
-		provinces_to_highlight = {
-			province_id = 852
-		}
-		trigger = {
-			OR = {
-				AZT = {
-					is_subject_of = ROOT
-				}
-				owns_or_subject_of = 852
-			}
-		}
-		effect = {
-			country_event = {
-				id = flavor_mhg.11
-				days = 0
-			}
-			country_event = {
-				id = flavor_mhg.12
-				days = 0
-			}
-			add_treasury = 800
-			central_america_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_claim = ROOT
-			}
-		}
-	}
-	
-	MHG_meet_the_pagan_gods = {
-		icon = mission_touhou_quetzalcoatl
-		required_missions = { MHG_subjugate_the_aztecs }
-		position = 10
-		
-		provinces_to_highlight = {
-			OR = {
-				province_id = 2644
-				province_id = 852
-				province_id = 846
-			}
-		}
-		trigger = {
-			owns_or_subject_of = 2644
-			owns_or_subject_of = 852
-			owns_or_subject_of = 846
-			custom_trigger_tooltip = {
-				tooltip = MHG_meet_the_pagan_gods.tooltip
-				has_country_flag = mhg_meeting_with_the_pagan_gods_ended
-			}
-		}
-		effect = {
-			add_prestige = 75
 		}
 	}
 }
