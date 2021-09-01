@@ -361,3 +361,187 @@ mry_add_scaled_province_conversion_faith_power = {
 		}
 	}
 }
+
+mry_add_monthly_faith_power = {
+	export_to_variable = {
+		variable_name = th_additional_faith_power
+		value = modifier:monthly_faith_power
+		who = ROOT
+	}
+	export_to_variable = {
+		which = faith_power_scaler
+		value = modifier:faith_power_modifier
+	}
+	change_variable = {
+		which = faith_power_scaler
+		value = 1
+	}
+	if = {
+		limit = {
+			check_variable = {	#NO NEGATIVITY SCALER
+				which = faith_power_scaler
+				value = 0
+			}
+			check_variable = {	#NEGATIVE VALUES SHOULD NOT SCALE
+				which = th_additional_faith_power
+				value = 0
+			}
+		}
+		multiply_variable = {
+			which = th_additional_faith_power
+			which = faith_power_scaler
+		}
+	}
+	change_variable = {
+		which = th_additional_faith_power
+		which = faith_power
+	}
+	export_to_variable = {
+		which = faith_power_limit
+		value = modifier:faith_power_capacity
+	}
+	multiply_variable = {
+		which = faith_power_limit
+		value = 100
+	}
+	if = {	#Underflow case
+		limit = {
+			NOT = {
+				check_variable = {
+					which = th_additional_faith_power
+					value = 0
+				}
+			}
+		}
+		set_variable = {
+			which = faith_power
+			value = 0
+		}
+	}
+	else_if = {	#Overflow case
+		limit = {
+			check_variable = {
+				which = th_additional_faith_power
+				which = faith_power_limit
+			}
+		}
+		set_variable = {
+			which = faith_power
+			which = faith_power_limit
+		}
+	}
+	else = {	#Normal case				
+		hidden_effect = {
+			subtract_variable = {
+				which = th_additional_faith_power
+				which = faith_power
+			}
+		}
+		change_variable = {
+			which = faith_power
+			which = th_additional_faith_power
+		}
+	}
+}
+
+mry_add_base_faith_power = {
+	export_to_variable = {
+		which = base_faith_power_gain
+		value = $value$
+		who = ROOT
+	}
+	export_to_variable = {
+		which = faith_power_scaler
+		value = modifier:faith_power_modifier
+	}
+	change_variable = {
+		which = faith_power_scaler
+		value = 1
+	}
+	export_to_variable = {
+		which = faith_power_religious_unity
+		value = religious_unity
+	}
+	export_to_variable = {
+		which = faith_power_development
+		value = total_development
+	}
+	divide_variable = {
+		which = faith_power_development
+		value = 1000
+	}
+	change_variable = {
+		which = th_additional_faith_power
+		which = faith_power_development
+	}
+	multiply_variable = {
+		which = th_additional_faith_power
+		which = faith_power_religious_unity
+	}
+	if = {
+		limit = {
+			check_variable = {	#NO NEGATIVITY SCALER
+				which = faith_power_scaler
+				value = 0
+			}
+			check_variable = {	#NEGATIVE VALUES SHOULD NOT SCALE
+				which = th_additional_faith_power
+				value = 0
+			}
+		}
+		multiply_variable = {
+			which = th_additional_faith_power
+			which = faith_power_scaler
+		}
+	}
+	change_variable = {
+		which = th_additional_faith_power
+		which = faith_power
+	}
+	export_to_variable = {
+		which = faith_power_limit
+		value = modifier:faith_power_capacity
+	}
+	multiply_variable = {
+		which = faith_power_limit
+		value = 100
+	}
+	if = {	#Underflow case
+		limit = {
+			NOT = {
+				check_variable = {
+					which = th_additional_faith_power
+					value = 0
+				}
+			}
+		}
+		set_variable = {
+			which = faith_power
+			value = 0
+		}
+	}
+	else_if = {	#Overflow case
+		limit = {
+			check_variable = {
+				which = th_additional_faith_power
+				which = faith_power_limit
+			}
+		}
+		set_variable = {
+			which = faith_power
+			which = faith_power_limit
+		}
+	}
+	else = {	#Normal case				
+		hidden_effect = {
+			subtract_variable = {
+				which = th_additional_faith_power
+				which = faith_power
+			}
+		}
+		change_variable = {
+			which = faith_power
+			which = th_additional_faith_power
+		}
+	}
+}

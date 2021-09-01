@@ -348,22 +348,7 @@ th_establish_religious_tributaries = {
 		FROM = {
 			religion = ROOT
 			is_at_war = no
-			OR = {
-				is_subject = no
-				is_subject_of = ROOT
-			}
-		}
-		OR = {
-			FROM = { 
-				is_subject_of = ROOT
-				is_subject_of_type = vassal	
-			}
-			FROM = {
-				NOT = { num_of_cities = 3 }
-			}
-			FROM = {
-				NOT = { total_development = 60 }
-			}
+			is_subject = no
 		}
 		is_at_war = no
 		if = {
@@ -709,17 +694,13 @@ th_establish_religious_tributaries = {
 	}
 }
 
-#MRY revoke religious tributaries
-th_revoke_religious_tributaries = {
+#MRY cancel religious tributaries
+th_cancel_religious_tributaries = {
 	category = th_diplo_action
 
-	require_acceptance = yes
+	require_acceptance = no
 
 	is_visible = {
-		is_free_or_tributary_trigger = yes
-		has_country_flag = mry_can_create_religious_tributaries
-		has_reform = Gensokyan_shrine_theocracy
-		religion = th_moriyashinto #Just to make it easier
 		FROM = {
 			is_subject_of = ROOT
 			is_subject_of_type = th_religious_tributary
@@ -727,22 +708,137 @@ th_revoke_religious_tributaries = {
 	}
 
 	is_allowed = {
-        FROM = {
-            custom_trigger_tooltip = {
-                tooltip = th_dev_condition_tooltip
-                NOT = { total_development = 200 }
-           }
-        }
+		always = yes
 	}
 
 	on_accept = {
+		FROM = {
+			grant_independence = yes
+			add_opinion = {
+				who = ROOT
+				modifier = th_evil_god
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#MRY incite Moriya zealots
+th_incite_moriya_zealots = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		OR = {
+			has_country_flag = th_enabled_incite_religious_rebels
+			th_has_copied_from_target = {
+				target = MRY
+			}
+		}
+		FROM = {
+			NOT = { religion = ROOT }
+			any_owned_province = { religion = ROOT }
+		}
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 30
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_already_incited_zealots
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_has_already_incited_zealots }
+					had_country_flag = {
+						flag = th_has_already_incited_zealots
+						days = 1826
+					}
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			set_country_flag = th_has_already_incited_zealots
+			every_owned_province = { 
+				limit = {
+					religion = ROOT
+				}
+				add_province_modifier = { 
+    				name = th_incited_zealots
+    				duration = 1825  
+				}
+			}
+			country_event = {
+				id = th_diplo_events.12
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -30
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Faith Power - Create Vassal
+th_promote_to_vassal = {
+	category = th_diplo_action
+
+	require_acceptance = yes
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		has_country_flag = mry_can_create_religious_tributaries
+		mry_uses_faith_power = yes
+		FROM = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_religious_tributary
+		}
+	}
+
+	is_allowed = {
+		variable_arithmetic_trigger = {
+			custom_tooltip = th_promote_to_vassal_tt
+			export_to_variable = {
+				which = th_from_total_development
+				value = trigger_value:total_development
+				who = FROM
+			}
+			multiply_variable = { which = th_from_total_development value = 10 }			
+			check_variable = { which = faith_power which = th_from_total_development }
+		}
+	}
+
+	on_accept = {
+		export_to_variable = {
+			which = th_from_total_development
+			value = trigger_value:total_development
+			who = FROM
+		}
+		multiply_variable = {
+			which = th_from_total_development
+			value = 10
+		}
+		subtract_variable = {
+			which = faith_power
+			which = th_from_total_development
+		}
 		create_subject = {
 			subject_type = vassal
 			subject = FROM
-		}
-		add_opinion = {
-			who = ROOT
-			modifier = th_evil_god
 		}
 	}
     ai_acceptance = {
@@ -870,105 +966,6 @@ th_revoke_religious_tributaries = {
 	}
 }
 
-#MRY cancel religious tributaries
-th_cancel_religious_tributaries = {
-	category = th_diplo_action
-
-	require_acceptance = no
-
-	is_visible = {
-		FROM = {
-			is_subject_of = ROOT
-			is_subject_of_type = th_religious_tributary
-		}
-	}
-
-	is_allowed = {
-		always = yes
-	}
-
-	on_accept = {
-		FROM = {
-			grant_independence = yes
-			add_opinion = {
-				who = ROOT
-				modifier = th_evil_god
-			}
-		}
-	}
-
-	ai_will_do = {
-		always = no
-	}
-}
-
-#MRY incite Moriya zealots
-th_incite_moriya_zealots = {
-	category = th_diplo_action
-
-	require_acceptance = no
-
-	is_visible = {
-		is_free_or_tributary_trigger = yes
-		OR = {
-			has_country_flag = th_enabled_incite_religious_rebels
-			th_has_copied_from_target = {
-				target = MRY
-			}
-		}
-		FROM = {
-			NOT = { religion = ROOT }
-			any_owned_province = { religion = ROOT }
-		}
-	}
-
-	is_allowed = {
-		has_spy_network_in = {
-			who = FROM
-			value = 30
-		}
-		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_has_already_incited_zealots
-			FROM = {				
-				OR = {
-					NOT = { has_country_flag = th_has_already_incited_zealots }
-					had_country_flag = {
-						flag = th_has_already_incited_zealots
-						days = 1826
-					}
-				}
-			}
-		}
-	}
-
-	on_accept = {
-		th_clear_copy_flag = yes
-		FROM = {
-			set_country_flag = th_has_already_incited_zealots
-			every_owned_province = { 
-				limit = {
-					religion = ROOT
-				}
-				add_province_modifier = { 
-    				name = th_incited_zealots
-    				duration = 1825  
-				}
-			}
-			country_event = {
-				id = th_diplo_events.12
-			}
-		}
-		add_spy_network_in = {
-			who = FROM
-			value = -30
-		}
-	}
-
-	ai_will_do = {
-		always = no
-	}
-}
-
 #Faith Power - Call for Crusade
 th_call_for_crusade = {
 	category = th_diplo_action
@@ -1017,26 +1014,40 @@ th_call_for_crusade = {
 				NOT = { religion = ROOT }
 			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_call_for_crusade_tt
-			NOT = {
-				any_country = {
-					has_country_modifier = th_mry_crusade_target
-				}
-			}
-		}
 	}
 
 	on_accept = {
 		th_clear_copy_flag = yes
+		every_country = {
+			limit = {
+				has_country_modifier = th_mry_crusade_target
+			}
+			remove_country_modifier = th_mry_crusade_target
+		}
+		every_country = {
+			limit = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_faith_poewr_called_crusade_against_us
+				}
+			}
+			remove_opinion = {
+				who = ROOT
+				modifier = th_faith_poewr_called_crusade_against_us
+			}
+		}
 		subtract_variable = {
 			which = faith_power
 			value = 200
 		}
 		FROM = {
+			add_opinion = {
+				who = ROOT
+				modifier = th_faith_poewr_called_crusade_against_us
+			}
 			add_country_modifier = {
 				name = th_mry_crusade_target
-				duration = 18250
+				duration = 10950
 			}
 		}
 		every_known_country = {
@@ -1046,6 +1057,55 @@ th_call_for_crusade = {
 			country_event = {
 				id = th_diplo_events.47
 			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Faith Power - Call to arms
+th_call_to_religious_war = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		mry_uses_faith_power = yes
+		FROM = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_religious_tributary
+		}
+	}
+
+	is_allowed = {
+		check_variable = {
+			which = faith_power
+			value = trigger_value:total_development
+			who = FROM
+		}
+		NOT = {
+			any_known_country = {
+				war_with = ROOT
+				alliance_with = FROM
+			}
+		}
+	}
+
+	on_accept = {
+		export_to_variable = {
+			which = th_from_total_development
+			value = trigger_value:total_development
+			who = FROM
+		}
+		subtract_variable = {
+			which = faith_power
+			which = th_from_total_development
+		}
+		FROM = {
+			join_all_offensive_wars_of = ROOT
+			join_all_defensive_wars_of = ROOT
 		}
 	}
 
