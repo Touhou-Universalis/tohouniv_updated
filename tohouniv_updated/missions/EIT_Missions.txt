@@ -560,12 +560,6 @@ eientei_lost_brewing_stand_slot = {
 				loyalty = 10
 				duration = -1
 			}
-			hidden_effect = {
-				set_variable = {	#Starts NOW to count, might have to move it to somewhere else if we want to count previous battles too
-					which = eit_defeated_mokou_counter
-					value = 0
-				}
-			}
 		}
 	}
 
@@ -576,7 +570,7 @@ eientei_lost_brewing_stand_slot = {
 		trigger = {
 			if = {
 				limit = {
-					mission_completed = EIT_30_loyalty
+					has_country_flag = eit_has_adapted_government
 				}
 				custom_trigger_tooltip = {
 					tooltip = EIT_defeat_mokou_10_times_ct
@@ -587,7 +581,7 @@ eientei_lost_brewing_stand_slot = {
 				}
 			}
 			else = {
-				custom_trigger_tooltip = {	#Complete prior mission first so you can see what the requirement is
+				custom_trigger_tooltip = {
 					tooltip = EIT_defeat_mokou_10_times_tt
 					always = no
 				}
@@ -660,7 +654,6 @@ eientei_lost_brewing_stand_slot = {
 				name = "eit_recovered_stolen_notes"
 				duration = 7300
 			}
-			add_mil_power = 100
 			Great_youkai_forest = {
 				limit = {
 					NOT = {
@@ -1203,13 +1196,6 @@ eientei_missions_middle_screen_slot = {
 		}
 		trigger = {
 			total_development = 1000
-			moon_region = {
-				type = all
-				OR = {
-					is_empty = yes
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-			}
 			custom_trigger_tooltip = {
 				tooltip = eit_is_crowned_as_tenno
 				has_country_flag = eit_tenno_crowning_flag
@@ -1217,6 +1203,13 @@ eientei_missions_middle_screen_slot = {
 			custom_trigger_tooltip = {
 				tooltip = eit_is_crowned_as_lunarian_empress
 				has_country_flag = eit_lunarian_crowning_flag
+			}
+			moon_region = {
+				type = all
+				OR = {
+					is_empty = yes
+					country_or_non_sovereign_subject_holds = ROOT
+				}
 			}
 		}
 		effect = {
@@ -1335,11 +1328,23 @@ eientei_relations_with_the_moon_slot = {
 					}
 				}
 				any_known_country = {
+					custom_trigger_tooltip = {
+						tooltip = EIT_influence_outworld_ct
+						capital_scope = {
+							th_gensokyo_or_moon_continent = no
+						}
+					}
 					th_has_been_influenced_by_root = yes
 				}
 			}
 			else = {
 				any_known_country = {
+					custom_trigger_tooltip = {
+						tooltip = EIT_influence_outworld_ct
+						capital_scope = {
+							th_gensokyo_or_moon_continent = no
+						}
+					}
 					th_has_received_gift_from_root = yes
 				}
 			}
@@ -1362,14 +1367,13 @@ eientei_relations_with_the_moon_slot = {
 			}			
 		}
 		effect = {
-			#not decided yet
-			#An idea from me: the tributaries pay all 1 year worth of their non-devastated provinces of goods to Kaguya
-			#For the implementation: just look at the script below
-			# - Comrade Flan
+			th_increase_ruler_adm_stat = {
+				adm = 1
+			}
 			custom_tooltip = EIT_five_tributaries_tt
 			if = {	#Is required or else we hit some serious performance issues when you hover over the mission without having any subject
 				limit = {
-					any_country = {
+					any_known_country = {
 						is_subject_of = ROOT
 					}
 				}
@@ -1383,7 +1387,7 @@ eientei_relations_with_the_moon_slot = {
 							value = treasury
 						}
 						add_years_of_owned_provinces_production_income = {
-							years = 1
+							years = 0.5
 							trigger = {
 								NOT = { devastation = 1 }
 							}
@@ -1628,7 +1632,7 @@ eientei_missions_outworld_slot = {
 				set_government_rank = 3
 			}
 			country_event = {
-				id = flavor_eit.16
+				id = flavor_eit.11
 			}
 			custom_tooltip = eit_lunarian_crowning
 			hidden_effect = {
@@ -1716,14 +1720,22 @@ eientei_missions_outworld_slot = {
 		icon = mission_build_up_to_force_limit
 		required_missions = { EIT_increase_deliver_efficiency }
 		position = 8
+		provinces_to_highlight = {
+			th_is_outworld_trade_node = yes
+		}
 		trigger = {
-			#Not decided yet
-			#Maybe something about having more influence in trade nodes outside of Gensokyo?
+			custom_trigger_tooltip = {
+				tooltip = EIT_opening_of_EIT_ct
+				any_trade_node = {
+					th_is_gensokyo_trade_node = no
+					trade_share = {
+						country = ROOT
+						share = 40
+					}
+				}
+			}
 		}
 		effect = {
-			th_increase_ruler_adm_stat = {
-				adm = 1
-			}
 			add_country_modifier = {
 				name = eit_better_traffic
 				duration = -1
