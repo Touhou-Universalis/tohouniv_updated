@@ -713,169 +713,13 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			remove_heir = yes
-			#Mokou gets respawned with additional stats
-			set_variable = {
-				which = th_respawn_adm_stat
-				which = th_ruler_adm_stat
-			}
-			set_variable = {
-				which = th_respawn_dip_stat
-				which = th_ruler_dip_stat
-			}
-			set_variable = {
-				which = th_respawn_mil_stat
-				which = th_ruler_mil_stat
-			}
-			define_ruler = {
-				name = "Mokou"
-				dynasty = "Fujiwara"
-				culture = Eientei
-				fixed = yes
-				adm = 5
-				dip = 4
-				mil = 6
-				age = 20
-				claim = 100
-				female = yes
-			}
-			add_ruler_personality = immortal_personality
-			set_ruler_flag = touhou_character_ruler
-			set_ruler_flag = touhou_original_ruler
-			set_ruler_flag = th_original_mokou
-			if = {
-				limit = {
-					th_fuj_has_n_volcanos = {
-						value = 4
-					}
-				}
-				define_ruler_to_general = {
-					fire = 6
-					shock = 5
-					manuever = 4
-					siege = 6
-				}
-			}
-			else_if = {
-				limit = {
-					th_fuj_has_n_volcanos = {
-						value = 3
-					}
-				}
-				define_ruler_to_general = {
-					fire = 5
-					shock = 5
-					manuever = 3
-					siege = 5
-				}
-			}
-			else_if = {
-				limit = {
-					th_fuj_has_n_volcanos = {
-						value = 2
-					}
-				}
-				define_ruler_to_general = {
-					fire = 5
-					shock = 5
-					manuever = 2
-					siege = 4
-				}
-			}
-			else_if = {
-				limit = {
-					th_fuj_has_n_volcanos = {
-						value = 1
-					}
-				}
-				define_ruler_to_general = {
-					fire = 4
-					shock = 4
-					manuever = 2
-					siege = 3
-				}
-			}
-			else = {
-				define_ruler_to_general = {
-					fire = 3
-					shock = 3
-					manuever = 2
-					siege = 2
-				}
-			}
+			th_respawn_ruler_with_new_stats_effect = yes
 		}
 	}
 
 	option = {	#WB
 		name = flavor_fuj.101.a
-		hidden_effect = {
-			export_to_variable = {
-				variable_name = th_start_stat_adm
-				value = ADM
-				who = ROOT
-			}
-			export_to_variable = {
-				variable_name = th_start_stat_dip
-				value = DIP
-				who = ROOT
-			}
-			export_to_variable = {
-				variable_name = th_start_stat_mil
-				value = MIL
-				who = ROOT
-			}
-			subtract_variable = {
-				which = th_respawn_adm_stat
-				which = th_start_stat_adm
-			}
-			subtract_variable = {
-				which = th_respawn_dip_stat
-				which = th_start_stat_dip
-			}
-			subtract_variable = {
-				which = th_respawn_mil_stat
-				which = th_start_stat_mil
-			}
-			while = {
-				limit = {
-					check_variable = {
-						which = th_respawn_adm_stat
-						value = 1
-					}
-				}
-				change_adm = 1
-				subtract_variable = {
-					which = th_respawn_adm_stat
-					value = 1
-				}
-			}
-			while = {
-				limit = {
-					check_variable = {
-						which = th_respawn_dip_stat
-						value = 1
-					}
-				}
-				change_dip = 1
-				subtract_variable = {
-					which = th_respawn_dip_stat
-					value = 1
-				}
-			}
-			while = {
-				limit = {
-					check_variable = {
-						which = th_respawn_mil_stat
-						value = 1
-					}
-				}
-				change_mil = 1
-				subtract_variable = {
-					which = th_respawn_mil_stat
-					value = 1
-				}
-			}
-		}
+		th_respawn_mokou = yes
 	}
 }
 
@@ -920,17 +764,31 @@ country_event = {
 			which = fuj_mokou_exp_raise
 			value = 150
 		}
+		set_variable = {
+			which = fuj_won_battles_counter
+			value = 0
+		}
+		ai_chance = {
+			factor = 1
+		}
 	}
 }
 
 #The leveling system of Mokou is not too complex as the mod should focus on Grand Strategy, not on RPG
 #Because of that, the experience needed to level up has a simple formular:
-#With every level, the Threshold gets increased by the Exp Raise, then the Exp Raise gets double
+#With every level, the Threshold gets increased by the Exp Raise, then the Exp Raise gets doubled
+#This results into the following leveling curve:
+#Level 1:	0
+#Level 2:	100	
+#Level 3:	250 (-100 as they are already achieved)		-> needed experience compared to previous level: 150
+#Level 4:	550 (-250 as they are already achieved)		-> needed experience compared to previous level: 300
+#Level 5:	1150 (-550 as they are already achieved)	-> needed experience compared to previous level: 600
+#Level 6:	2350 (-1150 as they are already achieved)	-> needed experience compared to previous level: 1200
 #LEVEL UP 
 country_event = {
-	id = flavor_fuj.102
-	title = flavor_fuj.102.t
-	desc = flavor_fuj.102.desc
+	id = flavor_fuj.103
+	title = flavor_fuj.103.t
+	desc = flavor_fuj.103.desc
 	picture = MOKOU_eventPicture
 
 	trigger = {
@@ -945,6 +803,7 @@ country_event = {
 			which = fuj_mokou_exp
 			which = fuj_mokou_level_threshold
 		}
+		NOT = { has_country_flag = th_has_leveling_event_going }
 	}
 
 	mean_time_to_happen = {
@@ -953,6 +812,8 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			set_country_flag = th_has_leveling_event_going
+			th_respawn_ruler_with_new_stats_effect = yes
 			change_variable = {
 				which = fuj_mokou_level_threshold
 				which = fuj_mokou_exp_raise
@@ -961,156 +822,93 @@ country_event = {
 				which = fuj_mokou_exp_raise
 				value = 2
 			}
+			change_variable = {
+				which = fuj_mokou_level
+				value = 1
+			}
 		}
 	}
 
 	option = {
+		name = flavor_fuj.103.a
+		custom_tooltip = fuj_mokou_leveled_up
+		th_respawn_mokou = yes
+
+		hidden_effect = {
+			clr_country_flag = th_has_leveling_event_going
+		}
 		
-		set_variable = {
-			which = fuj_mokou_level
-			value = 1
-		}
-		set_variable = {
-			which = fuj_mokou_exp
-			value = 0
-		}
-		set_variable = {
-			which = fuj_mokou_level_cap
-			value = 1
-		}
-		set_variable = {
-			which = fuj_mokou_level_threshold
-			value = 100
+		ai_chance = {
+			factor = 1
 		}
 	}
 }
 
-#Set volcano counter for FUJ
+#Choose general trait for Mokou
 country_event = {
     id = flavor_fuj.104
 	title = flavor_fuj.104.t
 	desc = flavor_fuj.104.desc
-	picture = SPY_eventPicture
-
-    mean_time_to_happen = {
-        days = 1
-    }
-
-    trigger = {
-		OR = {
-			tag = FUJ
-			AND = {
-				NOT = { exists = FUJ }
-				was_tag = FUJ
-			}
-		}
-		NOT = { has_country_flag = th_fuj_has_volcano_counter_setup }
-    }
-
-    hidden = yes
-
-    option = {
-        name = flavor_fuj.104.a
-		set_country_flag = th_fuj_has_volcano_counter_setup
-		th_fuj_set_volcano_counter = yes
-
-        ai_chance = {
-            factor = 100
-        }
-    }
-}
-
-#Replace Mokou when a volcano mission gets completed
-country_event = {
-	id = flavor_fuj.105
-	title = flavor_fuj.105.t
-	desc = flavor_fuj.105.desc
 	picture = MOKOU_eventPicture
-	
+
 	is_triggered_only = yes
-	hidden = yes
 
-	option = {	#WB
-		name = flavor_fuj.105.a
-		define_ruler = {
-			name = "Mokou"
-			dynasty = "Fujiwara"
-			culture = Eientei
-			fixed = yes
-			adm = 5
-			dip = 4
-			mil = 6
-			age = 20
-			claim = 100
-			female = yes
+	option = {
+		name = flavor_fuj.104.a
+		custom_tooltip = fuj_mokou_leveled_up
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_fire_bender
 		}
-		add_ruler_personality = immortal_personality
-		set_ruler_flag = touhou_character_ruler
-		set_ruler_flag = touhou_original_ruler
-		set_ruler_flag = th_original_mokou
-		if = {
-			limit = {
-				th_fuj_has_n_volcanos = {
-					value = 4
-				}
-			}
-			define_ruler_to_general = {
-				fire = 6
-				shock = 5
-				manuever = 4
-				siege = 6
-			}
-		}
-		else_if = {
-			limit = {
-				th_fuj_has_n_volcanos = {
-					value = 3
-				}
-			}
-			define_ruler_to_general = {
-				fire = 5
-				shock = 5
-				manuever = 3
-				siege = 5
-			}
-		}
-		else_if = {
-			limit = {
-				th_fuj_has_n_volcanos = {
-					value = 2
-				}
-			}
-			define_ruler_to_general = {
-				fire = 5
-				shock = 5
-				manuever = 2
-				siege = 4
-			}
-		}
-		else_if = {
-			limit = {
-				th_fuj_has_n_volcanos = {
-					value = 1
-				}
-			}
-			define_ruler_to_general = {
-				fire = 4
-				shock = 4
-				manuever = 2
-				siege = 3
-			}
-		}
-		else = {
-			define_ruler_to_general = {
-				fire = 3
-				shock = 3
-				manuever = 2
-				siege = 2
-			}
-		}
-
+		
 		ai_chance = {
-			factor = 100
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.b
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_fire_resistence
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.c
+		custom_tooltip = fuj_mokou_leveled_up
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_forest_burner
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.d
+		custom_tooltip = fuj_mokou_leveled_up
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_front_line_fighter
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.e
+		custom_tooltip = fuj_mokou_leveled_up
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_volcano_surviver
+		}
+		
+		ai_chance = {
+			factor = 1
 		}
 	}
 }

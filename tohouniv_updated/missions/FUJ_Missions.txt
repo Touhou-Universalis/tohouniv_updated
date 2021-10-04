@@ -24,15 +24,17 @@ fujiwara_mokous_training_slot = {	 #Mokou's training, control more famous volcan
 			}
 		}
 		effect = {
-			th_fuj_increment_volcano_counter = yes
-			custom_tooltip = th_fuj_mokou_respawns_with_more_power
-			hidden_effect = {
-				country_event = {
-					id = flavor_fuj.105
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				change_variable = {
+					which = fuj_mokou_level_cap
+					value = 1
 				}
 			}
 			1029 = {
-				add_permanent_province_modifier = { 
+				add_province_modifier = { 
 					name = fuj_mt_fuji
 					duration = -1
 				}
@@ -57,15 +59,17 @@ fujiwara_mokous_training_slot = {	 #Mokou's training, control more famous volcan
 			}
 		}
 		effect = {
-			th_fuj_increment_volcano_counter = yes
-			custom_tooltip = th_fuj_mokou_respawns_with_more_power
-			hidden_effect = {
-				country_event = {
-					id = flavor_fuj.105
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				change_variable = {
+					which = fuj_mokou_level_cap
+					value = 1
 				}
 			}
 			4794 = {
-				add_permanent_province_modifier = { 
+				add_province_modifier = { 
 					name = fuj_mt_bromo
 					duration = -1
 				}
@@ -90,15 +94,17 @@ fujiwara_mokous_training_slot = {	 #Mokou's training, control more famous volcan
 			}
 		}
 		effect = {
-			th_fuj_increment_volcano_counter = yes
-			custom_tooltip = th_fuj_mokou_respawns_with_more_power
-			hidden_effect = {
-				country_event = {
-					id = flavor_fuj.105
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				change_variable = {
+					which = fuj_mokou_level_cap
+					value = 1
 				}
 			}
 			124 = {
-				add_permanent_province_modifier = { 
+				add_province_modifier = { 
 					name = fuj_mt_etna
 					duration = -1
 				}
@@ -123,15 +129,18 @@ fujiwara_mokous_training_slot = {	 #Mokou's training, control more famous volcan
 			}
 		}
 		effect = {
-			th_fuj_increment_volcano_counter = yes
-			custom_tooltip = th_fuj_mokou_respawns_with_more_power
-			hidden_effect = {
-				country_event = {
-					id = flavor_fuj.105
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				change_variable = {
+					which = fuj_mokou_level_cap
+					value = 1
 				}
 			}
+			#custom_tooltip = th_fuj_mokou_respawns_with_more_power
 			4067 = {
-				add_permanent_province_modifier = { 
+				add_province_modifier = { 
 					name = fuj_mt_nyiragongo
 					duration = -1
 				}
@@ -194,6 +203,22 @@ fujiwara_mokous_training_slot = {	 #Mokou's training, control more famous volcan
 			custom_tooltip = fuj_bowl_of_the_buddha_available_tt
 			hidden_effect = {
 				set_country_flag = fuj_bowl_of_the_buddha_available
+				if = {
+					limit = {
+						has_country_flag = fuj_initialized_artifact_hunt
+					}
+					change_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
+				else = {
+					set_country_flag = fuj_initialized_artifact_hunt
+					set_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
 			}
 			2047 = {
 				add_base_tax = 3
@@ -286,7 +311,7 @@ fujiwara_missions_second_left_slot = {
 		}
 	}
 
-	FUJ_one_artifact = {	#TODO - Comrade
+	FUJ_one_artifact = {
 		icon = mission_settlers_north_america
 		required_missions = { }
 		position = 3
@@ -429,22 +454,19 @@ fujiwara_missions_second_left_slot = {
 			}
 		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = FOM_eliminate_the_yuuka_threat.tooltip
-				num_of_owned_provinces_with = {
-					value = 8
-					OR = {
-						area = Sunny_plains
-						area = Perfect_cut_coast
-					}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Sunny_plains
+					area = Perfect_cut_coast
 				}
-				owns_core_province = 5152
+				value = 8
 			}
+			owns_or_non_sovereign_subject_of = 5152
 		}
 		effect = {
 			add_country_modifier = {
 				name = fuj_return_of_the_kids
-				duration = 7200
+				duration = 7300
 			}
 			hidden_effect = {
 				set_country_flag = fuj_defeated_sff
@@ -475,6 +497,22 @@ fujiwara_missions_second_left_slot = {
 			custom_tooltip = fuj_the_jeweled_branch_available_tt
 			hidden_effect = {
 				set_country_flag = fuj_the_jeweled_branch_available
+				if = {
+					limit = {
+						has_country_flag = fuj_initialized_artifact_hunt
+					}
+					change_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
+				else = {
+					set_country_flag = fuj_initialized_artifact_hunt
+					set_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
 			}
 			capital_scope = {
 				add_base_tax = 4
@@ -504,10 +542,33 @@ fujiwara_missions_keine_slot = {
 		required_missions = { }
 		position = 1
 		trigger = {
-			#Has Mokou lead war and win x battle
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				check_variable = {
+					which = fuj_won_battles_counter
+					value = 10
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = fuj_has_leveling_mokou_tt
+					always = no
+				}
+			}
 		}
 		effect = {
-			#give general trait and other necessary reward
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				change_variable = {
+					which = fuj_mokou_exp
+					value = 100
+				}
+			}
+			add_army_tradition = 20
 		}
 	}
 
@@ -516,11 +577,35 @@ fujiwara_missions_keine_slot = {
 		required_missions = { FUJ_win_battle_1 }
 		position = 2
 		trigger = {
-			#Has Mokou lead war and win x battle
-			army_tradition = 80
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				check_variable = {
+					which = fuj_won_battles_counter
+					value = 30
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = fuj_has_leveling_mokou_tt
+					always = no
+				}
+			}
 		}
 		effect = {
-			#upgrade general trait and other necessary reward
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				change_variable = {
+					which = fuj_mokou_exp
+					value = 100
+				}
+			}
+			add_mil_power = 100
+			add_army_tradition = 15
+			add_army_professionalism = 0.05
 		}
 	}
 
@@ -532,6 +617,15 @@ fujiwara_missions_keine_slot = {
 			#Challenge main characters and win enough times or no main character exist
 		}
 		effect = {
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				change_variable = {
+					which = fuj_mokou_exp
+					value = 100
+				}
+			}
 			add_country_modifier = {
 				name = fuj_increased_danmaku_ability_1
 				duration = -1
@@ -548,6 +642,15 @@ fujiwara_missions_keine_slot = {
 			#Challenge main characters and win enough times or no main character exist
 		}
 		effect = {
+			if = {
+				limit = {
+					has_country_flag = fuj_has_leveling_mokou
+				}
+				change_variable = {
+					which = fuj_mokou_exp
+					value = 100
+				}
+			}
 			custom_tooltip = th_fuj_strengthen_mokou_danmaku_power.tt
 			hidden_effect = {
 				remove_country_modifier = fuj_increased_danmaku_ability_1
@@ -680,10 +783,6 @@ fujiwara_missions_keine_slot = {
 					}
 					add_permanent_claim = ROOT					
 				}
-			}
-			custom_tooltip = fuj_activate_keine
-			hidden_effect = {
-				set_country_flag = fuj_keine_met
 			}
 		}
 	}	
@@ -847,7 +946,7 @@ fujiwara_missions_keine_slot = {
 				add_casus_belli = {
 					target = EIT
 					type = cb_touhou_mission_eit_fuj_war
-					months = 900
+					months = 24
 				}
 			}
 		}
@@ -862,19 +961,22 @@ fujiwara_missions_keine_slot = {
 				area = Bamboo_forest_of_the_lost
 				area = Eientei_state			
 			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
+			OR = {
+				NOT = { is_core = ROOT }
+				NOT = { owned_by = ROOT }
 			}
 		}
 		trigger = {
 			NOT = { exists = EIT }
 			Bamboo_forest_of_the_lost = {
 				type = all
-				country_or_non_sovereign_subject_holds = ROOT
+				is_core = ROOT
+				owned_by = ROOT
 			}
 			Eientei_state = {
 				type = all
-				country_or_non_sovereign_subject_holds = ROOT
+				is_core = ROOT
+				owned_by = ROOT
 			}
 		}
 		effect = {
@@ -999,6 +1101,22 @@ fujiwara_missions_keine_slot = {
 			custom_tooltip = fuj_fire_rat_robe_available_tt
 			hidden_effect = {
 				set_country_flag = fuj_fire_rat_robe_available
+				if = {
+					limit = {
+						has_country_flag = fuj_initialized_artifact_hunt
+					}
+					change_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
+				else = {
+					set_country_flag = fuj_initialized_artifact_hunt
+					set_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
 			}
 			add_mil_power = 75
 		}
@@ -1181,16 +1299,13 @@ fujiwara_missions_second_right_slot = {
 		position = 7
 		provinces_to_highlight = {
 			area = World_of_fantasies
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			World_of_fantasies = {
-				type = all
 				country_or_non_sovereign_subject_holds = ROOT
+				type = all
 			}
-			owns_core_province = 5033
 		}
 		effect = {
 			hidden_effect = {
@@ -1228,6 +1343,22 @@ fujiwara_missions_second_right_slot = {
 			custom_tooltip = fuj_the_dragon_jewel_available_tt
 			hidden_effect = {
 				set_country_flag = fuj_the_dragon_jewel_available
+				if = {
+					limit = {
+						has_country_flag = fuj_initialized_artifact_hunt
+					}
+					change_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
+				else = {
+					set_country_flag = fuj_initialized_artifact_hunt
+					set_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
 			}
 			country_event = { id = flavor_fuj.12 }
 		}
@@ -1435,7 +1566,7 @@ fujiwara_missions_outworld_slot = {
 			}
 			add_country_modifier = {
 				name = fuj_support_of_the_humans
-				duration = 7200
+				duration = 7300
 			}
 			custom_tooltip = FUJ_unite_more_human.effect
 			hidden_effect = {
@@ -1443,7 +1574,7 @@ fujiwara_missions_outworld_slot = {
 					limit = {
 						culture = Gensokyo_human
 					}
-					add_nationalism = -10
+					add_nationalism = -10	#TODO add a modifier instead until
 					add_local_autonomy = -30 
 				}
 			}
@@ -1469,6 +1600,22 @@ fujiwara_missions_outworld_slot = {
 			custom_tooltip = fuj_cowry_treasure_available_tt
 			hidden_effect = {
 				set_country_flag = fuj_cowry_treasure_available
+				if = {
+					limit = {
+						has_country_flag = fuj_initialized_artifact_hunt
+					}
+					change_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
+				else = {
+					set_country_flag = fuj_initialized_artifact_hunt
+					set_variable = {
+						which = fuj_collected_artifacts
+						value = 1
+					}
+				}
 			}
 			country_event = { id = flavor_fuj.9 }	
 		}
