@@ -342,6 +342,9 @@ country_event = {
 	
 	option = {	#I demand you to give some land back!
 		name = th_yukari_daimyo_mechanic.6.b
+		trigger = {
+			FROM = { num_of_cities = 2 }	#Can't really split an OPM
+		}
 		FROM = {
 			country_event = {
 				id = th_yukari_daimyo_mechanic.8
@@ -416,17 +419,51 @@ country_event = {
 	picture = GENSOKYOTHRONE_eventPicture
 	
 	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { is_capital = no }
+				save_event_target_as = mhg_province_to_give
+			}
+			random_owned_province = {
+				limit = { is_capital = no has_port = yes }
+				save_event_target_as = mhg_province_to_give
+			}
+			random_owned_province = {
+				limit = { is_capital = no any_neighbor_province = { is_core = ROOT owned_by = ROOT } }
+				save_event_target_as = mhg_province_to_give
+			}
+			random_owned_province = {
+				limit = { is_capital = no any_neighbor_province = { owner = { is_subject_of = FROM } } }
+				save_event_target_as = mhg_province_to_give
+			}
+			random_owned_province = {
+				limit = { is_capital = no any_neighbor_province = { owner = { tag = FROM } } }
+				save_event_target_as = mhg_province_to_give
+			}
+		}
+	}
 	
 	option = {	#Fiiine
 		name = th_yukari_daimyo_mechanic.8.a
+		goto = mhg_province_to_give
 		release_all_subjects = yes
-		random_owned_province = {
-			limit = {
-				is_capital = no
-				is_core = ROOT
+		if = {
+			limit = { has_saved_event_target = mhg_province_to_give }
+			event_target:mhg_province_to_give = {
+				cede_province = FROM
 			}
-			cede_province = FROM
 		}
+		every_known_country = {
+			limit = { core_claim = ROOT }
+			every_core_province = {
+				limit = { owned_by = ROOT }
+				cede_province = PREV
+			}
+		}
+		add_liberty_desire = 50	#Needs proper testing to see if it actually works
+		#TODO: Ask PDX for an "add_timed_modifier = <timed modifier>" effect
 		
 		ai_chance = { 
 			factor = 1
@@ -498,6 +535,13 @@ country_event = {
 	}
 
 	hidden = yes
+
+	immediate = {
+		every_subject_country = {
+			limit = { has_country_flag = mhg_one_march_too_much }
+			clr_country_flag = mhg_one_march_too_much
+		}
+	}
 	
 	option = {
 		clr_country_flag = mhg_had_march_check
@@ -505,6 +549,10 @@ country_event = {
 		set_variable = {
 			which = mhg_num_of_marches
 			value = 0
+		}
+		export_to_variable = {
+			which = mhg_allowed_marches
+			value = modifier:march_slots
 		}
 		every_subject_country = {
 			limit = {
@@ -517,10 +565,19 @@ country_event = {
 					value = 1
 				}
 			}
-		}
-		export_to_variable = {
-			which = mhg_allowed_marches
-			value = modifier:march_slots
+			if = {
+				limit = {
+					ROOT = {
+						NOT = {
+							check_variable = {
+								which = mhg_allowed_marches
+								which = mhg_num_of_marches
+							}
+						}
+					}
+				}
+				set_country_flag = mhg_one_march_too_much
+			}
 		}
 		multiply_variable = {
 			which = mhg_allowed_marches
@@ -529,22 +586,6 @@ country_event = {
 
 		ai_chance = { 
 			factor = 100
-		}
-	}
-
-	after = {
-		if = {
-			limit = {
-				NOT = {
-					check_variable = {
-						which = mhg_allowed_marches
-						which = mhg_num_of_marches
-					}
-				}
-			}
-			country_event = {
-				id = th_yukari_daimyo_mechanic.11
-			}
 		}
 	}
 }
@@ -556,7 +597,26 @@ country_event = {
 	desc = th_yukari_daimyo_mechanic.11.desc
 	picture = GENSOKYOTHRONE_eventPicture
 	
-	is_triggered_only = yes
+	trigger = {
+		NOT = { dip_power = -998 }
+		NOT = { monthly_dip = 0 }
+		any_subject_country = {
+			has_country_flag = mhg_one_march_too_much
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			every_subject_country = {
+				limit = { has_country_flag = mhg_one_march_too_much }
+				clr_country_flag = mhg_one_march_too_much
+			}
+		}
+	}
 	
 	option = {	#Oh no...
 		name = th_yukari_daimyo_mechanic.11.a
