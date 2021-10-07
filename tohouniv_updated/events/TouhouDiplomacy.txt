@@ -875,6 +875,18 @@ country_event = {
             days = 1
         }
 		hidden_effect = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = th_youkai_hunt_refusal_counter
+                        value = 1
+                    }
+                }
+                subtract_variable = {
+                    which = th_youkai_hunt_refusal_counter
+                    value = 1
+                }
+            }
             FROM = {
                 country_event = {
                     id = th_diplo_events.20
@@ -891,6 +903,20 @@ country_event = {
     option = {  #Stupid idea
         name = th_diplo_events.19.b
         custom_tooltip = th_diplo_events.19.b.tt
+        trigger = {
+            NOT = {
+                check_variable = {
+                    which = th_youkai_hunt_refusal_counter
+                    value = 3
+                }
+            }
+        }
+        hidden_effect = {
+            change_variable = {
+                which = th_youkai_hunt_refusal_counter
+                value = 1
+            }
+        }
         FROM = {
             add_opinion = {
                 who = ROOT
@@ -1081,6 +1107,10 @@ country_event = {
                 root_variable = th_current_fighting_skills_counter
                 foreign_variable = th_danmaku_duel_enemy_power
             }
+            set_variable = {
+                which = th_declined_danmaku_duel_counter
+                value = 0
+            }
         }
         FROM = {
             country_event = {
@@ -1090,9 +1120,9 @@ country_event = {
         }
 
         ai_chance = {
-            factor = 0.25
+            factor = 0.20
             modifier = {
-                factor = 3
+                factor = 4
                 mil = FROM
             }
         }
@@ -1101,6 +1131,14 @@ country_event = {
     #I don't have time for games   
     option = {
         name = th_diplo_events.23.b
+        trigger = {
+            NOT = {
+                check_variable = {
+                    which = th_declined_danmaku_duel_counter
+                    value = 3
+                }
+            }
+        }
         add_power_projection = {
             type = th_has_declined_danmaku_duel
             amount = -5
@@ -1112,7 +1150,11 @@ country_event = {
             }
         }
         hidden_effect = {
-            set_country_flag = th_danmaku_duel_lost_against_@FROM
+            #set_country_flag = th_danmaku_duel_lost_against_@FROM
+            change_variable = {
+                which = th_declined_danmaku_duel_counter
+                value = 1
+            }
         }
 
         ai_chance = {
@@ -1142,6 +1184,25 @@ country_event = {
 			th_defineopponent_fighting_skill = {
 				VARIABLE = th_danmaku_duel_enemy_power
 			}
+            if = { 
+                limit = { 
+                    has_country_flag = fuj_has_leveling_mokou
+                    FROM = {
+                        OR = {
+                            th_is_or_was_tag = { tag = HKR }
+                            th_is_or_was_tag = { tag = FOM }
+                            th_is_or_was_tag = { tag = SCR }
+                            th_is_or_was_tag = { tag = EIT }
+                            th_is_or_was_tag = { tag = NET }
+                            is_enemy = ROOT
+                            is_rival = ROOT
+                            is_great_power = yes
+                            total_development = ROOT
+                        }
+                    }
+                }
+                set_country_flag = fuj_duels_important_person
+            }
 		}
 	}
 	
@@ -1192,6 +1253,15 @@ country_event = {
 	picture = REIMUMARISABATTLE_eventPicture
 	
 	is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = { has_country_flag = fuj_duels_important_person }
+                clr_country_flag = fuj_duels_important_person
+            }
+        }
+    }
 	
 	option = {
         name = th_diplo_events.25.a
@@ -1214,6 +1284,19 @@ country_event = {
 	picture = REIMUMARISABATTLE_eventPicture
 	
 	is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = { has_country_flag = fuj_duels_important_person }
+                clr_country_flag = fuj_duels_important_person
+                change_variable = {
+                    which = fuj_danmaku_win
+                    value = 1
+                }
+            }
+        }
+    }
 	
 	option = {
         name = th_diplo_events.26.a
@@ -1227,6 +1310,16 @@ country_event = {
             }
             country_event = {
                 id = th_diplo_events.28
+            }
+        }
+        if = {
+            limit = { has_country_flag = fuj_has_leveling_mokou }
+            change_variable = {
+                which = fuj_mokou_exp
+                value = 25
+            }
+            if = {
+                limit = { FROM = {  } }
             }
         }
 
