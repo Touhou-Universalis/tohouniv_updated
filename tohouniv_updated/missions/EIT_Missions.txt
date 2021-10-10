@@ -1546,26 +1546,35 @@ eientei_missions_outworld_slot = {
 			custom_trigger_tooltip = {
 				tooltip = eit_fight_lcu_tt
 				OR = {
-					LCU = {
-						is_subject = no
-						is_in_war = {
-							attacker_leader = ROOT
-							defender_leader = LCU
-						}
-					}
-					LCU = {
-						is_subject = yes
-						NOT = { is_subject_of = ROOT }
-						overlord = {
+					if = {
+						limit = { LCU = { is_free_or_tributary_trigger = yes NOT = { is_subject_of = ROOT } } }
+						LCU = {
 							is_in_war = {
 								attacker_leader = ROOT
-								defender_leader = THIS
+								defender_leader = LCU
 							}
 						}
 					}
-					LCU = {
-						is_subject_of = ROOT
-						is_subject_other_than_tributary_trigger = yes
+					else_if = {
+						limit = { LCU = { is_subject_other_than_tributary_trigger = yes NOT = { is_subject_of = ROOT } } }
+						LCU = {
+							overlord = {
+								war_with = ROOT
+								OR = {
+									is_in_war = {
+										attacker_leader = ROOT
+									}
+									is_in_war = {
+										defender_leader = ROOT
+									}
+								}
+							}
+						}
+					}
+					else = {
+						LCU = {
+							is_subject_of = ROOT
+						}
 					}
 					NOT = { exists = LCU }
 				}
@@ -1654,12 +1663,8 @@ eientei_missions_outworld_slot = {
 			}
 			calc_true_if = {
 				all_owned_province = {
-					custom_trigger_tooltip = {
-						tooltip = eit_fortify_eientei_ct
-						country_or_non_sovereign_subject_holds = ROOT
-						th_has_up_to_date_fort_building = {
-							tag = ROOT
-						}
+					th_has_up_to_date_fort_building = {
+						tag = ROOT
 					}
 					OR = {
 						area = Eientei_state
@@ -1683,7 +1688,7 @@ eientei_missions_outworld_slot = {
 	}
 
 	EIT_fortify_EIT_secretly = {
-		icon = mission_touhou_brewing_stand
+		icon = mission_touhou_ninja_clan
 		required_missions = { }
 		position = 6
 		trigger = {
