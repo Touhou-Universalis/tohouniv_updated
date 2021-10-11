@@ -1,5 +1,169 @@
 namespace = touhou_respawn
 
+#Initialize the variables for Touhou nations
+country_event = {
+    id = touhou_respawn.0
+    title = touhou_respawn.0.t
+    desc = touhou_respawn.0.desc
+    picture = ALLFAIRIES_eventPicture
+
+    trigger = {
+        #has_government_attribute = fairy_respawn_mechanic  #No longer the case as all rulers can now respawn with increased stats
+        NOT = { has_country_flag = th_has_initialized_ruler_stats }
+        has_ruler_flag = touhou_original_ruler
+        is_lesser_in_union = no
+    }
+
+    mean_time_to_happen = { 
+        days = 1
+    }
+
+    hidden = yes
+
+    immediate = {
+        set_country_flag = th_has_initialized_ruler_stats
+        export_to_variable = {
+            variable_name = th_ruler_adm_stat
+            value = ADM
+            who = ROOT
+        }
+        export_to_variable = {
+            variable_name = th_ruler_dip_stat
+            value = DIP
+            who = ROOT
+        }
+        export_to_variable = {
+            variable_name = th_ruler_mil_stat
+            value = MIL
+            who = ROOT
+        }
+        if = {
+            limit = {
+                has_heir = yes
+                has_heir_flag = touhou_original_heir
+            }
+            export_to_variable = {
+                variable_name = th_heir_adm_stat
+                value = heir_adm
+                who = ROOT
+            }
+            export_to_variable = {
+                variable_name = th_heir_dip_stat
+                value = heir_dip
+                who = ROOT
+            }
+            export_to_variable = {
+                variable_name = th_heir_mil_stat
+                value = heir_mil
+                who = ROOT
+            }
+        }
+		trigger_switch = {
+			on_trigger = tag
+			CIN = {
+				th_set_ruler_max_stats = {
+					max_possible_adm = 4
+					max_possible_dip = 5
+					max_possible_mil = 6
+				}
+			}
+			CLP = {
+				th_set_ruler_max_stats = {
+					max_possible_adm = 5
+					max_possible_dip = 6
+					max_possible_mil = 6
+				}
+			}
+			LRV = {
+				th_set_ruler_max_stats = {
+					max_possible_adm = 4
+					max_possible_dip = 6
+					max_possible_mil = 5
+				}
+			}
+			LIL = {
+				th_set_ruler_max_stats = {
+					max_possible_adm = 5
+					max_possible_dip = 6
+					max_possible_mil = 4
+				}
+			}
+			TFR = {
+				th_set_ruler_max_stats = {
+					max_possible_adm = 4
+					max_possible_dip = 5
+					max_possible_mil = 6
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { tag = CIN }
+				NOT = { tag = CLP }
+				NOT = { tag = LRV }
+				NOT = { tag = LIL }
+				NOT = { tag = TFR }
+			}
+			th_set_ruler_max_stats = {
+				max_possible_adm = 6
+				max_possible_dip = 6
+				max_possible_mil = 6
+			}
+		}
+		th_set_heir_max_stats = {
+			max_possible_adm = 6
+			max_possible_dip = 6
+			max_possible_mil = 6
+		}
+    }
+
+    option = {
+        name = touhou_respawn.0.a
+        set_variable = {
+            which = th_ruler_total_power
+            value = 0
+        }
+        change_variable = {
+            which = th_ruler_total_power
+            which = th_ruler_adm_stat
+        }
+        change_variable = {
+            which = th_ruler_total_power
+            which = th_ruler_dip_stat
+        }
+        change_variable = {
+            which = th_ruler_total_power
+            which = th_ruler_mil_stat
+        }
+        if = {
+            limit = {
+                has_heir = yes
+                has_heir_flag = touhou_original_heir
+            }
+            set_variable = {
+                which = th_heir_total_power
+                value = 0
+            }
+            change_variable = {
+                which = th_heir_total_power
+                which = th_heir_adm_stat
+            }
+            change_variable = {
+                which = th_heir_total_power
+                which = th_heir_dip_stat
+            }
+            change_variable = {
+                which = th_heir_total_power
+                which = th_heir_mil_stat
+            }
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
 #AI only-call back all lost touhou characters
 country_event = {
 	id = touhou_respawn.1
@@ -13,8 +177,8 @@ country_event = {
 	option = {		#Standard
 		name = touhou_respawn.1.a
 
-		th_respawn_ruler_effect = yes
-		th_respawn_heir_effect = yes
+		th_respawn_ruler_with_new_stats_effect = yes
+		th_respawn_heir_with_new_stats_effect = yes
 
 		ai_chance = {
 			factor = 100
@@ -40,20 +204,67 @@ country_event = {
 
 	option = {		#Standard
 		name = touhou_respawn.2.a
-		th_respawn_ruler_effect = yes
 		if = {
 			limit = {
-				OR = {
-					AND = {
-						th_is_or_was_tag = {
-							tag = SCR
+				th_is_not_exception_tag = yes
+			}
+			th_respawn_ruler_with_new_stats_effect = yes
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							th_is_or_was_tag = {
+								tag = SCR
+							}
+							NOT = { exists = FLR }
 						}
-						NOT = { exists = FLR }
+						AND = {
+							th_is_or_was_tag = {
+								tag = CRD
+							}
+							NOT = { exists = KMJ }
+						}
+						AND = {
+							th_is_or_was_tag = {
+								tag = FOM
+							}
+							has_country_modifier = fom_magician_hourai_elixir
+						}
+						th_is_or_was_a_tag_with_immortal_rulers_and_heir = yes
 					}
-					th_is_or_was_a_tag_with_immortal_rulers_and_heir = yes
+				}
+				th_respawn_heir_with_new_stats_effect = yes
+			}
+		}
+		else_if = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = EIT
 				}
 			}
-			th_respawn_heir_effect = yes
+			country_event = {
+				id = flavor_eit.101
+			}
+		}
+		else_if = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = FUJ
+				}
+			}
+			country_event = {
+				id = flavor_fuj.101
+			}
+		}
+		else_if = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = MHG
+				}
+			}
+			country_event = {
+				id = flavor_mhg.101
+			}
 		}
 
 		ai_chance = {
@@ -88,7 +299,7 @@ country_event = {
 	option = {		#Standard
 		name = touhou_respawn.3.a
 
-		th_respawn_heir_effect = yes
+		th_respawn_heir_with_new_stats_effect = yes
 
 		ai_chance = {
 			factor = 100

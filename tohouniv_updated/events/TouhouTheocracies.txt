@@ -19,10 +19,8 @@ country_event = {
 	}
 	picture = {
 		trigger = { 
-			NOT = {
-				religion_group = eastern 
-				religion_group = Touhou 
-			}
+			NOT = { religion_group = eastern }
+			NOT = { religion_group = Touhou }
 		}
 		picture = RELIGION_eventPicture
 	}
@@ -794,51 +792,12 @@ country_event = {	#Incident - Non-Gensokyan declares war upon Gensokyo
 	desc = touhou_theocracy.2.desc
 	picture = SHRINE_eventPicture
 	
-	mean_time_to_happen = {
-		months = 1
-	}
-	
-	trigger = {
-		NOT = { capital_scope = { th_gensokyo_or_moon_continent = yes } }
-		NOT = { religion_group = Touhou }
-		NOT = { has_country_flag = TH_foreign_invader }
-		any_country = {
-			capital_scope = { th_gensokyo_or_moon_continent = yes }
-			NOT = { has_country_flag = TH_asked_for_help_against_@ROOT }
-			is_in_war = {
-				attacker_leader = ROOT
-				defender_leader = THIS
-			}
-		}
-		calc_true_if = {
-			all_country = {
-				is_free_or_tributary_trigger = yes
-				has_government_attribute = enables_call_to_defensive_war
-				capital_scope = { th_gensokyo_or_moon_continent = yes }
-			}
-			amount = 1
-		}
-	}
+	is_triggered_only = yes
 	
 	option = {		#Defender will call now the shrine maiden
 		name = touhou_theocracy.2.a
 		custom_tooltip = touhou_theocracy.2.a.tt
-		hidden_effect = {
-			set_country_flag = TH_foreign_invader
-			every_country = {
-				limit = {
-					capital_scope = { th_gensokyo_or_moon_continent = yes }
-					NOT = { has_country_flag = TH_asked_for_help_against_@ROOT }
-					is_in_war = {
-						attacker_leader = ROOT
-						defender_leader = THIS
-					}
-					is_free_or_tributary_trigger = yes
-				}
-				country_event = { id = touhou_theocracy.3 }
-				set_country_flag = TH_asked_for_help_against_@ROOT
-			}
-		}
+		
 		ai_chance = {
 			factor = 100
 		}
@@ -851,7 +810,113 @@ country_event = {	#Incident - Gensokyo get attacked by none-gensokyan
 	desc = touhou_theocracy.3.desc
 	picture = SHRINE_eventPicture
 
-	is_triggered_only = yes
+	trigger = {
+		capital_scope = {
+			continent = gensokyo_continent
+		}
+		any_known_country = {
+			capital_scope = {
+				th_gensokyo_or_moon_continent = no
+			}
+			is_in_war = {
+				attacker_leader = THIS
+				defender_leader = ROOT
+			}
+			NOT = { religion_group = Touhou }
+			NOT = { has_country_flag = th_already_triggered_call_for_defensive_for_@ROOT }
+		}
+		if = {
+			limit = {
+				NOT = { has_government_attribute = enables_call_to_defensive_war }
+			}
+			any_known_country = {
+				NOT = { is_rival = ROOT }
+				NOT = { is_enemy = ROOT }
+				has_government_attribute = enables_call_to_defensive_war
+				NOT = { war_with = ROOT }
+				NOT = { has_country_flag = th_declined_help_for_@ROOT }
+				NOT = { has_country_flag = th_gets_asked_to_defend }
+				same_continent = ROOT
+				is_free_or_tributary_trigger = yes
+				NOT = {	#Shrine maiden shouldn't be called into a war with somebody they are either fighting already or against somebody they are allied with
+					any_country = {
+						capital_scope = {
+							th_gensokyo_or_moon_continent = no
+						}
+						OR = {
+							war_with = PREV
+							alliance_with = PREV
+						}
+						is_in_war = {
+							attacker_leader = THIS
+							defender_leader = ROOT
+						}
+					}
+				}
+			}
+		}
+		NOT = { has_country_flag = th_caused_call_to_defense }
+	}
+
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_caused_call_to_defense
+			if = {
+				limit = {
+					NOT = { has_government_attribute = enables_call_to_defensive_war }
+				}
+				every_known_country = {
+					limit = {
+						NOT = { is_rival = ROOT }
+						NOT = { is_enemy = ROOT }
+						has_government_attribute = enables_call_to_defensive_war
+						NOT = { war_with = ROOT }
+						NOT = { has_country_flag = th_declined_help_for_@ROOT }
+						NOT = { has_country_flag = th_gets_asked_to_defend }
+						same_continent = ROOT
+						is_free_or_tributary_trigger = yes
+						NOT = {	#Shrine maiden shouldn't be called into a war with somebody they are either fighting already or against somebody they are allied with
+							any_country = {
+								capital_scope = {
+									th_gensokyo_or_moon_continent = no
+								}
+								OR = {
+									war_with = PREV
+									alliance_with = PREV
+								}
+								is_in_war = {
+									attacker_leader = THIS
+									defender_leader = ROOT
+								}
+							}
+						}
+					}
+					set_country_flag = th_gets_asked_to_defend
+				}
+			}
+			random_known_country = {
+				limit = {
+					NOT = { religion_group = Touhou }
+					capital_scope = {
+						th_gensokyo_or_moon_continent = no
+					}
+					is_in_war = {
+						attacker_leader = THIS
+						defender_leader = ROOT
+					}
+					NOT = { has_country_flag = th_already_triggered_call_for_defensive_for_@ROOT }
+				}
+				set_country_flag = th_already_triggered_call_for_defensive_for_@ROOT
+				country_event = {
+					id = touhou_theocracy.2
+				}
+			}
+		}
+	}
 	
 	option = {		#Call the Shrine Maidens for help
 		name = touhou_theocracy.3.a
@@ -860,22 +925,9 @@ country_event = {	#Incident - Gensokyo get attacked by none-gensokyan
 		}
 		custom_tooltip = touhou_theocracy.3.a.tt
 		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { has_country_flag = TH_called_shrine_maidens_in }
-				}
-				set_country_flag = TH_called_shrine_maidens_in
-			}
 			every_known_country = {
 				limit = {
-					has_government_attribute = enables_call_to_defensive_war
-					NOT = { war_with = ROOT }
-					NOT = { war_with = FROM }
-					capital_scope = { th_gensokyo_or_moon_continent = yes }
-					has_opinion = {
-						who = ROOT
-						value = -50
-					}
+					has_country_flag = th_gets_asked_to_defend
 				}
 				country_event = { id = touhou_theocracy.4 }
 			}
@@ -926,6 +978,10 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 			who = FROM
 			modifier = th_defense_of_gensokyo_opinion
 		}
+		hidden_effect = {
+			set_country_flag = th_accepted_help_for_@FROM
+			clr_country_flag = th_gets_asked_to_defend
+		}
 		every_known_country = {
 			limit = {
 				religion_group = Touhou
@@ -946,6 +1002,9 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 		join_all_defensive_wars_of = FROM
 		add_devotion = 15
 		add_prestige = 15
+		mry_add_faith_power = {
+			value = 25
+		}
 		if = {
 			limit = {
 				NOT = { has_country_modifier = th_defense_of_gensokyo }
@@ -970,6 +1029,15 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 				factor = 0
 				is_subject_other_than_tributary_trigger = yes
 			}
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = -50
+					}
+				}
+			}
 		}
 	}
 	
@@ -981,7 +1049,13 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 			name = dishonoured_alliance
 			duration = 3650
 		}
-
+		mry_add_faith_power = {
+			value = -25
+		}
+		hidden_effect = {
+			set_country_flag = th_declined_help_for_@FROM
+			clr_country_flag = th_gets_asked_to_defend
+		}
 		ai_chance = { 
 			factor = 100
 			modifier = {
@@ -1004,7 +1078,10 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 			ai = yes
 			is_subject_other_than_tributary_trigger = yes
 		}
-
+		hidden_effect = {
+			set_country_flag = th_declined_help_for_@FROM
+			clr_country_flag = th_gets_asked_to_defend
+		}
 		ai_chance = { 
 			factor = 1000
 			modifier = {
@@ -1018,7 +1095,7 @@ country_event = {	#Incident - The Shrine Maiden get the call to arms
 	}	
 }
 
-country_event = {	#Incident - Non-Gensokyan finishes war with Gensokyan
+country_event = {	#Incident - Attacked Gensokyan finishes war with invader
 	id = touhou_theocracy.5
 	title = touhou_theocracy.5.t
 	desc = touhou_theocracy.5.desc
@@ -1031,11 +1108,18 @@ country_event = {	#Incident - Non-Gensokyan finishes war with Gensokyan
 	hidden = yes
 	
 	trigger = {
-		has_country_flag = TH_foreign_invader
+		has_country_flag = th_caused_call_to_defense
 		NOT = {
 			any_country = {
-				has_country_flag = TH_asked_for_help_against_@ROOT
-				NOT = { war_with = ROOT }
+				capital_scope = {
+					th_gensokyo_or_moon_continent = no
+				}
+				is_in_war = {
+					attacker_leader = THIS
+					defender_leader = ROOT
+				}
+				NOT = { religion_group = Touhou }
+				has_country_flag = th_already_triggered_call_for_defensive_for_@ROOT
 			}
 		}
 	}
@@ -1043,12 +1127,24 @@ country_event = {	#Incident - Non-Gensokyan finishes war with Gensokyan
 	option = {		#Delete flag
 		name = touhou_theocracy.5.a
 		hidden_effect = {
-			clr_country_flag = TH_foreign_invader
-			every_known_country = {
+			clr_country_flag = th_caused_call_to_defense
+			every_country = {
 				limit = {
-					has_country_flag = TH_asked_for_help_against_@ROOT
+					has_country_flag = th_already_triggered_call_for_defensive_for_@ROOT
 				}
-				clr_country_flag = TH_asked_for_help_against_@ROOT
+				clr_country_flag = th_already_triggered_call_for_defensive_for_@ROOT
+			}
+			every_country = {
+				limit = {
+					has_country_flag = th_declined_help_for_@ROOT
+				}
+				clr_country_flag = th_declined_help_for_@ROOT
+			}
+			every_country = {
+				limit = {
+					has_country_flag = th_accepted_help_for_@ROOT
+				}
+				clr_country_flag = th_accepted_help_for_@ROOT
 			}
 		}
 		ai_chance = {
@@ -1071,11 +1167,8 @@ country_event = {	#Defense of Gensokyo is over
 		has_country_modifier = th_defense_of_gensokyo
 		OR = {
 			NOT = {
-				calc_true_if = {
-					all_country = {
-						has_country_flag = TH_called_shrine_maidens_in
-					}
-					amount = 1
+				any_country = {
+					has_country_flag = th_caused_call_to_defense
 				}
 			}
 			NOT = { is_in_war = { defenders = ROOT } }
@@ -1085,47 +1178,5 @@ country_event = {	#Defense of Gensokyo is over
 	option = {
 		name = touhou_theocracy.6.a
 		remove_country_modifier = th_defense_of_gensokyo			
-	}
-}
-
-country_event = {	#Incident - Shrine Maiden Caller is not at any war
-	id = touhou_theocracy.7
-	title = touhou_theocracy.7.t
-	desc = touhou_theocracy.7.desc
-	picture = SHRINE_eventPicture
-	
-	mean_time_to_happen = {
-		months = 1
-	}
-	
-	hidden = yes
-	
-	trigger = {
-		has_country_flag = TH_called_shrine_maidens_in
-		NOT = {
-			calc_true_if = {
-				all_country = {
-					capital_scope = {
-						NOT = { th_gensokyo_or_moon_continent = yes }
-					}
-					is_in_war = {
-						attacker_leader = THIS
-						defender_leader = ROOT
-					}
-				}
-				amount = 1
-			}
-		}
-	}
-	
-	option = {		#Delete flag
-		name = touhou_theocracy.7.a
-		hidden_effect = {
-			clr_country_flag = TH_called_shrine_maidens_in
-		}
-
-		ai_chance = {
-			factor = 100
-		}
 	}
 }

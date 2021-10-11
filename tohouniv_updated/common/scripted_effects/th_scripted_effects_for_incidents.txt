@@ -1,3 +1,62 @@
+th_incident_initialize_investigator = {
+	set_country_flag = th_incident_investigating
+	add_country_modifier = {
+		name = th_incident_investigator_modifier
+		duration = -1
+		desc = th_incident_investigator_modifier_tt
+	}
+	#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+	save_global_event_target_as = th_incident_investigator		
+}
+
+th_incident_set_terminate_flag = {
+	set_global_flag = th_incident_to_terminate
+}
+
+th_incident_clr_terminate_flag = {
+	clr_global_flag = th_incident_to_terminate
+}
+
+#If an incident is active for over 25 years, it gets forcefully terminated and a bad ending occurs
+th_incident_terminate_current = {
+	hidden_effect = {
+		clr_global_flag = th_incident_to_terminate
+	}
+	trigger_switch = {
+		on_trigger = has_global_flag
+		th_current_incident_scarlet_mists = {
+			country_event = {
+				id = th_incidents_scarletmists.100
+			}
+		}
+		th_current_incident_cherry_blossom = {
+			country_event = {
+				id = th_incidents_cherryblossom.100
+			}
+		}
+		th_current_incident_eternal_night = {
+			country_event = {
+				id = th_incidents_eternalnight.100
+			}
+		}
+		th_current_incident_mountain_of_faith = {
+			country_event = {
+				id = th_incidents_mountainoffaith.100
+			}
+		}
+	}
+}
+
+th_incident_clr_investigator = {
+	clr_country_flag = th_incident_investigating
+	if = {
+		limit = {
+			has_country_modifier = th_incident_investigator_modifier
+		}
+		remove_country_modifier = th_incident_investigator_modifier
+	}
+}
+
 th_incident_initiate_good_outcome_counter = {
 	set_country_flag = hkr_inci_setup
 	set_variable = {
@@ -375,10 +434,9 @@ th_incident_set_country_to_new_investigator = {
 			limit = {
 				has_country_flag = th_incident_investigating
 			}
-			clr_country_flag = th_incident_investigating
+			th_incident_clr_investigator = yes
 		}
-		set_country_flag = th_incident_investigating
-		save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+		th_incident_initialize_investigator = yes
 		if = {
 			limit = {
 				NOT = { has_country_flag = th_incident_had_info }
@@ -438,27 +496,26 @@ th_incident_set_country_to_new_investigator = {
 	}
 }
 
-th_incident_set_investigator = {	
-	clr_country_flag = th_incident_investigating
+th_incident_set_investigator = {
+	th_incident_clr_investigator = yes
 	every_country = {
 		limit = {
 			has_country_flag = th_incident_investigating
 		}
-		clr_country_flag = th_incident_investigating
+		th_incident_clr_investigator = yes
 	}
 	if = {
 		limit = {
 			has_country_flag = th_eligible_investigator
 			NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 			NOT = {
-				any_known_country = {
+				any_country = {
 					has_country_flag = th_eligible_investigator
 				}
 			}
 		}
 		ROOT = {
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes			
 		}
 	}
 	else_if = {
@@ -475,8 +532,7 @@ th_incident_set_investigator = {
 				has_country_flag = th_eligible_investigator
 				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 			}
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {
@@ -493,8 +549,7 @@ th_incident_set_investigator = {
 				has_country_flag = th_eligible_investigator
 				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 			}
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {
@@ -504,13 +559,12 @@ th_incident_set_investigator = {
 			NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 		}
 		ROOT = {
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {
 		limit = {
-			any_known_country = {
+			any_country = {
 				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 				has_country_flag = th_eligible_investigator
 				ai = no
@@ -522,8 +576,7 @@ th_incident_set_investigator = {
 				has_country_flag = th_eligible_investigator
 				ai = no
 			}
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else = {
@@ -532,8 +585,7 @@ th_incident_set_investigator = {
 				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 				has_country_flag = th_eligible_investigator
 			}
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 
@@ -587,15 +639,14 @@ th_incident_search_for_eligible_investigator = {
 	}
 }
 
-th_incident_setup_investigator = {
+th_incident_setup_investigator = {	#Trouble maker
 	if = {	#Player always becomes investigator if the choice is biased
 		limit = {
 			has_global_flag = th_biased_incident_active
 			NOT = { tag = HKR }
 			NOT = { was_tag = HKR }
 		}
-		set_country_flag = th_incident_investigating
-		save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+		th_incident_initialize_investigator = yes
 	}
 	else_if = {	#HKR always becomes investigator
 		limit = {
@@ -604,8 +655,7 @@ th_incident_setup_investigator = {
 				was_tag = HKR
 			}
 		}
-		set_country_flag = th_incident_investigating
-		save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+		th_incident_initialize_investigator = yes
 	}
 	else_if = {	#FOM becomes investigator, whe HKR doesn't exist. Else HKR investigates
 		limit = {
@@ -625,16 +675,14 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			HKR = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else = {
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {	#MRY becomes investigator, when HKR and FOM are not aviable
@@ -655,11 +703,10 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			HKR = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else_if = {
@@ -673,16 +720,14 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			FOM = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else = {
-			set_country_flag = th_incident_investigating
-			save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+			th_incident_initialize_investigator = yes
 		}
 	}
 	else_if = {	#SCR and NET shares the same priority
@@ -707,11 +752,10 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			HKR = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else_if = {
@@ -725,11 +769,10 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			FOM = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 		else_if = {
@@ -743,19 +786,19 @@ th_incident_setup_investigator = {
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				clr_country_flag = th_incident_investigating
+				th_incident_clr_investigator = yes
 			}
 			MRY = {
-				set_country_flag = th_incident_investigating
-				save_global_event_target_as = th_incident_investigator		#Now our investigator has his own scope! To call him type "event_target:th_incident_investigator"
+				th_incident_initialize_investigator = yes
 			}
 		}
 	}
 	else = {
 		th_incident_set_investigator = yes
 	}
+}
 
-
+th_incident_introduction_event = {
 	if = {
 		limit = {
 			NOT = { has_global_flag = th_incident_introduced }	
@@ -780,7 +823,7 @@ th_incident_setup_investigator = {
 th_incident_clear_all_limited_flags = {	
 	clr_global_flag = th_incident_introduced
 	clr_global_flag = th_minor_player_asked
-	clr_country_flag = th_incident_investigating
+	th_incident_clr_investigator = yes
 	clr_country_flag = th_incident_last_fight_won
 	clr_country_flag = th_incident_last_fight_lost
 	clr_country_flag = th_incident_last_fight_terribly_lost
@@ -801,7 +844,7 @@ th_incident_clear_all_limited_flags = {
 				has_country_flag = th_incident_random_player_investigator
 			}
 		}
-		clr_country_flag = th_incident_investigating
+		th_incident_clr_investigator = yes
 		clr_country_flag = th_incident_last_fight_won
 		clr_country_flag = th_incident_last_fight_lost
 		clr_country_flag = th_incident_last_fight_terribly_lost
@@ -1047,6 +1090,12 @@ th_incident_clear_about_flags_mof = {
 	clr_global_flag = th_MOF_inci_sanae_encountered
 	clr_global_flag = th_MOF_inci_kanako_encountered
 	clr_global_flag = th_MOF_incident_end
+}
+
+#Gets called with the flag remover as they happen after each incident
+th_set_incident_cooldown = {
+	clr_global_flag = th_recently_solved_incident_flag
+	set_global_flag = th_recently_solved_incident_flag
 }
 
 #IMPORTANT FOR INCIDENTS
@@ -1297,7 +1346,7 @@ th_PCB_incident_reduce_winter_modifier = {
 			add_permanent_province_modifier = {
 				name = th_PCB_permanent_blizzard
 				duration = -1
-				desc = th_PCB_permanent_blizzard.tt
+				desc = th_until_end_of_incident_desc
 			}
 		}
 	}
@@ -1310,7 +1359,7 @@ th_PCB_incident_reduce_winter_modifier = {
 			add_permanent_province_modifier = {
 				name = th_PCB_frozen_land
 				duration = -1
-				desc = th_PCB_frozen_land.tt
+				desc = th_until_end_of_incident_desc
 			}
 		}
 	}
@@ -1323,7 +1372,7 @@ th_PCB_incident_reduce_winter_modifier = {
 			add_permanent_province_modifier = {
 				name = th_PCB_howling_winds
 				duration = -1
-				desc = th_PCB_howling_winds.tt
+				desc = th_until_end_of_incident_desc
 			}			
 		}
 	}

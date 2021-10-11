@@ -11,6 +11,7 @@ moriya_missions_god_tier_slot = {
 	MRY_defender_of_faith = {
 		icon = mission_touhou_mry_dof_lvl1
 		required_missions = {  }
+		position = 1
 		trigger = {
 			is_defender_of_faith = yes
 		}
@@ -128,17 +129,6 @@ moriya_missions_god_tier_slot = {
 			}
 		}
 	}
-}
-
-moriya_missions_religious_slot = {
-	slot = 1
-	generic = no
-	ai = yes
-	potential = {
-		tag = MRY
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
 
 	MRY_build_the_moriya_army = {
 		icon = mission_touhou_army
@@ -194,13 +184,13 @@ moriya_missions_religious_slot = {
 	}
 
 	MRY_control_of_the_tengu_mountains = {
-		icon = mission_touhou_youkai_mountain
+		icon = mission_touhou_aya
 		required_missions = { MRY_build_the_moriya_army }
 		position = 7
 		provinces_to_highlight = {
 			OR = {
-				province_id = 5047	#Tengu Newspaper Office
-				province_id = 4811	#Youkai Mountain
+				province_id = 5199	#Tengu Newspaper Office
+				province_id = 4963	#Youkai Mountain
 			}
 			NOT = { owned_by = ROOT }
 			owner = {
@@ -208,8 +198,8 @@ moriya_missions_religious_slot = {
 			}
 		}
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4811
-			owns_or_non_sovereign_subject_of = 5047
+			owns_or_non_sovereign_subject_of = 4963
+			owns_or_non_sovereign_subject_of = 5199
 			calc_true_if = {
 				all_province = {
 					region = youkai_mountain_region
@@ -261,13 +251,13 @@ moriya_missions_religious_slot = {
 		trigger = {
 			OR = {
 				AND = {
-					4982 = {
+					5134 = {
 						owner = {
 							religion = ROOT
 							NOT = { tag = ROOT }
 						}
 					}
-					5035 = {
+					5187 = {
 						owner = {
 							religion = ROOT
 							NOT = { tag = ROOT }
@@ -285,10 +275,10 @@ moriya_missions_religious_slot = {
 					amount = 6
 				}
 			}
-			4982 = {
+			5134 = {
 				religion = ROOT
 			}
-			5035 = {
+			5187 = {
 				religion = ROOT
 			}
 		}
@@ -359,12 +349,12 @@ moriya_missions_religious_slot = {
 		required_missions = { MRY_the_other_side_of_the_mountain }
 		position = 9
 		provinces_to_highlight = {
-			province_id = 4803	#Hakurei Shrine
+			province_id = 4955	#Hakurei Shrine
 			NOT = { religion = ROOT }
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			4803 = {
+			4955 = {
 				religion = ROOT
 				country_or_non_sovereign_subject_holds = ROOT
 			}
@@ -380,7 +370,7 @@ moriya_missions_religious_slot = {
 				type = mission_rewards_power_projection
 				amount = 75
 			}
-			4846 = {
+			4998 = {
 				add_base_tax = 3
 				add_base_production = 3
 				add_base_manpower = 2
@@ -403,8 +393,88 @@ moriya_missions_west_and_north_slot = {
 	}
 	has_country_shield = yes
 
-	MRY_suwakos_teachings = {
+	MRY_religious_prestige = {
 		icon = mission_touhou_moriya_shrine
+		required_missions = { }
+		position = 1
+		trigger = {
+			prestige = 25
+			religious_unity = 1
+			legitimacy_equivalent = 100
+			stability = 1
+		}
+		effect = {
+			mry_allow_religious_tributaries = yes
+		}
+	}
+	
+	MRY_reform_the_shrine = {
+		icon = mission_touhou_suwako_kanako_talking
+		required_missions = { MRY_religious_prestige }
+		position = 2
+		trigger = {
+			th_has_reached_government_reform_tier = {
+				tier_3 = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = MRY_reform_the_shrine_ct
+				any_country = {
+					is_subject_of = ROOT
+					is_subject_of_type = th_religious_tributary
+				}
+			}
+		}
+		effect = {
+			mry_activate_moriya_curia = yes
+		}
+	}
+	
+	MRY_suwako_organizing = {
+		icon = mission_touhou_develop_bamboo_forest
+		required_missions = { MRY_reform_the_shrine }
+		position = 3
+		trigger = {
+			monthly_adm = 15
+		}
+		effect = {
+			mry_enable_purchase_deity_advisor = yes
+		}
+	}
+	
+	MRY_abundance_of_mana = {
+		icon = mission_touhou_hkr_estate
+		required_missions = { MRY_suwako_organizing }
+		position = 4
+		trigger = {
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				OR = {
+					th_advisor_kanako = 5
+					th_advisor_suwako = 5
+				}
+			}
+			else = {
+				OR = {
+					th_advisor_kanako = 3
+					th_advisor_suwako = 3
+				}
+			}
+			monthly_adm = 12
+			monthly_dip = 12
+			monthly_mil = 12
+		}
+		effect = {
+			add_country_modifier = {
+				name = mry_blessed_donation_box
+				duration = -1
+			}
+		}
+	}
+
+	MRY_suwakos_teachings = {
+		icon = mission_touhou_suwako
 		required_missions = { }
 		position = 6
 		trigger = {
@@ -552,7 +622,7 @@ moriya_missions_west_and_north_slot = {
 				}
 				amount = 5
 			}
-			5031 = {
+			5183 = {
 				country_or_non_sovereign_subject_holds = ROOT
 				religion = ROOT
 			}
@@ -613,6 +683,9 @@ moriya_missions_west_and_north_slot = {
 				set_government_rank = 3
 			}
 			mry_enables_tributary_war_effect = yes
+			th_allow_convert_heathens_peace_treaty = {
+				religion = th_moriyashinto
+			}
 			add_country_modifier = {
 				name = mry_religious_hegemony
 				duration = -1
@@ -633,6 +706,114 @@ moriya_missions_empire_and_religion_slot = {
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
+	
+	MRY_mof_incident = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = {  }
+		position = 1
+		trigger = {
+			if = {
+				limit = {
+					th_has_incidents_enabled = yes
+				}
+				custom_trigger_tooltip = {
+					tooltip = th_mry_conversion_enabled_tt
+					has_global_flag = th_mry_conversion_enabled
+				}
+			}
+			else = {
+				has_reform = TH_feudal_shrine_reform
+			}
+		}
+		effect = {
+			th_allow_ask_for_conversion = {
+				religion = th_moriyashinto
+				shrine_only = yes
+			}
+		}
+	}
+	
+	MRY_moriya_dominance = {
+		icon = mission_touhou_kanako_magic
+		required_missions = { MRY_religious_prestige }
+		position = 2
+		trigger = {
+			calc_true_if = {
+				all_subject_country = {
+					is_subject_of_type = th_religious_tributary
+				}
+				amount = 5
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = mry_in_kochiya_we_trust
+				duration = 7300
+			}
+		}
+	}
+
+	MRY_religious_treasury = {
+		icon = mission_touhou_moriya_temple
+		required_missions = {  }
+		position = 3
+		provinces_to_highlight = {
+			province_id = 4998
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				NOT = { controlled_by = ROOT }
+			}
+		}
+		trigger = {
+			treasury = 500
+			owns_core_province = 4998
+			controls = 4998
+		}
+		effect = {
+			add_treasury = -500
+			4998 = {
+				add_permanent_province_modifier = {
+					name = mry_great_shrine
+					duration = -1
+				}
+			}
+		}
+	}
+
+	MRY_danmaku_fights = {
+		icon = mission_touhou_shrine_maiden_duel
+		required_missions = { MRY_religious_treasury }
+		position = 4
+		trigger = {
+			th_num_of_won_danmaku_duels = {
+				amount = 3
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = mry_fighting_experience
+				duration = -1
+			}
+		}
+	}
+
+	MRY_miracle_worker = {
+		icon = mission_touhou_sanae_miracle
+		required_missions = {  }
+		position = 5
+		trigger = {
+			mry_num_of_miracles_caused = {
+				amount = 3
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = mry_miracle_worker_sanae
+				duration = -1
+			}
+		}
+	}
 	
 	MRY_create_an_empire = {
 		icon = mission_touhou_sanae
@@ -690,15 +871,15 @@ moriya_missions_empire_and_religion_slot = {
 		position = 8
 		provinces_to_highlight = {
 			OR = {
-				province_id = 4855	#Chireiden
-				province_id = 4883	#Shining Needle Castle
-				province_id = 4803	#Hakurei Shrine
-				province_id = 5090	#Spirit Town
-				province_id = 4839	#Eientei
-				province_id = 5035	#Youkai Forest
-				province_id = 4830	#Higan
-				province_id = 5062	#Pandaemonium
-				province_id = 5178	#Junko's Base
+				province_id = 5007	#Chireiden
+				province_id = 5035	#Shining Needle Castle
+				province_id = 4955	#Hakurei Shrine
+				province_id = 5242	#Spirit Town
+				province_id = 4991	#Eientei
+				province_id = 5187	#Youkai Forest
+				province_id = 4982	#Higan
+				province_id = 5214	#Pandaemonium
+				province_id = 5330	#Junko's Base
 			}
 			OR = {
 				owner = {
@@ -717,15 +898,15 @@ moriya_missions_empire_and_religion_slot = {
 							religion = ROOT
 						}
 						OR = {
-							province_id = 4855	#Chireiden
-							province_id = 4883	#Shining Needle Castle
-							province_id = 4803	#Hakurei Shrine
-							province_id = 5090	#Spirit Town
-							province_id = 4839	#Eientei
-							province_id = 5035	#Youkai Forest
-							province_id = 4830	#Higan
-							province_id = 5062	#Pandaemonium
-							province_id = 5178	#Junko's Base
+							province_id = 5007	#Chireiden
+							province_id = 5035	#Shining Needle Castle
+							province_id = 4955	#Hakurei Shrine
+							province_id = 5242	#Spirit Town
+							province_id = 4991	#Eientei
+							province_id = 5187	#Youkai Forest
+							province_id = 4982	#Higan
+							province_id = 5214	#Pandaemonium
+							province_id = 5330	#Junko's Base
 						}
 					}
 					amount = 5
@@ -807,6 +988,106 @@ moriya_missions_europe_slot = {
 	}
 	has_country_shield = yes
 	
+	MRY_espionage = {
+		icon = mission_touhou_ninja_clan
+		required_missions = {  }
+		position = 1
+		trigger = {
+			calc_true_if = {
+				all_country = {
+					NOT = { is_subject_of = ROOT }
+					has_spy_network_from = {
+						who = ROOT
+						value = 20
+					}
+				}
+				amount = 3
+			}
+		}
+		effect = {
+			th_allow_incite_religious_rebels = yes
+			th_allow_converting_on_claim = {
+				religion = th_moriyashinto
+				shrine_only = yes
+			}
+			define_advisor = {
+				type = spymaster
+				skill = 2
+				female = yes
+				religion = ROOT
+				culture = ROOT
+				discount = yes
+			}
+		}
+	}
+	
+	MRY_moriya_festival = {
+		icon = mission_new_kingdom_of_granada
+		required_missions = { MRY_espionage }
+		position = 2
+		trigger = {
+			OR = {
+				num_of_colonists = 1
+				has_idea = quest_for_the_new_world
+				dip_tech = 7
+			}
+		}
+		effect = {
+			th_allow_converting_on_colonization = {
+				religion = th_moriyashinto
+				shrine_only = yes
+			}
+		}
+	}
+
+	MRY_danmaku_barracks = {
+		icon = mission_touhou_agni
+		required_missions = {  }
+		position = 3
+		provinces_to_highlight = {
+			has_manpower_building_trigger = no
+			owned_by = ROOT
+		}
+		trigger = {
+			num_of_owned_provinces_with = {
+				has_manpower_building_trigger = yes
+				value = 8
+			}
+		}
+		effect = {
+			add_yearly_manpower = 2
+		}
+	}
+	
+	MRY_army_quality = {
+		icon = touhou_assemble_army
+		required_missions = { MRY_danmaku_barracks }
+		position = 4
+		trigger = {
+			army_tradition = 50
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				army_professionalism = 0.5
+			}
+			else = {
+				th_has_full_professional_land_army_ideas = yes
+			}
+		}
+		effect = {
+			define_general = {
+				name = "Kanako Yasaka"
+				shock = 6
+				fire = 6
+				manuever = 2
+				siege = 5
+				female = yes
+				trait = defensive_planner_personality
+			}
+		}
+	}
+	
 	MRY_discover_europe = {
 		icon = mission_invade_england
 		required_missions = { MRY_beyond_the_barrier }
@@ -839,29 +1120,18 @@ moriya_missions_europe_slot = {
 			country_event = { id = TH_mission_events.4 }			
 		}
 	}
-}
-
-moriya_missions_modernize_gensokyo_slot = {
-	slot = 4
-	generic = no
-	ai = yes
-	potential = {
-		tag = MRY
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
 
 	MRY_organize_kappa_inventors = {
 		icon = mission_touhou_kappas
 		required_missions = { MRY_build_the_moriya_army }
 		position = 7
 		provinces_to_highlight = {
-			province_id = 4813	#Kappapolis
+			province_id = 4965	#Kappapolis
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			OR = {
-				owns_or_non_sovereign_subject_of = 4813
+				owns_or_non_sovereign_subject_of = 4965
 				AND = {
 					alliance_with = KPP
 					KPP = {
@@ -903,18 +1173,18 @@ moriya_missions_modernize_gensokyo_slot = {
 		position = 8
 		provinces_to_highlight = {
 			OR = {
-				province_id = 4861
-				province_id = 5143
+				province_id = 5013
+				province_id = 5295
 			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4861
-			owns_or_non_sovereign_subject_of = 5143
-			4861 = {
+			owns_or_non_sovereign_subject_of = 5013
+			owns_or_non_sovereign_subject_of = 5295
+			5013 = {
 				religion = ROOT
 			}
-			5143 = {
+			5295 = {
 				religion = ROOT
 			}
 		}
@@ -1082,7 +1352,7 @@ moriya_missions_modernize_gensokyo_slot = {
 			}
 			add_country_modifier = {
 				name = mry_coal_resources
-				duration = -1
+				duration = 7300
 			}
 		}
 	}

@@ -4,33 +4,19 @@ country_decisions = {
 		potential = {
 			has_country_flag = sff_enabled_drain_nature
 		}
-		provinces_to_highlight = {
-			region = sunflower_region
-			OR = {
-				is_state = no
-				NOT = { owned_by = ROOT }
-			}
-		}
 		allow = {
 			custom_trigger_tooltip = {
 				tooltip = sff_has_not_drain_event
-				NOT = { has_country_flag = sff_is_draining }
-			}
-			sunflower_region = {
-				owned_by = ROOT
-				is_state = yes
-				type = all
+				NOT = { has_country_flag = sff_pressed_decision_button }
 			}
 			any_owned_province = {
-				NOT = { region = sunflower_region }
-				is_territory = yes
-				development = 4
+				has_province_modifier = th_province_to_drain
 			}
-			government_reform_progress = 100
+			government_reform_progress = 25
 		}	
 		effect = {
 			custom_tooltip = sff_transfer_natures_power_tt
-			change_government_reform_progress = -100
+			change_government_reform_progress = -25
 			hidden_effect = {
 				set_country_flag = sff_pressed_decision_button
 			}
@@ -39,13 +25,56 @@ country_decisions = {
 		major = yes
 
 		ai_will_do = {
-			factor = 100
-			modifier = {
-				factor = 0
-				NOT = {
-					has_reform = TH_flower_of_japan_reform
+			factor = 0
+		}
+	}
+
+	sff_toggle_drain_ability_on = {
+		potential = {
+			has_country_flag = sff_enabled_drain_nature
+			NOT = { has_country_flag = th_activated_province_drain }
+		}
+		provinces_to_highlight = {
+			region = sunflower_region
+			OR = {
+				is_state = no
+				NOT = { owned_by = ROOT }
+			}
+		}
+		allow = {
+			sunflower_region = {
+				owned_by = ROOT
+				is_state = yes
+				type = all
+			}
+			any_owned_province = {
+				is_territory = yes
+				development = 4
+			}
+		}	
+		effect = {
+			custom_tooltip = sff_toggle_drain_ability_on_tt
+			hidden_effect = {
+				set_country_flag = th_activated_province_drain
+				every_owned_province = {
+					limit = {
+						is_territory = yes
+						NOT = { region = sunflower_region }
+						development = 4
+					}
+					add_province_modifier = {
+						name = th_province_to_mark
+						duration = -1
+						hidden = yes
+					}
 				}
 			}
+		}
+
+		major = yes
+
+		ai_will_do = {
+			factor = 0
 		}
 	}
 }

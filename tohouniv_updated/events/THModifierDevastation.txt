@@ -1,0 +1,116 @@
+namespace = th_modifier_devastation_events
+
+#Set bonus
+country_event = {
+	id = th_modifier_devastation_events.1
+	title = "th_modifier_devastation_events.1.t"
+	desc = "th_modifier_devastation_events.1.desc"
+	picture = SHRINE_eventPicture
+
+	trigger = {
+		OR = {
+			has_global_modifier_value = {
+				which = monthly_devastation_reduction
+				value = 0.01
+			}
+			NOT = {
+				has_global_modifier_value = {
+					which = monthly_devastation_reduction
+					value = 0
+				}
+			}
+		}
+		OR = {
+			NOT = { has_country_flag = th_had_devastation_event }
+			had_country_flag = {
+				flag = th_had_devastation_event
+				days = 29
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		clr_country_flag = th_had_devastation_event
+		export_to_variable = {
+			variable_name = th_additional_devastation
+			value = modifier:monthly_devastation_reduction
+			who = ROOT
+		}
+		multiply_variable = {
+			which = th_additional_devastation
+			value = 100
+		}
+	}
+
+	option = {
+		name = "th_modifier_devastation_events.1.a"
+		set_country_flag = th_had_devastation_event
+		if = {
+			limit = {
+				check_variable = {
+					which = th_additional_devastation
+					value = 0
+				}
+			}
+			subtract_variable = {
+				which = th_additional_devastation
+				value = 1
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_additional_devastation
+						value = 0
+					}
+				}
+				every_owned_province = {
+					limit = {
+						devastation = 1
+					}
+					add_devastation = -1
+				}
+				subtract_variable = {
+					which = th_additional_devastation
+					value = 1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = th_additional_devastation
+						value = 0
+					}
+				}
+			}
+			while = {
+				limit = {
+					NOT = {
+						check_variable = {
+							which = th_additional_devastation
+							value = 0
+						}
+					}
+				}
+				every_owned_province = {
+					add_devastation = 1
+				}
+				change_variable = {
+					which = th_additional_devastation
+					value = 1
+				}
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

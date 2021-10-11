@@ -481,7 +481,6 @@ country_event = {
             has_country_flag = th_pledged_to_religion_to_@ROOT
             NOT = { has_country_modifier = th_pledged_to_remain_religious }
         }
-        has_country_flag = th_able_to_force_religious_pledging
     }
 
     option = {
@@ -583,7 +582,7 @@ country_event = {
 	}
 }
 
-###FOM DIPLO ACTIONS###
+###UNUSED DIPLO ACTIONS###
 #Information about Marisa stealing from your treasury
 country_event = {
 	id = th_diplo_events.14
@@ -628,39 +627,16 @@ country_event = {
                 which = th_money_report
                 which = th_money_to_steal 
             }
-            set_variable = {
-                which = th_money_decimals
-                which = th_money_to_steal 
-            }
         }
     }
 	
 	option = {
         name = th_diplo_events.14.a
         custom_tooltip = th_diplo_events.14.a.tt
-        while = {
-            limit = {
-                check_variable = {
-                    which = th_money_to_steal
-                    value = 1
-                }
-            }
-            add_treasury = -1
-            FROM = { add_treasury = 1 }
-            subtract_variable = {
-                which = th_money_to_steal
-                value = 1
-            }
-            subtract_variable = {
-                which = th_money_decimals
-                value = 1
-            }
-        }
-        hidden_effect = {
-            multiply_variable = {
-                which = th_money_decimals
-                value = 100
-            }
+        th_transfer_treasury = {
+            giver = ROOT
+            taker = FROM
+            variable = th_money_to_steal
         }
         add_casus_belli = {
             type = cb_insult
@@ -682,23 +658,6 @@ country_event = {
 		ai_chance = { 
 			factor = 100
 		}
-    }
-    
-    after = {
-        while = {
-            limit = {
-                check_variable = {
-                    which = th_money_decimals
-                    value = 1
-                }
-            }
-            add_treasury = -0.01
-            FROM = { add_treasury = 0.01 }
-            subtract_variable = {
-                which = th_money_decimals
-                value = 1
-            }
-        }
     }
 }
 
@@ -722,7 +681,40 @@ country_event = {
 }
 
 
-###HKR DIPLO ACTIONS###
+###FOM DIPLO ACTIONS###
+# Inform target of being robbed
+country_event = {
+	id = th_diplo_events.15
+	title = th_diplo_events.15.t
+	desc = th_diplo_events.15.desc
+	picture = MARISA_eventPicture
+	
+    is_triggered_only = yes
+	
+	option = {
+        name = th_diplo_events.15.a
+
+        tooltip = {
+            FROM = {
+                add_country_modifier = {
+                    name = th_stolen_books
+                    duration = 1825
+                }
+            }
+        }
+        add_country_modifier = {
+            name = th_has_less_books
+            duration = 1825
+        }
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+###MORE HKR DIPLO ACTIONS###
 #Recharger for Youkai hunts
 country_event = {
 	id = th_diplo_events.17
@@ -745,6 +737,7 @@ country_event = {
                 value = 5
             }
         }
+        has_country_flag = th_enable_youkai_hunt
     }
 
     mean_time_to_happen = {
@@ -788,6 +781,29 @@ country_event = {
             value = total_development
             who = ROOT
         }
+        if = {
+            limit = {
+                total_development = 300
+            }
+            multiply_variable = {
+                which = th_youkai_hunt_own_development
+                value = 1.5
+            }
+            change_variable = {
+                which = th_youkai_hunt_own_development
+                value = 1550
+            }
+        }
+        else = {
+            multiply_variable = {
+                which = th_youkai_hunt_own_development
+                value = 4
+            }
+            change_variable = {
+                which = th_youkai_hunt_own_development
+                value = 800
+            }
+        }
         FROM = {
             set_variable = {
                 which = th_youkai_hunt_youkai_development
@@ -798,10 +814,10 @@ country_event = {
 	
 	option = {
         name = th_diplo_events.18.a
-        th_set_countrys_compare_variable_to_own_variable = {
+        th_export_root_variable_into_foreign = {
             who = FROM
-            root_counting_variable = th_youkai_hunt_own_development
-            who_counting_variable = th_youkai_hunt_youkai_development
+            root_variable = th_youkai_hunt_own_development
+            foreign_variable = th_youkai_hunt_youkai_development
         }
 
 		ai_chance = { 
@@ -830,12 +846,12 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_getruler_fighting_skill_no_mil = {
+			th_getruler_fighting_skill = {
 				SKILL_BONI = 0
             }            
 			set_variable = {
 				which = th_youkai_hunt_youkai_combat_skills
-				value = 800
+				value = 0
             }
             change_variable = {
                 which = th_youkai_hunt_youkai_combat_skills
@@ -859,6 +875,18 @@ country_event = {
             days = 1
         }
 		hidden_effect = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = th_youkai_hunt_refusal_counter
+                        value = 1
+                    }
+                }
+                subtract_variable = {
+                    which = th_youkai_hunt_refusal_counter
+                    value = 1
+                }
+            }
             FROM = {
                 country_event = {
                     id = th_diplo_events.20
@@ -875,6 +903,20 @@ country_event = {
     option = {  #Stupid idea
         name = th_diplo_events.19.b
         custom_tooltip = th_diplo_events.19.b.tt
+        trigger = {
+            NOT = {
+                check_variable = {
+                    which = th_youkai_hunt_refusal_counter
+                    value = 3
+                }
+            }
+        }
+        hidden_effect = {
+            change_variable = {
+                which = th_youkai_hunt_refusal_counter
+                value = 1
+            }
+        }
         FROM = {
             add_opinion = {
                 who = ROOT
@@ -905,10 +947,10 @@ country_event = {
                 value = 0
             }
         }
-        th_set_countrys_compare_variable_to_own_variable = {
+        th_export_root_variable_into_foreign = {
             who = FROM
-            root_counting_variable = th_youkai_hunt_own_development
-            who_counting_variable = th_youkai_cash
+            root_variable = th_youkai_hunt_own_development
+            foreign_variable = th_youkai_cash
         }
 	}
 
@@ -966,13 +1008,13 @@ country_event = {
                 }
                 multiply_variable = {
                     which = th_youkai_cash
-                    value = 4
+                    value = 2
                 }
             }
             else = {
                 multiply_variable = {
                     which = th_youkai_cash
-                    value = 2
+                    value = 1
                 }
             }
             change_variable = {
@@ -1060,10 +1102,14 @@ country_event = {
         custom_tooltip = th_diplo_events.23.a.tt
         hidden_effect = {
             th_danmaku_set_compare_variable = yes
-            th_set_countrys_compare_variable_to_own_variable = {
+            th_export_root_variable_into_foreign = {
                 who = FROM
-                root_counting_variable = th_current_fighting_skills_counter
-                who_counting_variable = th_danmaku_duel_enemy_power
+                root_variable = th_current_fighting_skills_counter
+                foreign_variable = th_danmaku_duel_enemy_power
+            }
+            set_variable = {
+                which = th_declined_danmaku_duel_counter
+                value = 0
             }
         }
         FROM = {
@@ -1074,9 +1120,9 @@ country_event = {
         }
 
         ai_chance = {
-            factor = 25
+            factor = 0.20
             modifier = {
-                factor = 90
+                factor = 4
                 mil = FROM
             }
         }
@@ -1085,6 +1131,14 @@ country_event = {
     #I don't have time for games   
     option = {
         name = th_diplo_events.23.b
+        trigger = {
+            NOT = {
+                check_variable = {
+                    which = th_declined_danmaku_duel_counter
+                    value = 3
+                }
+            }
+        }
         add_power_projection = {
             type = th_has_declined_danmaku_duel
             amount = -5
@@ -1096,13 +1150,17 @@ country_event = {
             }
         }
         hidden_effect = {
-            set_country_flag = th_danmaku_duel_lost_against_@FROM
+            #set_country_flag = th_danmaku_duel_lost_against_@FROM
+            change_variable = {
+                which = th_declined_danmaku_duel_counter
+                value = 1
+            }
         }
 
         ai_chance = {
-            factor = 75
+            factor = 0.75
             modifier = {
-                factor = 10
+                factor = 0.33
                 mil = FROM
             }
         }
@@ -1126,6 +1184,25 @@ country_event = {
 			th_defineopponent_fighting_skill = {
 				VARIABLE = th_danmaku_duel_enemy_power
 			}
+            if = { 
+                limit = { 
+                    has_country_flag = fuj_has_leveling_mokou
+                    FROM = {
+                        OR = {
+                            th_is_or_was_tag = { tag = HKR }
+                            th_is_or_was_tag = { tag = FOM }
+                            th_is_or_was_tag = { tag = SCR }
+                            th_is_or_was_tag = { tag = EIT }
+                            th_is_or_was_tag = { tag = NET }
+                            is_enemy = ROOT
+                            is_rival = ROOT
+                            is_great_power = yes
+                            total_development = ROOT
+                        }
+                    }
+                }
+                set_country_flag = fuj_duels_important_person
+            }
 		}
 	}
 	
@@ -1135,7 +1212,7 @@ country_event = {
         highlight = yes
 		th_danmaku_normal_fight_ruler_and_opponent = {
             win_event = th_diplo_events.26
-            draw_event = th_diplo_events.26
+            draw_event = th_diplo_events.260
             defeat_event = th_diplo_events.27
             days = 3
         }
@@ -1143,10 +1220,10 @@ country_event = {
             FROM = {
                 set_country_flag = th_danmaku_duel_target_for_@ROOT
             }
-		}			
+		}
 
 		ai_chance = { 
-			factor = 100
+			factor = 1
 		}
     }
     
@@ -1161,6 +1238,10 @@ country_event = {
                 id = th_diplo_events.30
             }
         }
+
+		ai_chance = { 
+			factor = 0
+		}
     }
 }
 
@@ -1172,6 +1253,15 @@ country_event = {
 	picture = REIMUMARISABATTLE_eventPicture
 	
 	is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = { has_country_flag = fuj_duels_important_person }
+                clr_country_flag = fuj_duels_important_person
+            }
+        }
+    }
 	
 	option = {
         name = th_diplo_events.25.a
@@ -1194,6 +1284,19 @@ country_event = {
 	picture = REIMUMARISABATTLE_eventPicture
 	
 	is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = { has_country_flag = fuj_duels_important_person }
+                clr_country_flag = fuj_duels_important_person
+                change_variable = {
+                    which = fuj_danmaku_win
+                    value = 1
+                }
+            }
+        }
+    }
 	
 	option = {
         name = th_diplo_events.26.a
@@ -1207,6 +1310,16 @@ country_event = {
             }
             country_event = {
                 id = th_diplo_events.28
+            }
+        }
+        if = {
+            limit = { has_country_flag = fuj_has_leveling_mokou }
+            change_variable = {
+                which = fuj_mokou_exp
+                value = 25
+            }
+            if = {
+                limit = { FROM = {  } }
             }
         }
 
@@ -1253,7 +1366,7 @@ country_event = {
 	is_triggered_only = yes
 	
 	option = {
-        name = th_diplo_events.26.a
+        name = th_diplo_events.27.a
         add_power_projection = {
             type = th_lost_danmaku_duel_power_projection
             amount = -30
@@ -1377,7 +1490,7 @@ country_event = {
 	}
 }
 
-###FAIRY PRANKS
+###FAIRY PRANKS###
 
 #Pranks - Generic for all non-special fairies
 country_event = {
@@ -1397,7 +1510,7 @@ country_event = {
     option = {
         name = th_diplo_events.31.a
         add_country_modifier = {
-            name = th_fairy_got_pranked
+            name = th_they_pranked_us
             duration = 3650
         }
         add_casus_belli = {
@@ -1406,7 +1519,7 @@ country_event = {
         }
         add_opinion = {
             who = FROM
-            modifier = th_they_pranked_us
+            modifier = th_they_pranked_us_opinion
         }
         
         ai_chance = {
@@ -1456,7 +1569,7 @@ country_event = {
         }
         add_opinion = {
             who = FROM
-            modifier = th_they_pranked_us
+            modifier = th_they_pranked_us_opinion
         }
         
         ai_chance = {
@@ -1495,7 +1608,7 @@ country_event = {
         }
         add_opinion = {
             who = FROM
-            modifier = th_they_pranked_us
+            modifier = th_they_pranked_us_opinion
         }
         
         ai_chance = {
@@ -1532,7 +1645,7 @@ country_event = {
         }
         add_opinion = {
             who = FROM
-            modifier = th_they_pranked_us
+            modifier = th_they_pranked_us_opinion
         }
         
         ai_chance = {
@@ -1569,7 +1682,7 @@ country_event = {
         }
         add_opinion = {
             who = FROM
-            modifier = th_they_pranked_us
+            modifier = th_they_pranked_us_opinion
         }
         
         ai_chance = {
@@ -1613,7 +1726,7 @@ country_event = {
         }
         add_opinion = {
             who = FROM
-            modifier = th_they_pranked_us
+            modifier = th_they_pranked_us_opinion
         }
         remove_fow = 24
         
@@ -1695,10 +1808,661 @@ country_event = {
             modifier = th_good_weather_cause
         }
         add_country_modifier = {
-            name = th_lar_amplified_weather
+            name = th_lrv_amplified_weather
             duration = 3650
         }
         
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+###SATORI'S MIND ABILITY###
+#Event to trigger if there is no noteworthy diplomatic action to copy
+country_event = {
+    id = th_diplo_events.39
+    title = th_diplo_events.39.t
+    desc = th_diplo_events.39.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {
+        name = th_diplo_events.39.a
+        trigger_switch = {
+            on_trigger = has_country_flag
+            th_copied_ability_of_FUJ = { add_country_modifier = { name = th_copy_ability_from_NET duration = 1825 } }
+            th_copied_ability_of_NET = { add_country_modifier = { name = th_copy_ability_from_FUJ duration = 1825 } }
+            th_copied_ability_of_SFF = { add_country_modifier = { name = th_copy_ability_from_SFF duration = 1825 } }
+            th_copied_ability_of_HIG = { add_country_modifier = { name = th_copy_ability_from_HIG duration = 1825 } }
+            th_copied_ability_of_MKI = { add_country_modifier = { name = th_copy_ability_from_MKI duration = 1825 } }
+            th_copied_ability_of_GNU = { add_country_modifier = { name = th_copy_ability_from_GNU duration = 1825 } }
+            th_copied_ability_of_FLR = { add_country_modifier = { name = th_copy_ability_from_FLR duration = 1825 } }
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+
+    after = {
+        hidden_effect = {
+            th_clear_copy_flag = yes
+        }
+    }
+}
+
+#Clear flags when the timer runs out
+country_event = {
+    id = th_diplo_events.40
+    title = th_diplo_events.40.t
+    desc = th_diplo_events.40.desc
+    picture = SATORI_eventPicture
+    
+    trigger = {
+        NOT = { has_country_modifier = th_copied_ability }
+        has_country_flag = th_copied_ability_flag
+    }
+
+    mean_time_to_happen = {
+        days = 0
+    }
+
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.40.a
+        th_clear_copy_flag = yes
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Target country gets manipulated into becoming a vassal of Satori
+country_event = {
+    id = th_diplo_events.41
+    title = th_diplo_events.41.t
+    desc = th_diplo_events.41.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {  #Satori Komeiji commands you: Obey!
+        name = th_diplo_events.41.a
+        FROM = {
+            create_subject = {
+                subject_type = th_satori_vassal
+                subject = ROOT
+            }
+            add_truce_with = ROOT
+            country_event = {
+                id = th_diplo_events.42
+            }
+        }
+        hidden_effect = {
+            set_country_flag = th_vassalized_through_mind_ability_by_@FROM
+        }
+
+        ai_chance = {
+            factor = 1
+            #No longer needed, might be useful for similar diplo actions in the future though
+            #factor = 0.6
+            #modifier = {
+            #    factor = 2
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 1
+            #    }
+            #}
+            #modifier = {
+            #    factor = 2
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 2
+            #    }
+            #}
+            #modifier = {
+            #    factor = 2
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 3
+            #    }
+            #}
+            #modifier = {
+            #    factor = 2
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 4
+            #    }
+            #}
+            #modifier = {
+            #    factor = 2
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 5
+            #    }
+            #}
+            #modifier = {
+            #    factor = 2
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 6
+            #    }
+            #}
+            #modifier = {
+            #    factor = 2
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 7
+            #    }
+            #}
+            #modifier = {
+            #    factor = 2
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 8
+            #    }
+            #}
+        }
+    }
+
+    option = {  #We will never follow a tyrann!
+        name = th_diplo_events.41.b
+        FROM = {
+            country_event = {
+                id = th_diplo_events.43
+            }
+        }
+
+        ai_chance = {
+            factor = 0
+            #No longer needed, might be useful for similar diplo actions in the future though
+            #factor = 0.4
+            #modifier = {
+            #    factor = 0.5
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 1
+            #    }
+            #}
+            #modifier = {
+            #    factor = 0.5
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 2
+            #    }
+            #}
+            #modifier = {
+            #    factor = 0.5
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 3
+            #    }
+            #}
+            #modifier = {
+            #    factor = 0.5
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 4
+            #    }
+            #}
+            #modifier = {
+            #    factor = 0.5
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 5
+            #    }
+            #}
+            #modifier = {
+            #    factor = 0.5
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 6
+            #    }
+            #}
+            #modifier = {
+            #    factor = 0.5
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 7
+            #    }
+            #}
+            #modifier = {
+            #    factor = 0.5
+            #    check_variable = {
+            #        which = th_spy_progress
+            #        value = 8
+            #    }
+            #}
+        }
+    }
+}
+
+#Target country is our vassal!
+country_event = {
+    id = th_diplo_events.42
+    title = th_diplo_events.42.t
+    desc = th_diplo_events.42.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {  #Lovely
+        name = th_diplo_events.42.a
+        tooltip = {
+            create_subject = {
+                subject_type = th_satori_vassal
+                subject = FROM
+            }
+        }
+
+        ai_chance = {
+            factor = 1
+        }
+    }
+}
+
+#Target country refuses!
+country_event = {
+    id = th_diplo_events.43
+    title = th_diplo_events.43.t
+    desc = th_diplo_events.43.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {  #Curses
+        name = th_diplo_events.43.a
+
+        ai_chance = {
+            factor = 1
+        }
+    }
+}
+
+#Target country awakens out of the hypnosis done by Satori!
+country_event = {
+    id = th_diplo_events.44
+    title = th_diplo_events.44.t
+    desc = th_diplo_events.44.desc
+    picture = SATORI_eventPicture
+    
+    trigger = {
+        any_country = {
+            had_country_flag = {
+                flag = th_satoris_command_flag_by_@ROOT
+                days = 1825
+            }
+            NOT = {
+                had_country_flag = {
+                    flag = th_satoris_command_flag_by_@ROOT
+                    days = 5475
+                }
+            }
+            NOT = { has_country_modifier = th_satoris_command }
+            NOT = { has_country_modifier = th_awoken_from_the_hybnosis }
+        }
+    }
+
+    mean_time_to_happen = {
+        days = 1
+    }
+    hidden = yes
+
+    option = {  #Curses
+        name = th_diplo_events.44.a
+        random_country = {
+            limit = {
+                had_country_flag = {
+                    flag = th_satoris_command_flag_by_@ROOT
+                    days = 1825
+                }
+                NOT = {
+                    had_country_flag = {
+                        flag = th_satoris_command_flag_by_@ROOT
+                        days = 5475
+                    }
+                }
+                NOT = { has_country_modifier = th_satoris_command }
+                NOT = { has_country_modifier = th_awoken_from_the_hybnosis }
+            }
+            if = {
+                limit = {
+                    is_subject_of_type = th_satori_vassal
+                }
+                add_country_modifier = {
+                    name = th_awoken_from_the_hybnosis
+                    duration = 3650
+                }
+            }
+        }
+
+        ai_chance = {
+            factor = 1
+        }
+    }
+}
+
+#Read the targets mind and cause trauma
+country_event = {
+    id = th_diplo_events.45
+    title = th_diplo_events.45.t
+    desc = th_diplo_events.45.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+			set_country_flag = th_awoken_traumas_by_@FROM
+        }
+    }
+
+    option = {
+        name = th_diplo_events.45.a
+        add_country_modifier = {
+            name = th_awoken_traumas
+            duration = 1825
+        }
+        custom_tooltip = th_diplo_events.36.a.tt
+        hidden_effect = {
+            FROM = {
+                country_event = {
+                    id = th_diplo_events.450
+                }
+            }
+        }
+        remove_fow = 60
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Read the targets mind and cause trauma (FoW deleter)
+country_event = {
+    id = th_diplo_events.450
+    title = th_diplo_events.450.t
+    desc = th_diplo_events.450.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+    hidden = yes
+
+    option = {
+        name = th_diplo_events.450.a
+        FROM = {
+            remove_fow = 60
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Remove money from overlord
+country_event = {
+    id = th_diplo_events.46
+    title = th_diplo_events.46.t
+    desc = th_diplo_events.46.desc
+    picture = SATORI_eventPicture
+    
+    trigger = {
+        has_country_modifier = th_hellish_officers
+        OR = {
+            NOT = { has_country_flag = th_wasted_overlords_money }
+            had_country_flag = {
+                flag = th_wasted_overlords_money
+                days = 364
+            }
+        }
+        had_country_flag = {
+            flag = th_officers_had_first_free_month
+            days = 30
+        }
+        is_subject = yes
+        OR = {
+            is_subject_of_type = th_satori_vassal
+            is_subject_of_type = th_pet_state
+        }
+    }
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    hidden = yes
+
+    immediate = {
+        clr_country_flag = th_wasted_overlords_money
+        export_to_variable = {
+            which = th_money_to_delete_from_overlord
+            value = years_of_income
+        }
+        export_to_variable = {
+            which = th_own_army_size
+            value = trigger_value:army_size_percentage
+        }
+        multiply_variable = {
+            which = th_money_to_delete_from_overlord
+            which = th_own_army_size
+        }
+        set_variable = {
+            which = th_deleted_money_tooltip
+            which = th_money_to_delete_from_overlord
+        }
+    }
+
+    option = {
+        name = th_diplo_events.46.a
+        set_country_flag = th_wasted_overlords_money
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_money_to_delete_from_overlord
+                    value = 1
+                }
+            }
+            overlord = {
+                add_treasury = -1
+            }
+            subtract_variable = {
+                which = th_money_to_delete_from_overlord
+                value = 1
+            }
+        }
+        multiply_variable = {
+            which = th_money_to_delete_from_overlord
+            value = 100
+        }
+        while = {
+            limit = {
+                check_variable = {
+                    which = th_money_to_delete_from_overlord
+                    value = 1
+                }
+            }
+            overlord = {
+                add_treasury = -0.01
+            }
+            subtract_variable = {
+                which = th_money_to_delete_from_overlord
+                value = 1
+            }
+        }
+
+        overlord = {
+            country_event = {
+                id = th_diplo_events.460
+            }
+        }
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Let overlord know his officers are taking his money
+country_event = {
+    id = th_diplo_events.460
+    title = th_diplo_events.460.t
+    desc = th_diplo_events.460.desc
+    picture = SATORI_eventPicture
+    
+    is_triggered_only = yes
+
+    option = {
+        name = th_diplo_events.460.a
+        custom_tooltip = th_diplo_events.460.a.tt
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#Let overlord know his officers are taking his money
+country_event = {
+    id = th_diplo_events.461
+    title = th_diplo_events.461.t
+    desc = none
+    picture = none
+    
+    hidden = yes
+
+    trigger = {
+        has_country_modifier = th_hellish_officers
+        NOT = { is_subject_of_type = th_satori_vassal }
+        NOT = { is_subject_of_type = th_pet_state }
+    }
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    option = {
+        remove_country_modifier = th_hellish_officers
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#CRUSADE!
+country_event = {
+    id = th_diplo_events.47
+    title = th_diplo_events.47.t
+    desc = th_diplo_events.47.desc
+    picture = SANAEBOSS_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            random_country = {
+                limit = {
+                    has_country_modifier = th_mry_crusade_target
+                }
+                save_event_target_as = th_mry_crusade_event_target
+            }
+        }
+    }
+
+    option = {
+        name = th_diplo_events.47.a
+        custom_tooltip = th_diplo_events.47.a.tt
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#CRUSADE!
+country_event = {
+    id = th_diplo_events.470
+    title = th_diplo_events.470.t
+    desc = none
+    picture = SANAEBOSS_eventPicture
+    hidden = yes
+    
+    trigger = {
+        NOT = { has_country_modifier = th_mry_crusade_target }
+        any_country = {
+            has_country_modifier = th_mry_crusade_target
+            war_with = ROOT
+            NOT = { religion = ROOT }
+        }
+        OR = {
+            any_country = {
+                religion = ROOT
+                mry_uses_faith_power = yes
+                NOT = { tag = ROOT }
+            }
+            mry_uses_faith_power = yes
+        }
+        NOT = { has_country_modifier = th_faith_power_war_against_crusade_target }
+    }
+    
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    option = {
+        add_country_modifier = {
+            name = th_faith_power_war_against_crusade_target
+            duration = -1
+        }
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#No longer crusade
+country_event = {
+    id = th_diplo_events.471
+    title = th_diplo_events.471.t
+    desc = none
+    picture = SANAEBOSS_eventPicture
+    hidden = yes
+    
+    trigger = {
+        has_country_modifier = th_faith_power_war_against_crusade_target
+        OR = {
+            is_at_war = no
+            NOT = {
+                any_country = {
+                    war_with = ROOT
+                    NOT = { has_country_modifier = th_mry_crusade_target }
+                }
+            }
+            AND = {
+                NOT = {
+                    any_country = {
+                        religion = ROOT
+                        mry_uses_faith_power = yes
+                        NOT = { tag = ROOT }
+                    }
+                }
+                NOT = { mry_uses_faith_power = yes }
+            }
+        }
+    }
+    
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    option = {
+        remove_country_modifier = th_faith_power_war_against_crusade_target
         ai_chance = {
             factor = 100
         }

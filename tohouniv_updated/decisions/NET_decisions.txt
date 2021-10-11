@@ -1,101 +1,116 @@
-country_decisions = {
-	
-	net_recruit_a_phantom_explorer = {
+country_decisions = {	
+	net_recruit_youmu_general = {
 		potential = {
-			has_country_flag = net_can_hire_explorers_without_idea
-			NOT = { has_idea = quest_for_the_new_world }
+			has_country_flag = net_can_hire_general_youmu
 		}
 
 		allow = {
-			dip_power = 50
+			mil_power = 50
+			owns_core_province = 4958
+			NOT = { advisor = th_advisor_youmu }
 			custom_trigger_tooltip = {
-				tooltip = net_did_not_hire_an_explorer_recently
+				tooltip = net_youmu_hired_for_thirty_years
+				NOT = { has_leader = "Youmu Konpaku" }
 				OR = {
-					NOT = { has_country_flag = net_hired_explorer }
 					had_country_flag = {
-						flag = net_hired_explorer
-						days = 365
+						flag = th_hired_advisor_youmu
+						days = 10950
 					}
+					NOT = { has_country_flag = th_hired_advisor_youmu }
 				}
 			}
 		}
 
 		effect = {
-			add_dip_power = -50
-			define_explorer = {
-				shock = 0
-				fire = 0
-				manuever = 3
-				siege = 0
+			add_mil_power = -50
+			define_general = {
+				name = "Youmu Konpaku"
+				shock = 6
+				fire = 5
+				manuever = 6
+				siege = 4
 				female = yes
-				name = "Spectral Explorer"
+				trait = defensive_planner_personality
 			}
 			hidden_effect = {
-				clr_country_flag = net_hired_explorer
-				set_country_flag = net_hired_explorer
+				set_country_flag = th_hired_advisor_youmu
+				country_event = {  		#Clear event after 30 years
+					id = th_advisor_events.2
+					days = 18250
+				}
 			}
 		}
 
 		ai_will_do = {
-			factor = 100
+			factor = 1
 			modifier = {
 				factor = 0
-				NOT = { dip_power = 700 }
+				is_at_war = no
 			}
-			modifier = {
-				factor = 0
-				AND = {
-					europe = {
-						has_discovered = ROOT
-					}
-					africa = {
-						has_discovered = ROOT
-					}
-				}
+		}
+
+		ai_importance = 50
+	}
+	
+	net_recruit_youmu_general_advisor = {
+		potential = {
+			has_country_flag = net_can_use_youmu_decision
+		}
+
+		allow = {
+			owns_core_province = 4958
+			NOT = { advisor = th_advisor_youmu }
+			custom_trigger_tooltip = {
+				tooltip = net_youmu_hired_for_thirty_years
+				NOT = { has_leader = "Youmu Konpaku" }
+				NOT = { has_country_modifier = th_hired_youmu_modifier }
 			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavor_net.102
+			}
+		}
+
+		ai_will_do = {
+			factor = 1
 			modifier = {
 				factor = 0
-				num_of_explorers = 1
+				is_at_war = no
 			}
 		}
 
 		ai_importance = 50
 	}
 
-	net_call_youmu = {
+	net_order_cuisine = {
 		potential = {
-			OR = {
-				tag = NET
-				was_tag = NET
+			net_uses_cuisine_mechanic = yes
+			check_variable = {
+				which = net_unlocked_cuisines
+				value = 1
 			}
-			has_country_flag = net_can_hire_youmu
 		}
 
 		allow = {
-			owns_core_province = 4806
 			custom_trigger_tooltip = {
-				tooltip = net_youmu_hired_for_thirty_years
+				tooltip = net_order_cuisine_at
 				NOT = {
-					advisor = th_advisor_youmu			
-				}
-				OR = {
-					had_country_flag = {
-						flag = net_youmu_hired
-						days = 10950
+					check_variable = {
+						which = net_active_cuisine_counter
+						which = net_unlocked_cuisines
 					}
-					NOT = { has_country_flag = net_youmu_hired }
-				}
-			}
-		}	
-		effect = {
-			custom_tooltip = net_hire_youmu.tt
-			hidden_effect = {	
-				country_event = {
-					id = flavor_net.102
 				}
 			}
 		}
-		
+
+		effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
 		ai_will_do = {
 			factor = 0
 		}

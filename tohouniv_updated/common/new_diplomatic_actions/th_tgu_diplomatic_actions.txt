@@ -1,0 +1,76 @@
+###TGU NEWSPAPER ABILITIES###
+
+#Diplo actions here are just recycled and NOT the final addition
+
+#TGU publishes propaganda in the target country -> target loses all AE opinion of root
+th_write_propaganda = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		has_government_attribute = enables_tengu_newspaper
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 40
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_write_propaganda_cd_tt
+			FROM = {
+				OR = {
+					NOT = { has_country_flag = th_read_propaganda_of_@ROOT }
+					had_country_flag = {
+						flag = th_read_propaganda_of_@ROOT
+						days = 5475
+					}
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_has_aggressive_expansion_modifier
+			FROM = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = aggressive_expansion
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		FROM = {
+			remove_opinion = {
+				who = ROOT
+				modifier = aggressive_expansion
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -40
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}

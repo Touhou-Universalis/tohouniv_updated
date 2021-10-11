@@ -99,48 +99,31 @@ country_event = {
 	}
 }
 
-#Automatically convert province with MRY`s claim
-province_event = {
+#Automatically convert province with MRY's claim
+country_event = {
 	id = flavor_mry.101
 	title = "flavor_mry.101.t"
 	desc = "flavor_mry.101.desc"
 	picture = SCARLETT_eventPicture
 	
 	trigger = {
-		OR = {
-			is_claim = MRY
-			AND = {   #If MRY formed GNK, GNK should keep this ability
-				is_claim = GNK
-				GNK = { was_tag = MRY }
+		any_province = {
+			NOT = { is_permanent_claim = ROOT }
+			is_claim = ROOT
+			NOT = { religion = ROOT }
+			is_reformation_center = no
+			NOT = {	has_province_modifier = religious_zeal_at_conv }
+			NOT = {	has_active_triggered_province_modifier = th_religious_center }
+			NOT = {	has_province_modifier = religious_center }
+			is_empty = no
+			has_missionary = no
+			NOT = { has_state_edict = edict_religion_enforced }
+			NOT = { has_province_flag = th_has_been_converted }
+			owner = {
+				NOT = { is_subject_of = ROOT }
 			}
 		}
-		NOT = { religion = th_moriyashinto }
-		NOT = { is_permanent_claim = MRY }
-		NOT = { is_permanent_claim = GNK }
-		is_reformation_center = no
-		NOT = {	has_province_modifier = religious_zeal_at_conv }
-		NOT = {	has_province_modifier = th_religious_center }
-		NOT = {	has_province_modifier = religious_center }
-		is_empty = no
-		has_missionary = no
-		NOT = { has_state_edict = edict_religion_enforced }
-		NOT = { has_province_flag = th_has_been_converted }
-		owner = {
-			NOT = { tag = MRY }
-			NOT = { was_tag = MRY }
-			NOT = { is_subject_of = MRY }
-		}
-		OR = {
-			MRY = {
-				religion = th_moriyashinto
-				has_reform = Gensokyan_shrine_theocracy
-			}
-			GNK = {
-				was_tag = MRY
-				religion = th_moriyashinto
-				has_reform = Gensokyan_shrine_theocracy
-			}
-		}
+		th_can_convert_claims = yes
 	}
 
 	mean_time_to_happen = {
@@ -151,8 +134,26 @@ province_event = {
 	
 	option = {		#Convert people here to the only one true faith!
 		name = "flavor_mry.101.a"
-		change_religion = th_moriyashinto
-		set_province_flag = th_has_been_converted
+		every_province = {
+			limit = {
+				NOT = { is_permanent_claim = ROOT }
+				is_claim = ROOT
+				NOT = { religion = ROOT }
+				is_reformation_center = no
+				NOT = {	has_province_modifier = religious_zeal_at_conv }
+				NOT = {	has_active_triggered_province_modifier = th_religious_center }
+				NOT = {	has_province_modifier = religious_center }
+				is_empty = no
+				has_missionary = no
+				NOT = { has_state_edict = edict_religion_enforced }
+				NOT = { has_province_flag = th_has_been_converted }
+				owner = {
+					NOT = { is_subject_of = ROOT }
+				}
+			}
+			change_religion = ROOT
+			set_province_flag = th_has_been_converted
+		}
 
 		ai_chance = { 
 			factor = 100
@@ -161,38 +162,24 @@ province_event = {
 }
 
 #Automatically convert colony province with colonist of MRY
-province_event = {
+country_event = {
 	id = flavor_mry.102
 	title = "flavor_mry.102.t"
 	desc = "flavor_mry.102.desc"
 	picture = SCARLETT_eventPicture
 	
 	trigger = {
-		is_colony = yes
-		has_colonist = yes
-		NOT = { religion = th_moriyashinto }
-		owner = {
-			OR = {
-				tag = MRY
-				was_tag = MRY
-			}
+		any_owned_province = {
+			is_colony = yes
+			has_colonist = yes
+			NOT = { religion = ROOT }
+			is_reformation_center = no
+			NOT = {	has_province_modifier = religious_zeal_at_conv }
+			NOT = {	has_active_triggered_province_modifier = th_religious_center }
+			NOT = {	has_province_modifier = religious_center }
+			has_missionary = no
 		}
-		is_reformation_center = no
-		NOT = {	has_province_modifier = religious_zeal_at_conv }
-		NOT = {	has_province_modifier = th_religious_center }
-		NOT = {	has_province_modifier = religious_center }
-		has_missionary = no
-		OR = {
-			MRY = {
-				religion = th_moriyashinto
-				has_reform = Gensokyan_shrine_theocracy
-			}
-			GNK = {
-				was_tag = MRY
-				religion = th_moriyashinto
-				has_reform = Gensokyan_shrine_theocracy
-			}
-		}
+		th_can_convert_on_colonization = yes
 	}
 
 	mean_time_to_happen = {
@@ -203,7 +190,19 @@ province_event = {
 	
 	option = {		#Convert people here to the only one true faith!
 		name = "flavor_mry.102.a"
-		change_religion = th_moriyashinto
+		every_owned_province = {
+			limit = {
+				is_colony = yes
+				has_colonist = yes
+				NOT = { religion = ROOT }
+				is_reformation_center = no
+				NOT = {	has_province_modifier = religious_zeal_at_conv }
+				NOT = {	has_active_triggered_province_modifier = th_religious_center }
+				NOT = {	has_province_modifier = religious_center }
+				has_missionary = no
+			}
+			change_religion = ROOT
+		}
 
 		ai_chance = { 
 			factor = 100

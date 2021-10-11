@@ -44,10 +44,13 @@ th_special_march = {}
 th_satori_vassal = {}
 th_mokou_daimyo = {}
 th_religious_tributary = {}
+th_trade_union = {}
 th_yuuka_gatekeeper = {}
+th_rebellious_subject = {}
+th_pet_state = {}
 
 default = {
-	# Graphics:
+	# Graphics:	#TODO
 	sprite = GFX_icon_vassal
 	diplomacy_overlord_sprite = GFX_diplomacy_leadvassal # The one that the overlord sees
 	diplomacy_subject_sprite = GFX_diplomacy_amvassal	# The one that the subject sees
@@ -344,7 +347,7 @@ th_yukari_puppet_state = {
 th_yukari_march = {
 	copy_from = vassal
 	
-	# Graphics:
+	# Graphics:	#TODO
 	sprite = GFX_icon_march
 	diplomacy_overlord_sprite = GFX_diplomacy_leadmarch
 	diplomacy_subject_sprite = GFX_diplomacy_weakmarch
@@ -376,7 +379,7 @@ th_yukari_march = {
 	}
 	can_marry = {
 		independent_nations = yes
-		same_overlord = th_tribuatary_daimyo
+		same_overlord = th_yukari_daimyo
 		same_overlord = th_yukari_march
 	}
 
@@ -392,7 +395,7 @@ th_yukari_march = {
 	seize_territory = no
 	
 	send_officers = yes
-	force_isolation = yes
+	force_isolation = no
 	conscript_general = yes
 
 	# Modifiers:
@@ -417,19 +420,27 @@ th_yukari_march = {
 		expiration_message_overlord = MARCHTOOLARGE
 		expiration_message_subject = MARCHTOOLARGEUS
 	}
+	modifier_overlord = {
+		modifier = th_yukari_marches_too_many_marches
+		trigger = {
+			ROOT = {
+				has_country_flag = mhg_one_march_too_much
+			}
+		}
+	}
 }
 
 th_special_march = {
 	copy_from = vassal
 	
-	# Graphics:
+	# Graphics:	#TODO
 	sprite = GFX_icon_march
 	diplomacy_overlord_sprite = GFX_diplomacy_leadmarch
 	diplomacy_subject_sprite = GFX_diplomacy_weakmarch
 
 	# Properties:
 	has_power_projection = yes
-	takes_diplo_slot = no
+	takes_diplo_slot = yes
 	gives_daimyo_bonuses = no
 	separatists_become_subjects = no
 	allows_taking_land_without_independence = yes
@@ -510,9 +521,9 @@ th_satori_vassal = {
 	fortify_march = yes
 	place_relative_on_throne = yes
 	
-	send_officers = yes
+	send_officers = no
 	contribute_to_capital = yes
-	force_isolation = yes
+	force_isolation = no
 	conscript_general = yes
 
 	# Modifiers:
@@ -528,7 +539,7 @@ th_satori_vassal = {
 		modifier = march_bonus
 		trigger = {
 			NOT = {
-				development_of_overlord_fraction = 0.25
+				development_of_overlord_fraction = 1
 			}
 		}
 		expiration_message_overlord = MARCHTOOLARGE
@@ -536,7 +547,6 @@ th_satori_vassal = {
 	}
 }
 
-# Completely scripted subject type (no code used). Add any number of these. Check common/new_diplomatic_actions for how to make visible in game.
 th_mokou_daimyo = {
 	copy_from = vassal
 	count = vassal
@@ -602,34 +612,22 @@ th_religious_tributary = {
 	#If similar subject added check if it needs to be added to these scripted triggers:
 	#is_subject_except_tributary_trigger
 	#is_free_or_tributary_trigger
-	copy_from = vassal
+	copy_from = tributary_state
 	
-	# Graphics:
+	# Graphics:	#TODO
 	sprite = GFX_subject_tributary_state
 	diplomacy_overlord_sprite = GFX_diplomacy_leadtributary
 	diplomacy_subject_sprite = GFX_diplomacy_amtributary
 
-	# Properties:
-	has_power_projection = yes
-	transfer_trade_if_merchant_republic = no
-	joins_overlords_wars = no
-	joins_colonial_wars = no
-	can_be_annexed = no
-	takes_diplo_slot = no
-	uses_military_focus = no
-	overlord_can_fabricate_for = yes
-	can_send_tribute = yes
-
-	trust_on_start = 0
+	can_send_missionary_to_subject = yes
 	base_liberty_desire = -15
-	liberty_desire_development_ratio = 0.25
-	pays_overlord = 0
-	forcelimit_bonus = 0
-	forcelimit_to_overlord = 0
-	relative_power_class = 1	
-	overlord_opinion_modifier = is_tributary
-	subject_opinion_modifier = is_tributary
+	knowledge_sharing = yes
 	
+	can_fight = {
+		independent_nations = yes
+		same_overlord = th_religious_tributary
+		other_overlord = all
+	}
 	can_rival = {
 		independent_nations = yes
 		same_overlord = th_religious_tributary
@@ -638,29 +636,13 @@ th_religious_tributary = {
 	can_ally = {
 		independent_nations = yes
 		same_overlord = th_religious_tributary
+		other_overlord = all
 	}
 	can_marry = {
 		independent_nations = yes
 		same_overlord = th_religious_tributary
 		other_overlord = all
 	}
-
-	# Subject Interactions:
-	# (immediate)
-	placate_rulers = no
-	place_relative_on_throne = no
-	enforce_religion = yes
-	seize_territory = no
-	sacrifice_ruler = no
-	sacrifice_heir = no
-	bestow_gifts = yes
-	send_additional_troops = yes
-	demand_artifacts = yes
-	demand_additional_tribute = yes
-	# (continuous)
-	embargo_rivals = no
-	scutage = no
-	divert_trade= no
 
 	# Modifiers:
 	modifier_subject = clear # Tributaries don't get the ordinary subject_nation penalty 
@@ -688,20 +670,56 @@ th_religious_tributary = {
 			}
 		}
 	}
-	modifier_subject = {
-		modifier = th_religious_tributary_wrong_religion
-		trigger = {
-			ROOT = {
-				NOT = { religion = FROM }
-			}
-		}
-	}
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_1_0 trigger = { ROOT = { NOT = { total_development = 50 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_1_5 trigger = { ROOT = { total_development = 50 NOT = { total_development = 100 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_2_0 trigger = { ROOT = { total_development = 100 NOT = { total_development = 150 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_2_5 trigger = { ROOT = { total_development = 150 NOT = { total_development = 200 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_3_0 trigger = { ROOT = { total_development = 200 NOT = { total_development = 250 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_3_5 trigger = { ROOT = { total_development = 250 NOT = { total_development = 300 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_4_0 trigger = { ROOT = { total_development = 300 NOT = { total_development = 350 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_4_5 trigger = { ROOT = { total_development = 350 NOT = { total_development = 400 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_5_0 trigger = { ROOT = { total_development = 400 NOT = { total_development = 450 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_5_5 trigger = { ROOT = { total_development = 450 NOT = { total_development = 500 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_6_0 trigger = { ROOT = { total_development = 500 NOT = { total_development = 550 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_6_5 trigger = { ROOT = { total_development = 550 NOT = { total_development = 600 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_7_0 trigger = { ROOT = { total_development = 600 NOT = { total_development = 650 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_7_5 trigger = { ROOT = { total_development = 650 NOT = { total_development = 700 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_8_0 trigger = { ROOT = { total_development = 700 NOT = { total_development = 750 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_8_5 trigger = { ROOT = { total_development = 750 NOT = { total_development = 800 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_9_0 trigger = { ROOT = { total_development = 800 NOT = { total_development = 850 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_9_5 trigger = { ROOT = { total_development = 850 NOT = { total_development = 900 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_10_0 trigger = { ROOT = { total_development = 900 NOT = { total_development = 950 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_10_5 trigger = { ROOT = { total_development = 950 NOT = { total_development = 1000 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_11_0 trigger = { ROOT = { total_development = 1000 NOT = { total_development = 1050 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_monthly_faith_power_level_11_5 trigger = { ROOT = { total_development = 1050 } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_1_0 trigger = { ROOT = { NOT = { total_development = 50 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_1_5 trigger = { ROOT = { total_development = 50 NOT = { total_development = 100 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_2_0 trigger = { ROOT = { total_development = 100 NOT = { total_development = 150 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_2_5 trigger = { ROOT = { total_development = 150 NOT = { total_development = 200 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_3_0 trigger = { ROOT = { total_development = 200 NOT = { total_development = 250 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_3_5 trigger = { ROOT = { total_development = 250 NOT = { total_development = 300 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_4_0 trigger = { ROOT = { total_development = 300 NOT = { total_development = 350 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_4_5 trigger = { ROOT = { total_development = 350 NOT = { total_development = 400 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_5_0 trigger = { ROOT = { total_development = 400 NOT = { total_development = 450 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_5_5 trigger = { ROOT = { total_development = 450 NOT = { total_development = 500 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_6_0 trigger = { ROOT = { total_development = 500 NOT = { total_development = 550 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_6_5 trigger = { ROOT = { total_development = 550 NOT = { total_development = 600 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_7_0 trigger = { ROOT = { total_development = 600 NOT = { total_development = 650 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_7_5 trigger = { ROOT = { total_development = 650 NOT = { total_development = 700 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_8_0 trigger = { ROOT = { total_development = 700 NOT = { total_development = 750 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_8_5 trigger = { ROOT = { total_development = 750 NOT = { total_development = 800 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_9_0 trigger = { ROOT = { total_development = 800 NOT = { total_development = 850 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_9_5 trigger = { ROOT = { total_development = 850 NOT = { total_development = 900 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_10_0 trigger = { ROOT = { total_development = 900 NOT = { total_development = 950 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_10_5 trigger = { ROOT = { total_development = 950 NOT = { total_development = 1000 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_11_0 trigger = { ROOT = { total_development = 1000 NOT = { total_development = 1050 } } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
+	modifier_overlord = { modifier = th_religious_tributary_additional_monthly_faith_power_level_11_5 trigger = { ROOT = { total_development = 1050 } FROM = { religion = th_moriyashinto has_reform = Gensokyan_shrine_theocracy has_country_flag = mry_moriya_curia_active has_country_flag = mry_doubled_faith_power } } }
 }
 
-th_trade_union = {
-	copy_from = default
+th_trade_union = {	#TODO use it for HMC
+	copy_from = vassal
 	
-	# Graphics:
+	# Graphics:	#TODO
 	sprite = GFX_icon_vassal
 	diplomacy_overlord_sprite = GFX_diplomacy_leadvassal
 	diplomacy_subject_sprite = GFX_diplomacy_amvassal
@@ -748,7 +766,7 @@ th_trade_union = {
 th_yuuka_gatekeeper = {
 	copy_from = vassal
 	
-	# Graphics:
+	# Graphics:	#TODO
 	sprite = GFX_icon_march
 	diplomacy_overlord_sprite = GFX_diplomacy_leadmarch
 	diplomacy_subject_sprite = GFX_diplomacy_weakmarch
@@ -763,6 +781,7 @@ th_yuuka_gatekeeper = {
 	can_use_claims = yes
 	can_be_annexed = yes
 	eats_overlords_colonies = yes
+	has_colonial_parent = yes
 	
 	pays_overlord = 0.0
 	military_focus = 1.5
@@ -821,6 +840,139 @@ th_yuuka_gatekeeper = {
 		trigger = {
 			NOT = {
 				development_of_overlord_fraction = 1.00
+			}
+		}
+		expiration_message_overlord = MARCHTOOLARGE
+		expiration_message_subject = MARCHTOOLARGEUS
+	}
+}
+
+th_rebellious_subject = {
+	copy_from = vassal
+	
+	# Graphics:	#TODO
+	sprite = GFX_icon_vassal
+	diplomacy_overlord_sprite = GFX_diplomacy_leadvassal
+	diplomacy_subject_sprite = GFX_diplomacy_amvassal
+
+	# Properties:
+	transfer_trade_if_merchant_republic = no
+	can_be_annexed = no
+	has_power_projection = yes
+	gets_help_with_rebels = yes
+	forms_trade_companies = no
+	joins_overlords_wars = no
+	can_have_subjects_of_other_types = yes
+	can_transfer_in_peace = no
+	can_set_mil_focus = no
+	can_concentrate_development = no
+
+	max_government_rank = 0
+	
+	base_liberty_desire = 30.0
+	liberty_desire_negative_prestige = 1.0
+	pays_overlord = 0
+	forcelimit_bonus = 0
+	forcelimit_to_overlord = 0.1
+
+	relative_power_class = 1
+	should_quit_wars_on_activation = yes
+
+	restoration_cb = cb_disloyal_vassal
+
+	# Subject Interactions:
+	embargo_rivals = no
+	support_loyalists = yes
+	bestow_gifts = yes
+	scutage = no
+	place_relative_on_throne = no
+	sacrifice_ruler = no
+	sacrifice_heir = no
+	divert_trade = no
+	seize_territory = no
+
+	# Modifiers:
+	modifier_subject = {
+		modifier = vassal_nation
+	}
+	modifier_overlord = {
+		modifier = vassal_subject
+	}
+
+	overlord_opinion_modifier = is_vassal
+	subject_opinion_modifier = is_vassal
+}
+
+th_pet_state = {
+	copy_from = th_special_march
+
+	# Properties:
+	base_liberty_desire = 0.0
+
+	# Subject Interactions:
+	subsidize_armies = yes
+	fortify_march = yes
+	place_relative_on_throne = no
+	
+	send_officers = no
+	contribute_to_capital = yes
+	force_isolation = no
+	conscript_general = yes
+
+	# Modifiers:
+	modifier_overlord = clear #We don't want to duplicate the ones inherited from vassal
+	modifier_subject = clear #Ditto
+	modifier_subject = {
+		modifier = subject_nation
+	}
+	modifier_overlord = {
+		modifier = march_subject
+	}
+	modifier_subject = {
+		modifier = march_bonus
+		trigger = {
+			NOT = {
+				development_of_overlord_fraction = 0.25
+			}
+		}
+		expiration_message_overlord = MARCHTOOLARGE
+		expiration_message_subject = MARCHTOOLARGEUS
+	}
+}
+
+th_sister_state = {
+	copy_from = tributary_state
+
+	# Properties:
+	military_focus = 1
+	base_liberty_desire = 0.0
+	forcelimit_to_overlord = 0.15
+	can_be_annexed = yes
+
+	# Subject Interactions:
+	subsidize_armies = yes
+	fortify_march = yes
+	place_relative_on_throne = no
+	
+	send_officers = yes
+	contribute_to_capital = yes
+	force_isolation = no
+	conscript_general = yes
+
+	# Modifiers:
+	modifier_overlord = clear #We don't want to duplicate the ones inherited from vassal
+	modifier_subject = clear #Ditto
+	modifier_subject = {
+		modifier = subject_nation
+	}
+	modifier_overlord = {
+		modifier = march_subject
+	}
+	modifier_subject = {
+		modifier = march_bonus
+		trigger = {
+			NOT = {
+				development_of_overlord_fraction = 0.25
 			}
 		}
 		expiration_message_overlord = MARCHTOOLARGE

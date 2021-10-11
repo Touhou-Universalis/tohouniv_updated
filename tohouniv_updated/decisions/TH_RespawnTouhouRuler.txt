@@ -4,25 +4,51 @@ country_decisions = {
 		potential = {
 			ai = no
 			th_is_or_was_a_tag_with_immortal_rulers = yes
+			th_fulfils_special_cases = yes
 			NOT = { has_government_attribute = fairy_respawn_mechanic }
 			th_has_not_original_ruler = yes
 			NOT = { has_country_flag = th_has_respawning_event }
 			NOT = { government = republic }
+			NOT = { th_is_or_was_tag = { tag = EIT } }
+			NOT = { th_is_or_was_tag = { tag = FUJ } }
+			NOT = { th_is_or_was_tag = { tag = MHG } }
 		}
 		
 		allow = {
 			is_lesser_in_union = no
 			th_ruler_is_not_a_masked_illusion = yes
-			adm_power = 300
-			dip_power = 300
-			mil_power = 300
-			custom_trigger_tooltip = {
-				tooltip = th_respanwed_ruler_recently_tt
-				OR = {
-					NOT = { has_country_flag = th_respanwed_ruler_recently }
-					had_country_flag = {
-						flag = th_respanwed_ruler_recently
-						days = 18250	#50 years
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_free_respawn }
+				}
+				adm_power = 300
+				dip_power = 300
+				mil_power = 300
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_halved_respawn_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = th_respanwed_ruler_recently_tt
+					OR = {
+						NOT = { has_country_flag = th_respanwed_ruler_recently }
+						had_country_flag = {
+							flag = th_respanwed_ruler_recently
+							days = 18250	#50 years
+						}
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = th_respanwed_ruler_recently_ct
+					OR = {
+						NOT = { has_country_flag = th_respanwed_ruler_recently }
+						had_country_flag = {
+							flag = th_respanwed_ruler_recently
+							days = 9125	#25 years
+						}
 					}
 				}
 			}
@@ -32,9 +58,14 @@ country_decisions = {
 		major = yes
 			
 		effect = {
-			add_adm_power = -300
-			add_dip_power = -300
-			add_mil_power = -300
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_free_respawn }
+				}
+				add_adm_power = -300
+				add_dip_power = -300
+				add_mil_power = -300
+			}
 			country_event = {
 				id = touhou_respawn.2
 			}
@@ -55,6 +86,12 @@ country_decisions = {
 					}
 					NOT = { exists = FLR }
 				}
+				AND = {
+					th_is_or_was_tag = {
+						tag = CRD
+					}
+					NOT = { exists = KMJ }
+				}
 			}
 			NOT = { has_government_attribute = fairy_respawn_mechanic }
 			th_has_not_original_heir = yes
@@ -66,16 +103,38 @@ country_decisions = {
 		allow = {
 			is_lesser_in_union = no
 			th_ruler_is_not_a_masked_illusion = yes
-			adm_power = 200
-			dip_power = 200
-			mil_power = 200
-			custom_trigger_tooltip = {
-				tooltip = th_respanwed_heir_recently_tt
-				OR = {
-					NOT = { has_country_flag = th_respanwed_heir_recently }
-					had_country_flag = {
-						flag = th_respanwed_heir_recently
-						days = 10950	#30 years
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_free_respawn }
+				}
+				adm_power = 200
+				dip_power = 200
+				mil_power = 200
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_halved_respawn_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = th_respanwed_heir_recently_tt
+					OR = {
+						NOT = { has_country_flag = th_respanwed_heir_recently }
+						had_country_flag = {
+							flag = th_respanwed_heir_recently
+							days = 10950	#30 years
+						}
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = th_respanwed_heir_recently_ct
+					OR = {
+						NOT = { has_country_flag = th_respanwed_heir_recently }
+						had_country_flag = {
+							flag = th_respanwed_heir_recently
+							days = 5475	#30 years
+						}
 					}
 				}
 			}
@@ -84,9 +143,14 @@ country_decisions = {
 		major = yes
 			
 		effect = {
-			add_adm_power = -200
-			add_dip_power = -200
-			add_mil_power = -200
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_free_respawn }
+				}
+				add_adm_power = -200
+				add_dip_power = -200
+				add_mil_power = -200
+			}
 			country_event = {
 				id = touhou_respawn.3
 			}
@@ -99,7 +163,7 @@ country_decisions = {
 	th_respawn_fairy_decision = {
 		potential = {
 			ai = no
-			has_country_flag = th_has_initialized_fairy_stats
+			has_country_flag = th_has_initialized_ruler_stats
 			has_government_attribute = fairy_respawn_mechanic
 			th_has_not_original_ruler = yes
 			NOT = { has_country_flag = th_has_respawning_event }
@@ -109,28 +173,50 @@ country_decisions = {
 		allow = {
 			is_lesser_in_union = no
 			th_ruler_is_not_a_masked_illusion = yes
-			th_fairy_respawn_has_monarch_power = {
-				type = adm
-				character = ruler
-				variable = th_fairy_adm_stat
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_free_respawn }
+				}
+				th_fairy_respawn_has_monarch_power = {
+					type = adm
+					character = ruler
+					variable = th_ruler_adm_stat
+				}
+				th_fairy_respawn_has_monarch_power = {
+					type = dip
+					character = ruler
+					variable = th_ruler_dip_stat
+				}
+				th_fairy_respawn_has_monarch_power = {
+					type = mil
+					character = ruler
+					variable = th_ruler_mil_stat
+				}
 			}
-			th_fairy_respawn_has_monarch_power = {
-				type = dip
-				character = ruler
-				variable = th_fairy_dip_stat
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_halved_respawn_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = th_fairy_respawned_ruler_recently_tt
+					OR = {
+						NOT = { has_country_flag = th_fairy_respawned_ruler_recently }
+						had_country_flag = {
+							flag = th_fairy_respawned_ruler_recently
+							days = 3650		#10 years
+						}
+					}
+				}
 			}
-			th_fairy_respawn_has_monarch_power = {
-				type = mil
-				character = ruler
-				variable = th_fairy_mil_stat
-			}
-			custom_trigger_tooltip = {
-				tooltip = th_fairy_respawned_ruler_recently_tt
-				OR = {
-					NOT = { has_country_flag = th_fairy_respawned_ruler_recently }
-					had_country_flag = {
-						flag = th_fairy_respawned_ruler_recently
-						days = 3650		#10 years
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = th_fairy_respawned_ruler_recently_ct
+					OR = {
+						NOT = { has_country_flag = th_fairy_respawned_ruler_recently }
+						had_country_flag = {
+							flag = th_fairy_respawned_ruler_recently
+							days = 1825		#5 years
+						}
 					}
 				}
 			}
@@ -139,17 +225,22 @@ country_decisions = {
 		major = yes
 			
 		effect = {
-			th_respawn_fairy_pay_monarch_power = {
-				type = adm
-				variable = th_fairy_adm_stat
-			}
-			th_respawn_fairy_pay_monarch_power = {
-				type = dip
-				variable = th_fairy_dip_stat
-			}
-			th_respawn_fairy_pay_monarch_power = {
-				type = mil
-				variable = th_fairy_mil_stat
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_free_respawn }
+				}
+				th_respawn_fairy_pay_monarch_power = {
+					type = adm
+					variable = th_ruler_adm_stat
+				}
+				th_respawn_fairy_pay_monarch_power = {
+					type = dip
+					variable = th_ruler_dip_stat
+				}
+				th_respawn_fairy_pay_monarch_power = {
+					type = mil
+					variable = th_ruler_mil_stat
+				}
 			}
 			country_event = {
 				id = fairy_events.2
@@ -163,20 +254,37 @@ country_decisions = {
 	th_respawn_fairy_heir_decision = {
 		potential = {
 			ai = no
-			has_country_flag = th_has_initialized_fairy_stats
+			has_country_flag = th_has_initialized_ruler_stats
 			th_is_or_was_tag = {
 				tag = TFR
 			}
 			th_has_not_original_heir = yes
 			th_has_not_original_heir_as_ruler = yes
 			NOT = { has_country_flag = th_has_respawning_event }
-			custom_trigger_tooltip = {
-				tooltip = th_fairy_respawned_heir_recently_tt
-				OR = {
-					NOT = { has_country_flag = th_fairy_respawned_heir_recently }
-					had_country_flag = {
-						flag = th_fairy_respawned_heir_recently
-						days = 1825		#5 years
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_halved_respawn_cd }
+				}
+				custom_trigger_tooltip = {
+					tooltip = th_fairy_respawned_heir_recently_tt
+					OR = {
+						NOT = { has_country_flag = th_fairy_respawned_heir_recently }
+						had_country_flag = {
+							flag = th_fairy_respawned_heir_recently
+							days = 1825		#5 years
+						}
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = th_fairy_respawned_heir_recently_ct
+					OR = {
+						NOT = { has_country_flag = th_fairy_respawned_heir_recently }
+						had_country_flag = {
+							flag = th_fairy_respawned_heir_recently
+							days = 1825		#2.5 years
+						}
 					}
 				}
 			}
@@ -186,37 +294,47 @@ country_decisions = {
 		allow = {
 			is_lesser_in_union = no
 			th_ruler_is_not_a_masked_illusion = yes
-			th_fairy_respawn_has_monarch_power = {
-				type = adm
-				character = heir
-				variable = th_fairy_heir_adm_stat
-			}
-			th_fairy_respawn_has_monarch_power = {
-				type = dip
-				character = heir
-				variable = th_fairy_heir_dip_stat
-			}
-			th_fairy_respawn_has_monarch_power = {
-				type = mil
-				character = heir
-				variable = th_fairy_heir_mil_stat
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_free_respawn }
+				}
+				th_fairy_respawn_has_monarch_power = {
+					type = adm
+					character = heir
+					variable = th_heir_adm_stat
+				}
+				th_fairy_respawn_has_monarch_power = {
+					type = dip
+					character = heir
+					variable = th_heir_dip_stat
+				}
+				th_fairy_respawn_has_monarch_power = {
+					type = mil
+					character = heir
+					variable = th_heir_mil_stat
+				}
 			}
 		}
 
 		major = yes
 			
 		effect = {
-			th_respawn_fairy_pay_monarch_power = {
-				type = adm
-				variable = th_fairy_heir_adm_stat
-			}
-			th_respawn_fairy_pay_monarch_power = {
-				type = dip
-				variable = th_fairy_heir_dip_stat
-			}
-			th_respawn_fairy_pay_monarch_power = {
-				type = mil
-				variable = th_fairy_heir_mil_stat
+			if = {
+				limit = {
+					NOT = { has_country_flag = th_free_respawn }
+				}
+				th_respawn_fairy_pay_monarch_power = {
+					type = adm
+					variable = th_heir_adm_stat
+				}
+				th_respawn_fairy_pay_monarch_power = {
+					type = dip
+					variable = th_heir_dip_stat
+				}
+				th_respawn_fairy_pay_monarch_power = {
+					type = mil
+					variable = th_heir_mil_stat
+				}
 			}
 			country_event = {
 				id = fairy_events.3

@@ -1,0 +1,545 @@
+#Scripted effects needed for supporting Koishi's migration ability through other countries
+
+#th_pick_koishi_potential_province and th_pick_koishi_actual_starting_province MUST be used within the same event together
+th_pick_koishi_potential_province = {
+	random_province = {
+		limit = {
+			continent = europe
+			is_island = no
+			is_empty = no
+			is_capital = no
+		}
+		save_event_target_as = kmj_europe_target
+	}
+	random_province = {
+		limit = {
+			continent = africa
+			is_island = no
+			is_empty = no
+			is_capital = no
+		}
+		save_event_target_as = kmj_africa_target
+	}
+	random_province = {
+		limit = {
+			continent = north_america
+			is_island = no
+			is_empty = no
+			is_capital = no
+		}
+		save_event_target_as = kmj_north_america_target
+	}
+	random_province = {
+		limit = {
+			continent = south_america
+			is_island = no
+			is_empty = no
+			is_capital = no
+		}
+		save_event_target_as = kmj_south_america_target
+	}
+	random_province = {
+		limit = {
+			continent = asia
+			is_island = no
+			is_empty = no
+			is_capital = no
+		}
+		save_event_target_as = kmj_asia_target
+	}
+}
+
+th_pick_koishi_actual_starting_province = {
+	random_list = {
+		$europe_chance$ = {
+			event_target:kmj_europe_target = {
+				set_province_flag = th_kmj_first_capital
+			}
+			set_global_flag = th_kmj_discover_europe
+		}
+		$africa_chance$ = {
+			event_target:kmj_africa_target = {
+				set_province_flag = th_kmj_first_capital
+			}
+			set_global_flag = th_kmj_discover_africa
+		}
+		$north_america_chance$ = {
+			event_target:kmj_north_america_target = {
+				set_province_flag = th_kmj_first_capital
+			}
+			set_global_flag = th_kmj_discover_south_america
+		}
+		$south_america_chance$ = {
+			event_target:kmj_south_america_target = {
+				set_province_flag = th_kmj_first_capital
+			}
+			set_global_flag = th_kmj_discover_north_america
+		}
+		$asia_chance$ = {
+			event_target:kmj_asia_target = {
+				set_province_flag = th_kmj_first_capital
+			}
+			set_global_flag = th_kmj_discover_asia
+		}
+	}
+}
+
+th_initialize_dev_transfer_mechanic = {
+	set_variable = {
+		which = th_newly_conquered_base_tax
+		value = 0
+	}	
+	set_variable = {
+		which = th_newly_conquered_base_production
+		value = 0
+	}	
+	set_variable = {
+		which = th_newly_conquered_base_manpower
+		value = 0
+	}
+	set_variable = {
+		which = th_newly_conquered_province_adm_cost
+		value = 0
+	}
+	#set_variable = {
+	#	which = th_coring_cost_modifier
+	#	value = 1
+	#}
+	set_country_flag = th_dev_transfer_variables_set
+}
+
+th_clear_all_koishi_marks = {
+	every_province = {
+		limit = {
+			has_province_modifier = th_mark_of_koishi
+		}
+		remove_province_modifier = th_mark_of_koishi
+	}
+}
+
+#Hardcoded into KMJ - the migration mechanic DOES not work for any other country
+th_release_koishi = {	
+	if = {
+		limit = {
+			has_heir_flag = th_original_koishi
+		}
+		remove_heir = yes
+	}
+	random_province = {
+		limit = {
+			has_province_flag = th_kmj_first_capital
+		}
+		owner = {
+			save_global_event_target_as = kmj_previous_owner
+		}
+		th_save_development_of_province = yes
+		add_core = KMJ
+		owner = {
+			release = KMJ
+		}
+	}
+	KMJ = {
+		save_global_event_target_as = kmj_country
+		change_government = monarchy
+		add_government_reform = Gensokyan_kmj_travelling_kingdom
+		change_primary_culture = $culture$
+		change_religion = $religion$
+		define_ruler = {
+			name = "Koishi"
+			dynasty = "Komeiji"
+			age = "15"
+			adm = 5
+			dip = 4
+			mil = 6
+			fixed = yes
+			female = yes
+			culture = $culture$
+			religion = $religion$
+		}
+		set_ruler_flag = touhou_character_ruler
+		set_ruler_flag = touhou_original_ruler
+		set_ruler_flag = th_original_koishi
+		add_ruler_personality = immortal_personality
+		random_province = {
+			limit = {
+				has_province_flag = th_kmj_first_capital
+			}
+			KMJ = {
+				set_capital = PREV
+			}
+		}
+		set_variable = {
+			which = kmj_capital_base_tax
+			value = 2
+		}
+		set_variable = {
+			which = kmj_capital_base_production
+			value = 2
+		}
+		set_variable = {
+			which = kmj_capital_base_manpower
+			value = 2
+		}
+		add_adm_power = 112
+		add_dip_power = 84
+		add_mil_power = 126
+		th_initialize_dev_transfer_mechanic = yes
+		add_treasury = 550
+		add_manpower = 5
+		change_estate_land_share = {
+			estate = estate_church
+			share = 20
+		}
+		change_estate_land_share = {
+			estate = estate_burghers
+			share = 20
+		}
+		change_estate_land_share = {
+			estate = estate_nobles
+			share = 29
+		}
+		random_province = {
+			limit = {
+				has_province_flag = th_kmj_first_capital
+			}
+			change_culture = $culture$
+			change_religion = $religion$
+			build_to_forcelimit = {
+				infantry = 0.6
+				cavalry = 0.3
+			}
+			if = {
+				limit = {
+					has_port = yes
+				}
+				build_to_forcelimit = {
+					light_ship = 0.4
+					transport = 0.5
+				}
+				KMJ = {
+					add_sailors = 100
+				}
+			}
+			add_base_tax = 2
+			add_base_manpower = 2
+			add_base_production = 2
+		}
+		trigger_switch = {
+			on_trigger = has_global_flag
+			th_kmj_discover_europe = { europe = { discover_country = KMJ } clr_global_flag = th_kmj_discover_europe }
+			th_kmj_discover_africa = { africa = { discover_country = KMJ } clr_global_flag = th_kmj_discover_africa }
+			th_kmj_discover_south_america = { south_america = { discover_country = KMJ } clr_global_flag = th_kmj_discover_south_america }
+			th_kmj_discover_north_america = { north_america = { discover_country = KMJ } clr_global_flag = th_kmj_discover_north_america }
+			th_kmj_discover_asia = { asia = { discover_country = KMJ } clr_global_flag = th_kmj_discover_asia }
+		}
+	}
+}
+
+th_initialize_kmj_capital = {
+	random_province = {
+		limit = {
+			has_province_flag = th_kmj_first_capital
+		}
+		# TEST #set_province_flag = kmj_capital_flag
+		save_global_event_target_as = kmj_capital
+		clr_province_flag = th_kmj_first_capital
+	}
+}
+
+#Province scope
+th_save_province_as_new_kmj_capital = {
+	#every_province = {
+	#	limit = {
+	#		has_province_flag = kmj_capital_flag
+	#	}
+	#	clr_province_flag = kmj_capital_flag
+	#}
+	# TEST #set_province_flag = kmj_capital_flag
+	save_global_event_target_as = kmj_capital
+}
+
+#Province scope
+th_save_development_of_province = {
+	1 = {
+		export_to_variable = {
+			which = kmj_province_original_culture
+			value = culture
+			who = PREV
+		}
+		export_to_variable = {
+			which = kmj_province_original_religion
+			value = religion
+			who = PREV
+		}
+		export_to_variable = {
+			which = kmj_province_original_base_tax
+			value = base_tax
+			who = PREV
+		}
+		export_to_variable = {
+			which = kmj_province_original_base_production
+			value = base_production
+			who = PREV
+		}
+		export_to_variable = {
+			which = kmj_province_original_base_manpower
+			value = base_manpower
+			who = PREV
+		}
+	}
+	#Create a trigger switch to save the previous buildings too as KMJ will move their buildings with them
+}
+
+#Province scope
+th_add_base_development = {
+	add_$base_type$ = $value$
+	owner = {
+		change_variable = {
+			which = kmj_capital_$base_type$
+			value = $value$
+		}
+	}
+}
+
+#Province scope
+th_reset_province = {
+	set_variable = {
+		which = kmj_province_religion
+		value = 0
+	}
+	set_variable = {
+		which = kmj_province_culture
+		value = 0
+	}
+	th_import_foreign_variable_into_root = {
+		root_variable = kmj_province_religion
+		foreign_variable = kmj_province_original_religion
+		who = 1
+	}
+	th_import_foreign_variable_into_root = {
+		root_variable = kmj_province_culture
+		foreign_variable = kmj_province_original_culture
+		who = 1
+	}
+	set_base_tax = 0
+	set_base_production = 0
+	set_base_manpower = 0
+	#It needs to check 2 because there is always the base value of 1/1/1 provinces
+	while = {
+		limit = {
+			1 = {
+				check_variable = {
+					which = kmj_province_original_base_tax
+					value = 2
+				}
+			}
+		}
+		add_base_tax = 1
+		1 = {
+			subtract_variable = {
+				which = kmj_province_original_base_tax
+				value = 1
+			}
+		}
+	}
+	while = {
+		limit = {
+			1 = {
+				check_variable = {
+					which = kmj_province_original_base_production
+					value = 2
+				}
+			}
+		}
+		add_base_production = 1
+		1 = {
+			subtract_variable = {
+				which = kmj_province_original_base_production
+				value = 1
+			}
+		}
+	}
+	while = {
+		limit = {
+			1 = {
+				check_variable = {
+					which = kmj_province_original_base_manpower
+					value = 2
+				}
+			}
+		}
+		add_base_manpower = 1
+		1 = {
+			subtract_variable = {
+				which = kmj_province_original_base_manpower
+				value = 1
+			}
+		}
+	}
+	change_religion = variable:kmj_province_religion
+	change_culture = variable:kmj_province_culture
+	clr_province_flag = th_has_migrated_dev
+}
+
+#Province scope
+th_update_new_kmj_capital = {
+	owner = {
+		set_variable = {
+			which = kmj_new_variable_tax
+			which = kmj_capital_base_tax
+		}
+		set_variable = {
+			which = kmj_new_variable_production
+			which = kmj_capital_base_production
+		}
+		set_variable = {
+			which = kmj_new_variable_manpower
+			which = kmj_capital_base_manpower
+		}
+	}
+	while = {
+		limit = {
+			owner = {
+				check_variable = {
+					which = kmj_new_variable_tax
+					value = 1
+				}
+			}
+		}
+		add_base_tax = 1
+		owner = {
+			subtract_variable = {
+				which = kmj_new_variable_tax
+				value = 1
+			}
+		}
+	}
+	while = {
+		limit = {
+			owner = {
+				check_variable = {
+					which = kmj_new_variable_production
+					value = 1
+				}
+			}
+		}
+		add_base_production = 1
+		owner = {
+			subtract_variable = {
+				which = kmj_new_variable_production
+				value = 1
+			}
+		}
+	}
+	while = {
+		limit = {
+			owner = {
+				check_variable = {
+					which = kmj_new_variable_manpower
+					value = 1
+				}
+			}
+		}
+		add_base_manpower = 1
+		owner = {
+			subtract_variable = {
+				which = kmj_new_variable_manpower
+				value = 1
+			}
+		}
+	}
+	change_culture = owner
+	change_religion = owner
+	set_province_flag = th_has_migrated_dev
+}
+
+#Province scope
+th_save_conquered_province_dev = {
+	if = {
+		limit = {
+			NOT = { has_province_modifier = th_mark_of_koishi }
+		}
+		export_to_variable = {
+			which = th_province_conquered_base_tax
+			value = base_tax
+		}
+		export_to_variable = {
+			which = th_province_conquered_base_production
+			value = base_production
+		}
+		export_to_variable = {
+			which = th_province_conquered_base_manpower
+			value = base_manpower
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_province_conquered_base_tax
+					value = 1
+				}
+			}
+			owner = {
+				change_variable = {
+					which = th_newly_conquered_base_tax
+					value = 1
+				}
+				change_variable = {
+					which = th_newly_conquered_province_adm_cost
+					value = 5
+				}
+			}
+			subtract_variable = {
+				which = th_province_conquered_base_tax
+				value = 1
+			}
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_province_conquered_base_production
+					value = 1
+				}
+			}
+			owner = {
+				change_variable = {
+					which = th_newly_conquered_base_production
+					value = 1
+				}
+				change_variable = {
+					which = th_newly_conquered_province_adm_cost
+					value = 5
+				}
+			}
+			subtract_variable = {
+				which = th_province_conquered_base_production
+				value = 1
+			}
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_province_conquered_base_manpower
+					value = 1
+				}
+			}
+			owner = {
+				change_variable = {
+					which = th_newly_conquered_base_manpower
+					value = 1
+				}
+				change_variable = {
+					which = th_newly_conquered_province_adm_cost
+					value = 5
+				}
+			}
+			subtract_variable = {
+				which = th_province_conquered_base_manpower
+				value = 1
+			}
+		}
+		add_permanent_province_modifier = {
+			name = th_mark_of_koishi
+			duration = -1
+		}
+	}
+}

@@ -1,6 +1,6 @@
 #MRY request another country to convert
 th_request_conversion = {
-	category = influence
+	category = th_diplo_action
 	alert_index = 30
 	alert_tooltip = th_request_conversion_tooltip
 	require_acceptance = yes
@@ -8,11 +8,11 @@ th_request_conversion = {
 	is_visible = {
 		is_free_or_tributary_trigger = yes
 		OR = {
-			tag = MRY
-			was_tag = MRY
+			th_can_request_conversion = yes
+			th_has_copied_from_target = {
+				target = MRY
+			}
 		}
-		has_reform = Gensokyan_shrine_theocracy
-		religion = th_moriyashinto #Just to make it easier
 		FROM = {
 			NOT = { religion = ROOT }
 			any_owned_province = { religion = ROOT }
@@ -21,26 +21,32 @@ th_request_conversion = {
 	}
 
 	is_allowed = {
-		if = {
-			limit = {
-				th_has_incidents_enabled = yes
-			}
-			custom_trigger_tooltip = {
-				tooltip = th_mry_conversion_enabled_tt
-				has_global_flag = th_mry_conversion_enabled
-			}
-		}
-		else = {
-			has_reform = TH_feudal_shrine_reform
-		}
 		FROM = {
-			dominant_religion = th_moriyashinto
+			dominant_religion = ROOT
 			is_free_or_tributary_trigger = yes
 			NOT = { tag = PAP }
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
 		}
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		add_prestige = 10
 		FROM = {
 			change_religion = ROOT
@@ -52,7 +58,13 @@ th_request_conversion = {
 		add_opinion = {
     		who = FROM
     		modifier = th_new_follower
-		}		
+		}
+		mry_add_scaled_country_conversion_faith_power = {
+			enforcer = ROOT
+			converted = FROM
+			value = 1
+			development_factor = 1
+		}
 	}
 
 	on_decline = {
@@ -275,7 +287,7 @@ th_request_conversion = {
 
 #MRY establish religious tributaries
 th_establish_religious_tributaries = {
-	category = influence
+	category = th_diplo_action
 
 	require_acceptance = yes
 
@@ -284,10 +296,7 @@ th_establish_religious_tributaries = {
 		FROM = {
 			NOT = { is_subject_of_type = th_religious_tributary }
 		}
-		OR = {
-			tag = MRY
-			was_tag = MRY
-		}
+		has_country_flag = mry_can_create_religious_tributaries
 		has_reform = Gensokyan_shrine_theocracy
 		religion = th_moriyashinto #Just to make it easier
 	}
@@ -296,24 +305,30 @@ th_establish_religious_tributaries = {
 		FROM = {
 			religion = ROOT
 			is_at_war = no
-			is_free_or_tributary_trigger = yes
-		}
-		OR = {
-			FROM = { 
-				is_subject_of = ROOT
-				is_subject_of_type = vassal	
-			}
-			FROM = {
-				NOT = { num_of_cities = 3 }
-			}
-			FROM = {
-				NOT = { total_development = 60 }
-			}
+			is_subject = no
 		}
 		is_at_war = no
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		create_subject = {
 			subject_type = th_religious_tributary
 			subject = FROM
@@ -568,36 +583,38 @@ th_establish_religious_tributaries = {
 		treasury = 0
 		monthly_income = 0
 		NOT = {
-			ai_attitude = {
-				who = FROM
-				attitude = attitude_threatened
-			}
-			ai_attitude = {
-				who = FROM
-				attitude = atittude_rivalry
-			}
-			FROM = {
-				overlord = {
-					OR = {
-						AND = {
-							manpower_percentage = 0.5
-							army_size = ROOT
-						}
-						ai_attitude = {
-							who = ROOT
-							attitude = attitude_allied
-						}
-						ai_attitude = {
-							who = ROOT
-							attitude = attitude_friendly
-						}
-						ai_attitude = {
-							who = ROOT
-							attitude = attitude_neutral
+			AND = {
+				ai_attitude = {
+					who = FROM
+					attitude = attitude_threatened
+				}
+				ai_attitude = {
+					who = FROM
+					attitude = atittude_rivalry
+				}
+				FROM = {
+					overlord = {
+						OR = {
+							AND = {
+								manpower_percentage = 0.5
+								army_size = ROOT
+							}
+							ai_attitude = {
+								who = ROOT
+								attitude = attitude_allied
+							}
+							ai_attitude = {
+								who = ROOT
+								attitude = attitude_friendly
+							}
+							ai_attitude = {
+								who = ROOT
+								attitude = attitude_neutral
+							}
 						}
 					}
+					
 				}
-				
 			}
 
 		}
@@ -634,20 +651,13 @@ th_establish_religious_tributaries = {
 	}
 }
 
-#MRY revoke religious tributaries
-th_revoke_religious_tributaries = {
-	category = influence
+#MRY cancel religious tributaries
+th_cancel_religious_tributaries = {
+	category = th_diplo_action
 
-	require_acceptance = yes
+	require_acceptance = no
 
 	is_visible = {
-		is_free_or_tributary_trigger = yes
-		OR = {
-			tag = MRY
-			was_tag = MRY
-		}
-		has_reform = Gensokyan_shrine_theocracy
-		religion = th_moriyashinto #Just to make it easier
 		FROM = {
 			is_subject_of = ROOT
 			is_subject_of_type = th_religious_tributary
@@ -655,22 +665,129 @@ th_revoke_religious_tributaries = {
 	}
 
 	is_allowed = {
-        FROM = {
-            custom_trigger_tooltip = {
-                tooltip = th_dev_condition_tooltip
-                NOT = { total_development = 200 }
-           }
-        }
+		always = yes
 	}
 
 	on_accept = {
+		FROM = {
+			grant_independence = yes
+			add_opinion = {
+				who = ROOT
+				modifier = th_evil_god
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#MRY incite Moriya zealots
+th_incite_moriya_zealots = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		OR = {
+			has_country_flag = th_enabled_incite_religious_rebels
+			th_has_copied_from_target = {
+				target = MRY
+			}
+		}
+		FROM = {
+			NOT = { religion = ROOT }
+			any_owned_province = { religion = ROOT }
+		}
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 30
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_already_incited_zealots
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_has_already_incited_zealots }
+					had_country_flag = {
+						flag = th_has_already_incited_zealots
+						days = 1826
+					}
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			set_country_flag = th_has_already_incited_zealots
+			every_owned_province = { 
+				limit = {
+					religion = ROOT
+				}
+				add_province_modifier = { 
+    				name = th_incited_zealots
+    				duration = 1825  
+				}
+			}
+			country_event = {
+				id = th_diplo_events.12
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -30
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Faith Power - Create Vassal
+th_promote_to_vassal = {
+	category = th_diplo_action
+
+	require_acceptance = yes
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		has_country_flag = mry_can_create_religious_tributaries
+		mry_uses_faith_power = yes
+		FROM = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_religious_tributary
+		}
+	}
+
+	is_allowed = {
+		check_variable = { 
+			which = faith_power 
+			value = trigger_value:total_development
+			who = FROM
+		}
+	}
+
+	on_accept = {
+		mry_increase_miracle_counter = yes
+		export_to_variable = {
+			which = th_from_total_development
+			value = trigger_value:total_development
+			who = FROM
+		}
+		subtract_variable = {
+			which = faith_power
+			which = th_from_total_development
+		}
 		create_subject = {
 			subject_type = vassal
 			subject = FROM
-		}
-		add_opinion = {
-			who = ROOT
-			modifier = th_evil_god
 		}
 	}
     ai_acceptance = {
@@ -798,29 +915,97 @@ th_revoke_religious_tributaries = {
 	}
 }
 
-#MRY cancel religious tributaries
-th_cancel_religious_tributaries = {
-	category = influence
+#Faith Power - Call for Crusade
+th_call_for_crusade = {
+	category = th_diplo_action
 
 	require_acceptance = no
 
 	is_visible = {
-		FROM = {
-			is_subject_of = ROOT
-			is_subject_of_type = th_religious_tributary
+		OR = {
+			mry_uses_faith_power = yes
+			th_has_copied_from_target = {
+				target = MRY
+			}
 		}
 	}
 
 	is_allowed = {
-		always = yes
+		if = {
+			limit = {
+				mry_uses_faith_power = yes
+			}
+			check_variable = {
+				which = faith_power
+				value = 50
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_call_for_crusade_ct
+			FROM = {
+				NOT = { religion = ROOT }
+			}
+		}
 	}
 
 	on_accept = {
+		mry_increase_miracle_counter = yes
+		th_clear_copy_flag = yes
+		every_country = {
+			limit = {
+				has_country_modifier = th_mry_crusade_target
+			}
+			remove_country_modifier = th_mry_crusade_target
+		}
+		every_country = {
+			limit = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_faith_poewr_called_crusade_against_us
+				}
+			}
+			remove_opinion = {
+				who = ROOT
+				modifier = th_faith_poewr_called_crusade_against_us
+			}
+		}
+		subtract_variable = {
+			which = faith_power
+			value = 50
+		}
 		FROM = {
-			grant_independence = yes
 			add_opinion = {
 				who = ROOT
-				modifier = th_evil_god
+				modifier = th_faith_poewr_called_crusade_against_us
+			}
+			add_country_modifier = {
+				name = th_mry_crusade_target
+				duration = 10950
+			}
+		}
+		every_known_country = {
+			limit = {
+				religion = ROOT
+			}
+			country_event = {
+				id = th_diplo_events.47
 			}
 		}
 	}
@@ -830,65 +1015,53 @@ th_cancel_religious_tributaries = {
 	}
 }
 
-#MRY incite Moriya zealots
-th_incite_moriya_zealots = {
-	category = covert
+#Faith Power - Call to arms
+th_call_to_religious_war = {
+	category = th_diplo_action
 
 	require_acceptance = no
 
 	is_visible = {
-		is_free_or_tributary_trigger = yes
-		OR = {
-			tag = MRY
-			was_tag = MRY
-		}
-		has_reform = Gensokyan_shrine_theocracy
-		religion = th_moriyashinto #Just to make it easier
+		mry_uses_faith_power = yes
 		FROM = {
-			NOT = { religion = ROOT }
-			any_owned_province = { religion = ROOT }
+			is_subject_of = ROOT
+			is_subject_of_type = th_religious_tributary
 		}
 	}
 
 	is_allowed = {
-		has_spy_network_in = {
-			who = FROM
-			value = 50
+		variable_arithmetic_trigger = {
+			custom_tooltip = th_call_to_religious_war_tt
+			export_to_variable = {
+				which = from_total_development
+				value = trigger_value:total_development
+				who = FROM
+			}
+			multiply_variable = { which = from_total_development value = 0.1 }			
+			check_variable = { which = faith_power which = from_total_development }
 		}
-		dip_tech = 9
-		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_has_already_incited_zealots
-			FROM = {				
-				OR = {
-					NOT = { has_country_flag = th_has_already_incited_zealots }
-					had_country_flag = {
-						flag = th_has_already_incited_zealots
-						days = 1826
-					}
-				}
+		NOT = {
+			any_known_country = {
+				war_with = ROOT
+				alliance_with = FROM
 			}
 		}
 	}
 
 	on_accept = {
-		FROM = {
-			set_country_flag = th_has_already_incited_zealots
-			every_owned_province = { 
-				limit = {
-					religion = ROOT
-				}
-				add_province_modifier = { 
-    				name = th_incited_zealots
-    				duration = 1825  
-				}
-			}
-			country_event = {
-				id = th_diplo_events.12
-			}
-		}
-		add_spy_network_in = {
+		mry_increase_miracle_counter = yes
+		export_to_variable = {
+			which = th_from_total_development
+			value = trigger_value:total_development
 			who = FROM
-			value = -50			
+		}
+		subtract_variable = {
+			which = faith_power
+			which = th_from_total_development
+		}
+		FROM = {
+			join_all_offensive_wars_of = ROOT
+			join_all_defensive_wars_of = ROOT
 		}
 	}
 
