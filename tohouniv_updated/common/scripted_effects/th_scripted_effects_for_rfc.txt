@@ -8,6 +8,20 @@ th_rfc_initiate_challenge = {
 		set_global_flag = th_royal_fairy_challenge_has_begun
 		set_country_flag = th_participates_royal_fairy_challenge
 		set_country_flag = th_rfc_has_variables_set
+		if = {
+			limit = {
+				NOT = {
+					calc_true_if = {
+						all_country = {
+							ai = no
+							primary_culture = Fairy
+						}
+						amount = 2
+					}
+				}
+			}
+			set_global_flag = th_royal_fairy_challenge_singleplayer
+		}
 		clr_global_flag = th_royal_fairy_challenge_is_about_to_happen
 		set_variable = {
 			which = th_royal_fairy_challenge_points
@@ -18,23 +32,32 @@ th_rfc_initiate_challenge = {
 			value = 0
 		}
 		#Variable for checking of how long RFC is going
-		1 = {	#Happens in Stockholm because we don't have a global variable yet
+		1 = {	#Happens in Stockholm because we don't have a global variable
 			set_province_flag = th_rfc_start_cooldown
 			set_variable = {
 				which = th_rfc_current_cycle_of_challenge
 				value = 0
 			}
 		}
-		#Sending invites to the other fairies
-		every_country = {
-			limit = {
-				primary_culture = Fairy
-				is_colonial_nation = no
-				is_client_nation = no
-				NOT = { tag = ROOT }
+		if = {
+			limit = { th_rfc_is_singleplayer = no }
+			#Sending invites to the other fairies
+			every_country = {
+				limit = {
+					primary_culture = Fairy
+					is_colonial_nation = no
+					is_client_nation = no
+					NOT = { tag = ROOT }
+				}
+				country_event = {
+					id = rfc_events.1
+				}
 			}
-			country_event = {
-				id = rfc_events.1
+		}
+		else = {
+			set_variable = {	#How many points a fairy nation should get to win
+				which = th_rfc_goal_points
+				value = 25
 			}
 		}
 		#Explaning event of what is going on
