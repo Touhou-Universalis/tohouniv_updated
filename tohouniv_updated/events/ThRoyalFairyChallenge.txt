@@ -10,8 +10,6 @@
 
 namespace = rfc_events
 
-###CIN Flavor events###
-
 #Invitation to the Royal Fairy Challenge
 country_event = {
 	id = rfc_events.1
@@ -69,7 +67,18 @@ country_event = {
 country_event = {
 	id = rfc_events.2
 	title = "rfc_events.2.t"
-	desc = "rfc_events.2.desc"
+	desc = {
+		desc = "rfc_events.2.a.desc"
+		trigger = {
+			th_rfc_is_singleplayer = yes
+		}
+	}
+	desc = {
+		desc = "rfc_events.2.b.desc"
+		trigger = {
+			th_rfc_is_singleplayer = no
+		}
+	}
 	picture = FAIRYFIGHT_eventPicture
 	
 	is_triggered_only = yes
@@ -230,7 +239,23 @@ country_event = {
 	#How many points to I have?
 	option = {
 		name = rfc_events.6.c
+		trigger = {
+			th_rfc_is_singleplayer = no
+		}
 		th_rfc_show_the_scores = yes
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#How many points to I have?
+	option = {
+		name = rfc_events.6.c
+		trigger = {
+			th_rfc_is_singleplayer = yes
+		}
+		custom_tooltip = th_rfc_sp_own_score_tt
 
 		ai_chance = {
 			factor = 100
@@ -242,8 +267,8 @@ country_event = {
 province_event = {
 	id = rfc_events.70
 	title = "rfc_events.7.t"
-	desc = "rfc_events.7.desc"
-	picture = FAIRYFIGHT_eventPicture
+	desc = none
+	picture = none
 
 	trigger = {
 		has_global_flag = th_royal_fairy_challenge_has_begun
@@ -277,7 +302,7 @@ province_event = {
 			limit = {
 				any_country = {
 					ai = no
-				has_country_flag = th_participates_royal_fairy_challenge
+					has_country_flag = th_participates_royal_fairy_challenge
 				}
 			}
 			random_country = {
@@ -319,9 +344,14 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			set_variable = {
-				which = th_rfc_high_score
-				which = th_royal_fairy_challenge_points
+			if = {
+				limit = {
+					th_rfc_is_singleplayer = no
+				}
+				set_variable = {
+					which = th_rfc_high_score
+					which = th_royal_fairy_challenge_points
+				}
 			}
 			save_global_event_target_as = th_rfc_winner
 			set_country_flag = th_rfc_calculator
@@ -363,20 +393,30 @@ country_event = {
 
 	immediate = {
 		clr_country_flag = th_participates_royal_fairy_challenge
-		FROM = {
-			set_variable = {
-				which = th_royal_fairy_compare_points
-				value = 0
+		if = {
+			limit = {
+				th_rfc_is_singleplayer = no
+			}
+			FROM = {
+				set_variable = {
+					which = th_royal_fairy_compare_points
+					value = 0
+				}
 			}
 		}
 	}
 	
 	option = {
 		name = rfc_events.8.a
-		th_export_root_variable_into_foreign = {
-			who = FROM
-			root_variable = th_royal_fairy_challenge_points
-			foreign_variable = th_royal_fairy_compare_points
+		if = {
+			limit = {
+				th_rfc_is_singleplayer = no
+			}
+			th_export_root_variable_into_foreign = {
+				who = FROM
+				root_variable = th_royal_fairy_challenge_points
+				foreign_variable = th_royal_fairy_compare_points
+			}
 		}
 		set_country_flag = th_rfc_is_compared
 
@@ -386,10 +426,41 @@ country_event = {
 	}
 
 	after = {
-		FROM = {
-			country_event = {
-				id = rfc_events.9
-				days = 5
+		if = {
+			limit = {
+				th_rfc_is_singleplayer = no
+			}
+			FROM = {
+				country_event = {
+					id = rfc_events.9
+					days = 5
+				}
+			}
+		}
+		else = {
+			clr_global_flag = th_royal_fairy_challenge_calculating_result
+			clr_country_flag = th_rfc_calculator
+			if = {
+				limit = {
+					FROM = {
+						check_variable = {
+							which = th_royal_fairy_challenge_points
+							which = th_rfc_goal_points
+						}
+					}
+				}
+				FROM = {
+					country_event = {
+						id = rfc_events.11
+					}
+				}
+			}
+			else = {
+				FROM = {
+					country_event = {
+						id = rfc_events.16
+					}
+				}
 			}
 		}
 	}
@@ -435,11 +506,6 @@ country_event = {
 				country_event = {
 					id = rfc_events.8
 				}
-			}
-		}
-		else = {
-			country_event = {
-				id = rfc_events.10
 			}
 		}
 
@@ -613,6 +679,28 @@ country_event = {
 	option = {	#Official Winner!
 		name = rfc_events.15.a
 		th_rfc_initiate_challenge = yes
+
+		ai_chance = { 
+			factor = 100
+		}
+    }
+}
+
+#Loser event
+country_event = {
+	id = rfc_events.16
+	title = rfc_events.16.t
+	desc = rfc_events.16.desc
+	picture = FAIRYFIGHT_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = {	#Official Winner!
+		name = rfc_events.16.a
+		hidden_effect = {
+			clear_global_event_target = th_rfc_winner
+		}
 
 		ai_chance = { 
 			factor = 100
