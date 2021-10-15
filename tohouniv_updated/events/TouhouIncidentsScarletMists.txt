@@ -3,6 +3,7 @@
 ########################################
 
 namespace = th_incidents_scarletmists
+#incident = scarlet_mists_incident
 
 #Scarlet Mist Incident - 1.Check any possible investigator country	- HIDDEN
 country_event = {
@@ -12,25 +13,9 @@ country_event = {
 	picture = SCARLETMIST_eventPicture
 
 	trigger = {
-		if = {
-			limit = {
-				has_global_flag = th_random_incident_active
-			}
-			has_global_flag = th_picked_rng_incident_sdm
-		}
-		else = {
-			is_year = 1450
-		}
-		NOT = { has_global_flag = th_active_incident }
-		NOT = { has_global_flag = th_scarlet_mists_incident_solved }
-		NOT = { has_global_flag = th_deactivated_incidents }
-		OR = {
-			NOT = { has_global_flag = th_recently_solved_incident_flag }
-			had_global_flag = { flag = th_recently_solved_incident_flag days = 1825 }
-		}
-		capital_scope = {
-			superregion = gensokyo_superregion
-		}
+		th_incident_check_year_for_incident = { incident = scarlet_mists_incident year = 1450 }
+		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
+		th_incident_can_trigger_generic_check = yes
 	}
 	
 	fire_only_once = yes
@@ -60,192 +45,35 @@ country_event = {
 	}
 
 	immediate = {
-		if = {
-			limit = {
-				exists = SCR
-			}
-			SCR = {
-				th_incident_forbids_to_become_investigator = yes
-			}
+		th_incident_forbid_country_to_investigate = { who = SCR }
+		th_incident_forbid_country_to_investigate = { who = SCD }
+		th_incident_forbid_country_to_investigate = { who = CIN }
+		th_incident_forbid_country_to_investigate = { who = FLR }
+		th_incident_forbid_country_to_investigate = { who = HNG }
+		th_start_incident_effect = {
+			incident = scarlet_mists_incident
 		}
-		if = {
-			limit = {
-				exists = SCD
-			}
-			SCD = {
-				th_incident_forbids_to_become_investigator = yes
-			}
-		}
-		if = {
-			limit = {
-				exists = CIN
-			}
-			CIN = {
-				th_incident_forbids_to_become_investigator = yes
-			}
-		}
-		if = {
-			limit = {
-				exists = FLR
-			}
-			FLR = {
-				th_incident_forbids_to_become_investigator = yes
-			}
-		}
-		if = {
-			limit = {
-				exists = HNG
-			}
-			HNG = {
-				th_incident_forbids_to_become_investigator = yes
-			}
-		}
-		every_known_country = {
-			limit = {
-				OR = {
-					was_tag = SCR
-					was_tag = SCD
-					was_tag = CIN
-					was_tag = FLR
-					was_tag = HNG
-				}
-				NOT = { tag = SCR }
-				NOT = { tag = SCD }
-				NOT = { tag = CIN }
-				NOT = { tag = FLR }
-				NOT = { tag = HNG }
-			}
-			th_incident_forbids_to_become_investigator = yes
-		}
-		set_global_flag = th_SDM_inci_setup_flag
 	}
 
 	option = {		#Check any possible investigator country
-		name = "th_incidents_scarletmists.1.a"
-		th_incident_search_for_eligible_investigator = yes
+		random_country = {
+			limit = { 
+				th_incident_can_become_investigator = yes
+			}
+			th_incident_setup_investigator = yes
+			th_incident_introduction_event = {
+				id = th_incidents_scarletmists.400
+			}
+		}
 		ai_chance = { 
 			factor = 100
-		}
-	}
-
-	after = {
-		if = {
-			limit = {
-				has_global_flag = th_biased_incident_active
-			}
-			th_incident_pick_random_player_for_biased_investigator = yes
 		}
 	}
 }
 
 #Scarlet Mist Incident - 2.Incident starts,add debuffs	- HIDDEN
-country_event = {
-	id = th_incidents_scarletmists.200
-	title = "th_incidents_scarletmists.200.t"
-	desc = "th_incidents_scarletmists.200.desc"
-	picture = SCARLETMIST_eventPicture
-
-	trigger = {
-		th_incident_can_become_investigator = yes
-		has_global_flag = th_SDM_inci_setup_flag
-	}
-
-	fire_only_once = yes
-	hidden = yes	
-
-	immediate = {
-		hidden_effect = {
-			th_incident_set_terminate_flag = yes
-			gensokyo_superregion = {
-				limit = {
-					owner = {
-						NOT = { tag = SCR }
-						NOT = { tag = SCD }
-						NOT = { was_tag = SCR }
-						NOT = { was_tag = SCD }
-						NOT = { is_subject_of = SCR }
-						NOT = { is_subject_of = SCD }
-					}
-					NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
-				}
-				add_province_modifier = { 
-					name = th_plagued_by_the_scarlet_mist
-					duration = -1  
-					desc = th_incident_duration_tt
-				}
-			}
-			random_province = {
-				limit = {
-					superregion = gensokyo_superregion
-					owner = {
-						NOT = { tag = SCR }
-						NOT = { tag = SCD }
-						NOT = { was_tag = SCR }
-						NOT = { was_tag = SCD }
-						NOT = { is_subject_of = SCR }
-						NOT = { is_subject_of = SCD }
-					}
-					NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
-				}
-				add_province_modifier = { 
-					name = th_plagued_by_the_scarlet_mist
-					duration = -1  
-					desc = th_incident_duration_tt
-				}
-			}
-			clr_global_flag = th_SDM_inci_setup_flag
-			set_global_flag = th_active_incident
-			clr_global_flag = th_incident_cleaned_all_flags
-			set_global_flag = th_current_incident_scarlet_mists
-			set_global_flag = th_SDM_inci_started
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 30
-
-		modifier = {
-			factor = 0.1
-			tag = HKR
-		}
-	}
-
-	option = {		#Set the first investigator
-		name = "th_incidents_scarletmists.200.a"
-		country_event = {
-			id = th_incidents_scarletmists.300
-			days = 0
-		}
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
 
 #Scarlet Mist Incident - 3.Set an investigator(use whenever there is need)	- HIDDEN
-country_event = {
-	id = th_incidents_scarletmists.300
-	title = "th_incidents_scarletmists.300.t"
-	desc = "th_incidents_scarletmists.300.desc"
-	picture = SCARLETMIST_eventPicture
-
-	is_triggered_only = yes
-	hidden = yes
-
-	option = {		#find an investigator
-		name = "th_incidents_scarletmists.300.a"
-		
-		th_incident_setup_investigator = yes
-		th_incident_introduction_event = {
-			introduction_event = th_incidents_scarletmists.400
-		}
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
 
 #Scarlet Mist Incident - 4.Introduction of incident
 country_event = {
@@ -280,24 +108,9 @@ country_event = {
 		trigger = {
 			th_incident_is_investigator = yes
 		}
- 		custom_tooltip = th_incidents_scarletmists.400.a.tt
 		highlight = yes	
-		add_adm_power = -25
-		hidden_effect = {
-			set_variable = {
-				which = th_SDM_inci_goodbad_level
-				value = 0
-			}
-			set_country_flag = th_SDM_inci_about_to_beat_rumia
-			if = {
-				limit = {
-					NOT = { has_country_flag = th_incident_had_info }
-				}
-				country_event = {
-					id = th_danmaku_event.1
-					days = 1
-				}
-			}
+		th_investigate_incident = {
+			incident = scarlet_mists_incident
 		}
 
 		ai_chance = {
@@ -316,19 +129,8 @@ country_event = {
 				th_incident_can_become_investigator = yes
 			}
 		}
-		custom_tooltip = th_incidents_scarletmists.400.b.tt
-		add_prestige = -25
-		hidden_effect = {
-			th_incident_clr_investigator = yes
-			random_known_country = {	
-				limit = {
-					exists = yes
-					th_incident_can_become_investigator = yes
-				}	
-				add_adm_power = -25
-				th_incident_set_country_to_new_investigator = yes
-			}
-		}		
+		th_start_incident_tooltip = { incident = scarlet_mists_incident }
+		th_refuse_investigating_incident = { incident = scarlet_mists_incident }
 		ai_chance = {
 			factor = 0
 		}
@@ -349,17 +151,15 @@ country_event = {
 			}
 			th_incident_can_become_investigator = yes
 		}
- 		custom_tooltip = th_incidents_scarletmists.400.c.tt
-		highlight = yes			
-		add_adm_power = -25
+		highlight = yes
+		th_investigate_incident = {
+			incident = scarlet_mists_incident
+		}
 		hidden_effect = {
-			every_known_country = {
-				limit = {
-					th_incident_is_investigator = yes
-				}
-				th_incident_clr_investigator = yes
+			th_incident_clr_previous_investigators = yes
+			th_incident_set_country_to_new_investigator = {
+				incident = scarlet_mists_incident
 			}
-			th_incident_set_country_to_new_investigator = yes
 		}
 
 		ai_chance = {
@@ -376,7 +176,7 @@ country_event = {
 			NOT = { was_tag = SCR }
 			NOT = { was_tag = SCD  }
 		}	
-		custom_tooltip = th_incidents_scarletmists.400.d.tt
+		th_start_incident_tooltip = { incident = scarlet_mists_incident }
 
 		ai_chance = {
 			factor = 100
@@ -393,11 +193,30 @@ country_event = {
 				was_tag = SCD
 			}
 		}	
-		custom_tooltip = th_incidents_scarletmists.400.e.tt
+		th_start_incident_tooltip = { incident = scarlet_mists_incident }
 		highlight = yes	
 		add_army_tradition = 15
 		add_navy_tradition = 15
 		add_treasury = 200
+		random_province = {
+			limit = {
+				superregion = gensokyo_superregion
+				owner = {
+					NOT = { tag = SCR }
+					NOT = { tag = SCD }
+					NOT = { was_tag = SCR }
+					NOT = { was_tag = SCD }
+					NOT = { is_subject_of = SCR }
+					NOT = { is_subject_of = SCD }
+				}
+				NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
+			}
+			add_province_modifier = { 
+				name = th_plagued_by_the_scarlet_mist
+				duration = -1  
+				desc = th_incident_duration_tt
+			}
+		}
 
 		ai_chance = {
 			factor = 100
@@ -414,12 +233,14 @@ country_event = {
 	picture = RUMIA_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_SDM_inci_about_to_beat_rumia
+		th_enough_time_for_next_stage_has_passed = {
 			days = 1095
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_SDM_inci_rumia_encountered }
+		th_incident_get_stage = {
+			incident = scarlet_mists_incident
+			stage = 1
+		}
 	}
 
 	mean_time_to_happen = {
@@ -428,30 +249,27 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+			th_raise_incident_stage = {
+				incident = scarlet_mists_incident
+				stage = 1
 			}
-			set_global_flag = th_SDM_inci_rumia_encountered
-			clr_global_flag = th_SDM_inci_started
-			clr_country_flag = th_SDM_inci_about_to_beat_rumia
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+			}
 			#Rumias Base Fighting Skills
 			set_variable = {
 				which = th_SDM_inci_rumias_combat_skills
 				value = 950
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_SDM_inci_rumias_combat_skills
+				type = incident
+				variable = th_SDM_inci_rumias_combat_skills
 			}
 		}
 	}
 
 	after = {
-		if = {
-			limit = {
-				th_incident_is_investigator = yes
-			}
-			set_country_flag = th_SDM_inci_about_to_beat_cirno
-		}
+		th_prepare_for_next_stage = yes
 	}
 	
 	option = {		#She's in my way! I will have to fight her!
@@ -464,11 +282,15 @@ country_event = {
 			factor = 40 
 			modifier = {
 				factor = 100
-				th_winnable_fight_trigger = yes
+				th_winnable_fight_trigger = {
+					type = incident
+				}
 			}
 			modifier = {
 				factor = 0
-				th_unwinnable_fight_trigger = yes
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
 			}
 		}
 	}
@@ -571,7 +393,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+				skill_boni = 0
 			}
 			set_global_flag = th_SDM_inci_cirno_encountered
 			clr_global_flag = th_SDM_inci_rumia_encountered
@@ -582,7 +404,8 @@ country_event = {
 				value = 999
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_SDM_inci_cirnos_combat_skills
+				type = incident
+				variable = th_SDM_inci_cirnos_combat_skills
 			}	
 		}
 	}
@@ -606,11 +429,15 @@ country_event = {
 			factor = 40 
 			modifier = {
 				factor = 100
-				th_winnable_fight_trigger = yes
+				th_winnable_fight_trigger = {
+					type = incident
+				}
 			}
 			modifier = {
 				factor = 0
-				th_unwinnable_fight_trigger = yes
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
 			}
 		}
 	}
@@ -708,7 +535,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+				skill_boni = 0
 			}
 			set_global_flag = th_SDM_inci_meiling_encountered
 			clr_global_flag = th_SDM_inci_cirno_encountered
@@ -719,7 +546,8 @@ country_event = {
 				value = 1125
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_SDM_inci_meilings_combat_skills
+				type = incident
+				variable = th_SDM_inci_meilings_combat_skills
 			}	
 		}
 	}
@@ -743,11 +571,15 @@ country_event = {
 			factor = 75 
 			modifier = {
 				factor = 100
-				th_winnable_fight_trigger = yes
+				th_winnable_fight_trigger = {
+					type = incident
+				}
 			}
 			modifier = {
 				factor = 0
-				th_unwinnable_fight_trigger = yes
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
 			}
 		}
 	}
@@ -785,11 +617,15 @@ country_event = {
 			factor = 25
 			modifier = {
 				factor = 0
-				th_winnable_fight_trigger = yes
+				th_winnable_fight_trigger = {
+					type = incident
+				}
 			}
 			modifier = {
 				factor = 100
-				th_unwinnable_fight_trigger = yes
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
 			}
 		}
 	}
@@ -818,7 +654,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+				skill_boni = 0
 			}
 			set_global_flag = th_SDM_inci_patchouli_encountered
 			clr_global_flag = th_SDM_inci_meiling_encountered
@@ -829,7 +665,8 @@ country_event = {
 				value = 1250
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_SDM_inci_patchoulis_combat_skills
+				type = incident
+				variable = th_SDM_inci_patchoulis_combat_skills
 			}	
 		}
 	}
@@ -853,11 +690,15 @@ country_event = {
 			factor = 75 
 			modifier = {
 				factor = 100
-				th_winnable_fight_trigger = yes
+				th_winnable_fight_trigger = {
+					type = incident
+				}
 			}
 			modifier = {
 				factor = 0
-				th_unwinnable_fight_trigger = yes
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
 			}
 		}
 	}
@@ -873,11 +714,15 @@ country_event = {
 			factor = 25
 			modifier = {
 				factor = 0
-				th_winnable_fight_trigger = yes
+				th_winnable_fight_trigger = {
+					type = incident
+				}
 			}
 			modifier = {
 				factor = 100
-				th_unwinnable_fight_trigger = yes
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
 			}
 		}
 	}
@@ -907,7 +752,9 @@ country_event = {
 			factor = 100
 			modifier = {
 				factor = 0
-				th_winnable_fight_trigger = yes
+				th_winnable_fight_trigger = {
+					type = incident
+				}
 			}
 		}
 	}
@@ -936,7 +783,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+				skill_boni = 0
 			}
 			set_global_flag = th_SDM_inci_sakuya_encountered
 			clr_global_flag = th_SDM_inci_patchouli_encountered
@@ -947,7 +794,8 @@ country_event = {
 				value = 1400
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_SDM_inci_sakuyas_combat_skills
+				type = incident
+				variable = th_SDM_inci_sakuyas_combat_skills
 			}	
 		}
 	}
@@ -996,7 +844,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+				skill_boni = 0
 			}
 			set_global_flag = th_SDM_inci_remilia_encountered
 			clr_global_flag = th_SDM_inci_sakuya_encountered
@@ -1007,7 +855,8 @@ country_event = {
 				value = 1500
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_SDM_inci_remilias_combat_skills
+				type = incident
+				variable = th_SDM_inci_remilias_combat_skills
 			}	
 		}
 	}
@@ -1048,7 +897,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+				skill_boni = 0
 			}
 			#Flandre's Base Fighting Skills
 			set_variable = {
@@ -1056,7 +905,8 @@ country_event = {
 				value = 1600
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_SDM_inci_flandres_combat_skills
+				type = incident
+				variable = th_SDM_inci_flandres_combat_skills
 			}	
 		}
 	}
@@ -1092,14 +942,14 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 		has_global_flag = th_SDM_incident_end
 		has_country_flag = th_incident_last_fight_terribly_lost
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_scarlet_mists_incident_solved }
+		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
 		NOT = { has_country_flag = th_just_finished_danmaku_fight }
 	}
 	
 	immediate = {
 		hidden_effect = {
 			th_incident_clr_terminate_flag = yes
-			set_global_flag = th_scarlet_mists_incident_solved
+			th_resolve_incident = { incident = scarlet_mists_incident }
 			clr_global_flag = th_active_incident
 		}
 	}
@@ -1164,14 +1014,14 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 	trigger = {
 		has_global_flag = th_SDM_incident_end
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_scarlet_mists_incident_solved }
+		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
 		check_variable = {
-			which = th_SDM_inci_goodbad_level
+			which = th_scarlet_mists_incident_points
 			value = 0
 		}
 		NOT = {
 			check_variable = {
-				which = th_SDM_inci_goodbad_level
+				which = th_scarlet_mists_incident_points
 				value = 5
 			}
 		}
@@ -1183,7 +1033,7 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 	immediate = {
 		hidden_effect = {
 			th_incident_clr_terminate_flag = yes
-			set_global_flag = th_scarlet_mists_incident_solved
+			th_resolve_incident = { incident = scarlet_mists_incident }
 			clr_global_flag = th_active_incident
 			clr_country_flag = th_SDM_inci_about_to_get_final
 		}
@@ -1250,14 +1100,14 @@ country_event = {
 		has_global_flag = th_SDM_incident_end
 		th_incident_is_investigator = yes
 		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
-		NOT = { has_global_flag = th_scarlet_mists_incident_solved }
+		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
 		check_variable = {
-			which = th_SDM_inci_goodbad_level
+			which = th_scarlet_mists_incident_points
 			value = 5
 		}
 		NOT = {
 			check_variable = {
-				which = th_SDM_inci_goodbad_level
+				which = th_scarlet_mists_incident_points
 				value = 10
 			}
 		}
@@ -1268,7 +1118,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_incident_clr_terminate_flag = yes
-			set_global_flag = th_scarlet_mists_incident_solved
+			th_resolve_incident = { incident = scarlet_mists_incident }
 			clr_global_flag = th_active_incident
 			clr_country_flag = th_SDM_inci_about_to_get_final
 			if = {
@@ -1326,12 +1176,12 @@ country_event = { #Remilia grumbles about her defeat, but disband the mists AND 
 	trigger = {
 		has_global_flag = th_SDM_incident_end
 		check_variable = {
-			which = th_SDM_inci_goodbad_level
+			which = th_scarlet_mists_incident_points
 			value = 10
 		}
 		th_incident_is_investigator = yes
 		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
-		NOT = { has_global_flag = th_scarlet_mists_incident_solved }
+		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
 		has_country_flag = th_SDM_inci_about_to_get_final
 		NOT = { has_country_flag = th_just_finished_danmaku_fight }
 	}
@@ -1339,7 +1189,7 @@ country_event = { #Remilia grumbles about her defeat, but disband the mists AND 
 	immediate = {
 		hidden_effect = {
 			th_incident_clr_terminate_flag = yes
-			set_global_flag = th_scarlet_mists_incident_solved
+			th_resolve_incident = { incident = scarlet_mists_incident }
 			clr_global_flag = th_active_incident
 			clr_country_flag = th_SDM_inci_about_to_get_final
 			if = {
@@ -1741,7 +1591,7 @@ country_event = {
 			}
 			tag = SCD
 		}
-		has_global_flag = th_current_incident_scarlet_mists
+		has_global_flag = th_current_incident_scarlet_mists_incident
 	}
 	
 	fire_only_once = yes
@@ -1769,7 +1619,7 @@ province_event = {
 	
 	trigger = {
 		owner = { ai = no }
-		has_global_flag = th_current_incident_scarlet_mists
+		has_global_flag = th_current_incident_scarlet_mists_incident
 		NOT = { has_province_flag = scarlet_revolt }
 		NOT = { local_autonomy = 1 }
 		OR = {
@@ -1864,7 +1714,7 @@ country_event = {
 	picture = SCARLETMIST_eventPicture
 	
 	trigger = {
-		has_global_flag = th_current_incident_scarlet_mists
+		has_global_flag = th_current_incident_scarlet_mists_incident
 		NOT = { has_country_flag = crd_appealed_remilia }	#Memo: add the same trigger but in reverse for SA incident
 		overlord_of = SCR
 		SCR = {
@@ -1929,7 +1779,7 @@ country_event = {
 	picture = SHRINE_eventPicture
 	
 	trigger = {
-		has_global_flag = th_current_incident_scarlet_mists
+		has_global_flag = th_current_incident_scarlet_mists_incident
 		OR = {
 			tag = HKR
 			tag = MRY
@@ -1954,7 +1804,7 @@ country_event = {
 			factor = 0.5			
 			NOT = {
 				check_variable = {
-					which = th_SDM_inci_goodbad_level
+					which = th_scarlet_mists_incident_points
 					value = 10
 				}
 			}
@@ -2108,7 +1958,7 @@ province_event = {
 	trigger = {
 		NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
 		NOT = { has_province_modifier = th_just_cured_of_the_mist }
-		has_global_flag = th_current_incident_scarlet_mists
+		has_global_flag = th_current_incident_scarlet_mists_incident
 		superregion = gensokyo_superregion
 		NOT = { culture = Scarlett }
 		owner = {
@@ -2159,7 +2009,7 @@ province_event = {
 	
 	trigger = {
 		has_province_modifier = th_plagued_by_the_scarlet_mist
-		has_global_flag = th_current_incident_scarlet_mists
+		has_global_flag = th_current_incident_scarlet_mists_incident
 		superregion = gensokyo_superregion
 	}
 	
@@ -2303,7 +2153,7 @@ province_event = {
 					overlord_of = SCR 
 				}
 			}
-			NOT = { has_global_flag = th_current_incident_scarlet_mists }
+			NOT = { has_global_flag = th_current_incident_scarlet_mists_incident }
 		}
 	}
 	
@@ -2363,7 +2213,7 @@ country_event = {
 	picture = SCARLETMIST_eventPicture
 
 	trigger = {
-		has_global_flag = th_current_incident_scarlet_mists
+		has_global_flag = th_current_incident_scarlet_mists_incident
 		OR = {
 			tag = SCR
 			tag = SCD
@@ -2399,7 +2249,7 @@ country_event = {
 	picture = SCARLETT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_current_incident_scarlet_mists		
+		has_global_flag = th_current_incident_scarlet_mists_incident		
 		gensokyo_superregion = {
 			OR = {
 				owned_by = SCR
@@ -2428,7 +2278,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_incident_clr_terminate_flag = yes
-			set_global_flag = th_scarlet_mists_incident_solved
+			th_resolve_incident = { incident = scarlet_mists_incident }
 			clr_global_flag = th_active_incident
 		}
 	}
@@ -2453,7 +2303,7 @@ country_event = {
 	picture = SCARLETT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_current_incident_scarlet_mists	
+		has_global_flag = th_current_incident_scarlet_mists_incident	
 		any_province = {
 			superregion = gensokyo_superregion
 			NOT = { owned_by = SCR }
@@ -2477,7 +2327,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_incident_clr_terminate_flag = yes
-			set_global_flag = th_scarlet_mists_incident_solved
+			th_resolve_incident = { incident = scarlet_mists_incident }
 			clr_global_flag = th_active_incident
 		}
 	}
@@ -2549,7 +2399,7 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 	immediate = {
 		hidden_effect = {
 			th_incident_clr_terminate_flag = yes
-			set_global_flag = th_scarlet_mists_incident_solved
+			th_resolve_incident = { incident = scarlet_mists_incident }
 			clr_global_flag = th_active_incident
 			clr_country_flag = th_SDM_inci_about_to_get_final
 		}
