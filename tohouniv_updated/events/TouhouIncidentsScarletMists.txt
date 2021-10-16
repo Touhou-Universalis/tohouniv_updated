@@ -2,14 +2,14 @@
 # Incident Events
 ########################################
 
-namespace = th_incidents_scarletmists
+namespace = th_scarlet_mists_incident_events
 #incident = scarlet_mists_incident
 
-#Scarlet Mist Incident - 1.Check any possible investigator country	- HIDDEN
+#Scarlet Mist Incident - Set up the incident
 country_event = {
-	id = th_incidents_scarletmists.1
-	title = "th_incidents_scarletmists.1.t"
-	desc = "th_incidents_scarletmists.1.desc"
+	id = th_scarlet_mists_incident_events.0
+	title = "th_scarlet_mists_incident_events.0.t"
+	desc = none
 	picture = SCARLETMIST_eventPicture
 
 	trigger = {
@@ -53,151 +53,30 @@ country_event = {
 		th_start_incident_effect = {
 			incident = scarlet_mists_incident
 		}
-	}
-
-	option = {		#Check any possible investigator country
-		random_country = {
-			limit = { 
-				th_incident_can_become_investigator = yes
-			}
-			th_incident_setup_investigator = yes
-			th_incident_introduction_event = {
-				id = th_incidents_scarletmists.400
-			}
-		}
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Scarlet Mist Incident - 2.Incident starts,add debuffs	- HIDDEN
-
-#Scarlet Mist Incident - 3.Set an investigator(use whenever there is need)	- HIDDEN
-
-#Scarlet Mist Incident - 4.Introduction of incident
-country_event = {
-	id = th_incidents_scarletmists.400
-	title = "th_incidents_scarletmists.400.t"
-	desc = {
-		trigger = {
-			OR = {
-				tag = SCR
-				was_tag = SCR
-				tag = SCD
-				was_tag = SCD
-			}
-		}
-		desc = "th_incidents_scarletmists.400.desc.1"
-	}
-	desc = {
-		trigger = { 
-			NOT = { tag = SCR }
-			NOT = {	was_tag = SCR }
-			NOT = { tag = SCD }
-			NOT = {	was_tag = SCD }
-		}
-		desc = "th_incidents_scarletmists.400.desc.2"
-	}
-	picture = SCARLETMIST_eventPicture
-
-	is_triggered_only = yes	
-
-	option = {		#We should investigate this mysterious scarlet mist.
-		name = "th_incidents_scarletmists.400.a"
-		trigger = {
-			th_incident_is_investigator = yes
-		}
-		highlight = yes	
-		th_investigate_incident = {
-			incident = scarlet_mists_incident
-		}
-
-		ai_chance = {
-			factor = 100
-		}
-	}
-	
-	option = {		#I don`t want to investigate the incident.For minor character who was chosen the first investigator
-		name = "th_incidents_scarletmists.400.b"
-		trigger = {
-			th_incident_is_investigator = yes
-			th_is_not_major_main_character = yes
-			th_is_not_minor_main_character = yes
-			any_known_country = {	#must have another eligible investigator country
-				exists = yes
-				th_incident_can_become_investigator = yes
-			}
-		}
-		th_start_incident_tooltip = { incident = scarlet_mists_incident }
-		th_refuse_investigating_incident = { incident = scarlet_mists_incident }
-		ai_chance = {
-			factor = 0
-		}
-	}
-	
-	option = {		#I shall be the first investigator!For main character player who was not chosen the first investigator
-		name = "th_incidents_scarletmists.400.c"
-		trigger = {
-			th_incident_is_not_investigator = yes
-			OR = {
-				tag = HKR
-				tag = FOM
-				tag = MRY
-				AND = {
-					th_incident_is_biasedly_picked_investigator = yes
-					ai = no
+		gensokyo_superregion = {
+			limit = {
+				owner = {
+					NOT = { tag = SCR }
+					NOT = { tag = SCD }
+					NOT = { was_tag = SCR }
+					NOT = { was_tag = SCD }
+					NOT = { is_subject_of = SCR }
+					NOT = { is_subject_of = SCD }
 				}
+				any_neighbor_province = {
+					OR = {
+						owned_by = SCR
+						owned_by = SCD
+					}
+				}
+				NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
 			}
-			th_incident_can_become_investigator = yes
-		}
-		highlight = yes
-		th_investigate_incident = {
-			incident = scarlet_mists_incident
-		}
-		hidden_effect = {
-			th_incident_clr_previous_investigators = yes
-			th_incident_set_country_to_new_investigator = {
-				incident = scarlet_mists_incident
+			add_province_modifier = { 
+				name = th_plagued_by_the_scarlet_mist
+				duration = -1  
+				desc = th_incident_duration_tt
 			}
 		}
-
-		ai_chance = {
-			factor = 0
-		}
-	}
-	
-	option = {		#Well, let it be.
-		name = "th_incidents_scarletmists.400.d"	
-		trigger = {
-			th_incident_is_not_investigator = yes
-			NOT = { tag = SCR }
-			NOT = { tag = SCD }
-			NOT = { was_tag = SCR }
-			NOT = { was_tag = SCD  }
-		}	
-		th_start_incident_tooltip = { incident = scarlet_mists_incident }
-
-		ai_chance = {
-			factor = 100
-		}	
-	}
-
-	option = {		#Let the games begin!
-		name = "th_incidents_scarletmists.400.e"
-		trigger = {
-			OR = {
-				tag = SCR
-				was_tag = SCR
-				tag = SCD
-				was_tag = SCD
-			}
-		}	
-		th_start_incident_tooltip = { incident = scarlet_mists_incident }
-		highlight = yes	
-		add_army_tradition = 15
-		add_navy_tradition = 15
-		add_treasury = 200
 		random_province = {
 			limit = {
 				superregion = gensokyo_superregion
@@ -217,6 +96,144 @@ country_event = {
 				desc = th_incident_duration_tt
 			}
 		}
+	}
+
+	option = {		#Check any possible investigator country
+		random_country = {
+			limit = { 
+				th_incident_can_become_investigator = yes
+			}
+			th_incident_setup_investigator = yes
+			th_incident_introduction_event = {
+				id = th_scarlet_mists_incident_events.1
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Scarlet Mist Incident - Introduction of incident
+country_event = {
+	id = th_scarlet_mists_incident_events.1
+	title = "th_scarlet_mists_incident_events.1.t"
+	desc = {
+		trigger = {
+			OR = {
+				tag = SCR
+				was_tag = SCR
+				tag = SCD
+				was_tag = SCD
+			}
+		}
+		desc = "th_scarlet_mists_incident_events.1.desc.1"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = SCR }
+			NOT = {	was_tag = SCR }
+			NOT = { tag = SCD }
+			NOT = {	was_tag = SCD }
+		}
+		desc = "th_scarlet_mists_incident_events.1.desc.2"
+	}
+	picture = SCARLETMIST_eventPicture
+
+	is_triggered_only = yes	
+
+	option = {		#We should investigate this mysterious scarlet mist.
+		name = "th_scarlet_mists_incident_events.1.a"
+		trigger = {
+			th_incident_is_investigator = yes
+		}
+		highlight = yes	
+		th_investigate_incident = {
+			incident = scarlet_mists_incident
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = {		#I don`t want to investigate the incident.For minor character who was chosen the first investigator
+		name = "th_scarlet_mists_incident_events.1.b"
+		trigger = {
+			th_incident_is_investigator = yes
+			th_is_not_major_main_character = yes
+			th_is_not_minor_main_character = yes
+			any_known_country = {	#must have another eligible investigator country
+				th_incident_can_become_investigator = yes
+			}
+		}
+		th_start_incident_tooltip = { incident = scarlet_mists_incident }
+		th_refuse_investigating_incident = yes
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {		#I shall be the first investigator!For main character player who was not chosen the first investigator
+		name = "th_scarlet_mists_incident_events.1.c"
+		trigger = {
+			th_incident_is_not_investigator = yes
+			OR = {
+				tag = HKR
+				tag = FOM
+				tag = MRY
+				AND = {
+					th_incident_is_biasedly_picked_investigator = yes
+					ai = no
+				}
+			}
+			th_incident_can_become_investigator = yes
+		}
+		highlight = yes
+		th_investigate_incident = {
+			incident = scarlet_mists_incident
+		}
+		hidden_effect = {
+			th_incident_clr_previous_investigators = yes
+			th_incident_set_country_to_new_investigator = yes
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {		#Well, let it be.
+		name = "th_scarlet_mists_incident_events.1.d"	
+		trigger = {
+			th_incident_is_not_investigator = yes
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = { was_tag = SCR }
+			NOT = { was_tag = SCD  }
+		}	
+		th_start_incident_tooltip = { incident = scarlet_mists_incident }
+
+		ai_chance = {
+			factor = 100
+		}	
+	}
+
+	option = {		#Let the games begin!
+		name = "th_scarlet_mists_incident_events.1.e"
+		trigger = {
+			OR = {
+				tag = SCR
+				was_tag = SCR
+				tag = SCD
+				was_tag = SCD
+			}
+		}	
+		th_start_incident_tooltip = { incident = scarlet_mists_incident }
+		highlight = yes	
+		add_army_tradition = 15
+		add_navy_tradition = 15
+		add_treasury = 200
 
 		ai_chance = {
 			factor = 100
@@ -225,11 +242,12 @@ country_event = {
 }
 
 
+
 #Scarlet Mist Incident - Rumia Encounter
 country_event = {
-	id = th_incidents_scarletmists.2
-	title = "th_incidents_scarletmists.2.t"
-	desc = "th_incidents_scarletmists.2.desc"
+	id = th_scarlet_mists_incident_events.2
+	title = "th_scarlet_mists_incident_events.2.t"
+	desc = "th_scarlet_mists_incident_events.2.desc"
 	picture = RUMIA_eventPicture
 	
 	trigger = {
@@ -237,9 +255,11 @@ country_event = {
 			days = 1095
 		}
 		th_incident_is_investigator = yes
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 1
+		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
 		}
 	}
 
@@ -249,10 +269,7 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_raise_incident_stage = {
-				incident = scarlet_mists_incident
-				stage = 1
-			}
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
@@ -270,8 +287,8 @@ country_event = {
 	}
 	
 	option = {		#She's in my way! I will have to fight her!
-		name = "th_incidents_scarletmists.2.a"
-		custom_tooltip = th_incidents_scarletmists.2.a.tt
+		name = "th_scarlet_mists_incident_events.2.a"
+		custom_tooltip = th_scarlet_mists_incident_events.2.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -293,8 +310,8 @@ country_event = {
 	}
 	
 	option = {		#Well... nobody will be mad, if there are some fairies missing.
-		name = "th_incidents_scarletmists.2.b"
-		custom_tooltip = th_incidents_scarletmists.2.b.tt
+		name = "th_scarlet_mists_incident_events.2.b"
+		custom_tooltip = th_scarlet_mists_incident_events.2.b.tt
 		add_yearly_manpower = -0.5
 		hidden_effect = {
 			every_known_country = {
@@ -331,14 +348,14 @@ country_event = {
 	}
 	
 	option = {		#My allies could deal with her.
-		name = "th_incidents_scarletmists.2.c"
-		custom_tooltip = th_incidents_scarletmists.2.c.tt
+		name = "th_scarlet_mists_incident_events.2.c"
+		custom_tooltip = th_scarlet_mists_incident_events.2.c.tt
 		trigger = {
 			num_of_allies = 1
 		}
 		random_ally = {
 			country_event = {
-				id = th_incidents_scarletmists.13
+				id = th_scarlet_mists_incident_events.13
 			}
 		}
 		th_incident_change_points = {
@@ -360,8 +377,8 @@ country_event = {
 	}
 	
 	option = {		#She's just a nuisance.
-		name = "th_incidents_scarletmists.2.d"
-		custom_tooltip = th_incidents_scarletmists.2.d.tt
+		name = "th_scarlet_mists_incident_events.2.d"
+		custom_tooltip = th_scarlet_mists_incident_events.2.d.tt
 		add_prestige = -5
 		th_incident_change_points = {
 			value = -1
@@ -375,19 +392,21 @@ country_event = {
 
 #Scarlet Mist Incident - Cirno Encounter
 country_event = {
-	id = th_incidents_scarletmists.3
-	title = "th_incidents_scarletmists.3.t"
-	desc = "th_incidents_scarletmists.3.desc"
+	id = th_scarlet_mists_incident_events.3
+	title = "th_scarlet_mists_incident_events.3.t"
+	desc = "th_scarlet_mists_incident_events.3.desc"
 	picture = CIRNO_eventPicture
 	
 	trigger = {
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 2
 		}
 		th_incident_is_investigator = yes
 		th_enough_time_for_next_stage_has_passed = {
 			days = 1095
+		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
 		}
 	}
 
@@ -399,6 +418,7 @@ country_event = {
 		hidden_effect = {
 			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
+				skill_boni = 0
 				type = incident
 			}
 			#Cirno's Base Fighting Skills
@@ -414,8 +434,8 @@ country_event = {
 	}
 	
 	option = {		#Another target. Great, I'll got bored on this lake.
-		name = "th_incidents_scarletmists.3.a"
-		custom_tooltip = th_incidents_scarletmists.3.a.tt
+		name = "th_scarlet_mists_incident_events.3.a"
+		custom_tooltip = th_scarlet_mists_incident_events.3.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -437,8 +457,8 @@ country_event = {
 	}
 	
 	option = {		#I don't have the time for this. Annoy someone else.
-		name = "th_incidents_scarletmists.3.b"
-		custom_tooltip = th_incidents_scarletmists.3.b.tt
+		name = "th_scarlet_mists_incident_events.3.b"
+		custom_tooltip = th_scarlet_mists_incident_events.3.b.tt
 		add_prestige = -5
 		add_country_modifier = {
 			name = th_SDM_inci_unchecked_cirno_rampage
@@ -454,14 +474,14 @@ country_event = {
 	}
 	
 	option = {		#Cirno, go back to your realm.
-		name = "th_incidents_scarletmists.3.c"
+		name = "th_scarlet_mists_incident_events.3.c"
 		trigger = {
 			exists = CIN
 			CIN = {
 				is_subject_of = ROOT
 			}
 		}
-		custom_tooltip = th_incidents_scarletmists.3.c.tt
+		custom_tooltip = th_scarlet_mists_incident_events.3.c.tt
 		add_prestige = 25
 		th_incident_change_points = {
 			value = 3
@@ -473,23 +493,23 @@ country_event = {
 	}
 	
 	option = {		#Allright, frost brain, look...
-		name = "th_incidents_scarletmists.3.d"
+		name = "th_scarlet_mists_incident_events.3.d"
 		trigger = {
 			adm = 3
 			dip = 3
 		}
-		custom_tooltip = th_incidents_scarletmists.3.d.tt
+		custom_tooltip = th_scarlet_mists_incident_events.3.d.tt
 		add_dip_power = -75
 		random_list = {
 			75 = {
-				custom_tooltip = th_incidents_scarletmists.3.d.success
+				custom_tooltip = th_scarlet_mists_incident_events.3.d.success
 				add_prestige = 10
 				th_incident_change_points = {
 					value = 2
 				}
 			}
 			25 = {
-				custom_tooltip = th_incidents_scarletmists.3.d.fail
+				custom_tooltip = th_scarlet_mists_incident_events.3.d.fail
 				add_prestige = -5
 				th_incident_change_points = {
 					value = -1
@@ -503,8 +523,8 @@ country_event = {
 	}
 	
 	option = {		#I will shake Cirno off in the fog
-		name = "th_incidents_scarletmists.3.e"
-		custom_tooltip = th_incidents_scarletmists.3.e.tt
+		name = "th_scarlet_mists_incident_events.3.e"
+		custom_tooltip = th_scarlet_mists_incident_events.3.e.tt
 		add_adm_power = 125
 		th_incident_change_points = {
 			value = -2
@@ -518,19 +538,21 @@ country_event = {
 
 #Scarlet Mist Incident - Meiling Encounter
 country_event = {
-	id = th_incidents_scarletmists.4
-	title = "th_incidents_scarletmists.4.t"
-	desc = "th_incidents_scarletmists.4.desc"
+	id = th_scarlet_mists_incident_events.4
+	title = "th_scarlet_mists_incident_events.4.t"
+	desc = "th_scarlet_mists_incident_events.4.desc"
 	picture = MEILINGBOSS_eventPicture
 	
 	trigger = {
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 3
 		}
 		th_incident_is_investigator = yes
 		th_enough_time_for_next_stage_has_passed = {
 			days = 1095
+		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
 		}
 	}
 
@@ -542,6 +564,7 @@ country_event = {
 		hidden_effect = {
 			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
+				skill_boni = 0
 				type = incident
 			}
 			#Meiling's Base Fighting Skills
@@ -557,8 +580,8 @@ country_event = {
 	}
 	
 	option = {		#A gatekeeper? Well, I want to know what is behind this gate.
-		name = "th_incidents_scarletmists.4.a"
-		custom_tooltip = th_incidents_scarletmists.4.a.tt
+		name = "th_scarlet_mists_incident_events.4.a"
+		custom_tooltip = th_scarlet_mists_incident_events.4.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -580,8 +603,8 @@ country_event = {
 	}
 	
 	option = {		#At the wish of the Celestial Emperor, I demand to let me pass!
-		name = "th_incidents_scarletmists.4.d"
-		custom_tooltip = th_incidents_scarletmists.4.d.tt
+		name = "th_scarlet_mists_incident_events.4.d"
+		custom_tooltip = th_scarlet_mists_incident_events.4.d.tt
 		trigger = {
 			OR = {
 				is_emperor_of_china = yes 
@@ -604,8 +627,8 @@ country_event = {
 	}
 	
 	option = {		#I could sneak past her
-		name = "th_incidents_scarletmists.4.e"
-		custom_tooltip = th_incidents_scarletmists.4.e.tt
+		name = "th_scarlet_mists_incident_events.4.e"
+		custom_tooltip = th_scarlet_mists_incident_events.4.e.tt
 		add_adm_power = 25
 		add_prestige = -25
 		th_incident_change_points = {
@@ -630,21 +653,23 @@ country_event = {
 	}
 }
 
-#Scarlet Mist Incident - Patchoulis Encounter
+#Scarlet Mist Incident - Patchouli Encounter
 country_event = {
-	id = th_incidents_scarletmists.5
-	title = "th_incidents_scarletmists.5.t"
-	desc = "th_incidents_scarletmists.5.desc"
+	id = th_scarlet_mists_incident_events.5
+	title = "th_scarlet_mists_incident_events.5.t"
+	desc = "th_scarlet_mists_incident_events.5.desc"
 	picture = PATCHOULI_eventPicture
 	
 	trigger = {
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 4
 		}
 		th_incident_is_investigator = yes
 		th_enough_time_for_next_stage_has_passed = {
 			days = 1095
+		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
 		}
 	}
 
@@ -656,6 +681,7 @@ country_event = {
 		hidden_effect = {
 			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
+				skill_boni = 0
 				type = incident
 			}
 			#Patchouli's Base Fighting Skills
@@ -671,8 +697,8 @@ country_event = {
 	}
 	
 	option = {		#Too bad for her, because I've got to fight her to pass the library
-		name = "th_incidents_scarletmists.5.a"
-		custom_tooltip = th_incidents_scarletmists.5.a.tt
+		name = "th_scarlet_mists_incident_events.5.a"
+		custom_tooltip = th_scarlet_mists_incident_events.5.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -694,8 +720,8 @@ country_event = {
 	}
 	
 	option = {		#Soo... she just wants to study? Maybe Rinnosuke has some books left over...
-		name = "th_incidents_scarletmists.5.b"
-		custom_tooltip = th_incidents_scarletmists.5.b.tt
+		name = "th_scarlet_mists_incident_events.5.b"
+		custom_tooltip = th_scarlet_mists_incident_events.5.b.tt
 		add_adm_power = -50
 		add_years_of_income = -0.5
 		th_incident_change_points = {
@@ -720,7 +746,7 @@ country_event = {
 	}
 	
 	option = {		#In Marisa's home are surely some books left. Maybe she is willing to bring them back.
-		name = "th_incidents_scarletmists.5.c"
+		name = "th_scarlet_mists_incident_events.5.c"
 		trigger = {
 			OR = {
 				AND = {
@@ -736,7 +762,7 @@ country_event = {
 				tag = FOM
 			}
 		}
-		custom_tooltip = th_incidents_scarletmists.5.c.tt
+		custom_tooltip = th_scarlet_mists_incident_events.5.c.tt
 		add_adm_power = -50
 		th_incident_change_points = {
 			value = 2
@@ -756,19 +782,21 @@ country_event = {
 
 #Scarlet Mist Incident - Sakuya Encounter
 country_event = {
-	id = th_incidents_scarletmists.6
-	title = "th_incidents_scarletmists.6.t"
-	desc = "th_incidents_scarletmists.6.desc"
+	id = th_scarlet_mists_incident_events.6
+	title = "th_scarlet_mists_incident_events.6.t"
+	desc = "th_scarlet_mists_incident_events.6.desc"
 	picture = SAKUYA_eventPicture
 	
 	trigger = {
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 5
 		}
 		th_incident_is_investigator = yes
 		th_enough_time_for_next_stage_has_passed = {
 			days = 1095
+		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
 		}
 	}
 
@@ -780,6 +808,7 @@ country_event = {
 		hidden_effect = {
 			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
+				skill_boni = 0
 				type = incident
 			}
 			#Sakuya's Base Fighting Skills
@@ -795,8 +824,8 @@ country_event = {
 	}
 	
 	option = {		#I don't think she will let me through. I will have to defeat her.
-		name = "th_incidents_scarletmists.6.a"
-		custom_tooltip = th_incidents_scarletmists.6.a.tt
+		name = "th_scarlet_mists_incident_events.6.a"
+		custom_tooltip = th_scarlet_mists_incident_events.6.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -808,19 +837,21 @@ country_event = {
 
 #Scarlet Mist Incident - Remilia Encounter
 country_event = {
-	id = th_incidents_scarletmists.7
-	title = "th_incidents_scarletmists.7.t"
-	desc = "th_incidents_scarletmists.7.desc"
+	id = th_scarlet_mists_incident_events.7
+	title = "th_scarlet_mists_incident_events.7.t"
+	desc = "th_scarlet_mists_incident_events.7.desc"
 	picture = REMILIA_eventPicture
 	
 	trigger = {
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 6
 		}
 		th_incident_is_investigator = yes
 		th_enough_time_for_next_stage_has_passed = {
 			days = 1095
+		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
 		}
 	}
 
@@ -832,6 +863,7 @@ country_event = {
 		hidden_effect = {
 			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
+				skill_boni = 0
 				type = incident
 			}
 			#Remilia's Base Fighting Skills
@@ -847,8 +879,8 @@ country_event = {
 	}
 	
 	option = {		#I will have to defeat her myself
-		name = "th_incidents_scarletmists.7.a"
-		custom_tooltip = th_incidents_scarletmists.7.a.tt
+		name = "th_scarlet_mists_incident_events.7.a"
+		custom_tooltip = th_scarlet_mists_incident_events.7.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -860,9 +892,9 @@ country_event = {
 
 #Scarlet Mist Incident EXTRA - Flandre Encounter
 country_event = {
-	id = th_incidents_scarletmists.8
-	title = "th_incidents_scarletmists.8.t"
-	desc = "th_incidents_scarletmists.8.desc"
+	id = th_scarlet_mists_incident_events.8
+	title = "th_scarlet_mists_incident_events.8.t"
+	desc = "th_scarlet_mists_incident_events.8.desc"
 	picture = FLANDRE_eventPicture
 	
 	is_triggered_only = yes
@@ -871,6 +903,7 @@ country_event = {
 		hidden_effect = {
 			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
+				skill_boni = 0
 				type = incident
 			}
 			#Flandre's Base Fighting Skills
@@ -886,13 +919,13 @@ country_event = {
 	}
 	
 	option = {		#She really wants to play danmaku...
-		name = "th_incidents_scarletmists.8.a"
-		custom_tooltip = th_incidents_scarletmists.8.a.tt
+		name = "th_scarlet_mists_incident_events.8.a"
+		custom_tooltip = th_scarlet_mists_incident_events.8.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		hidden_effect = {
 			country_event = {
-				id = th_incidents_scarletmists.12
+				id = th_scarlet_mists_incident_events.12
 				days = 90
 			}
 		}
@@ -907,19 +940,22 @@ country_event = {
 
 #Scarlet Mist Incident - Terrible Outcome because of dead ruler!
 country_event = { #Nothing changes and Scarlett Realm Mists grow
-	id = th_incidents_scarletmists.16
-	title = "th_incidents_scarletmists.16.t"
-	desc = "th_incidents_scarletmists.16.desc"
+	id = th_scarlet_mists_incident_events.16
+	title = "th_scarlet_mists_incident_events.16.t"
+	desc = "th_scarlet_mists_incident_events.16.desc"
 	picture = SCARLETMIST_eventPicture
 	
 	trigger = {
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 7
 		}
 		has_country_flag = th_incident_last_fight_terribly_lost
 		th_incident_is_investigator = yes
 		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
+		th_current_incident = {
+			incident = scarlet_mists_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}
 	
 	immediate = {
@@ -934,8 +970,8 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 	major = yes
 	
 	option = {		#Well, I've done what I could.
-		name = "th_incidents_scarletmists.16.a"
-		custom_tooltip = th_incidents_scarletmists.16.a.tt
+		name = "th_scarlet_mists_incident_events.16.a"
+		custom_tooltip = th_scarlet_mists_incident_events.16.a.tt
 		if = {
 			limit = {
 				exists = SCD
@@ -961,7 +997,7 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 		add_adm_power = 100
 		add_prestige = -10
 		add_devotion = -10
-		custom_tooltip = th_incidents_scarletmists_scarlet_mist
+		custom_tooltip = th_scarlet_mists_incident_events_scarlet_mist
 		hidden_effect = {
 			gensokyo_superregion = {
 				limit = {
@@ -980,29 +1016,30 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 
 #Scarlet Mist Incident - Bad Outcome
 country_event = { #Nothing changes and Scarlett Realm Mists grow
-	id = th_incidents_scarletmists.9
-	title = "th_incidents_scarletmists.9.t"
-	desc = "th_incidents_scarletmists.9.desc"
+	id = th_scarlet_mists_incident_events.9
+	title = "th_scarlet_mists_incident_events.9.t"
+	desc = "th_scarlet_mists_incident_events.9.desc"
 	picture = SCARLETMIST_eventPicture
 	
 	trigger = {
 		th_incident_is_investigator = yes
 		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
 		th_incident_check_point_result = {
-			incident = scarlet_mists_incident
 			value = 0
 		}
 		NOT = {
 			th_incident_check_point_result = {
-				incident = scarlet_mists_incident
 				value = 5
 			}
 		}
 		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 7
 		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}
 	
 	immediate = {
@@ -1017,8 +1054,8 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 	major = yes
 	
 	option = {		#Well, I've done what I could.
-		name = "th_incidents_scarletmists.9.a"
-		custom_tooltip = th_incidents_scarletmists.9.a.tt
+		name = "th_scarlet_mists_incident_events.9.a"
+		custom_tooltip = th_scarlet_mists_incident_events.9.a.tt
 		if = {
 			limit = {
 				exists = SCD
@@ -1044,7 +1081,7 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 		add_adm_power = 100
 		add_prestige = -10
 		add_devotion = -10
-		custom_tooltip = th_incidents_scarletmists_scarlet_mist
+		custom_tooltip = th_scarlet_mists_incident_events_scarlet_mist
 		hidden_effect = {
 			gensokyo_superregion = {
 				limit = {
@@ -1063,9 +1100,9 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 
 #Scarlet Mist Incident - OK Outcome
 country_event = { 
-	id = th_incidents_scarletmists.10
-	title = "th_incidents_scarletmists.10.t"
-	desc = "th_incidents_scarletmists.10.desc"
+	id = th_scarlet_mists_incident_events.10
+	title = "th_scarlet_mists_incident_events.10.t"
+	desc = "th_scarlet_mists_incident_events.10.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
@@ -1073,19 +1110,20 @@ country_event = {
 		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
 		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
 		th_incident_check_point_result = {
-			incident = scarlet_mists_incident
 			value = 5
 		}
 		NOT = {
 			th_incident_check_point_result = {
-				incident = scarlet_mists_incident
 				value = 10
 			}
 		}
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 7
 		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}
 
 	immediate = {
@@ -1100,7 +1138,7 @@ country_event = {
 	major = yes
 	
 	option = {		#Finally, it's over.
-		name = "th_incidents_scarletmists.10.a"
+		name = "th_scarlet_mists_incident_events.10.a"
 		th_solve_incident = {
 			incident = scarlet_mists_incident
 		}
@@ -1132,23 +1170,25 @@ country_event = {
 
 #Scarlet Mist Incident - Good Outcome
 country_event = { #Remilia grumbles about her defeat, but disband the mists AND visits the shrine
-	id = th_incidents_scarletmists.11
-	title = "th_incidents_scarletmists.11.t"
-	desc = "th_incidents_scarletmists.11.desc"
+	id = th_scarlet_mists_incident_events.11
+	title = "th_scarlet_mists_incident_events.11.t"
+	desc = "th_scarlet_mists_incident_events.11.desc"
 	picture = THFEST_eventPicture
 	
 	trigger = {
 		th_incident_check_point_result = {
-			incident = scarlet_mists_incident
 			value = 10
 		}
 		th_incident_is_investigator = yes
 		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
 		NOT = { th_incident_has_been_resolved = { incident = scarlet_mists_incident } }
-		th_incident_get_stage = {
-			incident = scarlet_mists_incident
+		th_incident_current_stage = {
 			stage = 7
 		}
+		th_current_incident = {
+			incident = scarlet_mists_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}
 	
 	immediate = {
@@ -1163,11 +1203,11 @@ country_event = { #Remilia grumbles about her defeat, but disband the mists AND 
 	major = yes
 	
 	option = {		#Well, we should investigate this, or Remilia will never go away.
-		name = "th_incidents_scarletmists.11.b"
+		name = "th_scarlet_mists_incident_events.11.b"
 		th_solve_incident = {
 			incident = scarlet_mists_incident
 		}
-		custom_tooltip = th_incidents_scarletmists.11.b.tt
+		custom_tooltip = th_scarlet_mists_incident_events.11.b.tt
 		highlight = yes
 		add_adm_power = -25
 		add_prestige = 35
@@ -1203,18 +1243,17 @@ country_event = { #Remilia grumbles about her defeat, but disband the mists AND 
 		}
 		hidden_effect = {
 			country_event = {
-				id = th_incidents_scarletmists.8
+				id = th_scarlet_mists_incident_events.8
 				days = 90
 			}
 		}
 	}
 	
 	option = {		#The rain will stop eventually. She can stay here for awhile.
-		name = "th_incidents_scarletmists.11.a"
+		name = "th_scarlet_mists_incident_events.11.a"
 		th_solve_incident = {
 			incident = scarlet_mists_incident
 		}
-		custom_tooltip = th_incidents_scarletmists.11.a.tt
 		if = {
 			limit = {
 				OR = {
@@ -1253,17 +1292,17 @@ country_event = { #Remilia grumbles about her defeat, but disband the mists AND 
 
 #Scarlet Mist Incident - EXTRA Outcome Good
 country_event = { #Remilia and Flandre visit the shrine
-	id = th_incidents_scarletmists.12
-	title = "th_incidents_scarletmists.12.t"
-	desc = "th_incidents_scarletmists.12.desc"
+	id = th_scarlet_mists_incident_events.12
+	title = "th_scarlet_mists_incident_events.12.t"
+	desc = "th_scarlet_mists_incident_events.12.desc"
 	picture = THFEST_eventPicture
 	
 	is_triggered_only = yes	
 	major = yes
 	
 	option = {		#The rain will stop eventually. She can stay here for awhile.
-		name = "th_incidents_scarletmists.12.a"	
-		custom_tooltip = th_incidents_scarletmists.12.a.tt
+		name = "th_scarlet_mists_incident_events.12.a"	
+		custom_tooltip = th_scarlet_mists_incident_events.12.a.tt
 		th_solve_incident_extra = {
 			incident = scarlet_mists_incident
 		}
@@ -1316,20 +1355,20 @@ country_event = { #Remilia and Flandre visit the shrine
 
 #Scarlet Mist Incident - Flavor Events - Ally has to deal with Rumia
 country_event = {
-	id = th_incidents_scarletmists.13
-	title = "th_incidents_scarletmists.13.t"
-	desc = "th_incidents_scarletmists.13.desc"
+	id = th_scarlet_mists_incident_events.13
+	title = "th_scarlet_mists_incident_events.13.t"
+	desc = "th_scarlet_mists_incident_events.13.desc"
 	picture = RUMIA_eventPicture
 	
 	is_triggered_only = yes
 	
 	option = {		#We shall trust our ally and deal with Rumia
-		name = "th_incidents_scarletmists.13.a"
+		name = "th_scarlet_mists_incident_events.13.a"
 		add_mil_power = -75
 		add_prestige = 15
 		FROM = {
 			country_event = {
-				id = th_incidents_scarletmists.14
+				id = th_scarlet_mists_incident_events.14
 			}			
 		}
 		reverse_add_opinion = {
@@ -1363,13 +1402,13 @@ country_event = {
 	}
 	
 	option = {		#No, this isn't our problem. Return to sender!
-		name = "th_incidents_scarletmists.13.b"
+		name = "th_scarlet_mists_incident_events.13.b"
 		add_dip_power = -10
 		add_mil_power = 100
 		add_prestige = 15
 		FROM = {
 			country_event = {
-				id = th_incidents_scarletmists.15
+				id = th_scarlet_mists_incident_events.15
 			}			
 		}
 		reverse_add_opinion = {
@@ -1403,7 +1442,7 @@ country_event = {
 	}
 	
 	option = {		#Waaiit, Rumia's skills would make her an excellent general!
-		name = "th_incidents_scarletmists.13.c"
+		name = "th_scarlet_mists_incident_events.13.c"
 		trigger = {
 			OR = {
 				tag = SFF
@@ -1425,7 +1464,7 @@ country_event = {
 		
 		FROM = {
 			country_event = {
-				id = th_incidents_scarletmists.14
+				id = th_scarlet_mists_incident_events.14
 			}			
 		}
 		reverse_add_opinion = {
@@ -1441,30 +1480,30 @@ country_event = {
 
 #Scarlet Mist Incident - Flavor Events - Ally can handle Rumia
 country_event = {
-	id = th_incidents_scarletmists.14
-	title = "th_incidents_scarletmists.14.t"
-	desc = "th_incidents_scarletmists.14.desc"
+	id = th_scarlet_mists_incident_events.14
+	title = "th_scarlet_mists_incident_events.14.t"
+	desc = "th_scarlet_mists_incident_events.14.desc"
 	picture = RUMIA_eventPicture
 	
 	is_triggered_only = yes
 	
 	option = {		#I knew I could count on them
-		name = "th_incidents_scarletmists.14.a"
+		name = "th_scarlet_mists_incident_events.14.a"
 		add_dip_power = 25
 	}
 }
 
 #Scarlet Mist Incident - Flavor Events - Ally sent Rumia back
 country_event = {
-	id = th_incidents_scarletmists.15
-	title = "th_incidents_scarletmists.15.t"
-	desc = "th_incidents_scarletmists.15.desc"
+	id = th_scarlet_mists_incident_events.15
+	title = "th_scarlet_mists_incident_events.15.t"
+	desc = "th_scarlet_mists_incident_events.15.desc"
 	picture = RUMIA_eventPicture
 	
 	is_triggered_only = yes
 	
 	option = {		#Curses!
-		name = "th_incidents_scarletmists.15.a"
+		name = "th_scarlet_mists_incident_events.15.a"
 		add_mil_power = -75
 		add_stability = -1
 	}
@@ -1472,9 +1511,9 @@ country_event = {
 
 #Scarlet Mist Incident - Random Mists events - Create Claim on neighbour
 country_event = {
-	id = th_incidents_scarletmists.17
-	title = "th_incidents_scarletmists.17.t"
-	desc = "th_incidents_scarletmists.17.desc"
+	id = th_scarlet_mists_incident_events.17
+	title = "th_scarlet_mists_incident_events.17.t"
+	desc = "th_scarlet_mists_incident_events.17.desc"
 	picture = SCARLETMIST_eventPicture
 	
 	trigger = {
@@ -1503,7 +1542,7 @@ country_event = {
 	}
 	
 	option = {		#The Scarlet Mist is spreading
-		name = "th_incidents_scarletmists.17.a"
+		name = "th_scarlet_mists_incident_events.17.a"
 		random_neighbor_country = {
 			limit = {
 				NOT = { alliance_with = ROOT }
@@ -1533,9 +1572,9 @@ country_event = {
 
 #Scarlet Mist Incident - Random Mists events - Gets insane mists buff
 country_event = {
-	id = th_incidents_scarletmists.18
-	title = "th_incidents_scarletmists.18.t"
-	desc = "th_incidents_scarletmists.18.desc"
+	id = th_scarlet_mists_incident_events.18
+	title = "th_scarlet_mists_incident_events.18.t"
+	desc = "th_scarlet_mists_incident_events.18.desc"
 	picture = SCARLETMIST_eventPicture
 	
 	trigger = {
@@ -1557,7 +1596,7 @@ country_event = {
 	}
 	
 	option = {		#The Scarlet Mist is spreading
-		name = "th_incidents_scarletmists.18.a"
+		name = "th_scarlet_mists_incident_events.18.a"
 		add_country_modifier = {
 			name = "th_SDM_scarlet_night"
 			duration = 9125
@@ -1567,9 +1606,9 @@ country_event = {
 
 #Scarlet Mist Incident - Random Mists events - Remilia demands her land back
 province_event = {
-	id = th_incidents_scarletmists.19
-	title = "th_incidents_scarletmists.19.t"
-	desc = "th_incidents_scarletmists.19.desc"
+	id = th_scarlet_mists_incident_events.19
+	title = "th_scarlet_mists_incident_events.19.t"
+	desc = "th_scarlet_mists_incident_events.19.desc"
 	picture = SCARLETMIST_eventPicture
 	
 	trigger = {
@@ -1639,7 +1678,7 @@ province_event = {
 	}
 
 	option = {
-		name = "th_incidents_scarletmists.19.a"
+		name = "th_scarlet_mists_incident_events.19.a"
 		set_province_flag = scarlet_revolt
 		spawn_rebels = {
 			type = nationalist_rebels
@@ -1652,7 +1691,7 @@ province_event = {
 		}
 	}
 	option = {
-		name = "th_incidents_scarletmists.19.b"
+		name = "th_scarlet_mists_incident_events.19.b"
 		cede_province = SCR
 		
 		ai_chance = { 
@@ -1663,9 +1702,9 @@ province_event = {
 
 #Scarlet Mist Incident - Random Mists events - Remilia demands her independence back
 country_event = {
-	id = th_incidents_scarletmists.20
-	title = "th_incidents_scarletmists.20.t"
-	desc = "th_incidents_scarletmists.20.desc"
+	id = th_scarlet_mists_incident_events.20
+	title = "th_scarlet_mists_incident_events.20.t"
+	desc = "th_scarlet_mists_incident_events.20.desc"
 	picture = SCARLETMIST_eventPicture
 	
 	trigger = {
@@ -1683,7 +1722,7 @@ country_event = {
 	}
 	
 	option = {		#Nah
-		name = "th_incidents_scarletmists.20.a"
+		name = "th_scarlet_mists_incident_events.20.a"
 		if = {
 			limit = {
 				th_is_or_was_tag = {
@@ -1712,7 +1751,7 @@ country_event = {
 	}
 	
 	option = {		#The vampire is the stress not worth.
-		name = "th_incidents_scarletmists.20.b"
+		name = "th_scarlet_mists_incident_events.20.b"
 		trigger = {
 			NOT = { th_is_or_was_tag = { tag = CRD } }
 		}
@@ -1728,9 +1767,9 @@ country_event = {
 
 #Scarlet Mist Incident - Random Mists events - Cleaning the mists up
 country_event = {
-	id = th_incidents_scarletmists.21
-	title = "th_incidents_scarletmists.21.t"
-	desc = "th_incidents_scarletmists.21.desc"
+	id = th_scarlet_mists_incident_events.21
+	title = "th_scarlet_mists_incident_events.21.t"
+	desc = "th_scarlet_mists_incident_events.21.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
@@ -1759,7 +1798,6 @@ country_event = {
 			factor = 0.5			
 			NOT = {
 				th_incident_check_point_result = {
-					incident = scarlet_mists_incident
 					value = 10
 				}
 			}
@@ -1819,7 +1857,7 @@ country_event = {
 	}
 	
 	option = {		#Put more resources into the cleaning
-		name = "th_incidents_scarletmists.21.a"
+		name = "th_scarlet_mists_incident_events.21.a"
 		add_years_of_income = -0.2
 		add_adm_power = 25
 		random_known_country = {
@@ -1859,7 +1897,7 @@ country_event = {
 			limit = {
 				th_incident_is_investigator = yes
 			}
-			custom_tooltip = th_incidents_scarletmists.21.a.tt
+			custom_tooltip = th_scarlet_mists_incident_events.21.a.tt
 			th_incident_change_points = {
 				value = 1
 			}
@@ -1875,8 +1913,8 @@ country_event = {
 	}
 	
 	option = {		#The normal mikos will clean it up
-		name = "th_incidents_scarletmists.21.b"
-		custom_tooltip = th_incidents_scarletmists.21.b.tt
+		name = "th_scarlet_mists_incident_events.21.b"
+		custom_tooltip = th_scarlet_mists_incident_events.21.b.tt
 		add_adm_power = 10
 		random_known_country = {
 			limit = {
@@ -1907,9 +1945,9 @@ country_event = {
 
 #Scarlet Mist Incident - Random Mists events - Province gets Scarlet Mists Modifier
 province_event = {
-	id = th_incidents_scarletmists.25
-	title = "th_incidents_scarletmists.25.t"
-	desc = "th_incidents_scarletmists.25.desc"
+	id = th_scarlet_mists_incident_events.25
+	title = "th_scarlet_mists_incident_events.25.t"
+	desc = "th_scarlet_mists_incident_events.25.desc"
 	picture = SCARLETT_eventPicture
 	
 	trigger = {
@@ -1944,7 +1982,7 @@ province_event = {
 	hidden = yes
 	
 	option = {		#Scarlet Mist plagues a province!
-		name = "th_incidents_scarletmists.25.a"
+		name = "th_scarlet_mists_incident_events.25.a"
 		add_province_modifier = { 
 			name = th_plagued_by_the_scarlet_mist
 			duration = -1  
@@ -1959,9 +1997,9 @@ province_event = {
 
 #Scarlet Mist Incident - Random Mists events - Clean own province
 province_event = {
-	id = th_incidents_scarletmists.24
-	title = "th_incidents_scarletmists.24.t"
-	desc = "th_incidents_scarletmists.24.desc"
+	id = th_scarlet_mists_incident_events.24
+	title = "th_scarlet_mists_incident_events.24.t"
+	desc = "th_scarlet_mists_incident_events.24.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
@@ -1985,7 +2023,7 @@ province_event = {
 	}
 	
 	option = {		#Clean the area up!
-		name = "th_incidents_scarletmists.24.a"
+		name = "th_scarlet_mists_incident_events.24.a"
 		owner = {
 			add_years_of_income = -0.25
 		}
@@ -2007,7 +2045,7 @@ province_event = {
 			limit = {
 				owner = { th_incident_is_investigator = yes }
 			}
-			custom_tooltip = th_incidents_scarletmists.21.a.tt
+			custom_tooltip = th_scarlet_mists_incident_events.21.a.tt
 			th_incident_change_points = {
 				value = 1
 			}
@@ -2027,7 +2065,7 @@ province_event = {
 	}
 	
 	option = {		#Clean the province up!
-		name = "th_incidents_scarletmists.24.b"
+		name = "th_scarlet_mists_incident_events.24.b"
 		owner = {
 			add_years_of_income = -0.8
 		}
@@ -2072,7 +2110,7 @@ province_event = {
 	}
 	
 	option = {		#Clean the province up!
-		name = "th_incidents_scarletmists.24.c"
+		name = "th_scarlet_mists_incident_events.24.c"
 
 		every_province_in_state = {
 			limit = {
@@ -2097,9 +2135,9 @@ province_event = {
 
 #Scarlet Mist Incident - Province cleans itself
 province_event = {
-	id = th_incidents_scarletmists.260
-	title = "th_incidents_scarletmists.260.t"
-	desc = "th_incidents_scarletmists.260.desc"
+	id = th_scarlet_mists_incident_events.260
+	title = "th_scarlet_mists_incident_events.260.t"
+	desc = "th_scarlet_mists_incident_events.260.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
@@ -2127,7 +2165,7 @@ province_event = {
 	hidden = yes
 	
 	option = {
-		name = "th_incidents_scarletmists.260.a"
+		name = "th_scarlet_mists_incident_events.260.a"
 		remove_province_modifier = th_plagued_by_the_scarlet_mist
 		remove_province_modifier = th_just_cured_of_the_mist		
 		
@@ -2139,9 +2177,9 @@ province_event = {
 
 #Scarlet Mist Incident - Dummy Flag Cleaner
 province_event = {
-	id = th_incidents_scarletmists.270
-	title = "th_incidents_scarletmists.270.t"
-	desc = "th_incidents_scarletmists.270.desc"
+	id = th_scarlet_mists_incident_events.270
+	title = "th_scarlet_mists_incident_events.270.t"
+	desc = "th_scarlet_mists_incident_events.270.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
@@ -2158,7 +2196,7 @@ province_event = {
 	hidden = yes
 	
 	option = {
-		name = "th_incidents_scarletmists.270.a"
+		name = "th_scarlet_mists_incident_events.270.a"
 		clr_province_flag = th_first_clean_dummy
 		clr_province_flag = th_second_clean_dummy
 		
@@ -2168,11 +2206,13 @@ province_event = {
 	}		
 }
 
+
+
 #Scarlet Mist Incident - Forbid SCR, SCD and CIN to become investigators
 country_event = {
-	id = th_incidents_scarletmists.271
-	title = th_incidents_scarletmists.271.t
-	desc = th_incidents_scarletmists.271.desc
+	id = th_scarlet_mists_incident_events.271
+	title = th_scarlet_mists_incident_events.271.t
+	desc = th_scarlet_mists_incident_events.271.desc
 	picture = SCARLETMIST_eventPicture
 
 	trigger = {
@@ -2195,7 +2235,7 @@ country_event = {
 	hidden = yes
 
 	option = {
-		name = th_incidents_scarletmists.271.a
+		name = th_scarlet_mists_incident_events.271.a
 		set_country_flag = th_is_not_valid_for_investiagtor_role
 
 		ai_chance = {
@@ -2206,9 +2246,9 @@ country_event = {
 
 #Scarlet Mist Incident - Special Case: nobody can become investigator
 country_event = {
-	id = th_incidents_scarletmists.26
-	title = "th_incidents_scarletmists.26.t"
-	desc = "th_incidents_scarletmists.26.desc"
+	id = th_scarlet_mists_incident_events.26
+	title = "th_scarlet_mists_incident_events.26.t"
+	desc = "th_scarlet_mists_incident_events.26.desc"
 	picture = SCARLETT_eventPicture
 	
 	trigger = {
@@ -2247,8 +2287,8 @@ country_event = {
 	major = yes
 	
 	option = {		#Scarlet Realm triumphs!
-		name = "th_incidents_scarletmists.26.a"
-		custom_tooltip = th_incidents_scarletmists.26.a.tt					
+		name = "th_scarlet_mists_incident_events.26.a"
+		custom_tooltip = th_scarlet_mists_incident_events.26.a.tt					
 		add_country_modifier = {
 			name = "th_SDM_inci_mist_spreading"
 			duration = 9125
@@ -2258,9 +2298,9 @@ country_event = {
 
 #Scarlet Mist Incident - Special Case: nobody can become investigator, but Gensokyo was NOT united by Remi
 country_event = {
-	id = th_incidents_scarletmists.27
-	title = "th_incidents_scarletmists.27.t"
-	desc = "th_incidents_scarletmists.27.desc"
+	id = th_scarlet_mists_incident_events.27
+	title = "th_scarlet_mists_incident_events.27.t"
+	desc = "th_scarlet_mists_incident_events.27.desc"
 	picture = SCARLETT_eventPicture
 	
 	trigger = {
@@ -2294,19 +2334,19 @@ country_event = {
 	major = yes
 	
 	option = {		#Scarlet Realm triumphs!--Not really
-		name = "th_incidents_scarletmists.27.a"
+		name = "th_scarlet_mists_incident_events.27.a"
 		trigger = {
 			OR = {
 				tag = SCR
 				was_tag = SCR
 			}
 		}
-		custom_tooltip = th_incidents_scarletmists.27.a.tt					
+		custom_tooltip = th_scarlet_mists_incident_events.27.a.tt					
 		add_country_modifier = {
 			name = "th_SDM_inci_mist_spreading"
 			duration = 3650
 		}		
-		custom_tooltip = th_incidents_scarletmists_scarlet_mist
+		custom_tooltip = th_scarlet_mists_incident_events_scarlet_mist
 		hidden_effect = {
 			gensokyo_superregion = {
 				limit = {
@@ -2322,13 +2362,13 @@ country_event = {
 		}
 	}
 	option = {		#Nobody is investigating. We can only pray for mist`s gone
-		name = "th_incidents_scarletmists.27.b"
+		name = "th_scarlet_mists_incident_events.27.b"
 		trigger = {
 			NOT = { tag = SCR }
 			NOT = { was_tag = SCR }
 		}
-		custom_tooltip = th_incidents_scarletmists.27.b.tt
-		custom_tooltip = th_incidents_scarletmists_scarlet_mist
+		custom_tooltip = th_scarlet_mists_incident_events.27.b.tt
+		custom_tooltip = th_scarlet_mists_incident_events_scarlet_mist
 		hidden_effect = {
 			gensokyo_superregion = {
 				limit = {
@@ -2348,9 +2388,9 @@ country_event = {
 ############################TERMINATION############################
 #Scarlet Mist Incident - Bad Outcome
 country_event = { #Nothing changes and Scarlett Realm Mists grow
-	id = th_incidents_scarletmists.100
-	title = "th_incidents_scarletmists.9.t"
-	desc = "th_incidents_scarletmists.9.desc"
+	id = th_scarlet_mists_incident_events.100
+	title = "th_scarlet_mists_incident_events.9.t"
+	desc = "th_scarlet_mists_incident_events.9.desc"
 	picture = SCARLETMIST_eventPicture
 
 	is_triggered_only = yes
@@ -2363,8 +2403,8 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 	major = yes
 	
 	option = {		#Well, I've done what I could.
-		name = "th_incidents_scarletmists.9.a"
-		custom_tooltip = th_incidents_scarletmists.9.a.tt
+		name = "th_scarlet_mists_incident_events.9.a"
+		custom_tooltip = th_scarlet_mists_incident_events.9.a.tt
 		if = {
 			limit = {
 				exists = SCD
@@ -2390,7 +2430,7 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 		add_adm_power = 100
 		add_prestige = -10
 		add_devotion = -10
-		custom_tooltip = th_incidents_scarletmists_scarlet_mist
+		custom_tooltip = th_scarlet_mists_incident_events_scarlet_mist
 		hidden_effect = {
 			gensokyo_superregion = {
 				limit = {

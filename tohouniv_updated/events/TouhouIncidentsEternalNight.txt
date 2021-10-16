@@ -2,14 +2,14 @@
 # Incident Events
 ########################################
 
-namespace = th_incidents_eternalnight
+namespace = th_eternal_night_incident_events
 #incident = eternal_night_incident
 
-#Eternal Night Incident - 1.Check any possible investigator country	- HIDDEN
+#Eternal Night Incident - Set up the incident
 country_event = {
-	id = th_incidents_eternalnight.1
-	title = "th_incidents_eternalnight.1.t"
-	desc = "th_incidents_eternalnight.1.desc"
+	id = th_eternal_night_incident_events.0
+	title = "th_eternal_night_incident_events.0.t"
+	desc = "th_eternal_night_incident_events.0.desc"
 	picture = ETERNALNIGHT_eventPicture
 
 	trigger = {
@@ -88,164 +88,49 @@ country_event = {
 	}
 
 	immediate = {
-		if = {
-			limit = {
-				exists = EIT
-			}
-			EIT = {
-				th_incident_forbids_to_become_investigator = yes
-			}
+		th_incident_forbid_country_to_investigate = { who = EIT }
+		th_incident_forbid_country_to_investigate = { who = FUJ }
+		th_incident_forbid_country_to_investigate = { who = LCU }
+		th_incident_forbid_country_to_investigate = { who = HMC }
+		th_start_incident_effect = {
+			incident = eternal_night_incident
 		}
-		if = {
+		every_country = {
 			limit = {
-				exists = FUJ
-			}
-			FUJ = {
-				th_incident_forbids_to_become_investigator = yes
-			}
-		}
-		if = {
-			limit = {
-				exists = LCU
-			}
-			LCU = {
-				th_incident_forbids_to_become_investigator = yes
-			}
-		}
-		if = {
-			limit = {
-				exists = HMC
-			}
-			HMC = {
-				th_incident_forbids_to_become_investigator = yes
-			}
-		}
-		every_known_country = {
-			limit = {
-				OR = {
-					was_tag = EIT
-					was_tag = FUJ
-					was_tag = LCU
-					was_tag = HMC
+				capital_scope = {
+					superregion = gensokyo_superregion
 				}
 				NOT = { tag = EIT }
 				NOT = { tag = FUJ }
-				NOT = { tag = LCU }
-				NOT = { tag = HMC }
 			}
-			th_incident_forbids_to_become_investigator = yes
+			add_country_modifier = {
+				name = th_EN_fake_moon_negative
+				duration = -1
+				desc = th_incident_duration_tt
+			}
 		}
-		set_global_flag = th_EN_inci_setup_flag
 	}
 
 	option = {		#Check any possible investigator country
-		name = "th_incidents_eternalnight.1.a"
-		th_incident_search_for_eligible_investigator = yes
-		ai_chance = { 
-			factor = 100
-		}
-	}
-
-	after = {
-		if = {
-			limit = {
-				has_global_flag = th_biased_incident_active
+		random_country = {
+			limit = { 
+				th_incident_can_become_investigator = yes
 			}
-			th_incident_pick_random_player_for_biased_investigator = yes
-		}
-	}
-}
-
-#Eternal Night Incident - 2.Incident starts,add debuffs	- HIDDEN
-country_event = {
-	id = th_incidents_eternalnight.200
-	title = "th_incidents_eternalnight.200.t"
-	desc = "th_incidents_eternalnight.200.desc"
-	picture = ETERNALNIGHT_eventPicture
-
-	trigger = {
-		th_incident_can_become_investigator = yes
-		has_global_flag = th_EN_inci_setup_flag
-	}
-
-	fire_only_once = yes
-	hidden = yes	
-
-	immediate = {
-		hidden_effect = {
-			th_incident_set_terminate_flag = yes
-			every_country = {
-				limit = {
-					capital_scope = {
-						superregion = gensokyo_superregion
-					}
-					NOT = { tag = EIT }
-					NOT = { tag = FUJ }
-				}
-				add_country_modifier = {
-					name = th_EN_fake_moon_negative
-					duration = -1
-					desc = th_incident_duration_tt
-				}
+			th_incident_setup_investigator = yes
+			th_incident_introduction_event = {
+				id = th_eternal_night_incident_events.1
 			}
-			clr_global_flag = th_EN_inci_setup_flag
-			set_global_flag = th_active_incident
-			clr_global_flag = th_incident_cleaned_all_flags
-			set_global_flag = th_current_incident_eternal_night
-			set_global_flag = th_EN_inci_started
 		}
-	}
-
-	mean_time_to_happen = {
-		days = 30
-
-		modifier = {
-			factor = 0.1
-			tag = HKR
-		}
-	}
-
-	option = {		#Set the first investigator
-		name = "th_incidents_eternalnight.200.a"
-		country_event = {
-			id = th_incidents_eternalnight.300
-			days = 0
-		}
-
 		ai_chance = { 
 			factor = 100
 		}
 	}
 }
 
-#Eternal Night Incident - 3.Set an investigator(use whenever there is need)	- HIDDEN
+#Eternal Night Incident - Introduction of incident
 country_event = {
-	id = th_incidents_eternalnight.300
-	title = "th_incidents_eternalnight.300.t"
-	desc = "th_incidents_eternalnight.300.desc"
-	picture = ETERNALNIGHT_eventPicture
-
-	is_triggered_only = yes
-	hidden = yes
-
-	option = {		#find an investigator
-		name = "th_incidents_eternalnight.300.a"
-		
-		th_incident_setup_investigator = yes 
-		th_incident_introduction_event = {
-			id = th_incidents_eternalnight.400
-		}
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Eternal Night Incident - 4.Introduction of incident
-country_event = {
-	id = th_incidents_eternalnight.400
-	title = "th_incidents_eternalnight.400.t"
+	id = th_eternal_night_incident_events.1
+	title = "th_eternal_night_incident_events.1.t"
 	desc = {
 		trigger = {
 			OR = {
@@ -254,14 +139,14 @@ country_event = {
 			}
 			exists = LCU
 		}
-		desc = "th_incidents_eternalnight.400.desc.1"
+		desc = "th_eternal_night_incident_events.1.desc.1"
 	}
 	desc = {
 		trigger = { 
 			NOT = { tag = EIT }
 			NOT = {	was_tag = EIT }
 		}
-		desc = "th_incidents_eternalnight.400.desc.2"
+		desc = "th_eternal_night_incident_events.1.desc.2"
 	}
 	desc = {
 		trigger = {
@@ -271,35 +156,20 @@ country_event = {
 			}
 			NOT = { exists = LCU }
 		}
-		desc = "th_incidents_eternalnight.400.desc.1"
+		desc = "th_eternal_night_incident_events.1.desc.1"
 	}
 	picture = ETERNALNIGHT_eventPicture
 
 	is_triggered_only = yes	
 
 	option = {		#We should investigate this strange moon.
-		name = "th_incidents_eternalnight.400.a"
+		name = "th_eternal_night_incident_events.1.a"
 		trigger = {
 			th_incident_is_investigator = yes
 		}
- 		custom_tooltip = th_incidents_eternalnight.400.a.tt
 		highlight = yes	
-		add_adm_power = -25
-		hidden_effect = {
-			set_variable = {
-				which = th_EN_inci_goodbad_level
-				value = 0
-			}
-			set_country_flag = th_EN_inci_about_to_beat_wriggle
-			if = {
-				limit = {
-					NOT = { has_country_flag = th_incident_had_info }
-				}
-				country_event = {
-					id = th_danmaku_event.1
-					days = 1
-				}
-			}
+		th_investigate_incident = {
+			incident = eternal_night_incident
 		}
 
 		ai_chance = {
@@ -307,37 +177,25 @@ country_event = {
 		}
 	}
 	
-	option = {		#I don`t want to investigate the incident.For minor character who was chosen the first investigator
-		name = "th_incidents_eternalnight.400.b"
+	option = {		#I don't want to investigate the incident.For minor character who was chosen the first investigator
+		name = "th_eternal_night_incident_events.1.b"
 		trigger = {
 			th_incident_is_investigator = yes
 			th_is_not_major_main_character = yes
 			th_is_not_minor_main_character = yes
 			any_known_country = {	#must have another eligible investigator country
-				exists = yes
 				th_incident_can_become_investigator = yes
 			}
 		}
-		custom_tooltip = th_incidents_eternalnight.400.b.tt
-		add_prestige = -25
-		hidden_effect = {
-			th_incident_clr_previous_investigators = yes
-			random_known_country = {	
-				limit = {
-					exists = yes
-					th_incident_can_become_investigator = yes
-				}	
-				add_adm_power = -25
-				th_incident_set_country_to_new_investigator = yes
-			}
-		}		
+		th_start_incident_tooltip = { incident = eternal_night_incident }
+		th_refuse_investigating_incident = yes
 		ai_chance = {
 			factor = 0
 		}
 	}
 	
 	option = {		#I shall be the first investigator!For main character player who was not chosen the first investigator
-		name = "th_incidents_eternalnight.400.c"
+		name = "th_eternal_night_incident_events.1.c"
 		trigger = {
 			th_incident_is_not_investigator = yes
 			OR = {
@@ -349,19 +207,19 @@ country_event = {
 				tag = NET
 				tag = MHG
 				tag = NMG
+				AND = {
+					th_incident_is_biasedly_picked_investigator = yes
+					ai = no
+				}
 			}
 			th_incident_can_become_investigator = yes
 		}
- 		custom_tooltip = th_incidents_eternalnight.400.c.tt
-		highlight = yes			
-		add_adm_power = -25
+		highlight = yes
+		th_investigate_incident = {
+			incident = eternal_night_incident
+		}
 		hidden_effect = {
-			every_known_country = {
-				limit = {
-					th_incident_is_investigator = yes
-				}
-				th_incident_clr_previous_investigators = yes
-			}
+			th_incident_clr_previous_investigators = yes
 			th_incident_set_country_to_new_investigator = yes
 		}
 
@@ -371,7 +229,7 @@ country_event = {
 	}
 	
 	option = {		#Well, let it be.
-		name = "th_incidents_eternalnight.400.d"	
+		name = "th_eternal_night_incident_events.1.d"	
 		trigger = {
 			th_incident_is_not_investigator = yes
 			NOT = { tag = EIT }
@@ -379,7 +237,7 @@ country_event = {
 			NOT = { was_tag = EIT }
 			NOT = { was_tag = FUJ  }
 		}	
-		custom_tooltip = th_incidents_eternalnight.400.d.tt
+		th_start_incident_tooltip = { incident = eternal_night_incident }
 
 		ai_chance = {
 			factor = 100
@@ -387,14 +245,14 @@ country_event = {
 	}
 
 	option = {		#Let the games begin!
-		name = "th_incidents_eternalnight.400.e"
+		name = "th_eternal_night_incident_events.1.e"
 		trigger = {
 			OR = {
 				tag = EIT
 				was_tag = EIT
 			}
 		}	
-		custom_tooltip = th_incidents_eternalnight.400.e.tt
+		th_start_incident_tooltip = { incident = eternal_night_incident }
 		highlight = yes	
 		add_army_tradition = 15
 		add_navy_tradition = 15
@@ -406,7 +264,7 @@ country_event = {
 	}
 
 	option = {		#The neighboring neet is causing incident. Let`s see what trick she can do(for Fujiwara when EIT still exists)
-		name = "th_incidents_eternalnight.400.f"
+		name = "th_eternal_night_incident_events.1.f"
 		trigger = { 
 			exists = EIT
 			OR = {
@@ -414,7 +272,7 @@ country_event = {
 				was_tag = FUJ
 			}			
 		}
-		custom_tooltip = th_incidents_eternalnight.400.f.tt
+		th_start_incident_tooltip = { incident = eternal_night_incident }
 
 		ai_chance = {
 			factor = 100
@@ -422,7 +280,7 @@ country_event = {
 	}
 
 	option = {		#The neighboring neet is causing incident. But she can`t trick me at all(for Fujiwara when EIT does not exist)
-		name = "th_incidents_eternalnight.400.g"
+		name = "th_eternal_night_incident_events.1.g"
 		trigger = { 
 			NOT = { exists = EIT }
 			OR = {
@@ -430,7 +288,7 @@ country_event = {
 				was_tag = FUJ
 			}			
 		}
-		custom_tooltip = th_incidents_eternalnight.400.g.tt
+		th_start_incident_tooltip = { incident = eternal_night_incident }
 
 		ai_chance = {
 			factor = 100
@@ -439,10 +297,11 @@ country_event = {
 }
 
 
+
 #Eternal Night Incident - Wriggle Encounter
 country_event = {
-	id = th_incidents_eternalnight.2
-	title = "th_incidents_eternalnight.2.t"
+	id = th_eternal_night_incident_events.2
+	title = "th_eternal_night_incident_events.2.t"
 	desc = {
 		trigger = { 
 			OR = {
@@ -452,11 +311,11 @@ country_event = {
 				was_tag = MHG
 			}
 		}
-		desc = "th_incidents_eternalnight.2.desc.1"
+		desc = "th_eternal_night_incident_events.2.desc.1"
 	}
 	desc = {
 		trigger = { tag = FOM }
-		desc = "th_incidents_eternalnight.2.desc.2"
+		desc = "th_eternal_night_incident_events.2.desc.2"
 	}
 	desc = {
 		trigger = { 
@@ -465,7 +324,7 @@ country_event = {
 				tag = SCD
 			}
 		}
-		desc = "th_incidents_eternalnight.2.desc.3"
+		desc = "th_eternal_night_incident_events.2.desc.3"
 	}
 	desc = {                       #recommand to add special word for Yuyuko xD
 		trigger = { 
@@ -474,7 +333,7 @@ country_event = {
 				was_tag = NET
 			}
 		}
-		desc = "th_incidents_eternalnight.2.desc.4"
+		desc = "th_eternal_night_incident_events.2.desc.4"
 	}
 	desc = {
 		trigger = { 
@@ -487,17 +346,21 @@ country_event = {
 			NOT = { tag = MHG }
 			NOT = { tag = NMG }
 		}
-		desc = "th_incidents_eternalnight.2.desc.5"
+		desc = "th_eternal_night_incident_events.2.desc.5"
 	}
 	picture = WRIGGLE_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_EN_inci_about_to_beat_wriggle
+		th_enough_time_for_next_stage_has_passed = {
 			days = 1095
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_EN_inci_wriggle_encountered }
+		th_incident_current_stage = {
+			stage = 1
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 	}
 
 	mean_time_to_happen = {
@@ -506,39 +369,26 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
 			}
-			set_global_flag = th_EN_inci_wriggle_encountered
-			clr_global_flag = th_EN_inci_started
-			clr_country_flag = th_EN_inci_about_to_beat_wriggle
 			#Wriggle Base Fighting Skills
 			set_variable = {
 				which = th_EN_inci_wriggle_combat_skills
 				value = 950
 			}
 			th_defineopponent_fighting_skill = {
-				type = incident
 				variable = th_EN_inci_wriggle_combat_skills
-			}
-		}
-	}
-
-	after = {
-		hidden_effect = {
-			if = {
-				limit = {
-					th_incident_is_investigator = yes
-				}
-				set_country_flag = th_EN_inci_about_to_beat_mystia
+				type = incident
 			}
 		}
 	}
 	
 	option = {		#She's in my way! I will have to fight her!
-		name = "th_incidents_eternalnight.2.a"
-		custom_tooltip = th_incidents_eternalnight.2.a.tt
+		name = "th_eternal_night_incident_events.2.a"
+		custom_tooltip = th_eternal_night_incident_events.2.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -560,8 +410,8 @@ country_event = {
 	}
 	
 	option = {		#She's just a nuisance.
-		name = "th_incidents_eternalnight.2.b"
-		custom_tooltip = th_incidents_eternalnight.2.b.tt
+		name = "th_eternal_night_incident_events.2.b"
+		custom_tooltip = th_eternal_night_incident_events.2.b.tt
 		add_prestige = -5
 		th_incident_change_points = {
 			value = -1
@@ -573,8 +423,8 @@ country_event = {
 	}
 	
 	option = {		#I just punch her to death
-		name = "th_incidents_eternalnight.2.c"
-		custom_tooltip = th_incidents_eternalnight.2.c.tt
+		name = "th_eternal_night_incident_events.2.c"
+		custom_tooltip = th_eternal_night_incident_events.2.c.tt
 		th_incident_cruel_decision = yes
 		th_incident_change_points = {
 			value = 1
@@ -588,8 +438,8 @@ country_event = {
 
 #Eternal Night Incident - Mystia Encounter
 country_event = {
-	id = th_incidents_eternalnight.3
-	title = "th_incidents_eternalnight.3.t"
+	id = th_eternal_night_incident_events.3
+	title = "th_eternal_night_incident_events.3.t"
 	desc = {
 		trigger = { 
 			OR = {
@@ -599,11 +449,11 @@ country_event = {
 				was_tag = MHG
 			}
 		}
-		desc = "th_incidents_eternalnight.3.desc.1"
+		desc = "th_eternal_night_incident_events.3.desc.1"
 	}
 	desc = {
 		trigger = { tag = FOM }
-		desc = "th_incidents_eternalnight.3.desc.2"
+		desc = "th_eternal_night_incident_events.3.desc.2"
 	}
 	desc = {
 		trigger = { 
@@ -612,7 +462,7 @@ country_event = {
 				tag = SCD
 			}
 		}
-		desc = "th_incidents_eternalnight.3.desc.3"
+		desc = "th_eternal_night_incident_events.3.desc.3"
 	}
 	desc = {                       #recommand to add special word for Yuyuko xD
 		trigger = { 
@@ -621,7 +471,7 @@ country_event = {
 				was_tag = NET
 			}
 		}
-		desc = "th_incidents_eternalnight.3.desc.4"
+		desc = "th_eternal_night_incident_events.3.desc.4"
 	}
 	desc = {
 		trigger = { 
@@ -634,17 +484,21 @@ country_event = {
 			NOT = { tag = MHG }
 			NOT = { tag = NMG }
 		}
-		desc = "th_incidents_eternalnight.3.desc.5"
+		desc = "th_eternal_night_incident_events.3.desc.5"
 	}
 	picture = MYSTIA_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_EN_inci_about_to_beat_mystia
-			days = 1095
+		th_incident_current_stage = {
+			stage = 2
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_EN_inci_mystia_encountered }
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 	}
 
 	mean_time_to_happen = {
@@ -653,13 +507,11 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
 			}
-			set_global_flag = th_EN_inci_mystia_encountered
-			clr_global_flag = th_EN_inci_wriggle_encountered
-			clr_country_flag = th_EN_inci_about_to_beat_mystia
 			#Mystia's Base Fighting Skills
 			set_variable = {
 				which = th_EN_inci_mystia_combat_skills
@@ -671,21 +523,10 @@ country_event = {
 			}	
 		}
 	}
-
-	after = {
-		hidden_effect = {
-			if = {
-				limit = {
-					th_incident_is_investigator = yes
-				}
-				set_country_flag = th_EN_inci_about_to_beat_keine
-			}
-		}
-	}
 	
 	option = {		#Another target. Great, I'll got bored on this lake.
-		name = "th_incidents_eternalnight.3.a"
-		custom_tooltip = th_incidents_eternalnight.3.a.tt
+		name = "th_eternal_night_incident_events.3.a"
+		custom_tooltip = th_eternal_night_incident_events.3.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -707,11 +548,11 @@ country_event = {
 	}
 	
 	option = {		#Let Kyouko go sing with Mystia
-		name = "th_incidents_eternalnight.3.b"
+		name = "th_eternal_night_incident_events.3.b"
 		trigger = {
 			tag = MYO
 		}
-		custom_tooltip = th_incidents_eternalnight.3.b.tt
+		custom_tooltip = th_eternal_night_incident_events.3.b.tt
 		add_prestige = 15
 		th_incident_change_points = {
 			value = 1
@@ -723,11 +564,11 @@ country_event = {
 	}
 	
 	option = {		#I just burn her cart down
-		name = "th_incidents_eternalnight.3.c"
+		name = "th_eternal_night_incident_events.3.c"
 		trigger = {
 			controls = 4977
 		}
-		custom_tooltip = th_incidents_eternalnight.3.c.tt
+		custom_tooltip = th_eternal_night_incident_events.3.c.tt
 		add_prestige = -10
 		th_incident_cruel_decision = yes
 		4977 = {
@@ -746,14 +587,14 @@ country_event = {
 	}
 	
 	option = {		#You know, some Mystia nuggets would be neat
-		name = "th_incidents_eternalnight.3.d"
+		name = "th_eternal_night_incident_events.3.d"
 		trigger = {
 			OR = {
 				tag = NET
 				was_tag = NET
 			}
 		}
-		custom_tooltip = th_incidents_eternalnight.3.d.tt
+		custom_tooltip = th_eternal_night_incident_events.3.d.tt
 		add_dip_power = -25
 		th_incident_change_points = {
 			value = 2
@@ -765,8 +606,8 @@ country_event = {
 	}
 	
 	option = {		#I will shake Mystia off in the fog
-		name = "th_incidents_eternalnight.3.e"
-		custom_tooltip = th_incidents_eternalnight.3.e.tt
+		name = "th_eternal_night_incident_events.3.e"
+		custom_tooltip = th_eternal_night_incident_events.3.e.tt
 		add_dip_power = 50
 		th_incident_change_points = {
 			value = -2
@@ -778,8 +619,8 @@ country_event = {
 	}
 	
 	option = {		#I just buy me the passage
-		name = "th_incidents_eternalnight.3.f"
-		custom_tooltip = th_incidents_eternalnight.3.f.tt
+		name = "th_eternal_night_incident_events.3.f"
+		custom_tooltip = th_eternal_night_incident_events.3.f.tt
 		add_treasury = -150
 		th_incident_change_points = {
 			value = 1
@@ -791,14 +632,14 @@ country_event = {
 	}
 	
 	option = {		#Hire Mystia for the band
-		name = "th_incidents_eternalnight.3.g"
+		name = "th_eternal_night_incident_events.3.g"
 		trigger = {
 			OR = {
 				tag = RAI
 				tag = PRI
 			}
 		}
-		custom_tooltip = th_incidents_eternalnight.3.g.tt
+		custom_tooltip = th_eternal_night_incident_events.3.g.tt
 		add_adm_power = 50
 		th_incident_change_points = {
 			value = 1
@@ -812,8 +653,8 @@ country_event = {
 
 #Eternal Night Incident - Keine Encounter
 country_event = {
-	id = th_incidents_eternalnight.4
-	title = "th_incidents_eternalnight.4.t"
+	id = th_eternal_night_incident_events.4
+	title = "th_eternal_night_incident_events.4.t"
 	desc = {
 		trigger = { 
 			OR = {
@@ -823,11 +664,11 @@ country_event = {
 				was_tag = MHG
 			}
 		}
-		desc = "th_incidents_eternalnight.4.desc.1"
+		desc = "th_eternal_night_incident_events.4.desc.1"
 	}
 	desc = {
 		trigger = { tag = FOM }
-		desc = "th_incidents_eternalnight.4.desc.2"
+		desc = "th_eternal_night_incident_events.4.desc.2"
 	}
 	desc = {
 		trigger = { 
@@ -836,7 +677,7 @@ country_event = {
 				tag = SCD
 			}
 		}
-		desc = "th_incidents_eternalnight.4.desc.3"
+		desc = "th_eternal_night_incident_events.4.desc.3"
 	}
 	desc = {
 		trigger = { 
@@ -845,7 +686,7 @@ country_event = {
 				was_tag = NET
 			}
 		}
-		desc = "th_incidents_eternalnight.4.desc.4"
+		desc = "th_eternal_night_incident_events.4.desc.4"
 	}
 	desc = {
 		trigger = { 
@@ -858,17 +699,21 @@ country_event = {
 			NOT = { tag = MHG }
 			NOT = { tag = NMG }
 		}
-		desc = "th_incidents_eternalnight.4.desc.5"
+		desc = "th_eternal_night_incident_events.4.desc.5"
 	}
 	picture = KEINE_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_EN_inci_about_to_beat_keine
-			days = 1095
+		th_incident_current_stage = {
+			stage = 3
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_EN_inci_keine_encountered }
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 	}
 
 	mean_time_to_happen = {
@@ -877,13 +722,11 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
 			}
-			set_global_flag = th_EN_inci_keine_encountered
-			clr_global_flag = th_EN_inci_mystia_encountered
-			clr_country_flag = th_EN_inci_about_to_beat_keine
 			#Keine's Base Fighting Skills
 			set_variable = {
 				which = th_EN_inci_keines_combat_skills
@@ -916,10 +759,6 @@ country_event = {
 						tag = MHG
 						tag = NET
 						tag = NMG
-						AND = {
-							th_incident_is_biasedly_picked_investigator = yes
-							ai = no
-						}
 					}
 					th_incident_is_investigator = yes
 				}
@@ -930,10 +769,10 @@ country_event = {
 					th_incident_is_investigator = yes
 				}
 				random_list = {
-					50 = {
+					1 = {
 						set_country_flag = th_EN_inci_about_to_beat_reimu
 					}
-					50 = {
+					1 = {
 						set_country_flag = th_EN_inci_about_to_beat_marisa		
 					}
 				}
@@ -942,8 +781,8 @@ country_event = {
 	}
 	
 	option = {		#Bring it on, bookworm!
-		name = "th_incidents_eternalnight.4.a"
-		custom_tooltip = th_incidents_eternalnight.4.a.tt
+		name = "th_eternal_night_incident_events.4.a"
+		custom_tooltip = th_eternal_night_incident_events.4.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -967,15 +806,15 @@ country_event = {
 
 #Eternal Night Incident - Reimu Encounter
 country_event = {
-	id = th_incidents_eternalnight.51
-	title = "th_incidents_eternalnight.51.t"
+	id = th_eternal_night_incident_events.51
+	title = "th_eternal_night_incident_events.51.t"
 	desc = {
 		trigger = { tag = MRY }
-		desc = "th_incidents_eternalnight.51.desc.1"
+		desc = "th_eternal_night_incident_events.51.desc.1"
 	}
 	desc = {
 		trigger = { tag = FOM }
-		desc = "th_incidents_eternalnight.51.desc.2"
+		desc = "th_eternal_night_incident_events.51.desc.2"
 	}
 	desc = {
 		trigger = { 
@@ -984,7 +823,7 @@ country_event = {
 				tag = SCD
 			}
 		}
-		desc = "th_incidents_eternalnight.51.desc.3"
+		desc = "th_eternal_night_incident_events.51.desc.3"
 	}
 	desc = {
 		trigger = { 
@@ -993,17 +832,22 @@ country_event = {
 			NOT = { tag = SCD }
 			NOT = { tag = MRY }
 		}
-		desc = "th_incidents_eternalnight.51.desc.4"
+		desc = "th_eternal_night_incident_events.51.desc.4"
 	}
 	picture = REIMU_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_EN_inci_about_to_beat_reimu
-			days = 1095
+		has_country_flag = th_EN_inci_about_to_beat_reimu
+		th_incident_current_stage = {
+			stage = 4
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_EN_inci_reimu_marisa_encountered }
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 	}
 
 	mean_time_to_happen = {
@@ -1012,12 +856,12 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
 			}
-			set_global_flag = th_EN_inci_reimu_marisa_encountered
-			clr_global_flag = th_EN_inci_keine_encountered
+			
 			clr_country_flag = th_EN_inci_about_to_beat_reimu
 			#Reimu's Base Fighting Skills
 			set_variable = {
@@ -1030,21 +874,10 @@ country_event = {
 			}	
 		}
 	}
-
-	after = {
-		hidden_effect = {
-			if = {
-				limit = {
-					th_incident_is_investigator = yes
-				}
-				set_country_flag = th_EN_inci_about_to_beat_reisen
-			}
-		}
-	}
 	
 	option = {		#Too bad for her, because I've got to fight her to pass the library
-		name = "th_incidents_eternalnight.51.a"
-		custom_tooltip = th_incidents_eternalnight.51.a.tt
+		name = "th_eternal_night_incident_events.51.a"
+		custom_tooltip = th_eternal_night_incident_events.51.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -1066,8 +899,8 @@ country_event = {
 	}
 	
 	option = {		#I will buy me the passage
-		name = "th_incidents_eternalnight.51.b"
-		custom_tooltip = th_incidents_eternalnight.51.b.tt
+		name = "th_eternal_night_incident_events.51.b"
+		custom_tooltip = th_eternal_night_incident_events.51.b.tt
 		add_treasury = -2000
 		th_incident_change_points = {
 			value = 1
@@ -1091,8 +924,8 @@ country_event = {
 	}
 	
 	option = {		#I ... I will spend some time with Reimu then
-		name = "th_incidents_eternalnight.51.c"
-		custom_tooltip = th_incidents_eternalnight.51.c.tt
+		name = "th_eternal_night_incident_events.51.c"
+		custom_tooltip = th_eternal_night_incident_events.51.c.tt
 		trigger = {
 			OR = {
 				tag = OKR
@@ -1124,8 +957,8 @@ country_event = {
 
 #Eternal Night Incident - Marisa Encounter
 country_event = {
-	id = th_incidents_eternalnight.52
-	title = "th_incidents_eternalnight.52.t"
+	id = th_eternal_night_incident_events.52
+	title = "th_eternal_night_incident_events.52.t"
 	desc = {
 		trigger = { 
 			OR = {
@@ -1134,7 +967,7 @@ country_event = {
 				was_tag = MHG
 			}
 		}	
-		desc = "th_incidents_eternalnight.52.desc.1"
+		desc = "th_eternal_night_incident_events.52.desc.1"
 	}
 	desc = {
 		trigger = { 
@@ -1143,7 +976,7 @@ country_event = {
 				was_tag = NET
 			}
 		}
-		desc = "th_incidents_eternalnight.52.desc.2"
+		desc = "th_eternal_night_incident_events.52.desc.2"
 	}
 	desc = {
 		trigger = { 
@@ -1152,17 +985,22 @@ country_event = {
 			NOT = { tag = NET }
 			NOT = { tag = NMG }
 		}
-		desc = "th_incidents_eternalnight.52.desc.3"
+		desc = "th_eternal_night_incident_events.52.desc.3"
 	}
 	picture = MARISA_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_EN_inci_about_to_beat_marisa
-			days = 1095
+		has_country_flag = th_EN_inci_about_to_beat_marisa
+		th_incident_current_stage = {
+			stage = 4
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_EN_inci_reimu_marisa_encountered }
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 	}
 
 	mean_time_to_happen = {
@@ -1171,14 +1009,14 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
 			}
-			set_global_flag = th_EN_inci_reimu_marisa_encountered
-			clr_global_flag = th_EN_inci_keine_encountered
+			
 			clr_country_flag = th_EN_inci_about_to_beat_marisa
-			#Reimu's Base Fighting Skills
+			#Marisa's Base Fighting Skills
 			set_variable = {
 				which = th_EN_inci_reimu_marisas_combat_skills
 				value = 1260
@@ -1189,21 +1027,9 @@ country_event = {
 			}	
 		}
 	}
-
-	after = {
-		hidden_effect = {
-			if = {
-				limit = {
-					th_incident_is_investigator = yes
-				}
-				set_country_flag = th_EN_inci_about_to_beat_reisen
-			}
-		}
-	}
-	
 	option = {		#Too bad for her, because I've got to fight her to pass the library
-		name = "th_incidents_eternalnight.52.a"
-		custom_tooltip = th_incidents_eternalnight.52.a.tt
+		name = "th_eternal_night_incident_events.52.a"
+		custom_tooltip = th_eternal_night_incident_events.52.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -1225,8 +1051,8 @@ country_event = {
 	}
 	
 	option = {		#Maybe some books will convince the witch
-		name = "th_incidents_eternalnight.52.b"
-		custom_tooltip = th_incidents_eternalnight.52.b.tt
+		name = "th_eternal_night_incident_events.52.b"
+		custom_tooltip = th_eternal_night_incident_events.52.b.tt
 		add_adm_power = -150
 		add_dip_power = -150
 		add_mil_power = -150
@@ -1251,9 +1077,9 @@ country_event = {
 		}
 	}
 	
-	option = {		#Let me pass, daughter
-		name = "th_incidents_eternalnight.52.c"
-		custom_tooltip = th_incidents_eternalnight.52.c.tt
+	option = {		#Let me pass, apprentice
+		name = "th_eternal_night_incident_events.52.c"
+		custom_tooltip = th_eternal_night_incident_events.52.c.tt
 		trigger = {
 			OR = {
 				tag = MIM
@@ -1285,18 +1111,22 @@ country_event = {
 
 #Eternal Night Incident - Reisen Encounter
 country_event = {
-	id = th_incidents_eternalnight.6
-	title = "th_incidents_eternalnight.6.t"
-	desc = "th_incidents_eternalnight.6.desc"
+	id = th_eternal_night_incident_events.6
+	title = "th_eternal_night_incident_events.6.t"
+	desc = "th_eternal_night_incident_events.6.desc"
 	picture = REISEN_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_EN_inci_about_to_beat_reisen
-			days = 1095
+		th_incident_current_stage = {
+			stage = 5
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_EN_inci_reisen_encountered }
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 	}
 
 	mean_time_to_happen = {
@@ -1305,13 +1135,11 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
 			}
-			set_global_flag = th_EN_inci_reisen_encountered
-			clr_global_flag = th_EN_inci_reimu_marisa_encountered
-			clr_country_flag = th_EN_inci_about_to_beat_reisen
 			#Reisen's Base Fighting Skills
 			set_variable = {
 				which = th_EN_inci_reisens_combat_skills
@@ -1323,21 +1151,10 @@ country_event = {
 			}	
 		}
 	}
-
-	after = {
-		hidden_effect = {
-			if = {
-				limit = {
-					th_incident_is_investigator = yes
-				}
-				set_country_flag = th_EN_inci_about_to_beat_eirin
-			}
-		}
-	}
 	
 	option = {		#I don't think she will let me through. I will have to defeat her.
-		name = "th_incidents_eternalnight.6.a"
-		custom_tooltip = th_incidents_eternalnight.6.a.tt
+		name = "th_eternal_night_incident_events.6.a"
+		custom_tooltip = th_eternal_night_incident_events.6.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -1347,60 +1164,24 @@ country_event = {
 	}
 }
 
-#Eternal Night Incident - Path to the Endboss
-country_event = {
-	id = th_incidents_eternalnight.7
-	title = "th_incidents_eternalnight.7.t"
-	desc = "th_incidents_eternalnight.7.desc"
-	picture = ETERNALNIGHT_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {		#Eirin's path
-		name = "th_incidents_eternalnight.7.a"
-		highlight = yes
-		hidden_effect = {
-			country_event = {
-				id = th_incidents_eternalnight.71
-				days = 1094
-			}
-		}
-		
-		ai_chance = { 
-			factor = 50
-		}
-	}
-	
-	option = {		#Kaguya's path
-		name = "th_incidents_eternalnight.7.b"
-		highlight = yes
-		hidden_effect = {
-			country_event = {
-				id = th_incidents_eternalnight.71
-				days = 1094
-			}
-		}
-		
-		ai_chance = { 
-			factor = 50
-		}
-	}
-}
-
 #Eternal Night Incident - Eirin Encounter
 country_event = {
-	id = th_incidents_eternalnight.71
-	title = "th_incidents_eternalnight.71.t"
-	desc = "th_incidents_eternalnight.71.desc"
+	id = th_eternal_night_incident_events.71
+	title = "th_eternal_night_incident_events.71.t"
+	desc = "th_eternal_night_incident_events.71.desc"
 	picture = EIRIN_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_EN_inci_about_to_beat_eirin
-			days = 1095
+		th_incident_current_stage = {
+			stage = 6
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_EN_inci_eirin_encountered }
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 	}
 
 	mean_time_to_happen = {
@@ -1409,13 +1190,11 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
 			}
-			set_global_flag = th_EN_inci_eirin_encountered
-			clr_global_flag = th_EN_inci_reisen_encountered
-			clr_country_flag = th_EN_inci_about_to_beat_eirin
 			#Eirin's Base Fighting Skills
 			set_variable = {
 				which = th_EN_inci_eirins_combat_skills
@@ -1427,21 +1206,10 @@ country_event = {
 			}	
 		}
 	}
-
-	after = {
-		hidden_effect = {
-			if = {
-				limit = {
-					th_incident_is_investigator = yes
-				}
-				set_country_flag = th_EN_inci_about_to_beat_kaguya
-			}
-		}
-	}
 	
 	option = {		#I will have to defeat her myself
-		name = "th_incidents_eternalnight.71.a"
-		custom_tooltip = th_incidents_eternalnight.71.a.tt
+		name = "th_eternal_night_incident_events.71.a"
+		custom_tooltip = th_eternal_night_incident_events.71.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		
@@ -1453,18 +1221,22 @@ country_event = {
 
 #Eternal Night Incident - Kaguya Encounter
 country_event = {
-	id = th_incidents_eternalnight.72
-	title = "th_incidents_eternalnight.72.t"
-	desc = "th_incidents_eternalnight.72.desc"
+	id = th_eternal_night_incident_events.72
+	title = "th_eternal_night_incident_events.72.t"
+	desc = "th_eternal_night_incident_events.72.desc"
 	picture = KAGUYA_eventPicture
 	
 	trigger = {
-		had_country_flag = {
-			flag = th_EN_inci_about_to_beat_kaguya
-			days = 90
+		th_incident_current_stage = {
+			stage = 7
 		}
 		th_incident_is_investigator = yes
-		NOT = { has_global_flag = th_EN_inci_kaguya_encountered }
+		th_enough_time_for_next_stage_has_passed = {
+			days = 90
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 	}
 
 	mean_time_to_happen = {
@@ -1473,13 +1245,11 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			th_prepare_for_next_stage = yes
 			th_getruler_fighting_skill = {
 				skill_boni = 0
 				type = incident
 			}
-			set_global_flag = th_EN_inci_kaguya_encountered
-			clr_global_flag = th_EN_inci_eirin_encountered
-			clr_country_flag = th_EN_inci_about_to_beat_kaguya
 			#Kaguya Base Fighting Skills
 			set_variable = {
 				which = th_EN_inci_kaguya_combat_skills
@@ -1493,29 +1263,22 @@ country_event = {
 	}
 	
 	option = {		#I will have to defeat her myself
-		name = "th_incidents_eternalnight.72.a"
-		custom_tooltip = th_incidents_eternalnight.72.a.tt
+		name = "th_eternal_night_incident_events.72.a"
+		custom_tooltip = th_eternal_night_incident_events.72.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
-		hidden_effect = {
-			set_global_flag = th_EN_incident_end
-		}
 		
 		ai_chance = { 
 			factor = 100
 		}
 	}
-
-	after = {
-		set_country_flag = th_EN_inci_about_to_get_final
-	}
 }	
 
 #Eternal Night Incident EXTRA - Mokou Encounter
 country_event = {
-	id = th_incidents_eternalnight.8
-	title = "th_incidents_eternalnight.8.t"
-	desc = "th_incidents_eternalnight.8.desc"
+	id = th_eternal_night_incident_events.8
+	title = "th_eternal_night_incident_events.8.t"
+	desc = "th_eternal_night_incident_events.8.desc"
 	picture = MOKOU_eventPicture
 	
 	is_triggered_only = yes
@@ -1539,13 +1302,13 @@ country_event = {
 	}
 	
 	option = {		#An undying human? Interesting. Seems we can break the rules this time
-		name = "th_incidents_eternalnight.8.a"
-		custom_tooltip = th_incidents_eternalnight.8.a.tt
+		name = "th_eternal_night_incident_events.8.a"
+		custom_tooltip = th_eternal_night_incident_events.8.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		hidden_effect = {
 			country_event = {
-				id = th_incidents_eternalnight.14
+				id = th_eternal_night_incident_events.14
 				days = 90
 			}
 		}
@@ -1556,21 +1319,29 @@ country_event = {
 	}
 }
 
+
+
 #Eternal Night Incident - Bad outcome because of lost or draw with Eirin
 country_event = {
-	id = th_incidents_eternalnight.9
-	title = "th_incidents_eternalnight.9.t"
-	desc = "th_incidents_eternalnight.9.desc"
+	id = th_eternal_night_incident_events.9
+	title = "th_eternal_night_incident_events.9.t"
+	desc = "th_eternal_night_incident_events.9.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_EN_inci_eirin_encountered
 		OR = {
 			has_country_flag = th_incident_last_fight_draw
 			has_country_flag = th_incident_last_fight_lost
 		}
-		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
+		th_incident_current_stage = {
+			stage = 7
+		}
 		th_incident_is_investigator = yes
+		NOT = { th_incident_has_been_resolved = { incident = eternal_night_incident } }
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}	
 
 	mean_time_to_happen = {
@@ -1580,15 +1351,13 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			th_incident_clr_terminate_flag = yes
 			th_resolve_incident = { incident = eternal_night_incident }
-			clr_global_flag = th_active_incident
 		}
 	}
 
 	option = {		#Well, I've done what I could.
-		name = "th_incidents_eternalnight.9.a"
-		custom_tooltip = th_incidents_eternalnight.9.a.tt
+		name = "th_eternal_night_incident_events.9.a"
+		custom_tooltip = th_eternal_night_incident_events.9.a.tt
 		if = {
 			limit = {
 				exists = EIT
@@ -1634,24 +1403,27 @@ country_event = {
 
 #Eternal Night Incident - Terrible Outcome because of dead ruler!
 country_event = {
-	id = th_incidents_eternalnight.10
-	title = "th_incidents_eternalnight.10.t"
-	desc = "th_incidents_eternalnight.10.desc"
+	id = th_eternal_night_incident_events.10
+	title = "th_eternal_night_incident_events.10.t"
+	desc = "th_eternal_night_incident_events.10.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_EN_incident_end
 		has_country_flag = th_incident_last_fight_terribly_lost
+		th_incident_current_stage = {
+			stage = 8
+		}
 		th_incident_is_investigator = yes
 		NOT = { th_incident_has_been_resolved = { incident = eternal_night_incident } }
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
 		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}
 	
 	immediate = {
 		hidden_effect = {
-			th_incident_clr_terminate_flag = yes
 			th_resolve_incident = { incident = eternal_night_incident }
-			clr_global_flag = th_active_incident
 		}
 	}
 	
@@ -1661,8 +1433,8 @@ country_event = {
 	major = yes
 	
 	option = {		#Well, I've done what I could.
-		name = "th_incidents_eternalnight.10.a"
-		custom_tooltip = th_incidents_eternalnight.10.a.tt
+		name = "th_eternal_night_incident_events.10.a"
+		custom_tooltip = th_eternal_night_incident_events.10.a.tt
 		if = {
 			limit = {
 				exists = FUJ
@@ -1708,37 +1480,35 @@ country_event = {
 
 #Eternal Night Incident - Bad Outcome
 country_event = {
-	id = th_incidents_eternalnight.11
-	title = "th_incidents_eternalnight.11.t"
-	desc = "th_incidents_eternalnight.11.desc"
+	id = th_eternal_night_incident_events.11
+	title = "th_eternal_night_incident_events.11.t"
+	desc = "th_eternal_night_incident_events.11.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_EN_inci_kaguya_encountered
-		has_global_flag = th_EN_incident_end
 		th_incident_is_investigator = yes
-		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 		NOT = { th_incident_has_been_resolved = { incident = eternal_night_incident } }
-		check_variable = {
-			which = th_EN_inci_goodbad_level
+		th_incident_check_point_result = {
 			value = 0
 		}
 		NOT = {
-			check_variable = {
-				which = th_EN_inci_goodbad_level
+			th_incident_check_point_result = {
 				value = 5
 			}
 		}
 		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
-		has_country_flag = th_EN_inci_about_to_get_final
+		th_incident_current_stage = {
+			stage = 8
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}
 	
 	immediate = {
-		hidden_effect = {
-			th_incident_clr_terminate_flag = yes
+		hidden_effect = { 
 			th_resolve_incident = { incident = eternal_night_incident }
-			clr_global_flag = th_active_incident
-			clr_country_flag = th_EN_inci_about_to_get_final
 		}
 	}
 	
@@ -1748,8 +1518,8 @@ country_event = {
 	major = yes
 	
 	option = {		#Well, I've done what I could.
-		name = "th_incidents_eternalnight.11.a"
-		custom_tooltip = th_incidents_eternalnight.11.a.tt
+		name = "th_eternal_night_incident_events.11.a"
+		custom_tooltip = th_eternal_night_incident_events.11.a.tt
 		if = {
 			limit = {
 				exists = EIT
@@ -1795,8 +1565,8 @@ country_event = {
 
 #Eternal Night Incident - OK Outcome
 country_event = { 
-	id = th_incidents_eternalnight.12
-	title = "th_incidents_eternalnight.12.t"
+	id = th_eternal_night_incident_events.12
+	title = "th_eternal_night_incident_events.12.t"
 	desc = {
 		trigger = { 
 			OR = {
@@ -1806,11 +1576,11 @@ country_event = {
 				was_tag = MHG
 			}
 		}
-		desc = "th_incidents_eternalnight.12.desc.1"
+		desc = "th_eternal_night_incident_events.12.desc.1"
 	}
 	desc = {
 		trigger = { tag = FOM }
-		desc = "th_incidents_eternalnight.12.desc.2"
+		desc = "th_eternal_night_incident_events.12.desc.2"
 	}
 	desc = {
 		trigger = { 
@@ -1819,7 +1589,7 @@ country_event = {
 				tag = SCD
 			}
 		}
-		desc = "th_incidents_eternalnight.12.desc.3"
+		desc = "th_eternal_night_incident_events.12.desc.3"
 	}
 	desc = {
 		trigger = { 
@@ -1828,7 +1598,7 @@ country_event = {
 				was_tag = NET
 			}
 		}
-		desc = "th_incidents_eternalnight.12.desc.4"
+		desc = "th_eternal_night_incident_events.12.desc.4"
 	}
 	desc = {
 		trigger = { 
@@ -1841,44 +1611,34 @@ country_event = {
 			NOT = { tag = NET }
 			NOT = { tag = NMG }
 		}
-		desc = "th_incidents_eternalnight.12.desc.5"
+		desc = "th_eternal_night_incident_events.12.desc.5"
 	}
 	picture = SHRINE_eventPicture
 	
 	trigger = {
-		has_global_flag = th_EN_inci_kaguya_encountered
-		has_global_flag = th_EN_incident_end
-		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 		th_incident_is_investigator = yes
 		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
 		NOT = { th_incident_has_been_resolved = { incident = eternal_night_incident } }
-		check_variable = {
-			which = th_EN_inci_goodbad_level
+		th_incident_check_point_result = {
 			value = 5
 		}
 		NOT = {
-			check_variable = {
-				which = th_EN_inci_goodbad_level
+			th_incident_check_point_result = {
 				value = 10
 			}
 		}
-		has_country_flag = th_EN_inci_about_to_get_final
+		th_incident_current_stage = {
+			stage = 8
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}
 	
 	immediate = {
 		hidden_effect = {
-			th_incident_clr_terminate_flag = yes
 			th_resolve_incident = { incident = eternal_night_incident }
-			clr_global_flag = th_active_incident
-			clr_country_flag = th_EN_inci_about_to_get_final
-			if = {
-				limit = {
-					has_country_flag = hkr_inci_setup
-				}
-				th_incident_increase_good_outcome_counter = yes
-				set_country_flag = th_solved_en_inci
-			}
-			set_country_flag = th_solved_incident
 		}
 	}
 	
@@ -1888,8 +1648,10 @@ country_event = {
 	major = yes
 	
 	option = {		#Finally, it's over.
-		name = "th_incidents_eternalnight.12.a"
-		custom_tooltip = th_incidents_eternalnight.12.a.tt
+		name = "th_eternal_night_incident_events.12.a"
+		th_solve_incident = {
+			incident = eternal_night_incident
+		}
 		if = {
 			limit = {
 				OR = {
@@ -1928,8 +1690,8 @@ country_event = {
 
 #Eternal Night Incident - Good Outcome
 country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of full moon
-	id = th_incidents_eternalnight.13
-	title = "th_incidents_eternalnight.13.t"
+	id = th_eternal_night_incident_events.13
+	title = "th_eternal_night_incident_events.13.t"
 	desc = {
 		trigger = { 
 			OR = {
@@ -1939,11 +1701,11 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 				was_tag = MHG
 			}
 		}
-		desc = "th_incidents_eternalnight.13.desc.1"
+		desc = "th_eternal_night_incident_events.13.desc.1"
 	}
 	desc = {
 		trigger = { tag = FOM }
-		desc = "th_incidents_eternalnight.13.desc.2"
+		desc = "th_eternal_night_incident_events.13.desc.2"
 	}
 	desc = {
 		trigger = { 
@@ -1952,7 +1714,7 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 				tag = SCD
 			}
 		}
-		desc = "th_incidents_eternalnight.13.desc.3"
+		desc = "th_eternal_night_incident_events.13.desc.3"
 	}
 	desc = {
 		trigger = { 
@@ -1961,7 +1723,7 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 				was_tag = NET
 			}
 		}
-		desc = "th_incidents_eternalnight.13.desc.4"
+		desc = "th_eternal_night_incident_events.13.desc.4"
 	}
 	desc = {
 		trigger = { 
@@ -1974,37 +1736,29 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 			NOT = { tag = NET }
 			NOT = { tag = NMG }
 		}
-		desc = "th_incidents_eternalnight.13.desc.5"
+		desc = "th_eternal_night_incident_events.13.desc.5"
 	}
 	picture = THFEST_eventPicture
 	
 	trigger = {
-		has_global_flag = th_EN_inci_kaguya_encountered
-		has_global_flag = th_EN_incident_end
-		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
-		check_variable = {
-			which = th_EN_inci_goodbad_level
+		th_incident_check_point_result = {
 			value = 10
 		}
 		th_incident_is_investigator = yes
 		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
 		NOT = { th_incident_has_been_resolved = { incident = eternal_night_incident } }
-		has_country_flag = th_EN_inci_about_to_get_final
+		th_incident_current_stage = {
+			stage = 8
+		}
+		th_current_incident = {
+			incident = eternal_night_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
 	}
 	
 	immediate = {
 		hidden_effect = {
-			th_incident_clr_terminate_flag = yes
 			th_resolve_incident = { incident = eternal_night_incident }
-			clr_global_flag = th_active_incident
-			clr_country_flag = th_EN_inci_about_to_get_final
-			if = {
-				limit = {
-					has_country_flag = hkr_inci_setup
-				}
-				th_incident_increase_good_outcome_counter = yes
-			}
-			set_country_flag = th_solved_incident
 		}
 	}
 	
@@ -2014,8 +1768,11 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 	major = yes
 	
 	option = {		#Well, let`s go to the trial of guts. (meet Mokou)
-		name = "th_incidents_eternalnight.13.a"
-		custom_tooltip = th_incidents_eternalnight.13.a.tt
+		name = "th_eternal_night_incident_events.13.a"
+		custom_tooltip = th_eternal_night_incident_events.13.a.tt
+		th_solve_incident = {
+			incident = eternal_night_incident
+		}
 		highlight = yes
 		add_adm_power = -25
 		add_prestige = 35
@@ -2029,9 +1786,6 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 			add_country_modifier = {
 				name = "th_EN_inci_breaker_of_the_fake_moon"
 				duration = 9125
-			}
-			hidden_effect = {
-				set_country_flag = th_solved_en_inci
 			}
 		}
 		else_if = {
@@ -2064,15 +1818,17 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 		}
 		hidden_effect = {
 			country_event = {
-				id = th_incidents_eternalnight.8
+				id = th_eternal_night_incident_events.8
 				days = 90
 			}
 		}
 	}
 	
 	option = {		#Whoever there is, I`ll just stay here and enjoy the full moon.
-		name = "th_incidents_eternalnight.13.b"
-		custom_tooltip = th_incidents_eternalnight.13.b.tt
+		name = "th_eternal_night_incident_events.13.b"
+		th_solve_incident = {
+			incident = eternal_night_incident
+		}
 		if = {
 			limit = {
 				OR = {
@@ -2083,9 +1839,6 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 			add_country_modifier = {
 				name = "th_EN_inci_breaker_of_the_fake_moon"
 				duration = 9125
-			}
-			hidden_effect = {
-				set_country_flag = th_solved_en_inci
 			}
 		}
 		else_if = {
@@ -2124,17 +1877,20 @@ country_event = {	#Kaguya invited heroines to Eientei and enjoy the night of ful
 
 #Eternal Night Incident - EXTRA Outcome Good
 country_event = { #Kaguya and Mokou visit the shrine
-	id = th_incidents_eternalnight.14
-	title = "th_incidents_eternalnight.14.t"
-	desc = "th_incidents_eternalnight.14.desc"
+	id = th_eternal_night_incident_events.14
+	title = "th_eternal_night_incident_events.14.t"
+	desc = "th_eternal_night_incident_events.14.desc"
 	picture = THFEST_eventPicture
 	
 	is_triggered_only = yes	
 	major = yes
 	
 	option = {		#Don`t involve others when fighting, you guys!
-		name = "th_incidents_eternalnight.14.a"	
-		custom_tooltip = th_incidents_eternalnight.14.a.tt
+		name = "th_eternal_night_incident_events.14.a"	
+		custom_tooltip = th_eternal_night_incident_events.14.a.tt
+		th_solve_incident_extra = {
+			incident = eternal_night_incident
+		}
 		if = {
 			limit = {
 				OR = {
@@ -2145,9 +1901,6 @@ country_event = { #Kaguya and Mokou visit the shrine
 			add_country_modifier = {
 				name = "th_EN_inci_extra"
 				duration = 9125
-			}
-			hidden_effect = {
-				set_country_flag = th_solved_en_inci_extra
 			}
 		}
 		else_if = {
@@ -2194,11 +1947,12 @@ country_event = { #Kaguya and Mokou visit the shrine
 }
 
 
+
 #Eternal Night Incident - Random Fake Moon events - Reapply Fake Moon Debuff
 country_event = {
-	id = th_incidents_eternalnight.15
-	title = "th_incidents_eternalnight.15.t"
-	desc = "th_incidents_eternalnight.15.desc"
+	id = th_eternal_night_incident_events.15
+	title = "th_eternal_night_incident_events.15.t"
+	desc = "th_eternal_night_incident_events.15.desc"
 	picture = ETERNALNIGHT_eventPicture
 
 	hidden = yes
@@ -2209,7 +1963,7 @@ country_event = {
 		}
 		NOT = { tag = FUJ }
 		NOT = { tag = EIT }
-		has_global_flag = th_current_incident_eternal_night
+		th_current_incident = { incident = eternal_night_incident }
 		NOT = { has_country_modifier = th_EN_fake_moon_negative }
 	}
 	
@@ -2218,7 +1972,7 @@ country_event = {
 	}
 	
 	option = {
-		name = "th_incidents_eternalnight.15.a"
+		name = "th_eternal_night_incident_events.15.a"
 		add_country_modifier = {
 			name = "th_EN_fake_moon_negative"
 			duration = -1
@@ -2232,16 +1986,16 @@ country_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Remove Fake Moon debuff
 country_event = {
-	id = th_incidents_eternalnight.16
-	title = "th_incidents_eternalnight.16.t"
-	desc = "th_incidents_eternalnight.16.desc"
+	id = th_eternal_night_incident_events.16
+	title = "th_eternal_night_incident_events.16.t"
+	desc = "th_eternal_night_incident_events.16.desc"
 	picture = ETERNALNIGHT_eventPicture
 
 	hidden = yes
 	
 	trigger = {
 		has_country_modifier = th_EN_fake_moon_negative
-		NOT = { has_global_flag = th_current_incident_eternal_night }
+		NOT = { th_current_incident = { incident = eternal_night_incident } }
 	}
 	
 	mean_time_to_happen = {
@@ -2249,7 +2003,7 @@ country_event = {
 	}
 	
 	option = {
-		name = "th_incidents_eternalnight.16.a"
+		name = "th_eternal_night_incident_events.16.a"
 		remove_country_modifier = th_EN_fake_moon_negative
 		ai_chance = {
 			factor = 100
@@ -2259,9 +2013,9 @@ country_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Give Province an unrest Youkai debuff
 country_event = {
-	id = th_incidents_eternalnight.17
-	title = "th_incidents_eternalnight.17.t"
-	desc = "th_incidents_eternalnight.17.desc"
+	id = th_eternal_night_incident_events.17
+	title = "th_eternal_night_incident_events.17.t"
+	desc = "th_eternal_night_incident_events.17.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
@@ -2289,7 +2043,7 @@ country_event = {
 	}
 	
 	option = {
-		name = "th_incidents_eternalnight.17.a"
+		name = "th_eternal_night_incident_events.17.a"
 		random_province = {
 			limit = {
 				owned_by = ROOT
@@ -2326,9 +2080,9 @@ country_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Gets powerful protective buff
 country_event = {
-	id = th_incidents_eternalnight.18
-	title = "th_incidents_eternalnight.18.t"
-	desc = "th_incidents_eternalnight.18.desc"
+	id = th_eternal_night_incident_events.18
+	title = "th_eternal_night_incident_events.18.t"
+	desc = "th_eternal_night_incident_events.18.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
@@ -2339,7 +2093,7 @@ country_event = {
 			}
 			tag = EIT
 		}
-		has_global_flag = th_current_incident_eternal_night
+		th_current_incident = { incident = eternal_night_incident }
 	}
 	
 	fire_only_once = yes
@@ -2350,7 +2104,7 @@ country_event = {
 	}
 	
 	option = {		#Protect princess from any threat
-		name = "th_incidents_eternalnight.18.a"
+		name = "th_eternal_night_incident_events.18.a"
 		add_country_modifier = {
 			name = "th_EN_fake_moon_protection"
 			duration = 9125
@@ -2360,14 +2114,14 @@ country_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Kaguya demands her land back
 province_event = {
-	id = th_incidents_eternalnight.19
-	title = "th_incidents_eternalnight.19.t"
-	desc = "th_incidents_eternalnight.19.desc"
+	id = th_eternal_night_incident_events.19
+	title = "th_eternal_night_incident_events.19.t"
+	desc = "th_eternal_night_incident_events.19.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
 		owner = { ai = no }
-		has_global_flag = th_current_incident_eternal_night
+		th_current_incident = { incident = eternal_night_incident }
 		NOT = { has_province_flag = eientein_revolt }
 		NOT = { local_autonomy = 1 }
 		OR = {
@@ -2431,7 +2185,7 @@ province_event = {
 	}
 
 	option = {
-		name = "th_incidents_eternalnight.19.a"
+		name = "th_eternal_night_incident_events.19.a"
 		set_province_flag = eientein_revolt
 		spawn_rebels = {
 			type = nationalist_rebels
@@ -2444,7 +2198,7 @@ province_event = {
 		}
 	}
 	option = {
-		name = "th_incidents_eternalnight.19.b"
+		name = "th_eternal_night_incident_events.19.b"
 		cede_province = EIT
 		
 		ai_chance = { 
@@ -2455,13 +2209,13 @@ province_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Kaguya demands her independence back
 country_event = {
-	id = th_incidents_eternalnight.20
-	title = "th_incidents_eternalnight.20.t"
-	desc = "th_incidents_eternalnight.20.desc"
+	id = th_eternal_night_incident_events.20
+	title = "th_eternal_night_incident_events.20.t"
+	desc = "th_eternal_night_incident_events.20.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_current_incident_eternal_night
+		th_current_incident = { incident = eternal_night_incident }
 		overlord_of = EIT
 		EIT = {
 			NOT = { has_country_modifier = th_EN_demands_independence }
@@ -2473,7 +2227,7 @@ country_event = {
 	}
 	
 	option = {		#Nah
-		name = "th_incidents_eternalnight.20.a"
+		name = "th_eternal_night_incident_events.20.a"
 		EIT = {
 			add_country_modifier = {
 				name = "th_EN_demands_independence"
@@ -2487,7 +2241,7 @@ country_event = {
 	}
 	
 	option = {		#The vampire is the stress not worth.
-		name = "th_incidents_eternalnight.20.b"
+		name = "th_eternal_night_incident_events.20.b"
 		EIT = {
 			grant_independence = yes 
 		}
@@ -2500,9 +2254,9 @@ country_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Feral Youkais rise up!
 province_event = {
-	id = th_incidents_eternalnight.21
-	title = "th_incidents_eternalnight.21.t"
-	desc = "th_incidents_eternalnight.21.desc"
+	id = th_eternal_night_incident_events.21
+	title = "th_eternal_night_incident_events.21.t"
+	desc = "th_eternal_night_incident_events.21.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
@@ -2537,7 +2291,7 @@ province_event = {
 	}
 	
 	option = {
-		name = "th_incidents_eternalnight.21.a"
+		name = "th_eternal_night_incident_events.21.a"
 
 		add_devastation = 10
 		
@@ -2561,14 +2315,14 @@ province_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Fight own Youkais
 province_event = {
-	id = th_incidents_eternalnight.24
-	title = "th_incidents_eternalnight.24.t"
-	desc = "th_incidents_eternalnight.24.desc"
+	id = th_eternal_night_incident_events.24
+	title = "th_eternal_night_incident_events.24.t"
+	desc = "th_eternal_night_incident_events.24.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
 		has_province_modifier = th_EN_unrested_youkais
-		has_global_flag = th_current_incident_eternal_night
+		th_current_incident = { incident = eternal_night_incident }
 		superregion = gensokyo_superregion
 	}
 	
@@ -2579,7 +2333,7 @@ province_event = {
 	is_mtth_scaled_to_size = 1
 	
 	option = {		#Send the shrine maiden
-		name = "th_incidents_eternalnight.24.a"
+		name = "th_eternal_night_incident_events.24.a"
 		owner = {
 			add_mil_power = -50
 		}
@@ -2604,7 +2358,7 @@ province_event = {
 	}
 	
 	option = {		#Clean the province up!
-		name = "th_incidents_eternalnight.24.b"
+		name = "th_eternal_night_incident_events.24.b"
 		
 		random_list = {
 			60 = {
@@ -2630,13 +2384,13 @@ province_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Fight other youkais
 country_event = {
-	id = th_incidents_eternalnight.25
-	title = "th_incidents_eternalnight.25.t"
-	desc = "th_incidents_eternalnight.25.desc"
+	id = th_eternal_night_incident_events.25
+	title = "th_eternal_night_incident_events.25.t"
+	desc = "th_eternal_night_incident_events.25.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
-		has_global_flag = th_current_incident_eternal_night
+		th_current_incident = { incident = eternal_night_incident }
 		OR = {
 			tag = HKR
 			tag = MRY
@@ -2721,7 +2475,7 @@ country_event = {
 	}
 	
 	option = {		#Put more resources into the cleaning
-		name = "th_incidents_eternalnight.25.a"
+		name = "th_eternal_night_incident_events.25.a"
 		add_years_of_income = -0.2
 		add_mil_power = 25
 		random_known_country = {
@@ -2761,7 +2515,7 @@ country_event = {
 			limit = {
 				th_incident_is_investigator = yes
 			}
-			custom_tooltip = th_incidents_eternalnight.25.a.tt
+			custom_tooltip = th_eternal_night_incident_events.25.a.tt
 			th_incident_change_points = {
 				value = 1
 			}
@@ -2777,8 +2531,8 @@ country_event = {
 	}
 	
 	option = {		#The normal mikos will clean it up
-		name = "th_incidents_eternalnight.25.b"
-		custom_tooltip = th_incidents_eternalnight.25.b.tt
+		name = "th_eternal_night_incident_events.25.b"
+		custom_tooltip = th_eternal_night_incident_events.25.b.tt
 		add_mil_power = 10
 		random_known_country = {
 			limit = {
@@ -2809,13 +2563,15 @@ country_event = {
 
 #Eternal Night Incident - Random Fake Moon events - Lengthening the night!
 country_event = {
-	id = th_incidents_eternalnight.28
-	title = "th_incidents_eternalnight.28.t"
-	desc = "th_incidents_eternalnight.28.desc"
+	id = th_eternal_night_incident_events.28
+	title = "th_eternal_night_incident_events.28.t"
+	desc = "th_eternal_night_incident_events.28.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_EN_inci_keine_encountered
+		th_incident_has_reached_stage = {
+			stage = 4
+		}
 		th_incident_is_investigator = yes
 		NOT = { has_global_flag = th_EN_inci_lengthened_night }
 	}
@@ -2831,9 +2587,8 @@ country_event = {
 	}
 	
 	option = {		#Well... we must lengthen the night in this case!
-		name = "th_incidents_eternalnight.28.a"
-		
-		custom_tooltip = th_incidents_eternalnight.28.a.tt
+		name = "th_eternal_night_incident_events.28.a"		
+		custom_tooltip = th_eternal_night_incident_events.28.a.tt
 		
 		ai_chance = { 
 			factor = 100
@@ -2843,9 +2598,9 @@ country_event = {
 
 #Eternal Night Incident - Province cleans itself
 province_event = {
-	id = th_incidents_eternalnight.260
-	title = "th_incidents_eternalnight.260.t"
-	desc = "th_incidents_eternalnight.260.desc"
+	id = th_eternal_night_incident_events.260
+	title = "th_eternal_night_incident_events.260.t"
+	desc = "th_eternal_night_incident_events.260.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
@@ -2861,7 +2616,7 @@ province_event = {
 					}
 				}
 			}
-			NOT = { has_global_flag = th_current_incident_eternal_night }
+			NOT = { th_current_incident = { incident = eternal_night_incident } }
 		}
 	}
 	
@@ -2872,7 +2627,7 @@ province_event = {
 	hidden = yes
 	
 	option = {
-		name = "th_incidents_eternalnight.260.a"
+		name = "th_eternal_night_incident_events.260.a"
 		remove_province_modifier = th_EN_unrested_youkais
 		
 		ai_chance = { 
@@ -2883,9 +2638,9 @@ province_event = {
 
 #Eternal Night Incident - Dummy Flag Cleaner
 province_event = {
-	id = th_incidents_eternalnight.270
-	title = "th_incidents_eternalnight.270.t"
-	desc = "th_incidents_eternalnight.270.desc"
+	id = th_eternal_night_incident_events.270
+	title = "th_eternal_night_incident_events.270.t"
+	desc = "th_eternal_night_incident_events.270.desc"
 	picture = SHRINE_eventPicture
 	
 	trigger = {
@@ -2902,7 +2657,7 @@ province_event = {
 	hidden = yes
 	
 	option = {
-		name = "th_incidents_eternalnight.270.a"
+		name = "th_eternal_night_incident_events.270.a"
 		clr_province_flag = th_first_clean_dummy
 		clr_province_flag = th_second_clean_dummy
 		
@@ -2913,15 +2668,16 @@ province_event = {
 }
 
 
+
 #Eternal Night Incident - Forbid EIT, FUJ, HMC and LCU to become investigators
 country_event = {
-	id = th_incidents_eternalnight.271
-	title = th_incidents_eternalnight.271.t
-	desc = th_incidents_eternalnight.271.desc
+	id = th_eternal_night_incident_events.271
+	title = th_eternal_night_incident_events.271.t
+	desc = th_eternal_night_incident_events.271.desc
 	picture = ETERNALNIGHT_eventPicture
 
 	trigger = {
-		has_global_flag = th_current_incident_eternal_night
+		th_current_incident = { incident = eternal_night_incident }
 		OR = {
 			tag = EIT
 			tag = FUJ
@@ -2942,7 +2698,7 @@ country_event = {
 	hidden = yes
 
 	option = {
-		name = th_incidents_eternalnight.271.a
+		name = th_eternal_night_incident_events.271.a
 		hidden_effect = {
 			set_country_flag = th_is_not_valid_for_investiagtor_role
 		}
@@ -2955,13 +2711,13 @@ country_event = {
 
 #Eternal Night Incident - Special Case: nobody can become investigator & Gensokyo united by FUJ/EIT
 country_event = {
-	id = th_incidents_eternalnight.26
-	title = "th_incidents_eternalnight.26.t"
-	desc = "th_incidents_eternalnight.26.desc"
+	id = th_eternal_night_incident_events.26
+	title = "th_eternal_night_incident_events.26.t"
+	desc = "th_eternal_night_incident_events.26.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_current_incident_eternal_night		
+		th_current_incident = { incident = eternal_night_incident }		
 		gensokyo_superregion = {
 			OR = {
 				owned_by = EIT
@@ -2989,20 +2745,18 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_incident_clr_terminate_flag = yes
 			th_resolve_incident = { incident = eternal_night_incident }
-			clr_global_flag = th_active_incident
 		}
 	}
 	
 	major = yes
 	
 	option = {		#Well, we don`t need to hide anymore. We are strong enough to strike the moon
-		name = "th_incidents_eternalnight.26.a"
+		name = "th_eternal_night_incident_events.26.a"
 		trigger = {
 			tag = EIT
 		}
-		custom_tooltip = th_incidents_eternalnight.26.a.tt					
+		custom_tooltip = th_eternal_night_incident_events.26.a.tt					
 		add_country_modifier = {
 			name = "th_EN_too_powerful_for_fake_moon"
 			duration = 9125
@@ -3010,11 +2764,11 @@ country_event = {
 	}
 	
 	option = {		#Stop this boring game, Kaguya. I`ll play with you instead
-		name = "th_incidents_eternalnight.26.b"
+		name = "th_eternal_night_incident_events.26.b"
 		trigger = {
 			tag = FUJ
 		}
-		custom_tooltip = th_incidents_eternalnight.26.b.tt	
+		custom_tooltip = th_eternal_night_incident_events.26.b.tt	
 		add_country_modifier = {
 			name = "th_EN_too_powerful_for_fake_moon"
 			duration = 9125
@@ -3024,13 +2778,13 @@ country_event = {
 
 #Eternal Night Incident - Special Case: nobody can become investigator & Gensokyo not united by FUJ/EIT
 country_event = {
-	id = th_incidents_eternalnight.27
-	title = "th_incidents_eternalnight.27.t"
-	desc = "th_incidents_eternalnight.27.desc"
+	id = th_eternal_night_incident_events.27
+	title = "th_eternal_night_incident_events.27.t"
+	desc = "th_eternal_night_incident_events.27.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
-		has_global_flag = th_current_incident_eternal_night
+		th_current_incident = { incident = eternal_night_incident }
 		any_province = {
 			superregion = gensokyo_superregion
 			NOT = { owned_by = EIT }
@@ -3053,23 +2807,21 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			th_incident_clr_terminate_flag = yes
 			th_resolve_incident = { incident = eternal_night_incident }
-			clr_global_flag = th_active_incident
 		}
 	}
 	
 	major = yes
 	
 	option = {		#We must protect our princess forever
-		name = "th_incidents_eternalnight.27.a"
+		name = "th_eternal_night_incident_events.27.a"
 		trigger = {
 			OR = {
 				tag = EIT
 				was_tag = EIT
 			}
 		}
-		custom_tooltip = th_incidents_eternalnight.27.a.tt					
+		custom_tooltip = th_eternal_night_incident_events.27.a.tt					
 		add_country_modifier = {
 			name = "th_EN_protection_from_the_lunarian"
 			duration = 3650
@@ -3091,14 +2843,14 @@ country_event = {
 		}
 	}
 	option = {		#Stop this boring game, Kaguya. I`ll play with you instead
-		name = "th_incidents_eternalnight.27.b"
+		name = "th_eternal_night_incident_events.27.b"
 		trigger = {
 			OR = {
 				tag = FUJ
 				was_tag = FUJ
 			}
 		}
-		custom_tooltip = th_incidents_eternalnight.27.b.tt	
+		custom_tooltip = th_eternal_night_incident_events.27.b.tt	
 		add_country_modifier = {
 			name = "th_EN_protection_from_the_lunarian"
 			duration = 3650
@@ -3120,14 +2872,14 @@ country_event = {
 		}
 	}
 	option = {		#Nobody is investigating. We can only pray for real moon`s back
-		name = "th_incidents_eternalnight.27.c"
+		name = "th_eternal_night_incident_events.27.c"
 		trigger = {
 			NOT = { tag = FUJ }
 			NOT = { tag = EIT }
 			NOT = { was_tag = EIT }
 			NOT = { was_tag = FUJ }
 		}
-		custom_tooltip = th_incidents_eternalnight.27.c.tt
+		custom_tooltip = th_eternal_night_incident_events.27.c.tt
 		hidden_effect = {
 			every_country = {
 				limit = {
@@ -3149,13 +2901,13 @@ country_event = {
 
 #Eternal Night Incident - Clean all the rebels up
 country_event = {
-	id = th_incidents_eternalnight.29
-	title = "th_incidents_eternalnight.29.t"
-	desc = "th_incidents_eternalnight.29.desc"
+	id = th_eternal_night_incident_events.29
+	title = "th_eternal_night_incident_events.29.t"
+	desc = "th_eternal_night_incident_events.29.desc"
 	picture = ETERNALNIGHT_eventPicture
 	
 	trigger = {
-		NOT = { has_global_flag = th_current_incident_eternal_night }
+		NOT = { th_current_incident = { incident = eternal_night_incident } }
 		th_incident_has_been_resolved = { incident = eternal_night_incident }
 		capital_scope = {
 			th_gensokyo_or_moon_continent = yes
@@ -3170,7 +2922,7 @@ country_event = {
 	fire_only_once = yes
 	
 	option = {
-		name = "th_incidents_eternalnight.29.a"
+		name = "th_eternal_night_incident_events.29.a"
 		
 		every_country = {
 			limit = {
@@ -3190,26 +2942,24 @@ country_event = {
 ############################TERMINATION############################
 #Eternal Night Incident - Bad outcome because of lost or draw with Eirin
 country_event = {
-	id = th_incidents_eternalnight.100
-	title = "th_incidents_eternalnight.9.t"
-	desc = "th_incidents_eternalnight.9.desc"
+	id = th_eternal_night_incident_events.100
+	title = "th_eternal_night_incident_events.9.t"
+	desc = "th_eternal_night_incident_events.9.desc"
 	picture = ETERNALNIGHT_eventPicture
 
 	is_triggered_only = yes
 
 	immediate = {
 		hidden_effect = {
-			th_incident_clr_terminate_flag = yes
 			th_resolve_incident = { incident = eternal_night_incident }
-			clr_global_flag = th_active_incident
 		}
 	}
 	
 	major = yes
 
 	option = {		#Well, I've done what I could.
-		name = "th_incidents_eternalnight.9.a"
-		custom_tooltip = th_incidents_eternalnight.9.a.tt
+		name = "th_eternal_night_incident_events.9.a"
+		custom_tooltip = th_eternal_night_incident_events.9.a.tt
 		if = {
 			limit = {
 				exists = EIT
