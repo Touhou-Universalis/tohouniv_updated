@@ -2448,3 +2448,82 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 		}
 	}
 }
+
+#Scarlet Mist Incident - DEBUG - Start Incident
+country_event = {
+	id = th_scarlet_mists_incident_events.1000
+	title = none
+	desc = none
+	picture = SCARLETMIST_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		th_incident_forbid_country_to_investigate = { who = SCR }
+		th_incident_forbid_country_to_investigate = { who = SCD }
+		th_incident_forbid_country_to_investigate = { who = CIN }
+		th_incident_forbid_country_to_investigate = { who = FLR }
+		th_incident_forbid_country_to_investigate = { who = HNG }
+		th_start_incident_effect = {
+			incident = scarlet_mists_incident
+		}
+		gensokyo_superregion = {
+			limit = {
+				owner = {
+					NOT = { tag = SCR }
+					NOT = { tag = SCD }
+					NOT = { was_tag = SCR }
+					NOT = { was_tag = SCD }
+					NOT = { is_subject_of = SCR }
+					NOT = { is_subject_of = SCD }
+				}
+				any_neighbor_province = {
+					OR = {
+						owned_by = SCR
+						owned_by = SCD
+					}
+				}
+				NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
+			}
+			add_province_modifier = { 
+				name = th_plagued_by_the_scarlet_mist
+				duration = -1  
+				desc = th_incident_duration_tt
+			}
+		}
+		random_province = {
+			limit = {
+				superregion = gensokyo_superregion
+				owner = {
+					NOT = { tag = SCR }
+					NOT = { tag = SCD }
+					NOT = { was_tag = SCR }
+					NOT = { was_tag = SCD }
+					NOT = { is_subject_of = SCR }
+					NOT = { is_subject_of = SCD }
+				}
+				NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
+			}
+			add_province_modifier = { 
+				name = th_plagued_by_the_scarlet_mist
+				duration = -1  
+				desc = th_incident_duration_tt
+			}
+		}
+	}
+
+	option = {		#Check any possible investigator country
+		random_country = {
+			limit = { 
+				th_incident_can_become_investigator = yes
+			}
+			th_incident_setup_investigator = yes
+			th_incident_introduction_event = {
+				id = th_scarlet_mists_incident_events.1
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
