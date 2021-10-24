@@ -1,0 +1,2363 @@
+########################################
+# Incident Events
+########################################
+
+namespace = th_subterranean_animism_incident_events
+#incident = subterranean_animism_incident
+
+#Subterranean Animism Incident - Set up the incident
+country_event = {
+	id = th_subterranean_animism_incident_events.0
+	title = "th_subterranean_animism_incident_events.0.t"
+	desc = none
+	picture = UNDERGROUND_eventPicture
+
+	trigger = {
+		th_incident_check_year_for_incident = { incident = subterranean_animism_incident year = 1550 }
+		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
+		th_incident_can_trigger_generic_check = yes
+	}
+	
+	fire_only_once = yes
+	hidden = yes	
+	
+	mean_time_to_happen = {
+		months = 12
+
+		modifier = {
+			factor = 0.8
+			OR = {
+				exists = CRD
+				AND = {
+					exists = SCD
+					SCD = { has_country_flag = crd_formed_scd }
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			exists = MRY
+		}
+	}
+
+	immediate = {
+		th_incident_forbid_country_to_investigate = { who = CRD }
+		th_incident_forbid_country_to_investigate = { who = ONI }
+		th_incident_forbid_country_to_investigate = { who = ORN }
+		th_incident_forbid_country_to_investigate = { who = OKU }
+		th_incident_forbid_country_to_investigate = { who = KMJ }
+		th_incident_forbid_country_to_investigate = { who = MRY }
+		th_start_incident_effect = {
+			incident = subterranean_animism_incident
+		}
+		gensokyo_superregion = {
+			limit = {
+				NOT = { region = former_hell_region }
+				NOT = { region = hell_region }
+				owner = {
+					NOT = { tag = CRD }
+					NOT = { tag = SCD }
+					NOT = { was_tag = CRD }
+					NOT = { was_tag = SCD }
+					NOT = { is_subject_of = CRD }
+					NOT = { is_subject_of = SCD }
+				}
+				any_neighbor_province = {
+					OR = {
+						region = former_hell_region
+						region = hell_region
+					}
+				}
+				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+			}
+			random_list = {
+				90 = {
+					add_province_modifier = {
+						name = th_SA_wandering_vengeful_spirits
+						duration = -1
+						desc = th_incident_duration_tt
+					}
+				}
+				10 = {
+					add_province_modifier = {
+						name = th_SA_wandering_helpful_spirits
+						duration = -1
+						desc = th_incident_duration_tt
+					}
+				}
+			}
+		}
+		random_province = {
+			limit = {
+				continent = gensokyo_continent
+				NOT = { region = former_hell_region }
+				NOT = { region = hell_region }
+				owner = {
+					NOT = { tag = CRD }
+					NOT = { tag = SCD }
+					NOT = { was_tag = CRD }
+					NOT = { was_tag = SCD }
+					NOT = { is_subject_of = CRD }
+					NOT = { is_subject_of = SCD }
+				}
+				any_neighbor_province = {
+					OR = {
+						region = former_hell_region
+						region = hell_region
+					}
+					NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+					NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+				}
+				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+			}
+			add_province_modifier = {
+				name = th_SA_wandering_helpful_spirits
+				duration = -1
+				desc = th_incident_duration_tt
+			}
+		}
+	}
+
+	option = {		#Check any possible investigator country
+		random_country = {
+			limit = { 
+				th_incident_can_become_investigator = yes
+			}
+			th_incident_setup_investigator = yes
+			th_incident_introduction_event = {
+				id = th_subterranean_animism_incident_events.1
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Subterranean Animism Incident - Introduction of incident
+country_event = {
+	id = th_subterranean_animism_incident_events.1
+	title = "th_subterranean_animism_incident_events.1.t"
+	desc = {
+		trigger = {
+			OR = {
+				tag = CRD
+				was_tag = CRD
+				tag = SCD
+				was_tag = SCD
+			}
+		}
+		desc = "th_subterranean_animism_incident_events.1.desc.1"
+	}
+	desc = {
+		trigger = { 
+			NOT = { tag = CRD }
+			NOT = {	was_tag = CRD }
+			NOT = { tag = SCD }
+			NOT = {	was_tag = SCD }
+		}
+		desc = "th_subterranean_animism_incident_events.1.desc.2"
+	}
+	desc = {
+		trigger = { 
+			OR = {
+				tag = MRY
+				was_tag = MRY
+			}
+		}
+		desc = "th_subterranean_animism_incident_events.1.desc.3"
+	}
+	picture = UNDERGROUND_eventPicture
+
+	is_triggered_only = yes	
+
+	option = {		#These Hot Springs need investigations
+		name = "th_subterranean_animism_incident_events.1.a"
+		trigger = {
+			th_incident_is_investigator = yes
+		}
+		highlight = yes	
+		th_investigate_incident = {
+			incident = subterranean_animism_incident
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = {		#These Hot Springs need investigations
+		name = "th_subterranean_animism_incident_events.1.b"
+		trigger = {
+			th_incident_is_investigator = yes
+			th_is_not_major_main_character = yes
+			th_is_not_minor_main_character = yes
+			any_known_country = {	#must have another eligible investigator country
+				th_incident_can_become_investigator = yes
+			}
+		}
+		th_start_incident_tooltip = { incident = subterranean_animism_incident }
+		th_refuse_investigating_incident = yes
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {		#I shall be the first investigator!For main character player who was not chosen the first investigator
+		name = "th_subterranean_animism_incident_events.1.c"
+		trigger = {
+			th_incident_is_not_investigator = yes
+			OR = {
+				tag = HKR
+				tag = FOM
+				AND = {
+					th_incident_is_biasedly_picked_investigator = yes
+					ai = no
+				}
+			}
+			th_incident_can_become_investigator = yes
+		}
+		highlight = yes
+		th_investigate_incident = {
+			incident = subterranean_animism_incident
+		}
+		hidden_effect = {
+			th_incident_clr_previous_investigators = yes
+			th_incident_set_country_to_new_investigator = yes
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {		#Well, let it be.
+		name = "th_subterranean_animism_incident_events.1.d"	
+		trigger = {
+			th_incident_is_not_investigator = yes
+			NOT = { tag = CRD }
+			NOT = { tag = SCD }
+			NOT = { was_tag = CRD }
+			NOT = { was_tag = SCD }
+		}	
+		th_start_incident_tooltip = { incident = subterranean_animism_incident }
+
+		ai_chance = {
+			factor = 100
+		}	
+	}
+
+	option = {		#Let the games begin!
+		name = "th_subterranean_animism_incident_events.1.e"
+		trigger = {
+			OR = {
+				tag = CRD
+				was_tag = CRD
+				tag = SCD
+				was_tag = SCD
+			}
+		}	
+		th_start_incident_tooltip = { incident = subterranean_animism_incident }
+		highlight = yes	
+		add_army_tradition = 15
+		add_navy_tradition = 15
+		add_treasury = 200
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	option = {		#Let the games begin!
+		name = "th_subterranean_animism_incident_events.1.f"
+		trigger = {
+			OR = {
+				tag = MRY
+				was_tag = MRY
+			}
+		}	
+		th_start_incident_tooltip = { incident = subterranean_animism_incident }
+		highlight = yes	
+		if = {
+			limit = { mry_uses_faith_power = yes }
+			mry_add_base_faith_power = {
+				value = 50
+			}
+		}
+		else = {
+			add_adm_power = 50
+		}
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+
+
+#Subterranean Animism Incident - Yamane Encounter
+country_event = {
+	id = th_subterranean_animism_incident_events.2
+	title = "th_subterranean_animism_incident_events.2.t"
+	desc = "th_subterranean_animism_incident_events.2.desc"
+	picture = YAMANE_eventPicture
+	
+	trigger = {
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_incident_is_investigator = yes
+		th_incident_current_stage = {
+			stage = 1
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			th_prepare_for_next_stage = yes
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = incident
+			}
+			#Rumias Base Fighting Skills
+			set_variable = {
+				which = th_SA_inci_yamane_combat_skills
+				value = 1000
+			}
+			th_defineopponent_fighting_skill = {
+				variable = th_SA_inci_yamane_combat_skills
+				type = incident
+			}
+		}
+	}
+	
+	option = {		#I hate spiders
+		name = "th_subterranean_animism_incident_events.2.a"
+		custom_tooltip = th_subterranean_animism_incident_events.2.a.tt
+		highlight = yes
+		th_danmaku_incident_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 40 
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = {
+					type = incident
+				}
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
+			}
+		}
+	}
+	
+	option = {		#Step aside spider
+		name = "th_subterranean_animism_incident_events.2.b"
+		trigger = {
+			th_is_or_was_tag = { tag = MHG }
+		}
+		custom_tooltip = th_subterranean_animism_incident_events.2.b.tt
+		add_mil_power = 75
+		th_incident_change_points = {
+			value = 2
+		}	
+		
+		ai_chance = { 
+			factor = 100 
+		}
+	}
+	
+	option = {		#You know, Eirin could use your poison...
+		name = "th_subterranean_animism_incident_events.2.c"
+		trigger = {
+			th_is_or_was_tag = { tag = EIT }
+		}
+		custom_tooltip = th_subterranean_animism_incident_events.2.c.tt
+		add_mil_power = 75
+		th_incident_change_points = {
+			value = 2
+		}	
+		
+		ai_chance = { 
+			factor = 100 
+		}
+	}
+}
+
+#Subterranean Animism Incident - Parsee Encounter
+country_event = {
+	id = th_subterranean_animism_incident_events.3
+	title = "th_subterranean_animism_incident_events.3.t"
+	desc = "th_subterranean_animism_incident_events.3.desc"
+	picture = PARSEE_eventPicture
+	
+	trigger = {
+		th_incident_current_stage = {
+			stage = 2
+		}
+		th_incident_is_investigator = yes
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			th_prepare_for_next_stage = yes
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = incident
+			}
+			#Parsee's Base Fighting Skills
+			set_variable = {
+				which = th_SA_inci_parsee_combat_skills
+				value = 1050
+			}
+			th_defineopponent_fighting_skill = {
+				type = incident
+				variable = th_SA_inci_parsee_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#Another target. Great, I'll got bored on this lake.
+		name = "th_subterranean_animism_incident_events.3.a"
+		custom_tooltip = th_subterranean_animism_incident_events.3.a.tt
+		highlight = yes
+		th_danmaku_incident_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 40 
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = {
+					type = incident
+				}
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
+			}
+		}
+	}
+	
+	option = {		#Trust me, you don't have any reason to be jealous of me...
+		name = "th_subterranean_animism_incident_events.3.b"
+		trigger = {
+			OR = {
+				has_any_disaster = yes
+				NOT = { stability = -2 }
+			}
+		}
+		custom_tooltip = th_subterranean_animism_incident_events.3.b.tt
+		add_stability = 1
+		th_incident_change_points = {
+			value = 1
+		}
+		
+		ai_chance = { 
+			factor = 15
+		}
+	}
+}
+
+#Subterranean Animism Incident - Yuugi Encounter
+country_event = {
+	id = th_subterranean_animism_incident_events.4
+	title = "th_subterranean_animism_incident_events.4.t"
+	desc = "th_subterranean_animism_incident_events.4.desc"
+	picture = YUUGI_eventPicture
+	
+	trigger = {
+		th_incident_current_stage = {
+			stage = 3
+		}
+		th_incident_is_investigator = yes
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			th_prepare_for_next_stage = yes
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = incident
+			}
+			#Yuugi's Base Fighting Skills
+			set_variable = {
+				which = th_SA_inci_yuugis_combat_skills
+				value = 1175
+			}
+			th_defineopponent_fighting_skill = {
+				type = incident
+				variable = th_SA_inci_yuugis_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#Oooh, an oni. This will be fun!
+		name = "th_subterranean_animism_incident_events.4.a"
+		custom_tooltip = th_subterranean_animism_incident_events.4.a.tt
+		highlight = yes
+		th_danmaku_incident_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 75 
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = {
+					type = incident
+				}
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
+			}
+		}
+	}
+	
+	option = {		#Let's drink, Yuugi!
+		name = "th_subterranean_animism_incident_events.4.b"
+		custom_tooltip = th_subterranean_animism_incident_events.4.b.tt
+		trigger = {
+			OR = {
+				has_ruler_flag = HKR_suika_in_charge
+				has_reform = Gensokyan_oni_brawling_kingdom
+				has_country_flag = hkr_met_suika
+			}
+		}
+		add_prestige = 25
+		th_incident_change_points = {
+			value = 3
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {		#Step aside, oni!
+		name = "th_subterranean_animism_incident_events.4.c"
+		custom_tooltip = th_subterranean_animism_incident_events.4.c.tt
+		trigger = {
+			OR = {
+				th_is_or_was_tag = { tag = TGU }
+				th_is_or_was_tag = { tag = KPP }
+			}
+		}
+		add_prestige = 25
+		th_incident_change_points = {
+			value = 2
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {		#I could sneak past her
+		name = "th_subterranean_animism_incident_events.4.e"
+		custom_tooltip = th_subterranean_animism_incident_events.4.e.tt
+		add_adm_power = 25
+		add_prestige = -25
+		th_incident_change_points = {
+			value = -2
+		}
+		
+		ai_chance = { 
+			factor = 25
+			modifier = {
+				factor = 0
+				th_winnable_fight_trigger = {
+					type = incident
+				}
+			}
+			modifier = {
+				factor = 100
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
+			}
+		}
+	}
+}
+
+#Subterranean Animism Incident - Satori Encounter
+country_event = {
+	id = th_subterranean_animism_incident_events.5
+	title = "th_subterranean_animism_incident_events.5.t"
+	desc = {
+		trigger = { 
+			NOT = { th_is_or_was_tag = { tag = SCR } }
+		}
+		desc = "th_subterranean_animism_incident_events.5.desc.1"
+	}
+	desc = {
+		trigger = { 
+			th_is_or_was_tag = { tag = SCR }
+		}
+		desc = "th_subterranean_animism_incident_events.5.desc.2"
+	}
+	picture = SATORIBOSS_eventPicture
+	
+	trigger = {
+		th_incident_current_stage = {
+			stage = 4
+		}
+		th_incident_is_investigator = yes
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			th_prepare_for_next_stage = yes
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = incident
+			}
+			if = {
+				limit = { th_is_or_was_tag = { tag = SCR } }
+				th_getruler_diplomatic_skill = {
+					skill_boni = 600
+				}
+				country_event = {
+					id = th_danmaku_event.20
+				}
+			}
+			#Satori's Base Fighting Skills
+			set_variable = {
+				which = th_SA_inci_satoris_combat_skills
+				value = 1350
+			}
+			if = {
+				limit = {
+					th_is_or_was_tag = { tag = SCR }
+				}
+				th_defineopponent_fighting_skill = {
+					type = diplomatic
+					variable = th_SA_inci_satoris_combat_skills
+				}
+			}
+			else = {
+				th_defineopponent_fighting_skill = {
+					type = incident
+					variable = th_SA_inci_satoris_combat_skills
+				}
+			}
+		}
+	}
+	
+	option = {		#Go away you mindreader pest!
+		name = "th_subterranean_animism_incident_events.5.a"
+		custom_tooltip = th_subterranean_animism_incident_events.5.a.tt
+		trigger = {
+			NOT = { th_is_or_was_tag = { tag = SCR } }
+		}
+		highlight = yes
+		th_danmaku_incident_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 75 
+			modifier = {
+				factor = 100
+				th_winnable_fight_trigger = {
+					type = incident
+				}
+			}
+			modifier = {
+				factor = 0
+				th_unwinnable_fight_trigger = {
+					type = incident
+				}
+			}
+		}
+	}
+	
+	option = {		#Satori! Let me pass! ... please.
+		name = "th_subterranean_animism_incident_events.5.b"
+		custom_tooltip = th_subterranean_animism_incident_events.5.b.tt
+		trigger = {
+			th_is_or_was_tag = { tag = SCR }
+		}
+		highlight = yes
+		th_danmaku_diplo_fight_ruler_and_opponent = {
+			win_event = th_danmaku_event.0
+			draw_event = th_danmaku_event.0
+			defeat_event = th_danmaku_event.0
+			days = 1
+		}
+		add_army_tradition = 40
+		add_army_professionalism = 0.05
+		add_mil_power = 200
+		th_incident_change_points = {
+			value = 3
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {		#I am here for business Satori. Please let me pass
+		name = "th_subterranean_animism_incident_events.5.c"
+		custom_tooltip = th_subterranean_animism_incident_events.5.c.tt
+		trigger = {
+			th_is_or_was_tag = { tag = HIG }
+		}		
+		th_incident_change_points = {
+			value = 3
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Subterranean Animism Incident - Orin Encounter
+country_event = {
+	id = th_subterranean_animism_incident_events.6
+	title = "th_subterranean_animism_incident_events.6.t"
+	desc = "th_subterranean_animism_incident_events.6.desc"
+	picture = ORIN_eventPicture
+	
+	trigger = {
+		th_incident_current_stage = {
+			stage = 5
+		}
+		th_incident_is_investigator = yes
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	immediate = {
+		hidden_effect = {
+			th_prepare_for_next_stage = yes
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = incident
+			}
+			#Chen's Base Fighting Skills
+			set_variable = {
+				which = th_SA_inci_chens_combat_skills
+				value = 1550
+			}
+			th_defineopponent_fighting_skill = {
+				type = incident
+				variable = th_SA_inci_chens_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#Damnit cat!
+		name = "th_subterranean_animism_incident_events.6.a"
+		custom_tooltip = th_subterranean_animism_incident_events.6.a.tt
+		highlight = yes
+		th_danmaku_incident_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Subterranean Animism Incident - Okuu Encounter
+country_event = {
+	id = th_subterranean_animism_incident_events.7
+	title = "th_subterranean_animism_incident_events.7.t"
+	desc = "th_subterranean_animism_incident_events.7.desc"
+	picture = OKUU_eventPicture
+	
+	trigger = {
+		th_incident_current_stage = {
+			stage = 6
+		}
+		th_incident_is_investigator = yes
+		th_enough_time_for_next_stage_has_passed = {
+			days = 1095
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			th_prepare_for_next_stage = yes
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = incident
+			}
+			#Okuu's Base Fighting Skills
+			set_variable = {
+				which = th_SA_inci_okuus_combat_skills
+				value = 1700
+			}
+			th_defineopponent_fighting_skill = {
+				type = incident
+				variable = th_SA_inci_okuus_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#I will have to defeat her myself
+		name = "th_subterranean_animism_incident_events.7.a"
+		custom_tooltip = th_subterranean_animism_incident_events.7.a.tt
+		highlight = yes
+		th_danmaku_incident_fight_ruler_and_opponent = yes
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Subterranean Animism Incident EXTRA - Koishi Encounter
+country_event = {
+	id = th_subterranean_animism_incident_events.8
+	title = "th_subterranean_animism_incident_events.8.t"
+	desc = "th_subterranean_animism_incident_events.8.desc"
+	picture = KOISHIBOSS_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_prepare_for_next_stage = yes
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = incident
+			}
+			#Koishi's Base Fighting Skills
+			set_variable = {
+				which = th_SA_inci_koishis_combat_skills
+				value = 1800
+			}
+			th_defineopponent_fighting_skill = {
+				type = incident
+				variable = th_SA_inci_koishis_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#She really wants to play danmaku...
+		name = "th_subterranean_animism_incident_events.8.a"
+		custom_tooltip = th_subterranean_animism_incident_events.8.a.tt
+		highlight = yes
+		th_danmaku_incident_fight_ruler_and_opponent = yes
+		hidden_effect = {
+			country_event = {
+				id = th_subterranean_animism_incident_events.12
+				days = 90
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+
+#Subterranean Animism Incident - Terrible Outcome because of dead ruler!
+country_event = { #Nothing changes and more unrest spirits appear
+	id = th_subterranean_animism_incident_events.16
+	title = "th_subterranean_animism_incident_events.16.t"
+	desc = "th_subterranean_animism_incident_events.16.desc"
+	picture = UNDERGROUND_eventPicture
+	
+	trigger = {
+		th_incident_current_stage = {
+			stage = 7
+		}
+		has_country_flag = th_incident_last_fight_terribly_lost
+		th_incident_is_investigator = yes
+		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
+	}
+	
+	immediate = {
+		hidden_effect = { 
+			th_resolve_incident = { incident = subterranean_animism_incident }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	major = yes
+	
+	option = {		#Well, I've done what I could.
+		name = "th_subterranean_animism_incident_events.16.a"
+		custom_tooltip = th_subterranean_animism_incident_events.16.a.tt
+		if = {
+			limit = {
+				exists = MRY
+			}
+			MRY = {
+				add_country_modifier = {
+					name = th_SA_growing_moriya_influence
+					duration = 1825
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = SCD
+				SCD = { has_country_flag = crd_formed_scd }
+			}
+			SCD = {
+				add_country_modifier = {
+					name = th_SA_earth_spirits_unleashed
+					duration = 1825
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				exists = CRD
+			}
+			CRD = {
+				add_country_modifier = {
+					name = th_SA_earth_spirits_unleashed
+					duration = 1825
+				}
+			}
+		}
+		add_adm_power = 100
+		add_prestige = -10
+		add_devotion = -10
+		custom_tooltip = th_subterranean_animism_incident_events_hot_geysers
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					owner = {
+						NOT = { tag = CRD }
+						NOT = { has_country_flag = crd_formed_scd }
+						NOT = { is_subject_of = CRD }
+					}
+				}
+				add_province_modifier = {
+					name = th_SA_hot_geysers
+					duration = 1825
+				}
+			}
+		}
+	}
+}
+
+#Subterranean Animism Incident - Bad Outcome
+country_event = { #Nothing changes and Scarlett Realm Mists grow
+	id = th_subterranean_animism_incident_events.9
+	title = "th_subterranean_animism_incident_events.9.t"
+	desc = "th_subterranean_animism_incident_events.9.desc"
+	picture = UNDERGROUND_eventPicture
+	
+	trigger = {
+		th_incident_is_investigator = yes
+		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
+		th_incident_check_point_result = {
+			value = 0
+		}
+		NOT = {
+			th_incident_check_point_result = {
+				value = 5
+			}
+		}
+		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
+		th_incident_current_stage = {
+			stage = 7
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
+	}
+	
+	immediate = {
+		hidden_effect = { 
+			th_resolve_incident = { incident = subterranean_animism_incident }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	major = yes
+	
+	option = {		#Well, I've done what I could.
+		name = "th_subterranean_animism_incident_events.9.a"
+		custom_tooltip = th_subterranean_animism_incident_events.9.a.tt
+		if = {
+			limit = {
+				exists = MRY
+			}
+			MRY = {
+				add_country_modifier = {
+					name = th_SA_growing_moriya_influence
+					duration = 1825
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = SCD
+				SCD = { has_country_flag = crd_formed_scd }
+			}
+			SCD = {
+				add_country_modifier = {
+					name = th_SA_earth_spirits_unleashed
+					duration = 1825
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				exists = CRD
+			}
+			CRD = {
+				add_country_modifier = {
+					name = th_SA_earth_spirits_unleashed
+					duration = 1825
+				}
+			}
+		}
+		add_adm_power = 100
+		add_prestige = -10
+		add_devotion = -10
+		custom_tooltip = th_subterranean_animism_incident_events_hot_geysers
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					owner = {
+						NOT = { tag = CRD }
+						NOT = { has_country_flag = crd_formed_scd }
+						NOT = { is_subject_of = CRD }
+					}
+				}
+				add_province_modifier = {
+					name = th_SA_hot_geysers
+					duration = 1825
+				}
+			}
+		}
+	}
+}
+
+#Subterranean Animism Incident - OK Outcome
+country_event = { 
+	id = th_subterranean_animism_incident_events.10
+	title = "th_subterranean_animism_incident_events.10.t"
+	desc = "th_subterranean_animism_incident_events.10.desc"
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		th_incident_is_investigator = yes
+		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
+		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
+		th_incident_check_point_result = {
+			value = 5
+		}
+		NOT = {
+			th_incident_check_point_result = {
+				value = 10
+			}
+		}
+		th_incident_current_stage = {
+			stage = 7
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
+	}
+
+	immediate = {
+		hidden_effect = { 
+			th_resolve_incident = { incident = subterranean_animism_incident }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	major = yes
+	
+	option = {		#Finally, it's over.
+		name = "th_subterranean_animism_incident_events.10.a"
+		th_solve_incident = {
+			incident = subterranean_animism_incident
+		}
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_SA_inci_stopped_okuu"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_SA_inci_stopped_okuu"
+				duration = 3650
+			}
+		}
+		add_adm_power = 100
+		add_prestige = 25
+		add_devotion = 10
+	}
+}
+
+#Subterranean Animism Incident - Good Outcome
+country_event = { #Okuu tells Reimu/Marisa about these weird gods
+	id = th_subterranean_animism_incident_events.11
+	title = "th_subterranean_animism_incident_events.11.t"
+	desc = "th_subterranean_animism_incident_events.11.desc"
+	picture = THFEST_eventPicture
+	
+	trigger = {
+		th_incident_check_point_result = {
+			value = 10
+		}
+		th_incident_is_investigator = yes
+		NOT = { has_country_flag = th_incident_last_fight_terribly_lost }
+		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
+		th_incident_current_stage = {
+			stage = 7
+		}
+		th_current_incident = {
+			incident = subterranean_animism_incident
+		}
+		NOT = { has_country_flag = th_just_finished_incident_danmaku_fight }
+	}
+	
+	immediate = {
+		hidden_effect = { 
+			th_resolve_incident = { incident = subterranean_animism_incident }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	major = yes
+	
+	option = {		#Well, we should investigate this. We don't need annoying gods lingering around
+		name = "th_subterranean_animism_incident_events.11.b"
+		th_solve_incident = {
+			incident = subterranean_animism_incident
+		}
+		custom_tooltip = th_subterranean_animism_incident_events.11.b.tt
+		highlight = yes
+		add_adm_power = -25
+		add_prestige = 35
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+				}
+			}
+			add_country_modifier = {
+				name = "th_SA_inci_stopped_okuu"
+				duration = 9125
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_SA_inci_stopped_okuu"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_SA_inci_stopped_okuu"
+				duration = 3650
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = th_subterranean_animism_incident_events.8
+				days = 90
+			}
+		}
+	}
+	
+	option = {		#The rain will stop eventually. She can stay here for awhile.
+		name = "th_subterranean_animism_incident_events.11.a"
+		th_solve_incident = {
+			incident = subterranean_animism_incident
+		}
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+				}
+			}
+			add_country_modifier = {
+				name = "th_SA_inci_stopped_okuu"
+				duration = 9125
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_SA_inci_stopped_okuu"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_SA_inci_stopped_okuu"
+				duration = 3650
+			}
+		}
+		add_adm_power = 150
+		add_prestige = 25
+		add_devotion = 10
+	}
+}
+
+#Subterranean Animism Incident - EXTRA Outcome Good
+country_event = { #Their plan succeeded nonetheless...
+	id = th_subterranean_animism_incident_events.12
+	title = "th_subterranean_animism_incident_events.12.t"
+	desc = "th_subterranean_animism_incident_events.12.desc"
+	picture = KANAKOSUWAKO_eventPicture
+	
+	is_triggered_only = yes	
+	major = yes
+	
+	option = {		#The rain will stop eventually. She can stay here for awhile.
+		name = "th_subterranean_animism_incident_events.12.a"	
+		custom_tooltip = th_subterranean_animism_incident_events.12.a.tt
+		th_solve_incident_extra = {
+			incident = subterranean_animism_incident
+		}
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+				}
+			}
+			add_country_modifier = {
+				name = "th_SA_inci_extra"
+				duration = 9125
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_SA_inci_extra"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_SA_inci_extra"
+				duration = 3650
+			}
+		}
+		add_adm_power = 150
+		if = {
+			limit = {
+				has_country_flag = th_increased_donations_from_events
+			}
+			add_years_of_income = 3
+		}
+		else = {
+			add_years_of_income = 2
+		}
+		add_prestige = 50
+		add_devotion = 10
+	}
+}
+
+
+
+#Subterranean Animism Incident - Random Geyser events - MRY gets buff
+country_event = {
+	id = th_subterranean_animism_incident_events.14
+	title = "th_subterranean_animism_incident_events.14.t"
+	desc = "th_subterranean_animism_incident_events.14.desc"
+	picture = KANAKOSUWAKO_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = { tag = MRY }
+		th_current_incident = { incident = subterranean_animism_incident }
+	}
+	
+	fire_only_once = yes
+	major = yes
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {		#All according plan
+		name = "th_subterranean_animism_incident_events.14.a"
+		if = {
+			limit = {
+				CRD = { religion = th_moriyashinto }
+			}
+			add_country_modifier = {
+				name = th_SA_the_gods_behind_the_incident_powerful
+				duration = 9125
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = "th_SA_the_gods_behind_the_incident"
+				duration = 9125
+			}
+		}
+		if = {
+			limit = { exists = HKR }
+			reverse_add_casus_belli = {
+				type = cb_insult
+				target = ROOT
+			}
+		}
+	}
+}
+
+#Subterranean Animism Incident - Choose invetigation companion
+country_event = {
+	id = th_subterranean_animism_incident_events.15
+	title = "th_subterranean_animism_incident_events.15.t"
+	desc = "th_subterranean_animism_incident_events.15.desc"
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		th_current_incident = { incident = subterranean_animism_incident }
+		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
+		th_incident_is_investigator = yes
+		NOT = { has_country_flag = th_SA_has_chosen_companion }
+	}
+	
+	mean_time_to_happen = { days = 5 }	
+	immediate = { hidden_effect = { set_country_flag = th_SA_has_chosen_companion } }
+	
+	option = {		#HKR - Choose Yukari
+		name = "th_subterranean_animism_incident_events.15.a"
+		trigger = {
+			th_is_or_was_tag = { tag = HKR }
+		}
+		th_choose_investigation_partner = {
+			partner = yukari
+		}
+	}
+	
+	option = {		#HKR - Choose Suika
+		name = "th_subterranean_animism_incident_events.15.b"
+		trigger = {
+			th_is_or_was_tag = { tag = HKR }
+		}
+		th_choose_investigation_partner = {
+			partner = suika
+		}
+	}
+	
+	option = {		#HKR - Choose Aya
+		name = "th_subterranean_animism_incident_events.15.c"
+		trigger = {
+			th_is_or_was_tag = { tag = HKR }
+		}
+		th_choose_investigation_partner = {
+			partner = aya
+		}
+	}
+	
+	option = {		#FOM - Choose Alice
+		name = "th_subterranean_animism_incident_events.15.d"
+		trigger = {
+			th_is_or_was_tag = { tag = FOM }
+		}
+		th_choose_investigation_partner = {
+			partner = alice
+		}
+	}
+	
+	option = {		#FOM - Choose Patchouli
+		name = "th_subterranean_animism_incident_events.15.e"
+		trigger = {
+			th_is_or_was_tag = { tag = FOM }
+		}
+		th_choose_investigation_partner = {
+			partner = patchouli
+		}
+	}
+	
+	option = {		#FOM - Choose Nitori
+		name = "th_subterranean_animism_incident_events.15.f"
+		trigger = {
+			th_is_or_was_tag = { tag = FOM }
+		}
+		th_choose_investigation_partner = {
+			partner = nitori
+		}
+	}
+	
+	option = {		#SCR - Choose Sakuya
+		name = "th_subterranean_animism_incident_events.15.g"
+		trigger = {
+			th_is_or_was_tag = { tag = SCR }
+		}
+		th_choose_investigation_partner = {
+			partner = sakuya
+		}
+	}
+	
+	option = {		#NET - Choose Youmu
+		name = "th_subterranean_animism_incident_events.15.h"
+		trigger = {
+			th_is_or_was_tag = { tag = NET }
+		}
+		th_choose_investigation_partner = {
+			partner = youmu
+		}
+	}
+	
+	option = {		#NET - Choose Yukari
+		name = "th_subterranean_animism_incident_events.15.i"
+		trigger = {
+			th_is_or_was_tag = { tag = NET }
+		}
+		th_choose_investigation_partner = {
+			partner = yukari
+		}
+	}
+	
+	option = {		#MHG - Choose Reimu
+		name = "th_subterranean_animism_incident_events.15.k"
+		trigger = {
+			th_is_or_was_tag = { tag = MHG }
+		}
+		th_choose_investigation_partner = {
+			partner = reimu
+		}
+	}
+	
+	option = {		#MHG - Choose Yuyuko
+		name = "th_subterranean_animism_incident_events.15.l"
+		trigger = {
+			th_is_or_was_tag = { tag = MHG }
+		}
+		th_choose_investigation_partner = {
+			partner = yuyuko
+		}
+	}
+	
+	option = {		#HIG - Choose Komachi
+		name = "th_subterranean_animism_incident_events.15.m"
+		trigger = {
+			th_is_or_was_tag = { tag = HIG }
+		}
+		th_choose_investigation_partner = {
+			partner = komachi
+		}
+	}
+	
+	option = {		#EIT - Choose Eirin
+		name = "th_subterranean_animism_incident_events.15.n"
+		trigger = {
+			th_is_or_was_tag = { tag = EIT }
+		}
+		th_choose_investigation_partner = {
+			partner = eirin
+		}
+	}
+	
+	option = {		#EIT - Choose Mokou
+		name = "th_subterranean_animism_incident_events.15.o"
+		trigger = {
+			th_is_or_was_tag = { tag = EIT }
+		}
+		th_choose_investigation_partner = {
+			partner = mokou
+		}
+	}
+	
+	option = {		#FUJ - Choose Keine
+		name = "th_subterranean_animism_incident_events.15.p"
+		trigger = {
+			OR = {
+				th_is_or_was_tag = { tag = FUJ }
+				th_is_or_was_tag = { tag = HMC }
+			}
+		}
+		th_choose_investigation_partner = {
+			partner = keine
+		}
+	}
+	
+	option = {		#FUJ - Choose Kaguya
+		name = "th_subterranean_animism_incident_events.15.q"
+		trigger = {
+			th_is_or_was_tag = { tag = FUJ }
+		}
+		th_choose_investigation_partner = {
+			partner = kaguya
+		}
+	}
+	
+	option = {		#KPP - Choose Marisa
+		name = "th_subterranean_animism_incident_events.15.r"
+		trigger = {
+			th_is_or_was_tag = { tag = KPP }
+		}
+		th_choose_investigation_partner = {
+			partner = marisa
+		}
+	}
+	
+	option = {		#Fairy - Choose Daiyousei
+		name = "th_subterranean_animism_incident_events.15.s"
+		trigger = {
+			primary_culture = Fairy
+		}
+		th_choose_investigation_partner = {
+			partner = daiyousei
+		}
+	}
+	
+	option = {		#Generic
+		name = "th_subterranean_animism_incident_events.15.zzz"
+		trigger = {
+			NOT = { primary_culture = Fairy }
+			NOT = { th_is_or_was_tag = { tag = KPP } }
+			NOT = { th_is_or_was_tag = { tag = FUJ } }
+			NOT = { th_is_or_was_tag = { tag = HMC } }
+			NOT = { th_is_or_was_tag = { tag = EIT } }
+			NOT = { th_is_or_was_tag = { tag = HIG } }
+			NOT = { th_is_or_was_tag = { tag = MHG } }
+			NOT = { th_is_or_was_tag = { tag = NET } }
+			NOT = { th_is_or_was_tag = { tag = SCR } }
+			NOT = { th_is_or_was_tag = { tag = FOM } }
+			NOT = { th_is_or_was_tag = { tag = HKR } }
+		}
+		th_choose_investigation_partner = {
+			partner = generic
+		}
+	}
+}
+
+#Subterranean Animism Incident - Random Geyser events - Create Core on neighbour
+country_event = {
+	id = th_subterranean_animism_incident_events.17
+	title = "th_subterranean_animism_incident_events.17.t"
+	desc = "th_subterranean_animism_incident_events.17.desc"
+	picture = UNDERGROUND_eventPicture
+	
+	trigger = {
+		is_free_or_tributary_trigger = yes
+		any_neighbor_country = {
+			NOT = { is_subject_of = ROOT }
+			NOT = { alliance_with = ROOT }
+			ROOT = { NOT = { core_claim = PREV } }
+			any_owned_province = {
+				NOT = { is_core = ROOT }
+				NOT = { is_claim = ROOT }
+				any_neighbor_province = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+		}
+		th_is_or_was_tag = { tag = CRD }
+		has_country_modifier = th_SA_control_over_the_underworld
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {		#The geysers are our territory
+		name = "th_subterranean_animism_incident_events.17.a"
+		random_neighbor_country = {
+			limit = {
+				NOT = { is_subject_of = ROOT }
+				NOT = { alliance_with = ROOT }
+				ROOT = { NOT = { core_claim = PREV } }
+				any_owned_province = {
+					NOT = { is_core = ROOT }
+					NOT = { is_claim = ROOT }
+					any_neighbor_province = {
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+				}	
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_claim = ROOT }
+					any_neighbor_province = {
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+				}
+				add_core = ROOT
+			}
+		}
+		add_prestige = 10
+	}
+}
+
+#Subterranean Animism Incident - Random Geyser events - Gets insane geyser buff
+country_event = {
+	id = th_subterranean_animism_incident_events.18
+	title = "th_subterranean_animism_incident_events.18.t"
+	desc = "th_subterranean_animism_incident_events.18.desc"
+	picture = FORMERHELL_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = { tag = CRD }
+		th_current_incident = { incident = subterranean_animism_incident }
+	}
+	
+	fire_only_once = yes
+	major = yes
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {		#The geysers are our territory!
+		name = "th_subterranean_animism_incident_events.18.a"
+		add_country_modifier = {
+			name = "th_SA_control_over_the_underworld"
+			duration = 9125
+		}
+	}
+}
+
+#Subterranean Animism Incident - Random Geyser events - Satori demands her land back
+province_event = {
+	id = th_subterranean_animism_incident_events.19
+	title = "th_subterranean_animism_incident_events.19.t"
+	desc = "th_subterranean_animism_incident_events.19.desc"
+	picture = FORMERHELL_eventPicture
+	
+	trigger = {
+		owner = { ai = no }
+		th_current_incident = { incident = subterranean_animism_incident }
+		NOT = { has_province_flag = chireiden_revolt }
+		NOT = { local_autonomy = 1 }
+		region = former_hell_region
+		culture = Chireidean
+		owner = {
+			NOT = { th_is_or_was_tag = { tag = CRD } }
+			NOT = { tag = SCD }
+			is_free_or_tributary_trigger = yes
+			num_of_cities = 4
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 30
+		modifier = {
+			factor = 0.5
+			any_neighbor_province = {
+				has_province_flag = chireiden_revolt
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_owner_religion = no
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				NOT = { culture_group = ROOT }
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				NOT = { primary_culture = ROOT }
+				NOT = { accepted_culture = ROOT }
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = { war_with = CRD }
+		}
+		modifier = {
+			factor = 0.75
+			unrest = 3
+		}
+		modifier = {
+			factor = 0.75
+			unrest = 5
+		}
+		modifier = {
+			factor = 0.75
+			unrest = 7
+		}
+		modifier = {
+			factor = 0.75
+			unrest = 9
+		}
+	}
+
+	option = {
+		name = "th_subterranean_animism_incident_events.19.a"
+		set_province_flag = chireiden_revolt
+		spawn_rebels = {
+			type = nationalist_rebels
+			size = 1
+			friend = CRD
+		}
+		
+		ai_chance = { 
+			factor = 90
+		}
+	}
+	option = {
+		name = "th_subterranean_animism_incident_events.19.b"
+		cede_province = CRD
+		
+		ai_chance = { 
+			factor = 10
+		}
+	}
+}
+
+#Subterranean Animism Incident - Random Geyser events - Satori demands her independence back
+country_event = {
+	id = th_subterranean_animism_incident_events.20
+	title = "th_subterranean_animism_incident_events.20.t"
+	desc = "th_subterranean_animism_incident_events.20.desc"
+	picture = FORMERHELL_eventPicture
+	
+	trigger = {
+		th_current_incident = { incident = subterranean_animism_incident }
+		NOT = { has_country_flag = crd_appealed_remilia }	#Memo: add the same trigger but in reverse for SA incident
+		overlord_of = SCR
+		SCR = {
+			NOT = { has_country_modifier = th_SDM_demands_independence }
+			NOT = { has_country_modifier = th_inci_rebellious_subject }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {		#Nah
+		name = "th_subterranean_animism_incident_events.20.a"
+		if = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = SCD
+				}
+			}
+			CRD = {
+				add_country_modifier = {
+					name = "th_inci_rebellious_subject"
+					duration = 5475
+				}
+			}
+		}
+		else = {
+			CRD = {
+				add_country_modifier = {
+					name = "th_SA_demands_independence"
+					duration = 5475
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 90
+		}
+	}
+	
+	option = {		#The satori is the stress not worth.
+		name = "th_subterranean_animism_incident_events.20.b"
+		trigger = {
+			NOT = { th_is_or_was_tag = { tag = SCR } }
+		}
+		CRD = {
+			grant_independence = yes 
+		}
+		
+		ai_chance = { 
+			factor = 10
+		}
+	}
+}
+
+#Subterranean Animism Incident - Random Geyser events - Province gets Scarlet Mists Modifier
+province_event = {
+	id = th_subterranean_animism_incident_events.25
+	title = "th_subterranean_animism_incident_events.25.t"
+	desc = "th_subterranean_animism_incident_events.25.desc"
+	picture = UNDERGROUND_eventPicture
+	
+	trigger = {
+		NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
+		NOT = { has_province_modifier = th_just_cured_of_the_mist }
+		th_current_incident = { incident = subterranean_animism_incident }
+		superregion = gensokyo_superregion
+		NOT = { culture = Scarlett }
+		owner = {
+			NOT = { tag = SCR }
+			NOT = { tag = SCD }
+			NOT = {
+				AND = {
+					tag = CRD
+					overlord_of = SCR 
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 60
+
+		modifier = {
+			factor = 0.25
+			any_neighbor_province = {
+				has_province_flag = chireiden_revolt
+			}
+		}
+	}
+	
+	hidden = yes
+	
+	option = {		#Scarlet Mist plagues a province!
+		name = "th_subterranean_animism_incident_events.25.a"
+		add_province_modifier = { 
+			name = th_plagued_by_the_scarlet_mist
+			duration = -1  
+			desc = th_incident_duration_tt
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}		
+	}
+}
+
+#Subterranean Animism Incident - Province cleans itself
+province_event = {
+	id = th_subterranean_animism_incident_events.260
+	title = "th_subterranean_animism_incident_events.260.t"
+	desc = none
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		OR = {
+			has_province_modifier = th_SA_wandering_vengeful_spirits
+			has_province_modifier = th_SA_wandering_helpful_spirits
+		}
+		OR = {
+			owner = {
+				OR = { 
+					th_is_or_was_tag = { tag = SCR } 
+					is_subject_of = SCR
+				}
+			}
+			th_does_not_have_current_incident = { incident = subterranean_animism_incident }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = "th_subterranean_animism_incident_events.260.a"
+		remove_province_modifier = th_SA_wandering_vengeful_spirits
+		remove_province_modifier = th_SA_wandering_helpful_spirits		
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}		
+}
+
+#Subterranean Animism Incident - Dummy Flag Cleaner
+province_event = {
+	id = th_subterranean_animism_incident_events.270
+	title = "th_subterranean_animism_incident_events.270.t"
+	desc = "th_subterranean_animism_incident_events.270.desc"
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		OR = {
+			has_province_flag = th_first_clean_dummy
+			has_province_flag = th_second_clean_dummy
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 2
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = "th_subterranean_animism_incident_events.270.a"
+		clr_province_flag = th_first_clean_dummy
+		clr_province_flag = th_second_clean_dummy
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}		
+}
+
+#Subterranean Animism Incident - Forbid CRD, ONI, ORN, OKU, KMJ, MRY
+country_event = {
+	id = th_subterranean_animism_incident_events.271
+	title = th_subterranean_animism_incident_events.271.t
+	desc = th_subterranean_animism_incident_events.271.desc
+	picture = UNDERGROUND_eventPicture
+
+	trigger = {
+		th_current_incident = { incident = subterranean_animism_incident }
+		OR = {
+			th_is_or_was_tag = { tag = CRD }	#Covers SCD formed by CRD
+			th_is_or_was_tag = { tag = ONI }
+			th_is_or_was_tag = { tag = ORN }
+			th_is_or_was_tag = { tag = OKU }
+			th_is_or_was_tag = { tag = KMJ }
+			th_is_or_was_tag = { tag = MRY }
+		}
+		NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		name = th_subterranean_animism_incident_events.271.a
+		set_country_flag = th_is_not_valid_for_investiagtor_role
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Subterranean Animism Incident - Special Case: nobody can become investigator
+country_event = {
+	id = th_subterranean_animism_incident_events.26
+	title = "th_subterranean_animism_incident_events.26.t"
+	desc = "th_subterranean_animism_incident_events.26.desc"
+	picture = UNDERGROUND_eventPicture
+	
+	trigger = {
+		th_current_incident = { incident = subterranean_animism_incident }		
+		gensokyo_superregion = {
+			owner = {
+				OR = {
+					th_is_or_was_tag = { tag = CRD }
+					is_subject_of = CRD
+					AND = {
+						SCD = { has_country_flag = crd_formed_scd }
+						is_subject_of = SCD
+					}
+				}
+			}
+		}
+		th_is_or_was_tag = { tag = CRD }
+		all_country = { th_incident_can_not_become_investigator = yes }
+		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
+	}
+	
+	mean_time_to_happen = {
+		days = 5
+	}
+	
+	immediate = {
+		hidden_effect = { 
+			th_resolve_incident = { incident = subterranean_animism_incident }
+		}
+	}
+	
+	major = yes
+	
+	option = {		#Chireiden triumphs!
+		name = "th_subterranean_animism_incident_events.26.a"
+		custom_tooltip = th_subterranean_animism_incident_events.26.a.tt					
+		add_country_modifier = {
+			name = "th_SA_earth_spirits_unleashed"
+			duration = 9125
+		}		
+	}
+}
+
+#Subterranean Animism Incident - Special Case: nobody can become investigator, but Gensokyo was NOT united by Remi
+country_event = {
+	id = th_subterranean_animism_incident_events.27
+	title = "th_subterranean_animism_incident_events.27.t"
+	desc = "th_subterranean_animism_incident_events.27.desc"
+	picture = UNDERGROUND_eventPicture
+	
+	trigger = {
+		th_current_incident = { incident = subterranean_animism_incident }	
+		any_province = {
+			superregion = gensokyo_superregion
+			NOT = { owned_by = CRD }
+			NOT = { owner = { is_subject_of = CRD } }
+		}	
+		any_province = {
+			superregion = gensokyo_superregion
+			NOT = { owned_by = SCD }
+			NOT = { owner = { is_subject_of = SCD } }
+		}
+		owns = 5007
+		all_country = {
+			th_incident_can_not_become_investigator = yes
+		}
+		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
+	}
+	
+	mean_time_to_happen = {
+		days = 5
+	}
+	
+	immediate = {
+		hidden_effect = { 
+			th_resolve_incident = { incident = subterranean_animism_incident }
+		}
+	}
+	
+	major = yes
+	
+	option = {		#Chireiden triumphs!--Not really
+		name = "th_subterranean_animism_incident_events.27.a"
+		trigger = {
+			th_is_or_was_tag = { tag = CRD }
+		}
+		custom_tooltip = th_subterranean_animism_incident_events.27.a.tt					
+		add_country_modifier = {
+			name = "th_SA_earth_spirits_unleashed"
+			duration = 3650
+		}		
+		custom_tooltip = th_subterranean_animism_incident_events_hot_geysers
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					NOT = { owned_by = CRD }
+					NOT = { owned_by = SCD }
+					NOT = { owned_by = KMJ }
+					NOT = { owned_by = OKU }
+					NOT = { owned_by = ORN }
+				}
+				add_province_modifier = {
+					name = th_SA_hot_geysers
+					duration = 1825
+				}
+			}
+		}
+	}
+	option = {		#Nobody is investigating. We can only pray for mist`s gone
+		name = "th_subterranean_animism_incident_events.27.b"
+		trigger = {
+			NOT = { tag = CRD }
+			NOT = { was_tag = CRD }
+		}
+		custom_tooltip = th_subterranean_animism_incident_events.27.b.tt
+		custom_tooltip = th_subterranean_animism_incident_events_hot_geysers
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					NOT = { owned_by = CRD }
+					NOT = { owned_by = SCD }
+					NOT = { owned_by = KMJ }
+					NOT = { owned_by = OKU }
+					NOT = { owned_by = ORN }
+				}
+				add_province_modifier = {
+					name = th_SA_hot_geysers
+					duration = 1825
+				}
+			}
+		}
+	}
+}
+
+############################TERMINATION############################
+#Subterranean Animism Incident - Bad Outcome
+country_event = { #Nothing changes and Scarlett Realm Mists grow
+	id = th_subterranean_animism_incident_events.100
+	title = "th_subterranean_animism_incident_events.9.t"
+	desc = "th_subterranean_animism_incident_events.9.desc"
+	picture = UNDERGROUND_eventPicture
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_resolve_incident = { incident = subterranean_animism_incident }
+		}
+	}
+	major = yes
+	
+	option = {		#Well, I've done what I could.
+		name = "th_subterranean_animism_incident_events.9.a"
+		custom_tooltip = th_subterranean_animism_incident_events.9.a.tt
+		if = {
+			limit = {
+				exists = MRY
+			}
+			MRY = {
+				add_country_modifier = {
+					name = th_SA_growing_moriya_influence
+					duration = 1825
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = SCD
+				SCD = { has_country_flag = crd_formed_scd }
+			}
+			SCD = {
+				add_country_modifier = {
+					name = th_SA_earth_spirits_unleashed
+					duration = 1825
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				exists = CRD
+			}
+			CRD = {
+				add_country_modifier = {
+					name = th_SA_earth_spirits_unleashed
+					duration = 1825
+				}
+			}
+		}
+		add_adm_power = 100
+		add_prestige = -10
+		add_devotion = -10
+		custom_tooltip = th_subterranean_animism_incident_events_hot_geysers
+		hidden_effect = {
+			gensokyo_superregion = {
+				limit = {
+					owner = {
+						NOT = { tag = CRD }
+						NOT = { has_country_flag = crd_formed_scd }
+						NOT = { is_subject_of = CRD }
+					}
+				}
+				add_province_modifier = {
+					name = th_SA_hot_geysers
+					duration = 1825
+				}
+			}
+		}
+	}
+}
+
+#Subterranean Animism Incident - DEBUG - Start Incident
+country_event = {
+	id = th_subterranean_animism_incident_events.1000
+	title = none
+	desc = none
+	picture = UNDERGROUND_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		th_incident_forbid_country_to_investigate = { who = CRD }
+		th_incident_forbid_country_to_investigate = { who = ONI }
+		th_incident_forbid_country_to_investigate = { who = ORN }
+		th_incident_forbid_country_to_investigate = { who = OKU }
+		th_incident_forbid_country_to_investigate = { who = KMJ }
+		th_incident_forbid_country_to_investigate = { who = MRY }
+		th_start_incident_effect = {
+			incident = subterranean_animism_incident
+		}
+		gensokyo_superregion = {
+			limit = {
+				NOT = { region = former_hell_region }
+				NOT = { region = hell_region }
+				owner = {
+					NOT = { tag = CRD }
+					NOT = { tag = SCD }
+					NOT = { was_tag = CRD }
+					NOT = { was_tag = SCD }
+					NOT = { is_subject_of = CRD }
+					NOT = { is_subject_of = SCD }
+				}
+				any_neighbor_province = {
+					OR = {
+						region = former_hell_region
+						region = hell_region
+					}
+				}
+				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+			}
+			random_list = {
+				90 = {
+					add_province_modifier = {
+						name = th_SA_wandering_vengeful_spirits
+						duration = -1
+						desc = th_incident_duration_tt
+					}
+				}
+				10 = {
+					add_province_modifier = {
+						name = th_SA_wandering_helpful_spirits
+						duration = -1
+						desc = th_incident_duration_tt
+					}
+				}
+			}
+		}
+		random_province = {
+			limit = {
+				continent = gensokyo_continent
+				NOT = { region = former_hell_region }
+				NOT = { region = hell_region }
+				owner = {
+					NOT = { tag = CRD }
+					NOT = { tag = SCD }
+					NOT = { was_tag = CRD }
+					NOT = { was_tag = SCD }
+					NOT = { is_subject_of = CRD }
+					NOT = { is_subject_of = SCD }
+				}
+				any_neighbor_province = {
+					OR = {
+						region = former_hell_region
+						region = hell_region
+					}
+					NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+					NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+				}
+				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+			}
+			add_province_modifier = {
+				name = th_SA_wandering_helpful_spirits
+				duration = -1
+				desc = th_incident_duration_tt
+			}
+		}
+	}
+
+	option = {		#Check any possible investigator country
+		random_country = {
+			limit = { 
+				th_incident_can_become_investigator = yes
+			}
+			th_incident_setup_investigator = yes
+			th_incident_introduction_event = {
+				id = th_subterranean_animism_incident_events.1
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
