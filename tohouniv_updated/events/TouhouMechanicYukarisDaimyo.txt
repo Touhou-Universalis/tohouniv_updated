@@ -349,6 +349,12 @@ country_event = {
 			country_event = {
 				id = th_yukari_daimyo_mechanic.8
 			}
+			tooltip = {
+				add_country_modifier = {
+					name = th_had_to_give_all_the_land
+					duration = 9125
+				}
+			}
 		}
 		custom_tooltip = th_yukari_daimyo_mechanic.6.b.tt
 		
@@ -448,7 +454,6 @@ country_event = {
 	option = {	#Fiiine
 		name = th_yukari_daimyo_mechanic.8.a
 		goto = mhg_province_to_give
-		release_all_subjects = yes
 		if = {
 			limit = { has_saved_event_target = mhg_province_to_give }
 			event_target:mhg_province_to_give = {
@@ -456,15 +461,22 @@ country_event = {
 				add_core = FROM
 			}
 		}
-		every_known_country = {
-			limit = { core_claim = ROOT }
-			every_core_province = {
-				limit = { owned_by = ROOT }
-				remove_core = ROOT
-				cede_province = PREV
+		every_owned_province = {	#Might wanna rethink it, can have a heavy hit on performance
+			limit = { 
+				NOT = { province_id = event_target:mhg_province_to_give } 
+				is_in_capital_area = yes
+			}
+			random_core_country = {
+				PREV = {
+					cede_province = PREV
+					remove_core = ROOT
+				}
 			}
 		}
-		add_liberty_desire = 50	#Needs proper testing to see if it actually works
+		add_country_modifier = {
+			name = th_had_to_give_all_the_land
+			duration = 9125
+		}
 		#TODO: Ask PDX for an "add_timed_modifier = <timed modifier>" effect
 		
 		ai_chance = { 
