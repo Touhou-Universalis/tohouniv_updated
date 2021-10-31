@@ -82,8 +82,7 @@ country_event = {
 				10 = {
 					add_province_modifier = {
 						name = th_SA_wandering_helpful_spirits
-						duration = -1
-						desc = th_incident_duration_tt
+						duration = 1460
 					}
 				}
 			}
@@ -114,8 +113,7 @@ country_event = {
 			}
 			add_province_modifier = {
 				name = th_SA_wandering_helpful_spirits
-				duration = -1
-				desc = th_incident_duration_tt
+				duration = 1460
 			}
 		}
 	}
@@ -1435,10 +1433,24 @@ country_event = {
 	option = {		#HKR - Choose Yukari
 		name = "th_subterranean_animism_incident_events.15.a"
 		trigger = {
-			th_is_or_was_tag = { tag = HKR }
+			OR = {
+				th_is_or_was_tag = { tag = NET }
+				th_is_or_was_tag = { tag = HKR }
+			}
 		}
 		th_choose_investigation_partner = {
 			partner = yukari
+		}
+		if = { 
+			limit = { exists = MHG } 
+			add_opinion = {
+				who = MHG
+				modifier = th_incident_partners
+			}
+			reverse_add_opinion = {
+				who = MHG
+				modifier = th_incident_partners
+			}
 		}
 	}
 	
@@ -1460,12 +1472,24 @@ country_event = {
 		th_choose_investigation_partner = {
 			partner = aya
 		}
+		if = { 
+			limit = { exists = TGU } 
+			add_opinion = {
+				who = TGU
+				modifier = th_incident_partners
+			}
+			reverse_add_opinion = {
+				who = TGU
+				modifier = th_incident_partners
+			}
+		}
 	}
 	
 	option = {		#FOM - Choose Alice
 		name = "th_subterranean_animism_incident_events.15.d"
 		trigger = {
 			th_is_or_was_tag = { tag = FOM }
+			NOT = { has_ruler_flag = th_original_alice }
 		}
 		th_choose_investigation_partner = {
 			partner = alice
@@ -1475,10 +1499,24 @@ country_event = {
 	option = {		#FOM - Choose Patchouli
 		name = "th_subterranean_animism_incident_events.15.e"
 		trigger = {
-			th_is_or_was_tag = { tag = FOM }
+			OR = {
+				th_is_or_was_tag = { tag = SCR }
+				th_is_or_was_tag = { tag = FOM }
+			}
 		}
 		th_choose_investigation_partner = {
 			partner = patchouli
+		}
+		if = { 
+			limit = { exists = SCR NOT = { tag = SCR } } 
+			add_opinion = {
+				who = SCR
+				modifier = th_incident_partners
+			}
+			reverse_add_opinion = {
+				who = SCR
+				modifier = th_incident_partners
+			}
 		}
 	}
 	
@@ -1489,6 +1527,17 @@ country_event = {
 		}
 		th_choose_investigation_partner = {
 			partner = nitori
+		}
+		if = { 
+			limit = { exists = KPP } 
+			add_opinion = {
+				who = KPP
+				modifier = th_incident_partners
+			}
+			reverse_add_opinion = {
+				who = KPP
+				modifier = th_incident_partners
+			}
 		}
 	}
 	
@@ -1512,16 +1561,6 @@ country_event = {
 		}
 	}
 	
-	option = {		#NET - Choose Yukari
-		name = "th_subterranean_animism_incident_events.15.i"
-		trigger = {
-			th_is_or_was_tag = { tag = NET }
-		}
-		th_choose_investigation_partner = {
-			partner = yukari
-		}
-	}
-	
 	option = {		#MHG - Choose Reimu
 		name = "th_subterranean_animism_incident_events.15.k"
 		trigger = {
@@ -1529,6 +1568,17 @@ country_event = {
 		}
 		th_choose_investigation_partner = {
 			partner = reimu
+		}
+		if = { 
+			limit = { exists = HKR } 
+			add_opinion = {
+				who = HKR
+				modifier = th_incident_partners
+			}
+			reverse_add_opinion = {
+				who = HKR
+				modifier = th_incident_partners
+			}
 		}
 	}
 	
@@ -1539,6 +1589,17 @@ country_event = {
 		}
 		th_choose_investigation_partner = {
 			partner = yuyuko
+		}
+		if = { 
+			limit = { exists = NET } 
+			add_opinion = {
+				who = NET
+				modifier = th_incident_partners
+			}
+			reverse_add_opinion = {
+				who = NET
+				modifier = th_incident_partners
+			}
 		}
 	}
 	
@@ -1570,6 +1631,9 @@ country_event = {
 		th_choose_investigation_partner = {
 			partner = mokou
 		}
+		th_add_rival_estate_loyalty = {
+			loyalty = 10
+		}
 	}
 	
 	option = {		#FUJ - Choose Keine
@@ -1583,6 +1647,17 @@ country_event = {
 		th_choose_investigation_partner = {
 			partner = keine
 		}
+		if = { 
+			limit = { exists = HMC } 
+			add_opinion = {
+				who = HMC
+				modifier = th_incident_partners
+			}
+			reverse_add_opinion = {
+				who = HMC
+				modifier = th_incident_partners
+			}
+		}
 	}
 	
 	option = {		#FUJ - Choose Kaguya
@@ -1593,15 +1668,38 @@ country_event = {
 		th_choose_investigation_partner = {
 			partner = kaguya
 		}
+		th_add_rival_estate_loyalty = {
+			loyalty = 10
+		}
 	}
 	
 	option = {		#KPP - Choose Marisa
 		name = "th_subterranean_animism_incident_events.15.r"
 		trigger = {
+			OR = {
+				AND = { 
+					th_is_or_was_tag = { tag = FOM }
+					NOT = { has_ruler_flag = th_original_marisa }
+				}
+			}
 			th_is_or_was_tag = { tag = KPP }
 		}
 		th_choose_investigation_partner = {
 			partner = marisa
+		}
+		if = {
+			limit = {
+				NOT = { th_is_or_was_tag = { tag = FOM } }
+				exists = FOM
+			}
+			add_opinion = {
+				who = FOM
+				modifier = th_incident_partners
+			}
+			reverse_add_opinion = {
+				who = FOM
+				modifier = th_incident_partners
+			}
 		}
 	}
 	
@@ -1642,7 +1740,7 @@ country_event = {
 	title = "th_subterranean_animism_incident_events.17.t"
 	desc = "th_subterranean_animism_incident_events.17.desc"
 	picture = UNDERGROUND_eventPicture
-	
+	goto = th_SA_new_core
 	trigger = {
 		is_free_or_tributary_trigger = yes
 		any_neighbor_country = {
@@ -1651,7 +1749,6 @@ country_event = {
 			ROOT = { NOT = { core_claim = PREV } }
 			any_owned_province = {
 				NOT = { is_core = ROOT }
-				NOT = { is_claim = ROOT }
 				any_neighbor_province = {
 					owner = {
 						OR = {
@@ -1669,42 +1766,48 @@ country_event = {
 	mean_time_to_happen = {
 		months = 12
 	}
+
+	immediate = {
+		hidden_effect = {
+			random_neighbor_country = {
+				limit = {
+					NOT = { is_subject_of = ROOT }
+					NOT = { alliance_with = ROOT }
+					ROOT = { NOT = { core_claim = PREV } }
+					any_owned_province = {
+						NOT = { is_core = ROOT }
+						any_neighbor_province = {
+							owner = {
+								OR = {
+									tag = ROOT
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}	
+				}
+				random_owned_province = {
+					limit = {
+						NOT = { is_core = ROOT }
+						any_neighbor_province = {
+							owner = {
+								OR = {
+									tag = ROOT
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					save_event_target_as = th_SA_new_core
+				}
+			}
+		}
+	}
 	
 	option = {		#The geysers are our territory
 		name = "th_subterranean_animism_incident_events.17.a"
-		random_neighbor_country = {
-			limit = {
-				NOT = { is_subject_of = ROOT }
-				NOT = { alliance_with = ROOT }
-				ROOT = { NOT = { core_claim = PREV } }
-				any_owned_province = {
-					NOT = { is_core = ROOT }
-					NOT = { is_claim = ROOT }
-					any_neighbor_province = {
-						owner = {
-							OR = {
-								tag = ROOT
-								is_subject_of = ROOT
-							}
-						}
-					}
-				}	
-			}
-			random_owned_province = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_claim = ROOT }
-					any_neighbor_province = {
-						owner = {
-							OR = {
-								tag = ROOT
-								is_subject_of = ROOT
-							}
-						}
-					}
-				}
-				add_core = ROOT
-			}
+		event_target:th_SA_new_core = {
+			add_core = ROOT
 		}
 		add_prestige = 10
 	}
@@ -1744,7 +1847,7 @@ province_event = {
 	title = "th_subterranean_animism_incident_events.19.t"
 	desc = "th_subterranean_animism_incident_events.19.desc"
 	picture = FORMERHELL_eventPicture
-	
+	goto = ROOT
 	trigger = {
 		owner = { ai = no }
 		th_current_incident = { incident = subterranean_animism_incident }
@@ -1839,10 +1942,10 @@ country_event = {
 	
 	trigger = {
 		th_current_incident = { incident = subterranean_animism_incident }
-		NOT = { has_country_flag = crd_appealed_remilia }	#Memo: add the same trigger but in reverse for SA incident
-		overlord_of = SCR
-		SCR = {
-			NOT = { has_country_modifier = th_SDM_demands_independence }
+		NOT = { has_country_flag = scr_appealed_satori }
+		overlord_of = CRD
+		CRD = {
+			NOT = { has_country_modifier = th_SA_demands_independence }
 			NOT = { has_country_modifier = th_inci_rebellious_subject }
 		}
 	}
@@ -1856,7 +1959,7 @@ country_event = {
 		if = {
 			limit = {
 				th_is_or_was_tag = {
-					tag = SCD
+					tag = SCR
 				}
 			}
 			CRD = {
@@ -1895,26 +1998,25 @@ country_event = {
 	}
 }
 
-#Subterranean Animism Incident - Random Geyser events - Province gets Scarlet Mists Modifier
+#Subterranean Animism Incident - Random Geyser events - Province gets a geyser modifier
 province_event = {
 	id = th_subterranean_animism_incident_events.25
-	title = "th_subterranean_animism_incident_events.25.t"
-	desc = "th_subterranean_animism_incident_events.25.desc"
+	title = none
+	desc = none
 	picture = UNDERGROUND_eventPicture
 	
 	trigger = {
-		NOT = { has_province_modifier = th_plagued_by_the_scarlet_mist }
-		NOT = { has_province_modifier = th_just_cured_of_the_mist }
+		NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+		NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
 		th_current_incident = { incident = subterranean_animism_incident }
 		superregion = gensokyo_superregion
-		NOT = { culture = Scarlett }
+		NOT = { culture = Chireidean }
 		owner = {
-			NOT = { tag = SCR }
-			NOT = { tag = SCD }
-			NOT = {
-				AND = {
-					tag = CRD
-					overlord_of = SCR 
+			NOT = { th_is_or_was_tag = { tag = CRD } }
+			OR = {
+				is_free_or_tributary_trigger = yes
+				overlord = {
+					NOT = { th_is_or_was_tag = { tag = CRD } }
 				}
 			}
 		}
@@ -1922,23 +2024,25 @@ province_event = {
 	
 	mean_time_to_happen = {
 		months = 60
-
-		modifier = {
-			factor = 0.25
-			any_neighbor_province = {
-				has_province_flag = chireiden_revolt
-			}
-		}
 	}
 	
 	hidden = yes
 	
-	option = {		#Scarlet Mist plagues a province!
-		name = "th_subterranean_animism_incident_events.25.a"
-		add_province_modifier = { 
-			name = th_plagued_by_the_scarlet_mist
-			duration = -1  
-			desc = th_incident_duration_tt
+	option = {		#A geyser popped up!
+		random_list = {
+			90 = {
+				add_province_modifier = {
+					name = th_SA_wandering_vengeful_spirits
+					duration = -1
+					desc = th_incident_duration_tt
+				}
+			}
+			10 = {
+				add_province_modifier = {
+					name = th_SA_wandering_helpful_spirits
+					duration = 1460
+				}
+			}
 		}
 		
 		ai_chance = { 
@@ -1950,7 +2054,7 @@ province_event = {
 #Subterranean Animism Incident - Province cleans itself
 province_event = {
 	id = th_subterranean_animism_incident_events.260
-	title = "th_subterranean_animism_incident_events.260.t"
+	title = none
 	desc = none
 	picture = SHRINE_eventPicture
 	
@@ -1962,8 +2066,8 @@ province_event = {
 		OR = {
 			owner = {
 				OR = { 
-					th_is_or_was_tag = { tag = SCR } 
-					is_subject_of = SCR
+					th_is_or_was_tag = { tag = CRD } 
+					is_subject_of = CRD
 				}
 			}
 			th_does_not_have_current_incident = { incident = subterranean_animism_incident }
@@ -1977,40 +2081,8 @@ province_event = {
 	hidden = yes
 	
 	option = {
-		name = "th_subterranean_animism_incident_events.260.a"
 		remove_province_modifier = th_SA_wandering_vengeful_spirits
 		remove_province_modifier = th_SA_wandering_helpful_spirits		
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}		
-}
-
-#Subterranean Animism Incident - Dummy Flag Cleaner
-province_event = {
-	id = th_subterranean_animism_incident_events.270
-	title = "th_subterranean_animism_incident_events.270.t"
-	desc = "th_subterranean_animism_incident_events.270.desc"
-	picture = SHRINE_eventPicture
-	
-	trigger = {
-		OR = {
-			has_province_flag = th_first_clean_dummy
-			has_province_flag = th_second_clean_dummy
-		}
-	}
-	
-	mean_time_to_happen = {
-		days = 2
-	}
-	
-	hidden = yes
-	
-	option = {
-		name = "th_subterranean_animism_incident_events.270.a"
-		clr_province_flag = th_first_clean_dummy
-		clr_province_flag = th_second_clean_dummy
 		
 		ai_chance = { 
 			factor = 100
@@ -2021,8 +2093,8 @@ province_event = {
 #Subterranean Animism Incident - Forbid CRD, ONI, ORN, OKU, KMJ, MRY
 country_event = {
 	id = th_subterranean_animism_incident_events.271
-	title = th_subterranean_animism_incident_events.271.t
-	desc = th_subterranean_animism_incident_events.271.desc
+	title = none
+	desc = none
 	picture = UNDERGROUND_eventPicture
 
 	trigger = {
@@ -2045,7 +2117,6 @@ country_event = {
 	hidden = yes
 
 	option = {
-		name = th_subterranean_animism_incident_events.271.a
 		set_country_flag = th_is_not_valid_for_investiagtor_role
 
 		ai_chance = {
@@ -2320,8 +2391,7 @@ country_event = {
 				10 = {
 					add_province_modifier = {
 						name = th_SA_wandering_helpful_spirits
-						duration = -1
-						desc = th_incident_duration_tt
+						duration = 1460
 					}
 				}
 			}
@@ -2352,8 +2422,7 @@ country_event = {
 			}
 			add_province_modifier = {
 				name = th_SA_wandering_helpful_spirits
-				duration = -1
-				desc = th_incident_duration_tt
+				duration = 1460
 			}
 		}
 	}

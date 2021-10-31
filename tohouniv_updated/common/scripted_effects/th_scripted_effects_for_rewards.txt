@@ -1274,3 +1274,92 @@ th_enable_exploration_without_explo_ideas = {
 		set_country_flag = th_can_hire_explorers_without_ideas
 	}
 }
+
+th_balkanize_country = {
+	custom_tooltip = th_balkanize_country_tt
+	hidden_effect = {
+		while = {
+			limit = {
+				any_owned_province = {
+					NOT = { has_province_flag = th_province_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_province_to_release_from_@ROOT }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = no
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = th_province_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_province_to_release_from_@ROOT }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = no
+					}
+				}
+				set_province_flag = th_province_to_release_from_@ROOT
+			}
+		}
+		while = {
+			limit = {
+				any_owned_province = {
+					NOT = { has_province_flag = th_province_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_province_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = yes
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = th_province_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_province_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = yes
+					}
+				}
+				set_province_flag = th_province_to_give_back_from_@ROOT
+			}
+		}
+		every_owned_province = {
+			limit = { 
+				has_province_flag = th_province_to_release_from_@ROOT
+			}
+			random_core_country = {
+				limit = {
+					NOT = { tag = ROOT }
+				}
+				PREV = {
+					cede_province = PREV
+					remove_core = ROOT
+				}
+			}
+			clr_province_flag = th_province_to_release_from_@ROOT
+		}
+		every_owned_province = {
+			limit = { 
+				has_province_flag = th_province_to_give_back_from_@ROOT
+			}
+			random_core_country = {
+				limit = {
+					NOT = { tag = ROOT }
+					exists = yes
+				}
+				PREV = {
+					cede_province = PREV
+					remove_core = ROOT
+				}
+			}
+			clr_province_flag = th_province_to_give_back_from_@ROOT
+		}
+	}
+}

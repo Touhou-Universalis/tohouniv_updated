@@ -461,23 +461,109 @@ country_event = {
 				add_core = FROM
 			}
 		}
+		while = {
+			limit = {
+				any_owned_province = {
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = yes
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = yes
+					}
+				}
+				set_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT
+			}
+		}
+		while = {
+			limit = {
+				any_owned_province = {
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = no
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = no
+					}
+				}
+				set_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT
+			}
+		}
 		every_owned_province = {	#Might wanna rethink it, can have a heavy hit on performance
 			limit = { 
-				NOT = { province_id = event_target:mhg_province_to_give } 
-				is_in_capital_area = yes
+				has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT
 			}
 			random_core_country = {
+				limit = {
+					NOT = { tag = ROOT }
+				}
+				PREV = {
+					cede_province = PREV
+					remove_core = ROOT
+				}
+				if = {
+					limit = { NOT = { has_country_flag = th_yukari_daimyo_new_daimyo_from_@ROOT } }
+					set_country_flag = th_yukari_daimyo_new_daimyo_from_@ROOT
+				}
+			}
+			clr_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT
+		}
+		every_owned_province = {	#Might wanna rethink it, can have a heavy hit on performance
+			limit = { 
+				has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT
+			}
+			random_core_country = {
+				limit = {
+					NOT = { tag = ROOT }
+					exists = yes
+				}
 				PREV = {
 					cede_province = PREV
 					remove_core = ROOT
 				}
 			}
+			clr_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT
 		}
 		add_country_modifier = {
 			name = th_had_to_give_all_the_land
 			duration = 9125
 		}
-		#TODO: Ask PDX for an "add_timed_modifier = <timed modifier>" effect
+		every_country = {
+			limit = { has_country_flag = th_yukari_daimyo_new_daimyo_from_@ROOT }
+			FROM = {
+				create_subject = {
+					subject_type = th_yukari_daimyo
+					subject = PREV
+				}
+				clr_province_flag = th_yukari_daimyo_new_daimyo_from_@ROOT
+			}
+		}
 		
 		ai_chance = { 
 			factor = 1
