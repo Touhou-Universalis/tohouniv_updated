@@ -1,0 +1,319 @@
+########################################
+# Anti Makaien Rebellion Disaster events
+########################################
+
+namespace = th_anti_makaien_rebellion
+
+#Start event
+country_event = {
+	id = th_anti_makaien_rebellion.1
+	title = th_anti_makaien_rebellion.1.t
+	desc = th_anti_makaien_rebellion.1.desc
+	picture = REVOLUTIONFIGHTER_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_has_anti_makaien_rebellion
+		}
+	}
+	
+	option = {	#Tolerant Path
+		name = th_anti_makaien_rebellion.1.a
+		custom_tooltip = th_anti_makaien_rebellion.1.a.tt
+		hidden_effect = {
+			set_global_flag = th_forbidden_shinkism
+			set_country_flag = mki_tolerant_missions
+			swap_non_generic_missions = yes
+			every_owned_province = {
+				limit = {
+					culture = Makaian
+				}
+				add_province_modifier = {
+					name = th_neglected_demons
+					duration = -1
+				}
+			}
+			add_country_modifier = {
+				name = th_questionable_goddess
+				duration = -1
+				desc = th_questionable_goddess_tt
+			}
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = {	#Intolerant Path
+		name = th_anti_makaien_rebellion.1.b
+		custom_tooltip = th_anti_makaien_rebellion.1.b.tt
+		th_ds_excuse_religion_swapping = yes
+		enable_religion = th_shinkism
+		every_neighbor_country = {
+			limit = {
+				religion_group = Touhou
+				NOT = { religion = th_shinkism }
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = renounced_as_heretics
+			}
+		}
+		change_religion = th_shinkism
+		if = {
+			limit = {
+				NOT = { has_country_flag = reformation_money }
+			}
+			add_years_of_income = 1.0
+		}
+		custom_tooltip = th_th_shinkism_convert_all_makai_provinces
+		hidden_effect = {
+			set_country_flag = mki_religious_missions
+			set_country_flag = mki_gets_penalty_on_heretic_heathen_province
+			every_owned_province = {
+				limit = {
+					culture = Makaian
+				}
+				change_religion = th_shinkism
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 9000
+				}
+			}
+			every_owned_province = {
+				limit = {
+					NOT = { religion = ROOT }
+				}
+				add_province_modifier = {
+					name = th_intolerance_to_mortals
+					duration = -1
+				}
+			}
+			swap_non_generic_missions = yes
+		} 
+		add_country_modifier = {
+			name = "conversion_zeal"
+			duration = 3650
+		}
+		if = {
+			limit = {
+				OR = {
+					tag = MKI
+					was_tag = MKI
+					AND = {
+						has_ruler = "Shinki"
+						dynasty = " "
+						ruler_has_personality = immortal_personality
+					}
+				}
+				has_religious_school = no
+			}
+			set_religious_school = {
+				group = Touhou
+				school = shinki_school
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#End event
+country_event = {
+	id = th_anti_makaien_rebellion.2
+	title = th_anti_makaien_rebellion.2.t
+	desc = {
+		desc = th_anti_makaien_rebellion.2.desc.a
+		trigger = {
+			has_country_modifier = th_questionable_goddess
+		}
+	}
+	desc = {
+		desc = th_anti_makaien_rebellion.2.desc.b
+		trigger = {
+			NOT = { has_country_modifier = th_questionable_goddess }
+		}
+	}
+	picture = SHINKI_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = th_has_anti_makaien_rebellion
+			set_country_flag = th_had_anti_makaien_rebellion
+			clr_country_flag = mki_had_disaster_event
+		}
+	}
+	
+	option = {	#Tolerant Path
+		name = th_anti_makaien_rebellion.2.a
+		hidden_effect = {
+			clr_country_flag = mki_gets_penalty_on_heretic_heathen_province
+			every_owned_province = {
+				limit = {
+					OR = {
+						has_province_modifier = th_neglected_demons
+						has_province_modifier = th_intolerance_to_mortals
+					}
+				}
+				remove_province_modifier = th_neglected_demons
+				remove_province_modifier = th_intolerance_to_mortals
+			}
+		}
+		remove_country_modifier = th_questionable_goddess
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Rebel event
+country_event = {
+	id = th_anti_makaien_rebellion.3
+	title = th_anti_makaien_rebellion.3.t
+	desc = {
+		desc = th_anti_makaien_rebellion.3.desc.a
+		trigger = {
+			has_country_modifier = th_questionable_goddess
+		}
+	}
+	desc = {
+		desc = th_anti_makaien_rebellion.3.desc.b
+		trigger = {
+			NOT = { has_country_modifier = th_questionable_goddess }
+		}
+	}
+	picture = REVOLUTIONFIGHTER_eventPicture
+	goto = mki_revolting_province
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			NOT = { has_country_flag = mki_had_disaster_event }
+			had_country_flag = {
+				flag = mki_had_disaster_event
+				days = 2190
+			}
+		}
+		OR = {
+			AND = {
+				has_country_modifier = th_questionable_goddess
+				any_owned_province = {
+					culture = Makaian
+				}
+			}
+			AND = {
+				NOT = { has_country_modifier = th_questionable_goddess }
+				any_owned_province = {
+					NOT = { religion = ROOT }
+				}
+			}
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = mki_had_disaster_event
+			set_country_flag = mki_had_disaster_event
+			if = {
+				limit = {
+					has_country_modifier = th_questionable_goddess
+				}
+				random_owned_province = {
+					limit = {
+						culture = Makaian
+					}
+					save_event_target_as = mki_revolting_province
+					set_province_flag = mki_own_uprising
+				}
+			}
+			else = {
+				random_owned_province = {
+					limit = {
+						NOT = { religion = ROOT }
+					}
+					save_event_target_as = mki_revolting_province
+					set_province_flag = mki_foreign_uprising
+				}
+			}
+		}
+	}
+	
+	option = {	#Traitors!
+		name = th_anti_makaien_rebellion.3.a
+		event_target:mki_revolting_province = {
+			if = {
+				limit = {
+					has_province_flag = mki_own_uprising
+				}
+				noble_rebels = 3
+			}
+			else_if = {
+				limit = {
+					has_province_flag = mki_own_uprising
+				}
+				th_independence_fighters = 3
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Stability event
+country_event = {
+	id = th_anti_makaien_rebellion.4
+	title = th_anti_makaien_rebellion.4.t
+	desc = {
+		desc = th_anti_makaien_rebellion.4.desc.a
+		trigger = {
+			has_country_modifier = th_questionable_goddess
+		}
+	}
+	desc = {
+		desc = th_anti_makaien_rebellion.4.desc.b
+		trigger = {
+			NOT = { has_country_modifier = th_questionable_goddess }
+		}
+	}
+	picture = REVOLUTIONFIGHTER_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			NOT = { has_country_flag = mki_had_disaster_event }
+			had_country_flag = {
+				flag = mki_had_disaster_event
+				days = 2190
+			}
+		}
+		stability = -1
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = mki_had_disaster_event
+			set_country_flag = mki_had_disaster_event
+		}
+	}
+	
+	option = {	#Traitors!
+		name = th_anti_makaien_rebellion.4.a
+		add_stability = -1
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
