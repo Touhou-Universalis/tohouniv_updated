@@ -10,6 +10,8 @@ country_event = {
 	title = flavor_scr.1.t
 	desc = flavor_scr.1.desc
 	picture = KOIFLAN_eventPicture
+
+	fire_only_once = yes
 	
 	trigger = {
 		tag = SCR
@@ -167,7 +169,7 @@ country_event = {
 				adm = 3
 				dip = 4
 				mil = 6
-				#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+				fixed = yes
 				female = yes
 				culture = ROOT
 				religion = ROOT
@@ -228,6 +230,17 @@ country_event = {
 			remove_core = ROOT
 			change_religion = ROOT
 		}
+		hidden_effect = {   #Remove all SCR's claim on China. This is to make sure if player switch to HNG, AI SCR will not become hostile
+			china_superregion = {
+				limit = {
+					OR = {
+						is_permanent_claim = ROOT
+						is_claim = ROOT
+					}
+				}
+				remove_claim = ROOT
+			}			
+		}
 		release = HNG
 		switch_tag = HNG
 		HNG = {
@@ -243,7 +256,7 @@ country_event = {
 				adm = 3
 				dip = 4
 				mil = 6
-				#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+				fixed = yes
 				female = yes
 				culture = ROOT
 				religion = ROOT
@@ -277,7 +290,6 @@ country_event = {
 			add_base_production = 2
 			change_culture = ROOT
 		}
-		
 		ai_chance = { 
 			factor = 0
 		}
@@ -336,11 +348,15 @@ country_event = {
 				country_event = { id = TH_mission_events.5 }
 				set_capital = 90
 				capital_scope = {
-						build_to_forcelimit = {
-							infantry = 0.6
-							cavalry = 0.3
-						}
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
 					}
+				}
+				add_country_modifier = {
+					name = th_flr_lvl1_flan
+					duration = -1
+				}
 			}
 		}
 		create_union = FLR
@@ -387,7 +403,7 @@ country_event = {
 				adm = 5
 				dip = 3
 				mil = 6
-				#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+				fixed = yes
 				female = yes
 				culture = ROOT
 				religion = ROOT
@@ -420,6 +436,10 @@ country_event = {
 						infantry = 0.6
 						cavalry = 0.3
 					}
+				}
+				add_country_modifier = {
+					name = th_flr_lvl1_flan
+					duration = -1
 				}
 			}
 		}
@@ -474,6 +494,17 @@ country_event = {
 			add_core = FLR
 			remove_core = ROOT
 		}
+		hidden_effect = {   #Remove all SCR's claim on China. This is to make sure if player switch to HNG, AI SCR will not become hostile
+			low_countries_region = {
+				limit = {
+					OR = {
+						is_permanent_claim = ROOT
+						is_claim = ROOT
+					}
+				}
+				remove_claim = ROOT
+			}
+		}
 		release = FLR
 		if = {
 			limit = {
@@ -497,7 +528,7 @@ country_event = {
 				adm = 5
 				dip = 3
 				mil = 6
-				#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+				fixed = yes
 				female = yes
 				culture = ROOT
 				religion = ROOT
@@ -593,6 +624,17 @@ country_event = {
 			add_core = FLR
 			remove_core = ROOT
 		}
+		hidden_effect = {   #Remove all SCR's claim on China. This is to make sure if player switch to HNG, AI SCR will not become hostile
+			low_countries_region = {
+				limit = {
+					OR = {
+						is_permanent_claim = ROOT
+						is_claim = ROOT
+					}
+				}
+				remove_claim = ROOT
+			}
+		}		
 		release = FLR
 		ROOT = {
 			define_ruler = {
@@ -602,7 +644,7 @@ country_event = {
 				adm = 4
 				dip = 4
 				mil = 6
-				#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+				fixed = yes
 				female = yes
 				culture = ROOT
 				religion = ROOT
@@ -628,7 +670,7 @@ country_event = {
 				adm = 5
 				dip = 3
 				mil = 6
-				#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+				fixed = yes
 				female = yes
 				culture = ROOT
 				religion = ROOT
@@ -683,7 +725,7 @@ country_event = {
 	id = flavor_scr.5
 	title = "flavor_scr.5.t"
 	desc = "flavor_scr.5.desc"
-	picture = RELIGIOUS_CONVERSION_eventPicture
+	picture = FLANDRECHURCH_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -792,7 +834,7 @@ country_event = {
 		}
 		desc = flavor_scr.6.desc.b
 	}
-	picture = KOIFLAN_eventPicture
+	picture = SATORI_eventPicture
 	
 	trigger = {
 		th_is_or_was_tag = {
@@ -823,7 +865,6 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			set_country_flag = scr_eligible_to_see_scd_decision
 			set_country_flag = scr_not_appealed_satori
 			every_owned_province = {
 				limit = {
@@ -886,12 +927,52 @@ country_event = {
 	}
 }
 
+#Vassal CRD is still rebellious if she gets released later
+country_event = {
+	id = flavor_scr.60
+	title = flavor_scr.60.t
+	desc = flavor_scr.60.desc
+	picture = SATORI_eventPicture
+	
+	trigger = {
+		has_country_flag = scr_not_appealed_satori
+		CRD = {
+			is_subject_of = ROOT
+			NOT = { is_subject_of_type = th_rebellious_subject }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_scr.60.a
+		CRD = {
+			grant_independence = yes
+		}
+		ROOT = {
+			create_subject = {
+				subject_type = th_rebellious_subject
+				subject = CRD
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+
 #Event for keeping all hell provinces unusable for SCR
 country_event = {
 	id = flavor_scr.7
 	title = flavor_scr.7.t
 	desc = flavor_scr.7.desc
-	picture = KOIFLAN_eventPicture
+	picture = SATORI_eventPicture
 	
 	trigger = {
 		th_is_or_was_tag = {
@@ -906,6 +987,7 @@ country_event = {
 				NOT = { has_province_modifier = scr_crd_not_my_mistress }
 			}
 			any_subject_country = {
+				NOT = { tag = CRD }
 				any_owned_province = {
 					region = former_hell_region
 					NOT = { has_province_modifier = scr_crd_not_my_mistress }
@@ -952,18 +1034,61 @@ country_event = {
 	}
 }
 
+#CRD cleans provinces debuffs when owning them
+country_event = {
+	id = flavor_scr.70
+	title = flavor_scr.70.t
+	desc = flavor_scr.70.desc
+	picture = SATORI_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		any_owned_province = {
+			region = former_hell_region
+			has_province_modifier = scr_crd_not_my_mistress
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = flavor_scr.70.a
+		every_owned_province = {
+			limit = {
+				region = former_hell_region
+				has_province_modifier = scr_crd_not_my_mistress
+			}
+			remove_province_modifier = scr_crd_not_my_mistress
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
 #Event for removing all the bad modifiers from the provinces
 country_event = {
 	id = flavor_scr.8
 	title = flavor_scr.8.t
 	desc = flavor_scr.8.desc
-	picture = KOIFLAN_eventPicture
+	picture = SATORI_eventPicture
 	
 	trigger = {
 		any_owned_province = {
+			region = former_hell_region
 			has_province_modifier = scr_crd_not_my_mistress
 		}
 		OR = {
+			th_is_or_was_tag = {
+				tag = CRD
+			}
 			AND = {
 				NOT = { th_is_or_was_tag = { tag = SCR } }
 				OR = {
@@ -1027,7 +1152,7 @@ country_event = {
 		}
 		desc = flavor_scr.9.desc.b
 	}
-	picture = KOIFLAN_eventPicture
+	picture = SATORI_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -1100,7 +1225,7 @@ country_event = {
 	id = flavor_scr.10
 	title = flavor_scr.10.t
 	desc = flavor_scr.10.desc
-	picture = KOIFLAN_eventPicture
+	picture = SATOREMI_eventPicture
 	
 	trigger = {
 		has_country_flag = scr_eligible_for_komeiji_consort
@@ -1124,7 +1249,7 @@ country_event = {
 			name = "Satori"
 			dynasty = "Komeiji"
 			culture = Chireidean
-			#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+			fixed = yes
 			adm = 5
 			dip = 6
 			mil = 4
@@ -1179,7 +1304,7 @@ country_event = {
 			name = "Koishi"
 			dynasty = "Komeiji"
 			culture = Chireidean
-			#fixed = yes  #TODO - remove the comment when EU4 gets the next beta patch - thanks guys
+			fixed = yes
 			adm = 5
 			dip = 4
 			mil = 6
@@ -1212,18 +1337,19 @@ country_event = {
 	id = flavor_scr.12
 	title = flavor_scr.12.t
 	desc = flavor_scr.12.desc
-	picture = KOIFLAN_eventPicture
+	picture = SATORI_eventPicture
 	
 	trigger = {
 		has_mission = SCR_appeal_to_satori
 		mission_completed = SCR_unite_the_mansions
 		NOT = { mission_completed = SCR_appeal_to_satori }
 		NOT = { has_country_flag = scr_has_appeased_satori }
-		owns_or_non_sovereign_subject_of = 5007	#Chireiden
-		5007 = {
-			th_has_up_to_date_fort_building = {
-				tag = ROOT
-			}
+		num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+			area = Chireiden_state
+			development = 15
+			has_tax_building_trigger = yes
+			has_production_building_trigger = yes
+			value = 5
 		}
 	}
 
@@ -1264,79 +1390,12 @@ country_event = {
 	}
 }
 
-#Appease Koishi
-country_event = {
-	id = flavor_scr.13
-	title = flavor_scr.13.t
-	desc = flavor_scr.13.desc
-	picture = KOIFLAN_eventPicture
-	
-	trigger = {
-		has_mission = SCR_appeal_to_satori
-		mission_completed = SCR_unite_the_mansions
-		NOT = { mission_completed = SCR_appeal_to_satori }
-		NOT = { has_country_flag = th_has_gotten_kokoros_mask_of_hope }
-		OR = {
-			controls = 5136
-			owns_or_non_sovereign_subject_of = 5136
-			5136 = {
-				owner = {
-					OR = {
-						th_has_lost_danmaku_duel_against_root = yes
-						ROOT = {
-							has_won_war_against = {
-								who = PREV
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 15
-	}
-
-	immediate = {
-		hidden_effect = {
-			set_country_flag = th_has_gotten_kokoros_mask_of_hope
-		}
-	}
-	
-	option = {	#Koishi is happy
-		name = flavor_scr.13.a
-		custom_tooltip = flavor_scr.13.a.tt
-		if = {
-			limit = {
-				exists = CRD
-				CRD = {
-					is_subject_of = ROOT
-				}
-			}
-			CRD = {
-				add_trust = {
-					who = ROOT
-					value = 10
-				}
-			}
-		}
-		else = {
-			add_adm_power = 100
-		}
-
-		ai_chance = {
-			factor = 1
-		}
-	}
-}
-
 #Appease the hell residents
 country_event = {
 	id = flavor_scr.14
 	title = flavor_scr.14.t
 	desc = flavor_scr.14.desc
-	picture = KOIFLAN_eventPicture
+	picture = FORMERHELL_eventPicture
 	
 	trigger = {
 		has_mission = SCR_appeal_to_satori
@@ -1348,11 +1407,16 @@ country_event = {
 		owns_or_non_sovereign_subject_of = 5282	#Yamane's Place
 		owns_or_non_sovereign_subject_of = 5292	#Orin's Place
 		owns_or_non_sovereign_subject_of = 5295	#Okuu's Place
-		5286 = { num_of_times_improved = 2 }
-		5009 = { num_of_times_improved = 2 }
-		5010 = { num_of_times_improved = 2 }
-		5292 = { num_of_times_improved = 2 }
-		5295 = { num_of_times_improved = 2 }
+		5286 = { development = 15 }
+		5009 = { development = 15 }
+		5010 = { development = 15 }
+		5292 = { development = 15 }
+		5295 = { development = 15 }
+		th_province_is_not_occupied = { province = 5286 }
+		th_province_is_not_occupied = { province = 5009 }
+		th_province_is_not_occupied = { province = 5010 }
+		th_province_is_not_occupied = { province = 5292 }
+		th_province_is_not_occupied = { province = 5295 }
 	}
 
 	mean_time_to_happen = {
@@ -1397,19 +1461,16 @@ country_event = {
 	id = flavor_scr.15
 	title = flavor_scr.15.t
 	desc = flavor_scr.15.desc
-	picture = KOIFLAN_eventPicture
+	picture = YUUGI_eventPicture
 	
 	trigger = {
 		has_mission = SCR_appeal_to_satori
 		mission_completed = SCR_unite_the_mansions
 		NOT = { mission_completed = SCR_appeal_to_satori }
 		NOT = { has_country_flag = scr_appeased_the_oni }
-		owns_or_non_sovereign_subject_of = 4963
-		OR = {
-			NOT = { exists = TGU }
-			TGU = {
-				has_been_insulted_by_root = yes
-			}
+		has_global_modifier_value = {
+			which = discipline
+			value = 0.2
 		}
 	}
 
@@ -1443,6 +1504,27 @@ country_event = {
 		else = {
 			add_mil_power = 100
 		}
+		if = {
+			limit = {
+				ONI = {
+					is_subject_of_type = tributary_state
+					is_subject_of = CRD
+					was_player = no
+					ai = yes
+				}
+			}
+			hidden_effect = {
+				ONI = {
+					grant_independence = yes
+				}
+			}
+			CRD = {
+				create_subject = {
+					subject_type = th_satori_vassal
+					subject = ONI
+				}
+			}
+		}
 
 		ai_chance = {
 			factor = 1
@@ -1455,7 +1537,7 @@ country_event = {
 	id = flavor_scr.16
 	title = flavor_scr.16.t
 	desc = flavor_scr.16.desc
-	picture = KOIFLAN_eventPicture
+	picture = YUKARIFIGHT_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -1594,14 +1676,26 @@ country_event = {
 	id = flavor_scr.21
 	title = "flavor_scr.21.t"
 	desc = "flavor_scr.21.desc"
-	picture = PATCHOULI_eventPicture
+	picture = MOON_eventPicture
 
 	is_triggered_only = yes
 
 	option = {
 		name = flavor_scr.21.a
 		th_outdate_moon_defenses = yes
-		#TODO - add "Show Superiority Casus Belli" against the owner of Lunar Capital
+		if = {
+			limit = {
+				NOT = { owns_or_non_sovereign_subject_of = 5320 }
+			}
+			5320 = {   
+				owner = {
+					reverse_add_casus_belli = {
+						type = cb_touhou_mission_dominance_war
+						target = ROOT
+					}
+				}
+			}
+		}
 		random_province = {
 			limit = {
 				continent = moon_continent
@@ -1625,7 +1719,7 @@ country_event = {
 	id = flavor_scr.22
 	title = "flavor_scr.22.t"
 	desc = "flavor_scr.22.desc"
-	picture = PATCHOULI_eventPicture
+	picture = SCARLETMIST_eventPicture
 
 	is_triggered_only = yes
 
@@ -1676,7 +1770,7 @@ country_event = {
 	id = flavor_scr.23
 	title = "flavor_scr.23.t"
 	desc = "flavor_scr.23.desc"
-	picture = PATCHOULI_eventPicture
+	picture = REMILIAVICTORY_eventPicture
 	
 	hidden = yes
 
@@ -1711,7 +1805,7 @@ country_event = {
 	id = flavor_scr.24
 	title = "flavor_scr.24.t"
 	desc = "flavor_scr.24.desc"
-	picture = PATCHOULI_eventPicture
+	picture = REMILIAVICTORY_eventPicture
 
 	is_triggered_only = yes
 
@@ -1754,7 +1848,7 @@ country_event = {
 	id = flavor_scr.25
 	title = "flavor_scr.25.t"
 	desc = "flavor_scr.25.desc"
-	picture = PATCHOULI_eventPicture
+	picture = LADYREMI_eventPicture
 
 	is_triggered_only = yes
 
@@ -1771,7 +1865,7 @@ country_event = {
 			4365 = {
 				owner = {
 					is_at_war = no
-					NOT = { capital = PREV }
+					NOT = { capital = 4365 }
 				}
 			}
 		}
@@ -1800,7 +1894,7 @@ country_event = {
 			1247 = {
 				owner = {
 					is_at_war = no
-					NOT = { capital = PREV }
+					NOT = { capital = 1247 }
 				}
 			}
 		}
@@ -1829,7 +1923,7 @@ country_event = {
 			2348 = {
 				owner = {
 					is_at_war = no
-					NOT = { capital = PREV }
+					NOT = { capital = 2348 }
 				}
 			}
 		}
@@ -1858,7 +1952,7 @@ country_event = {
 			4559 = {
 				owner = {
 					is_at_war = no
-					NOT = { capital = PREV }
+					NOT = { capital = 4559 }
 				}
 			}
 		}
@@ -1887,7 +1981,7 @@ country_event = {
 			1981 = {
 				owner = {
 					is_at_war = no
-					NOT = { capital = PREV }
+					NOT = { capital = 1981 }
 				}
 			}
 		}
@@ -1950,7 +2044,7 @@ country_event = {
 	id = flavor_scr.26
 	title = flavor_scr.26.t
 	desc = flavor_scr.26.desc
-	picture = YUKARI_eventPicture
+	picture = LADYREMI_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -2020,7 +2114,7 @@ country_event = {
 	id = flavor_scr.27
 	title = flavor_scr.27.t
 	desc = flavor_scr.27.desc
-	picture = YUKARI_eventPicture
+	picture = LADYREMI_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -2051,7 +2145,7 @@ country_event = {
 	id = flavor_scr.28
 	title = flavor_scr.28.t
 	desc = flavor_scr.28.desc
-	picture = YUKARI_eventPicture
+	picture = LADYREMI_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -2071,7 +2165,7 @@ country_event = {
 	id = flavor_scr.29
 	title = flavor_scr.29.t
 	desc = flavor_scr.29.desc
-	picture = YUKARI_eventPicture
+	picture = SCARLETPLAN_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -2125,7 +2219,7 @@ country_event = {
 	id = flavor_scr.30
 	title = flavor_scr.30.t
 	desc = flavor_scr.30.desc
-	picture = YUKARI_eventPicture
+	picture = NEWCONTINENT_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -2148,7 +2242,7 @@ country_event = {
 	id = flavor_scr.31
 	title = flavor_scr.31.t
 	desc = flavor_scr.31.desc
-	picture = YUKARI_eventPicture
+	picture = SCARLETMANSION_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -2167,7 +2261,7 @@ country_event = {
 	id = flavor_scr.32
 	title = flavor_scr.31.t
 	desc = flavor_scr.31.desc
-	picture = YUKARI_eventPicture
+	picture = SCARLETMANSION_eventPicture
 	
 	trigger = {
 		has_country_flag = scr_mansion_does_not_exist_yet
@@ -2199,21 +2293,29 @@ country_event = {
 	id = flavor_scr.33
 	title = flavor_scr.33.t
 	desc = flavor_scr.33.desc
-	picture = YUKARI_eventPicture
+	picture = TOUHOUCHURCH_eventPicture
 	
 	is_triggered_only = yes
 	
 	option = {
 		name = flavor_scr.33.a
-		set_papacy_active = no
 		if = {
 			limit = {
+				NOT = { religion = catholic }
 				OR = {
-					religion = th_hakureishinto
-					religion = th_moriyashinto
+					NOT = { exists = FLR }
+					FLR = {
+						NOT = { religion = catholic }
+					}
 				}
 			}
-			th_allow_shorter_deity_swapping = yes
+			set_papacy_active = no
+		}
+		else = {
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 100
+			}
 		}
 		add_country_modifier = {
 			name = scr_eliminated_the_pope

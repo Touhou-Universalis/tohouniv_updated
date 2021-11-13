@@ -1,23 +1,46 @@
 ###GENERAL STUFF WITH VARIABLES###
 
-th_set_countrys_compare_variable_to_own_variable = {
+th_export_root_variable_into_foreign = {
 	#This function counts your own variable, which is made for counting, down while increasing the counter variable of $who$
-	#Kinda redundant now though because you can just use 'who = ROOT' and 'who = FROM' to get the variable values of another scope to your own
+	#Useful if you need to convert variables from a province scope into a country's variable
 	while = {
 		limit = {
 			check_variable = {
-				which = $root_counting_variable$
+				which = $root_variable$
 				value = 1
 			}
 		}
 		$who$ = {
 			change_variable = {
-				which = $who_counting_variable$
+				which = $foreign_variable$
 				value = 1
 			}
 		}
 		subtract_variable = {
-			which = $root_counting_variable$
+			which = $root_variable$
+			value = 1
+		}
+	}
+}
+
+th_import_foreign_variable_into_root = {
+	while = {
+		limit = {
+			$who$ = {
+				check_variable = {
+					which = $foreign_variable$
+					value = 1
+				}
+			}
+		}
+		$who$ = {
+			subtract_variable = {
+				which = $foreign_variable$
+				value = 1
+			}
+		}
+		change_variable = {
+			which = $root_variable$
 			value = 1
 		}
 	}
@@ -312,6 +335,40 @@ th_increase_heir_mil_stat = {
 	}
 	else = {
 		add_mil_power = 50
+	}
+}
+
+#Use this scripted in the on_actions file, on_battle_won_country
+th_count_won_battles_and_reward_at_end = {
+	if = {
+		limit = {
+			ROOT = {
+				has_country_flag = $counting_flag$
+			}
+		}
+		ROOT = {
+			change_variable = {
+				which = $variable$
+				value = 1
+			}
+		}
+	}
+	if = {
+		limit = {
+			ROOT = {
+				has_country_flag = $counting_flag$
+				check_variable = {
+					which = $variable$
+					value = $max_value$
+				}
+			}
+		}
+		ROOT = {
+			clr_country_flag = $counting_flag$
+			country_event = {
+				id = $country_event$
+			}
+		}
 	}
 }
 

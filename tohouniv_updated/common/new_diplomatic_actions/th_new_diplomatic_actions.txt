@@ -526,6 +526,72 @@ th_bribe_subject = {
 	}
 }
 
+# Break vassal alliances
+th_break_vassal_alliance = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		FROM = {
+			is_subject_of = ROOT
+			OR = {
+				is_subject_of_type = th_yukari_daimyo 
+				is_subject_of_type = th_special_march 
+				is_subject_of_type = th_yukari_puppet_state
+				is_subject_of_type = th_pet_state
+			}
+		}
+	}
+
+	is_allowed = {
+		FROM = {
+			num_of_allies = 1
+			any_ally = {
+				is_subject = false
+			}
+		}
+	}
+
+	on_accept = {
+		FROM = {
+			every_ally = {
+				limit = {
+					is_subject = false
+				}
+				add_opinion = {
+					who = FROM
+					modifier = th_forced_alliance_break
+					years = 5
+				}
+				reverse_add_opinion = {
+					who = FROM
+					modifier = th_forced_alliance_break
+					years = 5
+				}
+				add_opinion = {
+					who = FROM
+					modifier = th_forced_alliance_break_2
+					years = 5
+				}
+				reverse_add_opinion = {
+					who = FROM
+					modifier = th_forced_alliance_break_2
+					years = 5
+				}
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = th_overlord_forced_alliance_break				
+			}
+			add_country_modifier = {
+				name = th_alliance_breaker
+				duration = 365
+			}
+		}
+	}
+}
+
 #Steal target's treasury - diplo action, which can be assigned to another tag later on
 th_loot_from_treasury = {
 	category = th_diplo_action
@@ -576,6 +642,69 @@ th_loot_from_treasury = {
 		}
 	}
 
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Trade off prestige for assert dominance cb
+th_proclaim_assert_dominance_cb = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_can_use_assert_dominance_cb
+		FROM = {
+			is_free_or_tributary_trigger = yes
+		}
+	}
+
+	is_allowed = {
+		custom_trigger_tooltip = {
+			tooltip = th_from_is_not_ally_tt
+			NOT = { alliance_with = FROM }
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_from_is_powerful_to_be_worth
+			FROM = {
+				total_development = ROOT
+				NOT = { great_power_rank = 8 }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		add_casus_belli = {
+			type = cb_touhou_mission_dominance_war
+			target = FROM
+			months = 60
+		}
+		add_prestige = -10
+		add_trust = {
+			who = FROM
+			value = -5
+		}
+	}
+	
 	ai_will_do = {
 		always = no
 	}

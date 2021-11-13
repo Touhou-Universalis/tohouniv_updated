@@ -1,93 +1,40 @@
-komeijis_missions_create_an_empire_slot = {
-	slot = 5
+crd_scarlet_diplo_slot = {
+	slot = 1
 	generic = no
 	ai = yes
 	potential = {
-		tag = CRD
+		th_is_or_was_tag = {
+			tag = CRD
+		}
 		NOT = { map_setup = map_setup_random }
-		has_country_flag = th_debug_mode_has_access_to_wip_missions
 	}
 	has_country_shield = yes
-
-	CRD_form_the_komeiji_navy = {
-		icon = mission_rb_a_mighty_fleet
-		required_missions = {  }
-		trigger = {
-			num_of_total_ports = 15
-			navy_size_percentage = 0.9
-		}
-		effect = {
-			add_prestige = 15
-			add_country_modifier = {
-				name = "crd_search_for_new_pets"
-				duration = 7300
-			}
-			define_explorer = {
-				shock = 1
-				fire = 6
-				manuever = 1
-				siege = 0
-				name = "Utsuho Reiuji"
-				female = yes
-			}
-		}
-	}
-	
-	CRD_break_the_barrier = {
-		icon = mission_establish_high_seas_navy
-		required_missions = { CRD_form_the_komeiji_navy }
-		position = 2
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_break_the_barrier_tt
-				OR = {
-					moluccas_region = { has_discovered = ROOT }
-					australia_region = { has_discovered = ROOT }
-					indo_china_region = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			add_dip_power = 75
-			add_navy_tradition = 35
-		}
-	}
-	
-	CRD_discover_europe_old = {
-		icon = mission_invade_england
-		required_missions = { CRD_break_the_barrier }
-		position = 3
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_discovers_europe.tooltip
-				OR = {
-					iberia_region = { has_discovered = ROOT }
-					france_region = { has_discovered = ROOT }
-					low_countries_region = { has_discovered = ROOT }
-					british_isles_region = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = "touhou_discovery_of_europe"
-				duration = 7300
-			}
-			country_event = { id = TH_mission_events.4 }			
-		}
-	}
 
 	CRD_the_scarletts = {
 		icon = mission_touhou_the_scarlets
 		required_missions = {  }
-		position = 4
+		position = 1
 		trigger = {
 			is_subject = no
 			OR = {
-				is_rival = SCR
-				SCR = { is_rival = ROOT }
+				custom_trigger_tooltip = {
+					tooltip = CRD_the_scarletts_tt
+					OR = {
+						AND = {
+							is_rival = SCR
+							trade_embargoing = SCR
+						}
+						AND = {
+							SCR = { is_rival = ROOT }
+							trade_embargoing = SCR
+						}
+					}
+				}
 				alliance_with = SCR
 				NOT = { exists = SCR }
+				SCR = {
+					is_subject_of = ROOT
+				}
 			}
 		}
 		effect = {
@@ -120,7 +67,7 @@ komeijis_missions_create_an_empire_slot = {
 				}
 				add_casus_belli = {
 					target = SCR
-					type = cb_restore_personal_union
+					type = cb_touhou_mission_scr_crd_war
 					months = 900
 				}
 			}
@@ -130,147 +77,295 @@ komeijis_missions_create_an_empire_slot = {
 	CRD_two_mansions_one_dynasty = {
 		icon = mission_touhou_scarlet_komeiji_union
 		required_missions = { CRD_the_scarletts }
-		position = 5
+		position = 2
 		
 		provinces_to_highlight = {
 			OR = {
-				area = Scarlett_domain
-				area = Scarlet_island
-				area = Scarlet_mountain
+				province_id = 4968
+				owner = {
+					tag = SCR
+				}
 			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		
 		trigger = {
-			Scarlett_domain = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			Scarlet_island = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			Scarlet_mountain = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
+			OR = {
+				tag = SCD
+				AND = {
+					NOT = { exists = SCR }
+					owns_or_non_sovereign_subject_of = 4968
+				}
+				SCR = {
+					is_subject_of = ROOT
+				}
 			}
 		}
 		
 		effect = {
 			add_country_modifier = {
-				name = "crd_scarlett_komeijis"
+				name = crd_scarlett_komeijis
 				duration = 7300
 			}
 			add_prestige = 25
-			Eastern_mountains = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
+		}
+	}
+	
+	CRD_scarlet_demand = {
+		icon = mission_touhou_flankoi
+		required_missions = { CRD_two_mansions_one_dynasty }
+		position = 3
+		provinces_to_highlight = {
+			area = Scarlet_island
+			OR = {
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					NOT = { base_production = 10 }
 				}
-				add_permanent_claim = ROOT
 			}
-			Mayohiga_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
+		}
+		trigger = {
+			Scarlet_island = {
+				country_or_non_sovereign_subject_holds = ROOT
+				base_production = 10
+				type = all
+			}	
+		}
+		effect = {
+			add_dip_power = 100
+			country_event = {
+				id = flavor_crd.14
 			}
-			Ran_state = {
+		}
+	}	
+
+	CRD_SDM_nuisance = {
+		icon = mission_touhou_smug_remilia
+		required_missions = { CRD_scarlet_demand }
+		position = 4
+		trigger = {
+			if = {
 				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
+					exists = SCR
 				}
-				add_permanent_claim = ROOT
+				SCR = {
+					is_subject_of = ROOT
+					NOT = { liberty_desire = 10 }
+					has_opinion = {
+						who = ROOT
+						value = 190
+					}
+				}
 			}
-			Great_youkai_forest = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
+			else = {
+				Scarlet_island = {
+					country_or_non_sovereign_subject_holds = ROOT
+					type = all
 				}
-				add_permanent_claim = ROOT
+				Scarlet_mountain = {
+					country_or_non_sovereign_subject_holds = ROOT
+					type = all
+				}
+				Scarlett_domain = {
+					country_or_non_sovereign_subject_holds = ROOT
+					type = all
+				}
+				legitimacy_equivalent = 100
 			}
-			Eastern_youkai_forest = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = CRD_SDM_nuisance_tt
+					has_country_flag = crd_defeated_remilia
 				}
-				add_permanent_claim = ROOT
+				th_has_solved_incident = {
+					scarlet_mist = yes
+				}
 			}
-			Land_of_the_black_doors = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
+		}
+		effect = {
+			hidden_effect = {
+				clr_country_flag = crd_enable_fight_against_remi
+				set_country_flag = crd_eligible_to_see_scd_decision
 			}
-			Black_door_border_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
+			country_event = {
+				id = flavor_crd.11
 			}
 		}
 	}
 	
-	CRD_control_over_the_untrustworthy_youkai = {
-		icon = mission_assemble_an_army
-		required_missions = { CRD_two_mansions_one_dynasty }
-		position = 6
-		
+	CRD_house_united = {
+		icon = mission_touhou_satoremi
+		required_missions = { CRD_SDM_nuisance }
+		position = 5
 		provinces_to_highlight = {
-			th_gensokyo_or_moon_continent = yes
-			culture = Youkai
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			OR = {
+				owner = {
+					tag = SCR
+				}
+				area = Scarlet_island
+				area = Scarlet_mountain
+				area = Scarlett_domain
+			}
+			NOT = { owned_by = ROOT }
 		}
-		
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = crd_conquer_youkai.tooltip
-				num_of_owned_provinces_with = {
-					value = 15
-					culture = Youkai
+			OR = {
+				th_is_or_was_tag = {
+					tag = SCD
+				}
+				AND = {
+					NOT = { exists = SCR }
+					Scarlet_island = {
+						owned_by = ROOT
+						type = all
+					}
+					Scarlet_mountain = {
+						owned_by = ROOT
+						type = all
+					}
+					Scarlett_domain = {
+						owned_by = ROOT
+						type = all
+					}
+					legitimacy_equivalent = 100
+				}
+				SCR = {
+					is_subject_of = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 190
+					}
+					NOT = { liberty_desire = 10 }
 				}
 			}
 		}
-		
 		effect = {
 			add_country_modifier = {
-				name = "crd_no_untrusting_threats"
-				duration = 7300
+				name = crd_one_house
+				duration = -1
+			}		
+		}
+	}
+
+	CRD_gensokyan_politics = {
+		icon = imperial_ascendancy
+		required_missions = {  }
+		position = 6
+		provinces_to_highlight = {
+			owner = {
+				alliance_with = ROOT
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
 			}
-			add_accepted_culture = Youkai
-			add_mil_power = 100 
+		}
+		trigger = {
+			num_of_allies = 3
+			all_ally = {
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = crd_third_eye_diplomacy
+				duration = 9125
+			}	
+		}
+	}
+
+	CRD_taste_for_power = {
+		icon = mission_have_two_subjects
+		required_missions = { CRD_gensokyan_politics }
+		position = 7
+		trigger = {
+			calc_true_if = {
+				all_subject_country = {
+					custom_trigger_tooltip = {
+						tooltip = CRD_taste_for_power_tt
+						total_development = 100
+						NOT = { liberty_desire = 10 }
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+				amount = 3
+			}
+		}
+		effect = {
+			crd_enable_third_eye_privilege = yes
+		}
+	}
+	
+	CRD_third_eye = {
+		icon = mission_touhou_thirdeye
+		required_missions = { CRD_taste_for_power }
+		position = 8
+		trigger = {
+			has_estate_privilege = th_estate_nobles_third_eye
+			has_reform = TH_komeiji_diplomacy_reform
+		}
+		effect = {
+			th_remove_annexation_penalty = yes	
+		}
+	}
+	
+	CRD_perfect_mind_manipulation = {
+		icon = mission_touhou_satori_mind_control
+		required_missions = { CRD_third_eye }
+		position = 9
+		trigger = {
+			calc_true_if = {
+				all_subject_country = {
+					custom_trigger_tooltip = {
+						tooltip = th_is_satori_vassal_and_was_interaction_target
+						OR = {
+							is_subject_of_type = th_pet_state
+							is_subject_of_type = th_satori_vassal
+						}
+						has_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+					}
+				}
+				amount = 4
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = crd_big_sister
+				duration = -1
+			}	
 		}
 	}
 }
 
-komeijis_missions_dominate_gensokyo_slot = {
-	slot = 1
+crd_conquest_religion_slot = {
+	slot = 2
 	generic = no
 	ai = yes
 	potential = {
-		tag = CRD
+		th_is_or_was_tag = {
+			tag = CRD
+		}
 		NOT = { map_setup = map_setup_random }
-		has_country_flag = th_debug_mode_has_access_to_wip_missions
 	}
 	has_country_shield = yes
 
-	CRD_improve_oni_relations = {
+	CRD_training_army = {
 		icon = mission_touhou_army
 		required_missions = {  }
 		position = 1
 		trigger = {
-			OR = {
-				reverse_has_opinion = {
-					who = ONI
-					value = 150
-				}
-				NOT = { exists = ONI }
-			}
+			num_of_generals = 1
+			has_mil_advisor = yes
+			army_size_percentage = 0.8
 		}
 		effect = {
+			add_army_tradition = 10
 			Land_of_the_dead = {
 				limit = {
 					NOT = {	is_core = ROOT }
@@ -290,7 +385,7 @@ komeijis_missions_dominate_gensokyo_slot = {
 
 	CRD_control_the_lone_coast = {
 		icon = mission_touhou_realm_of_the_dead
-		required_missions = { CRD_improve_oni_relations }
+		required_missions = { CRD_training_army }
 		position = 2
 		
 		provinces_to_highlight = {
@@ -298,6 +393,7 @@ komeijis_missions_dominate_gensokyo_slot = {
 				province_id = 5051
 				province_id = 5005
 			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		
 		trigger = {
@@ -305,57 +401,12 @@ komeijis_missions_dominate_gensokyo_slot = {
 			owns_or_non_sovereign_subject_of = 5005
 		}
 		effect = {
-			Northern_hills = {
+			youkai_mountain_region = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
-			}
-			Eastern_hills = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			The_hills = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}		
-			Youkai_Mountains = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			North_tengu_plains = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Southern_youkai_mountains = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			if = {
-				limit = {
-					exists = TGU
-				}
-				add_casus_belli = {
-					target = TGU
-					type = cb_vassalize_mission
-					months = 900
-				}
 			}
 			5013 = {
 				add_permanent_province_modifier = { 
@@ -363,29 +414,378 @@ komeijis_missions_dominate_gensokyo_slot = {
 					duration = -1
 				}
 			}
+			if = {
+				limit = {
+					exists = TGU
+					TGU = {
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = TGU
+				}
+			}
 		}
 	}
-	
-	CRD_between_hell_and_heaven = {
-		icon = mission_touhou_youkai_mountain
+
+	CRD_seize_the_newspaper = {
+		icon = mission_touhou_newspaper
 		required_missions = { CRD_control_the_lone_coast }
 		position = 3
 		provinces_to_highlight = {
-			province_id = 4963
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
+			OR = {
+				province_id = 5199
+				province_id = 4963
+				province_id = 4964
 			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			4963 = {
-				country_or_non_sovereign_subject_holds = ROOT
+			owns_or_non_sovereign_subject_of = 5199
+			owns_or_non_sovereign_subject_of = 4963
+			owns_or_non_sovereign_subject_of = 4964
+		}
+		effect = {
+			add_country_modifier = {
+				name = crd_control_over_the_newspaper
+				duration = 9125
+			}
+		}
+	}	
+	
+	CRD_conquer_the_hell_region = {
+		icon = mission_touhou_hell
+		required_missions = { CRD_new_master_of_hell }
+		position = 5
+		provinces_to_highlight = {
+			region = hell_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = hell_region
+				value = 40
 			}
 		}
 		effect = {
-			add_prestige = 25
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 100
+			}
+			add_adm_power = 75
+			add_dip_power = 75
+			add_mil_power = 75
+		}
+	}	
+
+	CRD_quest_of_religion = {
+		icon = mission_touhou_moriya_shrine
+		required_missions = {  }
+		position = 7
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = sff_has_chosen_religious_path.tooltip
+				has_country_flag = crd_has_chosen_religious_path
+			}
+		}
+		effect = {
+			add_stability = 1
+		}
+	}
+	
+	CRD_resolving_religious_confusion = {
+		icon = mission_touhou_shrines
+		required_missions = { CRD_quest_of_religion }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				area = Chireiden_state
+				area = Blazing_hell_state
+				area = Chireiden_canal_state
+				area = Road_to_hell_state
+			}
+			NOT = { 
+				religion = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					Chireiden_state = {
+						type = all
+						country_or_non_sovereign_subject_holds = ROOT
+						religion = ROOT
+					}
+					Blazing_hell_state = {
+						type = all
+						country_or_non_sovereign_subject_holds = ROOT
+						religion = ROOT
+					}
+					Chireiden_canal_state = {
+						type = all
+						country_or_non_sovereign_subject_holds = ROOT
+						religion = ROOT
+					}
+					Road_to_hell_state = {
+						type = all
+						country_or_non_sovereign_subject_holds = ROOT
+						religion = ROOT
+					}
+				}
+				full_idea_group = humanist_ideas
+			}
+		}
+		effect = {
+			Hakurei_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Hakurei_peninsula_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Hakurei_western_coast = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Moriya_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Moriya_coast_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Southern_moriya = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	CRD_lazy_hakurei_miko = {
+		icon = mission_touhou_reimulazy
+		required_missions = { CRD_resolving_religious_confusion }
+		position = 9
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4955
+				province_id = 4956
+			}
+		}
+		trigger = {
+			owns_or_subject_of = 4955
+			owns_or_subject_of = 4956
+		}
+		effect = {
 			add_country_modifier = {
-				name = "crd_backup_of_the_oni"
-				duration = 7300
+				name = crd_working_miko
+				duration = 9125
+			}	
+		}
+	}
+}
+
+crd_detective_act_one_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { map_setup = map_setup_random }
+		has_global_flag = crd_act_one
+	}
+	has_country_shield = yes
+
+	CRD_crime_in_SDM = {
+		icon = mission_touhou_scarlet_mansion
+		required_missions = {  }
+		position = 10
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = CRD_crime_in_SDM_tt
+				has_global_flag = crd_act_one_complete
+			}
+		}
+		effect = {
+			custom_tooltip = CRD_crime_in_SDM_ct
+			hidden_effect = {
+				set_global_flag = crd_act_two
+				set_global_flag = crd_act_two_talk_with_orin
+			}
+		}
+	}
+}
+
+crd_detective_act_two_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { map_setup = map_setup_random }
+		has_global_flag = crd_act_two
+	}
+	has_country_shield = yes
+
+	CRD_a_hot_lead = {
+		icon = mission_touhou_scarlet_interior
+		required_missions = { CRD_crime_in_SDM }
+		position = 11
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = CRD_a_hot_lead_tt
+				has_global_flag = crd_act_two_complete
+			}
+		}
+		effect = {
+			custom_tooltip = CRD_a_hot_lead_ct
+			hidden_effect = {
+				set_global_flag = crd_act_three
+				country_event = {
+					id = flavor_crd.44
+					days = 30
+				}
+			}
+		}
+	}
+}
+
+crd_detective_act_three_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { map_setup = map_setup_random }
+		has_global_flag = crd_act_three
+	}
+	has_country_shield = yes
+	
+	CRD_find_the_culprit = {
+		icon = mission_touhou_detective_satori
+		required_missions = { CRD_a_hot_lead }
+		position = 12
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = CRD_find_the_culprit_tt
+				has_global_flag = crd_act_three_complete
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_crd.60
+			}
+			hidden_effect = {
+				clr_global_flag = crd_act_one_first_interview
+				clr_global_flag = crd_act_one_second_interview
+				clr_global_flag = crd_act_one_accuse_marisa
+				clr_global_flag = crd_act_one_accuse_sakuya
+				clr_global_flag = crd_act_one_accuse_cirno
+				clr_global_flag = crd_cirno_clue
+				clr_global_flag = crd_act_one_finale
+				clr_global_flag = crd_act_two_news_about_containment_breach
+				clr_global_flag = crd_act_two_melings_body
+				clr_global_flag = crd_koishi_clue
+				clr_global_flag = crd_act_one_accuse_reimu
+			}
+		}
+	}
+}
+
+crd_imperial_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	CRD_found_komeiji_empire = {
+		icon = mission_touhou_empress_satori
+		required_missions = {  }
+		position = 1
+		trigger = {
+			OR = {
+				tag = GNK
+				government_rank = 3
+			}
+			total_development = 1000
+		}
+		effect = {
+			add_country_modifier = {
+				name = crd_formed_a_powerful_union_with_scr
+				duration = -1
+			}
+		}
+	}
+
+	CRD_eclipse_the_yama = {
+		icon = mission_touhou_serious_eiki
+		required_missions = { 
+			CRD_control_the_lone_coast
+			CRD_improve_oni_relations
+		}
+		position = 3
+		provinces_to_highlight = {
+			owner = {
+				tag = HIG
+			}
+		}
+		trigger = {
+			OR = {
+				total_development = HIG
+				NOT = { exists = HIG }
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					exists = HIG
+					HIG = {
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+				add_casus_belli = {
+					target = HIG
+					type = cb_touhou_mission_personal_union_war
+					months = 900
+				}
 			}
 			Higan_state = {
 				limit = {
@@ -415,22 +815,14 @@ komeijis_missions_dominate_gensokyo_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
-			if = {
-				limit = {
-					exists = HIG
-				}
-				add_casus_belli = {
-					target = HIG
-					type = cb_restore_personal_union
-					months = 900
-				}
-			}
 		}
 	}
 	
-	CRD_new_master_of_the_judge = {
+	CRD_new_master_of_hell = {
 		icon = mission_touhou_judge_of_gensokyo
-		required_missions = { CRD_between_hell_and_heaven }
+		required_missions = { 
+			CRD_eclipse_the_yama
+		}
 		position = 4
 		provinces_to_highlight = {
 			OR = {
@@ -442,37 +834,24 @@ komeijis_missions_dominate_gensokyo_slot = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			Higan_state = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			Eastern_higan = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			Higan_southern_coast = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			Western_higan = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
+			owns_or_non_sovereign_subject_of = 4983
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Higan_state
+					area = Eastern_higan
+					area = Higan_southern_coast
+					area = Western_higan
+				}
+				value = 16
 			}
 		}
 		effect = {
 			add_prestige = 25
 			add_country_modifier = {
-				name = "crd_controlleur_of_the_judge"
+				name = crd_controlleur_of_the_judge
 				duration = 7300
 			}
 			hell_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Great_border = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -509,9 +888,9 @@ komeijis_missions_dominate_gensokyo_slot = {
 		}
 	}
 	
-	CRD_hell_and_heaven_in_one = {
+	CRD_hell_and_heaven_in_one_new = {
 		icon = mission_touhou_hell_and_heaven
-		required_missions = { CRD_new_master_of_the_judge }
+		required_missions = { CRD_new_master_of_hell }
 		position = 5
 		provinces_to_highlight = {
 			OR = {
@@ -538,638 +917,1068 @@ komeijis_missions_dominate_gensokyo_slot = {
 			}
 		}
 		effect = {
-			add_dip_power = 100
-			korea_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			if = {
-				limit = {
-					exists = KOR
-				}
-				add_casus_belli = {
-					target = KOR
-					type = cb_vassalize_mission
-					months = 900
-				}
-			}
-		}
-	}
-	
-	
-	CRD_entrance_to_the_mandate_of_heaven = {
-		icon = mission_great_wall
-		required_missions = { CRD_hell_and_heaven_in_one }
-		position = 6
-		provinces_to_highlight = {
-			OR = {
-				area = south_korea_area
-				area = eastern_korea_area
-				area = pyongan_area
-				area = hamgyeong_area
-				area = western_korea_area
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			OR = {
-				south_korea_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-				eastern_korea_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-				western_korea_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-				pyongan_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-				hamgyeong_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-			}
-		}
-		effect = {
 			add_adm_power = 100
-			add_accepted_culture = korean
-			xinan_region = {
-				discover_country = ROOT
-			}
-			mongolia_region = {
-				discover_country = ROOT
-			}
-			manchuria_region = {
-				discover_country = ROOT
-			}
-			tibet_region = {
-				discover_country = ROOT
-			}
-			indo_china_region = {
-				discover_country = ROOT
-			}
-			burma_region = {
-				discover_country = ROOT
-			}
-		}
-	}
-
-	CRD_two_heavens_under_one_sky = {
-		icon = mission_touhou_dragonduel
-		position = 7
-		required_missions = {  }
-		trigger = {
-			if = {
-				limit = {
-					has_dlc = "Mandate of Heaven"
-				}
-				OR = {
-					NOT = {
-						any_country = {
-							is_emperor_of_china = yes
-						}
-					}
-					
-				}
-				OR = {
-					any_country = {
-						is_emperor_of_china = yes
-						custom_trigger_tooltip = {
-							tooltip = rivalled_or_rival_of
-							OR = {	
-								is_rival = ROOT
-								ROOT = { is_rival = PREV }
-							}
-						}
-					}
-					NOT = {
-						any_country = {
-							is_emperor_of_china = yes
-						}
-					}
-					AND = {
-						any_country = {
-							is_emperor_of_china = yes
-							NOT = {
-								total_development = ROOT
-							}
-						}
-						total_development = 1000
-					}
-				}
-			}
-			else = {
-				OR = {
-					is_rival = MNG
-					MNG = { is_rival = ROOT }
-					NOT = { exists = MNG }
-					AND = {
-						total_development = MNG
-						total_development = 1000
-					}
-				}
-			}
-		}
-		effect = {		
-			korea_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			if = {
-				limit = {
-					exists = KOR
-				}
-				add_casus_belli = {
-					target = KOR
-					type = cb_vassalize_mission
-					months = 900
-				}
-			}
+			add_dip_power = 100
+			add_mil_power = 100
 		}
 	}
 	
-	CRD_entrance_to_the_mandate_of_heaven_new = {
-		icon = mission_great_wall
-		required_missions = { CRD_two_heavens_under_one_sky }
-		position = 8
-		provinces_to_highlight = {
-			OR = {
-				area = south_korea_area
-				area = eastern_korea_area
-				area = pyongan_area
-				area = hamgyeong_area
-				area = western_korea_area
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
+	CRD_the_fair_lady_satori = {
+		icon = mission_touhou_satori1
+		required_missions = {
+			CRD_conquer_the_hell_region
+			CRD_hell_and_heaven_in_one_new
 		}
-		trigger = {
-			OR = {
-				south_korea_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-				eastern_korea_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-				western_korea_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-				pyongan_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-				hamgyeong_area = {
-					type = all
-					country_or_non_sovereign_subject_holds = ROOT
-				}
-			}
-		}
-		effect = {
-			add_accepted_culture = korean			
-			liaoning_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			hebei_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			south_hebei_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			shandong_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			jiangsu_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			south_jiangsu_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			anhui_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			south_anhui_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			zhejiang_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}			
-		}
-	}
-	
-	CRD_take_the_mandate_of_heaven_new = {
-		icon = mission_touhou_mandate_of_heaven
-		position = 9
-		required_missions = { CRD_entrance_to_the_mandate_of_heaven_new }
-		trigger = {
-			if = {
-				limit = {
-					any_country = {
-						is_emperor_of_china = yes
-					}
-				}
-				any_country = {
-					is_emperor_of_china = yes
-					war_with = ROOT
-				}
-				war_score = 70
-				if = {
-					limit = {
-						any_country = {
-							is_emperor_of_china = yes
-							owns = 1816
-						}
-					}
-					controls = 1816
-				}
-				else = {
-					any_country = {
-						is_emperor_of_china = yes
-						capital_scope = {
-							controlled_by = ROOT
-						}
-					}
-				}
-			}
-			else = {
-				OR = {
-					AND = {
-						1816 = {
-							owner = {
-								war_with = ROOT
-							}
-						}
-						war_score = 70
-						controls = 1816
-					}
-					1816 = {
-						owned_by = ROOT
-						is_core = ROOT
-					}
-				}
-			}
-		}
-		effect = {
-			china_superregion = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			add_war_exhaustion = -20
-			country_event = { id = TH_mission_events.1 }
-		}
-	}
-	
-	CRD_master_of_continent = {
-		icon = mission_kowtow
-		required_missions = { CRD_take_the_mandate_of_heaven_new }
-		position = 10
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 50
-				superregion = china_superregion
-			}
-			owns_core_province = 1816
-			owns_core_province = 1821				
-		}
-		effect = {
-			if = {
-				limit = {
-					has_dlc = "Mandate of Heaven"
-					is_emperor_of_china = yes
-				}
-				custom_tooltip = th_authority_mandate_lv2_tt
-				hidden_effect = {
-					remove_country_modifier = touhou_emperor_of_china
-					add_country_modifier = {
-						name = touhou_emperor_of_china_lv2
-						duration = -1
-					}
-				}
-			}
-			else = {
-				add_legitimacy = 20
-				add_prestige = 20
-			}
-		}
-	}
-	
-	CRD_restoration_of_order = {
-		icon = mission_chinese_general_riding
-		required_missions = { CRD_master_of_continent }
-		position = 11
-		trigger = {
-			if = {
-				limit = {
-					has_dlc = "Mandate of Heaven"
-					is_emperor_of_china = yes
-				}
-				calc_true_if = {
-					custom_trigger_tooltip = {
-						tooltip = CRD_restoration_of_order_tt
-						all_country = {
-							is_subject_of_type = tributary_state
-							is_subject_of = ROOT
-							capital_scope = {
-								OR = {
-									superregion = far_east_superregion
-									superregion = east_indies_superregion
-									region = mongolia_region
-									region = tibet_region
-								}
-							}	
-						}
-					}
-					amount = 10
-				}
-			}
-			else = {
-				owns_or_non_sovereign_subject_of = 730 #girin
-				owns_or_non_sovereign_subject_of = 2190 #qaraqorum
-				owns_or_non_sovereign_subject_of = 677 # lhasa
-				owns_or_non_sovereign_subject_of = 613 # donkin
-				owns_or_non_sovereign_subject_of = 1020 # kyoto
-			}
-		}
-		effect = {
-			if = {
-				limit = {
-					has_dlc = "Mandate of Heaven"
-					is_emperor_of_china = yes
-				}
-				custom_tooltip = th_authority_mandate_lv3_tt
-				hidden_effect = {
-					remove_country_modifier = touhou_emperor_of_china_lv2
-					add_country_modifier = {
-						name = touhou_emperor_of_china_lv3
-						duration = -1
-					}
-				}
-			}
-			else = {
-				add_prestige = 50
-			}	
-		}
-	}
-	
-	CRD_new_order_of_far_east = {
-		icon = mission_scholar_officials
-		required_missions = { CRD_restoration_of_order }
-		position = 12
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 100
-				superregion = china_superregion
-			}
-			has_any_disaster = no
-			NOT = {	
-				has_disaster_progress = {
-					disaster = th_gensokyan_celestial_trial
-					value = 1
-				}
-			}
-			if = {
-				limit = {
-					has_dlc = "Mandate of Heaven"
-					is_emperor_of_china = yes
-				}
-				#empire_of_china_reform_level = 4	#currently a bugged trigger
-				imperial_mandate = 80
-				meritocracy = 80
-			}
-			else = {
-				legitimacy = 95
-				stability = 3
-				NOT = {
-					any_owned_province = {
-						superregion = china_superregion
-						unrest = 1
-					}
-				}
-			}				
-		}
-		effect = {
-			if = {
-				limit = {
-					has_dlc = "Mandate of Heaven"
-					is_emperor_of_china = yes
-				}
-				custom_tooltip = th_max_authority_mandate_tt
-				hidden_effect = {
-					remove_country_modifier = touhou_emperor_of_china_lv3
-					add_country_modifier = {
-						name = touhou_emperor_of_china_lv4
-						duration = -1
-					}
-				}
-			}
-			else = {
-				add_country_modifier = {
-					name = crd_new_order_of_far_east
-					duration = -1
-				}
-			}	
-		}
-	}
-}
-
-komeijis_missions_middle_screen_slot = {
-	slot = 3
-	generic = no
-	ai = yes
-	potential = {
-		tag = CRD
-		NOT = { map_setup = map_setup_random }
-		has_country_flag = th_debug_mode_has_access_to_wip_missions
-	}
-	has_country_shield = yes
-	
-	CRD_form_the_scarlett_komeiji_nation_mission = {
-		icon = mission_touhou_empress_satori
-		required_missions = {  }
 		position = 6
 		trigger = {
-			OR = {
-				tag = SCD
-				tag = GNK
-				government_rank = 3
+			NOT = { great_power_rank = 2 }
+			calc_true_if = {
+				all_subject_country = {
+					custom_trigger_tooltip = {
+						tooltip = CRD_the_fair_lady_satori_tt
+						is_subject_of_type = th_satori_vassal
+						total_development = 150
+					}
+				}
+				amount = 4
 			}
-			total_development = 650
+			NOT = {
+				any_subject_country = {
+					liberty_desire = 10
+				}
+			}
+			legitimacy_equivalent = 100
 		}
 		effect = {
 			add_country_modifier = {
-				name = "crd_formed_a_powerful_union_with_scr"
+				name = crd_lord_satori
 				duration = -1
 			}
 		}
 	}
 	
-	CRD_attack_china = {
-		icon = mission_manchu_warrior
+	CRD_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { CRD_curiosity_of_the_pets }
 		position = 7
-		required_missions = { 
-			CRD_entrance_to_the_mandate_of_heaven
-			CRD_control_over_the_untrustworthy_youkai
-		}
 		trigger = {
-			OR = {
-				is_rival = MNG
-				MNG = { is_rival = ROOT }
-				NOT = { exists = MNG }
-				if = {
-					limit = {
-						exists = MNG
-					}
-					total_development = MNG
-					total_development = 1000
+			custom_trigger_tooltip = {
+				tooltip = CRD_discover_europe_tt
+				OR = {
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
 				}
 			}
 		}
 		effect = {
-			add_mil_power = 100
-			south_china_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
 			}
-			north_china_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
+			country_event = { id = TH_mission_events.4 }			
+		}
+	}
+	
+	CRD_moriya_matter = {
+		icon = mission_touhou_kanako_suwako
+		required_missions = { CRD_resolving_religious_confusion }
+		position = 9
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4999
+				province_id = 4998
 			}
-			xinan_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_or_subject_of = 4999
+			owns_or_subject_of = 4998
+		}
+		effect = {
+			add_country_modifier = {
+				name = crd_subjugate_moriya
+				duration = 9125
+			}		
+		}
+	}
+}
+
+crd_internal_okuu_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+
+	CRD_appease_the_hell_residents = {
+		icon = mission_touhou_parsee
+		required_missions = {  }
+		position = 1
+		provinces_to_highlight = {
+			region = former_hell_region
+			OR = {
+				unrest = 1
 			}
-			liaoning_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+			owned_by = ROOT
+		}
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					region = former_hell_region
+					unrest = 1
 				}
-				add_permanent_claim = ROOT
+			}
+			estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 60
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 60
+			}
+			estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 60
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = crd_resolved_nuisance
+				duration = 9125
+			}
+		}
+	}
+
+	CRD_improve_oni_relations = {
+		icon = mission_touhou_yuugi
+		required_missions = { CRD_appease_the_hell_residents }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				owner = {
+					tag = ONI
+					NOT = {
+						reverse_has_opinion = {
+							who = ONI
+							value = 150
+						}
+					}
+				}
+				AND = {
+					province_id = 5057 #Sake Storage
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		}
+		trigger = {
+			OR = {
+				reverse_has_opinion = {
+					who = ONI
+					value = 150
+				}
+				NOT = { exists = ONI }
+			}
+			owns_or_non_sovereign_subject_of = 5057 #Sake Storage
+		}
+		effect = {
+			country_event = {
+				id = flavor_crd.3
+			}
+		}
+	}
+
+	CRD_show_strength = {
+		icon = mission_touhou_yuugi_warrior
+		required_missions = { CRD_improve_oni_relations }
+		position = 3
+		trigger = {
+			OR = {
+				has_global_modifier_value = {
+					which = discipline
+					value = 0.15
+				}
+				army_size = 75
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					ONI = {
+						is_subject_of = ROOT
+					}
+				}
+				ONI = {
+					add_liberty_desire = -100
+				}
+			}
+			add_country_modifier = {
+				name = crd_oni_support
+				duration = 9125
+			}
+		}
+	}
+
+	CRD_stabilize_former_hell = {		#Stabilize Hell
+		icon = mission_touhou_senatesatori
+		required_missions = { CRD_show_strength }
+		position = 5
+		trigger = {
+			stability = 3
+			NOT = {
+				estate_influence = {
+					estate = estate_church
+					influence = 30
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_burghers
+					influence = 30
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_nobles
+					influence = 30
+				}
+			}
+			crown_land_share = 75
+			absolutism = 70
+		}
+		effect = {
+			th_remove_autonomy_from_all_provinces_effect = yes
+			add_absolutism = 25
+		}
+	}
+
+	CRD_passion_in_the_desert = {
+		icon = mission_rb_seize_alexandria
+		required_missions = { CRD_curiosity_of_the_pets }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				area = red_sea_coast_area
+				area = gulf_of_arabia_area
+				area = tabuk_area
+				area = medina_area
+				area = mecca_area
+				area = tihama_al_yemen_area
+			}
+			has_port = yes
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_owned_provinces_with = {
+				custom_trigger_tooltip = {
+					tooltip = CRD_passion_in_the_desert_ct
+					OR = {
+						area = red_sea_coast_area
+						area = gulf_of_arabia_area
+						area = tabuk_area
+						area = medina_area
+						area = mecca_area
+						area = tihama_al_yemen_area
+					}
+					has_port = yes
+				}
+				value = 5
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_crd.2
+			}
+		}
+	}
+
+	CRD_cat_worship = {	#Conquer Egypt
+		icon = mission_touhou_kaenbyou
+		required_missions = { CRD_passion_in_the_desert }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				province_id = 361
+				province_id = 359
+				province_id = 358
+				province_id = 363
+				province_id = 2316
+				province_id = 4316
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 361
+			owns_or_non_sovereign_subject_of = 359
+			owns_or_non_sovereign_subject_of = 358
+			owns_or_non_sovereign_subject_of = 363
+			owns_or_non_sovereign_subject_of = 2316
+			owns_or_non_sovereign_subject_of = 4316
+		}
+		effect = {
+			if = {
+				limit = {
+					ORN = {
+						exists = yes
+						is_subject_of = ROOT
+					}
+				}
+				ORN = {
+					add_country_modifier = {
+						name = crd_cat_of_egypt
+						duration = -1
+					}
+				}
+				egypt_region = {
+					limit = {
+						NOT = { is_core = ORN }
+						NOT = { is_permanent_claim = ORN }
+					}
+					add_permanent_claim = ORN
+				}
+				dongola_area = {
+					limit = {
+						NOT = { is_core = ORN }
+						NOT = { is_permanent_claim = ORN }
+					}
+					add_permanent_claim = ORN
+				}
+				upper_nubia_area = {
+					limit = {
+						NOT = { is_core = ORN }
+						NOT = { is_permanent_claim = ORN }
+					}
+					add_permanent_claim = ORN
+				}
+				sennar_area = {
+					limit = {
+						NOT = { is_core = ORN }
+						NOT = { is_permanent_claim = ORN }
+					}
+					add_permanent_claim = ORN
+				}
+				#If ORN should really have the origin of the Nile than there are much more claims required
+				#central_ethiopia_area = {
+				#	limit = {
+				#		NOT = { is_core = ORN }
+				#		NOT = { is_permanent_claim = ORN }
+				#	}
+				#	add_permanent_claim = ORN
+				#}
+				#damot_area = {
+				#	limit = {
+				#		NOT = { is_core = ORN }
+				#		NOT = { is_permanent_claim = ORN }
+				#	}
+				#	add_permanent_claim = ORN
+				#}
+				#1217 = {
+				#	add_permanent_claim = ORN
+				#}
+				#bunyoro_area = {
+				#	limit = {
+				#		NOT = { is_core = ORN }
+				#		NOT = { is_permanent_claim = ORN }
+				#	}
+				#	add_permanent_claim = ORN
+				#}
+				#uganda_area = {
+				#	limit = {
+				#		NOT = { is_core = ORN }
+				#		NOT = { is_permanent_claim = ORN }
+				#	}
+				#	add_permanent_claim = ORN
+				#}
+			}
+			else = {
+				custom_tooltip = CRD_get_all_pets_claim_two_at
+				hidden_effect = {
+					red_sea_coast_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					gulf_of_arabia_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					tabuk_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					medina_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					mecca_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					tihama_al_yemen_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+				}
+				egypt_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				dongola_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				upper_nubia_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				sennar_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			custom_tooltip = CRD_cat_worship_ct
+			hidden_effect = {
+				every_province = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+						OR = {
+							region = arabia_region
+							region = egypt_region
+						}
+					}
+					add_province_modifier = {
+						name = crd_no_untrusting_threats
+						duration = 9125
+					}
+				}
+			}
+			custom_tooltip = CRD_cat_worship_tt
+			hidden_effect = {
+				361 = { change_religion = ROOT }
+				359 = { change_religion = ROOT }
+				358 = { change_religion = ROOT }
+				363 = { change_religion = ROOT }
+				2316 = { change_religion = ROOT }
+				4316 = { change_religion = ROOT }
+			}
+			add_country_modifier = {
+				name = crd_power_of_hell_cat
+				duration = 7300
+			}
+		}
+	}
+
+	CRD_gain_mask_of_hope = {	#Koishi Kokoro mission
+		icon = mission_touhou_kokoro
+		required_missions = {  }
+		position = 10
+		provinces_to_highlight = {
+			province_id = 5136
+			NOT = { controller = { alliance_with = ROOT } }
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			5136 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						alliance_with = ROOT
+					}
+				}
+			}
+		}
+		effect = {
+			add_prestige = 15
+			country_event = {
+				id = flavor_crd.20
+			}
+		}
+	}	
+}
+
+crd_koishi_second_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { map_setup = map_setup_random }
+		has_global_flag = crd_unlock_first_koishi_mission
+	}
+	has_country_shield = yes
+	
+	CRD_find_koishi_mission = {
+		icon = mission_touhou_wandering_koishi
+		required_missions = { CRD_gain_mask_of_hope }
+		position = 11
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = CRD_find_koishi_mission_tt
+				always = yes
+			}
+		}
+		effect = {
+			add_prestige = 25
+		}
+	}
+}
+
+crd_koishi_third_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { map_setup = map_setup_random }
+		has_global_flag = crd_unlock_second_koishi_mission
+	}
+	has_country_shield = yes
+	
+	CRD_return_koishi_to_crd = {
+		icon = mission_touhou_koishi_at_home
+		required_missions = { CRD_find_koishi_mission }
+		position = 12
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = CRD_return_koishi_to_crd_tt
+				always = yes
+			}
+		}
+		effect = {
+			capital_scope = {
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
+			}
+		}
+	}
+}
+
+crd_orin_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	CRD_fortify_chireiden = {
+		icon = mission_touhou_former_hell_castle
+		required_missions = {  }
+		position = 1
+		provinces_to_highlight = {
+			region = former_hell_region
+			OR = {
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					NOT = {
+						th_has_up_to_date_fort_building = {
+							tag = ROOT
+						}
+					}
+				}
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			}
+		}
+		trigger = {
+			5007 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+			}
+			5290 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+			}
+			calc_true_if = {
+				all_owned_province = {
+					custom_trigger_tooltip = {
+						tooltip = CRD_fortify_chireiden_ct
+						country_or_non_sovereign_subject_holds = ROOT
+						th_has_up_to_date_fort_building = {
+							tag = ROOT
+						}
+					}
+					region = former_hell_region
+				}
+				amount = 4
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = crd_former_hell_fort
+				duration = 7300
+			}
+		}
+	}
+
+	CRD_expand_infrastructure = {
+		icon = mission_touhou_chireiden
+		required_missions = { CRD_fortify_chireiden }
+		position = 2
+		provinces_to_highlight = {
+			region = former_hell_region
+			country_or_non_sovereign_subject_holds = ROOT
+			OR = {
+				has_tax_building_trigger = no
+				has_production_building_trigger = no
+			}
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = former_hell_region
+				has_tax_building_trigger = yes
+				has_production_building_trigger = yes
+				value = 25
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = crd_parliament_of_chireiden
+				duration = 7300
+			}		
+		}
+	}
+	
+	CRD_paradise_of_spirit = {	
+		icon = mission_touhou_former_capital
+		required_missions = { CRD_expand_infrastructure }
+		position = 3
+		provinces_to_highlight = {
+			region = former_hell_region
+			country_or_non_sovereign_subject_holds = ROOT
+			has_manufactory_trigger = no
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = former_hell_region
+				has_manufactory_trigger = yes
+				value = 25
+			}
+		}
+		effect = {
+			add_years_of_income = 3
+			add_country_modifier = {
+				name = crd_spirit_manufactories
+				duration = 7300
+			}	
+		}
+	}	
+
+	CRD_form_the_komeiji_navy = {
+		icon = mission_touhou_expanded_navy
+		required_missions = {  }
+		position = 4
+		trigger = {
+			num_of_total_ports = 15
+			navy_size_percentage = 0.9
+		}
+		effect = {
+			add_prestige = 15
+			add_country_modifier = {
+				name = crd_search_for_new_pets
+				duration = 7300
+			}
+			define_explorer = {
+				shock = 1
+				fire = 2
+				manuever = 4
+				siege = 0
+				name = "Pet Explorer"
 			}
 		}
 	}
 	
-	CRD_take_the_mandate_of_heaven = {
-		icon = mission_touhou_mandate_of_heaven
-		position = 8
-		required_missions = { 
-			CRD_attack_china
+	CRD_break_the_barrier = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = { CRD_form_the_komeiji_navy }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+				region = bengal_region
+				region = coromandel_region
+			}
+			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
-			if = {
-				limit = {
-					any_country = {
-						is_emperor_of_china = yes
-					}
-				}
-				any_country = {
-					is_emperor_of_china = yes
-					war_with = ROOT
-				}
-				war_score = 70
-				if = {
-					limit = {
-						any_country = {
-							is_emperor_of_china = yes
-							owns = 1816
-						}
-					}
-					controls = 1816
-				}
-				else = {
-					any_country = {
-						is_emperor_of_china = yes
-						capital_scope = {
-							controlled_by = ROOT
-						}
-					}
-				}
-			}
-			else = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
 				OR = {
-					AND = {
-						1816 = {
-							owner = {
-								war_with = ROOT
-							}
-						}
-						war_score = 70
-						controls = 1816
-					}
-					1816 = {
-						owned_by = ROOT
-						is_core = ROOT
-					}
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
 				}
 			}
 		}
 		effect = {
-			add_war_exhaustion = -20
-			country_event = { id = TH_mission_events.1 }
-			country_event = { id = TH_mission_events.3 }
+			add_dip_power = 75
+			add_navy_tradition = 35
+			define_explorer = {
+				shock = 1
+				fire = 2
+				manuever = 4
+				siege = 0
+				name = "Pet Explorer"
+			}
+		}
+	}
+	
+	CRD_curiosity_of_the_pets = {
+		icon = mission_touhou_orinokuu1
+		required_missions = { CRD_break_the_barrier }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				region = bengal_region
+				region = coromandel_region
+				region = deccan_region
+				region = arabia_region
+				region = horn_of_africa_region
+				region = egypt_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = CRD_curiosity_of_the_pets_tt
+				OR = {
+					bengal_region = { has_discovered = ROOT }
+					coromandel_region = { has_discovered = ROOT }
+					deccan_region = { has_discovered = ROOT }
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = CRD_curiosity_of_the_pets_ct
+				OR = {
+					arabia_region = { has_discovered = ROOT }
+					horn_of_africa_region = { has_discovered = ROOT }
+					egypt_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = TH_mission_events.6
+			}
+			custom_tooltip = CRD_curiosity_of_the_pets_at
+			hidden_effect = {
+				red_sea_coast_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				gulf_of_arabia_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				tabuk_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				medina_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				mecca_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				tihama_al_yemen_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			custom_tooltip = CRD_curiosity_of_the_pets_bt
+			hidden_effect = {
+				orissa_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				east_bengal_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				west_bengal_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+	
+	CRD_flame_god_of_the_india = {	#Land in India
+		icon = mission_touhou_agni
+		required_missions = { CRD_curiosity_of_the_pets }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				area = west_bengal_area
+				area = east_bengal_area
+				area = orissa_area
+			}
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			num_of_owned_provinces_with = {
+				OR = {
+					area = west_bengal_area
+					area = east_bengal_area
+					area = orissa_area
+				}
+				value = 5
+			}
+			owns = 561
+		}
+		effect = {
+			country_event = {
+				id = flavor_crd.6
+			}	
+		}
+	}
+
+	CRD_pets_new_home = {	#Conquer India
+		icon = mission_touhou_orinokuu2
+		required_missions = { CRD_flame_god_of_the_india }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				area = jharkhand_area
+				area = bihar_area
+				area = purvanchal_area
+				area = oudh_area
+				area = lower_doab_area
+				area = katehar_area
+				area = upper_doab_area
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = jharkhand_area
+					area = bihar_area
+					area = purvanchal_area
+					area = oudh_area
+					area = lower_doab_area
+					area = katehar_area
+					area = upper_doab_area
+				}
+				value = 20
+			}
+			owns_or_non_sovereign_subject_of = 522
+		}
+		effect = {
+			if = {
+				limit = {
+					OKU = {
+						exists = yes 
+						is_subject_of = ROOT
+					}
+				}
+				sirhind_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				lahore_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				gaur_area = {
+					limit = {
+						NOT = { is_core = OKU }
+						NOT = { is_permanent_claim = OKU }
+					}
+					add_permanent_claim = OKU
+				}
+				OKU = {
+					add_country_modifier = {
+						name = crd_bird_of_india
+						duration = -1
+					}
+				}
+			}
+			else = {
+				custom_tooltip = CRD_get_all_pets_claim_at
+				hidden_effect = {
+					west_bengal_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					east_bengal_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					orissa_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					jharkhand_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					bihar_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					purvanchal_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					oudh_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					lower_doab_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					katehar_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+					upper_doab_area = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+				}
+				sirhind_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				lahore_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				gaur_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			add_country_modifier = {
+				name = crd_power_of_flame_god
+				duration = 7300
+			}
 		}
 	}
 }

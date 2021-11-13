@@ -233,6 +233,20 @@ on_adm_development = {
 				duration = -1
 			}
 		}
+		owner = {
+			add_adm_power = 5
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = disables_settled_property
+			}
+		}
+		change_variable = {
+			which = kmj_capital_base_tax
+			value = 1
+		}
 	}
 }
 
@@ -289,6 +303,20 @@ on_dip_development = {
 				name = th_province_to_drain
 				duration = -1
 			}
+		}
+		owner = {
+			add_dip_power = 5
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = disables_settled_property
+			}
+		}
+		change_variable = {
+			which = kmj_capital_base_production
+			value = 1
 		}
 	}
 }
@@ -347,6 +375,20 @@ on_mil_development = {
 				duration = -1
 			}
 		}
+		owner = {
+			add_mil_power = 5
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = disables_settled_property
+			}
+		}
+		change_variable = {
+			which = kmj_capital_base_manpower
+			value = 1
+		}
 	}
 }
 
@@ -365,35 +407,17 @@ on_battle_won_country = {
 		}
 		ROOT = { set_country_flag = albanian_victory }
 	}
-	if = {
-		limit = {
-			ROOT = {
-				has_country_flag = scr_battle_counter_ready
-			}
-		}
-		ROOT = {
-			change_variable = {
-				which = scr_battle_counter
-				value = 1
-			}
-		}
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = scr_battle_counter_ready
+		variable = scr_battle_counter
+		max_value = 30
+		country_event = flavor_scr.24	#SCR gets their government reform
 	}
-	if = {
-		limit = {
-			ROOT = {
-				has_country_flag = scr_battle_counter_ready
-				check_variable = {
-					which = scr_battle_counter
-					value = 30
-				}
-			}
-		}
-		ROOT = {
-			clr_country_flag = scr_battle_counter_ready
-			country_event = {
-				id = flavor_scr.24
-			}
-		}
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = crd_is_counting_battles
+		variable = crd_oni_battle_counter
+		max_value = 10
+		country_event = th_core_event.1	#No event for CRD
 	}
 }
 
@@ -506,7 +530,7 @@ on_create_vassal = {
 			culture = Fairy
 			th_ds_is_not_divine_state_nation = yes
 		}
-		change_government = tribe
+		change_government = tribal
 		add_government_reform = Gensokyan_fairy_government
 		adopt_reform_progress = FROM
 	}
@@ -544,7 +568,9 @@ on_create_vassal = {
 on_mercenary_recruited = {
 	if = {
 		limit = {
-			NOT = { has_country_flag = th_free_merc_companies }
+			FROM = {
+				NOT = { has_country_flag = th_free_merc_companies }
+			}
 		}
 		FROM = {
 			add_army_professionalism = -0.05
@@ -603,7 +629,7 @@ on_country_released = {
 			culture = Fairy
 			th_ds_is_not_divine_state_nation = yes
 		}
-		change_government = tribe
+		change_government = tribal
 		add_government_reform = Gensokyan_fairy_government
 		adopt_reform_progress = FROM
 	}
@@ -723,5 +749,54 @@ on_siege_won_country = {
 		10 = army_professionalism_events.1 #City Sacked
 		10 = flavor_tfr.16 #TFR sacks fort
 		100 = 0
+	}
+}
+
+# ROOT = Overlord, FROM = Minor
+on_dependency_gained = {
+	if = {
+		limit = {
+			FROM = {
+				has_reform = dutch_republic
+			}
+		}
+		ROOT = {
+			country_event = {
+				id = dutch_republic.31
+			}# States General falls under a PU
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				OR = {
+					is_subject_of_type = th_yukari_daimyo
+					is_subject_of_type = th_yukari_puppet_state
+					is_subject_of_type = th_yukari_march
+					is_subject_of_type = th_special_march
+					is_subject_of_type = th_satori_vassal
+					is_subject_of_type = th_mokou_daimyo
+					is_subject_of_type = th_trade_union
+					is_subject_of_type = th_yuuka_gatekeeper
+					is_subject_of_type = th_pet_state
+					is_subject_of_type = th_sister_state
+				}
+			}
+		}
+		FROM = {
+			set_country_flag = th_has_been_special_subject
+		}
+	}
+}
+
+# ROOT = Overlord, FROM = Minor
+on_dependency_lost = {
+	if = {
+		limit = {
+			FROM = {
+				has_country_flag = th_has_been_special_subject
+			}
+		}
+		clr_country_flag = th_has_been_special_subject
 	}
 }

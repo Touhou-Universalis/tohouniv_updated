@@ -26,3 +26,6 @@ NDefines.NFrontend.MP_OPTIONS_POS_Y = 922.0
 NDefines.NFrontend.MP_OPTIONS_POS_Z = 700.0
 NDefines.NFrontend.MP_OPTIONS_LOOK_X = 5358.0
 NDefines.NFrontend.MP_OPTIONS_LOOK_Z = 800.0
+
+--NDefines.NCountry.ESTATE_PRIVILEGES_MAX_CONCURRENT = 8		-- Max. number of privileges active at the same time
+--NDefines.NEconomy.MAX_BUILDING_SLOTS = 16
