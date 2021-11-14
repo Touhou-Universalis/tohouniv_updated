@@ -1,3 +1,4 @@
+#Basic add faith power effect without any scaling
 mry_add_faith_power = {
 	if = {
 		limit = {
@@ -57,6 +58,7 @@ mry_add_faith_power = {
 }
 
 #Not used yet, might come in handy later
+#Adds faith power without considering your total development or religious unity
 mry_add_scaled_faith_power = {
 	if = {
 		limit = {
@@ -363,89 +365,9 @@ mry_add_scaled_province_conversion_faith_power = {
 	}
 }
 
-mry_add_monthly_faith_power = {
-	export_to_variable = {
-		variable_name = th_additional_faith_power
-		value = modifier:monthly_faith_power
-		who = ROOT
-	}
-	export_to_variable = {
-		which = faith_power_scaler
-		value = modifier:faith_power_modifier
-	}
-	change_variable = {
-		which = faith_power_scaler
-		value = 1
-	}
-	if = {
-		limit = {
-			check_variable = {	#NO NEGATIVITY SCALER
-				which = faith_power_scaler
-				value = 0
-			}
-			check_variable = {	#NEGATIVE VALUES SHOULD NOT SCALE
-				which = th_additional_faith_power
-				value = 0
-			}
-		}
-		multiply_variable = {
-			which = th_additional_faith_power
-			which = faith_power_scaler
-		}
-	}
-	change_variable = {
-		which = th_additional_faith_power
-		which = faith_power
-	}
-	export_to_variable = {
-		which = faith_power_limit
-		value = modifier:faith_power_capacity
-	}
-	multiply_variable = {
-		which = faith_power_limit
-		value = 100
-	}
-	if = {	#Underflow case
-		limit = {
-			NOT = {
-				check_variable = {
-					which = th_additional_faith_power
-					value = 0
-				}
-			}
-		}
-		set_variable = {
-			which = faith_power
-			value = 0
-		}
-	}
-	else_if = {	#Overflow case
-		limit = {
-			check_variable = {
-				which = th_additional_faith_power
-				which = faith_power_limit
-			}
-		}
-		set_variable = {
-			which = faith_power
-			which = faith_power_limit
-		}
-	}
-	else = {	#Normal case				
-		hidden_effect = {
-			subtract_variable = {
-				which = th_additional_faith_power
-				which = faith_power
-			}
-		}
-		change_variable = {
-			which = faith_power
-			which = th_additional_faith_power
-		}
-	}
-}
-
-mry_add_base_faith_power = {
+#This effect is the base faith power you get. This gets applied always first
+#In the event, the base monthly faith power is 1
+mry_add_base_scaled_faith_power = {
 	export_to_variable = {
 		which = base_faith_power_gain
 		value = $value$
@@ -459,10 +381,8 @@ mry_add_base_faith_power = {
 		which = faith_power_scaler
 		value = 1
 	}
-	export_to_variable = {
-		which = faith_power_religious_unity
-		value = religious_unity
-	}
+	#Factors for gaining faith power
+	#+ 1/1000 of your total development as faith power
 	export_to_variable = {
 		which = faith_power_development
 		value = total_development
@@ -470,6 +390,20 @@ mry_add_base_faith_power = {
 	divide_variable = {
 		which = faith_power_development
 		value = 1000
+	}
+	#The faith power you get is multiplied with your religious unity - 100% means you get the full faith power (*1)
+	export_to_variable = {
+		which = faith_power_religious_unity
+		value = religious_unity
+	}
+	export_to_variable = {
+		variable_name = th_additional_faith_power
+		value = modifier:monthly_faith_power
+		who = ROOT
+	}
+	change_variable = {
+		which = th_additional_faith_power
+		which = base_faith_power_gain
 	}
 	change_variable = {
 		which = th_additional_faith_power
@@ -479,6 +413,7 @@ mry_add_base_faith_power = {
 		which = th_additional_faith_power
 		which = faith_power_religious_unity
 	}
+	#Then the faith power you gain will be multiplied with modifiers for scaling
 	if = {
 		limit = {
 			check_variable = {	#NO NEGATIVITY SCALER
@@ -499,6 +434,7 @@ mry_add_base_faith_power = {
 		which = th_additional_faith_power
 		which = faith_power
 	}
+	#The faith power you would get will now tested if it causes an overflow, underflow or if it is okay
 	export_to_variable = {
 		which = faith_power_limit
 		value = modifier:faith_power_capacity
