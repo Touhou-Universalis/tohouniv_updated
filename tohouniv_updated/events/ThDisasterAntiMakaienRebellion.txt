@@ -47,6 +47,7 @@ country_event = {
 			set_country_flag = mki_tolerant_missions
 			set_country_flag = mki_forbid_conversion_to_shinkism
 			clr_country_flag = mki_religious_missions
+			set_country_flag = mki_gets_penalty_on_makaien_provinces
 			swap_non_generic_missions = yes
 			every_owned_province = {
 				limit = {
@@ -174,10 +175,13 @@ country_event = {
 			clr_country_flag = th_has_anti_makaien_rebellion
 			set_country_flag = th_had_anti_makaien_rebellion
 			clr_country_flag = mki_had_disaster_event
+			clr_country_flag = mki_gets_penalty_on_makaien_provinces
+			clr_country_flag = mki_reduced_makai_penalty_level_1
+			clr_country_flag = mki_reduced_makai_penalty_level_2
 		}
 	}
 	
-	option = {	#Tolerant Path
+	option = {
 		name = th_anti_makaien_rebellion.2.a
 		hidden_effect = {
 			clr_country_flag = mki_gets_penalty_on_heretic_heathen_province
@@ -185,10 +189,14 @@ country_event = {
 				limit = {
 					OR = {
 						has_province_modifier = th_neglected_demons
+						has_province_modifier = th_begrudging_demons
+						has_province_modifier = th_grumpy_demons
 						has_province_modifier = th_intolerance_to_mortals
 					}
 				}
 				remove_province_modifier = th_neglected_demons
+				remove_province_modifier = th_begrudging_demons
+				remove_province_modifier = th_grumpy_demons
 				remove_province_modifier = th_intolerance_to_mortals
 			}
 		}
@@ -362,6 +370,78 @@ country_event = {
 		
 		ai_chance = { 
 			factor = 1
+		}
+	}
+}
+
+#Reapply debuff to owned provinces
+country_event = {
+	id = th_anti_makaien_rebellion.5
+	title = none
+	desc = none
+	picture = none
+	hidden = yes
+
+	trigger = {
+		has_disaster = th_anti_makaien_rebellion
+		any_owned_province = {
+			culture = Makaian
+			NOT = { has_province_modifier = th_neglected_demons }
+			NOT = { has_province_modifier = th_begrudging_demons }
+			NOT = { has_province_modifier = th_grumpy_demons }
+		}
+		has_country_flag = mki_gets_penalty_on_makaien_provinces
+	}
+
+	mean_time_to_happen = {
+		days = 5
+	}
+
+	option = {
+		if = {
+			limit = {
+				has_country_flag = mki_reduced_makai_penalty_level_2
+			}
+			every_owned_province = {
+				limit = {
+					culture = Makaian
+					NOT = { has_province_modifier = th_grumpy_demons }
+				}
+				remove_province_modifier = th_neglected_demons
+				remove_province_modifier = th_begrudging_demons
+				add_province_modifier = {
+					name = th_grumpy_demons
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = mki_reduced_makai_penalty_level_1
+			}
+			every_owned_province = {
+				limit = {
+					culture = Makaian
+					NOT = { has_province_modifier = th_begrudging_demons }
+				}
+				remove_province_modifier = th_neglected_demons
+				add_province_modifier = {
+					name = th_begrudging_demons
+					duration = -1
+				}
+			}
+		}
+		else = {
+			every_owned_province = {
+				limit = {
+					culture = Makaian
+					NOT = { has_province_modifier = th_neglected_demons }
+				}
+				add_province_modifier = {
+					name = th_neglected_demons
+					duration = -1
+				}
+			}
 		}
 	}
 }
