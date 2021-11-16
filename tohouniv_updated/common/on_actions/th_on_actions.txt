@@ -955,6 +955,184 @@ on_province_religion_converted = {
 	}
 }
 
+# province
+# FROM = old owner
+on_province_owner_change = {
+	events = {
+		japan.1
+	}
+	
+	if = {
+		limit = {
+			OR = {
+				has_province_modifier = wine_bonus_prod
+				has_province_modifier = grain_bonus_prod
+			}
+			FROM = { has_reform = monastic_breweries_reform }
+			NOT = { owner = { has_reform = monastic_breweries_reform } }
+		}
+		remove_province_modifier = wine_bonus_prod
+		remove_province_modifier = grain_bonus_prod
+	}
+	
+	if = {
+		limit = {
+			NOT = {
+				OR = {
+					has_province_modifier = wine_bonus_prod
+					has_province_modifier = grain_bonus_prod
+				}
+			}
+			owner = { has_reform = monastic_breweries_reform }
+			NOT = { FROM = { has_reform = monastic_breweries_reform } }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					trade_goods = wine
+				}
+				add_province_modifier = { 
+					name = wine_bonus_prod
+					duration = -1
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					trade_goods = grain
+				}
+				add_province_modifier = { 
+					name = grain_bonus_prod
+					duration = -1
+					hidden = yes
+				}
+			}
+		}
+	}
+
+	if = {
+		limit = {
+			owned_by = SRU
+			exists = ARA
+		}
+		ARA = {
+			set_country_flag = ARA_defeat_saruhan
+		}
+	}
+	if = {
+		limit = {
+			NOT = { owner = { religion_group = muslim } }
+			has_province_modifier = sufi_shrine
+		}
+		remove_province_modifier = sufi_shrine
+	}
+	on_province_owner_change_estate_privileges_effect = yes
+	judaism_on_province_change_religion_or_change_owner_effect = yes
+	kongo_on_province_change_culture_or_change_owner_effect = yes
+	th_on_province_owner_change_effect = yes
+	
+	if = {
+		limit = {
+			region = indo_china_region
+			has_building = farm_estate
+			trade_goods = grain
+			owner = {
+				has_mission = mnd_khm_irrigation 
+				NOT = {
+					OR = {
+						has_estate = estate_vaisyas
+						has_estate = estate_burghers
+					}
+				}
+			}
+		}
+		add_province_modifier = {
+			name = grain_production_improved
+			duration = 7300
+		}
+	}
+
+	if = {
+		limit = {
+			trade_goods = gold
+			NOT = { has_province_modifier = estate_burghers_control_over_gold_mine }
+			owner = {
+				has_estate_privilege = estate_burghers_control_over_the_mint
+			}
+		}
+		add_province_modifier = {
+			name = estate_burghers_control_over_gold_mine
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				religion = ROOT
+				culture_group = ROOT
+				has_estate_privilege = estate_church_one_faith_one_culture
+			}
+			NOT = { has_province_modifier = estate_church_united_faith_and_culture }
+		}
+		add_province_modifier = {
+			name = estate_church_united_faith_and_culture
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				NOT = { culture_group = ROOT }
+				has_estate_privilege = estate_church_one_faith_one_culture
+			}
+			has_owner_accepted_culture = no	#Com from today to Com to the future: please push this line out of the owner scope. Thanks.
+			NOT = { has_province_modifier = estate_church_false_culture }
+		}
+		add_province_modifier = {
+			name = estate_church_false_culture
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_country_modifier = son_fetishism_as_secondary_religion
+			}
+			religion = shamanism
+			NOT = { has_province_modifier = son_fetishism_as_secondary_religion_province }
+		}
+		add_province_modifier = {
+			name = son_fetishism_as_secondary_religion_province
+			duration = -1
+			desc = son_fetishism_as_secondary_religion_province_desc
+		}
+	}
+	
+	if = {
+		limit = {
+			province_id = 379
+			owner = {
+				NOT = { religion = jewish }
+			}
+		}
+		remove_country_modifier = third_temple_country_modifier
+	}
+	else_if = {
+		limit = {
+			OR = {
+				owner = {
+					NOT = { has_country_modifier = son_fetishism_as_secondary_religion }
+				}
+				NOT = { religion = shamanism }
+			}
+			has_province_modifier = son_fetishism_as_secondary_religion_province
+		}
+		remove_province_modifier = son_fetishism_as_secondary_religion_province
+	}
+	mki_apply_all_tolerance_on_province_effect = yes
+	mki_apply_all_religion_on_province_effect = yes
+}
+
 # country
 on_harmonized_Touhou = {
 	events = {
@@ -1289,6 +1467,4 @@ on_conquest = {
 			th_pirate_add_conquer_fame = yes
 		}
 	}
-	mki_apply_all_tolerance_on_province_effect = yes
-	mki_apply_all_religion_on_province_effect = yes
 }
