@@ -1,38 +1,3 @@
-th_on_conquest_effect = {
-	if = {
-		limit = {
-			owner = {
-				has_country_modifier = th_questionable_goddess
-			}
-			NOT = { has_province_modifier = th_neglected_demons }
-			OR = {
-				culture = Makaian
-				area = Makai_area
-				area = Makai_coast_state
-				area = Makai_peninsula_state
-				area = Western_makai_state
-			}
-		}
-		add_province_modifier = {
-			name = th_neglected_demons
-			duration = -1
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				has_country_flag = mki_gets_penalty_on_heretic_heathen_province
-			}
-			NOT = { has_province_modifier = th_intolerance_to_mortals }
-			NOT = { religion = ROOT }
-		}
-		add_province_modifier = {
-			name = th_intolerance_to_mortals
-			duration = -1
-		}
-	}
-}
-
 th_on_province_religion_converted_effect = {
 	if = {
 		limit = {
@@ -725,5 +690,71 @@ net_pay_cuisine_fee = {
 			}
 		}
 		add_years_of_income = -17
+	}
+}
+
+###MKI DISASTER STUFF###
+mki_reduce_province_debuff = {
+	if = {
+		limit = {
+			has_country_flag = mki_reduced_makai_penalty_level_2 
+		}
+		custom_tooltip = mki_reduced_makai_penalty_level_3_tt
+		hidden_effect = {
+			clr_country_flag = mki_reduced_makai_penalty_level_2
+			set_country_flag = mki_reduced_makai_penalty_level_3
+			every_owned_province = {
+				limit = {
+					OR = {
+						has_province_modifier = th_neglected_demons
+						has_province_modifier = th_begrudging_demons
+						has_province_modifier = th_grumpy_demons
+					}
+				}
+				remove_province_modifier = th_neglected_demons
+				remove_province_modifier = th_begrudging_demons
+				remove_province_modifier = th_grumpy_demons
+				add_province_modifier = {
+					name = th_unhappy_demons
+					duration = -1
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = mki_reduced_makai_penalty_level_1 
+		}
+		custom_tooltip = mki_reduced_makai_penalty_level_2_tt
+		hidden_effect = {
+			clr_country_flag = mki_reduced_makai_penalty_level_1
+			set_country_flag = mki_reduced_makai_penalty_level_2
+			every_owned_province = {
+				limit = {
+					has_province_modifier = th_begrudging_demons
+				}
+				remove_province_modifier = th_begrudging_demons
+				add_province_modifier = {
+					name = th_grumpy_demons
+					duration = -1
+				}
+			}
+		}
+	}
+	else = {
+		custom_tooltip = mki_reduced_makai_penalty_level_1_tt
+		hidden_effect = {
+			set_country_flag = mki_reduced_makai_penalty_level_1
+			every_owned_province = {
+				limit = {
+					has_province_modifier = th_neglected_demons
+				}
+				remove_province_modifier = th_neglected_demons
+				add_province_modifier = {
+					name = th_begrudging_demons
+					duration = -1
+				}
+			}
+		}
 	}
 }

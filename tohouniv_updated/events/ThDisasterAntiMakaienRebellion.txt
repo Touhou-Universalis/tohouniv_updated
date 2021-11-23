@@ -25,22 +25,8 @@ country_event = {
 		custom_tooltip = th_anti_makaien_rebellion.1.a.tt
 		if = {
 			limit = {
-				NOT = { religion = th_oldhakurei }
+				religion = th_oldhakurei
 			}
-			change_religion = th_oldhakurei
-			add_stability = -2
-			if = {
-				limit = {
-					th_is_or_was_tag = { tag = MKI }
-					has_religious_school = no
-				}
-				set_religious_school = {
-					group = Touhou
-					school = shinki_school
-				}
-			}
-		}
-		else = {
 			add_patriarch_authority = 0.1
 		}
 		hidden_effect = {
@@ -51,7 +37,13 @@ country_event = {
 			swap_non_generic_missions = yes
 			every_owned_province = {
 				limit = {
-					culture = Makaian
+					OR = {
+						area = Makai_area
+						area = Makai_coast_state
+						area = Makai_peninsula_state
+						area = Western_makai_state
+						culture = Makaian
+					}
 				}
 				add_province_modifier = {
 					name = th_neglected_demons
@@ -100,7 +92,13 @@ country_event = {
 			hidden_effect = {
 				every_owned_province = {
 					limit = {
-						culture = Makaian
+						OR = {
+							area = Makai_area
+							area = Makai_coast_state
+							area = Makai_peninsula_state
+							area = Western_makai_state
+							culture = Makaian
+						}
 					}
 					change_religion = th_shinkism
 					add_permanent_province_modifier = {
@@ -142,6 +140,11 @@ country_event = {
 				}
 			}
 		}
+		add_country_modifier = {
+			name = th_ruthless_goddess
+			duration = -1
+			desc = th_questionable_goddess_tt
+		}
 
 		ai_chance = { 
 			factor = 100
@@ -178,6 +181,7 @@ country_event = {
 			clr_country_flag = mki_gets_penalty_on_makaien_provinces
 			clr_country_flag = mki_reduced_makai_penalty_level_1
 			clr_country_flag = mki_reduced_makai_penalty_level_2
+			clr_country_flag = mki_reduced_makai_penalty_level_3
 		}
 	}
 	
@@ -191,12 +195,14 @@ country_event = {
 						has_province_modifier = th_neglected_demons
 						has_province_modifier = th_begrudging_demons
 						has_province_modifier = th_grumpy_demons
+						has_province_modifier = th_unhappy_demons
 						has_province_modifier = th_intolerance_to_mortals
 					}
 				}
 				remove_province_modifier = th_neglected_demons
 				remove_province_modifier = th_begrudging_demons
 				remove_province_modifier = th_grumpy_demons
+				remove_province_modifier = th_unhappy_demons
 				remove_province_modifier = th_intolerance_to_mortals
 			}
 		}
@@ -258,7 +264,13 @@ country_event = {
 			AND = {
 				has_country_modifier = th_questionable_goddess
 				any_owned_province = {
-					culture = Makaian
+					OR = {
+						area = Makai_area
+						area = Makai_coast_state
+						area = Makai_peninsula_state
+						area = Western_makai_state
+						culture = Makaian
+					}
 				}
 			}
 			AND = {
@@ -280,7 +292,13 @@ country_event = {
 				}
 				random_owned_province = {
 					limit = {
-						culture = Makaian
+						OR = {
+							area = Makai_area
+							area = Makai_coast_state
+							area = Makai_peninsula_state
+							area = Western_makai_state
+							culture = Makaian
+						}
 					}
 					save_event_target_as = mki_revolting_province
 					set_province_flag = mki_own_uprising
@@ -374,9 +392,105 @@ country_event = {
 	}
 }
 
-#Reapply debuff to owned provinces
+#Traitor among the rebels
 country_event = {
 	id = th_anti_makaien_rebellion.5
+	title = th_anti_makaien_rebellion.5.t
+	desc = {
+		desc = th_anti_makaien_rebellion.5.desc.a
+		trigger = {
+			has_country_modifier = th_questionable_goddess
+		}
+	}
+	desc = {
+		desc = th_anti_makaien_rebellion.5.desc.b
+		trigger = {
+			NOT = { has_country_modifier = th_questionable_goddess }
+		}
+	}
+	picture = REVOLUTIONFIGHTER_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			NOT = { has_country_flag = mki_had_disaster_event }
+			had_country_flag = {
+				flag = mki_had_disaster_event
+				days = 2190
+			}
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = mki_had_disaster_event
+			set_country_flag = mki_had_disaster_event
+		}
+	}
+	
+	option = {	#Serve me and I will reward you!
+		name = th_anti_makaien_rebellion.5.a
+		add_yearly_manpower = 0.25
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Spying on the rebels
+country_event = {
+	id = th_anti_makaien_rebellion.6
+	title = th_anti_makaien_rebellion.6.t
+	desc = {
+		desc = th_anti_makaien_rebellion.6.desc.a
+		trigger = {
+			has_country_modifier = th_questionable_goddess
+		}
+	}
+	desc = {
+		desc = th_anti_makaien_rebellion.6.desc.b
+		trigger = {
+			NOT = { has_country_modifier = th_questionable_goddess }
+		}
+	}
+	picture = REVOLUTIONFIGHTER_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			NOT = { has_country_flag = mki_had_disaster_event }
+			had_country_flag = {
+				flag = mki_had_disaster_event
+				days = 2190
+			}
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = mki_had_disaster_event
+			set_country_flag = mki_had_disaster_event
+		}
+	}
+	
+	option = {	#Serve me and I will reward you!
+		name = th_anti_makaien_rebellion.6.a
+		random_list = {
+			1 = { add_adm_power = 25 }
+			1 = { add_dip_power = 25 }
+			1 = { add_mil_power = 25 }
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Reapply debuff to owned provinces
+country_event = {
+	id = th_anti_makaien_rebellion.100
 	title = none
 	desc = none
 	picture = none
@@ -385,10 +499,17 @@ country_event = {
 	trigger = {
 		has_disaster = th_anti_makaien_rebellion
 		any_owned_province = {
-			culture = Makaian
+			OR = {
+				area = Makai_area
+				area = Makai_coast_state
+				area = Makai_peninsula_state
+				area = Western_makai_state
+				culture = Makaian
+			}
 			NOT = { has_province_modifier = th_neglected_demons }
 			NOT = { has_province_modifier = th_begrudging_demons }
 			NOT = { has_province_modifier = th_grumpy_demons }
+			NOT = { has_province_modifier = th_unhappy_demons }
 		}
 		has_country_flag = mki_gets_penalty_on_makaien_provinces
 	}
@@ -400,11 +521,41 @@ country_event = {
 	option = {
 		if = {
 			limit = {
+				has_country_flag = mki_reduced_makai_penalty_level_3
+			}
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = Makai_area
+						area = Makai_coast_state
+						area = Makai_peninsula_state
+						area = Western_makai_state
+						culture = Makaian
+					}
+					NOT = { has_province_modifier = th_unhappy_demons }
+				}
+				remove_province_modifier = th_neglected_demons
+				remove_province_modifier = th_begrudging_demons
+				remove_province_modifier = th_grumpy_demons
+				add_province_modifier = {
+					name = th_unhappy_demons
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
 				has_country_flag = mki_reduced_makai_penalty_level_2
 			}
 			every_owned_province = {
 				limit = {
-					culture = Makaian
+					OR = {
+						area = Makai_area
+						area = Makai_coast_state
+						area = Makai_peninsula_state
+						area = Western_makai_state
+						culture = Makaian
+					}
 					NOT = { has_province_modifier = th_grumpy_demons }
 				}
 				remove_province_modifier = th_neglected_demons
@@ -421,7 +572,13 @@ country_event = {
 			}
 			every_owned_province = {
 				limit = {
-					culture = Makaian
+					OR = {
+						area = Makai_area
+						area = Makai_coast_state
+						area = Makai_peninsula_state
+						area = Western_makai_state
+						culture = Makaian
+					}
 					NOT = { has_province_modifier = th_begrudging_demons }
 				}
 				remove_province_modifier = th_neglected_demons
@@ -434,13 +591,54 @@ country_event = {
 		else = {
 			every_owned_province = {
 				limit = {
-					culture = Makaian
+					OR = {
+						area = Makai_area
+						area = Makai_coast_state
+						area = Makai_peninsula_state
+						area = Western_makai_state
+						culture = Makaian
+					}
 					NOT = { has_province_modifier = th_neglected_demons }
 				}
 				add_province_modifier = {
 					name = th_neglected_demons
 					duration = -1
 				}
+			}
+		}
+	}
+}
+
+#Reapply debuff to owned provinces
+country_event = {
+	id = th_anti_makaien_rebellion.101
+	title = none
+	desc = none
+	picture = none
+	hidden = yes
+
+	trigger = {
+		has_disaster = th_anti_makaien_rebellion
+		any_owned_province = {
+			NOT = { religion = th_shinkism }
+			NOT = { has_province_modifier = th_intolerance_to_mortals }
+		}
+		has_country_flag = mki_gets_penalty_on_heretic_heathen_province
+	}
+
+	mean_time_to_happen = {
+		days = 5
+	}
+
+	option = {
+		every_owned_province = {
+			limit = {
+				NOT = { religion = th_shinkism }
+				NOT = { has_province_modifier = th_intolerance_to_mortals }
+			}
+			add_province_modifier = {
+				name = th_intolerance_to_mortals
+				duration = -1
 			}
 		}
 	}
