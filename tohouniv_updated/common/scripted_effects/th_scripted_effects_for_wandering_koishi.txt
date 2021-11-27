@@ -1,6 +1,125 @@
 #Scripted effects needed for supporting Koishi's migration ability through other countries
 
 #th_pick_koishi_potential_province and th_pick_koishi_actual_starting_province MUST be used within the same event together
+th_wandering_state_on_conquest_effect = {
+	if = {
+		limit = {
+			NOT = { has_province_flag = th_kmj_first_capital }
+			NOT = { has_province_flag = th_target_for_migration }
+		}
+		if = {
+			limit = {
+				NOT = { is_claim = owner }
+				owner = {
+					has_government_attribute = enables_development_transfer
+					has_country_flag = th_dev_transfer_variables_set
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_province_modifier = th_mark_of_koishi }
+				}
+				export_to_variable = {
+					which = th_province_conquered_base_tax
+					value = base_tax
+				}
+				export_to_variable = {
+					which = th_province_conquered_base_production
+					value = base_production
+				}
+				export_to_variable = {
+					which = th_province_conquered_base_manpower
+					value = base_manpower
+				}
+				while = {
+					limit = {
+						check_variable = {
+							which = th_province_conquered_base_tax
+							value = 1
+						}
+					}
+					owner = {
+						change_variable = {
+							which = th_newly_conquered_base_tax
+							value = 1
+						}
+						change_variable = {
+							which = th_newly_conquered_province_adm_cost
+							value = 5
+						}
+					}
+					subtract_variable = {
+						which = th_province_conquered_base_tax
+						value = 1
+					}
+				}
+				while = {
+					limit = {
+						check_variable = {
+							which = th_province_conquered_base_production
+							value = 1
+						}
+					}
+					owner = {
+						change_variable = {
+							which = th_newly_conquered_base_production
+							value = 1
+						}
+						change_variable = {
+							which = th_newly_conquered_province_adm_cost
+							value = 5
+						}
+					}
+					subtract_variable = {
+						which = th_province_conquered_base_production
+						value = 1
+					}
+				}
+				while = {
+					limit = {
+						check_variable = {
+							which = th_province_conquered_base_manpower
+							value = 1
+						}
+					}
+					owner = {
+						change_variable = {
+							which = th_newly_conquered_base_manpower
+							value = 1
+						}
+						change_variable = {
+							which = th_newly_conquered_province_adm_cost
+							value = 5
+						}
+					}
+					subtract_variable = {
+						which = th_province_conquered_base_manpower
+						value = 1
+					}
+				}
+				add_permanent_province_modifier = {
+					name = th_mark_of_koishi
+					duration = -1
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { is_claim = owner }
+				owner = { has_government_attribute = disables_settled_property }
+			}
+			remove_core = ROOT
+			cede_province = FROM
+		}
+	}
+	else_if = {
+		limit = {
+			has_province_flag = th_target_for_migration
+		}
+		clr_province_flag = th_target_for_migration
+	}
+}
+
 th_pick_koishi_potential_province = {
 	random_province = {
 		limit = {
@@ -123,7 +242,7 @@ th_release_koishi = {
 		limit = {
 			has_heir_flag = th_original_koishi
 		}
-		remove_heir = {}
+		remove_heir = { allow_new_heir = no }
 	}
 	random_province = {
 		limit = {
@@ -287,6 +406,24 @@ th_save_development_of_province = {
 		}
 	}
 	#Create a trigger switch to save the previous buildings too as KMJ will move their buildings with them
+}
+
+#Province
+th_wandering_state_on_development = {
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = enables_development_transfer
+				has_country_flag = th_dev_transfer_variables_set
+			}
+		}
+		owner = {
+			change_variable = {
+				which = kmj_capital_$base_type$
+				value = 1
+			}
+		}
+	}
 }
 
 #Province scope

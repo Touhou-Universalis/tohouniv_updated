@@ -235,18 +235,27 @@ th_eit_create_tributary_state = {
 	require_acceptance = yes
 	is_visible = {
 		has_country_flag = eit_can_create_tributary_state
+		FROM = { is_subject = no }
+		is_subject = no
 	}
 	is_allowed = {
 		is_at_war = no
+		total_development = FROM
 		FROM = {
 			is_at_war = no
-			NOT = { total_development = ROOT }
-			capital_scope = {
-				NOT = { continent = gensokyo_continent }
-				NOT = { continent = moon_continent }
+			custom_trigger_tooltip = {
+				tooltip = th_eit_create_tributary_state_ct
+				capital_scope = {
+					NOT = { continent = gensokyo_continent }
+					NOT = { continent = moon_continent }
+				}
 			}
-			NOT = { num_of_cities = ROOT }
-			NOT = { tech_difference = 0 }	#Equal tech does also not count
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_eit_create_tributary_state_tt
+			adm_tech = FROM
+			dip_tech = FROM
+			mil_tech = FROM
 		}
 		if = {
 			limit = {
@@ -479,6 +488,40 @@ th_eit_create_tributary_state = {
 			multiply_variable = {
 				which = ai_value
 				value = -100
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_EMPEROR
+			
+			limit = {
+				FROM = { is_emperor = yes }
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_CELESTIAL_EMPEROR
+			
+			limit = {
+				FROM = { is_emperor_of_china = yes }
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
 			}
 		}
     }

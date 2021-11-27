@@ -32,18 +32,25 @@ mkn_missions_expand_slot = {
 				add_base_tax = 2
 				add_base_production = 2
 				add_base_manpower = 2
-				area = {
-					limit = { owned_by = ROOT }
-				}
 			}
 			makai_region = {
 				limit = {
-					NOT = { is_core = MKN }
-					NOT = { is_permanent_claim = MKN }
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
-				add_permanent_claim = MKN
+				add_permanent_claim = ROOT
 			}
-
+			if = {
+				limit = {
+					exists = MKI
+					MKI = {
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+				country_event = {
+					id = flavor_mkn.1
+				}
+			}
 		}
 	}
 	MKN_negotiations_with_shinki = {
@@ -63,7 +70,7 @@ mkn_missions_expand_slot = {
 			owns_or_subject_of = 5214
 		}
 		effect = {
-			stability = 2
+			add_stability = 2
 			add_years_of_income = 1
 		}
 	}
@@ -79,14 +86,32 @@ mkn_missions_expand_slot = {
 				province_id = 5209 
 				province_id = 5211 
 			}
-			NOT = { development = 20 }
+			OR = {
+				NOT = { development = 20 }
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			}
 		}
 		trigger = {
-			5022 = { development = 20 }
-			5024 = { development = 20 }
-			5202 = { development = 20 }
-			5209 = { development = 20 }
-			5211 = { development = 20 }
+			5022 = { 
+				development = 20
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			5024 = { 
+				development = 20
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			5202 = { 
+				development = 20
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			5209 = { 
+				development = 20
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			5211 = { 
+				development = 20
+				country_or_non_sovereign_subject_holds = ROOT
+			}
 		}
 		effect = {
 			add_adm_power = 250
@@ -175,9 +200,7 @@ MKN_missions_left_slot = {
 		effect = {
 			east_siberia_region = {
 				limit = {
-					OR = {
-						owned_by = ROOT
-					}
+					owned_by = ROOT
 				}
 				add_province_modifier = {
 					name = "mkn_siberian_frozen_trade"
@@ -185,6 +208,13 @@ MKN_missions_left_slot = {
 				}
 			}
 			west_siberia_region = {
+				limit = {
+					NOT = { is_core = MKN }
+					NOT = { is_permanent_claim = MKN }
+				}
+				add_permanent_claim = MKN
+			}
+			manchuria_region = {
 				limit = {
 					NOT = { is_core = MKN }
 					NOT = { is_permanent_claim = MKN }
@@ -275,10 +305,6 @@ MKN_missions_left_slot = {
 		}
 		effect = {
 			add_prestige = 50 
-			add_country_modifier = {
-				name = "mkn_great_russian_campaign"
-				duration = 9125
-			}
 			scandinavia_region = {
 				limit = {
 					NOT = { is_core = MKN }
@@ -371,7 +397,7 @@ mkn_missions_empire_slot = {
 	}	
 	MKN_conquer_manchuria = {
 		icon = mission_manchu_warrior
-		required_missions = {MKN_push_to_south  }
+		required_missions = { MKN_complete_east_siberia }
 		position = 2		
 		provinces_to_highlight = {
 			OR = {
@@ -401,14 +427,12 @@ mkn_missions_empire_slot = {
 		required_missions = { MKN_conquer_manchuria }
 		position = 3		
 		provinces_to_highlight = {
-			OR = {
-				region = mongolia_region
-			}
+			region = mongolia_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 10
+				value = 20
 				region = mongolia_region
 			}
 		}
@@ -421,14 +445,12 @@ mkn_missions_empire_slot = {
 		required_missions = { MKN_foothold_in_mongolia }
 		position = 4		
 		provinces_to_highlight = {
-			OR = {
-				region = mongolia_region
-			}
+			region = mongolia_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 20
+				value = 40
 				region = mongolia_region
 			}
 		}
@@ -436,6 +458,13 @@ mkn_missions_empire_slot = {
 			add_country_modifier = {
 				name = "mkn_conquest_of_mongolia"
 				duration = 9125
+			}
+			central_asia_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
 		}
 	}
@@ -445,9 +474,7 @@ mkn_missions_empire_slot = {
 		required_missions = { MKN_conquer_mongolia }
 		position = 6		
 		provinces_to_highlight = {
-			OR = {
-				region = central_asia_region 
-			}
+			region = central_asia_region 
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
@@ -461,7 +488,7 @@ mkn_missions_empire_slot = {
 			add_country_modifier = {
 				name = "mkn_steppe_of_ice_and_snow"
 				duration = -1
-			}			
+			}	
 		}
 	}
 
@@ -469,9 +496,13 @@ mkn_missions_empire_slot = {
 		required_missions = {MKN_invade_scandinavia MKN_conquer_central_asia MKN_colonize_canada } 
 		icon = mission_yuki_mai_empresses
 		position = 7
+		provinces_to_highlight = {
+			has_climate = arctic
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {	
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 70
+				value = 50
 				has_climate = arctic
 			}
 		}
@@ -497,25 +528,45 @@ MKN_missions_right_slot = {
 		required_missions = { }
 		position = 1		
 		provinces_to_highlight = {
-			OR = {
-				region = east_siberia_region
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			region = east_siberia_region
+			owned_by = ROOT
+			NOT = { fort_level = 2 }
 		}
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				region = east_siberia_region
+				fort_level = 2
 				value = 5
-				OR = {
-					has_building = fort_15th
-					has_building = fort_16th
-					has_building = fort_17th
-					has_building = fort_18th
-				}
 			}
 		}
 		effect = {
 			add_mil_power = 100
+			custom_tooltip = MKN_fortify_east_siberia_tt
+			while = {
+				limit = {
+					NOT = {
+						calc_true_if = {
+							all_owned_province = {
+								region = east_siberia_region
+								fort_level = 2
+								has_province_modifier = mki_bless_of_shinki
+							}
+							amount = 5
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						region = east_siberia_region
+						fort_level = 2
+						NOT = { has_province_modifier = mki_bless_of_shinki }
+					}
+					add_province_modifier = {
+						name = mki_bless_of_shinki
+						duration = -1
+					}
+				}
+			}
 			east_siberia_region = {
 				limit = {
 					OR = {
@@ -533,7 +584,7 @@ MKN_missions_right_slot = {
 	MKN_discover_north_america = {
 		icon = mission_sea_battles
 		position = 2
-		required_missions = { LIL_quests_for_outworld }
+		required_missions = { MKN_form_the_frozen_navy }
 		provinces_to_highlight = {
 			colonial_region = colonial_australia
 			NOT = { has_discovered = ROOT }
@@ -615,7 +666,10 @@ MKN_missions_right_slot = {
 		}
 
 		effect = {
-			cascadia_region = {
+			th_unlock_estate_privilege = {
+				estate_privilege = th_estate_burghers_arctic_development
+			}
+			hudson_bay_region = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -655,7 +709,7 @@ MKN_missions_right_slot = {
 				add_permanent_claim = ROOT
 			}
 			add_country_modifier = {
-				name = "mkn_colonial_growth"
+				name = "mkn_colonial_expansion"
 				duration = 7300
 			}
 		}
@@ -680,9 +734,6 @@ MKN_missions_right_slot = {
 
 		effect = {
 			add_years_of_income = 1.5
-			th_unlock_estate_privilege = {
-				estate_privilege = th_estate_burghers_arctic_development
-			}
 		}
 	}
 }
@@ -800,7 +851,7 @@ frozen_missions_discover_europe_slot = {
 	MKN_assemble_army = {
 		icon = touhou_assemble_army
 		position = 5
-		required_missions = { MKN_expand_country_mission }
+		required_missions = { MKN_build_frozen_army }
 		trigger = { army_size = 90 }
 		effect = {
 			add_country_modifier = {
