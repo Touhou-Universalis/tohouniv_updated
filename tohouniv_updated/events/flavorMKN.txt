@@ -8,30 +8,56 @@ namespace = flavor_mkn
 country_event = {
 	id = flavor_mkn.1
 	title = flavor_mkn.1.t
-	desc = flavor_mkn.1.desc
+	desc = {
+		desc = flavor_mkn.1.desc.a
+		trigger = {
+			MKI = { is_free_or_tributary_trigger = yes }
+		}
+	}
+	desc = {
+		desc = flavor_mkn.1.desc.b
+		trigger = {
+			MKI = { is_free_or_tributary_trigger = no }
+		}
+	}
 	picture = SHINKI_eventPicture
     
     is_triggered_only = yes
-
 	
 	option = {	#We need to persuade Shinki
 		name = flavor_mkn.1.a
-		trigger = {		
-			MKI = {
-				is_free_or_tributary_trigger = yes
-				OR = {
-					AND = {
-						has_ruler = "Shinki"
-						dynasty = "of Makai"
-					}
+		trigger = {
+			hidden_trigger = {
+				MKI = {
+					is_free_or_tributary_trigger = yes
+					has_ruler = "Shinki"
+					dynasty = "of Makai"
+					ai = yes
+					was_player = no
 				}
 			}
 		}
-		highlight = yes
-		add_years_of_income = -5		
+		highlight = yes		
 		create_subject = {
 			subject_type = personal_union
 			subject = MKI
+		}
+		define_ruler = {
+			name = "Shinki"
+			dynasty = "of Makai"
+			culture = Makaian
+			adm = 6
+			dip = 6
+			mil = 6
+			age = 20
+			claim = 100
+			female = yes
+		}
+		remove_heir = { allow_new_heir = no }
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
 		}
 		ai_chance = { 
 			factor = 0
@@ -43,6 +69,8 @@ country_event = {
 		trigger = {
 			MKI = {
 				ai = yes
+				was_player = no
+				is_free_or_tributary_trigger = yes
 			}
 		}
 		declare_war_with_cb = {
@@ -57,14 +85,151 @@ country_event = {
 	
 	option = {	#That's just ridiculous.
 		name = flavor_mkn.1.c
-		hidden_effect = {	
-			add_casus_belli = {
-				target = MKI
-				type = cb_restore_personal_union
-				months = 900
+		trigger = {
+			MKI = { 
+				ai = yes
+				was_player = no
+				is_free_or_tributary_trigger = yes 
 			}
-		}		
+		}
+		add_casus_belli = {
+			target = MKI
+			type = cb_restore_personal_union
+			months = 900
+		}
 
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#We need to subjugate Shinki!
+		name = flavor_mkn.1.d
+		trigger = {
+			MKI = { is_free_or_tributary_trigger = no }
+		}
+		declare_war_with_cb = {
+			who = MKI
+			casus_belli = cb_restore_personal_union
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#That's just ridiculous.
+		name = flavor_mkn.1.e
+		trigger = {
+			MKI = { is_free_or_tributary_trigger = no }
+		}
+		add_casus_belli = {
+			target = MKI
+			type = cb_restore_personal_union
+			months = 900
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+country_event = {
+	id = flavor_mkn.2
+	title = flavor_mkn.2.t
+	desc = flavor_mkn.2.desc
+	picture = SHINKI_eventPicture
+	fire_only_once = yes
+	trigger = {
+		tag = MKN
+		NOT = { exists = MKI }
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	option = {	#We accept Shinki as our new ruler.
+		name = flavor_mkn.2.a
+		highlight = yes
+		define_ruler = {
+			name = "Shinki"
+			dynasty = "of Makai"
+			culture = Makaian
+			adm = 6
+			dip = 6
+			mil = 6
+			age = 20
+			claim = 100
+			female = yes
+		}
+		remove_heir = { allow_new_heir = no }
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+		makai_region = {
+			limit = {
+				NOT = { is_core = ROOT }
+			}
+			add_core = ROOT
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Thanks, but mistresses Yuki and Mai will pass.
+		name = flavor_mkn.2.b
+
+		add_stability = 3
+		add_adm_power = 200
+		add_dip_power = 200
+		add_mil_power = 200
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Gold of Siberia
+country_event = {
+	id = flavor_mkn.3
+	title = flavor_mkn.3.t
+	desc = flavor_mkn.3.desc
+	picture = GOLDEN_CITY_eventPicture
+	fire_only_once = yes
+
+	trigger = {
+		th_is_or_was_tag = {
+			tag = MKN
+		}
+		num_of_owned_provinces_with = {
+			region = east_siberia_region
+			value = 15
+		}
+		NOT = {
+			num_of_owned_provinces_with = {
+				region = east_siberia_region
+				trade_goods = gold
+				value = 3
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	option = {	#GOLD!
+		name = flavor_mkn.3.a
+		random_owned_province = {
+			limit = {
+				region = east_siberia_region
+				NOT = { trade_goods = gold }
+			}
+			change_trade_goods = gold
+		}
 		ai_chance = { 
 			factor = 100
 		}

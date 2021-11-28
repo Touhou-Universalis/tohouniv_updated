@@ -3,6 +3,7 @@
 # country
 on_religion_change = {
 	on_religion_change_estate_privileges_effect = yes
+	judaism_on_religion_change_effect = yes
 	###removes catholic modifiers
 		remove_country_modifier = counter_reformation
 		remove_country_modifier = the_statue_in_restraint_of_appeals
@@ -24,6 +25,7 @@ on_religion_change = {
 		limit = {
 			has_reform = feudal_theocracy
 			NOT = { religion_group = muslim }
+			NOT = { religion_group = zoroastrian_group }
 		}
 		remove_government_reform = feudal_theocracy
 	}
@@ -92,6 +94,12 @@ on_religion_change = {
 		set_country_flag = converted_to_protestantism
 	}
 	if = {
+		limit = {
+			religion = hussite
+		}
+		remove_country_modifier = hussite_persecution
+	}
+	if = {
 		limit = { has_country_modifier = bav_religious_mandate_mod }
 		remove_country_modifier = bav_religious_mandate_mod
 	}
@@ -110,9 +118,18 @@ on_religion_change = {
 			remove_province_modifier = sufi_shrine
 		}
 	}
-	events = {
-		muslim_school_events.20 #Pick School
-		propagate_religion_events.7 #Propagated Country is now Muslim
+	if = {
+		limit = {
+			religion = shamanism
+			has_country_modifier = son_fetishism_as_secondary_religion
+		}
+		remove_country_modifier = son_fetishism_as_secondary_religion
+		every_owned_province = {
+			limit = {
+				has_province_modifier = son_fetishism_as_secondary_religion_province
+			}
+			remove_province_modifier = son_fetishism_as_secondary_religion_province
+		}
 	}
 	if = {
 		limit = {
@@ -130,52 +147,546 @@ on_religion_change = {
 			}
 		}
 	}
+	events = {
+		muslim_school_events.20 #Pick School
+		propagate_religion_events.7 #Propagated Country is now Muslim
+	}
 }
 
 # country
-on_harmonized_Touhou = {
-	events = {
-		th_confucian_events.1
+# root = winning country, from = loser country
+on_battle_won_country = {
+	if = {
+		limit = {
+			ROOT = {
+				tag = ALB
+				NOT = { has_country_flag = albanian_victory }
+			}
+			FROM = {
+				tag = TUR
+			}
+		}
+		ROOT = { set_country_flag = albanian_victory }
+	}
+	if = {
+		limit = {
+			ROOT = {
+				religion = jewish
+				has_church_aspect = judaism_purim_teachings_aspect
+			}
+		}
+		ROOT = {
+			add_war_exhaustion = -0.05
+		}
+	}
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = scr_battle_counter_ready
+		variable = scr_battle_counter
+		max_value = 30
+		country_event = flavor_scr.24	#SCR gets their government reform
+	}
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = crd_is_counting_battles
+		variable = crd_oni_battle_counter
+		max_value = 10
+		country_event = th_core_event.1	#No event for CRD
 	}
 }
-on_harmonized_th_hakureishinto = {
-	events = {
-		th_confucian_events.2
+
+#Unit Scope OnAction for Battle Won
+on_battle_won_unit = {
+	if = {
+		limit = {
+			unit_owner = { ai = no } #Scopes to Unit Owner from Unit Scope
+			general_with_steam_name = yes #Unit Scope Trigger
+		}
+		unit_owner = { set_country_flag = general_with_steam_name_won_battle }
+	}
+	if = {
+		limit = {
+			general_with_name = "Damarwulan"
+		}
+		unit_owner = {
+			change_variable = {
+				which = DamarwulanWinVariable 
+				value = 1
+			}
+		}
+	}
+	if = {
+		limit = {
+			general_with_name = "Damarwulan"
+			unit_owner = {
+				check_variable = {
+					which = DamarwulanWinVariable
+					value = 5
+				}
+			}
+		}
+		unit_owner = {
+			country_event = { id = majapahit.2 days = 2 }
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				mission_completed = son_military_expertise
+				NOT = { mission_completed = son_win_battles }
+			}
+		}
+		unit_owner = {
+			change_variable = {
+				which = son_fight_counter
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				is_ruler_commanding_unit = yes
+			}
+			unit_owner = {
+				change_variable = {
+					which = son_fight_counter
+					value = 1
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				th_is_or_was_tag = {
+					tag = NET
+				}
+			}
+		}
+		if = {
+			limit = {
+				general_with_name = "Youmu Konpaku"
+			}
+			unit_owner = {
+				change_variable = {
+					which = net_battle_counter 
+					value = 2
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { general_with_name = "Youmu Konpaku" }
+			}
+			unit_owner = {
+				change_variable = {
+					which = net_battle_counter 
+					value = 1
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				has_country_flag = fuj_has_leveling_mokou
+			}
+			is_ruler_commanding_unit = yes
+		}
+		unit_owner = {
+			change_variable = {
+				which = fuj_won_battles_counter
+				value = 1
+			}
+			change_variable = {
+				which = fuj_mokou_exp
+				value = 10
+			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				has_government_attribute = th_legitimacy_through_battles
+			}
+			is_ruler_commanding_unit = yes
+		}
+		unit_owner = { add_legitimacy = 2 }
 	}
 }
-on_harmonized_th_moriyashinto = {
+
+# #Unit Scope OnAction for Battle Lost
+on_battle_lost_unit = {
+    if = {
+        limit = {
+            unit_owner = {
+                tag = MNG
+                has_ruler_flag = mng_militry_incompetence
+            }
+            is_ruler_commanding_unit = yes
+			enemy_unit = {
+				unit_owner = {
+					tag = OIR
+				}
+			}
+        }
+        OIR = {
+            country_event = { id = flavor_oir.2 }
+        }
+    }
+    if = {
+        limit = {
+            unit_owner = {
+				th_is_or_was_tag = {
+					tag = FUJ
+				}
+            }
+            is_ruler_commanding_unit = yes
+			enemy_unit = {
+				unit_owner = {
+					th_is_or_was_tag = {
+						tag = CIN
+					}
+					NOT = { has_country_flag = cin_has_won_battle_against_mokou }
+				}
+			}
+		}
+		random_country = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = CIN
+				}
+			}
+			set_country_flag = cin_has_won_battle_against_mokou
+		}
+    }
+    if = {
+        limit = {
+            unit_owner = {
+				th_is_or_was_tag = {
+					tag = OKR
+				}
+            }
+            is_ruler_commanding_unit = yes
+			enemy_unit = {
+				unit_owner = {
+					th_is_or_was_tag = {
+						tag = NET
+					}
+					NOT = { has_country_flag = net_won_battle_against_meira_in_person }
+				}
+			}
+		}
+		random_country = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = NET
+				}
+			}
+			set_country_flag = net_won_battle_against_meira_in_person
+		}
+    }
+}
+
+# country
+# root = winning country, from = location
+on_siege_won_country = {
+	if = {
+		limit = {
+			from = { owned_by = SAX }
+			OR = {
+				is_in_war = {
+					defenders = root
+					defenders = THU
+					defenders = emperor
+					attackers = SAX
+				}
+				is_in_war = {
+					attackers = root
+					attackers = THU
+					attackers = emperor
+					defenders = SAX
+				}
+			}
+			THU = {
+				dynasty = "von Wettin"
+				is_elector = no
+				is_emperor = no
+				alliance_with = emperor
+			}
+			SAX = {
+				is_elector = yes
+				all_owned_province = {
+					NOT = { controlled_by = SAX }
+					OR = {
+						controlled_by = THU
+						controller = {
+							OR = {
+								is_in_war = {
+									defenders = this
+									defenders = THU
+									defenders = emperor
+									attackers = SAX
+								}
+								is_in_war = {
+									attackers = this
+									attackers = THU
+									attackers = emperor
+									defenders = SAX
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		THU = { country_event = { id = flavor_sax.10 } } # Ask Emperor for Saxon Electorate
+	}
+	if = {
+		limit = {
+			ROOT = {
+				religion = jewish
+				has_church_aspect = judaism_remember_passover_aspect
+			}
+			FROM = {
+				owner = {
+					war_with = ROOT
+				}
+				fort_level = 1
+			}
+		}
+		ROOT = {
+			add_church_power = 5
+		}
+	}
+	grant_manpower_from_capital_slave_raid = yes
 	events = {
-		th_confucian_events.3
+		tyw_events.14 # Fall of Prague in Religious War
+		flavor_oir.5 # Oirats capture Beijing
+		flavor_lna.1 # Emerald Buddha
+		flavor_son.14 # Djenne surrenders to Songhai Trigger
+	}
+	random_events = {
+		10 = army_professionalism_events.1 #City Sacked
+		10 = flavor_tfr.16 #TFR sacks fort
+		100 = 0
 	}
 }
-on_harmonized_th_taoist = {
+
+# OBS: Consider that the following on_actions can be called for Personal Union juniors as well.
+# country
+on_new_monarch = {
+	crimean_succession_effect = yes #Scripted effect
+	slesvig_question_effect = yes #Scripted effect
+	if = {
+		limit = {
+			has_consort_regency = no
+			any_owned_province = {
+				has_province_modifier = domain_of_spouses_family
+			}
+		}
+		every_owned_province = {
+			limit = { has_province_modifier = domain_of_spouses_family }
+			remove_province_modifier = domain_of_spouses_family
+		}
+	}
+	if = {
+		limit = {
+			has_consort_regency = no
+			any_owned_province = {
+				has_province_modifier = home_of_consort
+			}
+		}
+		every_owned_province = {
+			limit = { has_province_modifier = home_of_consort }
+			remove_province_modifier = home_of_consort
+		}
+	}
+	if = {
+		limit = {
+			NOT = { has_dlc = "Mandate of Heaven" }
+			has_country_modifier = the_mandate_of_heaven
+			NOT = { legitimacy = 80 }
+		}
+		country_event = { id = china_events.32 }	# History of last ruler
+	}
+	if = {
+		limit = {
+			religion = jewish
+		}
+		clr_country_flag = ruler_is_messiah
+	}
+	if = {
+		limit = {
+			has_government_attribute = th_can_convert_general_to_ruler
+			is_lesser_in_union = no
+		}
+		if = {
+			limit = { is_female = yes } 
+			convert_female_ruler_to_general = yes
+		}
+		else = { convert_ruler_to_general = yes }
+	}
+	# ambrosian_republic_effect = yes
+	succession_culture_religion_effect = yes
+	sheik_ul_islam_effect = yes
+	hab_remove_mission_mods_if_not_emperor_effect = yes
+	thu_remain_von_wettin_effect = yes
+	ladislaus_postumus_union_effect = yes
+	if = {
+		limit = { has_any_heir_cult_active = yes }
+		remove_heir_cult = yes
+	}
 	events = {
-		th_confucian_events.4
+		tribal_succession.1		# Harsh anti-tribals.
+		9492 					# Remove some event modifiers
+		flavor_boh.8			# Winter King in Prague
+		flavor_kol.1			# Bavarian Archbishop
+		war_of_the_roses.101	# WotR - House of Lancaster wins
+		war_of_the_roses.102	# WotR - House of York wins
+		war_of_the_roses.106	# WotR - Another dynasty has seized the throne
+		flavor_tur.102			# Janissary Reward
+		flavor_ori.7			# Hamvira Victorious
+		flavor_kbo.1			# The two branches of the Sayfawa dynasty
+		flavor_kbo.8			# Sayfawa pretenders
+		flavor_zan.5			# Coup of Coup of Suleiman and Muhammad al-Mazlum.
+		purple_phoenix.1		# BYZ pretenders
+		flavor_pol.3480			# The Pacta Conventa
+		protestantism_events.15	# Catholic Leaning Monarch
+		tengri_events.17		# Keep the Khojas in Power?
+		flavor_tus.15			# Savonarola Dies
+		flavor_brapru.22		# Succession of Albrecht Achilles
+		flavor_brapru.25		# Dispositio Achillea (can also trigger from flavor_brapru.22)
+		flavor_nor.27			# Proclamation in Hamar
+		china_events.43			# Picking new Capital for China
+		celestial_empire_events.3 #Resistance to Sinicization
+		flavor_boh.2			#Heretic Kings
+		flavor_hun.17			#Maintaining the Black Army
+		flavor_tim.1			#Death of Shah Rukh
+		muslim_school_events.20 #No Religious School
+		flavor_daimyo.4			#Shiba Yoshikado
+		flavor_fra.9000			# François Villon
+		flavor_fuj.106			# Ruler becomes immediately a leveling general
+		th_oni_succession.1		# Oni Succession mechanic
+	}
+	random_events = {
+		1000 = 0
+		100 = flavor_kol.1		# Bavarian Archbishop
+		100 = flavor_hsa.3		# Hansa: Tagfahrt
+		100 = inti_events.1		# Birth of a Panaca
+		50 = dynastic_events.4
+		50 = dynastic_events.5
+		25 = harem_events.7		#Failed Policy of Fratricide
 	}
 }
-on_harmonized_eastern = {
+
+# country
+on_monarch_death = {
+	if = {
+		limit = {
+			tag = ANS
+			BRA = {
+				has_country_flag = albrecht_achilles_flag
+			}
+		}
+		BRA = {
+			clr_country_flag = albrecht_achilles_flag #Just to be sure
+			kill_heir = {} #If Albrecht Achilles dies in Ansbach he will also be dead in Brandenburg, will appear as normal death of heir to BRA.
+		}
+	}
+	if = {
+		limit = { has_country_modifier = sought_after_bachelor }
+		remove_country_modifier = sought_after_bachelor
+	}
+	if = {
+		limit = {
+			tag = SAX
+			has_country_flag = sax_thuringen_split_to_happen
+			OR = {
+				NOT = { dynasty = "von Wettin" }
+				NOT = { senior_union_with = THU }
+				has_regency = yes
+			}
+		}
+		clr_country_flag = sax_thuringen_split_to_happen
+	}
+	if = {
+		limit = { tag = SAM }
+		country_event = { id = polynesian.35 }
+	}
+	if = {
+		limit = { tag = TOG }
+		country_event = { id = polynesian.36 }
+	}
+	if = {	# Ascension of Trailokanat	
+		limit = { tag = AYU }
+		country_event = { id = flavor_suk.1 }		 			
+	}
+	burgundian_inheritance_start_effect = yes
+	ladislaus_postumus_king_died_effect = yes
+	if = {
+		limit = {
+			OR = {
+				has_country_flag = no_stab_hit_on_ruler_death
+				has_a_primary_cult_selected = yes
+			}
+			OR = {
+				government = tribal
+				government = monarchy
+			}
+			NOT = { has_ruler_flag = no_stab_bonus_on_ascending_the_throne }
+			NOT = { has_heir_flag = no_stab_bonus_on_ascending_the_throne }
+		}
+		add_stability = 1
+		if = {
+			limit = {
+				NOT = { heir_age = 15 }
+			}
+			set_heir_flag = no_stab_bonus_on_ascending_the_throne
+		}
+	}
 	events = {
-		th_confucian_events.5
+		flavor_wal.1 # Vlad the Impaler. So that he doesn't try to usurp his father.
+		flavor_nav.4 # Navarra succession event
+		flavor_sax.8 # Treaty of Leipzig
+		flavor_pap.16 # Borgia Pope
+		flavor_pap.19 # death of borgia pope
+		flavor_tus.22 # Medici Pope
+		flavor_tus.24 # death of the Medici Pope
+		majapahit.8 # Majapahit pretenders
+		flavor_mal.11 # Mali pretenders
+		flavor_mal.47 # Pilgrimage ends prematurely
+		th_samurai_succession.1 # Special samurai succession
 	}
 }
-on_harmonized_th_oldhakurei = {
+
+# country
+on_new_term_election = {
 	events = {
-		th_confucian_events.6
+		700		# Election event
+		elections.720		# Dutch Republic
+		elections.800	# Lottery election
+		pirates.1
+		fairy_elections.1
 	}
 }
-on_harmonized_th_shinkism = {
-	events = {
-		th_confucian_events.7
+
+# country
+on_death_election = {
+	if = {
+		limit = { has_reform = presidential_despot_reform }
+		remove_government_reform = presidential_despot_reform
 	}
-}
-on_harmonized_th_christian = {
-	events = {
-		th_confucian_events.8
+	if = {
+		limit = {
+			has_reform = pirate_republic_reform
+		}
+		set_country_flag = pirate_death_election
+		country_event = { id = pirates.1 }
 	}
-}
-on_harmonized_th_lunarian_religion = {
 	events = {
-		th_confucian_events.9
+		701		# Election event
+		elections.721		# Dutch Republic
+		elections.800	# Lottery election
+		flavor_tus.16 #Savonarola Leaves This World
+		fairy_elections.2
 	}
 }
 
@@ -237,17 +748,7 @@ on_adm_development = {
 			add_adm_power = 5
 		}
 	}
-	if = {
-		limit = {
-			owner = {
-				has_government_attribute = disables_settled_property
-			}
-		}
-		change_variable = {
-			which = kmj_capital_base_tax
-			value = 1
-		}
-	}
+	th_wandering_state_on_development = { base_type = base_tax }
 }
 
 # province
@@ -308,17 +809,7 @@ on_dip_development = {
 			add_dip_power = 5
 		}
 	}
-	if = {
-		limit = {
-			owner = {
-				has_government_attribute = disables_settled_property
-			}
-		}
-		change_variable = {
-			which = kmj_capital_base_production
-			value = 1
-		}
-	}
+	th_wandering_state_on_development = { base_type = base_production }
 }
 
 # province
@@ -379,124 +870,457 @@ on_mil_development = {
 			add_mil_power = 5
 		}
 	}
+	th_wandering_state_on_development = { base_type = base_manpower }
+}
+
+# province
+on_province_religion_converted = {
+	on_province_religion_converted_estate_privileges_effect = yes
+	th_on_province_religion_converted_effect = yes
 	if = {
 		limit = {
 			owner = {
-				has_government_attribute = disables_settled_property
+				has_country_modifier = son_fetishism_as_secondary_religion
 			}
+			religion = shamanism
+			NOT = { has_province_modifier = son_fetishism_as_secondary_religion_province }
 		}
-		change_variable = {
-			which = kmj_capital_base_manpower
+		add_province_modifier = {
+			name = son_fetishism_as_secondary_religion_province
+			duration = -1
+			desc = son_fetishism_as_secondary_religion_province_desc
+		}
+	}
+	else_if = {
+		limit = {
+			OR = {
+				owner = {
+					NOT = { has_country_modifier = son_fetishism_as_secondary_religion }
+				}
+				NOT = { religion = shamanism }
+			}
+			has_province_modifier = son_fetishism_as_secondary_religion_province
+		}
+		remove_province_modifier = son_fetishism_as_secondary_religion_province
+	}
+	judaism_on_province_change_religion_or_change_owner_effect = yes
+	if = {
+		limit = {
+			religion = th_moriyashinto
+		}
+		mry_add_scaled_province_conversion_faith_power = {
 			value = 1
+			development_factor = 0.25
 		}
 	}
 }
 
-# country
-# root = winning country, from = loser country
-on_battle_won_country = {
+# province
+# FROM = old owner
+on_province_owner_change = {
+	events = {
+		japan.1
+	}
+	
 	if = {
 		limit = {
-			ROOT = {
-				tag = ALB
-				NOT = { has_country_flag = albanian_victory }
+			OR = {
+				has_province_modifier = wine_bonus_prod
+				has_province_modifier = grain_bonus_prod
 			}
-			FROM = {
-				tag = TUR
+			FROM = { has_reform = monastic_breweries_reform }
+			NOT = { owner = { has_reform = monastic_breweries_reform } }
+		}
+		remove_province_modifier = wine_bonus_prod
+		remove_province_modifier = grain_bonus_prod
+	}
+	
+	if = {
+		limit = {
+			NOT = {
+				OR = {
+					has_province_modifier = wine_bonus_prod
+					has_province_modifier = grain_bonus_prod
+				}
+			}
+			owner = { has_reform = monastic_breweries_reform }
+			NOT = { FROM = { has_reform = monastic_breweries_reform } }
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					trade_goods = wine
+				}
+				add_province_modifier = { 
+					name = wine_bonus_prod
+					duration = -1
+					hidden = yes
+				}
+			}
+			if = {
+				limit = {
+					trade_goods = grain
+				}
+				add_province_modifier = { 
+					name = grain_bonus_prod
+					duration = -1
+					hidden = yes
+				}
 			}
 		}
-		ROOT = { set_country_flag = albanian_victory }
 	}
-	th_count_won_battles_and_reward_at_end = {
-		counting_flag = scr_battle_counter_ready
-		variable = scr_battle_counter
-		max_value = 30
-		country_event = flavor_scr.24	#SCR gets their government reform
-	}
-	th_count_won_battles_and_reward_at_end = {
-		counting_flag = crd_is_counting_battles
-		variable = crd_oni_battle_counter
-		max_value = 10
-		country_event = th_core_event.1	#No event for CRD
-	}
-}
 
-# #Unit Scope OnAction for Battle Lost
-on_battle_lost_unit = {
-    if = {
-        limit = {
-            unit_owner = {
-                tag = MNG
-                has_ruler_flag = mng_militry_incompetence
-            }
-            is_ruler_commanding_unit = yes
-			enemy_unit = {
-				unit_owner = {
-					tag = OIR
-				}
-			}
-        }
-        OIR = {
-            country_event = { id = flavor_oir.2 }
-        }
-    }
-    if = {
-        limit = {
-            unit_owner = {
-				th_is_or_was_tag = {
-					tag = FUJ
-				}
-            }
-            is_ruler_commanding_unit = yes
-			enemy_unit = {
-				unit_owner = {
-					th_is_or_was_tag = {
-						tag = CIN
+	if = {
+		limit = {
+			owned_by = SRU
+			exists = ARA
+		}
+		ARA = {
+			set_country_flag = ARA_defeat_saruhan
+		}
+	}
+	if = {
+		limit = {
+			NOT = { owner = { religion_group = muslim } }
+			has_province_modifier = sufi_shrine
+		}
+		remove_province_modifier = sufi_shrine
+	}
+	on_province_owner_change_estate_privileges_effect = yes
+	judaism_on_province_change_religion_or_change_owner_effect = yes
+	kongo_on_province_change_culture_or_change_owner_effect = yes
+	th_on_province_owner_change_effect = yes
+	
+	if = {
+		limit = {
+			region = indo_china_region
+			has_building = farm_estate
+			trade_goods = grain
+			owner = {
+				has_mission = mnd_khm_irrigation 
+				NOT = {
+					OR = {
+						has_estate = estate_vaisyas
+						has_estate = estate_burghers
 					}
-					NOT = { has_country_flag = cin_has_won_battle_against_mokou }
 				}
 			}
 		}
-		random_country = {
-			limit = {
-				th_is_or_was_tag = {
-					tag = CIN
-				}
-			}
-			set_country_flag = cin_has_won_battle_against_mokou
+		add_province_modifier = {
+			name = grain_production_improved
+			duration = 7300
 		}
-    }
-}
-
-# country
-on_new_term_election = {
-	events = {
-		700		# Election event
-		elections.720		# Dutch Republic
-		pirates.1
-		fairy_elections.1
 	}
-}
 
-# country
-on_death_election = {
 	if = {
-		limit = { has_reform = presidential_despot_reform }
-		remove_government_reform = presidential_despot_reform
+		limit = {
+			trade_goods = gold
+			NOT = { has_province_modifier = estate_burghers_control_over_gold_mine }
+			owner = {
+				has_estate_privilege = estate_burghers_control_over_the_mint
+			}
+		}
+		add_province_modifier = {
+			name = estate_burghers_control_over_gold_mine
+			duration = -1
+		}
 	}
 	if = {
 		limit = {
-			has_reform = pirate_republic_reform
+			owner = {
+				religion = ROOT
+				culture_group = ROOT
+				has_estate_privilege = estate_church_one_faith_one_culture
+			}
+			NOT = { has_province_modifier = estate_church_united_faith_and_culture }
 		}
-		set_country_flag = pirate_death_election
-		country_event = { id = pirates.1 }
+		add_province_modifier = {
+			name = estate_church_united_faith_and_culture
+			duration = -1
+		}
 	}
+	if = {
+		limit = {
+			owner = {
+				NOT = { culture_group = ROOT }
+				has_estate_privilege = estate_church_one_faith_one_culture
+			}
+			has_owner_accepted_culture = no	#Com from today to Com to the future: please push this line out of the owner scope. Thanks.
+			NOT = { has_province_modifier = estate_church_false_culture }
+		}
+		add_province_modifier = {
+			name = estate_church_false_culture
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_country_modifier = son_fetishism_as_secondary_religion
+			}
+			religion = shamanism
+			NOT = { has_province_modifier = son_fetishism_as_secondary_religion_province }
+		}
+		add_province_modifier = {
+			name = son_fetishism_as_secondary_religion_province
+			duration = -1
+			desc = son_fetishism_as_secondary_religion_province_desc
+		}
+	}
+	
+	if = {
+		limit = {
+			province_id = 379
+			owner = {
+				NOT = { religion = jewish }
+			}
+		}
+		remove_country_modifier = third_temple_country_modifier
+	}
+	else_if = {
+		limit = {
+			OR = {
+				owner = {
+					NOT = { has_country_modifier = son_fetishism_as_secondary_religion }
+				}
+				NOT = { religion = shamanism }
+			}
+			has_province_modifier = son_fetishism_as_secondary_religion_province
+		}
+		remove_province_modifier = son_fetishism_as_secondary_religion_province
+	}
+	mki_apply_all_tolerance_on_province_effect = yes
+	mki_apply_all_religion_on_province_effect = yes
+}
+
+# country
+on_harmonized_Touhou = {
+	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
-		701		# Election event
-		elections.721		# Dutch Republic
-		elections.800	# Lottery election
-		flavor_tus.16 #Savonarola Leaves This World
-		fairy_elections.2
+		th_confucian_events.1
+	}
+}
+on_harmonized_th_hakureishinto = {
+	on_harmonized_religion_estate_privileges_effect = yes
+	events = {
+		th_confucian_events.2
+	}
+}
+on_harmonized_th_moriyashinto = {
+	on_harmonized_religion_estate_privileges_effect = yes
+	events = {
+		th_confucian_events.3
+	}
+}
+on_harmonized_th_taoist = {
+	on_harmonized_religion_estate_privileges_effect = yes
+	events = {
+		th_confucian_events.4
+	}
+}
+on_harmonized_eastern = {
+	on_harmonized_religion_estate_privileges_effect = yes
+	events = {
+		th_confucian_events.5
+	}
+}
+on_harmonized_th_oldhakurei = {
+	on_harmonized_religion_estate_privileges_effect = yes
+	events = {
+		th_confucian_events.6
+	}
+}
+on_harmonized_th_shinkism = {
+	on_harmonized_religion_estate_privileges_effect = yes
+	events = {
+		th_confucian_events.7
+	}
+}
+on_harmonized_th_christian = {
+	on_harmonized_religion_estate_privileges_effect = yes
+	events = {
+		th_confucian_events.8
+	}
+}
+on_harmonized_th_lunarian_religion = {
+	on_harmonized_religion_estate_privileges_effect = yes
+	events = {
+		th_confucian_events.9
+	}
+}
+
+# THIS = Province, FROM = Country, ROOT = Merc Unit
+on_mercenary_recruited = {
+	if = {
+		limit = {
+			FROM = {
+				NOT = { has_country_flag = th_free_merc_companies }
+				has_country_flag = th_pay_mil_instead_of_prof
+			}
+		}
+		FROM = {
+			add_mil_power = -150
+		}
+	}
+	else_if = {
+		limit = {
+			FROM = {
+				NOT = { has_country_flag = th_free_merc_companies }
+				NOT = { has_country_flag = th_pay_mil_instead_of_prof }
+				has_country_flag = th_merc_eighty_percent_professionalism_cost
+			}
+		}
+		FROM = {
+			add_army_professionalism = -0.04
+		}
+	}
+	else_if = {
+		limit = {
+			FROM = {
+				NOT = { has_country_flag = th_free_merc_companies }
+			}
+		}
+		FROM = {
+			add_army_professionalism = -0.05
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				has_country_flag = th_merc_suppress_revolt
+			}
+		}
+		THIS = {
+			add_province_modifier = {
+				name = th_suppresed_revolters
+				duration = 1825
+			}
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				has_country_flag = th_enabled_instant_loot_on_merc_recruitment
+			}
+			THIS = {
+				controlled_by = FROM
+				NOT = { owned_by = FROM }
+			}
+		}
+		THIS = {
+			remove_loot = {
+				who = FROM
+				amount = 250
+			}
+		}
+	}
+	###TODO UPDATE IT AS SOON "mercenary_company" IS FIXED###
+	#if = {
+	#	limit = {
+	#		OR = {
+	#			FROM = { NOT = { has_country_flag = oyo_cavalry_do_not_consume_ap } }
+	#			ROOT = { NOT = { mercenary_company = merc_oyo_cavalry } }
+	#		}
+	#		th_is_not_free_merc_company = yes
+	#		NOT = { has_country_flag = th_pay_mil_instead_of_prof }
+	#		NOT = { has_country_flag = th_free_merc_companies }
+	#	}
+	#	FROM = {
+	#		if = {
+	#			limit = {
+	#				has_country_flag = th_pay_mil_instead_of_prof
+	#			}
+	#			add_mil_power = -150
+	#		}
+	#		else_if = {
+	#			limit = {
+	#				has_country_flag = th_merc_eighty_percent_professionalism_cost
+	#			}
+	#			add_army_professionalism = -0.04
+	#		}
+	#		else = {
+	#			add_army_professionalism = -0.05
+	#		}
+	#	}
+	#}
+	#if = {
+	#	limit = {
+	#		FROM = {
+	#			has_country_flag = th_merc_suppress_revolt
+	#		}
+	#	}
+	#	THIS = {
+	#		add_province_modifier = {
+	#			name = th_suppresed_revolters
+	#			duration = 1825
+	#		}
+	#	}
+	#}
+	#if = {
+	#	limit = {
+	#		FROM = {
+	#			has_country_flag = th_enabled_instant_loot_on_merc_recruitment
+	#		}
+	#		THIS = {
+	#			controlled_by = FROM
+	#			NOT = { owned_by = FROM }
+	#		}
+	#	}
+	#	THIS = {
+	#		remove_loot = {
+	#			who = FROM
+	#			amount = 250
+	#		}
+	#	}
+	#}
+}
+
+# ROOT = Overlord, FROM = Minor
+on_dependency_gained = {
+	if = {
+		limit = {
+			FROM = {
+				has_reform = dutch_republic
+			}
+		}
+		ROOT = {
+			country_event = {
+				id = dutch_republic.31
+			}# States General falls under a PU
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				OR = {
+					is_subject_of_type = th_yukari_daimyo
+					is_subject_of_type = th_yukari_puppet_state
+					is_subject_of_type = th_yukari_march
+					is_subject_of_type = th_special_march
+					is_subject_of_type = th_satori_vassal
+					is_subject_of_type = th_mokou_daimyo
+					is_subject_of_type = th_trade_union
+					is_subject_of_type = th_yuuka_gatekeeper
+					is_subject_of_type = th_pet_state
+					is_subject_of_type = th_sister_state
+				}
+			}
+		}
+		FROM = {
+			set_country_flag = th_has_been_special_subject
+		}
+	}
+}
+
+# ROOT = Overlord, FROM = Minor
+on_dependency_lost = {
+	if = {
+		limit = {
+			FROM = {
+				has_country_flag = th_has_been_special_subject
+			}
+		}
+		clr_country_flag = th_has_been_special_subject
 	}
 }
 
@@ -561,20 +1385,6 @@ on_create_vassal = {
 		change_religion = catholic
 		add_government_reform = papacy_reform
 		adopt_reform_progress = FROM
-	}
-}
-
-# THIS = Province, FROM = Country
-on_mercenary_recruited = {
-	if = {
-		limit = {
-			FROM = {
-				NOT = { has_country_flag = th_free_merc_companies }
-			}
-		}
-		FROM = {
-			add_army_professionalism = -0.05
-		}
 	}
 }
 
@@ -672,6 +1482,8 @@ on_country_released = {
 # FROM = The previous owner.
 on_conquest = {
 	remove_named_unrest = estate_land_seized
+	clr_province_flag = has_estate_unrest_flag
+	th_wandering_state_on_conquest_effect = yes
 	if = {
 		limit = {
 			owner = {
@@ -683,120 +1495,5 @@ on_conquest = {
 		owner = {
 			th_pirate_add_conquer_fame = yes
 		}
-	}
-}
-
-# country
-# root = winning country, from = location
-on_siege_won_country = {
-	if = {
-		limit = {
-			from = { owned_by = SAX }
-			OR = {
-				is_in_war = {
-					defenders = root
-					defenders = THU
-					defenders = emperor
-					attackers = SAX
-				}
-				is_in_war = {
-					attackers = root
-					attackers = THU
-					attackers = emperor
-					defenders = SAX
-				}
-			}
-			THU = {
-				dynasty = "von Wettin"
-				is_elector = no
-				is_emperor = no
-				alliance_with = emperor
-			}
-			SAX = {
-				is_elector = yes
-				all_owned_province = {
-					NOT = { controlled_by = SAX }
-					OR = {
-						controlled_by = THU
-						controller = {
-							OR = {
-								is_in_war = {
-									defenders = this
-									defenders = THU
-									defenders = emperor
-									attackers = SAX
-								}
-								is_in_war = {
-									attackers = this
-									attackers = THU
-									attackers = emperor
-									defenders = SAX
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		THU = { country_event = { id = flavor_sax.10 } } # Ask Emperor for Saxon Electorate
-	}
-	events = {
-		tyw_events.14 # Fall of Prague in Religious War
-		flavor_oir.5 # Oirats capture Beijing
-		flavor_lna.1 # Emerald Buddha
-	}
-	random_events = {
-		10 = army_professionalism_events.1 #City Sacked
-		10 = flavor_tfr.16 #TFR sacks fort
-		100 = 0
-	}
-}
-
-# ROOT = Overlord, FROM = Minor
-on_dependency_gained = {
-	if = {
-		limit = {
-			FROM = {
-				has_reform = dutch_republic
-			}
-		}
-		ROOT = {
-			country_event = {
-				id = dutch_republic.31
-			}# States General falls under a PU
-		}
-	}
-	if = {
-		limit = {
-			FROM = {
-				OR = {
-					is_subject_of_type = th_yukari_daimyo
-					is_subject_of_type = th_yukari_puppet_state
-					is_subject_of_type = th_yukari_march
-					is_subject_of_type = th_special_march
-					is_subject_of_type = th_satori_vassal
-					is_subject_of_type = th_mokou_daimyo
-					is_subject_of_type = th_trade_union
-					is_subject_of_type = th_yuuka_gatekeeper
-					is_subject_of_type = th_pet_state
-					is_subject_of_type = th_sister_state
-				}
-			}
-		}
-		FROM = {
-			set_country_flag = th_has_been_special_subject
-		}
-	}
-}
-
-# ROOT = Overlord, FROM = Minor
-on_dependency_lost = {
-	if = {
-		limit = {
-			FROM = {
-				has_country_flag = th_has_been_special_subject
-			}
-		}
-		clr_country_flag = th_has_been_special_subject
 	}
 }

@@ -4,146 +4,6 @@
 
 namespace = flavor_mhg
 
-#Mayohiga's Daimyos - break vassalization, if Mayohiga changes government reform
-country_event = {
-	id = flavor_mhg.1
-	title = flavor_mhg.1.t
-	desc = flavor_mhg.1.desc
-	picture = YUKARI_eventPicture
-	
-	mean_time_to_happen = {
-		months = 1
-	}
-	
-	trigger = {
-		NOT = { has_government_attribute = enables_yukaris_shogunate }
-		num_of_subjects = 1 
-		any_subject_country = { is_subject_of_type = th_yukari_daimyo }
-	}
-	
-	immediate = {
-		hidden_effect = {
-			every_subject_country = { 
-				limit = { is_subject_of_type = th_yukari_daimyo } 
-				country_event = { id = flavor_mhg.2 }
-			}
-		}
-	}
-	
-	option = {	#Abuse what?
-		name = flavor_mhg.1.a
-	}
-	option = {	#Worth it.
-		name = flavor_mhg.1.b
-	}
-	option = {	#Welp, bye Daimyos.
-		name = flavor_mhg.1.c
-	}
-	option = {	#You start to getting annoying...
-		name = flavor_mhg.1.d
-	}
-	option = {	#Can I have my immersion back, please?
-		name = flavor_mhg.1.e
-	}
-}
-
-#Mayohiga's Daimyos get independent
-country_event = {
-	id = flavor_mhg.2
-	title = flavor_mhg.2.t
-	desc = flavor_mhg.2.desc
-	picture = LIBERUM_VETO_eventPicture
-	
-	is_triggered_only = yes
-	
-	trigger = {
-		AND = {
-			is_subject = yes
-			is_subject_of_type = th_yukari_daimyo
-		}
-		overlord = {
-			NOT = { has_government_attribute = enables_yukaris_shogunate }
-		}
-	}
-	
-	option = {	#We are now masters of our own fate.
-		name = flavor_mhg.2.a
-		grant_independence = yes
-	}
-}
-
-#Mayohiga's vassals become daimyos
-country_event = {
-	id = flavor_mhg.4
-	title = flavor_mhg.4.t
-	desc = flavor_mhg.4.desc
-	picture = YUKARI_eventPicture
-	
-	mean_time_to_happen = {
-		days = 0
-	}
-
-	hidden = yes
-	
-	trigger = {
-		has_government_attribute = enables_yukaris_shogunate
-		num_of_subjects = 1 
-		OR = {
-			any_subject_country = { is_subject_of_type = vassal }
-			any_subject_country = { is_subject_of_type = daimyo_vassal }
-		}		
-	}
-	immediate = {
-		hidden_effect = {
-			every_subject_country = { 
-				limit = { 
-					OR = { 
-						is_subject_of_type = vassal 
-						is_subject_of_type = daimyo_vassal
-					}
-					NOT = { is_subject_of_type = th_yukari_daimyo }
-				} 
-				country_event = { id = flavor_mhg.5 }
-			}
-		}
-	}
-	
-	option = {
-		name = flavor_mhg.4.a
-
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Vassal becomes Daimyo
-country_event = {
-	id = flavor_mhg.5
-	title = flavor_mhg.5.t
-	desc = flavor_mhg.5.desc
-	picture = GENSOKYOTHRONE_eventPicture
-	
-	is_triggered_only = yes
-
-	hidden = yes
-	
-	option = {	#Long live Yukari
-		name = flavor_mhg.5.a
-		grant_independence = yes
-		FROM = {
-			create_subject = {
-				subject_type = th_yukari_daimyo
-				subject = ROOT
-			}
-		}
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
 ###MISSION RELATED EVENTS###
 
 #Humilation of Remilia
@@ -166,13 +26,14 @@ country_event = {
 			white_peace = SCD
 			remove_historical_rival = SCD
 			add_historical_friend = SCD
-			SCD = {
-				remove_historical_rival = ROOT
-				add_historical_friend = ROOT
-			}
 			create_subject = {
 				subject_type = th_yukari_march
 				subject = SCD
+			}
+			SCD = {
+				th_mhg_mark_march_as_special_case = yes
+				remove_historical_rival = ROOT
+				add_historical_friend = ROOT
 			}
 		}
 		
@@ -184,18 +45,18 @@ country_event = {
 			white_peace = SCR
 			remove_historical_rival = SCR
 			add_historical_friend = SCR
-			SCR = {
-				remove_historical_rival = ROOT
-				add_historical_friend = ROOT
-			}
 			create_subject = {
 				subject_type = th_yukari_march
 				subject = SCR
 			}
+			SCR = {
+				th_mhg_mark_march_as_special_case = yes
+				remove_historical_rival = ROOT
+				add_historical_friend = ROOT
+			}
 		}
 
 		add_dip_power = 150
-		add_war_exhaustion = -10
 		add_country_modifier = { 
 			name = mhg_support_of_the_vampire
 			duration = 7300
@@ -317,8 +178,8 @@ country_event = {
 	
 	option = {	#Gensokyo achieved unity through tranquility
 		name = flavor_mhg.9.a
-		add_adm_power = 350
-		add_dip_power = 350
+		add_adm_power = 150
+		add_dip_power = 150
 		if = {
 			limit = {
 				NOT = { government_rank = 3 }
@@ -348,41 +209,6 @@ country_event = {
 		}
 		custom_tooltip = flavor_mhg.9.a.tt
 
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Daimyo becomes too powerful!
-country_event = {
-	id = flavor_mhg.10
-	title = flavor_mhg.10.t
-	desc = flavor_mhg.10.desc
-	picture = GENSOKYOTHRONE_eventPicture
-
-	trigger = {
-		any_subject_country = {
-			is_subject_of = ROOT
-			is_subject_of_type = th_yukari_daimyo
-			total_development = 300
-		}
-	}
-	
-	mean_time_to_happen = {
-		days = 0
-	}
-	
-	option = {	#DAMNIT
-		name = flavor_mhg.10.a
-		every_subject_country = {
-			limit = {
-				is_subject_of = ROOT
-				is_subject_of_type = th_yukari_daimyo
-				total_development = 300
-			}
-			grant_independence = yes
-		}
 		ai_chance = { 
 			factor = 100
 		}
@@ -440,7 +266,6 @@ country_event = {
 					adm = 4
 					dip = 3
 					mil = 5
-					fixed = yes
 					religion = ROOT
 				}
 				mexico_region = {
@@ -526,7 +351,6 @@ country_event = {
 					adm = 4
 					dip = 3
 					mil = 5
-					fixed = yes
 					religion = ROOT
 				}
 				mexico_region = {
@@ -690,11 +514,8 @@ country_event = {
 		}
 		if = {
 			limit = {
-				NOT = { has_ruler = "Yukari" }
-				NOT = { has_ruler = "Ran" }
-				NOT = { adm = 5 }
-				NOT = { dip = 5 }
-				NOT = { mil = 5 }
+				NOT = { has_ruler_flag = touhou_original_ruler }
+				NOT = { has_ruler_flag = touhou_character_ruler }
 			}
 			add_ruler_modifier = {
 				name = mhg_insanity
@@ -720,6 +541,7 @@ country_event = {
 		has_country_flag = mhg_has_sotuta
 		has_country_flag = mhg_has_cholula
 		NOT = { has_country_flag = mhg_met_quetzacoatl }
+		NOT = { has_country_flag = mhg_meeting_with_the_pagan_gods_ended }
 	}
 
 	mean_time_to_happen = {
@@ -728,6 +550,7 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			set_country_flag = mhg_meeting_with_the_pagan_gods_ended
 			set_country_flag = mhg_met_quetzacoatl
 		}
 	}
@@ -758,7 +581,6 @@ country_event = {
 
 	trigger = {
 		has_country_flag = mhg_met_quetzacoatl
-		NOT = { has_country_flag = mhg_meeting_with_the_pagan_gods_ended }
 	}
 
 	mean_time_to_happen = {
@@ -767,7 +589,6 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			set_country_flag = mhg_meeting_with_the_pagan_gods_ended
 			clr_country_flag = mhg_pagan_gods_event_chain
 			clr_country_flag = mhg_has_mexican_city
 			clr_country_flag = mhg_has_sotuta
@@ -807,19 +628,12 @@ country_event = {
 		}
 		add_prestige = 25
 		add_mercantilism = 5
-		if = {
-			limit = {
-				exists = JAP
-			}
-			reverse_add_opinion = {
-				who = JAP
-				modifier = th_lucrative_trade_deal
-			}
-		} 
-		else = {
-			reverse_add_opinion = {
-				who = ASK
-				modifier = th_lucrative_trade_deal
+		1020 = {
+			owner = {
+				add_opinion = {
+					who = ROOT
+					modifier = th_lucrative_trade_deal
+				}
 			}
 		}
 		custom_tooltip = flavor_mhg.19.a.tt
@@ -855,10 +669,6 @@ country_event = {
 					months = 180
 				}
 			}
-		}
-		add_country_modifier = {
-			name = mhg_tensed_relations_with_japan
-			duration = 5475
 		}
 		custom_tooltip = flavor_mhg.20.a.tt
 		hidden_effect = {
@@ -979,9 +789,23 @@ country_event = {
 	
 	is_triggered_only = yes
 	major = yes
+
+	immediate = {
+		hidden_effect = {
+			668 = {
+				owner = {
+					save_event_target_as = mhg_owner_of_province
+				}
+			}
+		}
+	}
 	
 	option = {	#I'll take the province anyway
 		name = flavor_mhg.24.a
+		declare_war_with_cb = {
+			casus_belli = cb_insult
+			who = event_target:mhg_owner_of_province
+		}
 		668 = {
 			add_core = ROOT
 			cede_province = ROOT
@@ -1403,6 +1227,7 @@ country_event = {
 			BYZ = {
 				change_government = monarchy
 				add_government_reform = feudalism_reform
+				change_religion = orthodox
 				add_adm_power = 120
 				add_dip_power = 108
 				add_mil_power = 120
@@ -1473,18 +1298,18 @@ country_event = {
 			RUM = {
 				change_government = monarchy
 				add_government_reform = ottoman_government
+				change_religion = sunni
 				add_adm_power = 120
 				add_dip_power = 108
 				add_mil_power = 120
 				set_government_rank = 3
 				define_ruler = {
-					name = "Mehmet II Fatih"
+					name = "Mehmed II Fatih"
 					dynasty = "Osmanoglu"
 					adm = 6
 					dip = 4
 					mil = 6
 					age = 20
-					fixed = yes
 					claim = 100
 				}
 				add_accepted_culture = greek
@@ -1574,7 +1399,6 @@ country_event = {
 				dip = 4
 				mil = 4
 				age = 25
-				fixed = yes
 				claim = 100
 				culture = roman
 			}
@@ -1595,7 +1419,6 @@ country_event = {
 				dip = 4
 				mil = 6
 				age = 25
-				fixed = yes
 				claim = 100
 			}
 		}
@@ -1615,7 +1438,6 @@ country_event = {
 				dip = 6
 				mil = 4
 				age = 25
-				fixed = yes
 				claim = 100
 				female = yes
 			}
@@ -1647,7 +1469,6 @@ country_event = {
 				dip = 4
 				mil = 4
 				age = 25
-				fixed = yes
 				claim = 100
 			}
 		}
@@ -1667,7 +1488,6 @@ country_event = {
 				dip = 4
 				mil = 6
 				age = 25
-				fixed = yes
 				claim = 100
 			}
 		}
@@ -1687,7 +1507,6 @@ country_event = {
 				dip = 6
 				mil = 4
 				age = 25
-				fixed = yes
 				claim = 100
 				female = yes
 			}
@@ -2173,12 +1992,7 @@ country_event = {
 			PRU = {
 				change_government = monarchy
 				add_government_reform = prussian_monarchy
-				if = {
-					limit = {
-						is_religion_enabled = protestant
-					}
-					change_religion = protestant
-				}
+				change_religion = protestant
 				add_adm_power = 120
 				add_dip_power = 120
 				add_mil_power = 120
@@ -2190,7 +2004,6 @@ country_event = {
 					dip = 6
 					mil = 6
 					age = 20
-					fixed = yes
 					claim = 100
 				}
 
@@ -2273,6 +2086,9 @@ country_event = {
 					}
 					change_religion = protestant
 				}
+				else = {
+					change_religion = catholic
+				}
 				add_adm_power = 108
 				add_dip_power = 108
 				add_mil_power = 108
@@ -2284,7 +2100,6 @@ country_event = {
 					dip = 5
 					mil = 5
 					age = 20
-					fixed = yes
 					claim = 100
 				}
 
@@ -2411,11 +2226,11 @@ country_event = {
 	id = flavor_mhg.44
 	title = flavor_mhg.44.t
 	desc = {
-		trigger = { NOT = { has_global_flag = th_deactivated_incidents } }
+		trigger = { th_has_incidents_enabled = yes }
 		desc = "flavor_mhg.44.desc.1"
 	}
 	desc = {
-		trigger = { has_global_flag = th_deactivated_incidents }
+		trigger = { th_has_incidents_disabled = yes }
 		desc = "flavor_mhg.44.desc.2"
 	}
 	picture = YUYUKO_eventPicture
@@ -2423,8 +2238,8 @@ country_event = {
 	trigger = {
 		is_year = 1490
 		OR = {
-			has_global_flag = th_deactivated_incidents
-			has_global_flag = th_cherry_blossom_incident_solved
+			th_has_incidents_disabled = yes
+			th_incident_has_been_resolved = { incident = spring_snow_incident }
 		}
 		exists = NET
 		tag = MHG
@@ -2444,12 +2259,12 @@ country_event = {
 					has_ruler_flag = th_original_yukari
 				}
 				th_getruler_diplomatic_skill = {
-					SKILL_BONI = 500
+					skill_boni = 500
 				}
 			}
 			else = {
 				th_getruler_diplomatic_skill = {
-					SKILL_BONI = 0
+					skill_boni = 0
 				}
 			}
 			#Yuyukos base diplo fight skills
@@ -2458,12 +2273,13 @@ country_event = {
 				value = 1250
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_yuyuko_diplo_skills
+				variable = th_yuyuko_diplo_skills
+				type = diplomatic
 			}
 			if = {
 				limit = {
 					NOT = { has_country_flag = th_incident_had_info_diplo }
-					NOT = { has_global_flag = th_deactivated_incidents }
+					th_has_incidents_enabled = yes
 				}
 				country_event = {
 					id = th_danmaku_event.20
@@ -2479,7 +2295,11 @@ country_event = {
 	option = {	#Yuyuko is no longer capable of ruling her realm! I have to fight her!
 		name = flavor_mhg.44.a
 		trigger = {
-			NOT = { has_global_flag = th_deactivated_incidents }
+			th_has_incidents_enabled = yes
+			NET = {
+				ai = yes
+				was_player = no
+			}
 		}
 		highlight = yes
 		custom_tooltip = flavor_mhg.44.a.tt
@@ -2497,6 +2317,12 @@ country_event = {
 	
 	option = {	#We have to take over the throne!
 		name = flavor_mhg.44.b
+		trigger = {
+			NET = {
+				ai = yes
+				was_player = no
+			}
+		}
 		custom_tooltip = flavor_mhg.44.b.tt
 		declare_war_with_cb = {
 			who = NET
@@ -2599,6 +2425,176 @@ country_event = {
 	}
 }
 
+###TODO REMOVE EVENTS WHEN MERCS ARE FIXED###
+###Add Flag for not having any special Yukari merc active###
+country_event = {
+	id = flavor_mhg.47
+	title = flavor_mhg.47.t
+	desc = none
+	picture = none
+
+	trigger = {
+		mhg_has_not_hired_any_special_mercs = yes
+		NOT = { has_country_flag = th_free_merc_companies }
+		th_is_or_was_tag = {
+			tag = MHG
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		th_mhg_set_merc_flags = yes
+						
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+###Remove Flag for having any special Yukari merc###
+country_event = {
+	id = flavor_mhg.48
+	title = flavor_mhg.48.t
+	desc = none
+	picture = none
+
+	trigger = {
+		mhg_has_hired_any_special_mercs = yes
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		th_mhg_refund_costs_for_mercs = yes
+		
+						
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+###Add opinion to any new subject country###
+country_event = {
+	id = flavor_mhg.49
+	title = flavor_mhg.49.t
+	desc = none
+	picture = none
+
+	trigger = {
+		has_country_flag = mhg_has_increased_subject_opinion
+		any_subject_country = {
+			NOT = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_mhg_master_puppeteer
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		every_subject_country = {
+			limit = {
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_mhg_master_puppeteer
+					}
+				}
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = th_mhg_master_puppeteer
+			}
+		}		
+						
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+###Remove opinion if no longer subject###
+country_event = {
+	id = flavor_mhg.50
+	title = flavor_mhg.50.t
+	desc = none
+	picture = none
+
+	trigger = {
+		any_known_country = {
+			reverse_has_opinion_modifier = {
+				who = ROOT
+				modifier = th_mhg_master_puppeteer
+			}
+			NOT = { overlord_of = ROOT }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		every_subject_country = {
+			limit = {
+				reverse_has_opinion_modifier = {
+					who = ROOT
+					modifier = th_mhg_master_puppeteer
+				}
+				NOT = { overlord_of = ROOT }
+			}
+			reverse_remove_opinion = {
+				who = ROOT
+				modifier = th_mhg_master_puppeteer
+			}
+		}		
+						
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+###Remove opinion if no longer subject###
+country_event = {
+	id = flavor_mhg.51
+	title = flavor_mhg.51.t
+	desc = flavor_mhg.51.desc
+	picture = YUKARI2_eventPicture	#TODO
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_mhg.51.a
+		add_adm_power = 100	#Yukari
+		add_dip_power = 100	#Okina
+		add_mil_power = 100	#Kasen
+						
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
 ###FLAVOR RELATED EVENTS###
 
 #Yukari falls asleep
@@ -2630,6 +2626,12 @@ country_event = {
 		hidden_effect = {
 			set_country_flag = MHG_yukari_retired
 			exile_ruler_as = sleeping_yukari
+			if = {
+				limit = {
+					has_country_flag = mhg_no_stab_hits_on_sleep
+				}
+				add_stability = 1
+			}
 		}
 	}
 	
@@ -2689,7 +2691,6 @@ country_event = {
 					dip = 6
 					mil = 6
 					age = 17
-					fixed = yes
 					female = yes
 				}
 				add_ruler_personality = immortal_personality
@@ -2704,7 +2705,6 @@ country_event = {
 				adm = 5
 				dip = 5
 				mil = 5
-				fixed = yes
 				claim = 95
 				female = yes
 				no_consort_with_heir = yes

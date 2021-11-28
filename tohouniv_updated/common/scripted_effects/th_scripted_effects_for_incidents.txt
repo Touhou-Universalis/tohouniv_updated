@@ -1,3 +1,24 @@
+#This file contains all the effects, which are FINAL. You don't need to touch this file when you add a new incident
+#Supports following incidents:
+# scarlet_mists_incident			EoSD
+# spring_snow_incident			PCB
+# oni_night_parade_incident			IMP		(minor)
+# eternal_night_incident			IN
+# sixty_year_cycle_incident			PoFV
+# mountain_of_faith_incident		MoF
+# subterranean_animism_incident		SA
+# undefined_fantastic_incident		UFO
+# hisoutensoku_incident				His 	(minor)
+# ten_desires_incident				TD
+# hopeless_masquerade_incident		HM		(minor)
+# reversal_incident					DDC
+# urban_legend_incident				ULL		(minor)
+# lunarian_incident					LoLK
+# perfect_possession_incident		AoCF	(minor)
+# four_seasons_incident				HSFS
+# animal_realm_incident				WBWC
+# unconnected_marketeers_incident	UM
+#KEEP
 th_incident_initialize_investigator = {
 	set_country_flag = th_incident_investigating
 	add_country_modifier = {
@@ -9,54 +30,24 @@ th_incident_initialize_investigator = {
 	save_global_event_target_as = th_incident_investigator		
 }
 
-th_incident_set_terminate_flag = {
-	set_global_flag = th_incident_to_terminate
-}
-
-th_incident_clr_terminate_flag = {
-	clr_global_flag = th_incident_to_terminate
-}
-
-#If an incident is active for over 25 years, it gets forcefully terminated and a bad ending occurs
-th_incident_terminate_current = {
-	hidden_effect = {
-		clr_global_flag = th_incident_to_terminate
-	}
-	trigger_switch = {
-		on_trigger = has_global_flag
-		th_current_incident_scarlet_mists = {
-			country_event = {
-				id = th_incidents_scarletmists.100
-			}
-		}
-		th_current_incident_cherry_blossom = {
-			country_event = {
-				id = th_incidents_cherryblossom.100
-			}
-		}
-		th_current_incident_eternal_night = {
-			country_event = {
-				id = th_incidents_eternalnight.100
-			}
-		}
-		th_current_incident_mountain_of_faith = {
-			country_event = {
-				id = th_incidents_mountainoffaith.100
-			}
-		}
-	}
-}
-
-th_incident_clr_investigator = {
-	clr_country_flag = th_incident_investigating
-	if = {
+#Clear all the previous investigators - use this in the introduction event when nobody wants to investigate
+th_incident_clr_previous_investigators = {
+	every_known_country = {
 		limit = {
-			has_country_modifier = th_incident_investigator_modifier
+			th_incident_is_investigator = yes
 		}
-		remove_country_modifier = th_incident_investigator_modifier
+		clr_country_flag = th_incident_investigating
+		if = {
+			limit = {
+				has_country_modifier = th_incident_investigator_modifier
+			}
+			remove_country_modifier = th_incident_investigator_modifier
+		}
+		th_clear_investigation_partner = yes
 	}
 }
 
+###HKR MISSION EFFECTS ### DO NOT TOUCH###
 th_incident_initiate_good_outcome_counter = {
 	set_country_flag = hkr_inci_setup
 	set_variable = {
@@ -64,445 +55,16 @@ th_incident_initiate_good_outcome_counter = {
 		value = 0
 	}
 }
+#########################################
 
-th_incident_increase_good_outcome_counter = {
-	change_variable = {
-		which = th_incident_outcome_counter
-		value = 1
-	}
-}
-
-th_incident_investigate_scarlet_mist = {
-	if = {
-		limit = {
-			has_global_flag = th_SDM_inci_started
-			NOT = { has_country_flag = th_SDM_inci_about_to_beat_rumia }
-		}
-		set_country_flag = th_SDM_inci_about_to_beat_rumia
-	}
-	if = {
-		limit = {
-			has_global_flag = th_SDM_inci_rumia_encountered
-			NOT = { has_country_flag = th_SDM_inci_about_to_beat_cirno }
-		}
-		set_variable = {
-			which = th_SDM_inci_goodbad_level
-			value = 1
-		}
-		set_country_flag = th_SDM_inci_about_to_beat_cirno
-	}
-	if = {
-		limit = {
-			has_global_flag = th_SDM_inci_cirno_encountered
-			NOT = { has_country_flag = th_SDM_inci_about_to_beat_meiling }
-		}
-		set_variable = {
-			which = th_SDM_inci_goodbad_level
-			value = 2
-		}
-		set_country_flag = th_SDM_inci_about_to_beat_meiling
-	}
-	if = {
-		limit = {
-			has_global_flag = th_SDM_inci_meiling_encountered
-			NOT = { has_country_flag = th_SDM_inci_about_to_beat_patchouli }
-		}
-		set_variable = {
-			which = th_SDM_inci_goodbad_level
-			value = 4
-		}
-		set_country_flag = th_SDM_inci_about_to_beat_patchouli
-	}
-	if = {
-		limit = {
-			has_global_flag = th_SDM_inci_patchouli_encountered
-			NOT = { has_country_flag = th_SDM_inci_about_to_beat_sakuya }
-		}
-		set_variable = {
-			which = th_SDM_inci_goodbad_level
-			value = 6
-		}
-		set_country_flag = th_SDM_inci_about_to_beat_sakuya
-	}
-	if = {
-		limit = {
-			has_global_flag = th_SDM_inci_sakuya_encountered
-			NOT = { has_country_flag = th_SDM_inci_about_to_beat_remilia }
-		}
-		set_variable = {
-			which = th_SDM_inci_goodbad_level
-			value = 8
-		}
-		set_country_flag = th_SDM_inci_about_to_beat_remilia
-	}
-	if = {
-		limit = {
-			has_global_flag = th_SDM_inci_remilia_encountered
-			NOT = { has_country_flag = th_SDM_inci_about_to_get_final }
-		}
-		set_variable = {
-			which = th_SDM_inci_goodbad_level
-			value = 9
-		}
-		set_global_flag = th_SDM_incident_end
-		set_country_flag = th_SDM_inci_about_to_get_final
-	}
-
-}
-
-th_incident_investigate_spring_snow = {
-	if = {
-		limit = {
-			has_global_flag = th_PCB_inci_started
-			NOT = { has_country_flag = th_PCB_inci_about_to_beat_letty }
-		}
-		set_country_flag = th_PCB_inci_about_to_beat_letty
-	}
-	if = {
-		limit = {
-			has_global_flag = th_PCB_inci_letty_encountered
-			NOT = { has_country_flag = th_PCB_inci_about_to_beat_chen }
-		}
-		set_variable = {
-			which = th_PCB_inci_goodbad_level
-			value = 1
-		}
-		set_country_flag = th_PCB_inci_about_to_beat_chen
-	}
-	if = {
-		limit = {
-			has_global_flag = th_PCB_inci_chen_encountered
-			NOT = { has_country_flag = th_PCB_inci_about_to_beat_alice }
-		}
-		set_variable = {
-			which = th_PCB_inci_goodbad_level
-			value = 2
-		}
-		set_country_flag = th_PCB_inci_about_to_beat_alice
-	}
-	if = {
-		limit = {
-			has_global_flag = th_PCB_inci_alice_encountered
-			NOT = { has_country_flag = th_PCB_inci_about_to_beat_prismriver }
-		}
-		set_variable = {
-			which = th_PCB_inci_goodbad_level
-			value = 4
-		}
-		set_country_flag = th_PCB_inci_about_to_beat_prismriver
-	}
-	if = {
-		limit = {
-			has_global_flag = th_PCB_inci_prismriver_encountered
-			NOT = { has_country_flag = th_PCB_inci_about_to_beat_youmu }
-		}
-		set_variable = {
-			which = th_PCB_inci_goodbad_level
-			value = 6
-		}
-		set_country_flag = th_PCB_inci_about_to_beat_youmu
-	}
-	if = {
-		limit = {
-			has_global_flag = th_PCB_inci_youmu_encountered
-			NOT = { has_country_flag = th_PCB_inci_about_to_beat_yuyuko }
-		}
-		set_variable = {
-			which = th_PCB_inci_goodbad_level
-			value = 8
-		}
-		set_country_flag = th_PCB_inci_about_to_beat_yuyuko
-	}
-	if = {
-		limit = {
-			has_global_flag = th_PCB_inci_yuyuko_encountered
-			NOT = { has_country_flag = th_PCB_inci_about_to_get_final }
-		}
-		set_variable = {
-			which = th_PCB_inci_goodbad_level
-			value = 9
-		}
-		set_global_flag = th_PCB_incident_end
-		set_country_flag = th_PCB_inci_about_to_get_final
-	}
-}
-
-th_incident_investigate_eternal_night = {
-	if = {
-		limit = {
-			has_global_flag = th_EN_inci_started
-			NOT = { has_country_flag = th_EN_inci_about_to_beat_wriggle }
-		}
-		set_country_flag = th_EN_inci_about_to_beat_wriggle
-	}
-	if = {
-		limit = {
-			has_global_flag = th_EN_inci_wriggle_encountered
-			NOT = { has_country_flag = th_EN_inci_about_to_beat_mystia }
-		}
-		set_variable = {
-			which = th_EN_inci_goodbad_level
-			value = 1
-		}
-		set_country_flag = th_EN_inci_about_to_beat_mystia
-	}
-	if = {
-		limit = {
-			has_global_flag = th_EN_inci_mystia_encountered
-			NOT = { has_country_flag = th_EN_inci_about_to_beat_keine }
-		}
-		set_variable = {
-			which = th_EN_inci_goodbad_level
-			value = 2
-		}
-		set_country_flag = th_EN_inci_about_to_beat_keine
-	}
-	if = {
-		limit = {
-			has_global_flag = th_EN_inci_keine_encountered
-			NOT = { has_country_flag = th_EN_inci_about_to_beat_reimu }
-			NOT = { has_country_flag = th_EN_inci_about_to_beat_marisa }
-		}
-		set_variable = {
-			which = th_EN_inci_goodbad_level
-			value = 4
-		}
-		if = {
-			limit = { 
-				OR = {
-					tag = FOM
-					tag = SCR
-					tag = SCD
-				}
-			}
-			set_country_flag = th_EN_inci_about_to_beat_reimu
-		}
-		else_if = {
-			limit = {
-				OR = {
-					tag = HKR
-					tag = MHG
-					tag = NET
-					tag = NMG		
-				}
-			}
-			set_country_flag = th_EN_inci_about_to_beat_marisa		
-		}
-		else = {
-			random_list = {
-				50 = {
-					set_country_flag = th_EN_inci_about_to_beat_reimu
-				}
-				50 = {
-					set_country_flag = th_EN_inci_about_to_beat_marisa	
-				}
-			}
-		}
-	}
-	if = {
-		limit = {
-			has_global_flag = th_EN_inci_reimu_marisa_encountered
-			NOT = { has_country_flag = th_EN_inci_about_to_beat_reisen }
-		}
-		set_variable = {
-			which = th_EN_inci_goodbad_level
-			value = 6
-		}
-		set_country_flag = th_EN_inci_about_to_beat_reisen
-	}
-	if = {
-		limit = {
-			has_global_flag = th_EN_inci_reisen_encountered
-			NOT = { has_country_flag = th_EN_inci_about_to_beat_eirin }
-		}
-		set_variable = {
-			which = th_EN_inci_goodbad_level
-			value = 8
-		}
-		country_event = {
-			id = th_incidents_eternalnight.71
-			days = 1095
-		}
-		set_country_flag = th_EN_inci_about_to_beat_eirin
-	}
-	if = {
-		limit = {
-			has_global_flag = th_EN_inci_eirin_encountered
-			NOT = { has_country_flag = th_EN_inci_about_to_beat_kaguya }
-		}
-		set_variable = {
-			which = th_EN_inci_goodbad_level
-			value = 10
-		}
-		set_country_flag = th_EN_inci_about_to_beat_kaguya
-	}
-	if = {
-		limit = {
-			has_global_flag = th_EN_inci_kaguya_encountered
-			NOT = { has_country_flag = th_EN_inci_about_to_get_final }
-		}
-		set_variable = {
-			which = th_EN_inci_goodbad_level
-			value = 12
-		}
-		set_global_flag = th_EN_incident_end
-		set_country_flag = th_EN_inci_about_to_get_final
-	}
-}
-
-th_incident_investigate_mountain_of_faith = {
-	if = {
-		limit = {
-			has_global_flag = th_MOF_inci_started
-			NOT = { has_country_flag = th_MOF_inci_about_to_beat_aki }
-		}
-		set_country_flag = th_MOF_inci_about_to_beat_aki
-	}
-	if = {
-		limit = {
-			has_global_flag = th_MOF_inci_aki_encountered
-			NOT = { has_country_flag = th_MOF_inci_about_to_beat_hina }
-		}
-		set_variable = {
-			which = th_MOF_inci_goodbad_level
-			value = 1
-		}
-		set_country_flag = th_MOF_inci_about_to_beat_hina
-	}
-	if = {
-		limit = {
-			has_global_flag = th_MOF_inci_hina_encountered
-			NOT = { has_country_flag = th_MOF_inci_about_to_beat_nitori }
-		}
-		set_variable = {
-			which = th_MOF_inci_goodbad_level
-			value = 2
-		}
-		set_country_flag = th_MOF_inci_about_to_beat_nitori
-	}
-	if = {
-		limit = {
-			has_global_flag = th_MOF_inci_nitori_encountered
-			NOT = { has_country_flag = th_MOF_inci_about_to_beat_aya }
-		}
-		set_variable = {
-			which = th_MOF_inci_goodbad_level
-			value = 4
-		}
-		set_country_flag = th_MOF_inci_about_to_beat_aya
-	}
-	if = {
-		limit = {
-			has_global_flag = th_MOF_inci_aya_encountered
-			NOT = { has_country_flag = th_MOF_inci_about_to_beat_sanae }
-		}
-		set_variable = {
-			which = th_MOF_inci_goodbad_level
-			value = 6
-		}
-		set_country_flag = th_MOF_inci_about_to_beat_sanae
-	}
-	if = {
-		limit = {
-			has_global_flag = th_MOF_inci_sanae_encountered
-			NOT = { has_country_flag = th_MOF_inci_about_to_beat_kanako }
-		}
-		set_variable = {
-			which = th_MOF_inci_goodbad_level
-			value = 8
-		}
-		set_country_flag = th_MOF_inci_about_to_beat_kanako
-	}
-	if = {
-		limit = {
-			has_global_flag = th_MOF_inci_kanako_encountered
-			NOT = { has_country_flag = th_MOF_inci_about_to_get_final }
-		}
-		set_variable = {
-			which = th_MOF_inci_goodbad_level
-			value = 9
-		}
-		set_global_flag = th_MOF_incident_end
-		set_country_flag = th_MOF_inci_about_to_get_final
-	}
-}
-
-th_incident_set_country_to_new_investigator = {
-	custom_tooltip = th_incident_set_country_to_new_investigator.tt
-	hidden_effect = {
-		every_country = {
-			limit = {
-				has_country_flag = th_incident_investigating
-			}
-			th_incident_clr_investigator = yes
-		}
-		th_incident_initialize_investigator = yes
-		if = {
-			limit = {
-				NOT = { has_country_flag = th_incident_had_info }
-			}
-			country_event = {
-				id = th_danmaku_event.1
-				days = 1
-			}
-		}
-		#Scarlet Mist Incident		
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_scarlet_mists
-			}
-			set_variable = {
-				which = th_SDM_inci_goodbad_level
-				value = 0
-			}
-			th_incident_investigate_scarlet_mist = yes
-		}
-		
-		#Cherry Blossom Incident
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_cherry_blossom
-			}
-			set_variable = {
-				which = th_PCB_inci_goodbad_level
-				value = 0
-			}
-			th_incident_investigate_spring_snow = yes
-		}
-		
-		#Eternal Night Incident
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_eternal_night
-			}
-			set_variable = {
-				which = th_EN_inci_goodbad_level
-				value = 0
-			}
-			th_incident_investigate_eternal_night = yes
-		}
-
-		#Mountain of Faith Incident
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_mountain_of_faith
-			}
-			set_variable = {
-				which = th_MOF_inci_goodbad_level
-				value = 0
-			}
-			th_incident_investigate_mountain_of_faith = yes
-		}
-	}
-}
-
+#KEEP
 th_incident_set_investigator = {
-	th_incident_clr_investigator = yes
+	th_incident_clr_previous_investigators = yes
 	every_country = {
 		limit = {
 			has_country_flag = th_incident_investigating
 		}
-		th_incident_clr_investigator = yes
+		th_incident_clr_previous_investigators = yes
 	}
 	if = {
 		limit = {
@@ -600,46 +162,19 @@ th_incident_set_investigator = {
 	}
 }
 
-th_incident_pick_random_player_for_biased_investigator = {
-	if = {
-		limit = {
-			ai = no
-			has_country_flag = th_eligible_investigator
-			NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
-		}
-		set_country_flag = th_incident_random_player_investigator
-	}
-	else = {
-		random_country = {
-			limit = {
-				ai = no
-				has_country_flag = th_eligible_investigator
-				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
-			}
-			set_country_flag = th_incident_random_player_investigator
-		}
-	}
-}
-
-th_incident_forbids_to_become_investigator = {
-	clr_country_flag = th_eligible_investigator
-	set_country_flag = th_is_not_valid_for_investiagtor_role
-}
-
-th_incident_search_for_eligible_investigator = {
+#KEEP
+th_incident_forbid_country_to_investigate = {
 	every_country = {
 		limit = {
-			capital_scope = {
-				superregion = gensokyo_superregion
-			}
-			NOT = {	has_country_flag = th_is_not_valid_for_investiagtor_role }
-			is_free_or_tributary_trigger = yes
+			OR = { tag = $who$ was_tag = $who$ }
 		}
-		set_country_flag = th_eligible_investigator
+		clr_country_flag = th_eligible_investigator
+		set_country_flag = th_is_not_valid_for_investiagtor_role
 	}
 }
 
-th_incident_setup_investigator = {	#Trouble maker
+#KEEP
+th_incident_setup_investigator = {
 	if = {	#Player always becomes investigator if the choice is biased
 		limit = {
 			has_global_flag = th_biased_incident_active
@@ -675,7 +210,7 @@ th_incident_setup_investigator = {	#Trouble maker
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				th_incident_clr_investigator = yes
+				th_incident_clr_previous_investigators = yes
 			}
 			HKR = {
 				th_incident_initialize_investigator = yes
@@ -703,7 +238,7 @@ th_incident_setup_investigator = {	#Trouble maker
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				th_incident_clr_investigator = yes
+				th_incident_clr_previous_investigators = yes
 			}
 			HKR = {
 				th_incident_initialize_investigator = yes
@@ -720,7 +255,7 @@ th_incident_setup_investigator = {	#Trouble maker
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				th_incident_clr_investigator = yes
+				th_incident_clr_previous_investigators = yes
 			}
 			FOM = {
 				th_incident_initialize_investigator = yes
@@ -752,7 +287,7 @@ th_incident_setup_investigator = {	#Trouble maker
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				th_incident_clr_investigator = yes
+				th_incident_clr_previous_investigators = yes
 			}
 			HKR = {
 				th_incident_initialize_investigator = yes
@@ -769,7 +304,7 @@ th_incident_setup_investigator = {	#Trouble maker
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				th_incident_clr_investigator = yes
+				th_incident_clr_previous_investigators = yes
 			}
 			FOM = {
 				th_incident_initialize_investigator = yes
@@ -786,7 +321,7 @@ th_incident_setup_investigator = {	#Trouble maker
 				limit = {
 					has_country_flag = th_incident_investigating
 				}
-				th_incident_clr_investigator = yes
+				th_incident_clr_previous_investigators = yes
 			}
 			MRY = {
 				th_incident_initialize_investigator = yes
@@ -798,6 +333,7 @@ th_incident_setup_investigator = {	#Trouble maker
 	}
 }
 
+#KEEP
 th_incident_introduction_event = {
 	if = {
 		limit = {
@@ -810,7 +346,7 @@ th_incident_introduction_event = {
 				}				
 			}
 			country_event = {
-				id = $introduction_event$
+				id = $id$
 				days = 1
 			}
 		}
@@ -820,10 +356,12 @@ th_incident_introduction_event = {
 	}
 }
 
+###CLEANUP###
 th_incident_clear_all_limited_flags = {	
+	set_global_flag = th_incident_cleaned_all_flags
 	clr_global_flag = th_incident_introduced
 	clr_global_flag = th_minor_player_asked
-	th_incident_clr_investigator = yes
+	th_incident_clr_previous_investigators = yes
 	clr_country_flag = th_incident_last_fight_won
 	clr_country_flag = th_incident_last_fight_lost
 	clr_country_flag = th_incident_last_fight_terribly_lost
@@ -844,7 +382,7 @@ th_incident_clear_all_limited_flags = {
 				has_country_flag = th_incident_random_player_investigator
 			}
 		}
-		th_incident_clr_investigator = yes
+		th_incident_clr_previous_investigators = yes
 		clr_country_flag = th_incident_last_fight_won
 		clr_country_flag = th_incident_last_fight_lost
 		clr_country_flag = th_incident_last_fight_terribly_lost
@@ -867,536 +405,231 @@ th_incident_clear_all_limited_flags = {
 	}
 }
 
-th_incident_clear_about_flags_sdm = {
-	#SDM Incident
-	clr_country_flag = th_SDM_inci_about_to_beat_rumia
-	clr_country_flag = th_SDM_inci_about_to_beat_cirno
-	clr_country_flag = th_SDM_inci_about_to_beat_meiling
-	clr_country_flag = th_SDM_inci_about_to_beat_patchouli
-	clr_country_flag = th_SDM_inci_about_to_beat_sakuya
-	clr_country_flag = th_SDM_inci_about_to_beat_remilia
-	clr_country_flag = th_SDM_inci_about_to_get_final
-	every_country = {
-		limit = {
-			OR = {
-				has_country_flag = th_SDM_inci_about_to_beat_rumia
-				has_country_flag = th_SDM_inci_about_to_beat_cirno
-				has_country_flag = th_SDM_inci_about_to_beat_meiling
-				has_country_flag = th_SDM_inci_about_to_beat_patchouli
-				has_country_flag = th_SDM_inci_about_to_beat_sakuya
-				has_country_flag = th_SDM_inci_about_to_beat_remilia
-				has_country_flag = th_SDM_inci_about_to_get_final
-			}
+#Gets called with the flag remover as they happen after each incident
+th_set_incident_cooldown = {
+	clr_global_flag = th_recently_solved_incident_flag
+	set_global_flag = th_recently_solved_incident_flag
+}
+
+#Solve incident globally
+th_resolve_incident = {
+	custom_tooltip = th_solve_$incident$_tt
+	hidden_effect = {
+		set_global_flag = th_$incident$_solved
+		clr_global_flag = th_active_incident
+		clr_global_flag = th_incident_to_terminate
+		clr_global_flag = th_current_incident_$incident$
+		country_event = {
+			id = th_incidents_event.15
 		}
-		clr_country_flag = th_SDM_inci_about_to_beat_rumia
-		clr_country_flag = th_SDM_inci_about_to_beat_cirno
-		clr_country_flag = th_SDM_inci_about_to_beat_meiling
-		clr_country_flag = th_SDM_inci_about_to_beat_patchouli
-		clr_country_flag = th_SDM_inci_about_to_beat_sakuya
-		clr_country_flag = th_SDM_inci_about_to_beat_remilia
-		clr_country_flag = th_SDM_inci_about_to_get_final
-	}
-	clr_global_flag = th_current_incident_scarlet_mists
-	clr_global_flag = th_SDM_inci_started
-	clr_global_flag = th_SDM_inci_rumia_encountered
-	clr_global_flag = th_SDM_inci_cirno_encountered
-	clr_global_flag = th_SDM_inci_meiling_encountered
-	clr_global_flag = th_SDM_inci_patchouli_encountered
-	clr_global_flag = th_SDM_inci_sakuya_encountered
-	clr_global_flag = th_SDM_inci_remilia_encountered
-	clr_global_flag = th_SDM_incident_end
-	every_province = {
-		limit = {
-			has_province_modifier = th_plagued_by_the_scarlet_mist
-		}
-		remove_province_modifier = th_plagued_by_the_scarlet_mist
 	}
 }
 
-th_incident_clear_about_flags_pcb = {
-	#PCB Incident
-	clr_country_flag = th_PCB_inci_about_to_beat_letty
-	clr_country_flag = th_PCB_inci_about_to_beat_chen
-	clr_country_flag = th_PCB_inci_about_to_beat_alice
-	clr_country_flag = th_PCB_inci_about_to_beat_prismriver
-	clr_country_flag = th_PCB_inci_about_to_beat_youmu
-	clr_country_flag = th_PCB_inci_about_to_beat_yuyuko
-	clr_country_flag = th_PCB_inci_about_to_get_final
-	every_country = {
-		limit = {
-			OR = {
-				has_country_flag = th_PCB_inci_about_to_beat_letty
-				has_country_flag = th_PCB_inci_about_to_beat_chen
-				has_country_flag = th_PCB_inci_about_to_beat_alice
-				has_country_flag = th_PCB_inci_about_to_beat_prismriver
-				has_country_flag = th_PCB_inci_about_to_beat_youmu
-				has_country_flag = th_PCB_inci_about_to_beat_yuyuko
-				has_country_flag = th_PCB_inci_about_to_get_final
+#The country flag for the investigator for solving an incident
+th_solve_incident = {
+	custom_tooltip = th_solve_$incident$_tt
+	hidden_effect = {
+		set_country_flag = th_has_solved_$incident$
+		if = {
+			limit = { NOT = { has_country_flag = th_solved_incident } }
+			set_country_flag = th_solved_incident
+		}
+		if = {
+			limit = { has_country_flag = hkr_inci_setup }
+			change_variable = {
+				which = th_incident_outcome_counter
+				value = 1
 			}
 		}
-		clr_country_flag = th_PCB_inci_about_to_beat_letty
-		clr_country_flag = th_PCB_inci_about_to_beat_chen
-		clr_country_flag = th_PCB_inci_about_to_beat_alice
-		clr_country_flag = th_PCB_inci_about_to_beat_prismriver
-		clr_country_flag = th_PCB_inci_about_to_beat_youmu
-		clr_country_flag = th_PCB_inci_about_to_beat_yuyuko
-		clr_country_flag = th_PCB_inci_about_to_get_final
 	}
-	clr_global_flag = th_current_incident_cherry_blossom
-	clr_global_flag = th_PCB_inci_started
-	clr_global_flag = th_PCB_inci_letty_encountered
-	clr_global_flag = th_PCB_inci_chen_encountered
-	clr_global_flag = th_PCB_inci_alice_encountered
-	clr_global_flag = th_PCB_inci_prismriver_encountered
-	clr_global_flag = th_PCB_inci_youmu_encountered
-	clr_global_flag = th_PCB_inci_yuyuko_encountered
-	clr_global_flag = th_PCB_incident_end
-	every_province = {
-		limit = {
-			OR = {
-				has_province_modifier = th_PCB_hard_winter
-				has_province_modifier = th_PCB_howling_winds
-				has_province_modifier = th_PCB_frozen_land
-				has_province_modifier = th_PCB_permanent_blizzard
-				has_province_modifier = th_PCB_endless_winter
-			}
-		}
-		remove_province_modifier = th_PCB_hard_winter
-		remove_province_modifier = th_PCB_howling_winds
-		remove_province_modifier = th_PCB_frozen_land
-		remove_province_modifier = th_PCB_permanent_blizzard
-		remove_province_modifier = th_PCB_endless_winter
-		remove_province_modifier = th_PCB_locals_take_a_rest
-		remove_province_modifier = th_PCB_locals_are_freezing
-		remove_province_modifier = th_PCB_locals_are_used_to_freezing_to_death
-		remove_province_modifier = th_PCB_abandon_province
-		remove_province_modifier = th_PCB_great_fire
-		remove_province_modifier = th_PCB_people_holding_together
+}
+th_solve_incident_extra = {
+	custom_tooltip = th_solve_$incident$_extra_tt
+	hidden_effect = {
+		set_country_flag = th_has_solved_$incident$_extra
 	}
 }
 
-th_incident_clear_about_flags_en = {
-	#EN Incident
-	clr_country_flag = th_EN_inci_about_to_beat_wriggle
-	clr_country_flag = th_EN_inci_about_to_beat_mystia
-	clr_country_flag = th_EN_inci_about_to_beat_keine
-	clr_country_flag = th_EN_inci_about_to_beat_reimu
-	clr_country_flag = th_EN_inci_about_to_beat_marisa
-	clr_country_flag = th_EN_inci_about_to_beat_reisen
-	clr_country_flag = th_EN_inci_about_to_beat_eirin
-	clr_country_flag = th_EN_inci_about_to_beat_kaguya
-	clr_country_flag = th_EN_inci_about_to_get_final
-	every_country = {
-		limit = {
-			OR = {
-				has_country_flag = th_EN_inci_about_to_beat_wriggle
-				has_country_flag = th_EN_inci_about_to_beat_mystia
-				has_country_flag = th_EN_inci_about_to_beat_keine
-				has_country_flag = th_EN_inci_about_to_beat_reimu
-				has_country_flag = th_EN_inci_about_to_beat_marisa
-				has_country_flag = th_EN_inci_about_to_beat_reisen
-				has_country_flag = th_EN_inci_about_to_beat_eirin
-				has_country_flag = th_EN_inci_about_to_beat_kaguya
-				has_country_flag = th_EN_inci_about_to_get_final
-				has_country_flag = th_EN_had_recent_youkai_risen_up_flag
-				has_country_flag = th_EN_has_rising_youkai_flag
-				has_country_flag = th_EN_had_recent_youkai_unrest_flag
-			}
-		}
-		clr_country_flag = th_EN_inci_about_to_beat_wriggle
-		clr_country_flag = th_EN_inci_about_to_beat_mystia
-		clr_country_flag = th_EN_inci_about_to_beat_keine
-		clr_country_flag = th_EN_inci_about_to_beat_reimu
-		clr_country_flag = th_EN_inci_about_to_beat_marisa
-		clr_country_flag = th_EN_inci_about_to_beat_reisen
-		clr_country_flag = th_EN_inci_about_to_beat_eirin
-		clr_country_flag = th_EN_inci_about_to_beat_kaguya
-		clr_country_flag = th_EN_inci_about_to_get_final
-		clr_country_flag = th_EN_had_recent_youkai_risen_up_flag
-		clr_country_flag = th_EN_has_rising_youkai_flag
-		clr_country_flag = th_EN_had_recent_youkai_unrest_flag
-	}
-	clr_global_flag = th_current_incident_eternal_night
-	clr_global_flag = th_EN_inci_started
-	clr_global_flag = th_EN_inci_wriggle_encountered
-	clr_global_flag = th_EN_inci_mystia_encountered
-	clr_global_flag = th_EN_inci_keine_encountered
-	clr_global_flag = th_EN_inci_reimu_marisa_encountered
-	clr_global_flag = th_EN_inci_reisen_encountered
-	clr_global_flag = th_EN_inci_eirin_encountered
-	clr_global_flag = th_EN_inci_kaguya_encountered
-	clr_global_flag = th_EN_inci_lengthened_night
-	clr_global_flag = th_EN_incident_end
-	every_province = {
-		limit = {
-			has_province_modifier = th_EN_unrested_youkais
-		}
-		remove_province_modifier = th_EN_unrested_youkais
-	}
-
+#The great effect which sets up the general incident
+#Use this effect after declaring the countries, which cannot investigate
+th_start_incident_effect = {
 	every_country = {
 		limit = {
 			capital_scope = {
-				th_gensokyo_or_moon_continent = yes
+				superregion = gensokyo_superregion
 			}
+			NOT = {	has_country_flag = th_is_not_valid_for_investiagtor_role }
+			is_free_or_tributary_trigger = yes
 		}
-		disband_rebels = th_youkai_rebels
+		set_country_flag = th_eligible_investigator
 	}
-}
-
-th_incident_clear_about_flags_mof = {
-	#MOF Incident
-	clr_country_flag = th_MOF_inci_about_to_beat_aki
-	clr_country_flag = th_MOF_inci_about_to_beat_hina
-	clr_country_flag = th_MOF_inci_about_to_beat_nitori
-	clr_country_flag = th_MOF_inci_about_to_beat_aya
-	clr_country_flag = th_MOF_inci_about_to_beat_sanae
-	clr_country_flag = th_MOF_inci_about_to_beat_kanako
-	clr_country_flag = th_MOF_inci_about_to_get_final
-	every_country = {
+	if = {		
 		limit = {
-			OR = {
-				has_country_flag = th_MOF_inci_about_to_beat_aki
-				has_country_flag = th_MOF_inci_about_to_beat_hina
-				has_country_flag = th_MOF_inci_about_to_beat_nitori
-				has_country_flag = th_MOF_inci_about_to_beat_aya
-				has_country_flag = th_MOF_inci_about_to_beat_sanae
-				has_country_flag = th_MOF_inci_about_to_beat_kanako
-				has_country_flag = th_MOF_inci_about_to_get_final
+			has_global_flag = th_biased_incident_active
+		}
+		if = {
+			limit = {
+				ai = no
+				has_country_flag = th_eligible_investigator
+				NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+			}
+			set_country_flag = th_incident_random_player_investigator
+		}
+		else = {
+			random_country = {
+				limit = {
+					ai = no
+					has_country_flag = th_eligible_investigator
+					NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
+				}
+				set_country_flag = th_incident_random_player_investigator
 			}
 		}
-		clr_country_flag = th_MOF_inci_about_to_beat_aki
-		clr_country_flag = th_MOF_inci_about_to_beat_hina
-		clr_country_flag = th_MOF_inci_about_to_beat_nitori
-		clr_country_flag = th_MOF_inci_about_to_beat_aya
-		clr_country_flag = th_MOF_inci_about_to_beat_sanae
-		clr_country_flag = th_MOF_inci_about_to_beat_kanako
-		clr_country_flag = th_MOF_inci_about_to_get_final
 	}
-	every_province = {
-		limit = {
-			OR = {
-				has_province_flag = th_religious_zeal_event_happend
-			}
+	set_global_flag = th_incident_to_terminate
+	set_global_flag = th_active_incident
+	clr_global_flag = th_incident_cleaned_all_flags
+	set_global_flag = th_current_incident_$incident$
+	1 = {
+		set_variable = {
+			which = th_incident_stage
+			value = 0
 		}
-		clr_province_flag = th_religious_zeal_event_happend
-	}
-	clr_global_flag = th_current_incident_mountain_of_faith
-	clr_global_flag = th_MOF_inci_started
-	clr_global_flag = th_MOF_inci_aki_encountered
-	clr_global_flag = th_MOF_inci_hina_encountered
-	clr_global_flag = th_MOF_inci_nitori_encountered
-	clr_global_flag = th_MOF_inci_aya_encountered
-	clr_global_flag = th_MOF_inci_sanae_encountered
-	clr_global_flag = th_MOF_inci_kanako_encountered
-	clr_global_flag = th_MOF_incident_end
-}
-
-#IMPORTANT FOR INCIDENTS
-th_incident_major_victory_bonus = {
-	custom_tooltip = th_incident_major_victory_bonus_tt
-	hidden_effect = {
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_scarlet_mists
-			}
-			change_variable = {
-				which = th_SDM_inci_goodbad_level
-				value = 3
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_cherry_blossom
-			}
-			change_variable = {
-				which = th_PCB_inci_goodbad_level
-				value = 3
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_eternal_night
-			}
-			change_variable = {
-				which = th_EN_inci_goodbad_level
-				value = 3
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_mountain_of_faith
-			}
-			change_variable = {
-				which = th_MOF_inci_goodbad_level
-				value = 3
-			}
+		set_variable = {
+			which = th_incident_current_points
+			value = 0
 		}
 	}
 }
 
-th_incident_victory_bonus = {
-	custom_tooltip = th_incident_victory_bonus_tt
-	hidden_effect = {
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_scarlet_mists
-			}
-			change_variable = {
-				which = th_SDM_inci_goodbad_level
-				value = 2
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_cherry_blossom
-			}
-			change_variable = {
-				which = th_PCB_inci_goodbad_level
-				value = 2
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_eternal_night
-			}
-			change_variable = {
-				which = th_EN_inci_goodbad_level
-				value = 2
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_mountain_of_faith
-			}
-			change_variable = {
-				which = th_MOF_inci_goodbad_level
-				value = 2
-			}
-		}
-	}
+#Tooltip
+th_start_incident_tooltip = {
+	custom_tooltip = th_start_$incident$_tt
 }
 
-th_incident_minor_victory_bonus = {
-	custom_tooltip = th_incident_minor_victory_bonus_tt
-	hidden_effect = {
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_scarlet_mists
-			}
-			change_variable = {
-				which = th_SDM_inci_goodbad_level
-				value = 1
-			}
+#Let the investigator progress to the next stage
+th_prepare_for_next_stage = {
+	1 = {
+		change_variable = {
+			which = th_incident_stage
+			value = 1
 		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_cherry_blossom
-			}
-			change_variable = {
-				which = th_PCB_inci_goodbad_level
-				value = 1
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_eternal_night
-			}
-			change_variable = {
-				which = th_EN_inci_goodbad_level
-				value = 1
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_mountain_of_faith
-			}
-			change_variable = {
-				which = th_MOF_inci_goodbad_level
-				value = 1
-			}
-		}
-	}
-}
-
-th_incident_minor_defeat_bonus = {
-	custom_tooltip = th_incident_minor_defeat_bonus_tt
-	hidden_effect = {
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_scarlet_mists
-			}
-			subtract_variable = {
-				which = th_SDM_inci_goodbad_level
-				value = 1
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_cherry_blossom
-			}
-			subtract_variable = {
-				which = th_PCB_inci_goodbad_level
-				value = 1
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_eternal_night
-			}
-			subtract_variable = {
-				which = th_EN_inci_goodbad_level
-				value = 1
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_mountain_of_faith
-			}
-			subtract_variable = {
-				which = th_MOF_inci_goodbad_level
-				value = 1
-			}
-		}
-	}
-}
-
-th_incident_defeat_bonus = {
-	custom_tooltip = th_incident_defeat_bonus_tt
-	hidden_effect = {
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_scarlet_mists
-			}
-			subtract_variable = {
-				which = th_SDM_inci_goodbad_level
-				value = 2
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_cherry_blossom
-			}
-			subtract_variable = {
-				which = th_PCB_inci_goodbad_level
-				value = 2
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_eternal_night
-			}
-			subtract_variable = {
-				which = th_EN_inci_goodbad_level
-				value = 2
-			}
-		}
-		if = {
-			limit = {
-				has_global_flag = th_current_incident_mountain_of_faith
-			}
-			subtract_variable = {
-				which = th_MOF_inci_goodbad_level
-				value = 2
-			}
-		}
-	}
-}
-
-###GENERAL EFFECTS###
-
-th_incident_cruel_decision = {	
-	if = {
-		limit = {
-			OR = {
-				ruler_has_personality = malevolent_personality
-				ruler_has_personality = cruel_personality
-			}
-		}
-		add_mil_power = 150
-	}
-	else = {
-		add_mil_power = -75
 	}
 	if = {
-		limit = {
-			ruler_has_personality = kind_hearted_personality
+		limit = {			
+			th_incident_is_investigator = yes
 		}
-		remove_ruler_personality = kind_hearted_personality
-		add_ruler_personality = cruel_personality 
+		clr_country_flag = th_incident_stage_timer
+		set_country_flag = th_incident_stage_timer
 	}
 }
 
-###EFFECTS FOR SNOW SPRING INCIDENT###
-
-th_PCB_incident_reduce_winter_modifier = {
-	custom_tooltip = th_PCB_incident_reduce_winter_modifier.tt
-	if = {
-		limit = {
-			has_province_modifier = th_PCB_endless_winter
-		}
-		hidden_effect = {
-			remove_province_modifier = th_PCB_endless_winter
-			add_permanent_province_modifier = {
-				name = th_PCB_permanent_blizzard
-				duration = -1
-				desc = th_until_end_of_incident_desc
-			}
-		}
-	}
-	else_if = {
-		limit = {
-			has_province_modifier = th_PCB_permanent_blizzard
-		}
-		hidden_effect = {
-			remove_province_modifier = th_PCB_permanent_blizzard		
-			add_permanent_province_modifier = {
-				name = th_PCB_frozen_land
-				duration = -1
-				desc = th_until_end_of_incident_desc
-			}
-		}
-	}
-	else_if = {
-		limit = {
-			has_province_modifier = th_PCB_frozen_land
-		}
-		hidden_effect = {
-			remove_province_modifier = th_PCB_frozen_land
-			add_permanent_province_modifier = {
-				name = th_PCB_howling_winds
-				duration = -1
-				desc = th_until_end_of_incident_desc
-			}			
-		}
-	}
-	else = {
-		hidden_effect = {
-			remove_province_modifier = th_PCB_howling_winds
+#Set the stage of an incident
+th_set_incident_stage = {
+	1 = {
+		set_variable = {
+			which = th_incident_stage
+			value = $stage$
 		}
 	}
 }
 
-###EFFECTS FOR REFORM CENTERS###
-th_create_random_center_of_reform = {	
-	random_owned_province = {
-		limit = {
-			superregion = $superregion$
+#Set the stage of an incident
+th_set_incident_points = {
+	1 = {
+		set_variable = {
+			which = th_incident_current_points
+			value = $points$
 		}
+	}
+}
+
+#Effect for the country, who investigates an incident first
+th_investigate_incident = {
+	custom_tooltip = th_investigate_$incident$_tt
+	add_adm_power = -25
+	hidden_effect = {
+		1 = {
+			set_variable = {
+				which = th_incident_stage
+				value = 1
+			}
+		}
+		clr_country_flag = th_incident_stage_timer
+		set_country_flag = th_incident_stage_timer
 		if = {
 			limit = {
-				NOT = { religion = $religion$ }
+				NOT = { has_country_flag = th_incident_had_info }
 			}
-			change_religion = $religion$
+			country_event = {
+				id = th_danmaku_event.1
+				days = 1
+			}
 		}
-		add_reform_center = $religion$
-		add_permanent_province_modifier = {
-			name = "religious_zeal_at_conv"
-			duration = 9000
+	}
+}
+
+#Effect for a country to be made into a new investigator if the previous investigator dies/refuses
+th_incident_set_country_to_new_investigator = {
+	custom_tooltip = th_incident_set_country_to_new_investigator.tt
+	hidden_effect = {
+		every_country = {
+			limit = {
+				has_country_flag = th_incident_investigating
+			}
+			clr_country_flag = th_incident_investigating
+			if = {
+				limit = {
+					has_country_modifier = th_incident_investigator_modifier
+				}
+				remove_country_modifier = th_incident_investigator_modifier
+			}
 		}
-		add_permanent_province_modifier = {
-			name = "th_center_of_reformation"
-			duration = -1
+		th_incident_initialize_investigator = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = th_incident_had_info }
+			}
+			country_event = {
+				id = th_danmaku_event.1
+				days = 1
+			}
+		}
+		clr_country_flag = th_incident_stage_timer
+		set_country_flag = th_incident_stage_timer
+	}
+}
+
+#Effect for the country, which refuses to investigate in the introduction event
+th_refuse_investigating_incident = {
+	add_prestige = -25
+	hidden_effect = {
+		clr_country_flag = th_incident_investigating
+		if = {
+			limit = {
+				has_country_modifier = th_incident_investigator_modifier
+			}
+			remove_country_modifier = th_incident_investigator_modifier
+		}
+		random_country = {	
+			limit = {
+				th_incident_can_become_investigator = yes
+			}	
+			add_adm_power = -25
+			th_incident_set_country_to_new_investigator = yes
+		}
+	}
+}
+
+#Change the investigation points
+th_incident_change_points = {
+	custom_tooltip = th_incident_change_points_$value$_tt
+	hidden_effect = {
+		1 = {
+			change_variable = {
+				which = th_incident_current_points
+				value = $value$
+			}
 		}
 	}
 }

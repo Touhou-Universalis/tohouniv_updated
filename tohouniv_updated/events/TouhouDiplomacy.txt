@@ -5,7 +5,7 @@
 namespace = th_diplo_events
 
 ###MHG DIPLO ACTIONS###
-#Provocate War
+#Provoke War
 country_event = {
     id = th_diplo_events.1
 	title = th_diplo_events.1.t
@@ -230,42 +230,7 @@ country_event = {
 }
 
 ###EIT DIPLO ACTIONS###
-#Set counter of aggressors for EIT
-country_event = {
-    id = th_diplo_events.5
-	title = th_diplo_events.5.t
-	desc = th_diplo_events.5.desc
-	picture = SPY_eventPicture
-
-    mean_time_to_happen = {
-        days = 1
-    }
-
-    trigger = {
-		OR = {
-			tag = EIT
-			AND = {
-				NOT = { exists = EIT }
-				was_tag = EIT
-			}
-		}
-		NOT = { has_country_flag = th_eit_has_aggressor_counter_setup }
-    }
-
-    hidden = yes
-
-    option = {
-        name = th_diplo_events.5.a
-		set_country_flag = th_eit_has_aggressor_counter_setup
-		th_eit_set_aggressor_counter = yes
-
-        ai_chance = {
-            factor = 100
-        }
-    }
-}
-
-#Provocate War against Rival for EIT
+#Provoke War against Rival for EIT
 country_event = {
     id = th_diplo_events.6
 	title = th_diplo_events.6.t
@@ -627,39 +592,16 @@ country_event = {
                 which = th_money_report
                 which = th_money_to_steal 
             }
-            set_variable = {
-                which = th_money_decimals
-                which = th_money_to_steal 
-            }
         }
     }
 	
 	option = {
         name = th_diplo_events.14.a
         custom_tooltip = th_diplo_events.14.a.tt
-        while = {
-            limit = {
-                check_variable = {
-                    which = th_money_to_steal
-                    value = 1
-                }
-            }
-            add_treasury = -1
-            FROM = { add_treasury = 1 }
-            subtract_variable = {
-                which = th_money_to_steal
-                value = 1
-            }
-            subtract_variable = {
-                which = th_money_decimals
-                value = 1
-            }
-        }
-        hidden_effect = {
-            multiply_variable = {
-                which = th_money_decimals
-                value = 100
-            }
+        th_transfer_treasury = {
+            giver = ROOT
+            taker = FROM
+            variable = th_money_to_steal
         }
         add_casus_belli = {
             type = cb_insult
@@ -681,23 +623,6 @@ country_event = {
 		ai_chance = { 
 			factor = 100
 		}
-    }
-    
-    after = {
-        while = {
-            limit = {
-                check_variable = {
-                    which = th_money_decimals
-                    value = 1
-                }
-            }
-            add_treasury = -0.01
-            FROM = { add_treasury = 0.01 }
-            subtract_variable = {
-                which = th_money_decimals
-                value = 1
-            }
-        }
     }
 }
 
@@ -887,7 +812,8 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+				skill_boni = 0
+                type = normal
             }            
 			set_variable = {
 				which = th_youkai_hunt_youkai_combat_skills
@@ -898,7 +824,8 @@ country_event = {
                 which = th_youkai_hunt_youkai_development
             }
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_youkai_hunt_youkai_combat_skills
+				variable = th_youkai_hunt_youkai_combat_skills
+				type = normal
 			}
 		}
 	}
@@ -915,6 +842,18 @@ country_event = {
             days = 1
         }
 		hidden_effect = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = th_youkai_hunt_refusal_counter
+                        value = 1
+                    }
+                }
+                subtract_variable = {
+                    which = th_youkai_hunt_refusal_counter
+                    value = 1
+                }
+            }
             FROM = {
                 country_event = {
                     id = th_diplo_events.20
@@ -931,6 +870,20 @@ country_event = {
     option = {  #Stupid idea
         name = th_diplo_events.19.b
         custom_tooltip = th_diplo_events.19.b.tt
+        trigger = {
+            NOT = {
+                check_variable = {
+                    which = th_youkai_hunt_refusal_counter
+                    value = 3
+                }
+            }
+        }
+        hidden_effect = {
+            change_variable = {
+                which = th_youkai_hunt_refusal_counter
+                value = 1
+            }
+        }
         FROM = {
             add_opinion = {
                 who = ROOT
@@ -1099,7 +1052,8 @@ country_event = {
 		hidden_effect = {
             set_country_flag = th_was_already_danmaku_challenged_by_@FROM
             th_getruler_fighting_skill = {
-                SKILL_BONI = 0
+                skill_boni = 0
+                type = normal
             }
             FROM = {
                 set_variable = {
@@ -1115,11 +1069,17 @@ country_event = {
         name = th_diplo_events.23.a
         custom_tooltip = th_diplo_events.23.a.tt
         hidden_effect = {
-            th_danmaku_set_compare_variable = yes
+            th_danmaku_set_compare_variable = {
+                type = normal
+            }
             th_export_root_variable_into_foreign = {
                 who = FROM
                 root_variable = th_current_fighting_skills_counter
                 foreign_variable = th_danmaku_duel_enemy_power
+            }
+            set_variable = {
+                which = th_declined_danmaku_duel_counter
+                value = 0
             }
         }
         FROM = {
@@ -1130,9 +1090,9 @@ country_event = {
         }
 
         ai_chance = {
-            factor = 0.25
+            factor = 0.20
             modifier = {
-                factor = 3
+                factor = 4
                 mil = FROM
             }
         }
@@ -1141,6 +1101,14 @@ country_event = {
     #I don't have time for games   
     option = {
         name = th_diplo_events.23.b
+        trigger = {
+            NOT = {
+                check_variable = {
+                    which = th_declined_danmaku_duel_counter
+                    value = 3
+                }
+            }
+        }
         add_power_projection = {
             type = th_has_declined_danmaku_duel
             amount = -5
@@ -1152,7 +1120,11 @@ country_event = {
             }
         }
         hidden_effect = {
-            set_country_flag = th_danmaku_duel_lost_against_@FROM
+            #set_country_flag = th_danmaku_duel_lost_against_@FROM
+            change_variable = {
+                which = th_declined_danmaku_duel_counter
+                value = 1
+            }
         }
 
         ai_chance = {
@@ -1177,11 +1149,32 @@ country_event = {
 	immediate = {
 		hidden_effect = {
             th_getruler_fighting_skill = {
-                SKILL_BONI = 0
+                skill_boni = 0
+                type = normal
             }
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_danmaku_duel_enemy_power
+				variable = th_danmaku_duel_enemy_power
+				type = normal
 			}
+            if = { 
+                limit = { 
+                    has_country_flag = fuj_has_leveling_mokou
+                    FROM = {
+                        OR = {
+                            th_is_or_was_tag = { tag = HKR }
+                            th_is_or_was_tag = { tag = FOM }
+                            th_is_or_was_tag = { tag = SCR }
+                            th_is_or_was_tag = { tag = EIT }
+                            th_is_or_was_tag = { tag = NET }
+                            is_enemy = ROOT
+                            is_rival = ROOT
+                            is_great_power = yes
+                            total_development = ROOT
+                        }
+                    }
+                }
+                set_country_flag = fuj_duels_important_person
+            }
 		}
 	}
 	
@@ -1232,6 +1225,15 @@ country_event = {
 	picture = REIMUMARISABATTLE_eventPicture
 	
 	is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = { has_country_flag = fuj_duels_important_person }
+                clr_country_flag = fuj_duels_important_person
+            }
+        }
+    }
 	
 	option = {
         name = th_diplo_events.25.a
@@ -1254,6 +1256,19 @@ country_event = {
 	picture = REIMUMARISABATTLE_eventPicture
 	
 	is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            if = {
+                limit = { has_country_flag = fuj_duels_important_person }
+                clr_country_flag = fuj_duels_important_person
+                change_variable = {
+                    which = fuj_danmaku_win
+                    value = 1
+                }
+            }
+        }
+    }
 	
 	option = {
         name = th_diplo_events.26.a
@@ -1267,6 +1282,16 @@ country_event = {
             }
             country_event = {
                 id = th_diplo_events.28
+            }
+        }
+        if = {
+            limit = { has_country_flag = fuj_has_leveling_mokou }
+            change_variable = {
+                which = fuj_mokou_exp
+                value = 25
+            }
+            if = {
+                limit = { FROM = {  } }
             }
         }
 
@@ -2278,8 +2303,8 @@ country_event = {
 country_event = {
     id = th_diplo_events.461
     title = th_diplo_events.461.t
-    desc = th_diplo_events.461.desc
-    picture = SATORI_eventPicture
+    desc = none
+    picture = none
     
     hidden = yes
 
@@ -2294,9 +2319,122 @@ country_event = {
     }
 
     option = {
-        name = th_diplo_events.461.a
         remove_country_modifier = th_hellish_officers
         
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#CRUSADE!
+country_event = {
+    id = th_diplo_events.47
+    title = th_diplo_events.47.t
+    desc = th_diplo_events.47.desc
+    picture = SANAEBOSS_eventPicture
+    
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            random_country = {
+                limit = {
+                    has_country_modifier = th_mry_crusade_target
+                }
+                save_event_target_as = th_mry_crusade_event_target
+            }
+        }
+    }
+
+    option = {
+        name = th_diplo_events.47.a
+        custom_tooltip = th_diplo_events.47.a.tt
+        
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#CRUSADE!
+country_event = {
+    id = th_diplo_events.470
+    title = th_diplo_events.470.t
+    desc = none
+    picture = SANAEBOSS_eventPicture
+    hidden = yes
+    
+    trigger = {
+        NOT = { has_country_modifier = th_mry_crusade_target }
+        any_country = {
+            has_country_modifier = th_mry_crusade_target
+            war_with = ROOT
+            NOT = { religion = ROOT }
+        }
+        OR = {
+            any_country = {
+                religion = ROOT
+                mry_uses_faith_power = yes
+                NOT = { tag = ROOT }
+            }
+            mry_uses_faith_power = yes
+        }
+        NOT = { has_country_modifier = th_faith_power_war_against_crusade_target }
+    }
+    
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    option = {
+        add_country_modifier = {
+            name = th_faith_power_war_against_crusade_target
+            duration = -1
+        }
+        ai_chance = {
+            factor = 100
+        }
+    }
+}
+
+#No longer crusade
+country_event = {
+    id = th_diplo_events.471
+    title = th_diplo_events.471.t
+    desc = none
+    picture = SANAEBOSS_eventPicture
+    hidden = yes
+    
+    trigger = {
+        has_country_modifier = th_faith_power_war_against_crusade_target
+        OR = {
+            is_at_war = no
+            NOT = {
+                any_country = {
+                    war_with = ROOT
+                    NOT = { has_country_modifier = th_mry_crusade_target }
+                }
+            }
+            AND = {
+                NOT = {
+                    any_country = {
+                        religion = ROOT
+                        mry_uses_faith_power = yes
+                        NOT = { tag = ROOT }
+                    }
+                }
+                NOT = { mry_uses_faith_power = yes }
+            }
+        }
+    }
+    
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    option = {
+        remove_country_modifier = th_faith_power_war_against_crusade_target
         ai_chance = {
             factor = 100
         }

@@ -18,19 +18,35 @@ country_event = {
 		NOT = { exists = EIT }
 		NOT = { has_country_flag = fuj_has_adapted_government }
 		owns_core_province = 4997
-		Eientei_state = {
-			type = all
-			country_or_non_sovereign_subject_holds = ROOT
-		}
-		Bamboo_forest_of_the_lost = {
-			type = all
-			country_or_non_sovereign_subject_holds = ROOT
+		OR = {
+			ai = yes
+			AND = {
+				Eientei_state = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				Bamboo_forest_of_the_lost = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
 		}
 	}
 
 	immediate = {
 		hidden_effect = {
 			set_country_flag = fuj_has_adapted_government
+		}
+	}
+
+	after = {
+		if = {
+			limit = {
+				ai = no
+			}
+			th_add_rival_estate_loyalty = {
+				loyalty = -49
+			}
 		}
 	}
 	
@@ -98,7 +114,9 @@ country_event = {
 		add_adm_power = 50
 		add_dip_power = 50
 		add_mil_power = 50
-		custom_tooltip = fuj_can_hire_keine_now_tt
+		th_enable_touhou_advisor = {
+			advisor = th_advisor_keine
+		}
 				
 		ai_chance = { 
 			factor = 100
@@ -168,29 +186,41 @@ country_event = {
 	
 	is_triggered_only = yes
 
-	immediate = { #Due improved opinions of eachother the likelyhood of bad events gets more limited to both extreme ends
+	immediate = { #Due improved opinions of eachother the likelihood of bad events gets more limited to both extreme ends
 		custom_tooltip = flavor_fuj.4.tt
 		hidden_effect = {
 			set_country_flag = th_states_improved_relationship_between_kagu_mokou
-			change_statists_vs_orangists = -2
+			if = {
+				limit = {
+					has_estate_privilege = th_estate_rival_kaguya_subsidize_eientei
+				}
+				remove_estate_privilege = th_estate_rival_kaguya_subsidize_eientei
+			}
+			if = {
+				limit = {
+					has_estate_privilege = th_estate_rival_kaguya_satisfy_kaguya
+				}
+				remove_estate_privilege = th_estate_rival_kaguya_satisfy_kaguya
+			}
+			if = {
+				limit = {
+					has_estate_privilege = th_estate_rival_allow_house_visits
+				}
+				remove_estate_privilege = th_estate_rival_allow_house_visits
+			}
+			set_country_flag = th_disable_rival_privilege
 		} 
 	}
 	
 	option = {	#For now our country needs Mokou in power
 		name = flavor_fuj.4.a
-		
-		change_statists_vs_orangists = 1.1
-
-		ai_chance = { 
-			factor = 50
+		custom_tooltip = th_states_relation_improved_tt
+		th_add_rival_estate_loyalty = {
+			loyalty = 30
 		}
-	}
-	
-	option = {	#We need now Kaguya's diplomacy more than ever
-		name = flavor_fuj.4.b
-		
-		change_statists_vs_orangists = 0.9
-
+		custom_tooltip = th_states_disable_rival_privilege_tt
+		custom_tooltip = th_estate_rival_allow_house_visits_at
+		hidden_effect = { set_country_flag = th_estate_rivals_allow_unannounced_visits }
 		ai_chance = { 
 			factor = 50
 		}
@@ -479,7 +509,26 @@ country_event = {
 	
 	option = {	#Kaguya is entertained, but at what cost?
 		name = flavor_fuj.10.a
-		
+		custom_tooltip = fuj_cowry_treasure_available_tt
+		hidden_effect = {
+			set_country_flag = fuj_cowry_treasure_available
+			if = {
+				limit = {
+					has_country_flag = fuj_initialized_artifact_hunt
+				}
+				change_variable = {
+					which = fuj_collected_artifacts
+					value = 1
+				}
+			}
+			else = {
+				set_country_flag = fuj_initialized_artifact_hunt
+				set_variable = {
+					which = fuj_collected_artifacts
+					value = 1
+				}
+			}
+		}
 		add_years_of_income = 4
 		add_prestige = -15
 
@@ -500,7 +549,26 @@ country_event = {
 	
 	option = {	#TAKE THIS
 		name = flavor_fuj.11.a
-		
+		custom_tooltip = fuj_cowry_treasure_available_tt
+		hidden_effect = {
+			set_country_flag = fuj_cowry_treasure_available
+			if = {
+				limit = {
+					has_country_flag = fuj_initialized_artifact_hunt
+				}
+				change_variable = {
+					which = fuj_collected_artifacts
+					value = 1
+				}
+			}
+			else = {
+				set_country_flag = fuj_initialized_artifact_hunt
+				set_variable = {
+					which = fuj_collected_artifacts
+					value = 1
+				}
+			}
+		}
 		add_prestige = 40
 		add_army_professionalism = 0.1
 		add_dip_power = -75
@@ -523,7 +591,8 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			th_getruler_fighting_skill = {
-				SKILL_BONI = 0
+				skill_boni = 0
+				type = normal
 			}
 			#Dragon's Base Fighting Skills
 			set_variable = {
@@ -531,7 +600,8 @@ country_event = {
 				value = 750
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_fuj_dragon_combat_skills
+				variable = th_fuj_dragon_combat_skills
+				type = normal
 			}	
 		}
 	}
@@ -571,6 +641,26 @@ country_event = {
 		add_dip_power = 100
 		add_mil_power = 100
 
+		custom_tooltip = fuj_the_dragon_jewel_available_tt
+		hidden_effect = {
+			set_country_flag = fuj_the_dragon_jewel_available
+			if = {
+				limit = {
+					has_country_flag = fuj_initialized_artifact_hunt
+				}
+				change_variable = {
+					which = fuj_collected_artifacts
+					value = 1
+				}
+			}
+			else = {
+				set_country_flag = fuj_initialized_artifact_hunt
+				set_variable = {
+					which = fuj_collected_artifacts
+					value = 1
+				}
+			}
+		}
 		ai_chance = { 
 			factor = 100
 		}
@@ -590,12 +680,126 @@ country_event = {
 		name = flavor_fuj.15.a
 		custom_tooltip = flavor_fuj.15.a.tt
 
+		custom_tooltip = fuj_the_dragon_jewel_available_tt
+		hidden_effect = {
+			set_country_flag = fuj_the_dragon_jewel_available
+			if = {
+				limit = {
+					has_country_flag = fuj_initialized_artifact_hunt
+				}
+				change_variable = {
+					which = fuj_collected_artifacts
+					value = 1
+				}
+			}
+			else = {
+				set_country_flag = fuj_initialized_artifact_hunt
+				set_variable = {
+					which = fuj_collected_artifacts
+					value = 1
+				}
+			}
+		}
 		ai_chance = { 
 			factor = 100
 		}
 	}
 }
 
+#Refresh artifact
+country_event = {
+	id = flavor_fuj.16
+	title = flavor_fuj.16.t
+	desc = flavor_fuj.16.desc
+	picture = KAGUYAVSMOKOU_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_fuj.16.a
+		trigger = {
+			has_country_flag = fuj_used_fire_rat_robe
+			NOT = { had_country_flag = { flag = fuj_used_fire_rat_robe days = 18250 } }
+			NOT = { has_country_modifier = fuj_fire_rat_robe_buff }
+		}
+		custom_tooltip = flavor_fuj.16.a.tt
+		hidden_effect = {
+			clr_country_flag = fuj_used_fire_rat_robe
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.16.b
+		trigger = {
+			has_country_flag = fuj_used_bowl_of_the_buddha
+			NOT = { had_country_flag = { flag = fuj_used_bowl_of_the_buddha days = 18250 } }
+			NOT = { has_country_modifier = fuj_bowl_of_the_buddha_buff }
+		}
+		custom_tooltip = flavor_fuj.16.b.tt
+		hidden_effect = {
+			clr_country_flag = fuj_used_bowl_of_the_buddha
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.16.c
+		trigger = {
+			has_country_flag = fuj_used_the_jeweled_branch
+			NOT = { had_country_flag = { flag = fuj_used_the_jeweled_branch days = 18250 } }
+			NOT = { has_country_modifier = fuj_the_jeweled_branch_buff }
+		}
+		custom_tooltip = flavor_fuj.16.c.tt
+		hidden_effect = {
+			clr_country_flag = fuj_used_the_jeweled_branch
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.16.d
+		trigger = {
+			has_country_flag = fuj_used_the_dragon_jewel
+			NOT = { had_country_flag = { flag = fuj_used_the_dragon_jewel days = 18250 } }
+			NOT = { has_country_modifier = fuj_the_dragon_jewel_buff }
+		}
+		custom_tooltip = flavor_fuj.16.d.tt
+		hidden_effect = {
+			clr_country_flag = fuj_used_the_dragon_jewel
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.16.e
+		trigger = {
+			has_country_flag = fuj_used_cowry_treasure
+			NOT = { had_country_flag = { flag = fuj_used_cowry_treasure days = 18250 } }
+			NOT = { has_country_modifier = fuj_cowry_treasure_buff }
+		}
+		custom_tooltip = flavor_fuj.16.e.tt
+		hidden_effect = {
+			clr_country_flag = fuj_used_cowry_treasure
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
 
 #Mokou returns
 country_event = {
@@ -608,298 +812,310 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			remove_heir = yes
-			#Mokou gets respawned with additional stats
-			set_variable = {
-				which = th_respawn_adm_stat
-				which = th_ruler_adm_stat
-			}
-			set_variable = {
-				which = th_respawn_dip_stat
-				which = th_ruler_dip_stat
-			}
-			set_variable = {
-				which = th_respawn_mil_stat
-				which = th_ruler_mil_stat
-			}
-			define_ruler = {
-				name = "Mokou"
-				dynasty = "Fujiwara"
-				culture = Eientei
-				fixed = yes
-				adm = 5
-				dip = 4
-				mil = 6
-				age = 20
-				claim = 100
-				female = yes
-			}
-			add_ruler_personality = immortal_personality
-			set_ruler_flag = touhou_character_ruler
-			set_ruler_flag = touhou_original_ruler
-			set_ruler_flag = th_original_mokou
-			if = {
-				limit = {
-					th_fuj_has_n_volcanos = {
-						value = 4
-					}
-				}
-				define_ruler_to_general = {
-					fire = 6
-					shock = 5
-					manuever = 4
-					siege = 6
-				}
-			}
-			else_if = {
-				limit = {
-					th_fuj_has_n_volcanos = {
-						value = 3
-					}
-				}
-				define_ruler_to_general = {
-					fire = 5
-					shock = 5
-					manuever = 3
-					siege = 5
-				}
-			}
-			else_if = {
-				limit = {
-					th_fuj_has_n_volcanos = {
-						value = 2
-					}
-				}
-				define_ruler_to_general = {
-					fire = 5
-					shock = 5
-					manuever = 2
-					siege = 4
-				}
-			}
-			else_if = {
-				limit = {
-					th_fuj_has_n_volcanos = {
-						value = 1
-					}
-				}
-				define_ruler_to_general = {
-					fire = 4
-					shock = 4
-					manuever = 2
-					siege = 3
-				}
-			}
-			else = {
-				define_ruler_to_general = {
-					fire = 3
-					shock = 3
-					manuever = 2
-					siege = 2
-				}
-			}
+			th_respawn_ruler_with_new_stats_effect = yes
 		}
 	}
 
 	option = {	#WB
 		name = flavor_fuj.101.a
+		th_respawn_mokou = yes
+	}
+}
+
+#Set leveling system for FUJ
+country_event = {
+	id = flavor_fuj.102
+	title = flavor_fuj.102.t
+	desc = flavor_fuj.102.desc
+	picture = MOKOU_eventPicture
+
+	trigger = {
+		OR = {
+			has_government_attribute = th_has_leveling_ruler_general
+			th_is_or_was_tag = {
+				tag = FUJ
+			}
+		}
+		NOT = { has_country_flag = fuj_has_leveling_mokou }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
 		hidden_effect = {
-			export_to_variable = {
-				variable_name = th_start_stat_adm
-				value = ADM
-				who = ROOT
+			set_variable = {
+				which = fuj_mokou_level
+				value = 1
 			}
-			export_to_variable = {
-				variable_name = th_start_stat_dip
-				value = DIP
-				who = ROOT
+			set_variable = {
+				which = fuj_mokou_exp
+				value = 0
 			}
-			export_to_variable = {
-				variable_name = th_start_stat_mil
-				value = MIL
-				who = ROOT
+			set_variable = {
+				which = fuj_mokou_level_cap
+				value = 2
 			}
-			subtract_variable = {
-				which = th_respawn_adm_stat
-				which = th_start_stat_adm
+			set_variable = {
+				which = fuj_mokou_level_threshold
+				value = 100
 			}
-			subtract_variable = {
-				which = th_respawn_dip_stat
-				which = th_start_stat_dip
+			set_variable = {
+				which = fuj_mokou_exp_raise
+				value = 150
 			}
-			subtract_variable = {
-				which = th_respawn_mil_stat
-				which = th_start_stat_mil
+			set_variable = {
+				which = fuj_won_battles_counter
+				value = 0
 			}
-			while = {
-				limit = {
-					check_variable = {
-						which = th_respawn_adm_stat
-						value = 1
-					}
-				}
-				change_adm = 1
-				subtract_variable = {
-					which = th_respawn_adm_stat
-					value = 1
-				}
+			set_variable = {
+				which = fuj_danmaku_win
+				value = 0
 			}
-			while = {
-				limit = {
-					check_variable = {
-						which = th_respawn_dip_stat
-						value = 1
-					}
-				}
-				change_dip = 1
-				subtract_variable = {
-					which = th_respawn_dip_stat
-					value = 1
-				}
+			set_variable = {
+				which = fuj_defeated_kaguya
+				value = 0
 			}
-			while = {
-				limit = {
-					check_variable = {
-						which = th_respawn_mil_stat
-						value = 1
-					}
-				}
-				change_mil = 1
-				subtract_variable = {
-					which = th_respawn_mil_stat
-					value = 1
-				}
+			set_country_flag = fuj_has_leveling_mokou
+		}
+	}
+
+	option = {
+		name = flavor_fuj.102.a
+		custom_tooltip = flavor_fuj.102.a.tt
+		if = {
+			limit = { NOT = { is_monarch_leader = yes } }
+			country_event = {
+				id = flavor_fuj.104
 			}
+		}
+		ai_chance = {
+			factor = 1
 		}
 	}
 }
 
-#Set volcano counter for FUJ
+#The leveling system of Mokou is not too complex as the mod should focus on Grand Strategy, not on RPG
+#Because of that, the experience needed to level up has a simple formular:
+#With every level, the Threshold gets increased by the Exp Raise, then the Exp Raise gets doubled
+#This results into the following leveling curve:
+#Level 1:	0
+#Level 2:	100	
+#Level 3:	250 (-100 as they are already achieved)		-> needed experience compared to previous level: 150
+#Level 4:	550 (-250 as they are already achieved)		-> needed experience compared to previous level: 300
+#Level 5:	1150 (-550 as they are already achieved)	-> needed experience compared to previous level: 600
+#Level 6:	2350 (-1150 as they are already achieved)	-> needed experience compared to previous level: 1200
+#LEVEL UP 
+country_event = {
+	id = flavor_fuj.103
+	title = flavor_fuj.103.t
+	desc = flavor_fuj.103.desc
+	picture = MOKOU_eventPicture
+
+	trigger = {
+		has_country_flag = fuj_has_leveling_mokou
+		NOT = {
+			check_variable = {
+				which = fuj_mokou_level
+				which = fuj_mokou_level_cap
+			}
+		}
+		check_variable = {
+			which = fuj_mokou_exp
+			which = fuj_mokou_level_threshold
+		}
+		NOT = { has_country_flag = th_has_leveling_event_going }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_has_leveling_event_going
+			th_respawn_ruler_with_new_stats_effect = yes
+			change_variable = {
+				which = fuj_mokou_level_threshold
+				which = fuj_mokou_exp_raise
+			}
+			multiply_variable = {
+				which = fuj_mokou_exp_raise
+				value = 2
+			}
+			change_variable = {
+				which = fuj_mokou_level
+				value = 1
+			}
+		}
+	}
+
+	option = {
+		name = flavor_fuj.103.a
+		custom_tooltip = fuj_mokou_leveled_up
+		th_respawn_mokou = yes
+
+		hidden_effect = {
+			clr_country_flag = th_has_leveling_event_going
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Choose general trait for Mokou
 country_event = {
     id = flavor_fuj.104
 	title = flavor_fuj.104.t
 	desc = flavor_fuj.104.desc
-	picture = SPY_eventPicture
+	picture = MOKOU_eventPicture
 
-    mean_time_to_happen = {
-        days = 1
-    }
+	is_triggered_only = yes
 
-    trigger = {
-		OR = {
-			tag = FUJ
-			AND = {
-				NOT = { exists = FUJ }
-				was_tag = FUJ
-			}
+	option = {
+		name = flavor_fuj.104.a
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_fire_bender
 		}
-		NOT = { has_country_flag = th_fuj_has_volcano_counter_setup }
-    }
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
 
-    hidden = yes
+	option = {
+		name = flavor_fuj.104.b
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_fire_resistance
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
 
-    option = {
-        name = flavor_fuj.104.a
-		set_country_flag = th_fuj_has_volcano_counter_setup
-		th_fuj_set_volcano_counter = yes
+	option = {
+		name = flavor_fuj.104.c
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_forest_burner
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
 
-        ai_chance = {
-            factor = 100
-        }
-    }
+	option = {
+		name = flavor_fuj.104.d
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_front_line_fighter
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.e
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_volcano_surviver
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
 }
 
-#Replace Mokou when a volcano mission gets completed
+#Mechanic Explanation
 country_event = {
-	id = flavor_fuj.105
-	title = flavor_fuj.105.t
-	desc = flavor_fuj.105.desc
+    id = flavor_fuj.105
+	title = flavor_fuj.102.t
+	desc = flavor_fuj.102.desc
 	picture = MOKOU_eventPicture
-	
+
 	is_triggered_only = yes
-	hidden = yes
 
-	option = {	#WB
-		name = flavor_fuj.105.a
-		define_ruler = {
-			name = "Mokou"
-			dynasty = "Fujiwara"
-			culture = Eientei
-			fixed = yes
-			adm = 5
-			dip = 4
-			mil = 6
-			age = 20
-			claim = 100
-			female = yes
-		}
-		add_ruler_personality = immortal_personality
-		set_ruler_flag = touhou_character_ruler
-		set_ruler_flag = touhou_original_ruler
-		set_ruler_flag = th_original_mokou
-		if = {
-			limit = {
-				th_fuj_has_n_volcanos = {
-					value = 4
-				}
-			}
-			define_ruler_to_general = {
-				fire = 6
-				shock = 5
-				manuever = 4
-				siege = 6
-			}
-		}
-		else_if = {
-			limit = {
-				th_fuj_has_n_volcanos = {
-					value = 3
-				}
-			}
-			define_ruler_to_general = {
-				fire = 5
-				shock = 5
-				manuever = 3
-				siege = 5
-			}
-		}
-		else_if = {
-			limit = {
-				th_fuj_has_n_volcanos = {
-					value = 2
-				}
-			}
-			define_ruler_to_general = {
-				fire = 5
-				shock = 5
-				manuever = 2
-				siege = 4
-			}
-		}
-		else_if = {
-			limit = {
-				th_fuj_has_n_volcanos = {
-					value = 1
-				}
-			}
-			define_ruler_to_general = {
-				fire = 4
-				shock = 4
-				manuever = 2
-				siege = 3
-			}
-		}
-		else = {
-			define_ruler_to_general = {
-				fire = 3
-				shock = 3
-				manuever = 2
-				siege = 2
-			}
-		}
-
+	option = {
+		name = flavor_fuj.102.a
+		custom_tooltip = flavor_fuj.102.a.tt
+		
 		ai_chance = {
-			factor = 100
+			factor = 1
+		}
+	}
+}
+
+#Choose general trait for Generic Ruler if used for another government
+country_event = {
+    id = flavor_fuj.106
+	title = flavor_fuj.104.t
+	desc = flavor_fuj.104.desc
+	picture = MOKOU_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_government_attribute = th_has_leveling_ruler_general
+		has_country_flag = fuj_has_leveling_mokou
+	}
+
+	option = {
+		name = flavor_fuj.104.a
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_fire_bender
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.b
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_fire_resistance
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.c
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_forest_burner
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.d
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_front_line_fighter
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_fuj.104.e
+		th_define_ruler_to_leveling_general = {
+			trait = th_mokou_volcano_surviver
+		}
+		
+		ai_chance = {
+			factor = 1
 		}
 	}
 }

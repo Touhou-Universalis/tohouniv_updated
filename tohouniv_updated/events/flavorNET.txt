@@ -21,12 +21,12 @@ country_event = {
                     dynasty = "Saigyouji"
 				}
 				th_getruler_diplomatic_skill = {
-					SKILL_BONI = 600
+					skill_boni = 600
 				}
 			}
 			else = {
 				th_getruler_diplomatic_skill = {
-					SKILL_BONI = 0
+					skill_boni = 0
 				}
 			}
 			#Yuyukos base diplo fight skills
@@ -35,11 +35,12 @@ country_event = {
 				value = 1250
 			}
 			th_defineopponent_fighting_skill = {
-				VARIABLE = th_yukari_diplo_skills
+				variable = th_yukari_diplo_skills
+				type = diplomatic
 			}
 			if = {
 				limit = {
-					NOT = { has_global_flag = th_deactivated_incidents }
+					th_has_incidents_enabled = yes
 				}
 				country_event = {
 					id = th_danmaku_event.20
@@ -51,7 +52,7 @@ country_event = {
 	option = {	#Yukari is no longer capable of ruling her realm! I have to fight her!
 		name = flavor_net.1.a
 		trigger = {
-			NOT = { has_global_flag = th_deactivated_incidents }
+			th_has_incidents_enabled = yes
 			MHG = {
 				was_player = no
 				ai = yes
@@ -168,6 +169,872 @@ country_event = {
 		
 		ai_chance = { 
 			factor = 100
+		}
+	}
+}
+
+#Necromancer attacks Yuyuko - Event makes sure NET's gets access to their mission even if they get released as a vassal
+country_event = {
+	id = flavor_net.4
+	title = flavor_net.4.t
+	desc = flavor_net.4.desc
+	picture = YUYUKO_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = {
+			tag = NET
+		}
+		has_ruler_flag = th_original_yuyuko
+		NOT = { has_mission = NET_elimiate_seiga }
+		NOT = { mission_completed = NET_elimiate_seiga }
+		OR = {
+			is_year = 1500
+			mission_completed = NET_choose_mortal_policy
+		}
+		NOT = { has_country_flag = net_ambushed_by_seiga }
+	}
+
+	mean_time_to_happen = {
+		months = 12
+		modifier = {
+			factor = 0.1
+			exists = SNK
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = net_ambushed_by_seiga
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = normal
+			}
+			set_variable = {
+				which = net_seigas_ambush_combat_skills
+				value = 250
+			}
+			th_defineopponent_fighting_skill = {
+				variable = net_seigas_ambush_combat_skills
+				type = normal
+			}
+		}
+	}
+	
+	option = {	#I misjudged her. She can still hold responsibilty apparently
+		name = flavor_net.4.a
+		custom_tooltip = flavor_net.4.a.tt
+		highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_net.5
+			draw_event = flavor_net.5
+			defeat_event = flavor_net.5
+			days = 3
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Retaliation against Senkai!
+country_event = {
+	id = flavor_net.5
+	title = flavor_net.5.t
+	desc = flavor_net.5.desc
+	picture = YUKARIFIGHT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_net.5.a
+		Eastern_senkai = {
+			limit = {
+				NOT = {	is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		if = {
+			limit = {
+				NOT = { is_core = 5014 }
+				NOT = { is_permanent_claim = 5014 }
+			}
+			add_permanent_claim = 5014
+		}
+		hidden_effect = {
+			swap_non_generic_missions = yes
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+###Events for Mortal Policies###
+#Pick Mortal Policy
+country_event = {
+	id = flavor_net.100
+	title = flavor_net.100.t
+	desc = flavor_net.100.desc
+	picture = YUYUKO_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Acceptance
+		name = flavor_net.100.a
+		if = {
+			limit = {
+				OR = {
+					has_country_modifier = th_mortal_policy_tolerance
+					has_country_modifier = th_mortal_policy_repression
+				}
+			}
+			remove_country_modifier = th_mortal_policy_tolerance
+			remove_country_modifier = th_mortal_policy_repression
+			add_stability = -1
+		}
+		add_country_modifier = {
+			name = th_mortal_policy_acceptance
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+	
+	option = {	#Tolerance
+		name = flavor_net.100.b
+		if = {
+			limit = {
+				OR = {
+					has_country_modifier = th_mortal_policy_acceptance
+					has_country_modifier = th_mortal_policy_repression
+				}
+			}
+			remove_country_modifier = th_mortal_policy_acceptance
+			remove_country_modifier = th_mortal_policy_repression
+			add_stability = -1
+		}
+		add_country_modifier = {
+			name = th_mortal_policy_tolerance
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+	
+	option = {	#More spirits for us!
+		name = flavor_net.100.c
+		if = {
+			limit = {
+				OR = {
+					has_country_modifier = th_mortal_policy_acceptance
+					has_country_modifier = th_mortal_policy_tolerance
+				}
+			}
+			remove_country_modifier = th_mortal_policy_acceptance
+			remove_country_modifier = th_mortal_policy_tolerance
+			add_stability = -1
+		}
+		add_country_modifier = {
+			name = th_mortal_policy_repression
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Clear policies
+country_event = {
+	id = flavor_net.101
+	title = flavor_net.101.t
+	desc = flavor_net.101.desc
+	picture = YUYUKO_eventPicture
+	
+	trigger = {
+		OR = {
+			has_country_modifier = th_mortal_policy_acceptance
+			has_country_modifier = th_mortal_policy_tolerance
+			has_country_modifier = th_mortal_policy_repression
+		}
+		NOT = { has_government_attribute = th_mortal_policies }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {	#Acceptance
+		name = flavor_net.101.a
+		remove_country_modifier = th_mortal_policy_acceptance
+		remove_country_modifier = th_mortal_policy_tolerance
+		remove_country_modifier = th_mortal_policy_repression
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Hire Youmu
+country_event = {
+	id = flavor_net.102
+	title = flavor_net.102.t
+	desc = flavor_net.102.desc
+	picture = YOUMU2_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = th_hired_youmu_modifier
+				duration = 10950
+				hidden = yes
+			}
+		}
+	}
+	
+	option = {	#Advisor Youmu
+		name = flavor_net.102.a
+		define_advisor = {
+			type = th_advisor_youmu
+			name = "Youmu Konpaku"
+			skill = 3
+			location = 4958
+			discount = yes
+			female = yes
+			culture = Netherlandish
+			religion = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+	
+	option = {	#General Youmu
+		name = flavor_net.102.b
+		define_general = {
+			name = "Youmu Konpaku"
+			shock = 6
+			fire = 5
+			manuever = 6
+			siege = 4
+			female = yes
+			trait = defensive_planner_personality
+		}
+		
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Cook your meal!
+country_event = {
+	id = flavor_net.103
+	title = flavor_net.103.t
+	desc = flavor_net.103.desc
+	picture = YUYUKO_eventPicture
+
+	is_triggered_only = yes
+
+	#mediterranean Cuisine
+	option = {
+		name = flavor_net.103.a
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = mediterranean
+			}
+			net_has_not_cuisine_active = {
+				cuisine = mediterranean
+			}
+			NOT = { has_country_modifier = net_mediterranean_cuisine_for_the_navy }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = mediterranean
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#west_european Cuisine
+	option = {
+		name = flavor_net.103.b
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = west_european
+			}
+			net_has_not_cuisine_active = {
+				cuisine = west_european
+			}
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = west_european
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#middle_european Cuisine
+	option = {
+		name = flavor_net.103.c
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = middle_european
+			}
+			net_has_not_cuisine_active = {
+				cuisine = middle_european
+			}
+			NOT = { has_country_modifier = net_candy_candy_candy }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = middle_european
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#muslim Cuisine
+	option = {
+		name = flavor_net.103.d
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = muslim
+			}
+			net_has_not_cuisine_active = {
+				cuisine = muslim
+			}
+			NOT = { has_country_modifier = net_imports_from_the_middle_east }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = muslim
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#east_african Cuisine
+	option = {
+		name = flavor_net.103.e
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = east_african
+			}
+			net_has_not_cuisine_active = {
+				cuisine = east_african
+			}
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = east_african
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#west_african Cuisine
+	option = {
+		name = flavor_net.103.f
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = west_african
+			}
+			net_has_not_cuisine_active = {
+				cuisine = west_african
+			}
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = west_african
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#southeast_asian Cuisine
+	option = {
+		name = flavor_net.103.g
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = southeast_asian
+			}
+			net_has_not_cuisine_active = {
+				cuisine = southeast_asian
+			}
+			NOT = { has_country_modifier = net_spice_trader }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = southeast_asian
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#far_east Cuisine
+	option = {
+		name = flavor_net.103.h
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = far_east
+			}
+			net_has_not_cuisine_active = {
+				cuisine = far_east
+			}
+			NOT = { has_country_modifier = net_asian_meals }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = far_east
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#indian Cuisine
+	option = {
+		name = flavor_net.103.i
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = indian
+			}
+			net_has_not_cuisine_active = {
+				cuisine = indian
+			}
+			NOT = { has_country_modifier = net_indian_diverse_food }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = indian
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.104
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_net.103.zzz
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Cook your meal! - 2nd event for the chain
+country_event = {
+	id = flavor_net.104
+	title = flavor_net.103.t
+	desc = flavor_net.103.desc
+	picture = YUYUKO_eventPicture
+
+	is_triggered_only = yes
+
+	#mediterranean Cuisine
+	option = {
+		name = flavor_net.103.a
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = mediterranean
+			}
+			net_has_not_cuisine_active = {
+				cuisine = mediterranean
+			}
+			NOT = { has_country_modifier = net_mediterranean_cuisine_for_the_navy }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = mediterranean
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#west_european Cuisine
+	option = {
+		name = flavor_net.103.b
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = west_european
+			}
+			net_has_not_cuisine_active = {
+				cuisine = west_european
+			}
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = west_european
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#middle_european Cuisine
+	option = {
+		name = flavor_net.103.c
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = middle_european
+			}
+			net_has_not_cuisine_active = {
+				cuisine = middle_european
+			}
+			NOT = { has_country_modifier = net_candy_candy_candy }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = middle_european
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#muslim Cuisine
+	option = {
+		name = flavor_net.103.d
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = muslim
+			}
+			net_has_not_cuisine_active = {
+				cuisine = muslim
+			}
+			NOT = { has_country_modifier = net_imports_from_the_middle_east }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = muslim
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#east_african Cuisine
+	option = {
+		name = flavor_net.103.e
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = east_african
+			}
+			net_has_not_cuisine_active = {
+				cuisine = east_african
+			}
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = east_african
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#west_african Cuisine
+	option = {
+		name = flavor_net.103.f
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = west_african
+			}
+			net_has_not_cuisine_active = {
+				cuisine = west_african
+			}
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = west_african
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#southeast_asian Cuisine
+	option = {
+		name = flavor_net.103.g
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = southeast_asian
+			}
+			net_has_not_cuisine_active = {
+				cuisine = southeast_asian
+			}
+			NOT = { has_country_modifier = net_spice_trader }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = southeast_asian
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#far_east Cuisine
+	option = {
+		name = flavor_net.103.h
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = far_east
+			}
+			net_has_not_cuisine_active = {
+				cuisine = far_east
+			}
+			NOT = { has_country_modifier = net_asian_meals }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = far_east
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#indian Cuisine
+	option = {
+		name = flavor_net.103.i
+		trigger = {
+			net_has_cuisine_unlocked = {
+				cuisine = indian
+			}
+			net_has_not_cuisine_active = {
+				cuisine = indian
+			}
+			NOT = { has_country_modifier = net_indian_diverse_food }
+		}
+		net_pay_cuisine_fee = yes
+		net_activate_cuisine_buff = {
+			cuisine = indian
+			duration = 3650
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_net.103
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {
+		name = flavor_net.103.zzz
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Remove the flag when modifier is inactive
+country_event = {
+	id = flavor_net.105
+	title = flavor_net.105.t
+	desc = none
+	picture = YUYUKO_eventPicture
+	hidden = yes
+	trigger = {
+		OR = {
+			net_has_cuisine_flag_with_no_modifier = { cuisine = mediterranean }
+			net_has_cuisine_flag_with_no_modifier = { cuisine = west_european }
+			net_has_cuisine_flag_with_no_modifier = { cuisine = middle_european }
+			net_has_cuisine_flag_with_no_modifier = { cuisine = muslim }
+			net_has_cuisine_flag_with_no_modifier = { cuisine = east_african }
+			net_has_cuisine_flag_with_no_modifier = { cuisine = west_african }
+			net_has_cuisine_flag_with_no_modifier = { cuisine = southeast_asian }
+			net_has_cuisine_flag_with_no_modifier = { cuisine = far_east }
+			net_has_cuisine_flag_with_no_modifier = { cuisine = indian }
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = mediterranean } }
+			net_remove_cuisine_flag = { cuisine = mediterranean }
+		}
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = west_european } }
+			net_remove_cuisine_flag = { cuisine = west_european }
+		}
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = middle_european } }
+			net_remove_cuisine_flag = { cuisine = middle_european }
+		}
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = muslim } }
+			net_remove_cuisine_flag = { cuisine = muslim }
+		}
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = east_african } }
+			net_remove_cuisine_flag = { cuisine = east_african }
+		}
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = west_african } }
+			net_remove_cuisine_flag = { cuisine = west_african }
+		}
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = southeast_asian } }
+			net_remove_cuisine_flag = { cuisine = southeast_asian }
+		}
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = far_east } }
+			net_remove_cuisine_flag = { cuisine = far_east }
+		}
+		if = {
+			limit = { net_has_cuisine_flag_with_no_modifier = { cuisine = indian } }
+			net_remove_cuisine_flag = { cuisine = indian }
 		}
 	}
 }

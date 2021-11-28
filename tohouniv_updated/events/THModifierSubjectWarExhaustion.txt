@@ -1,0 +1,113 @@
+namespace = th_modifier_subject_war_exhaustion
+
+#Set bonus
+country_event = {
+	id = th_modifier_subject_war_exhaustion.1
+	title = th_modifier_subject_war_exhaustion.1.t
+	desc = none
+	picture = none
+
+	trigger = {
+		num_of_subjects = 1
+		OR = {
+			has_global_modifier_value = {
+				which = subject_war_exhaustion
+				value = 0.01
+			}
+			NOT = {
+				has_global_modifier_value = {
+					which = subject_war_exhaustion
+					value = 0
+				}
+			}
+		}
+		OR = {
+			NOT = { has_country_flag = th_had_subject_war_exhaustion_event }
+			had_country_flag = {
+				flag = th_had_subject_war_exhaustion_event
+				days = 29
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		clr_country_flag = th_had_subject_war_exhaustion_event
+		export_to_variable = {
+			variable_name = th_additional_war_exhaustion
+			value = modifier:subject_war_exhaustion
+			who = ROOT
+		}
+		multiply_variable = {
+			which = th_additional_war_exhaustion
+			value = 100
+		}
+	}
+
+	option = {
+		set_country_flag = th_had_subject_war_exhaustion_event
+		if = {
+			limit = {
+				check_variable = {
+					which = th_additional_war_exhaustion
+					value = 0
+				}
+			}
+			subtract_variable = {
+				which = th_additional_war_exhaustion
+				value = 1
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_additional_war_exhaustion
+						value = 0
+					}
+				}
+				every_subject_country = {
+					add_war_exhaustion = -0.01
+				}
+				subtract_variable = {
+					which = th_additional_war_exhaustion
+					value = 1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = th_additional_war_exhaustion
+						value = 0
+					}
+				}
+			}
+			while = {
+				limit = {
+					NOT = {
+						check_variable = {
+							which = th_additional_war_exhaustion
+							value = 0
+						}
+					}
+				}
+				every_subject_country = {
+					add_war_exhaustion = 0.01
+				}
+				change_variable = {
+					which = th_additional_war_exhaustion
+					value = 1
+				}
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

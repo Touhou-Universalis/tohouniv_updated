@@ -1,0 +1,493 @@
+#Basic add faith power effect without any scaling
+mry_add_faith_power = {
+	if = {
+		limit = {
+			mry_uses_faith_power = yes
+		}
+		hidden_effect = {
+			set_variable = {
+				which = potential_faith_power
+				value = $value$
+			}
+			change_variable = {
+				which = potential_faith_power
+				which = faith_power
+			}
+			export_to_variable = {
+				which = faith_power_limit
+				value = modifier:faith_power_capacity
+			}
+			multiply_variable = {
+				which = faith_power_limit
+				value = 100
+			}
+		}
+		if = {	#Underflow case
+			limit = {
+				NOT = {
+					check_variable = {
+						which = potential_faith_power
+						value = 0
+					}
+				}
+			}
+			set_variable = {
+				which = faith_power
+				value = 0
+			}
+		}
+		else_if = {	#Overflow case
+			limit = {
+				check_variable = {
+					which = potential_faith_power
+					which = faith_power_limit
+				}
+			}
+			set_variable = {
+				which = faith_power
+				which = faith_power_limit
+			}
+		}
+		else = {	#Normal case
+			change_variable = {
+				which = faith_power
+				value = $value$
+			}
+		}
+	}
+}
+
+#Not used yet, might come in handy later
+#Adds faith power without considering your total development or religious unity
+mry_add_scaled_faith_power = {
+	if = {
+		limit = {
+			mry_uses_faith_power = yes
+		}
+		hidden_effect = {
+			set_variable = {
+				which = potential_faith_power
+				value = $value$
+			}
+			export_to_variable = {
+				which = faith_power_scaler
+				value = modifier:faith_power_modifier
+			}
+			change_variable = {
+				which = faith_power_scaler
+				value = 1
+			}
+			if = {
+				limit = {
+					check_variable = {	#NO NEGATIVITY SCALER
+						which = faith_power_scaler
+						value = 0
+					}
+					check_variable = {	#NEGATIVE VALUES SHOULD NOT SCALE
+						which = potential_faith_power
+						value = 0
+					}
+				}
+				multiply_variable = {
+					which = potential_faith_power
+					which = faith_power_scaler
+				}
+			}
+			change_variable = {
+				which = potential_faith_power
+				which = faith_power
+			}
+			export_to_variable = {
+				which = faith_power_limit
+				value = modifier:faith_power_capacity
+			}
+			multiply_variable = {
+				which = faith_power_limit
+				value = 100
+			}
+		}
+		if = {	#Underflow case
+			limit = {
+				NOT = {
+					check_variable = {
+						which = potential_faith_power
+						value = 0
+					}
+				}
+			}
+			set_variable = {
+				which = faith_power
+				value = 0
+			}
+		}
+		else_if = {	#Overflow case
+			limit = {
+				check_variable = {
+					which = potential_faith_power
+					which = faith_power_limit
+				}
+			}
+			set_variable = {
+				which = faith_power
+				which = faith_power_limit
+			}
+		}
+		else = {	#Normal case
+			hidden_effect = {
+				subtract_variable = {
+					which = potential_faith_power
+					which = faith_power
+				}
+			}
+			change_variable = {
+				which = faith_power
+				which = potential_faith_power
+			}
+		}
+	}
+}
+
+#Country effect
+#$enforcer$ is the country, which forces the target to convert
+#$converted$ is the country, which gets converted
+#$value$ determines how much faith per development
+#$development_factor$ multiplies the $value$ by a specified factor
+mry_add_scaled_country_conversion_faith_power = {
+	if = {
+		limit = {
+			$enforcer$ = {
+				mry_uses_faith_power = yes
+			}
+		}
+		$enforcer$ = {
+			hidden_effect = {
+				set_variable = {
+					which = potential_faith_power
+					value = $value$
+				}
+				export_to_variable = {
+					which = faith_power_scaler
+					value = modifier:faith_power_modifier
+				}
+				change_variable = {
+					which = faith_power_scaler
+					value = 1
+				}
+				export_to_variable = {
+					which = mry_country_development
+					value = total_development
+					who = $converted$
+				}
+				multiply_variable = {
+					which = mry_country_development
+					value = $development_factor$
+				}
+				multiply_variable = {
+					which = potential_faith_power
+					which = mry_country_development
+				}
+				if = {
+					limit = {
+						check_variable = {	#NO NEGATIVITY SCALER
+							which = faith_power_scaler
+							value = 0
+						}
+						check_variable = {	#NEGATIVE VALUES SHOULD NOT SCALE
+							which = potential_faith_power
+							value = 0
+						}
+					}
+					multiply_variable = {
+						which = potential_faith_power
+						which = faith_power_scaler
+					}
+				}
+				change_variable = {
+					which = potential_faith_power
+					which = faith_power
+				}
+				export_to_variable = {
+					which = faith_power_limit
+					value = modifier:faith_power_capacity
+				}
+				multiply_variable = {
+					which = faith_power_limit
+					value = 100
+				}
+			}
+			if = {	#Underflow case
+				limit = {
+					NOT = {
+						check_variable = {
+							which = potential_faith_power
+							value = 0
+						}
+					}
+				}
+				set_variable = {
+					which = faith_power
+					value = 0
+				}
+			}
+			else_if = {	#Overflow case
+				limit = {
+					check_variable = {
+						which = potential_faith_power
+						which = faith_power_limit
+					}
+				}
+				set_variable = {
+					which = faith_power
+					which = faith_power_limit
+				}
+			}
+			else = {	#Normal case
+				hidden_effect = {
+					subtract_variable = {
+						which = potential_faith_power
+						which = faith_power
+					}
+				}
+				change_variable = {
+					which = faith_power
+					which = potential_faith_power
+				}
+			}
+		}
+	}
+}
+
+#Province effect
+#$value$ determines how much faith per development
+#$development_factor$ multiplies the $value$ by a specified factor
+mry_add_scaled_province_conversion_faith_power = {
+	if = {
+		limit = {
+			owner = {
+				mry_uses_faith_power = yes
+			}
+		}
+		owner = {
+			hidden_effect = {
+				set_variable = {
+					which = potential_faith_power
+					value = $value$
+				}
+				export_to_variable = {
+					which = faith_power_scaler
+					value = modifier:faith_power_modifier
+				}
+				change_variable = {
+					which = faith_power_scaler
+					value = 1
+				}
+				export_to_variable = {
+					which = mry_province_development
+					value = development
+					who = ROOT
+				}
+				multiply_variable = {
+					which = mry_province_development
+					value = $development_factor$
+				}
+				multiply_variable = {
+					which = potential_faith_power
+					which = mry_province_development
+				}
+				if = {
+					limit = {
+						check_variable = {	#NO NEGATIVITY SCALER
+							which = faith_power_scaler
+							value = 0
+						}
+						check_variable = {	#NEGATIVE VALUES SHOULD NOT SCALE
+							which = potential_faith_power
+							value = 0
+						}
+					}
+					multiply_variable = {
+						which = potential_faith_power
+						which = faith_power_scaler
+					}
+				}
+				change_variable = {
+					which = potential_faith_power
+					which = faith_power
+				}
+				export_to_variable = {
+					which = faith_power_limit
+					value = modifier:faith_power_capacity
+				}
+				multiply_variable = {
+					which = faith_power_limit
+					value = 100
+				}
+			}
+			if = {	#Underflow case
+				limit = {
+					NOT = {
+						check_variable = {
+							which = potential_faith_power
+							value = 0
+						}
+					}
+				}
+				set_variable = {
+					which = faith_power
+					value = 0
+				}
+			}
+			else_if = {	#Overflow case
+				limit = {
+					check_variable = {
+						which = potential_faith_power
+						which = faith_power_limit
+					}
+				}
+				set_variable = {
+					which = faith_power
+					which = faith_power_limit
+				}
+			}
+			else = {	#Normal case				
+				hidden_effect = {
+					subtract_variable = {
+						which = potential_faith_power
+						which = faith_power
+					}
+				}
+				change_variable = {
+					which = faith_power
+					which = potential_faith_power
+				}
+			}
+		}
+	}
+}
+
+#This effect is the base faith power you get. This gets applied always first
+#In the event, the base monthly faith power is 1
+mry_add_base_scaled_faith_power = {
+	export_to_variable = {
+		which = base_faith_power_gain
+		value = $value$
+		who = ROOT
+	}
+	export_to_variable = {
+		which = faith_power_scaler
+		value = modifier:faith_power_modifier
+	}
+	change_variable = {
+		which = faith_power_scaler
+		value = 1
+	}
+	#Factors for gaining faith power
+	#+ 1/1000 of your total development as faith power
+	export_to_variable = {
+		which = faith_power_development
+		value = total_development
+	}
+	divide_variable = {
+		which = faith_power_development
+		value = 1000
+	}
+	#The faith power you get is multiplied with your religious unity - 100% means you get the full faith power (*1)
+	export_to_variable = {
+		which = faith_power_religious_unity
+		value = religious_unity
+	}
+	export_to_variable = {
+		variable_name = th_additional_faith_power
+		value = modifier:monthly_faith_power
+		who = ROOT
+	}
+	change_variable = {
+		which = th_additional_faith_power
+		which = base_faith_power_gain
+	}
+	change_variable = {
+		which = th_additional_faith_power
+		which = faith_power_development
+	}
+	multiply_variable = {
+		which = th_additional_faith_power
+		which = faith_power_religious_unity
+	}
+	#Then the faith power you gain will be multiplied with modifiers for scaling
+	if = {
+		limit = {
+			check_variable = {	#NO NEGATIVITY SCALER
+				which = faith_power_scaler
+				value = 0
+			}
+			check_variable = {	#NEGATIVE VALUES SHOULD NOT SCALE
+				which = th_additional_faith_power
+				value = 0
+			}
+		}
+		multiply_variable = {
+			which = th_additional_faith_power
+			which = faith_power_scaler
+		}
+	}
+	change_variable = {
+		which = th_additional_faith_power
+		which = faith_power
+	}
+	#The faith power you would get will now tested if it causes an overflow, underflow or if it is okay
+	export_to_variable = {
+		which = faith_power_limit
+		value = modifier:faith_power_capacity
+	}
+	multiply_variable = {
+		which = faith_power_limit
+		value = 100
+	}
+	if = {	#Underflow case
+		limit = {
+			NOT = {
+				check_variable = {
+					which = th_additional_faith_power
+					value = 0
+				}
+			}
+		}
+		set_variable = {
+			which = faith_power
+			value = 0
+		}
+	}
+	else_if = {	#Overflow case
+		limit = {
+			check_variable = {
+				which = th_additional_faith_power
+				which = faith_power_limit
+			}
+		}
+		set_variable = {
+			which = faith_power
+			which = faith_power_limit
+		}
+	}
+	else = {	#Normal case				
+		hidden_effect = {
+			subtract_variable = {
+				which = th_additional_faith_power
+				which = faith_power
+			}
+		}
+		change_variable = {
+			which = faith_power
+			which = th_additional_faith_power
+		}
+	}
+}
+
+mry_increase_miracle_counter = {
+	hidden_effect = {
+		change_variable = {
+			which = mry_miracle_counter
+			value = 1
+		}
+	}
+}
