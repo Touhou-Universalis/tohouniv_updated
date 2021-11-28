@@ -319,8 +319,11 @@ mki_missions_branching_first_slot = {
 	#[Root.GetSelectableMissionTitle]
 	#[Root.GetSelectableMissionDescription]
 	mki_first_branch_mission = {
+		#Aka:
+		#MKI_moriya_shinto_religion_tolerance
+		#MKI_moriya_shinto_religion_intolerance
 		icon = mission_unknown_mission
-		required_missions = { MKI_religion_question }
+		required_missions = {}
 		position = 8
 		trigger = {
 			custom_trigger_tooltip = {
@@ -391,7 +394,7 @@ mki_missions_moriya_tolerance_slot = {
 
 	MKI_moriya_shinto_religion_tolerance = {
 		icon = mission_touhou_mry_dof_lvl3
-		required_missions = { MKI_religion_question }
+		required_missions = {}
 		position = 8
 		provinces_to_highlight = {
 			OR = {
@@ -436,7 +439,7 @@ mki_missions_moriya_intolerance_slot = {
 
 	MKI_moriya_shinto_religion_intolerance = {
 		icon = mission_touhou_mry_dof_lvl3
-		required_missions = { MKI_religion_question }
+		required_missions = {}
 		position = 8
 		provinces_to_highlight = {
 			OR = {
@@ -624,70 +627,171 @@ mki_missions_branching_second_slot = {
 
 	#[Root.GetSelectableMissionTitle]
 	#[Root.GetSelectableMissionDescription]
-	mki_second_branch_mission = {
+	mki_third_branch_mission = {
+		#Aka:
+		#MKI_taoism_religion_tolerance
+		#MKI_taoism_religion_intolerance
 		icon = mission_unknown_mission
 		required_missions = { MKI_religion_question }
-		position = 8
+		position = 7
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = selectable_mission_trigger_tt
 				always = no
 			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Senkai_state
+					area = Northern_senkai
+					area = Eastern_senkai
+				}
+				value = 5
+			}	
 			OR = {
 				AND = {
 					custom_trigger_tooltip = {
 						tooltip = mki_tolerance_path_trigger_tt
 						always = no
 					}
-					if = {
-						limit = {
-							any_province = {
-								religion = th_christian
-							}
-						}
-						num_of_owned_provinces_with = {
-							value = 1
-							religion = th_christian
-						}
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						value = 1
+						religion = th_taoist
 					}
-					owns_or_non_sovereign_subject_of = 5301
+					owns_or_non_sovereign_subject_of = 5025
 				}
 				AND = {
 					custom_trigger_tooltip = {
 						tooltip = mki_intolerance_path_trigger_tt
 						always = no
 					}
-					owns_or_non_sovereign_subject_of = 5301
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						OR = {		
+							area = Senkai_state
+							area = Northern_senkai
+							area = Eastern_senkai
+						}
+						has_owner_religion = yes
+						religion = th_shinkism
+						value = 2
+					}
+					owns_or_non_sovereign_subject_of = 5025
 				}
 			}
 		}
 		effect = {
-			add_country_modifier = {
-				name = "mki_time_traveler_artifacts"
-				duration = 7300
-			}
-			custom_tooltip = mki_tolerance_effect_tt
-			Yumemi_space_state = {
+			Eastern_myouren_state = {
 				limit = {
-					NOT = { has_province_flag = mki_integrated_culture_province_flag }
-					owned_by = ROOT
+					NOT = {
+						is_permanent_claim = ROOT
+					}
+					NOT = {
+						is_core = ROOT
+					}
 				}
-				add_province_modifier = {
-					name = mki_prosperity_of_people
-					duration = 9125
+				add_permanent_claim = ROOT
+			}
+			Northern_myouren_state = {
+				limit = {
+					NOT = {
+						is_permanent_claim = ROOT
+					}
+					NOT = {
+						is_core = ROOT
+					}
 				}
-				set_province_flag = mki_integrated_culture_province_flag
+				add_permanent_claim = ROOT
+			}
+			Myouren_state = {
+				limit = {
+					NOT = {
+						is_permanent_claim = ROOT
+					}
+					NOT = {
+						is_core = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+			add_casus_belli = {
+				target = MYO
+				type = cb_restore_personal_union
+				months = 900
+			}
+
+			custom_tooltip = mki_tolerance_effect_tt
+			add_accepted_culture = Senkaian
+			mki_tolerate_culture = {
+				culture = Senkaian
 			}
 
 			custom_tooltip = mki_intolerance_effect_tt
 			mki_focus_convert_religion = {
-				religion = th_christian
+				religion = th_taoist
+			}
+		}
+	}
+	mki_fourth_branch_mission = {
+		#Aka:
+		#MKI_byakuren_tolerant
+		#MKI_byakuren_intolerant
+		icon = mission_unknown_mission
+		required_missions = { 
+			mki_third_branch_mission
+		}
+		position = 8
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = selectable_mission_trigger_tt
+				always = no
+			}
+			owns_or_non_sovereign_subject_of = 4987
+			OR = {
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = mki_tolerance_path_trigger_tt
+						always = no
+					}
+					num_of_owned_provinces_with = {
+						value = 1
+						religion = th_buddhist
+					}
+				}
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = mki_intolerance_path_trigger_tt
+						always = no
+					}
+					4987 = {
+						owner = {
+							religion = th_shinkism
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = mki_tolerance_effect_tt
+			add_stability = 2
+			mki_reduce_province_debuff = yes
+
+			custom_tooltip = mki_intolerance_effect_tt
+			mki_focus_convert_religion = {
+				religion = mki_focus_convert_religion
+			}
+			if = {
+				limit = {
+					religion = th_shinkism
+				}
+				add_church_power = 100
+			}
+			else = {
+				add_adm_power = 100
 			}
 		}
 	}
 }
 
-mki_missions_touhou_christian_tolerance_slot = {
+mki_missions_touhou_tao_buddhism_tolerance_slot = {
 	slot = 2
 	generic = no
 	ai = yes
@@ -697,48 +801,90 @@ mki_missions_touhou_christian_tolerance_slot = {
 		has_country_flag = mki_tolerant_missions
 	}
 	has_country_shield = yes
-	MKI_touhou_christian_religion_tolerance = {
-		icon = mission_touhou_yumemi
+	MKI_taoism_religion_tolerance = {
+		icon = mission_touhou_taoism_heresy
 		required_missions = { MKI_religion_question }
-		position = 8
+		position = 7
 		provinces_to_highlight = {
-			province_id = 5301
+			OR = {
+				area = Senkai_state 
+				area = Northern_senkai 
+				area = Eastern_senkai 
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			if = {
-				limit = {
-					any_province = {
-						religion = th_christian
-					}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Senkai_state 
+					area = Northern_senkai 
+					area = Eastern_senkai 
 				}
-				num_of_owned_provinces_with = {
-					value = 1
-					religion = th_christian
-				}
+				value = 5
+			}	
+			num_of_owned_provinces_with = {
+				value = 1
+				religion = th_taoist
 			}
-			owns_or_non_sovereign_subject_of = 5301
+			owns_or_non_sovereign_subject_of = 5025
 		}
 		effect = {
-			Yumemi_space_state = {
+			Eastern_myouren_state = {
 				limit = {
-					NOT = { has_province_flag = mki_integrated_culture_province_flag }
-					owned_by = ROOT
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
 				}
-				add_province_modifier = {
-					name = mki_prosperity_of_people
-					duration = 9125
+				add_permanent_claim = ROOT
+			}
+			Northern_myouren_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
 				}
-				set_province_flag = mki_integrated_culture_province_flag
+				add_permanent_claim = ROOT
 			}
-			add_country_modifier = {
-				name = "mki_time_traveler_artifacts"
-				duration = 7300
+			Myouren_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
+			add_casus_belli = {
+				target = MYO
+				type = cb_restore_personal_union
+				months = 900
+			}
+			add_accepted_culture = Senkaian
+			mki_tolerate_culture = {
+				culture = Senkaian
+			}
+		}
+	}
+	MKI_byakuren_tolerant = {
+		icon = mission_touhou_byakuren
+		required_missions = {
+			MKI_taoism_religion_tolerance
+		}
+		position = 8
+		provinces_to_highlight = {
+			province_id = 4987
+		}
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 1
+				religion = th_buddhist
+			}
+			owns_or_non_sovereign_subject_of = 4987
+		}
+		effect = {
+			add_stability = 2
+			mki_reduce_province_debuff = yes
 		}
 	}
 }
 
-mki_missions_touhou_christian_intolerance_slot = {
+mki_missions_touhou_tao_buddhism_intolerance_slot = {
 	slot = 2
 	generic = no
 	ai = yes
@@ -748,23 +894,112 @@ mki_missions_touhou_christian_intolerance_slot = {
 		has_country_flag = mki_religious_missions
 	}
 	has_country_shield = yes
-	MKI_touhou_christian_religion_intolerance = {
-		icon = mission_touhou_yumemi
+	MKI_taoism_religion_intolerance = {
+		icon = mission_touhou_taoism_heresy
 		required_missions = { MKI_religion_question }
-		position = 8
+		position = 7
 		provinces_to_highlight = {
-			province_id = 5301
+			OR = {
+				area = Senkai_state
+				area = Northern_senkai
+				area = Eastern_senkai
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			owns_or_non_sovereign_subject_of = 5301
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Senkai_state
+					area = Northern_senkai
+					area = Eastern_senkai
+				}
+				value = 5
+			}	
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {		
+					area = Senkai_state
+					area = Northern_senkai
+					area = Eastern_senkai
+				}
+				has_owner_religion = yes
+					religion = th_shinkism
+				value = 2
+			}
+			owns_or_non_sovereign_subject_of = 5025
+		}
+		effect = {
+			Eastern_myouren_state = {
+				limit = {
+					NOT = {
+						is_permanent_claim = ROOT
+					}
+					NOT = {
+						is_core = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+			Northern_myouren_state = {
+				limit = {
+					NOT = {
+						is_permanent_claim = ROOT
+					}
+					NOT = {
+						is_core = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+			Myouren_state = {
+				limit = {
+					NOT = {
+						is_permanent_claim = ROOT
+					}
+					NOT = {
+						is_core = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+			add_casus_belli = {
+				target = MYO
+				type = cb_restore_personal_union
+				months = 900
+			}
+			mki_focus_convert_religion = {
+				religion = th_taoist
+			}
+		}
+	}
+	MKI_byakuren_intolerant = {
+		icon = mission_touhou_byakuren
+		required_missions = { 
+			MKI_taoism_religion_intolerance
+		}
+		position = 8
+		provinces_to_highlight = {
+			province_id = 4987
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 4987
+			4987 = {
+				owner = {
+					religion = th_shinkism
+				}
+			}
 		}
 		effect = {
 			mki_focus_convert_religion = {
-				religion = th_christian
+				religion = mki_focus_convert_religion
 			}
-			add_country_modifier = {
-				name = "mki_time_traveler_artifacts"
-				duration = 7300
+			if = {
+				limit = {
+					religion = th_shinkism
+				}
+				add_church_power = 100
+			}
+			else = {
+				add_adm_power = 100
 			}
 		}
 	}
@@ -911,9 +1146,12 @@ mki_missions_empire_slot = {
 	MKI_religion_question = {
 		icon = mission_touhou_th_shintoism
 		required_missions = { } 
-		position = 7
+		position = 6
 		trigger = {
-			has_disaster = th_anti_makaien_rebellion
+			custom_trigger_tooltip = {
+				tooltip = MKI_religion_question_ct
+				has_country_flag = th_has_picked_choice_from_makaien_rebellion
+			}
 		}
 		effect = {
 			Senkai_state = {
@@ -1003,171 +1241,19 @@ mki_missions_branching_third_slot = {
 
 	#[Root.GetSelectableMissionTitle]
 	#[Root.GetSelectableMissionDescription]
-	mki_third_branch_mission = {
-		icon = mission_unknown_mission
-		required_missions = { MKI_religion_question }
-		position = 8
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {
-					area = Senkai_state
-					area = Northern_senkai
-					area = Eastern_senkai
-				}
-				value = 5
-			}	
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = mki_tolerance_path_trigger_tt
-						always = no
-					}
-					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-						value = 1
-						religion = th_taoist
-					}
-					owns_or_non_sovereign_subject_of = 5025
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = mki_intolerance_path_trigger_tt
-						always = no
-					}
-					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-						OR = {		
-							area = Senkai_state
-							area = Northern_senkai
-							area = Eastern_senkai
-						}
-						has_owner_religion = yes
-						religion = th_shinkism
-						value = 2
-					}
-					owns_or_non_sovereign_subject_of = 5025
-				}
-			}
-		}
-		effect = {
-			Eastern_myouren_state = {
-				limit = {
-					NOT = {
-						is_permanent_claim = ROOT
-					}
-					NOT = {
-						is_core = ROOT
-					}
-				}
-				add_permanent_claim = ROOT
-			}
-			Northern_myouren_state = {
-				limit = {
-					NOT = {
-						is_permanent_claim = ROOT
-					}
-					NOT = {
-						is_core = ROOT
-					}
-				}
-				add_permanent_claim = ROOT
-			}
-			Myouren_state = {
-				limit = {
-					NOT = {
-						is_permanent_claim = ROOT
-					}
-					NOT = {
-						is_core = ROOT
-					}
-				}
-				add_permanent_claim = ROOT
-			}
-			add_casus_belli = {
-				target = MYO
-				type = cb_restore_personal_union
-				months = 900
-			}
-
-			custom_tooltip = mki_tolerance_effect_tt
-			add_accepted_culture = Senkaian
-			mki_tolerate_culture = {
-				culture = Senkaian
-			}
-
-			custom_tooltip = mki_intolerance_effect_tt
-			mki_focus_convert_religion = {
-				religion = th_taoist
-			}
-		}
-	}
-	mki_fourth_branch_mission = {
-		icon = mission_unknown_mission
-		required_missions = { 
-			mki_third_branch_mission
-			mki_second_branch_mission
-			mki_first_branch_mission
-		}
-		position = 9
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			owns_or_non_sovereign_subject_of = 4987
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = mki_tolerance_path_trigger_tt
-						always = no
-					}
-					num_of_owned_provinces_with = {
-						value = 1
-						religion = th_buddhist
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = mki_intolerance_path_trigger_tt
-						always = no
-					}
-					4987 = {
-						owner = {
-							religion = th_shinkism
-						}
-					}
-				}
-			}
-		}
-		effect = {
-			custom_tooltip = mki_tolerance_effect_tt
-			add_stability = 2
-			mki_reduce_province_debuff = yes
-
-			custom_tooltip = mki_intolerance_effect_tt
-			mki_focus_convert_religion = {
-				religion = mki_focus_convert_religion
-			}
-			if = {
-				limit = {
-					religion = th_shinkism
-				}
-				add_church_power = 100
-			}
-			else = {
-				add_adm_power = 100
-			}
-		}
-	}
 	mki_fith_branch_mission = {
+		#Aka:
+		#MKI_tolerant_gensokyo
+		#MKI_intolerant_gensokyo
 		icon = mission_unknown_mission
 		required_missions = {
+			MKI_religion_question
+			mki_first_branch_mission
 			mki_fourth_branch_mission
 			mki_seventh_branch_mission
+			mki_second_branch_mission
 		}
-		position = 10
+		position = 9
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = selectable_mission_trigger_tt
@@ -1194,96 +1280,16 @@ mki_missions_central_religion_tolerance_slot = {
 		has_country_flag = mki_tolerant_missions
 	}
 	has_country_shield = yes
-	MKI_taoism_religion_tolerance = {
-		icon = mission_touhou_taoism_heresy
-		required_missions = { MKI_religion_question }
-		position = 8
-		provinces_to_highlight = {
-			OR = {
-				area = Senkai_state 
-				area = Northern_senkai 
-				area = Eastern_senkai 
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {
-					area = Senkai_state 
-					area = Northern_senkai 
-					area = Eastern_senkai 
-				}
-				value = 5
-			}	
-			num_of_owned_provinces_with = {
-				value = 1
-				religion = th_taoist
-			}
-			owns_or_non_sovereign_subject_of = 5025
-		}
-		effect = {
-			Eastern_myouren_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Northern_myouren_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Myouren_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			add_casus_belli = {
-				target = MYO
-				type = cb_restore_personal_union
-				months = 900
-			}
-			add_accepted_culture = Senkaian
-			mki_tolerate_culture = {
-				culture = Senkaian
-			}
-		}
-	}
-	MKI_byakuren_tolerant = {
-		icon = mission_touhou_byakuren
-		required_missions = {
-			MKI_taoism_religion_tolerance
-			MKI_moriya_shinto_religion_tolerance
-			MKI_touhou_christian_religion_tolerance 
-		}
-		position = 9
-		provinces_to_highlight = {
-			province_id = 4987
-		}
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 1
-				religion = th_buddhist
-			}
-			owns_or_non_sovereign_subject_of = 4987
-		}
-		effect = {
-			add_stability = 2
-			mki_reduce_province_debuff = yes
-		}
-	}
 	MKI_tolerant_gensokyo = {
 		icon = mission_touhou_shinki
-		required_missions = { 			 
+		required_missions = { 
+			MKI_religion_question
+			MKI_moriya_shinto_religion_tolerance	 
 			MKI_byakuren_tolerant 
 			MKI_hakurei_tolerance 
+			MKI_touhou_christian_religion_tolerance
 		}
-		position = 10
+		position = 9
 		trigger = {
 			religious_unity = 1
 		}
@@ -1306,124 +1312,16 @@ mki_missions_central_religion_intolerance_slot = {
 		has_country_flag = mki_religious_missions
 	}
 	has_country_shield = yes
-	MKI_taoism_religion_intolerance = {
-		icon = mission_touhou_taoism_heresy
-		required_missions = { MKI_religion_question }
-		position = 8
-		provinces_to_highlight = {
-			OR = {
-				area = Senkai_state
-				area = Northern_senkai
-				area = Eastern_senkai
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {
-					area = Senkai_state
-					area = Northern_senkai
-					area = Eastern_senkai
-				}
-				value = 5
-			}	
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {		
-					area = Senkai_state
-					area = Northern_senkai
-					area = Eastern_senkai
-				}
-				has_owner_religion = yes
-					religion = th_shinkism
-				value = 2
-			}
-			owns_or_non_sovereign_subject_of = 5025
-		}
-		effect = {
-			Eastern_myouren_state = {
-				limit = {
-					NOT = {
-						is_permanent_claim = ROOT
-					}
-					NOT = {
-						is_core = ROOT
-					}
-				}
-				add_permanent_claim = ROOT
-			}
-			Northern_myouren_state = {
-				limit = {
-					NOT = {
-						is_permanent_claim = ROOT
-					}
-					NOT = {
-						is_core = ROOT
-					}
-				}
-				add_permanent_claim = ROOT
-			}
-			Myouren_state = {
-				limit = {
-					NOT = {
-						is_permanent_claim = ROOT
-					}
-					NOT = {
-						is_core = ROOT
-					}
-				}
-				add_permanent_claim = ROOT
-			}
-			add_casus_belli = {
-				target = MYO
-				type = cb_restore_personal_union
-				months = 900
-			}
-			mki_focus_convert_religion = {
-				religion = th_taoist
-			}
-		}
-	}
-	MKI_byakuren_intolerant = {
-		icon = mission_touhou_byakuren
-		required_missions = { 
-			MKI_moriya_shinto_religion_intolerance
-			MKI_taoism_religion_intolerance
+	MKI_intolerant_gensokyo = {
+		icon = mission_touhou_shinki
+		required_missions = {
+			MKI_religion_question
+			MKI_moriya_shinto_religion_intolerance		 
+			MKI_byakuren_intolerant 
+			MKI_hakurei_intolerance
 			MKI_touhou_christian_religion_intolerance
 		}
 		position = 9
-		provinces_to_highlight = {
-			province_id = 4987
-		}
-		trigger = {
-			owns_or_non_sovereign_subject_of = 4987
-			4987 = {
-				owner = {
-					religion = th_shinkism
-				}
-			}
-		}
-		effect = {
-			mki_focus_convert_religion = {
-				religion = mki_focus_convert_religion
-			}
-			if = {
-				limit = {
-					religion = th_shinkism
-				}
-				add_church_power = 100
-			}
-			else = {
-				add_adm_power = 100
-			}
-		}
-	}
-	MKI_intolerant_gensokyo = {
-		icon = mission_touhou_shinki
-		required_missions = { 			 
-			MKI_byakuren_intolerant 
-			MKI_hakurei_intolerance 
-		}
-		position = 10
 		trigger = {
 			religious_unity = 1
 		}
@@ -1555,9 +1453,12 @@ mki_missions_branching_fourth_slot = {
 	#[Root.GetSelectableMissionTitle]
 	#[Root.GetSelectableMissionDescription]
 	mki_sixth_branch_mission = {
+		#Aka:
+		#MKI_tradition_religion_tolerance
+		#MKI_tradition_religion_intolerance
 		icon = mission_unknown_mission
 		required_missions = { MKI_religion_question }
-		position = 8
+		position = 7
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = selectable_mission_trigger_tt
@@ -1649,9 +1550,14 @@ mki_missions_branching_fourth_slot = {
 		}
 	}
 	mki_seventh_branch_mission = {
+		#Aka:
+		#MKI_hakurei_tolerance
+		#MKI_hakurei_intolerance
 		icon = mission_unknown_mission
-		required_missions = { mki_sixth_branch_mission }
-		position = 9
+		required_missions = { 
+			mki_sixth_branch_mission
+		}
+		position = 8
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = selectable_mission_trigger_tt
@@ -1719,7 +1625,7 @@ mki_missions_hakurei_tolerance_slot = {
 	MKI_tradition_religion_tolerance = {
 		icon = mission_touhou_old_reimu
 		required_missions = { MKI_religion_question }
-		position = 8
+		position = 7
 		provinces_to_highlight = {
 			province_id = 5183
 		}
@@ -1764,7 +1670,7 @@ mki_missions_hakurei_tolerance_slot = {
 	MKI_hakurei_tolerance = {
 		icon = mission_touhou_reimu
 		required_missions = { MKI_tradition_religion_tolerance }
-		position = 9	
+		position = 8
 		provinces_to_highlight = {	
 			province_id = 4955
 		}
@@ -1804,7 +1710,7 @@ mki_missions_hakurei_intolerance_slot = {
 	MKI_tradition_religion_intolerance = {
 		icon = mission_touhou_old_reimu
 		required_missions = { MKI_religion_question }
-		position = 8	
+		position = 7
 		provinces_to_highlight = {	
 			province_id = 5183
 		}
@@ -1848,7 +1754,7 @@ mki_missions_hakurei_intolerance_slot = {
 	MKI_hakurei_intolerance = {
 		icon = mission_touhou_reimu
 		required_missions = { MKI_tradition_religion_intolerance }
-		position = 9
+		position = 8
 		provinces_to_highlight = {
 			province_id = 4978
 		}
@@ -2135,6 +2041,170 @@ makai_missions_discover_europe_slot = {
 						duration = -1
 					}
 				}
+			}
+		}
+	}
+}
+
+mki_missions_branching_fith_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = MKI
+		NOT = { map_setup = map_setup_random }
+		NOT = { has_country_flag = mki_religious_missions }
+		NOT = { has_country_flag = mki_tolerant_missions }
+	}
+	has_country_shield = yes
+
+
+	#[Root.GetSelectableMissionTitle]
+	#[Root.GetSelectableMissionDescription]
+	mki_second_branch_mission = {
+		#Aka:
+		#MKI_touhou_christian_religion_tolerance
+		#MKI_touhou_christian_religion_intolerance
+		icon = mission_unknown_mission
+		required_missions = {}
+		position = 8
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = selectable_mission_trigger_tt
+				always = no
+			}
+			OR = {
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = mki_tolerance_path_trigger_tt
+						always = no
+					}
+					if = {
+						limit = {
+							any_province = {
+								religion = th_christian
+							}
+						}
+						num_of_owned_provinces_with = {
+							value = 1
+							religion = th_christian
+						}
+					}
+					owns_or_non_sovereign_subject_of = 5301
+				}
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = mki_intolerance_path_trigger_tt
+						always = no
+					}
+					owns_or_non_sovereign_subject_of = 5301
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "mki_time_traveler_artifacts"
+				duration = 7300
+			}
+			custom_tooltip = mki_tolerance_effect_tt
+			Yumemi_space_state = {
+				limit = {
+					NOT = { has_province_flag = mki_integrated_culture_province_flag }
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = mki_prosperity_of_people
+					duration = 9125
+				}
+				set_province_flag = mki_integrated_culture_province_flag
+			}
+
+			custom_tooltip = mki_intolerance_effect_tt
+			mki_focus_convert_religion = {
+				religion = th_christian
+			}
+		}
+	}
+}
+
+mki_missions_touhou_christian_tolerance_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = MKI
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = mki_tolerant_missions
+	}
+	has_country_shield = yes
+	MKI_touhou_christian_religion_tolerance = {
+		icon = mission_touhou_yumemi
+		required_missions = {}
+		position = 8
+		provinces_to_highlight = {
+			province_id = 5301
+		}
+		trigger = {
+			if = {
+				limit = {
+					any_province = {
+						religion = th_christian
+					}
+				}
+				num_of_owned_provinces_with = {
+					value = 1
+					religion = th_christian
+				}
+			}
+			owns_or_non_sovereign_subject_of = 5301
+		}
+		effect = {
+			Yumemi_space_state = {
+				limit = {
+					NOT = { has_province_flag = mki_integrated_culture_province_flag }
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = mki_prosperity_of_people
+					duration = 9125
+				}
+				set_province_flag = mki_integrated_culture_province_flag
+			}
+			add_country_modifier = {
+				name = "mki_time_traveler_artifacts"
+				duration = 7300
+			}
+		}
+	}
+}
+
+mki_missions_touhou_christian_intolerance_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = MKI
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = mki_religious_missions
+	}
+	has_country_shield = yes
+	MKI_touhou_christian_religion_intolerance = {
+		icon = mission_touhou_yumemi
+		required_missions = {}
+		position = 8
+		provinces_to_highlight = {
+			province_id = 5301
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 5301
+		}
+		effect = {
+			mki_focus_convert_religion = {
+				religion = th_christian
+			}
+			add_country_modifier = {
+				name = "mki_time_traveler_artifacts"
+				duration = 7300
 			}
 		}
 	}
