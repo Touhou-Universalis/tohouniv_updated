@@ -8,22 +8,36 @@ namespace = flavor_mkn
 country_event = {
 	id = flavor_mkn.1
 	title = flavor_mkn.1.t
-	desc = flavor_mkn.1.desc
+	desc = {
+		desc = flavor_mkn.1.desc.a
+		trigger = {
+			MKI = { is_free_or_tributary_trigger = yes }
+		}
+	}
+	desc = {
+		desc = flavor_mkn.1.desc.b
+		trigger = {
+			MKI = { is_free_or_tributary_trigger = no }
+		}
+	}
 	picture = SHINKI_eventPicture
     
     is_triggered_only = yes
 	
 	option = {	#We need to persuade Shinki
 		name = flavor_mkn.1.a
-		trigger = {		
-			MKI = {
-				is_free_or_tributary_trigger = yes
-				has_ruler = "Shinki"
-				dynasty = "of Makai"
+		trigger = {
+			hidden_trigger = {
+				MKI = {
+					is_free_or_tributary_trigger = yes
+					has_ruler = "Shinki"
+					dynasty = "of Makai"
+					ai = yes
+					was_player = no
+				}
 			}
 		}
-		highlight = yes
-		add_years_of_income = -5		
+		highlight = yes		
 		create_subject = {
 			subject_type = personal_union
 			subject = MKI
@@ -55,6 +69,8 @@ country_event = {
 		trigger = {
 			MKI = {
 				ai = yes
+				was_player = no
+				is_free_or_tributary_trigger = yes
 			}
 		}
 		declare_war_with_cb = {
@@ -69,13 +85,49 @@ country_event = {
 	
 	option = {	#That's just ridiculous.
 		name = flavor_mkn.1.c
-		hidden_effect = {	
-			add_casus_belli = {
-				target = MKI
-				type = cb_restore_personal_union
-				months = 900
+		trigger = {
+			MKI = { 
+				ai = yes
+				was_player = no
+				is_free_or_tributary_trigger = yes 
 			}
-		}		
+		}
+		add_casus_belli = {
+			target = MKI
+			type = cb_restore_personal_union
+			months = 900
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#We need to subjugate Shinki!
+		name = flavor_mkn.1.d
+		trigger = {
+			MKI = { is_free_or_tributary_trigger = no }
+		}
+		declare_war_with_cb = {
+			who = MKI
+			casus_belli = cb_restore_personal_union
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#That's just ridiculous.
+		name = flavor_mkn.1.e
+		trigger = {
+			MKI = { is_free_or_tributary_trigger = no }
+		}
+		add_casus_belli = {
+			target = MKI
+			type = cb_restore_personal_union
+			months = 900
+		}
 
 		ai_chance = { 
 			factor = 100
@@ -161,36 +213,7 @@ country_event = {
 			num_of_owned_provinces_with = {
 				region = east_siberia_region
 				trade_goods = gold
-				value = 6
-			}
-		}
-	}
-
-	immediate = {
-		hidden_effect = {
-			random_owned_province = {
-				limit = {
-					region = east_siberia_region
-					NOT = { trade_goods = gold }
-					NOT = { has_province_flag = mkn_gold_flag }
-				}
-				set_province_flag = mkn_gold_flag
-			}
-			random_owned_province = {
-				limit = {
-					region = east_siberia_region
-					NOT = { trade_goods = gold }
-					NOT = { has_province_flag = mkn_gold_flag }
-				}
-				set_province_flag = mkn_gold_flag
-			}
-			random_owned_province = {
-				limit = {
-					region = east_siberia_region
-					NOT = { trade_goods = gold }
-					NOT = { has_province_flag = mkn_gold_flag }
-				}
-				set_province_flag = mkn_gold_flag
+				value = 3
 			}
 		}
 	}
@@ -200,14 +223,12 @@ country_event = {
 	}
 	option = {	#GOLD!
 		name = flavor_mkn.3.a
-		every_owned_province = {
+		random_owned_province = {
 			limit = {
-				has_province_flag = mkn_gold_flag
+				region = east_siberia_region
+				NOT = { trade_goods = gold }
 			}
 			change_trade_goods = gold
-			hidden_effect = {
-				clr_province_flag = mkn_gold_flag
-			}
 		}
 		ai_chance = { 
 			factor = 100

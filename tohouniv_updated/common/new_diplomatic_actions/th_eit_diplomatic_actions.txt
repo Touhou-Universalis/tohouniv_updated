@@ -1,18 +1,14 @@
 #EIT Provoke War
-
 th_eit_set_target_as_aggressor = {
 	category = th_diplo_action
-
 	require_acceptance = no
-
 	is_visible = {
 		is_free_or_tributary_trigger = yes
 		OR = {
-			th_is_or_was_tag = { tag = EIT }
 			th_has_copied_from_target = {
 				target = EIT
 			}
-			has_country_flag = th_eit_has_aggressor_counter_setup
+			has_country_flag = eit_can_provoke_wars
 		}
 		FROM = {
 			NOT = { has_country_flag = th_eit_is_planned_aggressor_of_@ROOT }
@@ -113,14 +109,12 @@ th_eit_provoke_war_against_target = {
 	require_acceptance = no
 
 	is_visible = {
-		dip_tech = 6
 		is_free_or_tributary_trigger = yes
 		OR = {
-			th_is_or_was_tag = { tag = EIT }
 			th_has_copied_from_target = {
 				target = EIT
 			}
-			has_country_flag = th_eit_has_aggressor_counter_setup
+			has_country_flag = eit_can_provoke_wars
 		}
 		FROM = {
 			NOT = { has_country_flag = th_eit_is_planned_aggressor_of_@ROOT }
@@ -182,14 +176,25 @@ th_eit_influence_outworld_country = {
 
 	is_visible = {
 		is_subject = no	#Eientei shouldn't be able to influence anybody if they are slaves themselves
-		has_country_flag = eit_can_influence_outworld
-	}
-
-	is_allowed = {
+		OR = {
+			has_country_flag = eit_can_influence_outworld
+			th_has_copied_from_target = {
+				target = EIT
+			}
+		}
 		FROM = {
 			capital_scope = {
 				NOT = { continent = gensokyo_continent }
 				NOT = { continent = moon_continent }
+			}
+		}
+	}
+
+	is_allowed = {
+		FROM = {
+			custom_trigger_tooltip = {
+				tooltip = th_eit_influence_outworld_country_ct
+				NOT = { has_country_modifier = th_influencing_outworld_country }
 			}
 		}
 		years_of_income = FROM
@@ -234,8 +239,19 @@ th_eit_create_tributary_state = {
 	alert_tooltip = th_create_tributary_state_tooltip
 	require_acceptance = yes
 	is_visible = {
-		has_country_flag = eit_can_create_tributary_state
-		FROM = { is_subject = no }
+		OR = {
+			has_country_flag = eit_can_create_tributary_state
+			th_has_copied_from_target = {
+				target = EIT
+			}
+		}
+		FROM = { 
+			is_subject = no
+			capital_scope = {
+				NOT = { continent = gensokyo_continent }
+				NOT = { continent = moon_continent }
+			}
+		}
 		is_subject = no
 	}
 	is_allowed = {
@@ -243,13 +259,6 @@ th_eit_create_tributary_state = {
 		total_development = FROM
 		FROM = {
 			is_at_war = no
-			custom_trigger_tooltip = {
-				tooltip = th_eit_create_tributary_state_ct
-				capital_scope = {
-					NOT = { continent = gensokyo_continent }
-					NOT = { continent = moon_continent }
-				}
-			}
 		}
 		custom_trigger_tooltip = {
 			tooltip = th_eit_create_tributary_state_tt
@@ -276,8 +285,9 @@ th_eit_create_tributary_state = {
 		}
 	}
 	on_accept = {
+		th_clear_copy_flag = yes
 		create_subject = {
-			subject_type = tributary_state
+			subject_type = th_tributary_state
 			subject = FROM
 		}
 		FROM = {
