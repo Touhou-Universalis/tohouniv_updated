@@ -15,11 +15,14 @@ th_lecture_ruler = {
 	on_accept = {
 		th_clear_copy_flag = yes
 		excommunicate = FROM
-		#Remove excommunication effect after 10 years
 		FROM = {
 			add_ruler_modifier = {
 				name = th_lectured_modifier
 				duration = 3650
+			}
+			country_event = {
+				id = th_yama_authority_event.99
+				days = 3650
 			}
 		}
 	}
@@ -32,28 +35,64 @@ th_lecture_ruler = {
 th_enforce_gensokyan_peace = {
 	category = th_diplo_action
 
-	require_acceptance = no
+	require_acceptance = yes
 
 	is_visible = {
 		has_country_flag = th_can_enforce_gensokyan_peace
 	}
 
 	is_allowed = {
-		always = yes
+		FROM = {
+			any_known_country = {
+				capital_scope = {
+					continent = gensokyo_continent
+				}
+				is_in_war = {
+					defender_leader = THIS
+					attacker_leader = FROM
+				}
+			}
+			NOT = { war_with = ROOT }
+		}
 	}
 
 	on_accept = {
 		th_clear_copy_flag = yes
-		excommunicate = FROM
-		#Remove excommunication effect after 10 years
-		FROM = {
-			add_ruler_modifier = {
-				name = th_lectured_modifier
-				duration = 3650
+		random_country = {
+			limit = {
+				capital_scope = {
+					continent = gensokyo_continent
+				}
+				is_in_war = {
+					defender_leader = THIS
+					attacker_leader = FROM
+				}
+			}
+			FROM = {
+				white_peace = PREV
 			}
 		}
 	}
 
+	on_decline = {
+
+	}
+
+	ai_acceptance = {
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+	}
 	ai_will_do = {
 		always = no
 	}
@@ -62,28 +101,53 @@ th_enforce_gensokyan_peace = {
 th_demand_unlawful_territory = {
 	category = th_diplo_action
 
-	require_acceptance = no
+	require_acceptance = yes
 
 	is_visible = {
 		has_country_flag = th_can_demand_unlawful_territory
 	}
 
 	is_allowed = {
-		always = yes
-	}
-
-	on_accept = {
-		th_clear_copy_flag = yes
-		excommunicate = FROM
-		#Remove excommunication effect after 10 years
 		FROM = {
-			add_ruler_modifier = {
-				name = th_lectured_modifier
-				duration = 3650
+			any_owned_province = {
+				continent = gensokyo_continent
+				NOT = { is_core = FROM }
+				is_capital = no
+				NOT = { has_province_modifier = th_unlawful_territory }
+				any_core_country = {
+					is_core = PREV
+				}
 			}
 		}
 	}
 
+	on_accept = {
+		FROM = {
+			th_yama_force_unlawful_territory_back = yes
+		}
+	}
+
+	on_decline = {
+		FROM = {
+			th_yama_refuse_unlawful_territory_back = yes
+		}
+	}
+
+	ai_acceptance = {
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+	}
 	ai_will_do = {
 		always = no
 	}
@@ -99,7 +163,7 @@ th_appoint_executor = {
 	}
 
 	is_allowed = {
-		always = yes
+		NOT = { th_yama_executor = 1 }
 	}
 
 	on_accept = {
