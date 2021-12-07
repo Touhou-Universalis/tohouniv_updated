@@ -1,6 +1,90 @@
 #When adding effects directly in on_actions always consider if it would be best to do so through a scripted effect. on_actions with a lot of script in them are harder to get an overview of.
 
 # country
+on_startup = {
+	if = {
+		limit = {
+			current_age = age_of_discovery
+		}
+		LXA = {
+			if = {
+				limit = {
+					NOT = { has_country_flag = lxa_loyalty_flag }
+				}
+				add_estate_loyalty = {
+					estate = estate_church
+					loyalty = -10
+				}
+				set_country_flag = lxa_loyalty_flag
+			}
+		}
+	}
+	emperor = {
+		save_global_event_target_as = Emperor
+	}
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		save_global_event_target_as = EmperorOfChina
+	}
+	if = {
+		limit = {
+			has_government_attribute = enables_yama_authority
+		}
+		save_global_event_target_as = YamaOfGensokyo
+	}
+	events = {
+		muslim_school_events.20 #Pick School
+	#flavor_fra.15000 #Make the French Revolution happen if starting in 1789
+	}
+	if = {
+		limit = {
+			has_dlc = "Cradle of Civilization"
+			has_country_modifier = tur_janissary
+		}
+		remove_country_modifier = tur_janissary
+	}
+	initialize_schools_effect = yes #This is only used here but is used for readability of on_action file.
+
+	if = {
+		limit = {
+			NOT = { has_country_flag = new_flavour_bav_13_has_been_triggered }
+			OR = {
+				tag = UBV
+				tag = LBV
+				tag = ING
+			}
+		}
+		set_country_flag = new_flavour_bav_13_has_been_triggered
+		country_event = { id = new_flavour_bav.13 days = 90 } #better not to allow almost instant DOWs
+	}
+	if = {
+		limit = {
+			tag = FRA
+			started_in = 1789.7.14
+			NOT = { is_year = 1790 }
+			NOT = { has_disaster = french_revolution }
+		}
+		add_disaster_progress = {
+			value = 100
+			disaster = french_revolution
+		}
+	}
+	if = {
+		limit = {
+			exists = SUK
+		}
+		SUK = {
+			set_ruler_flag = suk_monarch_flag
+		}
+		AYU = {
+			set_country_flag = ayu_monarch_flag
+		}
+	}
+}
+
+# country
 on_religion_change = {
 	on_religion_change_estate_privileges_effect = yes
 	judaism_on_religion_change_effect = yes
@@ -1386,6 +1470,15 @@ on_create_vassal = {
 		add_government_reform = papacy_reform
 		adopt_reform_progress = FROM
 	}
+	if = {
+		limit = {
+			tag = HIG
+		}
+		change_government = monarchy
+		add_government_reform = Gensokyan_hig_yama_government
+		adopt_reform_progress = FROM
+		save_global_event_target_as = YamaOfGensokyo
+	}
 }
 
 # THIS = Raiding country, FROM = Sea province
@@ -1476,6 +1569,20 @@ on_country_released = {
 			change_religion = FROM
 		}
 	}
+	if = {
+		limit = {
+			tag = HIG
+		}
+		change_government = monarchy
+		add_government_reform = Gensokyan_hig_yama_government
+		adopt_reform_progress = FROM
+		if = {
+			limit = {
+				NOT = { has_saved_event_target = YamaOfGensokyo }
+			}
+			save_global_event_target_as = YamaOfGensokyo
+		}
+	}
 }
 
 # province:  spawned whenever a new owner takes over the province
@@ -1495,5 +1602,43 @@ on_conquest = {
 		owner = {
 			th_pirate_add_conquer_fame = yes
 		}
+	}
+}
+
+on_country_creation = {
+	if = {
+		limit = {
+			tag = PAP
+			OR = {
+				NOT = {
+					religion = catholic
+				}
+				NOT = {
+					has_reform = papacy_reform
+				}
+				NOT = {
+					government = theocracy
+				}
+			}
+		}
+		change_religion = catholic
+		change_government = theocracy
+		add_government_reform = papacy_reform
+	}
+	if = {
+		limit = {
+			tag = HIG
+			OR = {
+				NOT = {
+					has_reform = Gensokyan_hig_yama_government
+				}
+				NOT = {
+					government = monarchy
+				}
+			}
+		}
+		change_government = monarchy
+		add_government_reform = Gensokyan_hig_yama_government
+		save_global_event_target_as = YamaOfGensokyo
 	}
 }

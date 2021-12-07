@@ -571,6 +571,13 @@ th_remove_merc_penalty = {
 	}
 }
 
+th_add_merc_penalty = {
+	custom_tooltip = th_add_merc_penalty_tt
+	hidden_effect = {
+		clr_country_flag = th_free_merc_companies
+	}
+}
+
 th_spawn_random_unit = {
 	random_list = {
 		$infantry_chance$ = {
@@ -669,6 +676,20 @@ th_allow_insta_loot_on_merc_recruitment = {
 	}
 }
 
+th_disable_stab_hits_on_ruler_death = {
+	custom_tooltip = th_disable_stab_hits_on_ruler_death_tt
+	hidden_effect = {
+		set_country_flag = no_stab_hit_on_ruler_death
+	}
+}
+
+th_enable_stab_hits_on_ruler_death = {
+	custom_tooltip = th_enable_stab_hits_on_ruler_death_tt
+	hidden_effect = {
+		clr_country_flag = no_stab_hit_on_ruler_death
+	}
+}
+
 ###Supports the following estate privileges
 # th_estate_nobles_third_eye
 # th_estate_burghers_arctic_development
@@ -676,6 +697,25 @@ th_unlock_estate_privilege = {
 	custom_tooltip = th_unlock_$estate_privilege$_privilege_tt
 	hidden_effect = {
 		set_country_flag = th_unlocked_$estate_privilege$_privilege
+	}
+}
+
+###Supports the following merc companies
+# merc_th_level_titania
+# merc_th_goliath_doll
+# merc_th_level_leviathan
+# merc_th_yukaris_royal_guard
+# merc_th_law_enforcers_of_higan
+th_unlock_mercenary_company = {
+	custom_tooltip = th_unlock_$mercenary_company$_tt
+	hidden_effect = {
+		set_country_flag = th_unlock_$mercenary_company$
+	}
+}
+th_lock_mercenary_company = {
+	custom_tooltip = th_lock_$mercenary_company$_tt
+	hidden_effect = {
+		set_country_flag = th_unlock_$mercenary_company$
 	}
 }
 
@@ -1096,27 +1136,6 @@ scr_enable_koakuma_explorer = {
 	}
 }
 
-###FOM specific reward###
-fom_enable_goliath_doll_merc = {
-	custom_tooltip = fom_enable_goliath_doll_merc_tt
-	hidden_effect = {
-		set_country_flag = th_goliath_unlocked
-	}
-}
-
-fom_enable_titania_doll_merc = {
-	custom_tooltip = fom_enable_titania_doll_merc_tt
-	hidden_effect = {
-		set_country_flag = th_titania_unlocked
-	}
-}
-
-fom_enable_leviathan_doll_merc = {
-	custom_tooltip = fom_enable_leviathan_doll_merc_tt
-	hidden_effect = {
-		set_country_flag = th_leviathan_unlocked
-	}
-}
 
 ###NET specific reward###
 #Will not remove the below because of potential use for submods + it doesn't negatively affect neither script nor game
@@ -1150,13 +1169,6 @@ net_enable_cuisine_mechanic = {
 }
 
 ###MHG specific reward###
-mhg_enable_elite_mercenaries = {
-	custom_tooltip = mhg_enable_elite_mercenaries_tt
-	hidden_effect = {
-		set_country_flag = mhg_can_recruit_elite_mercs
-	}
-}
-
 mhg_enable_provoke_war_action = {
 	custom_tooltip = mhg_enable_provoke_war_action_tt
 	hidden_effect = {
@@ -1488,6 +1500,109 @@ hig_disable_demand_unlawful_territory = {
 	custom_tooltip = hig_disable_demand_unlawful_territory_tt
 	hidden_effect = {
 		clr_country_flag = th_can_demand_unlawful_territory
+	}
+}
+
+hig_enable_appoint_executor = {
+	custom_tooltip = hig_enable_appoint_executor_tt
+	hidden_effect = {
+		set_country_flag = th_can_appoint_an_executor
+	}
+}
+hig_disable_appoint_executor = {
+	custom_tooltip = hig_disable_appoint_executor_tt
+	hidden_effect = {
+		clr_country_flag = th_can_appoint_an_executor
+		if = {
+			limit = {
+				has_country_flag = th_is_about_to_upgrade_reform
+			}
+			clr_country_flag = th_is_about_to_upgrade_reform
+		}
+		else = {
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = th_yama_executor
+				}
+				grant_independence = yes
+			}
+		}
+	}
+}
+
+hig_enable_judge_deceased_rulers = {
+	custom_tooltip = hig_enable_judge_deceased_rulers_tt
+	hidden_effect = {
+		set_country_flag = th_can_judge_deceased_rulers
+	}
+}
+hig_disable_judge_deceased_rulers = {
+	custom_tooltip = hig_disable_judge_deceased_rulers_tt
+	hidden_effect = {
+		clr_country_flag = th_can_judge_deceased_rulers
+	}
+}
+
+hig_enable_judge_deceased_non_eastern_rulers = {
+	custom_tooltip = hig_enable_judge_deceased_non_eastern_rulers_tt
+	hidden_effect = {
+		set_country_flag = th_can_judge_deceased_rulers
+	}
+}
+hig_disable_judge_deceased_non_eastern_rulers = {
+	custom_tooltip = hig_disable_judge_deceased_non_eastern_rulers_tt
+	hidden_effect = {
+		clr_country_flag = th_can_judge_deceased_rulers
+	}
+}
+
+hig_enable_recruit_exceptional_rulers = {
+	custom_tooltip = hig_enable_recruit_exceptional_rulers_tt
+	hidden_effect = {
+		set_country_flag = th_can_judge_deceased_rulers
+	}
+}
+hig_disable_recruit_exceptional_rulers = {
+	custom_tooltip = hig_disable_recruit_exceptional_rulers_tt
+	hidden_effect = {
+		clr_country_flag = th_can_judge_deceased_rulers
+	}
+}
+
+hig_remove_latest_yama_reform = {
+	custom_tooltip = hig_remove_latest_yama_reform_tt
+	hidden_effect = {
+		if = {
+			limit = { has_estate_privilege = th_estate_yama_reshape_power_delegation NOT = { has_country_flag = th_removed_reform } }
+			remove_estate_privilege = th_estate_yama_reshape_power_delegation
+			set_country_flag = th_removed_reform
+		}
+		if = {
+			limit = { has_estate_privilege = th_estate_yama_expand_roles NOT = { has_country_flag = th_removed_reform } }
+			remove_estate_privilege = th_estate_yama_expand_roles
+			set_country_flag = th_removed_reform
+		}
+		if = {
+			limit = { has_estate_privilege = th_estate_yama_centralize_gensokyan_authority NOT = { has_country_flag = th_removed_reform } }
+			remove_estate_privilege = th_estate_yama_centralize_gensokyan_authority
+			set_country_flag = th_removed_reform
+		}
+		if = {
+			limit = { has_estate_privilege = th_estate_yama_establish_laws_of_war NOT = { has_country_flag = th_removed_reform } }
+			remove_estate_privilege = th_estate_yama_establish_laws_of_war
+			set_country_flag = th_removed_reform
+		}
+		if = {
+			limit = { has_estate_privilege = th_estate_yama_reform_the_judicative NOT = { has_country_flag = th_removed_reform } }
+			remove_estate_privilege = th_estate_yama_reform_the_judicative
+			set_country_flag = th_removed_reform
+		}
+		if = {
+			limit = { has_estate_privilege = th_estate_yama_appoint_executor NOT = { has_country_flag = th_removed_reform } }
+			remove_estate_privilege = th_estate_yama_appoint_executor
+			set_country_flag = th_removed_reform
+		}
+		clr_country_flag = th_removed_reform
 	}
 }
 
