@@ -79,7 +79,6 @@ country_event = {
 	}
 }
 
-
 #Remove the lecture
 country_event = {
 	id = th_yama_authority_event.99
@@ -98,7 +97,6 @@ country_event = {
 		}
 	}
 }
-
 
 #Information Event for the Yama Authority
 country_event = {
@@ -136,7 +134,7 @@ country_event = {
 	}
 }
 
-#Count countries in Gensokyo
+#Count countries in Gensokyo and count approving countries
 province_event = {
 	id = th_yama_authority_event.102
 	title = none
@@ -146,12 +144,14 @@ province_event = {
 
 	trigger = {
 		province_id = 1
-		exists = event_target:YamaOfGensokyo
+		event_target:YamaOfGensokyo = {
+			exists = yes
+		}
 		OR = {
 			NOT = { has_province_flag = th_counted_active_gensokyan_countries }
 			had_province_flag = {
 				flag = th_counted_active_gensokyan_countries
-				days = 364
+				days = 29
 			}
 		}
 	}
@@ -165,6 +165,10 @@ province_event = {
 			which = th_gensokyan_counter
 			value = 0
 		}
+		set_variable = {
+			which = th_approving_gensokyan_counter
+			value = 0
+		}
 		gensokyo_continent = {
 			limit = {
 				is_capital = yes
@@ -173,6 +177,24 @@ province_event = {
 				change_variable = {
 					which = th_gensokyan_counter
 					value = 1
+				}
+			}
+			if = {
+				limit = {
+					owner = {
+						event_target:YamaOfGensokyo = {
+							reverse_has_opinion = {
+								who = PREV
+								value = 100
+							}
+						}
+					}
+				}
+				ROOT = {
+					change_variable = {
+						which = th_approving_gensokyan_counter
+						value = 1
+					}
 				}
 			}
 		}
