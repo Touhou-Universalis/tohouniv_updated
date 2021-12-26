@@ -12,11 +12,61 @@ hig_internal_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = {  }
 		position = 1
+		provinces_to_highlight = {
+			owned_by = ONI
+		}
 		trigger = {
 			army_size_percentage = 1
+			OR = {
+				any_hired_mercenary_company = {
+					template = merc_th_oni_warriors
+				}
+				reverse_has_opinion = {
+					who = ONI
+					value = 50
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = hig_oni_strike_force
+				duration = 9125
+			}
+			Keiki_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Saki_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Yachie_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Great_border = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Western_great_border = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 
@@ -25,10 +75,12 @@ hig_internal_slot = {
 		required_missions = { HIG_recruit_oni_strike_force }
 		position = 2
 		trigger = {
-			army_size_percentage = 1
+			NOT = { has_estate_privilege = th_estate_nobles_unorganized_shinigami_authority }
+			NOT = { has_estate_privilege = th_estate_nobles_lack_of_overseers }
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#Disable all negative events caused by slacking shinigami
 		}
 	}
 
@@ -37,10 +89,20 @@ hig_internal_slot = {
 		required_missions = { HIG_reorganize_the_shinigami }
 		position = 3
 		trigger = {
-			army_size_percentage = 1
+			estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 75
+			}
+			NOT = { overextension_percentage = 0.01 }
+			adm_tech = 7
+			monthly_adm = 12
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			hidden_effect = {
+				set_country_flag = hig_has_dealt_with_slacking_komachi
+			}
+			remove_estate_privilege = th_estate_nobles_slacking_shinigami
+			add_adm_power = 100
 		}
 	}
 
@@ -48,11 +110,70 @@ hig_internal_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_deal_with_komachis_slack }
 		position = 4
+		provinces_to_highlight = {
+			region = hell_region
+			owned_by = ROOT
+			OR = {
+				local_autonomy = 5
+				has_production_building_trigger = no
+			}
+		}
 		trigger = {
-			army_size_percentage = 1
+			num_of_owned_provinces_with = {
+				region = hell_region
+				has_production_building_trigger = yes
+				NOT = { local_autonomy = 5 }
+				value = 25
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			custom_tooltip = HIG_improve_hells_infrastructure_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						mission_completed = HIG_assign_kutaka
+					}
+					if = {
+						limit = {
+							exists = CRD
+						}
+						add_casus_belli = {
+							type = cb_touhou_mission_personal_union_war
+							target = CRD
+							months = 600
+						}
+					}
+					else_if = {
+						limit = {
+							SCD = {
+								exists = yes
+								was_tag = CRD
+							}
+						}
+						add_casus_belli = {
+							type = cb_touhou_mission_personal_union_war
+							target = SCD
+							months = 600
+						}
+					}
+					former_hell_region = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+				}
+			}
+			add_years_of_owned_provinces_production_income = {
+				years = 8
+				trigger = {
+					region = hell_region
+					has_production_building_trigger = yes
+					NOT = { local_autonomy = 5 }
+				}
+				custom_tooltip = TH_LOW_AUTONOMY_HELL_WORKSHOPS
+			}
 		}
 	}
 
@@ -63,8 +184,15 @@ hig_internal_slot = {
 			HIG_assign_kutaka
 		}
 		position = 5
+		provinces_to_highlight = {
+			region = former_hell_region
+			NOT = { country_or_subject_holds = ROOT }
+		}
 		trigger = {
-			army_size_percentage = 1
+			former_hell_region = {
+				country_or_subject_holds = ROOT
+				type = all
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -75,11 +203,38 @@ hig_internal_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = {  }
 		position = 6
+		provinces_to_highlight = {
+			
+		}
 		trigger = {
-			army_size_percentage = 1
+			OR = {
+				AND = {
+					alliance_with = HKR
+					reverse_has_opinion = {
+						who = HKR
+						value = 100
+					}
+				}
+				AND = {
+					alliance_with = MRY
+					reverse_has_opinion = {
+						who = MRY
+						value = 100
+					}
+				}
+				AND = {
+					NOT = { exists = HKR }
+					NOT = { exists = MRY }
+				}
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 65
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#TODO add country event to make one of these two shrine maidens the official protector
 		}
 	}
 
@@ -88,10 +243,35 @@ hig_internal_slot = {
 		required_missions = {  }
 		position = 7
 		trigger = {
-			army_size_percentage = 1
+			OR = {
+				HVR = {
+					exists = yes
+					NOT = { has_ruler = "Tenshi" }
+				}
+				NOT = { exists = HVR }
+				AND = {
+					war_with = HVR
+					war_score_against = {
+						who = HVR
+						value = 50
+					}
+					HVR = {
+						capital_scope = {
+							controller = {
+								OR = {
+									tag = ROOT
+									is_subject_of = ROOT
+									alliance_with = ROOT
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#TODO add event to remove Tenshi permanently from HVR and secure a better heaven for everyone
 		}
 	}
 
@@ -149,11 +329,31 @@ hig_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_recruit_oni_strike_force }
 		position = 2
+		provinces_to_highlight = {
+			OR = {
+				area = Saki_state
+				area = Yachie_state
+				area = Keiki_state
+				area = Great_border
+				area = Western_great_border
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			army_size_percentage = 1
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Saki_state
+					area = Yachie_state
+					area = Keiki_state
+					area = Great_border
+					area = Western_great_border
+				}
+				value = 15
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#TODO event to judge the gang leaders
 		}
 	}
 
@@ -161,11 +361,34 @@ hig_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_handle_the_gang_wars }
 		position = 3
+		provinces_to_highlight = {
+			OR = {
+				area = Saki_state
+				area = Yachie_state
+				area = Keiki_state
+				area = Great_border
+				area = Western_great_border
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			army_size_percentage = 1
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Saki_state
+					area = Yachie_state
+					area = Keiki_state
+					area = Great_border
+					area = Western_great_border
+				}
+				NOT = { local_autonomy = 10 }
+				NOT = { devastation = 1 }
+				prosperity = 75
+				value = 15
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#TODO event to make Kutaka a full vassal of yours
 		}
 	}
 
@@ -173,11 +396,55 @@ hig_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_stablize_the_animal_realms }
 		position = 4
+		provinces_to_highlight = {			
+			area = Land_of_the_dead
+			NOT = { owned_by = ROOT }
+		}
 		trigger = {
-			army_size_percentage = 1
+			Land_of_the_dead = {
+				owned_by = ROOT
+				type = all
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			custom_tooltip = HIG_assign_kutaka_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						mission_completed = HIG_assign_kutaka
+					}
+					if = {
+						limit = {
+							exists = CRD
+						}
+						add_casus_belli = {
+							type = cb_touhou_mission_personal_union_war
+							target = CRD
+							months = 600
+						}
+					}
+					else_if = {
+						limit = {
+							SCD = {
+								exists = yes
+								was_tag = CRD
+							}
+						}
+						add_casus_belli = {
+							type = cb_touhou_mission_personal_union_war
+							target = SCD
+							months = 600
+						}
+					}
+					former_hell_region = {
+						limit = {
+							NOT = { is_core = ROOT }
+							NOT = { is_permanent_claim = ROOT }
+						}
+						add_permanent_claim = ROOT
+					}
+				}
+			}
 		}
 	}
 
@@ -185,11 +452,44 @@ hig_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = {  }
 		position = 5
+		provinces_to_highlight = {
+			OR = {
+				owned_by = MHG
+				owned_by = NMG
+			}
+		}
 		trigger = {
-			army_size_percentage = 1
+			if = {
+				limit = {
+					exists = NMG
+				}
+				OR = {
+					NOT = { exists = NMG }
+					NMG = { humiliated_by = ROOT }
+					AND = {
+						has_won_war_against = { who = NMG }
+						NMG = { th_has_lost_danmaku_duel_against_root = yes }
+					}
+				}
+				NOT = { exists = MHG }
+			}
+			else = {
+				OR = {
+					NOT = { exists = MHG }
+					MHG = { humiliated_by = ROOT }
+					AND = {
+						has_won_war_against = { who = MHG }
+						MHG = { th_has_lost_danmaku_duel_against_root = yes }
+					}
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 50
+			}
+			#TODO event to clarify relations between Yukari and Eiki
 		}
 	}
 
@@ -197,11 +497,40 @@ hig_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = {  }
 		position = 6
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 4991
+						province_id = 4997
+					}
+					NOT = { controlled_by = ROOT }
+				}
+				owned_by = FUJ
+				owned_by = EIT
+			}
+		}
 		trigger = {
-			army_size_percentage = 1
+			OR = {
+				AND = {
+					controls = 4991
+					controls = 4997
+				}
+				AND = {
+					OR = {
+						NOT = { exists = EIT }
+						EIT = { is_excommunicated = yes }
+					}
+					OR = {
+						NOT = { exists = FUJ }
+						FUJ = { is_excommunicated = yes }
+					}
+				}
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#TODO event for FUJ / EIT / HIG
 		}
 	}
 
@@ -236,8 +565,33 @@ hig_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_enact_the_second_reform_tier }
 		position = 9
+		provinces_to_highlight = {
+			owned_by = KNN
+		}
 		trigger = {
-			army_size_percentage = 1
+			if = {
+				limit = {
+					exists = KNN
+				}
+				KNN = {
+					is_subject_of = ROOT
+					is_subject_of_type = th_yama_executor
+				}
+			}
+			else_if = {
+				limit = {
+					has_estate_privilege = th_estate_yama_unite_gensokyo
+				}
+				Konngaras_state = {
+					owned_by = ROOT
+					type = all
+				}
+			}
+			else = {
+				any_subject_country = {
+					is_subject_of_type = th_yama_executor
+				}
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -263,7 +617,27 @@ hig_reform_gensokyo_slot = {
 			has_adm_advisor_3 = yes
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			The_hills = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_hills = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Northern_hills = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 
@@ -271,11 +645,25 @@ hig_reform_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_hire_yama_advisors }
 		position = 2
+		provinces_to_highlight = {
+			province_id = 5247
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			has_adm_advisor_3 = yes
+			owns_or_non_sovereign_subject_of = 5247
+			5247 = {
+				is_in_capital_area = yes
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			#TODO event
+			5247 = {
+				change_religion = ROOT
+				change_culture = ROOT
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 3
+			}
 		}
 	}
 
@@ -286,11 +674,53 @@ hig_reform_gensokyo_slot = {
 			HIG_improve_the_sanzu_river_income
 		}
 		position = 3
+		provinces_to_highlight = {
+			province_id = 4983
+		}
 		trigger = {
-			has_adm_advisor_3 = yes
+			NOT = { corruption = 1 }
+			stability = 2
+			owns_core_province = 4983
+			4983 = {
+				is_capital_of = ROOT
+				development = 25
+				if = {
+					limit = {
+						has_dlc = "Leviathan"
+					}
+					has_great_project = {
+						type = th_monument_yamas_palace
+						tier = 2
+					}
+				}
+				else = {
+					has_tax_building_trigger = yes
+					has_production_building_trigger = yes
+					has_trade_building_trigger = yes
+					has_courthouse_building_trigger = yes
+					th_has_up_to_date_fort_building = yes
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			#TOOD event of the Ministry moving
+			if = {
+				limit = {
+					exists = NET
+				}
+				add_casus_belli = {
+					type = cb_touhou_mission_personal_union_war
+					target = NET
+					months = 60
+				}
+			}
+			netherworld_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 
@@ -298,11 +728,20 @@ hig_reform_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_move_the_ministry_to_gensokyo }
 		position = 4
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4958
+				province_id = 5106
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			has_adm_advisor_3 = yes
+			owns_or_non_sovereign_subject_of = 4958
+			owns_or_non_sovereign_subject_of = 5106
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#TODO create special CB to bring Hecatia back to Higan + event for HEC being inherited by either CLP or JNK
 		}
 	}
 
@@ -310,11 +749,35 @@ hig_reform_gensokyo_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_take_control_over_netherworld }
 		position = 5
+		provinces_to_highlight = {
+			province_id = 5053
+		}
 		trigger = {
-			has_adm_advisor_3 = yes
+			owns_core_province = 5053
+			5053 = {
+				development = 25
+				has_courthouse_building_trigger = yes
+			}
+			HEC = {
+				OR = {
+					exists = no
+					custom_trigger_tooltip = {
+						tooltip = HIG_hecatia_and_eiki_tt
+						has_country_flag = hig_hecatia_has_been_brought_back
+					}
+					AND = {
+						alliance_with = ROOT
+						custom_trigger_tooltip = {
+							tooltip = HIG_hecatia_and_eiki_tt
+							has_country_flag = hig_had_event_for_going_back_to_gensokyo
+						}
+					}
+				}
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#TODO Unlock Hecatia advisor
 		}
 	}
 
@@ -342,11 +805,15 @@ hig_reform_gensokyo_slot = {
 		}
 		position = 8
 		trigger = {
-			total_development = 650
-			OR = {
-				government_rank = 3
-				tag = GNK
-			}
+			has_estate_privilege = th_estate_yama_gensokyan_edict
+			has_estate_privilege = th_estate_yama_tighten_gensokyan_defense
+			has_estate_privilege = th_estate_yama_sphere_of_influence
+			has_estate_privilege = th_estate_yama_unite_gensokyo
+			stability = 3
+			NOT = { corruption = 0.1 }
+			is_bankrupt = no
+			NOT = { num_of_loans = 1 }
+			legitimacy = 100
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -358,7 +825,11 @@ hig_reform_gensokyo_slot = {
 		required_missions = { HIG_enact_the_second_reform_tier }
 		position = 9
 		trigger = {
-			army_size_percentage = 1
+			custom_trigger_tooltip = {
+				tooltip = HIG_judge_the_dead_tt
+				always = no
+				#TODO
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -380,11 +851,33 @@ hig_outworld_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_hire_yama_advisors }
 		position = 2
+		provinces_to_highlight = {
+			province_id = 4969
+		}
 		trigger = {
-			has_adm_advisor_3 = yes
+			owns_core_province = 4969
+			if = {
+				limit = {
+					has_dlc = "Dharma"
+				}
+				4969 = {
+					province_has_center_of_trade_of_level = 3
+				}
+			}
+			else = {
+				4969 = {
+					has_trade_building_trigger = yes
+					has_courthouse_building_trigger = yes
+					th_has_up_to_date_fort_building = yes
+					has_tax_building_trigger = yes
+					has_production_building_trigger = yes
+					development = 25
+				}
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			#TODO event
 		}
 	}
 
@@ -489,10 +982,12 @@ hig_colonial_slot = {
 		required_missions = {  }
 		position = 1
 		trigger = {
-			always = yes
+			navy_size_percentage = 1
+			num_of_heavy_ship = 3
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_navy_tradition = 25
+			create_explorer = { tradition = 45 }
 		}
 	}
 
@@ -500,11 +995,27 @@ hig_colonial_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = { HIG_establish_hig_fleet }
 		position = 2
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
 		trigger = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_dip_power = 75
+			add_navy_tradition = 35
 		}
 	}
 

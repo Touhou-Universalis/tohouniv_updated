@@ -52,6 +52,7 @@ th_sister_state = {}
 th_yama_sphere_of_influence = {}
 th_yama_subject_to_law = {}
 th_yama_executor = {}
+th_shinigami_subject = {}
 
 default = {
 	# Graphics:
@@ -1432,23 +1433,6 @@ th_yama_executor = {
 	max_government_rank = 0
 	liberty_desire_development_ratio = 0.1
 
-	can_fight = {
-		independent_nations = yes
-		other_overlord = all
-	}
-	can_rival = {
-		independent_nations = yes
-		other_overlord = all
-	}
-	can_ally = {
-		independent_nations = yes
-		other_overlord = all
-	}
-	can_marry = {
-		independent_nations = yes
-		other_overlord = all
-	}
-
 	# Subject Interactions:
 	scutage = yes
 	subsidize_armies = yes
@@ -1472,13 +1456,126 @@ th_yama_executor = {
 		modifier = march_subject
 	}
 	modifier_subject = {
-		modifier = march_bonus
-		trigger = {
-			NOT = {
-				development_of_overlord_fraction = 1.00
-			}
-		}
-		expiration_message_overlord = MARCHTOOLARGE
-		expiration_message_subject = MARCHTOOLARGEUS
+		modifier = th_executor_bonus
 	}
+	modifier_overlord = { 
+		modifier = th_yama_slightly_too_many_executor_provinces 
+		trigger = { 
+			ROOT = {
+				num_of_owned_provinces_with = {
+					continent = gensokyo_continent
+					NOT = { region = former_hell_region }
+					NOT = { region = hell_region }
+					NOT = { region = netherworld_region }
+					NOT = { area = Konngaras_state }
+					value = 5
+				}
+			} 
+		} 
+	}
+	modifier_overlord = { 
+		modifier = th_yama_too_many_executor_provinces 
+		trigger = { 
+			ROOT = {
+				num_of_owned_provinces_with = {
+					continent = gensokyo_continent
+					NOT = { region = former_hell_region }
+					NOT = { region = hell_region }
+					NOT = { region = netherworld_region }
+					NOT = { area = Konngaras_state }
+					value = 10
+				}
+			} 
+		} 
+	}
+	modifier_overlord = { 
+		modifier = th_yama_way_too_many_executor_provinces 
+		trigger = { 
+			ROOT = {
+				num_of_owned_provinces_with = {
+					continent = gensokyo_continent
+					NOT = { region = former_hell_region }
+					NOT = { region = hell_region }
+					NOT = { region = netherworld_region }
+					NOT = { area = Konngaras_state }
+					value = 15
+				}
+			} 
+		} 
+	}
+}
+
+th_shinigami_subject = {
+	copy_from = vassal
+	
+	# Graphics:	#TODO
+	sprite = GFX_icon_vassal
+	diplomacy_overlord_sprite = GFX_diplomacy_leadvassal
+	diplomacy_subject_sprite = GFX_diplomacy_amvassal
+
+	# Properties:
+	transfer_trade_if_merchant_republic = no
+	can_be_annexed = yes
+	has_power_projection = yes
+	gets_help_with_rebels = yes
+	forms_trade_companies = no
+	joins_overlords_wars = no
+	can_have_subjects_of_other_types = yes
+	can_transfer_in_peace = no
+	can_set_mil_focus = no
+	can_concentrate_development = no
+
+	max_government_rank = 0
+	
+	base_liberty_desire = -25.0
+	liberty_desire_negative_prestige = 0.0
+	pays_overlord = 0
+	forcelimit_bonus = 0
+	forcelimit_to_overlord = 0.1
+
+	relative_power_class = 1
+	should_quit_wars_on_activation = yes
+
+	restoration_cb = cb_disloyal_vassal
+
+	# Subject Interactions:
+	embargo_rivals = no
+	support_loyalists = yes
+	bestow_gifts = yes
+	scutage = no
+	place_relative_on_throne = no
+	sacrifice_ruler = no
+	sacrifice_heir = no
+	divert_trade = no
+	seize_territory = no
+	
+	can_fight = {
+		independent_nations = yes
+		other_overlord = all
+	}
+	can_rival = {
+		independent_nations = yes
+		other_overlord = all
+	}
+	can_ally = {
+		independent_nations = yes
+		same_overlord = th_rebellious_subject
+		other_overlord = all
+	}
+	can_marry = {
+		independent_nations = yes
+		same_overlord = th_rebellious_subject
+		other_overlord = all
+	}
+
+	# Modifiers:
+	modifier_subject = {
+		modifier = vassal_nation
+	}
+	modifier_overlord = {
+		modifier = vassal_subject
+	}
+
+	overlord_opinion_modifier = is_vassal
+	subject_opinion_modifier = is_vassal
 }
