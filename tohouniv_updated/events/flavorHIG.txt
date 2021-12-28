@@ -10,23 +10,17 @@ country_event = {
 	title = flavor_hig.1.t
 	desc = flavor_hig.1.desc
 	picture = KOMACHI_eventPicture
-	
+	fire_only_once = yes
 	trigger = {
 		th_is_or_was_tag = {
 			tag = HIG
 		}
-		NOT = { has_country_flag = hig_slacking_komachi }
 		NOT = { has_country_flag = hig_has_dealt_with_slacking_komachi }
+		has_estate_privilege = th_estate_nobles_slacking_shinigami
 	}
 	
 	mean_time_to_happen = {
 		months = 1
-	}
-	
-	immediate = {
-		hidden_effect = {
-			set_country_flag = hig_slacking_komachi
-		}
 	}
 	
 	option = {
@@ -34,6 +28,138 @@ country_event = {
 
 		ai_chance = { 
 			factor = 100
+		}
+	}
+}
+
+#Hellish Union - split land apart if they have provinces outside the allowed region
+country_event = {
+	id = flavor_hig.2
+	title = flavor_hig.2.t
+	desc = flavor_hig.2.desc
+	picture = SATORIOFFICE_eventPicture
+	trigger = {
+		NOT = { has_country_flag = hig_crd_release_event }
+		NOT = { has_country_flag = th_has_no_penalty_from_owning_gensokyan_land }
+		th_is_or_was_tag = {
+			tag = HIG
+		}
+		any_subject_country = {
+			th_is_or_was_tag = {
+				tag = CRD
+			}
+			any_owned_province = {
+				continent = gensokyo_continent
+				NOT = { region = former_hell_region }
+				NOT = { region = hell_region }
+				NOT = { region = netherworld_region }
+				NOT = { area = Konngaras_state }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = hig_crd_release_event
+			random_subject_country = {
+				limit = {
+					th_is_or_was_tag = {
+						tag = CRD
+					}
+				}
+				save_event_target_as = hig_subject_country
+			}
+		}
+	}
+	
+	option = {	#Return all non-hell provinces in Gensokyo
+		name = flavor_hig.2.a
+		event_target:hig_subject_country = {
+			th_return_gensokyan_provinces = yes
+		}
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = 10
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#No
+		name = flavor_hig.2.b
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = -25
+		}
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Hire Komachi
+country_event = {
+	id = flavor_hig.102
+	title = flavor_hig.102.t
+	desc = flavor_hig.102.desc
+	picture = KOMACHI_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = th_hired_komachi_modifier
+				duration = 10950
+				hidden = yes
+			}
+		}
+	}
+	
+	option = {	#Advisor Komachi
+		name = flavor_hig.102.a
+		define_advisor = {
+			type = th_advisor_komachi
+			name = "Komachi Onozuka"
+			skill = 3
+			location = 4969
+			discount = yes
+			female = yes
+			culture = Higanean
+			religion = ROOT
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#General Komachi
+		name = flavor_hig.102.b
+		define_general = {
+			name = "Komachi Onozuka"
+			shock = 6
+			fire = 6
+			manuever = 6
+			siege = 4
+			female = yes
+			trait = goal_oriented_personality
+		}
+		
+		
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 100
+				is_at_war = yes
+			}
 		}
 	}
 }
