@@ -548,7 +548,7 @@ th_break_vassal_alliance = {
 		FROM = {
 			num_of_allies = 1
 			any_ally = {
-				is_subject = false
+				is_subject = no
 			}
 		}
 	}
@@ -557,7 +557,7 @@ th_break_vassal_alliance = {
 		FROM = {
 			every_ally = {
 				limit = {
-					is_subject = false
+					is_subject = no
 				}
 				add_opinion = {
 					who = FROM
@@ -587,6 +587,70 @@ th_break_vassal_alliance = {
 			add_country_modifier = {
 				name = th_alliance_breaker
 				duration = 365
+			}
+		}
+	}
+}
+
+# Elevate Government Rank
+th_elevate_subject_government_rank = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		FROM = {
+			is_subject_of = ROOT
+			OR = {
+				is_subject_of_type = personal_union
+				is_subject_of_type = th_yukari_daimyo
+				is_subject_of_type = th_yukari_puppet_state
+				is_subject_of_type = th_yukari_march
+				is_subject_of_type = th_special_march 
+				is_subject_of_type = th_yuuka_gatekeeper
+				is_subject_of_type = th_pet_state
+				is_subject_of_type = th_yama_executor
+			}
+		}
+		OR = {
+			AND = {
+				government_rank = 2
+				FROM = { NOT = { government_rank = 2 } }
+			}
+			AND = {
+				government_rank = 3
+				FROM = { NOT = { government_rank = 3 } }
+			}
+		}
+	}
+
+	is_allowed = {
+		OR = {
+			AND = {
+				government_rank = 2
+				FROM = { NOT = { government_rank = 2 } }
+				prestige = 50
+			}
+			AND = {
+				government_rank = 3
+				FROM = { NOT = { government_rank = 3 } }
+				prestige = 75
+			}
+		}
+	}
+
+	on_accept = {
+		if = {
+			limit = {
+				government_rank = 3
+			}
+			FROM = {
+				set_government_rank = 3
+			}
+		}
+		else = {
+			FROM = {
+				set_government_rank = 2
 			}
 		}
 	}
