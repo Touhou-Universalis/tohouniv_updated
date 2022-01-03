@@ -32,74 +32,27 @@ country_event = {
 	}
 }
 
-#Hellish Union - split land apart if they have provinces outside the allowed region
+#Resolvement of the Religious Chaos
 country_event = {
 	id = flavor_hig.2
 	title = flavor_hig.2.t
 	desc = flavor_hig.2.desc
-	picture = SATORIOFFICE_eventPicture
-	trigger = {
-		NOT = { has_country_flag = hig_crd_release_event }
-		NOT = { has_country_flag = th_has_no_penalty_from_owning_gensokyan_land }
-		th_is_or_was_tag = {
-			tag = HIG
-		}
-		any_subject_country = {
-			th_is_or_was_tag = {
-				tag = CRD
-			}
-			any_owned_province = {
-				continent = gensokyo_continent
-				NOT = { region = former_hell_region }
-				NOT = { region = hell_region }
-				NOT = { region = netherworld_region }
-				NOT = { area = Konngaras_state }
-			}
-		}
-	}
+	picture = GENSOKYOTHRONE_eventPicture
+	is_triggered_only = yes
 	
-	mean_time_to_happen = {
-		months = 1
-	}
-
-	immediate = {
-		hidden_effect = {
-			set_country_flag = hig_crd_release_event
-			random_subject_country = {
-				limit = {
-					th_is_or_was_tag = {
-						tag = CRD
-					}
-				}
-				save_event_target_as = hig_subject_country
-			}
-		}
-	}
-	
-	option = {	#Return all non-hell provinces in Gensokyo
+	option = {
 		name = flavor_hig.2.a
-		event_target:hig_subject_country = {
-			th_return_gensokyan_provinces = yes
-		}
 		add_estate_loyalty = {
 			estate = estate_yama
-			loyalty = 10
+			loyalty = 25
 		}
 
 		ai_chance = { 
 			factor = 100
-		}
-	}
-	
-	option = {	#No
-		name = flavor_hig.2.b
-		add_estate_loyalty = {
-			estate = estate_yama
-			loyalty = -25
-		}
-
-		ai_chance = { 
-			factor = 0
+			modifier = {
+				factor = 0
+				NOT = { alliance_with = HKR }
+			}
 		}
 	}
 }
@@ -114,7 +67,23 @@ country_event = {
 	
 	option = {
 		name = flavor_hig.3.a
-
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+		every_subject_country = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = CRD
+				}
+			}
+			grant_independence = yes
+			ROOT = {
+				create_subject = {
+					subject_type = th_exarch_subject
+					subject = PREV
+				}
+			}
+		}
 		ai_chance = { 
 			factor = 100
 		}
@@ -122,6 +91,27 @@ country_event = {
 	
 	option = {
 		name = flavor_hig.3.b
+		add_prestige = 25
+		every_subject_country = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = CRD
+				}
+			}
+			every_owned_province = {
+				limit = {
+					OR = {
+						NOT = { continent = gensokyo_continent }
+						region = former_hell_region
+						region = hell_region
+						region = netherworld_region
+						area = Konngaras_state
+					}
+				}
+				add_core = ROOT
+				cede_province = ROOT
+			}
+		}
 
 		ai_chance = { 
 			factor = 100
@@ -129,19 +119,213 @@ country_event = {
 	}
 }
 
-#Appointing of the Shrine Maiden Denfender
+#Appointing of a Religious Head
 country_event = {
 	id = flavor_hig.4
 	title = flavor_hig.4.t
 	desc = flavor_hig.4.desc
 	picture = GENSOKYOTHRONE_eventPicture
 	is_triggered_only = yes
+	major = yes
 	
 	option = {
 		name = flavor_hig.4.a
+		trigger = {
+			exists = HKR
+		}
+		hig_assign_religious_figurehead = {
+			tag = HKR
+			religion = th_hakureishinto
+		}
+		add_opinion = {
+			who = MRY
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = OKR
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = MYO
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = SNK
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
 
 		ai_chance = { 
 			factor = 100
+			modifier = {
+				factor = 0
+				NOT = { alliance_with = HKR }
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_hig.4.b
+		trigger = {
+			exists = MRY
+		}
+		hig_assign_religious_figurehead = {
+			tag = MRY
+			religion = th_moriyashinto
+		}
+		add_opinion = {
+			who = HKR
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = OKR
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = MYO
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = SNK
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = { alliance_with = MRY }
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_hig.4.c
+		trigger = {
+			exists = OKR
+		}
+		hig_assign_religious_figurehead = {
+			tag = OKR
+			religion = th_oldhakurei
+		}
+		add_opinion = {
+			who = MRY
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = HKR
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = MYO
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = SNK
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = { alliance_with = OKR }
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_hig.4.d
+		trigger = {
+			exists = MYO
+		}
+		hig_assign_religious_figurehead = {
+			tag = MYO
+			religion = th_buddhist
+		}
+		add_opinion = {
+			who = MRY
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = OKR
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = HKR
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = SNK
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = { alliance_with = MYO }
+			}
+		}
+	}
+	
+	option = {
+		name = flavor_hig.4.e
+		trigger = {
+			exists = SNK
+		}
+		hig_assign_religious_figurehead = {
+			tag = SNK
+			religion = th_taoist
+		}
+		add_opinion = {
+			who = MRY
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = OKR
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = MYO
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+		add_opinion = {
+			who = HKR
+			modifier = th_did_not_legitimize_us_as_religious_head
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = { alliance_with = SNK }
+			}
+		}
+	}
+	
+	option = { #The law is above petty religious debacles
+		name = flavor_hig.4.f
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = 15
+		}
+		add_country_modifier = {
+			name = hig_above_the_religious_scuffle
+			duration = 9125
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					alliance_with = HKR
+					alliance_with = MRY
+					alliance_with = OKR
+					alliance_with = MYO
+					alliance_with = SNK
+				}
+			}
 		}
 	}
 }
@@ -154,8 +338,84 @@ country_event = {
 	picture = TENSHI_eventPicture
 	is_triggered_only = yes
 	
-	option = {
+	option = {	#Replace Tenshi with Iku
 		name = flavor_hig.5.a
+		white_peace = HVR
+		HVR = {
+			custom_tooltip = flavor_hig.5.a.tt
+			add_stability = -2
+			define_ruler = {
+				name = "Iku"
+				dynasty = "Nagae"
+				culture = Youkai
+				adm = 5
+				dip = 6
+				mil = 4
+				age = 20
+				claim = 100
+				female = yes
+				religion = th_hakureishinto
+			}
+			hidden_effect = {
+				set_country_flag = hvr_cannot_get_tenshi
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				add_ruler_personality = immortal_personality
+			}
+			add_ruler_modifier = {
+				name = hig_competent_ruler
+				duration = 9125
+			}
+			add_country_modifier = {
+				name = hig_under_yama_influence
+				duration = 9125
+			}
+		}
+		add_prestige = 100
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = 25
+		}
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {	#Lecture Tenshi
+		name = flavor_hig.5.b
+		white_peace = HVR
+		HVR = {
+			add_stability = -4
+			add_ruler_modifier = {
+				name = hig_lectured_tenshi
+				duration = 9125
+			}
+			add_country_modifier = {
+				name = hig_under_yama_influence
+				duration = 9125
+			}
+		}
+		add_prestige = 100
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = 25
+		}
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = flavor_hig.5.c
+		add_adm_power = 200
+		add_dip_power = 200
+		add_mil_power = 200
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = -25
+		}
 
 		ai_chance = { 
 			factor = 100
@@ -170,12 +430,252 @@ country_event = {
 	desc = flavor_hig.6.desc
 	picture = TENSHI_eventPicture
 	is_triggered_only = yes
+	major = yes
 	
 	option = {
 		name = flavor_hig.6.a
+		trigger = {
+			OR = {
+				exists = SKI
+				exists = GBD
+				exists = YAC
+			}
+		}
+		hidden_effect = {
+			set_variable = {
+				which = th_ae_variable
+				value = 0
+			}
+		}
+		if = {
+			limit = {
+				exists = SKI
+			}
+			white_peace = SKI
+			create_subject = {
+				subject_type = vassal
+				subject = SKI
+			}
+			hidden_effect = {
+				change_variable = {
+					which = th_ae_variable
+					value = 15
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = YAC
+			}
+			white_peace = YAC
+			create_subject = {
+				subject_type = vassal
+				subject = YAC
+			}
+			hidden_effect = {
+				change_variable = {
+					which = th_ae_variable
+					value = 15
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = SKI
+			}
+			white_peace = SKI
+			create_subject = {
+				subject_type = vassal
+				subject = SKI
+			}
+			hidden_effect = {
+				change_variable = {
+					which = th_ae_variable
+					value = 15
+				}
+			}
+		}
+		add_country_modifier = {
+			name = hig_ruler_of_the_matriarchs
+			duration = 10950
+		}
+		custom_tooltip = flavor_hig.6.a.tt
+		while = {
+			limit = {
+				check_variable = {
+					which = th_ae_variable
+					value = 1
+				}
+			}
+			every_known_country = {
+				limit = {
+					capital_scope = {
+						continent = gensokyo_continent
+					}
+					NOT = { is_subject_of = ROOT }
+					NOT = { alliance_with = ROOT }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = aggressive_expansion
+				}
+			}
+			subtract_variable = {
+				which = th_ae_variable
+				value = 1
+			}
+		}
 
 		ai_chance = { 
 			factor = 100
+		}
+	}
+	
+	option = {
+		name = flavor_hig.6.b
+		trigger = {
+			OR = {
+				exists = SKI
+				exists = GBD
+				exists = YAC
+			}
+		}
+		hidden_effect = {
+			set_variable = {
+				which = th_ae_variable
+				value = 0
+			}
+		}
+		if = {
+			limit = {
+				exists = SKI
+			}
+			white_peace = SKI
+			create_subject = {
+				subject_type = tributary_state
+				subject = SKI
+			}
+			hidden_effect = {
+				change_variable = {
+					which = th_ae_variable
+					value = 10
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = YAC
+			}
+			white_peace = YAC
+			create_subject = {
+				subject_type = tributary_state
+				subject = YAC
+			}
+			hidden_effect = {
+				change_variable = {
+					which = th_ae_variable
+					value = 10
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = SKI
+			}
+			white_peace = SKI
+			create_subject = {
+				subject_type = tributary_state
+				subject = SKI
+			}
+			hidden_effect = {
+				change_variable = {
+					which = th_ae_variable
+					value = 10
+				}
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = 25
+		}
+		custom_tooltip = flavor_hig.6.b.tt
+		while = {
+			limit = {
+				check_variable = {
+					which = th_ae_variable
+					value = 1
+				}
+			}
+			every_known_country = {
+				limit = {
+					capital_scope = {
+						continent = gensokyo_continent
+					}
+					NOT = { is_subject_of = ROOT }
+					NOT = { alliance_with = ROOT }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = aggressive_expansion
+				}
+			}
+			subtract_variable = {
+				which = th_ae_variable
+				value = 1
+			}
+		}
+
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = flavor_hig.6.c
+		trigger = {
+			OR = {
+				exists = SKI
+				exists = GBD
+				exists = YAC
+			}
+		}
+		if = {
+			limit = {
+				exists = SKI
+			}
+			kill_ruler = yes
+			th_disable_temporarily_respawn_ability = {
+				custom_tooltip = flavor_hig.6.c.tt
+				duration = 36500
+			}
+		}
+		if = {
+			limit = {
+				exists = YAC
+			}
+			kill_ruler = yes
+			th_disable_temporarily_respawn_ability = {
+				custom_tooltip = flavor_hig.6.c.tt
+				duration = 36500
+			}
+		}
+		if = {
+			limit = {
+				exists = SKI
+			}
+			kill_ruler = yes
+			th_disable_temporarily_respawn_ability = {
+				custom_tooltip = flavor_hig.6.c.tt
+				duration = 36500
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = 50
+		}
+
+		ai_chance = { 
+			factor = 0
 		}
 	}
 }
