@@ -637,8 +637,11 @@ hig_gensokyo_slot = {
 					}
 				}
 			}
-			country_event = {
-				id = flavor_hig.8
+			5005 = {
+				th_build_uptodate_fort = yes
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
 			}
 		}
 	}
@@ -680,10 +683,6 @@ hig_gensokyo_slot = {
 			}
 		}
 		effect = {
-			add_power_projection = {
-				type = mission_rewards_power_projection
-				amount = 50
-			}
 			country_event = {
 				id = flavor_hig.9
 			}
@@ -716,18 +715,42 @@ hig_gensokyo_slot = {
 				AND = {
 					OR = {
 						NOT = { exists = EIT }
-						EIT = { is_excommunicated = yes }
+						AND = {
+							EIT = { is_excommunicated = yes }
+							war_score_against = {
+								who = EIT
+								value = 50
+							}
+						}
 					}
 					OR = {
 						NOT = { exists = FUJ }
-						FUJ = { is_excommunicated = yes }
+						AND = {
+							FUJ = { is_excommunicated = yes }
+							war_score_against = {
+								who = FUJ
+								value = 50
+							}
+						}
 					}
 				}
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.10
+			if = {
+				limit = {
+					OR = {
+						exists = EIT
+						exists = FUJ
+					}
+				}
+				country_event = {
+					id = flavor_hig.10
+				}
+			}
+			add_country_modifier = {
+				name = hig_handled_immortal_debate
+				duration = 9125
 			}
 		}
 	}
@@ -886,9 +909,15 @@ hig_reform_gensokyo_slot = {
 					limit = {
 						has_dlc = "Leviathan"
 					}
-					has_great_project = {
-						type = th_monument_yamas_palace
-						tier = 2
+					OR = {
+						has_great_project = {
+							type = th_monument_yamas_palace
+							tier = 2
+						}
+						has_great_project = {
+							type = th_monument_yamas_palace
+							tier = 3
+						}
 					}
 				}
 				else = {
@@ -896,7 +925,9 @@ hig_reform_gensokyo_slot = {
 					has_production_building_trigger = yes
 					has_trade_building_trigger = yes
 					has_courthouse_building_trigger = yes
-					th_has_up_to_date_fort_building = yes
+					th_has_up_to_date_fort_building = {
+						tag = ROOT
+					}
 				}
 			}
 		}
@@ -1083,7 +1114,9 @@ hig_outworld_slot = {
 				4969 = {
 					has_trade_building_trigger = yes
 					has_courthouse_building_trigger = yes
-					th_has_up_to_date_fort_building = yes
+					th_has_up_to_date_fort_building = {
+						tag = ROOT
+					}
 					has_tax_building_trigger = yes
 					has_production_building_trigger = yes
 					development = 25
