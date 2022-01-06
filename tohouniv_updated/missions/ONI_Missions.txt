@@ -73,6 +73,7 @@ oni_missions_army_slot = {
 		}
 		effect = {
 			custom_tooltip = cool_effect
+			set_country_flag = oni_has_completed_merc_mission
 		}
 	}
 	
@@ -81,10 +82,30 @@ oni_missions_army_slot = {
 		required_missions = { ONI_gathering_merc }
 		position = 4
 		trigger = {
-
+			if = {
+				limit = {
+					mission_completed = ONI_gathering_merc
+				}
+				custom_trigger_tooltip = {
+					tooltip = ONI_ruler_honor_tt
+					check_variable = {
+						which = oni_won_battles_counter
+						value = 20
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = ONI_ruler_honor_at
+					always = no
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = oni_ruler_autonomy
+				duration = -1
+			}
 		}
 	}
 }
@@ -130,8 +151,8 @@ oni_missions_conquest_slot = {
 
 	
 	ONI_miracle_mallet = {
-		icon = mission_touhou_yuugi
-		required_missions = { ONI_restore_onigashima }
+		icon = mission_miracle_mallet
+		required_missions = { ONI_establish_onigashima }
 		position = 6
 		provinces_to_highlight = {
 			area = Shining_needle_state
@@ -191,7 +212,7 @@ oni_missions_conquest_slot = {
 	}
 }
 
-oni_missions_onigashima_slot = {
+oni_missions_ally_slot = {
 	slot = 2
 	generic = no
 	ai = yes
@@ -215,22 +236,102 @@ oni_missions_onigashima_slot = {
 			}
 		}
 	}
+}
 
-	ONI_goto_chireiden = {
+ONI_missions_chireiden_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = ONI
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	ONI_diplomacy_or_war = {
 		icon = mission_touhou_chireiden
 		required_missions = { ONI_relation_chireiden }
 		position = 2
 		trigger = {
-
+			OR = {
+				AND = {
+					owns_core_province = 5009
+					owns_core_province = 5284			
+					owns_core_province = 5285	
+				}
+				AND = {
+					war_with = CRD
+					war_score = 90
+					OR = {
+						own = 5007
+						controls = 5007
+					}
+				}
+				AND = {
+					reverse_has_opinion = {
+						who = CRD
+						value = 100
+					}
+					treasury = 600
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			Southern_youkai_mountains = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_core = ROOT
+			}
+			Youkai_Mountains = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_core = ROOT
+			}
+			if = {
+				limit = {
+					war_with = CRD
+				}
+				country_event = {
+					id = flavor_oni.3
+				}
+			}
+			else_if = {
+				AND = {
+					reverse_has_opinion = {
+						who = CRD
+						value = 100
+					}
+					treasury = 600
+				}	
+				country_event = {
+					id = flavor_oni.2
+				}
+			}
+			else = {
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
+			}
 		}
 	}
-	
+}
+
+oni_missions_onigashima_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = ONI
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
 	ONI_comeback_mountain = {
 		icon = mission_touhou_aya
-		required_missions = { ONI_goto_chireiden }
+		required_missions = { ONI_diplomacy_or_war }
 		position = 3
 		provinces_to_highlight = {
 			OR = {
@@ -311,14 +412,18 @@ oni_missions_onigashima_slot = {
 		}
 	}
 	
-	ONI_restore_onigashima = {
-		icon = mission_touhou_yuugi
+	ONI_establish_onigashima = {
+		icon = mission_touhou_yuugisuika
 		required_missions = { 
 			ONI_reclaim_mountain
 			ONI_join_kasen
 		}
 		position = 5
 		trigger = {
+			4964 = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
 			stability = 1
 			OR = {
 				reform_level = 4
@@ -380,7 +485,7 @@ oni_missions_gensokyo_slot = {
 	
 	ONI_powers_gensokyo = {
 		icon = mission_touhou_battle_cry
-		required_missions = { ONI_restore_onigashima }
+		required_missions = { ONI_establish_onigashima }
 		position = 7
 		trigger = {
 			if = {
@@ -545,7 +650,7 @@ oni_missions_gensokyo_slot = {
 	}
 	
 	ONI_gensokyo_champion = {
-		icon = mission_touhou_yuugi
+		icon = mission_touhou_suika2
 		required_missions = { 
 			ONI_beat_vampire
 			ONI_beat_yuuka
@@ -587,9 +692,12 @@ oni_missions_big_four_slot = {
 		position = 1
 		trigger = {
 			OR = {
-				reverse_has_opinion = {
-					who = CRD
-					value = 100
+				AND = {
+					is_subject_of_type = tributary_state
+					reverse_has_opinion = {
+						who = CRD
+						value = 100
+					}
 				}
 				AND = {
 					NOT = {
@@ -600,7 +708,7 @@ oni_missions_big_four_slot = {
 						has_been_insulted_by_root = yes
 					}					
 				}
-				NOT = { exists = CRD }
+				total_development = CRD
 			}
 		}
 		effect = {
@@ -614,12 +722,48 @@ oni_missions_big_four_slot = {
 				add_country_modifier = {
 					name = oni_diplo_chireiden
 					duration = 5475
-				}	
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = {
+						is_subject_of_type = tributary_state
+					}
+					is_subject = no
+					CRD = {
+						has_been_insulted_by_root = yes
+					}	
+				}
+				Road_to_hell_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Chireiden_canal_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				CRD = {
+					country_event = {
+						id = flavor_oni.1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					total_development = CRD
+				}
+				country_event = {
+					id = flavor_oni.102
+				}			
 			}
 			else = {
-				country_event = {
-					id = flavor_oni.1
-				}
+				custom_tooltip = ONI_relation_chireiden.tt
 			}
 		}
 	}
@@ -757,7 +901,7 @@ oni_missions_big_four_slot = {
 	}
 	
 	ONI_join_kasen = {
-		icon = mission_touhou_yuugi
+		icon = mission_touhou_ibaraki
 		required_missions = { ONI_mountain_hermit }
 		position = 4
 		provinces_to_highlight = {
@@ -768,7 +912,10 @@ oni_missions_big_four_slot = {
 			owns_or_non_sovereign_subject_of = 5191
 			KSE = {
 				OR = {
-					is_subject_of = ROOT
+					AND = {
+						is_subject_of = ROOT
+						NOT = { total_development = 100 }
+					}
 					exists = no
 				}
 			}
@@ -779,7 +926,6 @@ oni_missions_big_four_slot = {
 			}
 		}
 	}
-
 }
 
 oni_missions_empire_slot = {
@@ -793,11 +939,24 @@ oni_missions_empire_slot = {
 	has_country_shield = yes
 	
 	ONI_onigashima_empire = {
-		icon = mission_touhou_yuugi
+		icon = mission_touhou_onigashima
 		required_missions = {  }
 		position = 5
 		trigger = {
-
+			if = {
+				limit = {
+					mission_completed = ONI_establish_onigashima
+				}
+				has_reform = Gensokyan_oni_brawling_kingdom
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = ONI_onigashima_empire_tt
+					always = no
+				}
+			}
+			total_development = 650
+			army_size = 120
 		}
 		effect = {
 			add_country_modifier = {
@@ -809,7 +968,7 @@ oni_missions_empire_slot = {
 
 	ONI_arrest_seiga = {
 		icon = mission_touhou_seiga
-		required_missions = { ONI_restore_onigashima }
+		required_missions = { ONI_establish_onigashima }
 		position = 6
 		provinces_to_highlight = {
 			OR = {
@@ -873,7 +1032,6 @@ oni_missions_empire_slot = {
 			}	
 		}
 	}
-
 }
 
 oni_missions_human_slot = {
@@ -996,7 +1154,6 @@ oni_missions_human_slot = {
 			}
 		}
 	}
-
 }
 
 oni_missions_outworld_slot = {
@@ -1064,8 +1221,13 @@ oni_missions_outworld_slot = {
 			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
-			persia_region = { has_discovered = ROOT }
-			mashriq_region = { has_discovered = ROOT }
+			custom_trigger_tooltip = {
+				tooltip = oni_wide_outworld_tt
+				OR = {
+					persia_region = { has_discovered = ROOT }
+					mashriq_region = { has_discovered = ROOT }
+				}
+			}
 		}
 		effect = {
 			add_country_modifier = {
@@ -1166,7 +1328,7 @@ oni_missions_outworld_slot = {
 	}
 	
 	ONI_terror_oni = {
-		icon = mission_touhou_yuugi
+		icon = mission_touhou_suikafear
 		required_missions = { 
 			ONI_attack_germany
 			ONI_attack_france
@@ -1178,13 +1340,34 @@ oni_missions_outworld_slot = {
 				NOT = {
 					any_country = {
 						capital_scope = {
-							continent = europe
+							OR = {
+								continent = europe
+								continent = asia
+							}
 						}
-						NOT = { total_development = 1000 }
+						NOT = { total_development = ROOT }
 						NOT = { tag = ROOT }
 						NOT = { is_subject_of = ROOT }
 					}
 				}
+			}
+			calc_true_if = {
+				all_country = {
+					OR = {
+						is_subject_of = ROOT
+						truce_with = ROOT
+					}
+					custom_trigger_tooltip = {
+						tooltip = ONI_capital_in_europe_asia.tt
+						capital_scope = {
+							OR = {
+								continent = europe
+								continent = asia
+							}
+						}
+					}
+				}
+				amount = 15
 			}
 		}
 		effect = {
@@ -1194,7 +1377,6 @@ oni_missions_outworld_slot = {
 			}
 		}
 	}
-
 }
 
 oni_missions_navy_slot = {
@@ -1311,7 +1493,6 @@ oni_missions_navy_slot = {
 			country_event = { id = TH_mission_events.4 }			
 		}
 	}
-
 }
 
 oni_missions_europe_slot = {
@@ -1402,5 +1583,4 @@ oni_missions_europe_slot = {
 			}
 		}
 	}
-
 }
