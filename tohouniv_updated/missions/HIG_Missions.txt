@@ -195,14 +195,43 @@ hig_internal_slot = {
 			NOT = { country_or_subject_holds = ROOT }
 		}
 		trigger = {
-			former_hell_region = {
-				country_or_subject_holds = ROOT
-				type = all
+			OR = {
+				AND = {
+					any_subject_country = {
+						th_is_or_was_tag = {
+							tag = CRD
+						}
+					}
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						region = former_hell_region
+						value = 25
+					}
+				}
+				former_hell_region = {
+					country_or_subject_holds = ROOT
+					type = all
+				}
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.3
+			if = {
+				limit = {
+					any_subject_country = {
+						th_is_or_was_tag = {
+							tag = CRD
+						}
+					}
+				}
+				country_event = {
+					id = flavor_hig.3
+				}
+			}
+			else = {
+				custom_tooltip = HIG_take_over_chireiden_tt
+			}
+			add_country_modifier = {
+				name = hig_hells_in_yama_possession
+				duration = 9125
 			}
 		}
 	}
@@ -215,27 +244,54 @@ hig_internal_slot = {
 			OR = {
 				owned_by = HKR
 				owned_by = MRY
+				owned_by = OKR
+				owned_by = SNK
+				owned_by = MYO
 			}
 		}
 		trigger = {
 			OR = {
 				AND = {
 					alliance_with = HKR
-					reverse_has_opinion = {
+					has_opinion = {
 						who = HKR
-						value = 100
+						value = 75
 					}
 				}
 				AND = {
 					alliance_with = MRY
-					reverse_has_opinion = {
+					has_opinion = {
 						who = MRY
-						value = 100
+						value = 75
+					}
+				}
+				AND = {
+					alliance_with = OKR
+					has_opinion = {
+						who = OKR
+						value = 75
+					}
+				}
+				AND = {
+					alliance_with = SNK
+					has_opinion = {
+						who = SNK
+						value = 75
+					}
+				}
+				AND = {
+					alliance_with = MYO
+					has_opinion = {
+						who = MYO
+						value = 75
 					}
 				}
 				AND = {
 					NOT = { exists = HKR }
 					NOT = { exists = MRY }
+					NOT = { exists = OKR }
+					NOT = { exists = SNK }
+					NOT = { exists = MYO }
 				}
 			}
 			estate_loyalty = {
@@ -244,8 +300,22 @@ hig_internal_slot = {
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.4
+			if = {
+				limit = {
+					NOT = { exists = HKR }
+					NOT = { exists = MRY }
+					NOT = { exists = OKR }
+					NOT = { exists = SNK }
+					NOT = { exists = MYO }
+				}
+				country_event = {
+					id = flavor_hig.4
+				}
+			}
+			else = {
+				country_event = {
+					id = flavor_hig.2
+				}
 			}
 		}
 	}
@@ -288,8 +358,19 @@ hig_internal_slot = {
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.5
+			if = {
+				limit = {
+					HVR = {
+						exists = yes
+						has_ruler = "Tenshi"
+					}
+				}
+				country_event = {
+					id = flavor_hig.5
+				}
+			}
+			else = {
+				add_dip_power = 100
 			}
 		}
 	}
@@ -350,29 +431,79 @@ hig_gensokyo_slot = {
 		position = 2
 		provinces_to_highlight = {
 			OR = {
-				area = Saki_state
-				area = Yachie_state
-				area = Keiki_state
-				area = Great_border
-				area = Western_great_border
+				is_capital_of = SKI
+				is_capital_of = YAC
+				is_capital_of = GBD
 			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			NOT = { controlled_by = ROOT }
 		}
 		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+			SKI = {
 				OR = {
-					area = Saki_state
-					area = Yachie_state
-					area = Keiki_state
-					area = Great_border
-					area = Western_great_border
+					exists = no
+					AND = {
+						NOT = {
+							war_score_against = {
+								who = ROOT
+								value = -50
+							}
+						}
+						capital_scope = {
+							controlled_by = ROOT
+						}
+					}
 				}
-				value = 15
+			}
+			YAC = {
+				OR = {
+					exists = no
+					AND = {
+						NOT = {
+							war_score_against = {
+								who = ROOT
+								value = -50
+							}
+						}
+						capital_scope = {
+							controlled_by = ROOT
+						}
+					}
+				}
+			}
+			GBD = {
+				OR = {
+					exists = no
+					AND = {
+						NOT = {
+							war_score_against = {
+								who = ROOT
+								value = -50
+							}
+						}
+						capital_scope = {
+							controlled_by = ROOT
+						}
+					}
+				}
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.6
+			if = {
+				limit = {
+					OR = {
+						exists = SKI
+						exists = YAC
+						exists = GBD
+					}
+				}
+				country_event = {
+					id = flavor_hig.6
+				}
+			}
+			else = {
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
 			}
 		}
 	}
@@ -389,26 +520,66 @@ hig_gensokyo_slot = {
 				area = Great_border
 				area = Western_great_border
 			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			NOT = { country_or_subject_holds = ROOT }
 		}
 		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {
-					area = Saki_state
-					area = Yachie_state
-					area = Keiki_state
-					area = Great_border
-					area = Western_great_border
+			stability = 2
+			calc_true_if = {
+				all_province = {
+					OR = {
+						area = Saki_state
+						area = Yachie_state
+						area = Keiki_state
+						area = Great_border
+						area = Western_great_border
+					}
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+					NOT = { local_autonomy = 10 }
+					NOT = { devastation = 1 }
+					prosperity = 75
 				}
-				NOT = { local_autonomy = 10 }
-				NOT = { devastation = 1 }
-				prosperity = 75
-				value = 15
+				amount = 15
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.7
+			add_prestige = 25
+			add_estate_loyalty = {
+				estate = estate_yama
+				loyalty = 15
+			}
+			if = {
+				limit = {
+					GGS = {
+						is_subject_of_type_with_overlord = {
+							who = ROOT
+							type = tributary_state
+						}
+					}
+				}
+				country_event = {
+					id = flavor_hig.7
+				}
+			}
+			else = {
+				Land_of_the_dead = {
+					limit =  {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Gate_to_the_dead = {
+					limit =  {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
 			}
 		}
 	}
@@ -466,8 +637,11 @@ hig_gensokyo_slot = {
 					}
 				}
 			}
-			country_event = {
-				id = flavor_hig.8
+			5005 = {
+				th_build_uptodate_fort = yes
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
 			}
 		}
 	}
@@ -509,10 +683,6 @@ hig_gensokyo_slot = {
 			}
 		}
 		effect = {
-			add_power_projection = {
-				type = mission_rewards_power_projection
-				amount = 50
-			}
 			country_event = {
 				id = flavor_hig.9
 			}
@@ -545,18 +715,42 @@ hig_gensokyo_slot = {
 				AND = {
 					OR = {
 						NOT = { exists = EIT }
-						EIT = { is_excommunicated = yes }
+						AND = {
+							EIT = { is_excommunicated = yes }
+							war_score_against = {
+								who = EIT
+								value = 50
+							}
+						}
 					}
 					OR = {
 						NOT = { exists = FUJ }
-						FUJ = { is_excommunicated = yes }
+						AND = {
+							FUJ = { is_excommunicated = yes }
+							war_score_against = {
+								who = FUJ
+								value = 50
+							}
+						}
 					}
 				}
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.10
+			if = {
+				limit = {
+					OR = {
+						exists = EIT
+						exists = FUJ
+					}
+				}
+				country_event = {
+					id = flavor_hig.10
+				}
+			}
+			add_country_modifier = {
+				name = hig_handled_immortal_debate
+				duration = 9125
 			}
 		}
 	}
@@ -641,7 +835,16 @@ hig_reform_gensokyo_slot = {
 		required_missions = { }
 		position = 1
 		trigger = {
-			has_adm_advisor_3 = yes
+			OR = {
+				has_advisors_of_level = {
+					level = 2
+					amount = 2
+				}
+				has_advisors_of_level = {
+					level = 3
+					amount = 1
+				}
+			}
 		}
 		effect = {
 			The_hills = {
@@ -683,13 +886,16 @@ hig_reform_gensokyo_slot = {
 			}
 		}
 		effect = {
-			#TODO event
 			5247 = {
 				change_religion = ROOT
 				change_culture = ROOT
 				add_base_tax = 3
 				add_base_production = 3
 				add_base_manpower = 3
+				add_province_modifier = {
+					name = hig_got_rid_of_scammers
+					duration = -1
+				}
 			}
 		}
 	}
@@ -715,9 +921,15 @@ hig_reform_gensokyo_slot = {
 					limit = {
 						has_dlc = "Leviathan"
 					}
-					has_great_project = {
-						type = th_monument_yamas_palace
-						tier = 2
+					OR = {
+						has_great_project = {
+							type = th_monument_yamas_palace
+							tier = 2
+						}
+						has_great_project = {
+							type = th_monument_yamas_palace
+							tier = 3
+						}
 					}
 				}
 				else = {
@@ -725,7 +937,9 @@ hig_reform_gensokyo_slot = {
 					has_production_building_trigger = yes
 					has_trade_building_trigger = yes
 					has_courthouse_building_trigger = yes
-					th_has_up_to_date_fort_building = yes
+					th_has_up_to_date_fort_building = {
+						tag = ROOT
+					}
 				}
 			}
 		}
@@ -912,7 +1126,9 @@ hig_outworld_slot = {
 				4969 = {
 					has_trade_building_trigger = yes
 					has_courthouse_building_trigger = yes
-					th_has_up_to_date_fort_building = yes
+					th_has_up_to_date_fort_building = {
+						tag = ROOT
+					}
 					has_tax_building_trigger = yes
 					has_production_building_trigger = yes
 					development = 25

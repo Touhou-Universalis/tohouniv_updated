@@ -172,14 +172,15 @@ th_incident_check_point_result = {
 
 #Checks if it is random incident, and the incident got chosen, or if the year has come
 th_incident_check_year_for_incident = {
-	if = {
-		limit = {
+	OR = {
+		AND = {
 			has_global_flag = th_random_incident_active
+			has_global_flag = th_picked_rng_$incident$
 		}
-		has_global_flag = th_picked_rng_$incident$
-	}
-	else = {
-		is_year = $year$
+		AND = {
+			NOT = { has_global_flag = th_random_incident_active }
+			is_year = $year$
+		}
 	}
 }
 
@@ -187,11 +188,11 @@ th_incident_check_year_for_incident = {
 th_incident_can_trigger_generic_check = {
 	th_has_incidents_enabled = yes
 	NOT = { has_global_flag = th_active_incident }
-	if = {
-		limit = { has_global_flag = th_recently_solved_incident_flag }
-		had_global_flag = { flag = th_recently_solved_incident_flag days = 1825 }
-	}
-	else = {
+	OR = {
+		AND = {
+			has_global_flag = th_recently_solved_incident_flag
+			had_global_flag = { flag = th_recently_solved_incident_flag days = 1825 }
+		}
 		NOT = { has_global_flag = th_recently_solved_incident_flag }
 	}
 	capital_scope = {
