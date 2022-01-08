@@ -83,6 +83,10 @@ hig_internal_slot = {
 				name = hig_shinigami_reforms
 				duration = 9125
 			}
+			add_estate_loyalty = {
+				estate = estate_yama
+				loyalty = 30
+			}
 		}
 	}
 
@@ -105,6 +109,14 @@ hig_internal_slot = {
 			}
 			remove_estate_privilege = th_estate_nobles_slacking_shinigami
 			add_adm_power = 100
+			add_estate_loyalty = {
+				estate = estate_yama
+				loyalty = 30
+			}
+			change_estate_land_share = {
+				estate = estate_nobles
+				share = -25
+			}
 		}
 	}
 
@@ -216,6 +228,12 @@ hig_internal_slot = {
 		effect = {
 			if = {
 				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
+			if = {
+				limit = {
 					any_subject_country = {
 						th_is_or_was_tag = {
 							tag = CRD
@@ -309,12 +327,12 @@ hig_internal_slot = {
 					NOT = { exists = MYO }
 				}
 				country_event = {
-					id = flavor_hig.4
+					id = flavor_hig.2
 				}
 			}
 			else = {
 				country_event = {
-					id = flavor_hig.2
+					id = flavor_hig.4
 				}
 			}
 		}
@@ -944,6 +962,12 @@ hig_reform_gensokyo_slot = {
 			}
 		}
 		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
 			country_event = {
 				id = flavor_hig.8
 			}
@@ -954,7 +978,7 @@ hig_reform_gensokyo_slot = {
 				add_casus_belli = {
 					type = cb_vassalize_mission
 					target = NET
-					months = 60
+					months = 600
 				}
 			}
 			netherworld_region = {
@@ -1014,13 +1038,6 @@ hig_reform_gensokyo_slot = {
 						tooltip = HIG_hecatia_and_eiki_tt
 						has_country_flag = hig_hecatia_has_been_brought_back
 					}
-					AND = {
-						alliance_with = ROOT
-						custom_trigger_tooltip = {
-							tooltip = HIG_hecatia_and_eiki_tt
-							has_country_flag = hig_had_event_for_going_back_to_gensokyo
-						}
-					}
 				}
 			}
 		}
@@ -1028,9 +1045,11 @@ hig_reform_gensokyo_slot = {
 			th_enable_touhou_advisor = {
 				advisor = th_advisor_hecatia
 			}
-			add_country_modifier = {
-				name = hig_hecatias_authority
-				duration = -1
+			5053 = {
+				add_province_modifier = {
+					name = hig_hecatias_palace_retaken
+					duration = -1
+				}
 			}
 		}
 	}
@@ -1041,7 +1060,10 @@ hig_reform_gensokyo_slot = {
 		}
 		position = 7
 		trigger = {
-			total_development = 650
+			OR = {
+				total_development = 650
+				has_estate_privilege = th_estate_yama_tighten_gensokyan_defense
+			}
 			OR = {
 				government_rank = 3
 				tag = GNK
@@ -1073,7 +1095,7 @@ hig_reform_gensokyo_slot = {
 			legitimacy = 100
 		}
 		effect = {
-			custom_tooltip = unlock_crownland_for_yama_and_edict_modifiers
+			custom_tooltip = unlock_crownland_for_yama_and_edict_modifiers_tt
 			hidden_effect = {
 				set_country_flag = hig_unlock_modifiers_from_yama_estate
 			}
@@ -1116,30 +1138,29 @@ hig_outworld_slot = {
 		}
 		trigger = {
 			owns_core_province = 4969
-			if = {
-				limit = {
-					has_dlc = "Dharma"
+			4969 = {
+				has_trade_building_trigger = yes
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
 				}
-				4969 = {
-					province_has_center_of_trade_of_level = 3
-				}
-			}
-			else = {
-				4969 = {
-					has_trade_building_trigger = yes
-					has_courthouse_building_trigger = yes
-					th_has_up_to_date_fort_building = {
-						tag = ROOT
-					}
-					has_tax_building_trigger = yes
-					has_production_building_trigger = yes
-					development = 25
-				}
+				has_production_building_trigger = yes
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.13
+			4969 = {
+				add_center_of_trade_level = 3
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 3
+				add_local_autonomy = -100
+				add_province_modifier = {
+					name = hig_sanzu_infrastructure
+					duration = -1
+				}
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 20
 			}
 		}
 	}
@@ -1341,7 +1362,7 @@ hig_colonial_slot = {
 		position = 1
 		trigger = {
 			navy_size_percentage = 1
-			num_of_heavy_ship = 3
+			num_of_heavy_ship = 5
 		}
 		effect = {
 			add_navy_tradition = 25
