@@ -17,6 +17,7 @@ hig_internal_slot = {
 		}
 		trigger = {
 			army_size_percentage = 1
+			num_of_generals = 1
 			OR = {
 				any_hired_mercenary_company = {
 					template = merc_th_oni_warriors
@@ -83,6 +84,10 @@ hig_internal_slot = {
 				name = hig_shinigami_reforms
 				duration = 9125
 			}
+			add_estate_loyalty = {
+				estate = estate_yama
+				loyalty = 50
+			}
 		}
 	}
 
@@ -96,7 +101,7 @@ hig_internal_slot = {
 				loyalty = 75
 			}
 			NOT = { overextension_percentage = 0.01 }
-			adm_tech = 7
+			adm_tech = 5
 			monthly_adm = 12
 		}
 		effect = {
@@ -104,7 +109,18 @@ hig_internal_slot = {
 				set_country_flag = hig_has_dealt_with_slacking_komachi
 			}
 			remove_estate_privilege = th_estate_nobles_slacking_shinigami
-			add_adm_power = 100
+			add_estate_loyalty = {
+				estate = estate_yama
+				loyalty = 50
+			}
+			change_estate_land_share = {
+				estate = estate_nobles
+				share = -25
+			}
+			custom_tooltip = hig_can_use_komachi_tt
+			hidden_effect = {
+				set_country_flag = hig_can_use_komachi
+			}
 		}
 	}
 
@@ -176,10 +192,6 @@ hig_internal_slot = {
 				}
 				custom_tooltip = TH_LOW_AUTONOMY_HELL_WORKSHOPS
 			}
-			custom_tooltip = hig_can_use_komachi_tt
-			hidden_effect = {
-				set_country_flag = hig_can_use_komachi
-			}
 		}
 	}
 
@@ -214,6 +226,12 @@ hig_internal_slot = {
 			}
 		}
 		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
 			if = {
 				limit = {
 					any_subject_country = {
@@ -309,12 +327,12 @@ hig_internal_slot = {
 					NOT = { exists = MYO }
 				}
 				country_event = {
-					id = flavor_hig.4
+					id = flavor_hig.2
 				}
 			}
 			else = {
 				country_event = {
-					id = flavor_hig.2
+					id = flavor_hig.4
 				}
 			}
 		}
@@ -431,79 +449,22 @@ hig_gensokyo_slot = {
 		position = 2
 		provinces_to_highlight = {
 			OR = {
-				is_capital_of = SKI
-				is_capital_of = YAC
-				is_capital_of = GBD
+				province_id = 5044
+				province_id = 5232
+				province_id = 5245
+				province_id = 5242
 			}
-			NOT = { controlled_by = ROOT }
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			SKI = {
-				OR = {
-					exists = no
-					AND = {
-						NOT = {
-							war_score_against = {
-								who = ROOT
-								value = -50
-							}
-						}
-						capital_scope = {
-							controlled_by = ROOT
-						}
-					}
-				}
-			}
-			YAC = {
-				OR = {
-					exists = no
-					AND = {
-						NOT = {
-							war_score_against = {
-								who = ROOT
-								value = -50
-							}
-						}
-						capital_scope = {
-							controlled_by = ROOT
-						}
-					}
-				}
-			}
-			GBD = {
-				OR = {
-					exists = no
-					AND = {
-						NOT = {
-							war_score_against = {
-								who = ROOT
-								value = -50
-							}
-						}
-						capital_scope = {
-							controlled_by = ROOT
-						}
-					}
-				}
-			}
+			owns_or_non_sovereign_subject_of = 5044
+			owns_or_non_sovereign_subject_of = 5232
+			owns_or_non_sovereign_subject_of = 5245
+			owns_or_non_sovereign_subject_of = 5242
 		}
 		effect = {
-			if = {
-				limit = {
-					OR = {
-						exists = SKI
-						exists = YAC
-						exists = GBD
-					}
-				}
-				country_event = {
-					id = flavor_hig.6
-				}
-			}
-			else = {
-				add_adm_power = 100
-				add_dip_power = 100
-				add_mil_power = 100
+			country_event = {
+				id = flavor_hig.6
 			}
 		}
 	}
@@ -520,37 +481,41 @@ hig_gensokyo_slot = {
 				area = Great_border
 				area = Western_great_border
 			}
-			NOT = { country_or_subject_holds = ROOT }
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			stability = 2
-			calc_true_if = {
-				all_province = {
-					OR = {
-						area = Saki_state
-						area = Yachie_state
-						area = Keiki_state
-						area = Great_border
-						area = Western_great_border
-					}
-					owner = {
-						OR = {
-							tag = ROOT
-							is_subject_of = ROOT
-						}
-					}
-					NOT = { local_autonomy = 10 }
-					NOT = { devastation = 1 }
-					prosperity = 75
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Saki_state
+					area = Yachie_state
+					area = Keiki_state
+					area = Great_border
+					area = Western_great_border
 				}
-				amount = 15
+				country_or_non_sovereign_subject_holds = ROOT
+				NOT = { local_autonomy = 10 }
+				NOT = { devastation = 1 }
+				value = 15
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Saki_state
+					area = Yachie_state
+					area = Keiki_state
+					area = Great_border
+					area = Western_great_border
+				}
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+				value = 4
 			}
 		}
 		effect = {
-			add_prestige = 25
 			add_estate_loyalty = {
 				estate = estate_yama
-				loyalty = 15
+				loyalty = 50
 			}
 			if = {
 				limit = {
@@ -841,10 +806,14 @@ hig_reform_gensokyo_slot = {
 					amount = 2
 				}
 				has_advisors_of_level = {
-					level = 3
-					amount = 1
+					level = 1
+					amount = 3
 				}
 			}
+			NOT = { num_of_loans = 1 }
+			NOT = { corruption = 1 }
+			treasury = 50
+			is_in_deficit = no
 		}
 		effect = {
 			The_hills = {
@@ -877,13 +846,13 @@ hig_reform_gensokyo_slot = {
 		position = 2
 		provinces_to_highlight = {
 			province_id = 5247
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			OR = {
+				NOT = { is_core = ROOT }
+				NOT = { owned_by = ROOT }
+			}
 		}
 		trigger = {
-			owns_or_non_sovereign_subject_of = 5247
-			5247 = {
-				is_in_capital_area = yes
-			}
+			owns_core_province = 5247
 		}
 		effect = {
 			5247 = {
@@ -944,15 +913,23 @@ hig_reform_gensokyo_slot = {
 			}
 		}
 		effect = {
-			#TOOD event of the Ministry moving
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
+			country_event = {
+				id = flavor_hig.8
+			}
 			if = {
 				limit = {
 					exists = NET
 				}
 				add_casus_belli = {
-					type = cb_touhou_mission_personal_union_war
+					type = cb_vassalize_mission
 					target = NET
-					months = 60
+					months = 600
 				}
 			}
 			netherworld_region = {
@@ -986,7 +963,7 @@ hig_reform_gensokyo_slot = {
 				set_country_flag = hig_has_return_hecatia_war_cb_flag
 			}
 			add_country_modifier = {
-				name = hig_reach_for_hecatia
+				name = hig_might_of_netherworld
 				duration = 9125
 			}
 		}
@@ -1012,13 +989,6 @@ hig_reform_gensokyo_slot = {
 						tooltip = HIG_hecatia_and_eiki_tt
 						has_country_flag = hig_hecatia_has_been_brought_back
 					}
-					AND = {
-						alliance_with = ROOT
-						custom_trigger_tooltip = {
-							tooltip = HIG_hecatia_and_eiki_tt
-							has_country_flag = hig_had_event_for_going_back_to_gensokyo
-						}
-					}
 				}
 			}
 		}
@@ -1026,9 +996,11 @@ hig_reform_gensokyo_slot = {
 			th_enable_touhou_advisor = {
 				advisor = th_advisor_hecatia
 			}
-			add_country_modifier = {
-				name = hig_hecatias_authority
-				duration = -1
+			5053 = {
+				add_province_modifier = {
+					name = hig_hecatias_palace_retaken
+					duration = -1
+				}
 			}
 		}
 	}
@@ -1039,7 +1011,10 @@ hig_reform_gensokyo_slot = {
 		}
 		position = 7
 		trigger = {
-			total_development = 650
+			OR = {
+				total_development = 650
+				has_estate_privilege = th_estate_yama_tighten_gensokyan_defense
+			}
 			OR = {
 				government_rank = 3
 				tag = GNK
@@ -1071,7 +1046,7 @@ hig_reform_gensokyo_slot = {
 			legitimacy = 100
 		}
 		effect = {
-			custom_tooltip = unlock_crownland_for_yama_and_edict_modifiers
+			custom_tooltip = unlock_crownland_for_yama_and_edict_modifiers_tt
 			hidden_effect = {
 				set_country_flag = hig_unlock_modifiers_from_yama_estate
 			}
@@ -1114,30 +1089,28 @@ hig_outworld_slot = {
 		}
 		trigger = {
 			owns_core_province = 4969
-			if = {
-				limit = {
-					has_dlc = "Dharma"
+			4969 = {
+				has_trade_building_trigger = yes
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
 				}
-				4969 = {
-					province_has_center_of_trade_of_level = 3
-				}
-			}
-			else = {
-				4969 = {
-					has_trade_building_trigger = yes
-					has_courthouse_building_trigger = yes
-					th_has_up_to_date_fort_building = {
-						tag = ROOT
-					}
-					has_tax_building_trigger = yes
-					has_production_building_trigger = yes
-					development = 25
-				}
+				has_production_building_trigger = yes
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.13
+			4969 = {
+				add_center_of_trade_level = 3
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 3
+				add_province_modifier = {
+					name = hig_sanzu_infrastructure
+					duration = -1
+				}
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 20
 			}
 		}
 	}
@@ -1147,30 +1120,48 @@ hig_outworld_slot = {
 		required_missions = { HIG_beyond_the_barrier }
 		position = 3
 		provinces_to_highlight = {
-			region = japan_region
+			OR = {
+				province_id = 1029
+				province_id = 1028
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			OR = {
-				num_of_owned_provinces_with = {
-					region = japan_region
-					value = 5
-				}
-				calc_true_if = {
-					all_known_country = {
-						capital_scope = {
-							region = japan_region
-						}
-						has_opinion = {
-							who = ROOT
-							value = 75
-						}
-					}
-					amount = 5
-				}
-			}
+			owns_or_non_sovereign_subject_of = 1028
+			owns_or_non_sovereign_subject_of = 1029
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			create_conquistador = {
+				tradition = 40
+			}
+			vietnam_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			lanka_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			south_lanka_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			tsang_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 
@@ -1179,42 +1170,58 @@ hig_outworld_slot = {
 		required_missions = { HIG_the_jizo_of_japan }
 		position = 4
 		provinces_to_highlight = {
-			owner = {
-				OR = {
-					religion = buddhism
-					religion = vajrayana
-					religion = mahayana
-				}
+			OR = {
+				province_id = 2373
+				province_id = 677
+				province_id = 2099
 			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			OR = {
-				num_of_owned_provinces_with = {
+			2373 = {
+				owner = {
 					OR = {
-						religion = buddhism
-						religion = vajrayana
-						religion = mahayana
-					}
-					value = 5
-				}
-				calc_true_if = {
-					all_known_country = {
-						OR = {
-							religion = buddhism
-							religion = vajrayana
-							religion = mahayana
-						}
+						tag = ROOT
+						is_subject_of = ROOT
+						alliance_with = ROOT
 						has_opinion = {
 							who = ROOT
-							value = 75
+							value = 100
 						}
 					}
-					amount = 5
+				}
+			}
+			677 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						alliance_with = ROOT
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+			2099 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						alliance_with = ROOT
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
 				}
 			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			create_explorer = {
+				tradition = 35
+			}
 		}
 	}
 
@@ -1232,7 +1239,7 @@ hig_outworld_slot = {
 		}
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = th_break_the_barrier_tt
+				tooltip = th_discover_middle_east_tt
 				OR = {
 					arabia_region = { has_discovered = ROOT }
 					egypt_region = { has_discovered = ROOT }
@@ -1241,6 +1248,7 @@ hig_outworld_slot = {
 			}
 		}
 		effect = {
+			#TODO Event
 			custom_tooltip = cool_effect
 		}
 	}
@@ -1339,7 +1347,7 @@ hig_colonial_slot = {
 		position = 1
 		trigger = {
 			navy_size_percentage = 1
-			num_of_heavy_ship = 3
+			num_of_heavy_ship = 5
 		}
 		effect = {
 			add_navy_tradition = 25
@@ -1370,8 +1378,38 @@ hig_colonial_slot = {
 			}
 		}
 		effect = {
-			add_dip_power = 75
-			add_navy_tradition = 35
+			add_country_modifier = {
+				name = hig_shinigami_explorers
+				duration = 9125
+			}
+			shandong_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT } 
+				}
+				add_permanent_claim = ROOT
+			}
+			jiangsu_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT } 
+				}
+				add_permanent_claim = ROOT
+			}
+			kanto_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT } 
+				}
+				add_permanent_claim = ROOT
+			}
+			eastern_chubu_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT } 
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 
@@ -1380,68 +1418,176 @@ hig_colonial_slot = {
 		required_missions = { HIG_beyond_the_barrier }
 		position = 3
 		provinces_to_highlight = {
-			superregion = china_superregion
+			province_id = 2140
 		}
 		trigger = {
-			china_superregion = {
+			2140 = {
 				num_of_units_in_province = {
+					who = ROOT
 					amount = 10
 				}
-			}
-		}
-		effect = {
-			custom_tooltip = cool_effect
-		}
-	}
-
-	HIG_the_concept_of_dharma = {
-		icon = mission_corsairs_of_the_north_sea
-		required_missions = { HIG_gather_the_10_kings }
-		position = 4
-		provinces_to_highlight = {
-			owner = {
-				OR = {
-					religion = buddhism
-					religion = vajrayana
-					religion = mahayana
-				}
-			}
-		}
-		trigger = {
-			OR = {
-				num_of_owned_provinces_with = {
-					religion_group = dharmic
-					value = 5
-				}
-				calc_true_if = {
-					all_known_country = {
-						religion_group = dharmic
+				owner = {
+					OR = {
+						tag = ROOT
+						alliance_with = ROOT
+						is_subject_of = ROOT
 						has_opinion = {
 							who = ROOT
-							value = 75
+							value = 100
 						}
 					}
-					amount = 5
 				}
 			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_hig.12
+			}
+			th_colonize_dev_province_for_root = {
+				province = 2701
+				trade_goods = coffee
+			}
+			2701 = {
+				add_province_modifier = {
+					name = hig_yama_coffe
+					duration = -1
+				}
+			}
+			west_java_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			central_java_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			east_java_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			surabaya_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			banten_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 
 	HIG_yama_influence_in_south_east_asia = {
 		icon = mission_corsairs_of_the_north_sea
+		required_missions = { HIG_gather_the_10_kings }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				area = west_java_area
+				area = central_java_area
+				area = east_java_area
+				area = surabaya_area
+				area = banten_area
+			}
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = west_java_area
+					area = central_java_area
+					area = east_java_area
+					area = surabaya_area
+					area = banten_area
+				}
+				value = 8
+			}
+		}
+		effect = {
+			#TODO Event
+			th_colonize_dev_province_for_root = {
+				province = 2684
+			}
+			purvanchal_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			orissa_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	HIG_the_concept_of_dharma = {
+		icon = mission_corsairs_of_the_north_sea
 		required_missions = {
-			HIG_the_concept_of_dharma
+			HIG_yama_influence_in_south_east_asia
 			HIG_the_way_of_buddhism
 		}
 		position = 5
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2095
+				province_id = 552
+			}
+		}
 		trigger = {
-			has_adm_advisor_3 = yes
+			2095 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						alliance_with = ROOT
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+			552 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						alliance_with = ROOT
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			#TODO Event
+			mecca_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 
@@ -1449,34 +1595,36 @@ hig_colonial_slot = {
 		icon = mission_corsairs_of_the_north_sea
 		required_missions = {
 			HIG_discover_the_middle_east
-			HIG_yama_influence_in_south_east_asia
+			HIG_the_concept_of_dharma
 		}
 		position = 6
 		provinces_to_highlight = {
-			owner = {
-				religion_group = muslim
-			}
+			province_id = 385
 		}
 		trigger = {
-			OR = {
-				num_of_owned_provinces_with = {
-					religion_group = muslim
-					value = 5
+			385 = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 10
 				}
-				calc_true_if = {
-					all_known_country = {
-						religion_group = muslim
+				owner = {
+					OR = {
+						tag = ROOT
+						alliance_with = ROOT
+						is_subject_of = ROOT
 						has_opinion = {
 							who = ROOT
-							value = 75
+							value = 100
 						}
 					}
-					amount = 5
 				}
 			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			#TODO Event
+			create_conquistador = {
+				tradition = 75
+			}
 		}
 	}
 
@@ -1488,29 +1636,29 @@ hig_colonial_slot = {
 		}
 		position = 7
 		provinces_to_highlight = {
-			owner = {
-				religion_group = christian
-			}
+			province_id = 118
 		}
 		trigger = {
-			OR = {
-				num_of_owned_provinces_with = {
-					religion_group = christian
-					value = 5
+			118 = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 10
 				}
-				calc_true_if = {
-					all_known_country = {
-						religion_group = christian
+				owner = {
+					OR = {
+						tag = ROOT
+						alliance_with = ROOT
+						is_subject_of = ROOT
 						has_opinion = {
 							who = ROOT
-							value = 75
+							value = 100
 						}
 					}
-					amount = 5
 				}
 			}
 		}
 		effect = {
+			#TODO Event
 			custom_tooltip = cool_effect
 		}
 	}
