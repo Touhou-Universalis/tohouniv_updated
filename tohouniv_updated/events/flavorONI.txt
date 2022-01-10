@@ -452,6 +452,9 @@ country_event = {
 			name = "Suika Ibuki"
 			female = yes
 		}
+		hidden_effect = {
+			set_global_flag = suika_not_come_shrine
+		}
 		
 		ai_chance = { 
 			factor = 50
@@ -485,6 +488,48 @@ country_event = {
 			name = oni_gloomy_suika
 			duration = 1825
 		}
+		hidden_effect = {
+			set_global_flag = suika_not_come_shrine
+			if = {
+				HKR = {
+					has_ruler = "Suika"
+					dynasty = "Ibuki"
+					ai = yes
+				}
+				HKR = {
+					kill_ruler = yes
+					clr_ruler_flag = HKR_suika_in_charge
+					clr_ruler_flag = touhou_character_ruler
+					clr_ruler_flag = touhou_original_ruler
+					clr_country_flag = th_suika_is_ruler
+					add_stability = 1
+				}
+			}
+			else_if = {
+				HKR = {
+					has_heir = yes
+					has_heir_flag = touhou_original_heir
+					ai = yes
+				}
+				HKR = {
+					kill_heir = {}
+					clr_heir_flag = touhou_character_ruler
+					clr_heir_flag = touhou_original_heir
+					clr_country_flag = th_suika_is_ruler
+					add_stability = 1
+				}
+			}
+			else_if = {
+				HKR = {
+					has_leader = "Suika Ibuki"
+				}
+				HKR = {
+					kill_leader = { type = "Suika Ibuki" }
+					clr_country_flag = hkr_suika_general
+					clr_country_flag = hkr_suika_general_unavailable
+				}
+			}
+		}
 		
 		ai_chance = { 
 			factor = 100
@@ -510,6 +555,19 @@ country_event = {
 			name = "Kasen Ibaraki"
 			female = yes
 		}
+		if = {
+			limit = {
+				exists = KSE
+				KSE = { ai = yes }
+			}
+			inherit = KSE
+			every_province = {
+				limit = {
+					is_core = KSE
+				}
+				remove_core = KSE
+			}
+		}
 		
 		ai_chance = { 
 			factor = 50
@@ -521,6 +579,19 @@ country_event = {
 		add_country_modifier = {
 			name = oni_kasen_return
 			duration = 10950
+		}
+		if = {
+			limit = {
+				exists = KSE
+				KSE = { ai = yes }
+			}
+			inherit = KSE
+			every_province = {
+				limit = {
+					is_core = KSE
+				}
+				remove_core = KSE
+			}
 		}
 		
 		ai_chance = { 
@@ -565,15 +636,22 @@ country_event = {
 		}
 		if = {
 			limit = {
-				NOT = { government = monarchy }
+				NOT = { has_country_flag = oni_has_enacted_onigashima }
 			}
-			change_government = monarchy
+			if = {
+				limit = {
+					NOT = { government = monarchy }
+				}
+				change_government = monarchy
+			}
+			add_government_reform = Gensokyan_oni_brawling_kingdom
+			hidden_effect = {
+				set_country_flag = oni_has_enacted_onigashima
+			}
 		}		
-		add_government_reform = Gensokyan_oni_brawling_kingdom
 		add_stability = 1
 		add_prestige = 50
 		hidden_effect = {
-			set_country_flag = oni_has_enacted_onigashima
 			set_country_flag = th_oni_had_yuugi
 		}
 		
@@ -680,7 +758,7 @@ country_event = {
 
 	option = {
 		set_country_flag = oni_not_hired_oni_warriors
-						
+
 		ai_chance = { 
 			factor = 1
 		}
@@ -711,7 +789,7 @@ country_event = {
 	option = {
 		clr_country_flag = oni_not_hired_oni_warriors
 		add_army_professionalism = 0.05
-						
+
 		ai_chance = { 
 			factor = 1
 		}
