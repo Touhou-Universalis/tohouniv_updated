@@ -747,6 +747,342 @@ country_event = {
 	}
 }
 
+#Higan and the Buddhistic Faith
+country_event = {
+	id = flavor_hig.13
+	title = flavor_hig.13.t
+	desc = flavor_hig.13.desc
+	picture = HECATIA2_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		th_buddhism_prepare_add_harmonized_religion_effect = yes
+	}
+	
+	option = { #Implement some parts of Buddhism in our judge system
+		name = flavor_hig.13.a
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = 20
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = { #Convert entirely
+		name = flavor_hig.13.b
+		trigger = {
+			NOT = { religion = th_buddhist }
+			NOT = { has_country_flag = hig_swapped_religion }
+		}
+		hidden_effect = {
+			set_country_flag = hig_swapped_religion
+		}
+		change_religion = th_buddhist
+		th_buddhism_harmonize_previous_religion = yes
+		custom_tooltip = flavor_hig.13.b.tt
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					OR = {
+						religion = buddhism
+						religion = vajrayana
+						religion = mahayana
+						religion = th_buddhist
+					}
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = th_follows_our_religion
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	after = {
+		th_buddhism_clean_up_flags = yes
+	}
+}
+
+#Make offer for the island Suqutra
+country_event = {
+	id = flavor_hig.14
+	title = flavor_hig.14.t
+	desc = flavor_hig.14.desc
+	picture = AFRICAN_EUROPEAN_PURCHASE_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = hig_allowed_to_purchase_suqutra
+		}
+	}
+
+	option = { #Make offer for the island Suqutra
+		name = flavor_hig.14.a
+		goto = 1099
+		trigger = {
+			NOT = { owns_or_non_sovereign_subject_of = 1099 }
+			1099 = {
+				owner = {
+					is_at_war = no
+					NOT = { capital = 1099 }
+				}
+			}
+		}
+		custom_tooltip = flavor_hig.14.a.tt
+		hidden_effect = {
+			1099 = {
+				save_global_event_target_as = hig_island_to_buy
+				owner = {
+					country_event = {
+						id = flavor_hig.15
+					}
+				}
+			}
+		}
+		mal_determine_offer_acceptance = {
+			province = 1099
+		}
+
+		ai_chance = { 
+			factor = 20
+		}
+	}
+
+	option = { #I need more time to think about it
+		name = flavor_hig.14.f
+		custom_tooltip = flavor_hig.14.f.tt
+		hidden_effect = {
+			set_country_flag = hig_allowed_to_purchase_suqutra
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+
+	option = { #I already have them all though
+		name = flavor_hig.14.g
+		trigger = {
+			owns_or_non_sovereign_subject_of = 1099
+		}
+		highlight = yes
+		add_mercantilism = 5
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#The gold offer from Higan
+country_event = {	
+	id = flavor_hig.15
+	title = flavor_hig.15.t
+	desc = flavor_hig.15.desc
+	picture = AFRICAN_EUROPEAN_PURCHASE_eventPicture
+	goto = hig_island_to_buy 
+	is_triggered_only = yes
+	
+	option = {	#Thanks for the money
+		name = flavor_hig.15.a
+		event_target:hig_island_to_buy = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+		}
+		add_treasury = 1500
+		FROM = {
+			country_event = {
+				id = flavor_hig.16
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					is_rival = FROM
+					is_enemy = FROM
+				}
+			}
+			modifier = {
+				factor = 0.25
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = 0
+					}
+				}
+			}
+			modifier = {
+				factor = 0.25
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = -50
+					}
+				}
+			}
+			modifier = {
+				factor = 0.25
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = -75
+					}
+				}
+			}
+			modifier = {
+				factor = 0.25
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = -100
+					}
+				}
+			}
+			modifier = {
+				factor = 0.25
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = -125
+					}
+				}
+			}
+			modifier = {
+				factor = 0.25
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = -150
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					has_opinion = {
+						who = FROM
+						value = -175
+					}
+				}
+			}
+		}
+	}
+	
+	option = {	#Nah
+		name = flavor_hig.15.b
+		event_target:hig_island_to_buy = {
+			add_core = FROM
+		}
+		FROM = {
+			country_event = {
+				id = flavor_hig.17
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = { is_rival = FROM }
+				NOT = { is_enemy = FROM }
+			}
+			modifier = {
+				factor = 0.25
+				has_opinion = {
+					who = FROM
+					value = 0
+				}
+			}
+			modifier = {
+				factor = 0.25
+				has_opinion = {
+					who = FROM
+					value = 50
+				}
+			}
+			modifier = {
+				factor = 0
+				has_opinion = {
+					who = FROM
+					value = 100
+				}
+			}
+		}
+	}
+}
+
+#Higan gets the island
+country_event = {
+	id = flavor_hig.16
+	title = flavor_hig.16.t
+	desc = flavor_hig.16.desc
+	picture = AFRICAN_EUROPEAN_PURCHASE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Lovely
+		name = flavor_hig.16.a
+		add_treasury = -1500
+		tooltip = {
+			event_target:hig_island_to_buy = {
+				remove_core = FROM
+				add_core = ROOT
+				cede_province = ROOT
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			clear_global_event_target = hig_island_to_buy
+		}
+	}
+}
+
+#Higan gets refused
+country_event = {
+	id = flavor_hig.17
+	title = flavor_hig.17.t
+	desc = flavor_hig.17.desc
+	picture = AFRICAN_EUROPEAN_PURCHASE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Aww... then I must take it by force then
+		name = flavor_hig.17.a
+		tooltip = {
+			event_target:hig_island_to_buy = {
+				add_core = ROOT
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			clear_global_event_target = hig_island_to_buy
+		}
+	}
+}
+
 #Hire Komachi
 country_event = {
 	id = flavor_hig.102
