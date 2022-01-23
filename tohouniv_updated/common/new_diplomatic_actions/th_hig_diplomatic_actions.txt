@@ -5,51 +5,220 @@ th_lecture_ruler = {
 	require_acceptance = no
 
 	is_visible = {
-		has_country_flag = th_can_lecture_countries
+		has_government_attribute = enables_yama_authority
+		FROM = { NOT = { has_country_modifier = th_lectured_modifier } }
+		FROM = {
+			capital_scope = {
+				continent = gensokyo_continent
+			}
+		}
 	}
 
 	is_allowed = {
-		reverse_has_opinion_modifier = {
-			who = FROM
-			modifier = aggressive_expansion
+		if = {
+			limit = {
+				alliance_with = FROM
+			}
+			NOT = { alliance_with = FROM }
 		}
-		NOT = {
-			reverse_has_opinion = {
-				who = FROM
-				value = 0
+		if = {
+			limit = {
+				has_opinion = { who = FROM value = 75 }
+			}
+			NOT = { has_opinion = { who = FROM value = 75 } }
+		}
+		if = {
+			limit = {
+				FROM = {
+					is_at_war = no
+					NOT = { had_recent_war = 10 }
+				}
+			}
+			FROM = {
+				OR = {
+					had_recent_war = 10
+					is_at_war = yes
+				}
 			}
 		}
-		NOT = { alliance_with = FROM }
-		FROM = { is_excommunicated = no }
-		estate_influence = {
-			estate = estate_yama
-			influence = 5
+		if = {
+			limit = {
+				FROM = { is_in_war = { defenders = FROM } }
+			}
+			NOT = { FROM = { is_in_war = { defenders = FROM } } }
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			NOT = { war_with = FROM }
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_recently_lectured
+					NOT = {
+						had_country_flag = {
+							flag = th_recently_lectured
+							days = 7300
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_lecture_ruler_tt
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_recently_lectured }
+						had_country_flag = {
+							flag = th_recently_lectured
+							days = 7300
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { has_country_modifier = th_grace_of_the_yama }
+			}
+			NOT = { FROM = { has_country_modifier = th_grace_of_the_yama } }
+		}
+		if = {
+			limit = {
+				NOT = {
+					estate_loyalty = {
+						estate = estate_yama
+						loyalty = 40
+					}
+				}
+			}
+			estate_loyalty = {
+				estate = estate_yama
+				loyalty = 40
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = th_improved_lecturing }
+			}
+			OR = {
+				FROM = { NOT = { total_development = 51 } }
+				AND = {
+					FROM = { NOT = { total_development = 101 } }
+					estate_influence = {
+						estate = estate_yama
+						influence = 15
+					}
+				}
+				AND = {
+					FROM = { NOT = { total_development = 201 } }
+					estate_influence = {
+						estate = estate_yama
+						influence = 30
+					}
+				}
+				AND = {
+					FROM = { NOT = { total_development = 301 } }
+					estate_influence = {
+						estate = estate_yama
+						influence = 45
+					}
+				}
+				AND = {
+					FROM = { NOT = { total_development = 401 } }
+					estate_influence = {
+						estate = estate_yama
+						influence = 60
+					}
+				}
+				estate_influence = {
+					estate = estate_yama
+					influence = 75
+				}
+			}
 		}
 	}
 
 	on_accept = {
 		th_clear_copy_flag = yes
-		excommunicate = FROM
 		FROM = {
-			add_country_modifier = {
-				name = th_lectured_modifier
-				duration = 3650
-			}
+			clr_country_flag = th_recently_lectured
+			set_country_flag = th_recently_lectured
 			country_event = {
-				id = th_yama_authority_event.99
-				days = 3650
+				id = th_yama_authority_event.98
 			}
 		}
 		add_estate_loyalty = {
 			estate = estate_yama
-			loyalty = 25
+			loyalty = -10
 		}
-		add_estate_influence_modifier = {
-			estate = estate_yama
-			desc = TH_YAMA_LECTURED_A_RULER
-			influence = -10
-			duration = 3650
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_lift_lecture = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		has_government_attribute = enables_yama_authority
+		FROM = { has_country_modifier = th_lectured_modifier }
+	}
+
+	is_allowed = {
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			country_event = {
+				id = th_yama_authority_event.97
+			}
 		}
+		add_corruption = 4
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_bestow_yama_grace = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		has_government_attribute = enables_yama_authority
+		FROM = { NOT = { has_country_modifier = th_lectured_modifier } }
+		FROM = {
+			capital_scope = {
+				continent = gensokyo_continent
+			}
+		}
+	}
+
+	is_allowed = {
+		NOT = { FROM = { has_country_modifier = th_grace_of_the_yama } }
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			country_event = {
+				id = th_yama_authority_event.96
+			}
+		}
+		add_country_modifier = {
+			name = th_showed_yama_grace
+			duration = 7300
+		}
+		add_corruption = 2
 	}
 
 	ai_will_do = {
@@ -63,7 +232,7 @@ th_enforce_gensokyan_peace = {
 	require_acceptance = yes
 
 	is_visible = {
-		has_country_flag = th_can_enforce_gensokyan_peace
+		has_government_attribute = enables_yama_authority
 	}
 
 	is_allowed = {
@@ -129,7 +298,7 @@ th_demand_unlawful_territory = {
 	require_acceptance = yes
 
 	is_visible = {
-		has_country_flag = th_can_demand_unlawful_territory
+		has_government_attribute = enables_yama_authority
 	}
 
 	is_allowed = {
@@ -184,7 +353,7 @@ th_demand_partitioning = {
 	require_acceptance = yes
 
 	is_visible = {
-		has_country_flag = th_can_demand_unlawful_territory
+		has_government_attribute = enables_yama_authority
 	}
 
 	is_allowed = {

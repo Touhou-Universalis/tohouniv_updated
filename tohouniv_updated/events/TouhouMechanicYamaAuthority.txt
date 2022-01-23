@@ -83,6 +83,130 @@ country_event = {
 	}
 }
 
+#Gain Grace of the Yama
+country_event = {
+	id = th_yama_authority_event.96
+	title = th_yama_authority_event.96.t
+	desc = th_yama_authority_event.96.desc
+	picture = EIKIBOSS_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		option = th_yama_authority_event.96.a
+		event_target:YamaOfGensokyo = {
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = th_grace_of_the_yama
+			}
+		}
+		add_country_modifier = {
+			name = th_grace_of_the_yama
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Get the lecture lifted
+country_event = {
+	id = th_yama_authority_event.97
+	title = th_yama_authority_event.97.t
+	desc = th_yama_authority_event.97.desc
+	picture = EIKIBOSS_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		option = th_yama_authority_event.97.a
+		if = {
+			limit = {
+				is_excommunicated = yes
+			}
+			tooltip = {
+				event_target:YamaOfGensokyo = {
+					excommunicate = ROOT
+				}
+			}
+		}
+		th_enable_respawn_ability = yes
+		remove_country_modifier = th_lectured_modifier
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	after = {
+		if = {
+			limit = {
+				is_excommunicated = yes
+			}
+			event_target:YamaOfGensokyo = {
+				excommunicate = ROOT
+			}
+		}
+	}
+}
+
+#Get the lecture
+country_event = {
+	id = th_yama_authority_event.98
+	title = th_yama_authority_event.98.t
+	desc = th_yama_authority_event.98.desc
+	picture = EIKIBOSS_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		option = th_yama_authority_event.98.a
+		tooltip = {
+			event_target:YamaOfGensokyo = {
+				excommunicate = ROOT
+			}
+		}
+		th_disable_respawn_ability = {
+			custom_tooltip = th_yama_authority_event.98.a.tt
+			duration = 3650
+		}
+		add_country_modifier = {
+			name = th_lectured_modifier
+			duration = 3650
+		}
+		kill_ruler = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	after = {
+		event_target:YamaOfGensokyo = {
+			excommunicate = ROOT
+		}
+		country_event = {
+			id = th_yama_authority_event.99
+			days = 3650
+		}
+		if = {
+			limit = {
+				personality = ai_militarist
+			}
+			random_list = {
+				1 = {
+					set_ai_personality = {
+						personality = ai_capitalist
+					}
+				}
+				1 = {
+					set_ai_personality = {
+						personality = ai_diplomat
+					}
+				}
+			}
+		}
+	}
+}
+
 #Remove the lecture
 country_event = {
 	id = th_yama_authority_event.99
@@ -139,7 +263,7 @@ country_event = {
 }
 
 #Count countries in Gensokyo and count approving countries
-province_event = {
+country_event = {
 	id = th_yama_authority_event.102
 	title = none
 	desc = none
@@ -147,16 +271,18 @@ province_event = {
 	hidden = yes
 
 	trigger = {
-		province_id = 1
 		event_target:YamaOfGensokyo = {
 			exists = yes
 		}
-		OR = {
-			NOT = { has_province_flag = th_counted_active_gensokyan_countries }
-			had_province_flag = {
-				flag = th_counted_active_gensokyan_countries
-				days = 29
+		1 = {
+			OR = {
+				NOT = { has_province_flag = th_counted_active_gensokyan_countries }
+				had_province_flag = {
+					flag = th_counted_active_gensokyan_countries
+					days = 29
+				}
 			}
+			owned_by = ROOT
 		}
 	}
 
@@ -165,19 +291,21 @@ province_event = {
 	}
 
 	option = {
-		set_variable = {
-			which = th_gensokyan_counter
-			value = 0
-		}
-		set_variable = {
-			which = th_approving_gensokyan_counter
-			value = 0
+		1 = {
+			set_variable = {
+				which = th_gensokyan_counter
+				value = 0
+			}
+			set_variable = {
+				which = th_approving_gensokyan_counter
+				value = 0
+			}
 		}
 		gensokyo_continent = {
 			limit = {
 				is_capital = yes
 			}
-			ROOT = {
+			1 = {
 				change_variable = {
 					which = th_gensokyan_counter
 					value = 1
@@ -194,7 +322,7 @@ province_event = {
 						}
 					}
 				}
-				ROOT = {
+				1 = {
 					change_variable = {
 						which = th_approving_gensokyan_counter
 						value = 1
