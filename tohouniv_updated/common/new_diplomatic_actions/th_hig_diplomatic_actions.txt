@@ -244,7 +244,8 @@ th_enforce_gensokyan_peace = {
 				is_in_war = {
 					defender_leader = THIS
 					attacker_leader = FROM
-				}
+				}				
+				NOT = { war_with = ROOT }
 			}
 		}
 		if = {
@@ -256,6 +257,7 @@ th_enforce_gensokyan_peace = {
 		if = {
 			limit = {
 				is_at_war = yes
+				NOT = { has_country_flag = th_improved_enforce_gensokyan_peace }
 			}
 			is_at_war = no
 		}
@@ -279,8 +281,10 @@ th_enforce_gensokyan_peace = {
 					attacker_leader = FROM
 				}
 			}
-			FROM = {
-				white_peace = PREV
+			FROM = { white_peace = PREV }
+			reverse_add_opinion = {
+				modifier = th_enforced_peace_on_us
+				who = FROM
 			}
 		}
 		FROM = {
@@ -309,10 +313,13 @@ th_enforce_gensokyan_peace = {
 					defender_leader = THIS
 					attacker_leader = FROM
 				}
+				NOT = { war_with = ROOT }
 			}
 			set_country_flag = th_hig_defender
-			ROOT = {
-				join_all_defensive_wars_of = PREV
+			ROOT = { join_all_defensive_wars_of = PREV }			
+			add_opinion = {
+				modifier = th_enforced_peace_aid
+				who = ROOT
 			}
 		}
 		ROOT = { set_country_flag = th_hig_joined_enforced_peace_war }
@@ -487,7 +494,7 @@ th_enforce_gensokyan_peace = {
 			}
 		}
 		add_entry = {
-			name = DIPLO_HISTORICAL_RIVAL			
+			name = DIPLO_HISTORICAL_RIVAL
 			limit = {
 				OR = { 
 					historical_rival_with = FROM
@@ -521,28 +528,96 @@ th_demand_unlawful_territory = {
 	}
 
 	is_allowed = {
-		FROM = {
-			any_owned_province = {
-				continent = gensokyo_continent
-				NOT = { is_core = FROM }
-				is_capital = no
-				NOT = { has_province_modifier = th_unlawful_territory }
-				any_core_country = {
-					is_core = PREV
+		if = {
+			limit = {
+				FROM = {
+					NOT = {
+						any_owned_province = {
+							continent = gensokyo_continent
+							NOT = { is_core = FROM }
+							is_capital = no
+							NOT = { has_province_modifier = th_unlawful_territory }
+							any_core_country = {
+								is_core = PREV
+							}
+						}
+					}
 				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_demand_unlawful_territory_ct
+				FROM = {
+					any_owned_province = {
+						continent = gensokyo_continent
+						NOT = { is_core = FROM }
+						is_capital = no
+						NOT = { has_province_modifier = th_unlawful_territory }
+						any_core_country = {
+							is_core = PREV
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			NOT = { war_with = FROM }
+		}
+		if = {
+			limit = {
+				NOT = {
+					estate_loyalty = {
+						estate = estate_yama
+						loyalty = 1
+					}
+				}
+			}
+			estate_loyalty = {
+				estate = estate_yama
+				loyalty = 1
 			}
 		}
 	}
 
 	on_accept = {
-		FROM = {
-			th_yama_force_unlawful_territory_back = yes
+		if = {
+			limit = {
+				has_country_flag = th_improved_demand_unlawful_territory
+			}
+			FROM = {
+				th_yama_force_unlawful_territory_back = {
+					improved_effect = yes
+				}
+			}
+		}
+		else = {
+			add_estate_loyalty = {
+				estate = estate_yama
+				loyalty = -1
+			}
+			FROM = {
+				th_yama_force_unlawful_territory_back = {}
+			}
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_demanded_unlawful_territory
 		}
 	}
 
 	on_decline = {
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = -1
+		}
 		FROM = {
 			th_yama_refuse_unlawful_territory_back = yes
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_demanded_unlawful_territory
 		}
 	}
 
@@ -560,6 +635,22 @@ th_demand_unlawful_territory = {
 				value = 0.2
 			}
         }
+		add_entry = {
+			name = TH_HAS_IMPROVED_DEMAND_PROVINCE
+			limit = {
+				has_country_flag = th_improved_demand_unlawful_territory
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 10
+			}
+		}
 	}
 	ai_will_do = {
 		always = no
