@@ -86,6 +86,12 @@ th_lecture_ruler = {
 		}
 		if = {
 			limit = {
+				truce_with = FROM
+			}
+			NOT = { truce_with = FROM }
+		}
+		if = {
+			limit = {
 				NOT = {
 					estate_loyalty = {
 						estate = estate_yama
@@ -236,16 +242,19 @@ th_enforce_gensokyan_peace = {
 	}
 
 	is_allowed = {
-		FROM = {
-			any_known_country = {
-				capital_scope = {
-					continent = gensokyo_continent
+		custom_trigger_tooltip = {
+			tooltip = th_enforce_gensokyan_peace_tt
+			FROM = {
+				any_known_country = {
+					capital_scope = {
+						continent = gensokyo_continent
+					}
+					is_in_war = {
+						defender_leader = THIS
+						attacker_leader = FROM
+					}				
+					NOT = { war_with = ROOT }
 				}
-				is_in_war = {
-					defender_leader = THIS
-					attacker_leader = FROM
-				}				
-				NOT = { war_with = ROOT }
 			}
 		}
 		if = {
@@ -512,6 +521,23 @@ th_enforce_gensokyan_peace = {
 				value = -100
 			}
 		}
+        add_entry = {
+            name = TH_IS_NOT_GENSOKYAN
+			limit = {
+				FROM = {
+					capital_scope = { NOT = { continent = gensokyo_continent } }
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -50
+			}
+        }
 	}
 	ai_will_do = {
 		always = no
@@ -619,9 +645,78 @@ th_demand_unlawful_territory = {
 			who = FROM
 			modifier = th_demanded_unlawful_territory
 		}
+		add_casus_belli = {
+			target = FROM
+			type = cb_war_for_unlawful_territory
+			months = 120
+		}
 	}
 
 	ai_acceptance = {
+		add_entry = {
+			name = TH_BASE_DISOBEDIENCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -75
+			}
+		}
+		add_entry = {
+			name = TH_NEGATIVE_PRESTIGE
+			
+			limit = {
+				NOT = { prestige = 0 }
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = prestige
+				who = ROOT
+			}
+			#-1 trust = -2 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.2
+			}
+		}
+        add_entry = {
+            name = TH_WAS_ALREADY_DEMANDED_A_PROVINCE
+			limit = {
+				reverse_has_opinion_modifier = {
+					who = FROM
+					modifier = th_demanded_unlawful_territory
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+        }
+        add_entry = {
+            name = TH_IS_NOT_GENSOKYAN
+			limit = {
+				FROM = {
+					capital_scope = { NOT = { continent = gensokyo_continent } }
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -50
+			}
+        }
         add_entry = {
             name = TH_DIPLO_OPPINION
 			export_to_variable = {
@@ -636,6 +731,122 @@ th_demand_unlawful_territory = {
 			}
         }
 		add_entry = {
+			name = TH_FEAR_OF_US
+			export_to_variable = {
+				variable_name = ai_value
+				value = manpower
+				who = ROOT
+				with = FROM
+			}
+			export_to_variable = {
+				variable_name = from_manpower
+				value = manpower
+				who = FROM
+			}
+			subtract_variable = {
+				which = ai_value
+				which = from_manpower
+			}
+			export_to_variable = {
+				variable_name = root_discipline
+				value = modifier:discipline
+				who = ROOT
+			}
+			export_to_variable = {
+				variable_name = from_discipline
+				value = modifier:discipline
+				who = FROM
+			}
+			subtract_variable = {
+				which = root_discipline
+				which = from_discipline
+			}
+			multiply_variable = {
+				which = root_discipline
+				value = 100
+			}
+			change_variable = {
+				which = ai_value
+				which = root_discipline
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+        add_entry = {
+            name = TH_YAMA_INFLUENCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = modifier:yama_authority_multiplier
+				who = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 100
+			}
+        }
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
 			name = TH_HAS_IMPROVED_DEMAND_PROVINCE
 			limit = {
 				has_country_flag = th_improved_demand_unlawful_territory
@@ -649,6 +860,38 @@ th_demand_unlawful_territory = {
 			multiply_variable = {
 				which = ai_value
 				value = 10
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 2
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
 			}
 		}
 	}
@@ -667,28 +910,139 @@ th_demand_partitioning = {
 	}
 
 	is_allowed = {
-		FROM = {
-			any_owned_province = {
-				continent = gensokyo_continent
-				is_capital = no
-				any_core_country = {
-					exists = no
-					is_core = PREV
+		if = {
+			limit = {
+				FROM = {
+					NOT = {
+						calc_true_if = {
+							all_owned_province = {
+								continent = gensokyo_continent
+								is_capital = no
+								any_core_country = {
+									exists = no
+									is_core = PREV
+								}
+							}
+							amount = 5
+						}
+					}
 				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_demand_partitioning_tt
+				FROM = {
+					calc_true_if = {
+						all_owned_province = {
+							continent = gensokyo_continent
+							is_capital = no
+							any_core_country = {
+								exists = no
+								is_core = PREV
+							}
+						}
+						amount = 5
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			NOT = { war_with = FROM }
+		}
+		if = {
+			limit = {
+				NOT = {
+					estate_loyalty = {
+						estate = estate_yama
+						loyalty = 10
+					}
+				}
+			}
+			estate_loyalty = {
+				estate = estate_yama
+				loyalty = 10
 			}
 		}
 	}
 
 	on_accept = {
-		FROM = {
-			th_yama_force_partition = yes
+		FROM = { th_yama_force_partition = yes }
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = -10
+		}
+		reverse_add_opinion = {
+			modifier = th_demanded_partitioning
+			who = FROM
 		}
 	}
 
 	on_decline = {
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = -10
+		}
+		add_casus_belli = {
+			target = FROM
+			type = cb_partitioning_war
+			months = 60
+		}
+		reverse_add_opinion = {
+			modifier = th_demanded_partitioning
+			who = FROM
+		}
 	}
 
 	ai_acceptance = {
+		add_entry = {
+			name = TH_BASE_DISOBEDIENCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -75
+			}
+		}
+		add_entry = {
+			name = TH_NEGATIVE_PRESTIGE
+			
+			limit = {
+				NOT = { prestige = 0 }
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = prestige
+				who = ROOT
+			}
+			#-1 trust = -2 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.2
+			}
+		}
+        add_entry = {
+            name = TH_WAS_ALREADY_DEMANDED_A_PROVINCE
+			limit = {
+				reverse_has_opinion_modifier = {
+					who = FROM
+					modifier = th_demanded_unlawful_territory
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+        }
         add_entry = {
             name = TH_DIPLO_OPPINION
 			export_to_variable = {
@@ -700,6 +1054,184 @@ th_demand_partitioning = {
 			multiply_variable = {
 				which = ai_value 
 				value = 0.2
+			}
+        }
+		add_entry = {
+			name = TH_FEAR_OF_US
+			export_to_variable = {
+				variable_name = ai_value
+				value = manpower
+				who = ROOT
+				with = FROM
+			}
+			export_to_variable = {
+				variable_name = from_manpower
+				value = manpower
+				who = FROM
+			}
+			subtract_variable = {
+				which = ai_value
+				which = from_manpower
+			}
+			export_to_variable = {
+				variable_name = root_discipline
+				value = modifier:discipline
+				who = ROOT
+			}
+			export_to_variable = {
+				variable_name = from_discipline
+				value = modifier:discipline
+				who = FROM
+			}
+			subtract_variable = {
+				which = root_discipline
+				which = from_discipline
+			}
+			multiply_variable = {
+				which = root_discipline
+				value = 100
+			}
+			change_variable = {
+				which = ai_value
+				which = root_discipline
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+        add_entry = {
+            name = TH_YAMA_INFLUENCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = modifier:yama_authority_multiplier
+				who = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 100
+			}
+        }
+		add_entry = {
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = -0.5
+			multiply_variable = {
+				which = ai_value
+				value = -0.5
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 2
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+        add_entry = {
+            name = TH_IS_NOT_GENSOKYAN
+			limit = {
+				FROM = {
+					capital_scope = { NOT = { continent = gensokyo_continent } }
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -50
 			}
         }
 	}
@@ -715,10 +1247,30 @@ th_appoint_executor = {
 
 	is_visible = {
 		has_country_flag = th_can_appoint_an_executor
+		NOT = { th_yama_executor = 1 }
 	}
 
 	is_allowed = {
-		NOT = { th_yama_executor = 1 }
+		if = {
+			limit = {
+				NOT = {
+					estate_loyalty = {
+						estate = estate_yama
+						loyalty = 20
+					}
+				}
+			}
+			estate_loyalty = {
+				estate = estate_yama
+				loyalty = 20
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			NOT = { war_with = FROM }
+		}
 	}
 
 	on_accept = {
@@ -726,7 +1278,11 @@ th_appoint_executor = {
 		create_subject = {
 			subject_type = th_yama_executor
 			subject = FROM
-		}	
+		}
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = -20
+		}
 	}
 
 	on_decline = {
@@ -734,6 +1290,10 @@ th_appoint_executor = {
 			target = FROM
 			type = cb_touhou_enforce_executor_service
 			months = 120
+		}
+		add_estate_loyalty = {
+			estate = estate_yama
+			loyalty = -20
 		}
 	}
 
