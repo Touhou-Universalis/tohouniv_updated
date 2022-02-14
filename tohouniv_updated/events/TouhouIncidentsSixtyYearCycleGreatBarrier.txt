@@ -31,79 +31,18 @@ country_event = {
 	}
 
 	immediate = {
-		th_incident_forbid_country_to_investigate = { who = CRD }
-		th_incident_forbid_country_to_investigate = { who = ONI }
-		th_incident_forbid_country_to_investigate = { who = ORN }
-		th_incident_forbid_country_to_investigate = { who = OKU }
-		th_incident_forbid_country_to_investigate = { who = KMJ }
-		th_incident_forbid_country_to_investigate = { who = MRY }
+		th_incident_forbid_country_to_investigate = { who = HIG }
+		th_incident_forbid_country_to_investigate = { who = SNZ }
 		th_start_incident_effect = {
 			incident = sixty_year_cycle_incident
 		}
 		gensokyo_superregion = {
 			limit = {
-				NOT = { region = former_hell_region }
-				NOT = { region = hell_region }
-				owner = {
-					NOT = { tag = CRD }
-					NOT = { tag = SCD }
-					NOT = { was_tag = CRD }
-					NOT = { was_tag = SCD }
-					NOT = { is_subject_of = CRD }
-					NOT = { is_subject_of = SCD }
-				}
-				any_neighbor_province = {
-					OR = {
-						region = former_hell_region
-						region = hell_region
-					}
-				}
-				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
-				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+				NOT = { has_province_modifier = th_POFV_random_flower_bed }
 			}
-			random_list = {
-				90 = {
-					add_province_modifier = {
-						name = th_SA_wandering_vengeful_spirits
-						duration = -1
-						desc = th_incident_duration_tt
-					}
-				}
-				10 = {
-					add_province_modifier = {
-						name = th_SA_wandering_helpful_spirits
-						duration = 1460
-					}
-				}
-			}
-		}
-		random_province = {
-			limit = {
-				continent = gensokyo_continent
-				NOT = { region = former_hell_region }
-				NOT = { region = hell_region }
-				owner = {
-					NOT = { tag = CRD }
-					NOT = { tag = SCD }
-					NOT = { was_tag = CRD }
-					NOT = { was_tag = SCD }
-					NOT = { is_subject_of = CRD }
-					NOT = { is_subject_of = SCD }
-				}
-				any_neighbor_province = {
-					OR = {
-						region = former_hell_region
-						region = hell_region
-					}
-					NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
-					NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
-				}
-				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
-				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
-			}
-			add_province_modifier = {
-				name = th_SA_wandering_helpful_spirits
-				duration = 1460
+			add_permanent_province_modifier = {
+				name = th_POFV_random_flower_bed
+				duration = -1
 			}
 		}
 	}
@@ -118,6 +57,7 @@ country_event = {
 				id = th_sixty_year_cycle_incident_events.1
 			}
 		}
+		set_global_flag = th_POFV_random_matches_active
 		ai_chance = { 
 			factor = 100
 		}
@@ -128,89 +68,33 @@ country_event = {
 country_event = {
 	id = th_sixty_year_cycle_incident_events.1
 	title = "th_sixty_year_cycle_incident_events.1.t"
-	desc = {
-		trigger = {
-			th_is_or_was_tag = {
-				tag = CRD
-			}
-		}
-		desc = "th_sixty_year_cycle_incident_events.1.desc.1"
-	}
-	desc = {
-		trigger = { 
-			NOT = { tag = CRD }
-			NOT = {	was_tag = CRD }
-			NOT = { tag = MRY }
-			NOT = { was_tag = MRY }
-		}
-		desc = "th_sixty_year_cycle_incident_events.1.desc.2"
-	}
-	desc = {
-		trigger = { 
-			OR = {
-				tag = MRY
-				was_tag = MRY
-			}
-		}
-		desc = "th_sixty_year_cycle_incident_events.1.desc.3"
-	}
+	desc = "th_sixty_year_cycle_incident_events.1.desc"
 	picture = HIGAN_eventPicture
 
 	is_triggered_only = yes	
 
-	option = {		#These Hot Springs need investigations
+	option = {		#Curious... I will investigate this phenomenon
 		name = "th_sixty_year_cycle_incident_events.1.a"
+		custom_tooltip = th_sixty_year_cycle_incident_events.1.a.tt
 		trigger = {
-			th_incident_is_investigator = yes
+			NOT = { tag = HIG }
+			NOT = { was_tag = HIG }
+			NOT = { tag = SNZ }
+			NOT = { was_tag = SNZ }
 		}
 		highlight = yes	
-		th_investigate_incident = {
-			incident = sixty_year_cycle_incident
-		}
-
-		ai_chance = {
-			factor = 100
-		}
-	}
-	
-	option = {		#These Hot Springs need investigations
-		name = "th_sixty_year_cycle_incident_events.1.b"
-		trigger = {
-			th_incident_is_investigator = yes
-			th_is_not_major_main_character = yes
-			th_is_not_minor_main_character = yes
-			any_known_country = {	#must have another eligible investigator country
-				th_incident_can_become_investigator = yes
-			}
-		}
-		th_start_incident_tooltip = { incident = sixty_year_cycle_incident }
-		th_refuse_investigating_incident = yes
-		ai_chance = {
-			factor = 0
-		}
-	}
-	
-	option = {		#I shall be the first investigator!For main character player who was not chosen the first investigator
-		name = "th_sixty_year_cycle_incident_events.1.c"
-		trigger = {
-			th_incident_is_not_investigator = yes
-			OR = {
-				tag = HKR
-				tag = FOM
-				AND = {
-					th_incident_is_biasedly_picked_investigator = yes
+		hidden_effect = {
+			set_country_flag = th_POFV_joined_the_investigation
+			if = {
+				limit = {
 					ai = no
+					NOT = { has_country_flag = th_incident_had_info }
+				}
+				country_event = {
+					id = th_danmaku_event.1
+					days = 1
 				}
 			}
-			th_incident_can_become_investigator = yes
-		}
-		highlight = yes
-		th_investigate_incident = {
-			incident = sixty_year_cycle_incident
-		}
-		hidden_effect = {
-			th_incident_clr_previous_investigators = yes
-			th_incident_set_country_to_new_investigator = yes
 		}
 
 		ai_chance = {
@@ -218,30 +102,27 @@ country_event = {
 		}
 	}
 	
-	option = {		#Well, let it be.
-		name = "th_sixty_year_cycle_incident_events.1.d"	
+	option = {		#These flowerbeds need investigations
+		name = "th_sixty_year_cycle_incident_events.1.b"
+		custom_tooltip = th_sixty_year_cycle_incident_events.1.b.tt
 		trigger = {
-			th_incident_is_not_investigator = yes
-			NOT = { tag = CRD }
-			NOT = { was_tag = CRD }
-			NOT = { tag = MRY }
-			NOT = { was_tag = MRY }
-		}	
-		th_start_incident_tooltip = { incident = sixty_year_cycle_incident }
-
+			NOT = { tag = HIG }
+			NOT = { was_tag = HIG }
+			NOT = { tag = SNZ }
+			NOT = { was_tag = SNZ }
+		}
 		ai_chance = {
 			factor = 100
-		}	
+		}
 	}
-
-	option = {		#Let the games begin!
-		name = "th_sixty_year_cycle_incident_events.1.e"
+	
+	option = {		#Oh no... not again. Komachi must have been slacking off again
+		name = "th_sixty_year_cycle_incident_events.1.c"
 		trigger = {
-			OR = {
-				tag = CRD
-				was_tag = CRD
+			th_is_or_was_tag = {
+				tag = HIG
 			}
-		}	
+		}
 		th_start_incident_tooltip = { incident = sixty_year_cycle_incident }
 		highlight = yes	
 		add_army_tradition = 15
@@ -252,26 +133,20 @@ country_event = {
 			factor = 100
 		}
 	}
-
-	option = {		#Let the games begin!
-		name = "th_sixty_year_cycle_incident_events.1.f"
+	
+	option = {		#Oh no... not again. Eiki will be so mad...
+		name = "th_sixty_year_cycle_incident_events.1.d"
 		trigger = {
-			OR = {
-				tag = MRY
-				was_tag = MRY
+			th_is_or_was_tag = {
+				tag = SNZ
 			}
-		}	
+		}
 		th_start_incident_tooltip = { incident = sixty_year_cycle_incident }
 		highlight = yes	
-		if = {
-			limit = { mry_uses_faith_power = yes }
-			mry_add_faith_power = {
-				value = 50
-			}
-		}
-		else = {
-			add_adm_power = 50
-		}
+		add_army_tradition = 15
+		add_navy_tradition = 15
+		add_treasury = 200
+		add_stability = -1
 
 		ai_chance = {
 			factor = 100
@@ -280,474 +155,76 @@ country_event = {
 }
 
 
-
-#Sixty Year Cycle Great Barrier Incident - Yamane Encounter
-country_event = {
-	id = th_sixty_year_cycle_incident_events.2
-	title = "th_sixty_year_cycle_incident_events.2.t"
-	desc = "th_sixty_year_cycle_incident_events.2.desc"
-	picture = YAMANE_eventPicture
-	
-	trigger = {
-		th_enough_time_for_next_stage_has_passed = {
-			days = 1095
-		}
-		th_incident_is_investigator = yes
-		th_incident_current_stage = {
-			stage = 1
-		}
-		th_current_incident = {
-			incident = sixty_year_cycle_incident
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-	
-	immediate = {
-		hidden_effect = {
-			th_prepare_for_next_stage = yes
-			th_getruler_fighting_skill = {
-				skill_boni = 0
-				type = incident
-			}
-			#Rumias Base Fighting Skills
-			set_variable = {
-				which = th_SA_inci_yamane_combat_skills
-				value = 1000
-			}
-			th_defineopponent_fighting_skill = {
-				variable = th_SA_inci_yamane_combat_skills
-				type = incident
-			}
-		}
-	}
-	
-	option = {		#I hate spiders
-		name = "th_sixty_year_cycle_incident_events.2.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.2.a.tt
-		highlight = yes
-		th_danmaku_incident_fight_ruler_and_opponent = yes
-		
-		ai_chance = { 
-			factor = 40 
-			modifier = {
-				factor = 100
-				th_winnable_fight_trigger = {
-					type = incident
-				}
-			}
-			modifier = {
-				factor = 0
-				th_unwinnable_fight_trigger = {
-					type = incident
-				}
-			}
-		}
-	}
-	
-	option = {		#Step aside spider
-		name = "th_sixty_year_cycle_incident_events.2.b"
-		trigger = {
-			th_is_or_was_tag = { tag = MHG }
-		}
-		custom_tooltip = th_sixty_year_cycle_incident_events.2.b.tt
-		add_mil_power = 75
-		th_incident_change_points = {
-			value = 2
-		}	
-		
-		ai_chance = { 
-			factor = 100 
-		}
-	}
-	
-	option = {		#You know, Eirin could use your poison...
-		name = "th_sixty_year_cycle_incident_events.2.c"
-		trigger = {
-			th_is_or_was_tag = { tag = EIT }
-		}
-		custom_tooltip = th_sixty_year_cycle_incident_events.2.c.tt
-		add_dip_power = 75
-		th_incident_change_points = {
-			value = 2
-		}	
-		
-		ai_chance = { 
-			factor = 100 
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Parsee Encounter
+#Sixty Year Cycle Great Barrier Incident - Random Encounters!
 country_event = {
 	id = th_sixty_year_cycle_incident_events.3
-	title = "th_sixty_year_cycle_incident_events.3.t"
-	desc = "th_sixty_year_cycle_incident_events.3.desc"
-	picture = PARSEE_eventPicture
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	hidden = yes
 	
 	trigger = {
-		th_incident_current_stage = {
-			stage = 2
-		}
-		th_incident_is_investigator = yes
-		th_enough_time_for_next_stage_has_passed = {
-			days = 1095
-		}
-		th_current_incident = {
-			incident = sixty_year_cycle_incident
-		}
+		th_current_incident = { incident = sixty_year_cycle_incident }
+		has_global_flag = th_POFV_random_matches_active
+		owns = 1
 	}
+
+	is_triggered_only = yes
 
 	mean_time_to_happen = {
 		days = 1
 	}
 	
-	immediate = {
-		hidden_effect = {
+	option = {
+		if = {
+			limit = {
+				1 = { NOT = { has_province_flag = th_POFV_counter_active } }
+			}
+			th_set_incident_stage = {
+				stage = 0
+			}
+			1 = { set_province_flag = th_POFV_counter_active }
+		}
+		else = {
 			th_prepare_for_next_stage = yes
-			th_getruler_fighting_skill = {
-				skill_boni = 0
-				type = incident
-			}
-			#Parsee's Base Fighting Skills
-			set_variable = {
-				which = th_SA_inci_parsee_combat_skills
-				value = 1050
-			}
-			th_defineopponent_fighting_skill = {
-				type = incident
-				variable = th_SA_inci_parsee_combat_skills
-			}	
 		}
-	}
-	
-	option = {		#Another target. Great, I'll got bored on this lake.
-		name = "th_sixty_year_cycle_incident_events.3.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.3.a.tt
-		highlight = yes
-		th_danmaku_incident_fight_ruler_and_opponent = yes
-		
-		ai_chance = { 
-			factor = 40 
-			modifier = {
-				factor = 100
-				th_winnable_fight_trigger = {
-					type = incident
+		if = {
+			limit = {
+				th_incident_has_reached_stage = {
+					stage = 5
 				}
 			}
-			modifier = {
-				factor = 0
-				th_unwinnable_fight_trigger = {
-					type = incident
-				}
-			}
-		}
-	}
-	
-	option = {		#Trust me, you don't have any reason to be jealous of me...
-		name = "th_sixty_year_cycle_incident_events.3.b"
-		trigger = {
-			OR = {
-				has_any_disaster = yes
-				NOT = { stability = -2 }
-			}
-		}
-		custom_tooltip = th_sixty_year_cycle_incident_events.3.b.tt
-		add_stability = 1
-		th_incident_change_points = {
-			value = 1
-		}
-		
-		ai_chance = { 
-			factor = 15
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Yuugi Encounter
-country_event = {
-	id = th_sixty_year_cycle_incident_events.4
-	title = "th_sixty_year_cycle_incident_events.4.t"
-	desc = "th_sixty_year_cycle_incident_events.4.desc"
-	picture = YUUGI_eventPicture
-	
-	trigger = {
-		th_incident_current_stage = {
-			stage = 3
-		}
-		th_incident_is_investigator = yes
-		th_enough_time_for_next_stage_has_passed = {
-			days = 1095
-		}
-		th_current_incident = {
-			incident = sixty_year_cycle_incident
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-	
-	immediate = {
-		hidden_effect = {
-			th_prepare_for_next_stage = yes
-			th_getruler_fighting_skill = {
-				skill_boni = 0
-				type = incident
-			}
-			#Yuugi's Base Fighting Skills
-			set_variable = {
-				which = th_SA_inci_yuugis_combat_skills
-				value = 1175
-			}
-			th_defineopponent_fighting_skill = {
-				type = incident
-				variable = th_SA_inci_yuugis_combat_skills
-			}	
-		}
-	}
-	
-	option = {		#Oooh, an oni. This will be fun!
-		name = "th_sixty_year_cycle_incident_events.4.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.4.a.tt
-		trigger = {
-			NOT = { has_country_flag = th_oni_had_yuugi }
-		}
-		highlight = yes
-		th_danmaku_incident_fight_ruler_and_opponent = yes
-		
-		ai_chance = { 
-			factor = 75 
-			modifier = {
-				factor = 100
-				th_winnable_fight_trigger = {
-					type = incident
-				}
-			}
-			modifier = {
-				factor = 0
-				th_unwinnable_fight_trigger = {
-					type = incident
-				}
-			}
-		}
-	}
-	
-	option = {		#Let's drink, Yuugi!
-		name = "th_sixty_year_cycle_incident_events.4.b"
-		custom_tooltip = th_sixty_year_cycle_incident_events.4.b.tt
-		trigger = {
-			OR = {
-				has_ruler_flag = HKR_suika_in_charge
-				has_reform = Gensokyan_oni_brawling_kingdom
-				has_country_flag = hkr_met_suika
-			}
-			NOT = { has_country_flag = th_oni_had_yuugi }
-		}
-		random_list = {
-			90 = {
-				th_incident_change_points = {
-					value = 3
-				}
-			}
-			10 = {
-				th_incident_change_points = {
-					value = -2
-				}
-			}
-		}
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-	
-	option = {		#Step aside, oni!
-		name = "th_sixty_year_cycle_incident_events.4.c"
-		custom_tooltip = th_sixty_year_cycle_incident_events.4.c.tt
-		trigger = {
-			OR = {
-				th_is_or_was_tag = { tag = TGU }
-				th_is_or_was_tag = { tag = KPP }
-			}
-		}
-		th_incident_change_points = {
-			value = 2
-		}
-		add_mil_power = -25
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-	
-	option = {		#Let's roll, lol
-		name = "th_sixty_year_cycle_incident_events.4.d"
-		custom_tooltip = th_sixty_year_cycle_incident_events.4.d.tt
-		trigger = {
-			has_country_flag = th_oni_had_yuugi
-		}
-		th_incident_change_points = {
-			value = 3
-		}
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Satori Encounter
-country_event = {
-	id = th_sixty_year_cycle_incident_events.5
-	title = "th_sixty_year_cycle_incident_events.5.t"
-	desc = {
-		trigger = { 
-			NOT = { th_is_or_was_tag = { tag = SCR } }
-			NOT = { th_is_or_was_tag = { tag = HIG } }
-		}
-		desc = "th_sixty_year_cycle_incident_events.5.desc.1"
-	}
-	desc = {
-		trigger = { 
-			th_is_or_was_tag = { tag = SCR }
-		}
-		desc = "th_sixty_year_cycle_incident_events.5.desc.2"
-	}
-	desc = {
-		trigger = { 
-			th_is_or_was_tag = { tag = HIG }
-		}
-		desc = "th_sixty_year_cycle_incident_events.5.desc.3"
-	}
-	picture = SATORIBOSS_eventPicture
-	
-	trigger = {
-		th_incident_current_stage = {
-			stage = 4
-		}
-		th_incident_is_investigator = yes
-		th_enough_time_for_next_stage_has_passed = {
-			days = 1095
-		}
-		th_current_incident = {
-			incident = sixty_year_cycle_incident
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-	
-	immediate = {
-		hidden_effect = {
-			th_prepare_for_next_stage = yes
-			th_getruler_fighting_skill = {
-				skill_boni = 0
-				type = incident
-			}
-			if = {
-				limit = { th_is_or_was_tag = { tag = SCR } }
-				if = {
-					limit = { has_ruler_flag = th_original_remi }
-					th_getruler_diplomatic_skill = {
-						skill_boni = 600
-					}
-				}
-				else = {
-					th_getruler_diplomatic_skill = {
-						skill_boni = 0
-					}
+			random_country = {
+				limit = {
+					tag = HIG
+					#TODO count highest score
 				}
 				country_event = {
-					id = th_danmaku_event.20
+					id = th_sixty_year_cycle_incident_events.7
 				}
 			}
-			#Satori's Base Fighting Skills
-			set_variable = {
-				which = th_SA_inci_satoris_combat_skills
-				value = 1350
+		}
+		every_country = {
+			limit = {
+				has_country_flag = th_POFV_joined_the_investigation
 			}
-			if = {
+			clr_country_flag = th_POFV_search_for_enemy
+			set_country_flag = th_POFV_search_for_enemy
+			1 = { set_province_flag = th_POFV_enemies_set }
+		}
+		if = {
+			limit = {
+				1 = { has_province_flag = th_POFV_enemies_set }
+			}
+			random_country = {
 				limit = {
-					th_is_or_was_tag = { tag = SCR }
+					has_country_flag = th_POFV_search_for_enemy
 				}
-				th_defineopponent_fighting_skill = {
-					type = diplomatic
-					variable = th_SA_inci_satoris_combat_skills
-				}
-			}
-			else = {
-				th_defineopponent_fighting_skill = {
-					type = incident
-					variable = th_SA_inci_satoris_combat_skills
+				country_event = {
+					id = th_sixty_year_cycle_incident_events.4
 				}
 			}
-		}
-	}
-	
-	option = {		#Go away you mindreader pest!
-		name = "th_sixty_year_cycle_incident_events.5.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.5.a.tt
-		trigger = {
-			NOT = { th_is_or_was_tag = { tag = SCR } }
-			NOT = { th_is_or_was_tag = { tag = HIG } }
-		}
-		highlight = yes
-		th_danmaku_incident_fight_ruler_and_opponent = yes
-		
-		ai_chance = { 
-			factor = 75 
-			modifier = {
-				factor = 100
-				th_winnable_fight_trigger = {
-					type = incident
-				}
-			}
-			modifier = {
-				factor = 0
-				th_unwinnable_fight_trigger = {
-					type = incident
-				}
-			}
-		}
-	}
-	
-	option = {		#Satori! Let me pass! ... please.
-		name = "th_sixty_year_cycle_incident_events.5.b"
-		custom_tooltip = th_sixty_year_cycle_incident_events.5.b.tt
-		trigger = {
-			th_is_or_was_tag = { tag = SCR }
-		}
-		highlight = yes
-		th_danmaku_diplo_fight_ruler_and_opponent = {
-			win_event = th_danmaku_event.0
-			draw_event = th_danmaku_event.0
-			defeat_event = th_danmaku_event.0
-			days = 1
-		}
-		add_army_tradition = 40
-		add_army_professionalism = 0.05
-		add_mil_power = 200
-		th_incident_change_points = {
-			value = 3
-		}
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-	
-	option = {		#I am here for business Satori. Please let me pass
-		name = "th_sixty_year_cycle_incident_events.5.c"
-		custom_tooltip = th_sixty_year_cycle_incident_events.5.c.tt
-		trigger = {
-			th_is_or_was_tag = { tag = HIG }
-		}		
-		th_incident_change_points = {
-			value = 3
+			1 = { clr_province_flag = th_POFV_enemies_set }
 		}
 		
 		ai_chance = { 
@@ -756,84 +233,428 @@ country_event = {
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident - Orin Encounter
+#Sixty Year Cycle Great Barrier Incident - Random Encounters!
+country_event = {
+	id = th_sixty_year_cycle_incident_events.4
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	option = {
+		while = {
+			limit = {
+				any_known_country = {
+					has_country_flag = th_POFV_search_for_enemy
+					NOT = { has_country_flag = th_POFV_second_enemy }
+					NOT = { has_country_flag = th_POFV_first_enemy }
+				}
+			}
+			random_known_country = {
+				limit = {
+					has_country_flag = th_POFV_search_for_enemy
+					NOT = { has_country_flag = th_POFV_second_enemy }
+				}
+				set_country_flag = th_POFV_first_enemy
+				save_event_target_as = th_POFV_first_enemy_tar
+			}
+			random_known_country = {
+				limit = {
+					has_country_flag = th_POFV_search_for_enemy
+					NOT = { has_country_flag = th_POFV_first_enemy }
+				}
+				set_country_flag = th_POFV_second_enemy
+				save_event_target_as = th_POFV_second_enemy_tar
+			}
+			event_target:th_POFV_first_enemy_tar = {
+				event_target:th_POFV_second_enemy_tar = {
+					set_country_flag = th_challenged_by_@PREV
+					event_target:th_POFV_first_enemy_tar = {
+						set_country_flag = th_challenges_@PREV
+						country_event = {
+							id = th_sixty_year_cycle_incident_events.5
+						}
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.6
+					}
+				}
+			}
+		}
+		random_country = {
+			limit = {
+				has_country_flag = th_POFV_search_for_enemy
+				NOT = { has_country_flag = th_POFV_second_enemy }
+				NOT = { has_country_flag = th_POFV_first_enemy }
+			}
+			random_list = {
+				1 = { #Medicine
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.110
+					}
+				}
+				1 = { #Tewi
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.120
+					}
+				}
+				1 = { #Mystia
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.130
+					}
+				}
+				1 = { #Yuuka
+					trigger = {
+						NOT = { tag = SFF }
+						NOT = { was_tag = SFF }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.140
+					}
+				}
+				1 = { #Aya
+					trigger = {
+						NOT = { tag = TGU }
+						NOT = { was_tag = TGU }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.150
+					}
+				}
+				1 = { #Prismriver
+					trigger = {
+						NOT = { tag = PRI }
+						NOT = { was_tag = PRI }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.160
+					}
+				}
+				1 = { #Cirno
+					trigger = {
+						NOT = { tag = CIN }
+						NOT = { was_tag = CIN }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.170
+					}
+				}
+				1 = { #Reisen
+					trigger = {
+						NOT = { tag = EIT }
+						NOT = { was_tag = EIT }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.180
+					}
+				}
+				1 = { #Youmu
+					trigger = {
+						NOT = { tag = NET }
+						NOT = { was_tag = NET }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.190
+					}
+				}
+				1 = { #Sakuya
+					trigger = {
+						NOT = { tag = SCR }
+						NOT = { was_tag = SCR }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.200
+					}
+				}
+				1 = { #Marisa
+					trigger = {
+						NOT = { tag = FOM }
+						NOT = { was_tag = FOM }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.210
+					}
+				}
+				1 = { #Reimu
+					trigger = {
+						NOT = { tag = HKR }
+						NOT = { was_tag = HKR }
+					}
+					country_event = {
+						id = th_sixty_year_cycle_incident_events.220
+					}
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Gets challenged
+country_event = {
+	id = th_sixty_year_cycle_incident_events.5
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Challenges
 country_event = {
 	id = th_sixty_year_cycle_incident_events.6
-	title = "th_sixty_year_cycle_incident_events.6.t"
-	desc = "th_sixty_year_cycle_incident_events.6.desc"
-	picture = ORIN_eventPicture
-	
-	trigger = {
-		th_incident_current_stage = {
-			stage = 5
-		}
-		th_incident_is_investigator = yes
-		th_enough_time_for_next_stage_has_passed = {
-			days = 1095
-		}
-		th_current_incident = {
-			incident = sixty_year_cycle_incident
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-	
-	immediate = {
-		hidden_effect = {
-			th_prepare_for_next_stage = yes
-			th_getruler_fighting_skill = {
-				skill_boni = 0
-				type = incident
-			}
-			#Chen's Base Fighting Skills
-			set_variable = {
-				which = th_SA_inci_chens_combat_skills
-				value = 1550
-			}
-			th_defineopponent_fighting_skill = {
-				type = incident
-				variable = th_SA_inci_chens_combat_skills
-			}	
-		}
-	}
-	
-	option = {		#Damnit cat!
-		name = "th_sixty_year_cycle_incident_events.6.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.6.a.tt
-		highlight = yes
-		th_danmaku_incident_fight_ruler_and_opponent = yes
-		
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	is_triggered_only = yes
+	option = {		
 		ai_chance = { 
 			factor = 100
 		}
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident - Okuu Encounter
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - FIGHT!
+country_event = {
+	id = th_sixty_year_cycle_incident_events.7
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Ran away
+country_event = {
+	id = th_sixty_year_cycle_incident_events.8
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Victory!
+country_event = {
+	id = th_sixty_year_cycle_incident_events.9
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Defeat!
+country_event = {
+	id = th_sixty_year_cycle_incident_events.10
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Medicine
+country_event = {
+	id = th_sixty_year_cycle_incident_events.110
+	title = none
+	desc = none
+	picture = MEDICINE_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Tewi
+country_event = {
+	id = th_sixty_year_cycle_incident_events.120
+	title = none
+	desc = none
+	picture = TEWI_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Mystia
+country_event = {
+	id = th_sixty_year_cycle_incident_events.130
+	title = none
+	desc = none
+	picture = MYSTIA_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Yuuka
+country_event = {
+	id = th_sixty_year_cycle_incident_events.140
+	title = none
+	desc = none
+	picture = YUUKABOSS_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Aya
+country_event = {
+	id = th_sixty_year_cycle_incident_events.150
+	title = none
+	desc = none
+	picture = AYABOSS_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Prismriver
+country_event = {
+	id = th_sixty_year_cycle_incident_events.160
+	title = none
+	desc = none
+	picture = PRISMRIVER_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Cirno
+country_event = {
+	id = th_sixty_year_cycle_incident_events.170
+	title = none
+	desc = none
+	picture = CIRNO_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Reisen
+country_event = {
+	id = th_sixty_year_cycle_incident_events.180
+	title = none
+	desc = none
+	picture = REISEN_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Youmu
+country_event = {
+	id = th_sixty_year_cycle_incident_events.190
+	title = none
+	desc = none
+	picture = YOUMU2_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Sakuya
+country_event = {
+	id = th_sixty_year_cycle_incident_events.200
+	title = none
+	desc = none
+	picture = SAKUYA_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Marisa
+country_event = {
+	id = th_sixty_year_cycle_incident_events.210
+	title = none
+	desc = none
+	picture = MARISA_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Reimu
+country_event = {
+	id = th_sixty_year_cycle_incident_events.220
+	title = none
+	desc = none
+	picture = REIMU_eventPicture
+	is_triggered_only = yes
+	option = {		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+#Sixty Year Cycle Great Barrier Incident - Komachi Encounter
 country_event = {
 	id = th_sixty_year_cycle_incident_events.7
 	title = "th_sixty_year_cycle_incident_events.7.t"
 	desc = "th_sixty_year_cycle_incident_events.7.desc"
-	picture = OKUU_eventPicture
+	picture = KOMACHI_eventPicture
 	
-	trigger = {
-		th_incident_current_stage = {
-			stage = 6
-		}
-		th_incident_is_investigator = yes
-		th_enough_time_for_next_stage_has_passed = {
-			days = 1095
-		}
-		th_current_incident = {
-			incident = sixty_year_cycle_incident
-		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
+	is_triggered_only = yes
 
 	immediate = {
 		hidden_effect = {
@@ -842,7 +663,7 @@ country_event = {
 				skill_boni = 0
 				type = incident
 			}
-			#Okuu's Base Fighting Skills
+			#Komachi's Base Fighting Skills
 			set_variable = {
 				which = th_SA_inci_okuus_combat_skills
 				value = 1700
@@ -866,12 +687,12 @@ country_event = {
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident EXTRA - Koishi Encounter
+#Sixty Year Cycle Great Barrier Incident "EXTRA" - Eiki Encounter
 country_event = {
 	id = th_sixty_year_cycle_incident_events.8
 	title = "th_sixty_year_cycle_incident_events.8.t"
 	desc = "th_sixty_year_cycle_incident_events.8.desc"
-	picture = KOISHIBOSS_eventPicture
+	picture = EIKIBOSS_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -882,21 +703,21 @@ country_event = {
 				skill_boni = 0
 				type = incident
 			}
-			#Koishi's Base Fighting Skills
+			#Eiki's Base Fighting Skills
 			set_variable = {
-				which = th_SA_inci_koishis_combat_skills
-				value = 1800
+				which = th_SDM_inci_flandres_combat_skills
+				value = 1600
 			}
 			th_defineopponent_fighting_skill = {
 				type = incident
-				variable = th_SA_inci_koishis_combat_skills
+				variable = th_SDM_inci_flandres_combat_skills
 			}	
 		}
 	}
 	
-	option = {		#She really wants to play danmaku...
-		name = "th_sixty_year_cycle_incident_events.8.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.8.a.tt
+	option = {		#Oh no...
+		name = "th_scarlet_mists_incident_events.8.a"
+		custom_tooltip = th_scarlet_mists_incident_events.8.a.tt
 		highlight = yes
 		th_danmaku_incident_fight_ruler_and_opponent = yes
 		hidden_effect = {
@@ -982,7 +803,7 @@ country_event = { #Nothing changes and more unrest spirits appear
 				}
 			}
 		}
-		add_adm_power = 100
+		add_adm_power = -100
 		add_prestige = -10
 		add_devotion = -10
 		custom_tooltip = th_sixty_year_cycle_incident_events_hot_geysers
@@ -1048,57 +869,18 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 		custom_tooltip = th_sixty_year_cycle_incident_events.9.a.tt
 		if = {
 			limit = {
-				exists = MRY
+				exists = HIG
 			}
-			MRY = {
+			HIG = {
 				add_country_modifier = {
-					name = th_SA_growing_moriya_influence
+					name = th_POFV_reorganized_the_shinigami
 					duration = 1825
 				}
 			}
 		}
-		if = {
-			limit = {
-				exists = SCD
-				SCD = { has_country_flag = crd_formed_scd }
-			}
-			SCD = {
-				add_country_modifier = {
-					name = th_SA_earth_spirits_unleashed
-					duration = 1825
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				exists = CRD
-			}
-			CRD = {
-				add_country_modifier = {
-					name = th_SA_earth_spirits_unleashed
-					duration = 1825
-				}
-			}
-		}
-		add_adm_power = 100
+		add_adm_power = -100
 		add_prestige = -10
 		add_devotion = -10
-		custom_tooltip = th_sixty_year_cycle_incident_events_hot_geysers
-		hidden_effect = {
-			gensokyo_superregion = {
-				limit = {
-					owner = {
-						NOT = { tag = CRD }
-						NOT = { has_country_flag = crd_formed_scd }
-						NOT = { is_subject_of = CRD }
-					}
-				}
-				add_province_modifier = {
-					name = th_SA_hot_geysers
-					duration = 1825
-				}
-			}
-		}
 	}
 }
 
@@ -1156,13 +938,13 @@ country_event = {
 				}
 			}
 			add_country_modifier = {
-				name = "th_SA_inci_stopped_okuu"
+				name = "th_POFV_inci_overcame_komachi"
 				duration = 9125
 			}
 		}
 		else = {			
 			add_country_modifier = {
-				name = "th_SA_inci_stopped_okuu"
+				name = "th_POFV_inci_overcame_komachi"
 				duration = 3650
 			}
 		}
@@ -1223,7 +1005,7 @@ country_event = { #Okuu tells Reimu/Marisa about these weird gods
 				}
 			}
 			add_country_modifier = {
-				name = "th_SA_inci_stopped_okuu"
+				name = "th_POFV_inci_overcame_komachi"
 				duration = 9125
 			}
 		}
@@ -1235,22 +1017,22 @@ country_event = { #Okuu tells Reimu/Marisa about these weird gods
 				}
 			}
 			add_country_modifier = {
-				name = "th_SA_inci_stopped_okuu"
+				name = "th_POFV_inci_overcame_komachi"
 				duration = 9125
 			}
 		}
 		else = {			
 			add_country_modifier = {
-				name = "th_SA_inci_stopped_okuu"
+				name = "th_POFV_inci_overcame_komachi"
 				duration = 3650
 			}
 		}
-		hidden_effect = {
-			country_event = {
-				id = th_sixty_year_cycle_incident_events.8
-				days = 90
-			}
-		}
+		#hidden_effect = {
+		#	country_event = {
+		#		id = th_sixty_year_cycle_incident_events.8
+		#		days = 90
+		#	}
+		#}
 	}
 	
 	option = {		#The rain will stop eventually. She can stay here for awhile.
@@ -1266,7 +1048,7 @@ country_event = { #Okuu tells Reimu/Marisa about these weird gods
 				}
 			}
 			add_country_modifier = {
-				name = "th_SA_inci_stopped_okuu"
+				name = "th_POFV_inci_overcame_komachi"
 				duration = 9125
 			}
 		}
@@ -1278,13 +1060,13 @@ country_event = { #Okuu tells Reimu/Marisa about these weird gods
 				}
 			}
 			add_country_modifier = {
-				name = "th_SA_inci_stopped_okuu"
+				name = "th_POFV_inci_overcame_komachi"
 				duration = 9125
 			}
 		}
 		else = {			
 			add_country_modifier = {
-				name = "th_SA_inci_stopped_okuu"
+				name = "th_POFV_inci_overcame_komachi"
 				duration = 3650
 			}
 		}
@@ -1318,7 +1100,7 @@ country_event = { #Their plan succeeded nonetheless...
 				}
 			}
 			add_country_modifier = {
-				name = "th_SA_inci_extra"
+				name = "th_POFV_inci_extra"
 				duration = 9125
 			}
 		}
@@ -1330,13 +1112,13 @@ country_event = { #Their plan succeeded nonetheless...
 				}
 			}
 			add_country_modifier = {
-				name = "th_SA_inci_extra"
+				name = "th_POFV_inci_extra"
 				duration = 9125
 			}
 		}
 		else = {			
 			add_country_modifier = {
-				name = "th_SA_inci_extra"
+				name = "th_POFV_inci_extra"
 				duration = 3650
 			}
 		}
@@ -1357,15 +1139,15 @@ country_event = { #Their plan succeeded nonetheless...
 
 
 
-#Sixty Year Cycle Great Barrier Incident - Random Geyser events - MRY gets buff
+#Sixty Year Cycle Great Barrier Incident - Random events - HIG gets buff
 country_event = {
 	id = th_sixty_year_cycle_incident_events.14
 	title = "th_sixty_year_cycle_incident_events.14.t"
 	desc = "th_sixty_year_cycle_incident_events.14.desc"
-	picture = KANAKOSUWAKO_eventPicture
+	picture = EIKIBOSS_eventPicture
 	
 	trigger = {
-		th_is_or_was_tag = { tag = MRY }
+		th_is_or_was_tag = { tag = HIG }
 		th_current_incident = { incident = sixty_year_cycle_incident }
 	}
 	
@@ -1376,462 +1158,16 @@ country_event = {
 		months = 12
 	}
 	
-	option = {		#All according plan
+	option = {	#Looks like I have to do more lecutres in the near future
 		name = "th_sixty_year_cycle_incident_events.14.a"
-		if = {
-			limit = {
-				CRD = { religion = th_moriyashinto }
-			}
-			add_country_modifier = {
-				name = th_SA_the_gods_behind_the_incident_powerful
-				duration = 9125
-			}
-		}
-		else = {
-			add_country_modifier = {
-				name = "th_SA_the_gods_behind_the_incident"
-				duration = 9125
-			}
-		}
-		if = {
-			limit = { exists = HKR }
-			reverse_add_casus_belli = {
-				type = cb_insult
-				target = ROOT
-			}
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Choose invetigation companion
-country_event = {
-	id = th_sixty_year_cycle_incident_events.15
-	title = "th_sixty_year_cycle_incident_events.15.t"
-	desc = "th_sixty_year_cycle_incident_events.15.desc"
-	picture = SHRINE_eventPicture
-	
-	trigger = {
-		th_current_incident = { incident = sixty_year_cycle_incident }
-		NOT = { th_incident_has_been_resolved = { incident = sixty_year_cycle_incident } }
-		th_incident_is_investigator = yes
-		NOT = { has_country_flag = th_SA_has_chosen_companion }
-	}
-	
-	mean_time_to_happen = { days = 5 }	
-	immediate = { hidden_effect = { set_country_flag = th_SA_has_chosen_companion } }
-	
-	option = {		#HKR - Choose Yukari
-		name = "th_sixty_year_cycle_incident_events.15.a"
-		trigger = {
-			OR = {
-				th_is_or_was_tag = { tag = NET }
-				th_is_or_was_tag = { tag = HKR }
-			}
-		}
-		th_choose_investigation_partner = {
-			partner = yukari
-		}
-		if = { 
-			limit = { exists = MHG } 
-			add_opinion = {
-				who = MHG
-				modifier = th_incident_partners
-			}
-			reverse_add_opinion = {
-				who = MHG
-				modifier = th_incident_partners
-			}
-		}
-	}
-	
-	option = {		#HKR - Choose Suika
-		name = "th_sixty_year_cycle_incident_events.15.b"
-		trigger = {
-			th_is_or_was_tag = { tag = HKR }
-		}
-		th_choose_investigation_partner = {
-			partner = suika
-		}
-	}
-	
-	option = {		#HKR - Choose Aya
-		name = "th_sixty_year_cycle_incident_events.15.c"
-		trigger = {
-			th_is_or_was_tag = { tag = HKR }
-		}
-		th_choose_investigation_partner = {
-			partner = aya
-		}
-		if = { 
-			limit = { exists = TGU } 
-			add_opinion = {
-				who = TGU
-				modifier = th_incident_partners
-			}
-			reverse_add_opinion = {
-				who = TGU
-				modifier = th_incident_partners
-			}
-		}
-	}
-	
-	option = {		#FOM - Choose Alice
-		name = "th_sixty_year_cycle_incident_events.15.d"
-		trigger = {
-			th_is_or_was_tag = { tag = FOM }
-			NOT = { has_ruler_flag = th_original_alice }
-		}
-		th_choose_investigation_partner = {
-			partner = alice
-		}
-	}
-	
-	option = {		#FOM - Choose Patchouli
-		name = "th_sixty_year_cycle_incident_events.15.e"
-		trigger = {
-			OR = {
-				th_is_or_was_tag = { tag = SCR }
-				th_is_or_was_tag = { tag = FOM }
-			}
-		}
-		th_choose_investigation_partner = {
-			partner = patchouli
-		}
-		if = { 
-			limit = { exists = SCR NOT = { tag = SCR } } 
-			add_opinion = {
-				who = SCR
-				modifier = th_incident_partners
-			}
-			reverse_add_opinion = {
-				who = SCR
-				modifier = th_incident_partners
-			}
-		}
-	}
-	
-	option = {		#FOM - Choose Nitori
-		name = "th_sixty_year_cycle_incident_events.15.f"
-		trigger = {
-			th_is_or_was_tag = { tag = FOM }
-		}
-		th_choose_investigation_partner = {
-			partner = nitori
-		}
-		if = { 
-			limit = { exists = KPP } 
-			add_opinion = {
-				who = KPP
-				modifier = th_incident_partners
-			}
-			reverse_add_opinion = {
-				who = KPP
-				modifier = th_incident_partners
-			}
-		}
-	}
-	
-	option = {		#SCR - Choose Sakuya
-		name = "th_sixty_year_cycle_incident_events.15.g"
-		trigger = {
-			th_is_or_was_tag = { tag = SCR }
-		}
-		th_choose_investigation_partner = {
-			partner = sakuya
-		}
-	}
-	
-	option = {		#NET - Choose Youmu
-		name = "th_sixty_year_cycle_incident_events.15.h"
-		trigger = {
-			th_is_or_was_tag = { tag = NET }
-		}
-		th_choose_investigation_partner = {
-			partner = youmu
-		}
-	}
-	
-	option = {		#MHG - Choose Reimu
-		name = "th_sixty_year_cycle_incident_events.15.k"
-		trigger = {
-			th_is_or_was_tag = { tag = MHG }
-		}
-		th_choose_investigation_partner = {
-			partner = reimu
-		}
-		if = { 
-			limit = { exists = HKR } 
-			add_opinion = {
-				who = HKR
-				modifier = th_incident_partners
-			}
-			reverse_add_opinion = {
-				who = HKR
-				modifier = th_incident_partners
-			}
-		}
-	}
-	
-	option = {		#MHG - Choose Yuyuko
-		name = "th_sixty_year_cycle_incident_events.15.l"
-		trigger = {
-			th_is_or_was_tag = { tag = MHG }
-		}
-		th_choose_investigation_partner = {
-			partner = yuyuko
-		}
-		if = { 
-			limit = { exists = NET } 
-			add_opinion = {
-				who = NET
-				modifier = th_incident_partners
-			}
-			reverse_add_opinion = {
-				who = NET
-				modifier = th_incident_partners
-			}
-		}
-	}
-	
-	option = {		#HIG - Choose Komachi
-		name = "th_sixty_year_cycle_incident_events.15.m"
-		trigger = {
-			th_is_or_was_tag = { tag = HIG }
-		}
-		th_choose_investigation_partner = {
-			partner = komachi
-		}
-	}
-	
-	option = {		#EIT - Choose Eirin
-		name = "th_sixty_year_cycle_incident_events.15.n"
-		trigger = {
-			th_is_or_was_tag = { tag = EIT }
-		}
-		th_choose_investigation_partner = {
-			partner = eirin
-		}
-	}
-	
-	option = {		#EIT - Choose Mokou
-		name = "th_sixty_year_cycle_incident_events.15.o"
-		trigger = {
-			th_is_or_was_tag = { tag = EIT }
-		}
-		th_choose_investigation_partner = {
-			partner = mokou
-		}
-		th_add_rival_estate_loyalty = {
-			loyalty = 10
-		}
-	}
-	
-	option = {		#FUJ - Choose Keine
-		name = "th_sixty_year_cycle_incident_events.15.p"
-		trigger = {
-			OR = {
-				th_is_or_was_tag = { tag = FUJ }
-				th_is_or_was_tag = { tag = HMC }
-			}
-		}
-		th_choose_investigation_partner = {
-			partner = keine
-		}
-		if = { 
-			limit = { exists = HMC } 
-			add_opinion = {
-				who = HMC
-				modifier = th_incident_partners
-			}
-			reverse_add_opinion = {
-				who = HMC
-				modifier = th_incident_partners
-			}
-		}
-	}
-	
-	option = {		#FUJ - Choose Kaguya
-		name = "th_sixty_year_cycle_incident_events.15.q"
-		trigger = {
-			th_is_or_was_tag = { tag = FUJ }
-		}
-		th_choose_investigation_partner = {
-			partner = kaguya
-		}
-		th_add_rival_estate_loyalty = {
-			loyalty = 10
-		}
-	}
-	
-	option = {		#KPP - Choose Marisa
-		name = "th_sixty_year_cycle_incident_events.15.r"
-		trigger = {
-			OR = {
-				AND = { 
-					th_is_or_was_tag = { tag = FOM }
-					NOT = { has_ruler_flag = th_original_marisa }
-				}
-			}
-			th_is_or_was_tag = { tag = KPP }
-		}
-		th_choose_investigation_partner = {
-			partner = marisa
-		}
-		if = {
-			limit = {
-				NOT = { th_is_or_was_tag = { tag = FOM } }
-				exists = FOM
-			}
-			add_opinion = {
-				who = FOM
-				modifier = th_incident_partners
-			}
-			reverse_add_opinion = {
-				who = FOM
-				modifier = th_incident_partners
-			}
-		}
-	}
-	
-	option = {		#Fairy - Choose Daiyousei
-		name = "th_sixty_year_cycle_incident_events.15.s"
-		trigger = {
-			primary_culture = Fairy
-		}
-		th_choose_investigation_partner = {
-			partner = daiyousei
-		}
-	}
-	
-	option = {		#Generic
-		name = "th_sixty_year_cycle_incident_events.15.zzz"
-		trigger = {
-			NOT = { primary_culture = Fairy }
-			NOT = { th_is_or_was_tag = { tag = KPP } }
-			NOT = { th_is_or_was_tag = { tag = FUJ } }
-			NOT = { th_is_or_was_tag = { tag = HMC } }
-			NOT = { th_is_or_was_tag = { tag = EIT } }
-			NOT = { th_is_or_was_tag = { tag = HIG } }
-			NOT = { th_is_or_was_tag = { tag = MHG } }
-			NOT = { th_is_or_was_tag = { tag = NET } }
-			NOT = { th_is_or_was_tag = { tag = SCR } }
-			NOT = { th_is_or_was_tag = { tag = FOM } }
-			NOT = { th_is_or_was_tag = { tag = HKR } }
-		}
-		th_choose_investigation_partner = {
-			partner = generic
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Geyser events - Create Core on neighbour
-country_event = {
-	id = th_sixty_year_cycle_incident_events.17
-	title = "th_sixty_year_cycle_incident_events.17.t"
-	desc = "th_sixty_year_cycle_incident_events.17.desc"
-	picture = HIGAN_eventPicture
-	goto = th_SA_new_core
-	trigger = {
-		is_free_or_tributary_trigger = yes
-		any_neighbor_country = {
-			NOT = { is_subject_of = ROOT }
-			NOT = { alliance_with = ROOT }
-			ROOT = { NOT = { core_claim = PREV } }
-			any_owned_province = {
-				NOT = { is_core = ROOT }
-				any_neighbor_province = {
-					owner = {
-						OR = {
-							tag = ROOT
-							is_subject_of = ROOT
-						}
-					}
-				}
-			}
-		}
-		th_is_or_was_tag = { tag = CRD }
-		has_country_modifier = th_SA_control_over_the_underworld
-	}
-	
-	mean_time_to_happen = {
-		months = 12
-	}
-
-	immediate = {
-		hidden_effect = {
-			random_neighbor_country = {
-				limit = {
-					NOT = { is_subject_of = ROOT }
-					NOT = { alliance_with = ROOT }
-					ROOT = { NOT = { core_claim = PREV } }
-					any_owned_province = {
-						NOT = { is_core = ROOT }
-						any_neighbor_province = {
-							owner = {
-								OR = {
-									tag = ROOT
-									is_subject_of = ROOT
-								}
-							}
-						}
-					}	
-				}
-				random_owned_province = {
-					limit = {
-						NOT = { is_core = ROOT }
-						any_neighbor_province = {
-							owner = {
-								OR = {
-									tag = ROOT
-									is_subject_of = ROOT
-								}
-							}
-						}
-					}
-					save_event_target_as = th_SA_new_core
-				}
-			}
-		}
-	}
-	
-	option = {		#The geysers are our territory
-		name = "th_sixty_year_cycle_incident_events.17.a"
-		event_target:th_SA_new_core = {
-			add_core = ROOT
-		}
-		add_prestige = 10
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Geyser events - Gets insane geyser buff
-country_event = {
-	id = th_sixty_year_cycle_incident_events.18
-	title = "th_sixty_year_cycle_incident_events.18.t"
-	desc = "th_sixty_year_cycle_incident_events.18.desc"
-	picture = FORMERHELL_eventPicture
-	
-	trigger = {
-		th_is_or_was_tag = { tag = CRD }
-		th_current_incident = { incident = sixty_year_cycle_incident }
-	}
-	
-	fire_only_once = yes
-	major = yes
-	
-	mean_time_to_happen = {
-		months = 12
-	}
-	
-	option = {		#The geysers are our territory!
-		name = "th_sixty_year_cycle_incident_events.18.a"
 		add_country_modifier = {
-			name = "th_SA_control_over_the_underworld"
+			name = th_POFV_the_lecturing
 			duration = 9125
 		}
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident - Random Geyser events - Satori demands her land back
+#Sixty Year Cycle Great Barrier Incident - Random Flower events - Satori demands her land back
 province_event = {
 	id = th_sixty_year_cycle_incident_events.19
 	title = "th_sixty_year_cycle_incident_events.19.t"
@@ -1923,7 +1259,7 @@ province_event = {
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident - Random Geyser events - Satori demands her independence back
+#Sixty Year Cycle Great Barrier Incident - Random Flower events - Satori demands her independence back
 country_event = {
 	id = th_sixty_year_cycle_incident_events.20
 	title = "th_sixty_year_cycle_incident_events.20.t"
@@ -1988,7 +1324,7 @@ country_event = {
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident - Random Geyser events - Province gets a geyser modifier
+#Sixty Year Cycle Great Barrier Incident - Random Flower events - Province gets a random flower modifier + effect (Spring/Summer/Fall/Winter) TODO
 province_event = {
 	id = th_sixty_year_cycle_incident_events.25
 	title = none
@@ -2080,7 +1416,9 @@ province_event = {
 	}		
 }
 
-#Sixty Year Cycle Great Barrier Incident - Forbid CRD, ONI, ORN, OKU, KMJ, MRY
+
+
+#Sixty Year Cycle Great Barrier Incident - Forbid HIG, SNZ
 country_event = {
 	id = th_sixty_year_cycle_incident_events.271
 	title = none
@@ -2090,12 +1428,8 @@ country_event = {
 	trigger = {
 		th_current_incident = { incident = sixty_year_cycle_incident }
 		OR = {
-			th_is_or_was_tag = { tag = CRD }	#Covers SCD formed by CRD
-			th_is_or_was_tag = { tag = ONI }
-			th_is_or_was_tag = { tag = ORN }
-			th_is_or_was_tag = { tag = OKU }
-			th_is_or_was_tag = { tag = KMJ }
-			th_is_or_was_tag = { tag = MRY }
+			th_is_or_was_tag = { tag = HIG }
+			th_is_or_was_tag = { tag = SNZ }
 		}
 		NOT = { has_country_flag = th_is_not_valid_for_investiagtor_role }
 	}
@@ -2127,16 +1461,12 @@ country_event = {
 		gensokyo_superregion = {
 			owner = {
 				OR = {
-					th_is_or_was_tag = { tag = CRD }
-					is_subject_of = CRD
-					AND = {
-						SCD = { has_country_flag = crd_formed_scd }
-						is_subject_of = SCD
-					}
+					th_is_or_was_tag = { tag = HIG }
+					is_subject_of = HIG
 				}
 			}
 		}
-		th_is_or_was_tag = { tag = CRD }
+		th_is_or_was_tag = { tag = HIG }
 		all_country = { th_incident_can_not_become_investigator = yes }
 		NOT = { th_incident_has_been_resolved = { incident = sixty_year_cycle_incident } }
 	}
@@ -2153,17 +1483,17 @@ country_event = {
 	
 	major = yes
 	
-	option = {		#Chireiden triumphs!
+	option = {		#Time to resolve this issue on my own
 		name = "th_sixty_year_cycle_incident_events.26.a"
 		custom_tooltip = th_sixty_year_cycle_incident_events.26.a.tt					
 		add_country_modifier = {
-			name = "th_SA_earth_spirits_unleashed"
+			name = "th_POFV_reorganized_the_shinigami"
 			duration = 9125
 		}		
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident - Special Case: nobody can become investigator, but Gensokyo was NOT united by Remi
+#Sixty Year Cycle Great Barrier Incident - Special Case: nobody can become investigator, but Gensokyo was NOT united by Eiki
 country_event = {
 	id = th_sixty_year_cycle_incident_events.27
 	title = "th_sixty_year_cycle_incident_events.27.t"
@@ -2174,10 +1504,8 @@ country_event = {
 		th_current_incident = { incident = sixty_year_cycle_incident }	
 		any_province = {
 			superregion = gensokyo_superregion
-			NOT = { owned_by = CRD }
-			NOT = { owner = { is_subject_of = CRD } }
-			NOT = { owned_by = SCD }
-			NOT = { owner = { is_subject_of = SCD } }
+			NOT = { owned_by = HIG }
+			NOT = { owner = { is_subject_of = HIG } }
 		}	
 		owns = 5007
 		all_country = {
@@ -2198,62 +1526,29 @@ country_event = {
 	
 	major = yes
 	
-	option = {		#Chireiden triumphs!--Not really
+	option = {		#I will have to resolve it myself then
 		name = "th_sixty_year_cycle_incident_events.27.a"
 		trigger = {
-			th_is_or_was_tag = { tag = CRD }
-		}
-		custom_tooltip = th_sixty_year_cycle_incident_events.27.a.tt					
+			th_is_or_was_tag = { tag = HIG }
+		}				
 		add_country_modifier = {
-			name = "th_SA_earth_spirits_unleashed"
+			name = "th_POFV_reorganized_the_shinigami"
 			duration = 3650
-		}		
-		custom_tooltip = th_sixty_year_cycle_incident_events_hot_geysers
-		hidden_effect = {
-			gensokyo_superregion = {
-				limit = {
-					NOT = { owned_by = CRD }
-					NOT = { owned_by = SCD }
-					NOT = { owned_by = KMJ }
-					NOT = { owned_by = OKU }
-					NOT = { owned_by = ORN }
-				}
-				add_province_modifier = {
-					name = th_SA_hot_geysers
-					duration = 1825
-				}
-			}
 		}
 	}
 	option = {		#Nobody is investigating. We can only pray for mist`s gone
 		name = "th_sixty_year_cycle_incident_events.27.b"
 		trigger = {
-			NOT = { tag = CRD }
-			NOT = { was_tag = CRD }
+			NOT = { tag = HIG }
+			NOT = { was_tag = HIG }
 		}
-		custom_tooltip = th_sixty_year_cycle_incident_events.27.b.tt
-		custom_tooltip = th_sixty_year_cycle_incident_events_hot_geysers
-		hidden_effect = {
-			gensokyo_superregion = {
-				limit = {
-					NOT = { owned_by = CRD }
-					NOT = { owned_by = SCD }
-					NOT = { owned_by = KMJ }
-					NOT = { owned_by = OKU }
-					NOT = { owned_by = ORN }
-				}
-				add_province_modifier = {
-					name = th_SA_hot_geysers
-					duration = 1825
-				}
-			}
-		}
+		add_stability = -2
 	}
 }
 
 ############################TERMINATION############################
 #Sixty Year Cycle Great Barrier Incident - Bad Outcome
-country_event = { #Nothing changes and Scarlett Realm Mists grow
+country_event = { #The Yamaxandu resolves the incident on her own
 	id = th_sixty_year_cycle_incident_events.100
 	title = "th_sixty_year_cycle_incident_events.9.t"
 	desc = "th_sixty_year_cycle_incident_events.9.desc"
@@ -2273,57 +1568,18 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 		custom_tooltip = th_sixty_year_cycle_incident_events.9.a.tt
 		if = {
 			limit = {
-				exists = MRY
+				exists = HIG
 			}
-			MRY = {
+			HIG = {
 				add_country_modifier = {
-					name = th_SA_growing_moriya_influence
+					name = th_POFV_reorganized_the_shinigami
 					duration = 1825
 				}
 			}
 		}
-		if = {
-			limit = {
-				exists = SCD
-				SCD = { has_country_flag = crd_formed_scd }
-			}
-			SCD = {
-				add_country_modifier = {
-					name = th_SA_earth_spirits_unleashed
-					duration = 1825
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				exists = CRD
-			}
-			CRD = {
-				add_country_modifier = {
-					name = th_SA_earth_spirits_unleashed
-					duration = 1825
-				}
-			}
-		}
-		add_adm_power = 100
+		add_adm_power = -100
 		add_prestige = -10
 		add_devotion = -10
-		custom_tooltip = th_sixty_year_cycle_incident_events_hot_geysers
-		hidden_effect = {
-			gensokyo_superregion = {
-				limit = {
-					owner = {
-						NOT = { tag = CRD }
-						NOT = { has_country_flag = crd_formed_scd }
-						NOT = { is_subject_of = CRD }
-					}
-				}
-				add_province_modifier = {
-					name = th_SA_hot_geysers
-					duration = 1825
-				}
-			}
-		}
 	}
 }
 
@@ -2337,79 +1593,18 @@ country_event = {
 	is_triggered_only = yes
 
 	immediate = {
-		th_incident_forbid_country_to_investigate = { who = CRD }
-		th_incident_forbid_country_to_investigate = { who = ONI }
-		th_incident_forbid_country_to_investigate = { who = ORN }
-		th_incident_forbid_country_to_investigate = { who = OKU }
-		th_incident_forbid_country_to_investigate = { who = KMJ }
-		th_incident_forbid_country_to_investigate = { who = MRY }
+		th_incident_forbid_country_to_investigate = { who = HIG }
+		th_incident_forbid_country_to_investigate = { who = SNZ }
 		th_start_incident_effect = {
 			incident = sixty_year_cycle_incident
 		}
 		gensokyo_superregion = {
 			limit = {
-				NOT = { region = former_hell_region }
-				NOT = { region = hell_region }
-				owner = {
-					NOT = { tag = CRD }
-					NOT = { tag = SCD }
-					NOT = { was_tag = CRD }
-					NOT = { was_tag = SCD }
-					NOT = { is_subject_of = CRD }
-					NOT = { is_subject_of = SCD }
-				}
-				any_neighbor_province = {
-					OR = {
-						region = former_hell_region
-						region = hell_region
-					}
-				}
-				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
-				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
-			}
-			random_list = {
-				90 = {
-					add_province_modifier = {
-						name = th_SA_wandering_vengeful_spirits
-						duration = -1
-						desc = th_incident_duration_tt
-					}
-				}
-				10 = {
-					add_province_modifier = {
-						name = th_SA_wandering_helpful_spirits
-						duration = 1460
-					}
-				}
-			}
-		}
-		random_province = {
-			limit = {
-				continent = gensokyo_continent
-				NOT = { region = former_hell_region }
-				NOT = { region = hell_region }
-				owner = {
-					NOT = { tag = CRD }
-					NOT = { tag = SCD }
-					NOT = { was_tag = CRD }
-					NOT = { was_tag = SCD }
-					NOT = { is_subject_of = CRD }
-					NOT = { is_subject_of = SCD }
-				}
-				any_neighbor_province = {
-					OR = {
-						region = former_hell_region
-						region = hell_region
-					}
-					NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
-					NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
-				}
-				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
-				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+				NOT = { has_province_modifier = th_POFV_random_flower_bed }
 			}
 			add_province_modifier = {
-				name = th_SA_wandering_helpful_spirits
-				duration = 1460
+				name = th_POFV_random_flower_bed
+				duration = -1
 			}
 		}
 	}
