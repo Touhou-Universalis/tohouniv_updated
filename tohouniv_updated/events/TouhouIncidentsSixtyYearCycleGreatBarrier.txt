@@ -85,6 +85,10 @@ country_event = {
 		highlight = yes	
 		hidden_effect = {
 			set_country_flag = th_POFV_joined_the_investigation
+			set_variable = {
+				which = th_POFV_personal_fight_counter
+				value = 0
+			}
 			if = {
 				limit = {
 					ai = no
@@ -166,7 +170,7 @@ country_event = {
 	trigger = {
 		th_current_incident = { incident = sixty_year_cycle_incident }
 		has_global_flag = th_POFV_random_matches_active
-		owns = 1
+		has_country_flag = th_POFV_joined_the_investigation
 	}
 
 	is_triggered_only = yes
@@ -178,53 +182,204 @@ country_event = {
 	option = {
 		if = {
 			limit = {
-				1 = { NOT = { has_province_flag = th_POFV_counter_active } }
+				is_variable_equal = {
+					which = th_POFV_personal_fight_counter
+					value = 5
+				}
 			}
-			th_set_incident_stage = {
-				stage = 0
+			country_event = {
+				id = th_sixty_year_cycle_incident_events.7
 			}
-			1 = { set_province_flag = th_POFV_counter_active }
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_POFV_personal_fight_counter
+					value = 6
+				}
+			}
+			country_event = {
+				id = th_sixty_year_cycle_incident_events.8
+			}
 		}
 		else = {
-			th_prepare_for_next_stage = yes
-		}
-		if = {
-			limit = {
-				th_incident_has_reached_stage = {
-					stage = 5
+			random_list = {
+				#Stage 1 - 2 Bracket
+				1 = { #Cirno
+					trigger = {
+						NOT = { tag = CIN }
+						NOT = { was_tag = CIN }
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						NOT = { has_country_flag = th_POFV_had_cirno_fight }
+					}
+					set_country_flag = th_POFV_cirno_fight
+					set_country_flag = th_POFV_had_cirno_fight
+				}
+				1 = { #Mystia
+					trigger = {
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						NOT = { has_country_flag = th_POFV_had_mystia_fight }
+					}
+					set_country_flag = th_POFV_mystia_fight
+					set_country_flag = th_POFV_had_mystia_fight
+				}
+				#Stage 2 - 4 bracket
+				1 = { #Prismriver
+					trigger = {
+						NOT = { tag = PRI }
+						NOT = { was_tag = PRI }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 2
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						NOT = { has_country_flag = th_POFV_had_prismriver_fight }
+					}
+					set_country_flag = th_POFV_prismriver_fight
+					set_country_flag = th_POFV_had_prismriver_fight
+				}
+				1 = { #Tewi
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 2
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						NOT = { has_country_flag = th_POFV_had_tewi_fight }
+					}
+					set_country_flag = th_POFV_tewi_fight
+					set_country_flag = th_POFV_had_tewi_fight
+				}
+				#Stage 3 - 5 bracket
+				1 = { #Reisen
+					trigger = {
+						NOT = { tag = EIT }
+						NOT = { was_tag = EIT }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 6
+							}
+						}
+						NOT = { has_country_flag = th_POFV_had_reisen_fight }
+					}
+					set_country_flag = th_POFV_reisen_fight
+					set_country_flag = th_POFV_had_reisen_fight
+				}
+				1 = { #Youmu
+					trigger = {
+						NOT = { tag = NET }
+						NOT = { was_tag = NET }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 6
+							}
+						}
+						NOT = { has_country_flag = th_POFV_had_youmu_fight }
+					}
+					set_country_flag = th_POFV_youmu_fight
+					set_country_flag = th_POFV_had_youmu_fight
+				}
+				1 = { #Sakuya
+					trigger = {
+						NOT = { tag = SCR }
+						NOT = { was_tag = SCR }
+						NOT = { has_country_flag = th_POFV_had_sakuya_fight }
+					}
+					set_country_flag = th_POFV_sakuya_fight
+					set_country_flag = th_POFV_had_sakuya_fight
+				}
+				1 = { #Medicine
+					trigger = {
+						NOT = { has_country_flag = th_POFV_had_medicine_fight }
+					}
+					set_country_flag = th_POFV_medicine_fight
+					set_country_flag = th_POFV_had_medicine_fight
+				}
+				1 = { #Yuuka
+					trigger = {
+						NOT = { tag = SFF }
+						NOT = { was_tag = SFF }
+						NOT = { has_country_flag = th_POFV_had_yuuka_fight }
+					}
+					set_country_flag = th_POFV_yuuka_fight
+					set_country_flag = th_POFV_had_yuuka_fight
+				}
+				1 = { #Aya
+					trigger = {
+						NOT = { tag = TGU }
+						NOT = { was_tag = TGU }
+						NOT = { has_country_flag = th_POFV_had_aya_fight }
+					}
+					set_country_flag = th_POFV_aya_fight
+					set_country_flag = th_POFV_had_aya_fight
+				}
+				1 = { #Marisa
+					trigger = {
+						NOT = { tag = FOM }
+						NOT = { was_tag = FOM }
+						NOT = { has_country_flag = th_POFV_had_marisa_fight }
+					}
+					set_country_flag = th_POFV_marisa_fight
+					set_country_flag = th_POFV_had_marisa_fight
+				}
+				1 = { #Reimu
+					trigger = {
+						NOT = { tag = HKR }
+						NOT = { was_tag = HKR }
+						NOT = { has_country_flag = th_POFV_had_reimu_fight }
+					}
+					set_country_flag = th_POFV_reimu_fight
+					set_country_flag = th_POFV_had_reimu_fight
+				}
+				#Bonus bosses if there are more investigators
+				1 = { #Lily
+					trigger = {
+						LIL = { has_country_flag = th_POFV_joined_the_investigation }
+						NOT = { tag = LIL }
+						NOT = { was_tag = LIL }
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+					}
+					set_country_flag = th_POFV_lily_fight
 				}
 			}
-			random_country = {
-				limit = {
-					tag = HIG
-					#TODO count highest score
-				}
-				country_event = {
-					id = th_sixty_year_cycle_incident_events.7
-				}
+			country_event = {
+				id = th_sixty_year_cycle_incident_events.4
 			}
-		}
-		every_country = {
-			limit = {
-				has_country_flag = th_POFV_joined_the_investigation
-			}
-			clr_country_flag = th_POFV_search_for_enemy
-			set_country_flag = th_POFV_search_for_enemy
-			1 = { set_province_flag = th_POFV_enemies_set }
-		}
-		if = {
-			limit = {
-				1 = { has_province_flag = th_POFV_enemies_set }
-			}
-			random_country = {
-				limit = {
-					has_country_flag = th_POFV_search_for_enemy
-				}
-				country_event = {
-					id = th_sixty_year_cycle_incident_events.4
-				}
-			}
-			1 = { clr_province_flag = th_POFV_enemies_set }
 		}
 		
 		ai_chance = { 
@@ -236,413 +391,160 @@ country_event = {
 #Sixty Year Cycle Great Barrier Incident - Random Encounters!
 country_event = {
 	id = th_sixty_year_cycle_incident_events.4
-	title = none
-	desc = none
-	picture = HIGAN_eventPicture
-	hidden = yes
+	title = th_sixty_year_cycle_incident_events.4.t
+	desc = {
+		trigger = { has_country_flag = th_POFV_medicine_fight }
+		desc = th_sixty_year_cycle_incident_events.4.medicine.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_tewi_fight }
+		desc = th_sixty_year_cycle_incident_events.4.tewi.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_mystia_fight }
+		desc = th_sixty_year_cycle_incident_events.4.mystia.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_yuuka_fight }
+		desc = th_sixty_year_cycle_incident_events.4.yuuka.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_aya_fight }
+		desc = th_sixty_year_cycle_incident_events.4.aya.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_prismriver_fight }
+		desc = th_sixty_year_cycle_incident_events.4.prismriver.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_cirno_fight }
+		desc = th_sixty_year_cycle_incident_events.4.cirno.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_reisen_fight }
+		desc = th_sixty_year_cycle_incident_events.4.reisen.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_youmu_fight }
+		desc = th_sixty_year_cycle_incident_events.4.youmu.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_sakuya_fight }
+		desc = th_sixty_year_cycle_incident_events.4.sakuya.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_marisa_fight }
+		desc = th_sixty_year_cycle_incident_events.4.marisa.desc
+	}
+	desc = {
+		trigger = { has_country_flag = th_POFV_reimu_fight }
+		desc = th_sixty_year_cycle_incident_events.4.reimu.desc
+	}
+	desc = {
+		trigger = {
+			NOT = { has_country_flag = th_POFV_medicine_fight }
+			NOT = { has_country_flag = th_POFV_tewi_fight }
+			NOT = { has_country_flag = th_POFV_mystia_fight }
+			NOT = { has_country_flag = th_POFV_yuuka_fight }
+			NOT = { has_country_flag = th_POFV_aya_fight }
+			NOT = { has_country_flag = th_POFV_prismriver_fight }
+			NOT = { has_country_flag = th_POFV_cirno_fight }
+			NOT = { has_country_flag = th_POFV_reisen_fight }
+			NOT = { has_country_flag = th_POFV_youmu_fight }
+			NOT = { has_country_flag = th_POFV_sakuya_fight }
+			NOT = { has_country_flag = th_POFV_marisa_fight }
+			NOT = { has_country_flag = th_POFV_reimu_fight }
+		}
+		desc = th_sixty_year_cycle_incident_events.4.default.desc
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_medicine_fight }
+		picture = MEDICINE_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_tewi_fight }
+		picture = TEWI_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_mystia_fight }
+		picture = MYSTIA_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_yuuka_fight }
+		picture = YUUKABOSS_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_aya_fight }
+		picture = AYABOSS_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_prismriver_fight }
+		picture = PRISMRIVER_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_cirno_fight }
+		picture = CIRNO_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_reisen_fight }
+		picture = REISEN_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_youmu_fight }
+		picture = YOUMU2_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_sakuya_fight }
+		picture = SAKUYA_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_marisa_fight }
+		picture = MARISA_eventPicture
+	}
+	picture = {
+		trigger = { has_country_flag = th_POFV_reimu_fight }
+		picture = REIMU_eventPicture
+	}
+	picture = {
+		trigger = {
+			NOT = { has_country_flag = th_POFV_medicine_fight }
+			NOT = { has_country_flag = th_POFV_tewi_fight }
+			NOT = { has_country_flag = th_POFV_mystia_fight }
+			NOT = { has_country_flag = th_POFV_yuuka_fight }
+			NOT = { has_country_flag = th_POFV_aya_fight }
+			NOT = { has_country_flag = th_POFV_prismriver_fight }
+			NOT = { has_country_flag = th_POFV_cirno_fight }
+			NOT = { has_country_flag = th_POFV_reisen_fight }
+			NOT = { has_country_flag = th_POFV_youmu_fight }
+			NOT = { has_country_flag = th_POFV_sakuya_fight }
+			NOT = { has_country_flag = th_POFV_marisa_fight }
+			NOT = { has_country_flag = th_POFV_reimu_fight }
+		}
+		picture = HIGAN_eventPicture
+	}
 	is_triggered_only = yes
 	
 	option = {
-		while = {
-			limit = {
-				any_known_country = {
-					has_country_flag = th_POFV_search_for_enemy
-					NOT = { has_country_flag = th_POFV_second_enemy }
-					NOT = { has_country_flag = th_POFV_first_enemy }
-				}
-			}
-			random_known_country = {
-				limit = {
-					has_country_flag = th_POFV_search_for_enemy
-					NOT = { has_country_flag = th_POFV_second_enemy }
-				}
-				set_country_flag = th_POFV_first_enemy
-				save_event_target_as = th_POFV_first_enemy_tar
-			}
-			random_known_country = {
-				limit = {
-					has_country_flag = th_POFV_search_for_enemy
-					NOT = { has_country_flag = th_POFV_first_enemy }
-				}
-				set_country_flag = th_POFV_second_enemy
-				save_event_target_as = th_POFV_second_enemy_tar
-			}
-			event_target:th_POFV_first_enemy_tar = {
-				event_target:th_POFV_second_enemy_tar = {
-					set_country_flag = th_challenged_by_@PREV
-					event_target:th_POFV_first_enemy_tar = {
-						set_country_flag = th_challenges_@PREV
-						country_event = {
-							id = th_sixty_year_cycle_incident_events.5
-						}
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.6
-					}
-				}
-			}
-		}
-		random_country = {
-			limit = {
-				has_country_flag = th_POFV_search_for_enemy
-				NOT = { has_country_flag = th_POFV_second_enemy }
-				NOT = { has_country_flag = th_POFV_first_enemy }
-			}
-			random_list = {
-				1 = { #Medicine
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.110
-					}
-				}
-				1 = { #Tewi
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.120
-					}
-				}
-				1 = { #Mystia
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.130
-					}
-				}
-				1 = { #Yuuka
-					trigger = {
-						NOT = { tag = SFF }
-						NOT = { was_tag = SFF }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.140
-					}
-				}
-				1 = { #Aya
-					trigger = {
-						NOT = { tag = TGU }
-						NOT = { was_tag = TGU }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.150
-					}
-				}
-				1 = { #Prismriver
-					trigger = {
-						NOT = { tag = PRI }
-						NOT = { was_tag = PRI }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.160
-					}
-				}
-				1 = { #Cirno
-					trigger = {
-						NOT = { tag = CIN }
-						NOT = { was_tag = CIN }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.170
-					}
-				}
-				1 = { #Reisen
-					trigger = {
-						NOT = { tag = EIT }
-						NOT = { was_tag = EIT }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.180
-					}
-				}
-				1 = { #Youmu
-					trigger = {
-						NOT = { tag = NET }
-						NOT = { was_tag = NET }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.190
-					}
-				}
-				1 = { #Sakuya
-					trigger = {
-						NOT = { tag = SCR }
-						NOT = { was_tag = SCR }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.200
-					}
-				}
-				1 = { #Marisa
-					trigger = {
-						NOT = { tag = FOM }
-						NOT = { was_tag = FOM }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.210
-					}
-				}
-				1 = { #Reimu
-					trigger = {
-						NOT = { tag = HKR }
-						NOT = { was_tag = HKR }
-					}
-					country_event = {
-						id = th_sixty_year_cycle_incident_events.220
-					}
-				}
-			}
-		}
+		name = th_sixty_year_cycle_incident_events.4.a.tt
 		
 		ai_chance = { 
 			factor = 100
 		}
 	}
-}
 
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Gets challenged
-country_event = {
-	id = th_sixty_year_cycle_incident_events.5
-	title = none
-	desc = none
-	picture = HIGAN_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Challenges
-country_event = {
-	id = th_sixty_year_cycle_incident_events.6
-	title = none
-	desc = none
-	picture = HIGAN_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - FIGHT!
-country_event = {
-	id = th_sixty_year_cycle_incident_events.7
-	title = none
-	desc = none
-	picture = HIGAN_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Ran away
-country_event = {
-	id = th_sixty_year_cycle_incident_events.8
-	title = none
-	desc = none
-	picture = HIGAN_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Victory!
-country_event = {
-	id = th_sixty_year_cycle_incident_events.9
-	title = none
-	desc = none
-	picture = HIGAN_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Defeat!
-country_event = {
-	id = th_sixty_year_cycle_incident_events.10
-	title = none
-	desc = none
-	picture = HIGAN_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Medicine
-country_event = {
-	id = th_sixty_year_cycle_incident_events.110
-	title = none
-	desc = none
-	picture = MEDICINE_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Tewi
-country_event = {
-	id = th_sixty_year_cycle_incident_events.120
-	title = none
-	desc = none
-	picture = TEWI_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Mystia
-country_event = {
-	id = th_sixty_year_cycle_incident_events.130
-	title = none
-	desc = none
-	picture = MYSTIA_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Yuuka
-country_event = {
-	id = th_sixty_year_cycle_incident_events.140
-	title = none
-	desc = none
-	picture = YUUKABOSS_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Aya
-country_event = {
-	id = th_sixty_year_cycle_incident_events.150
-	title = none
-	desc = none
-	picture = AYABOSS_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Prismriver
-country_event = {
-	id = th_sixty_year_cycle_incident_events.160
-	title = none
-	desc = none
-	picture = PRISMRIVER_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Cirno
-country_event = {
-	id = th_sixty_year_cycle_incident_events.170
-	title = none
-	desc = none
-	picture = CIRNO_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Reisen
-country_event = {
-	id = th_sixty_year_cycle_incident_events.180
-	title = none
-	desc = none
-	picture = REISEN_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Youmu
-country_event = {
-	id = th_sixty_year_cycle_incident_events.190
-	title = none
-	desc = none
-	picture = YOUMU2_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Sakuya
-country_event = {
-	id = th_sixty_year_cycle_incident_events.200
-	title = none
-	desc = none
-	picture = SAKUYA_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Marisa
-country_event = {
-	id = th_sixty_year_cycle_incident_events.210
-	title = none
-	desc = none
-	picture = MARISA_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Random Encounters! - Reimu
-country_event = {
-	id = th_sixty_year_cycle_incident_events.220
-	title = none
-	desc = none
-	picture = REIMU_eventPicture
-	is_triggered_only = yes
-	option = {		
-		ai_chance = { 
-			factor = 100
-		}
+	after = {
+		clr_country_flag = th_POFV_medicine_fight
+		clr_country_flag = th_POFV_tewi_fight
+		clr_country_flag = th_POFV_mystia_fight
+		clr_country_flag = th_POFV_yuuka_fight
+		clr_country_flag = th_POFV_aya_fight
+		clr_country_flag = th_POFV_prismriver_fight
+		clr_country_flag = th_POFV_cirno_fight
+		clr_country_flag = th_POFV_reisen_fight
+		clr_country_flag = th_POFV_youmu_fight
+		clr_country_flag = th_POFV_sakuya_fight
+		clr_country_flag = th_POFV_marisa_fight
+		clr_country_flag = th_POFV_reimu_fight
 	}
 }
 
