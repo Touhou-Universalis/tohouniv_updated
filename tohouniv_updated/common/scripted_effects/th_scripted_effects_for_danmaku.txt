@@ -44,8 +44,9 @@ th_additional_danmaku_buff = {
 
 #Uses "type"
 #Supports the following types:
-# incident		- used for all incident related fights
-# normal		- used for all the other fights
+# incident			- used for all incident related fights
+# lesser_incident	- used for all smaller scope incidents related fights
+# normal			- used for all the other fights
 th_getruler_fighting_skill = {
 	#Players Fighting Skills
 	set_variable = {
@@ -69,7 +70,7 @@ th_getruler_fighting_skill = {
 	#}
 	export_to_variable = {
 		variable_name = th_current_tolerance_to_the_true_faith_skill
-		value = tolerance_to_this
+		value = modifier:tolerance_own
 		who = ROOT
 	}
 
@@ -140,7 +141,7 @@ th_getruler_diplomatic_skill = {
 	}
 	export_to_variable = {
 		variable_name = th_current_repuation_skill
-		value = trigger_value:diplomatic_reputation
+		value = modifier:diplomatic_reputation
 		who = ROOT
 	}
 	export_to_variable = {
@@ -217,7 +218,7 @@ th_getruler_fighting_skill_no_mil = {
 	#}
 	export_to_variable = {
 		variable_name = th_current_tolerance_to_the_true_faith_skill
-		value = tolerance_to_this
+		value = modifier:tolerance_own
 		who = ROOT
 	}
 	
@@ -269,9 +270,10 @@ th_danmaku_set_compare_variable = {
 }
 
 #Supports the following types:
-# incident		- used for all incident related fights
-# normal		- used for all the other fights
-# diplomatic	- used for diplo fights only
+# incident			- used for all incident related fights
+# lesser_incident	- used for all smaller incidents related fights
+# normal			- used for all the other fights
+# diplomatic		- used for diplo fights only
 th_defineopponent_fighting_skill = {
 	#Draw Zone
 	set_variable = {
@@ -498,6 +500,252 @@ th_danmaku_incident_fight_ruler_and_opponent = {
 					id = th_danmaku_event.4
 					days = 1
 				}			
+			}
+		}
+	}
+}
+
+#Use th_danmaku_event.0 for win/draw/lose events if you don't have any additional events following the fight
+th_danmaku_lesser_incident_fight_ruler_and_opponent = {
+	custom_tooltip = th_danmaku_lesser_incident_fight_ruler_and_opponent_tt
+	#Player is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_lesser_incident
+				which = th_enemy_border_great_victory_lesser_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_enemy_upper_border_draw_lesser_incident
+					which = th_current_fighting_skills_lesser_incident
+				}
+			}
+		}
+		random_list = {
+			60 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.8
+					days = 1
+				}	
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = $win_event$
+				days = $days$
+			}
+		}
+	}
+	#Player is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_lesser_incident
+				which = th_enemy_upper_border_draw_lesser_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_lesser_incident
+					which = th_enemy_border_great_victory_lesser_incident
+				}
+			}
+		}
+		random_list = {
+			75 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			15 = {
+				country_event = {
+					id = th_danmaku_event.8
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}		
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent and Player are equal strong
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_lesser_incident
+				which = th_enemy_lower_border_draw_lesser_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_lesser_incident
+					which = th_enemy_upper_border_draw_lesser_incident
+				}
+			}
+		}
+		random_list = {
+			65 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+			25 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+		}
+	}
+	#Opponent is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_lesser_incident
+				which = th_enemy_border_great_defeat_lesser_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_lesser_incident
+					which = th_enemy_lower_border_draw_lesser_incident
+				}
+			}
+		}
+		random_list = {
+			20 = {
+				country_event = {
+					id = th_danmaku_event.12
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+			60 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}			
+			}
+			20 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_enemy_border_great_defeat_lesser_incident
+				which = th_current_fighting_skills_lesser_incident
+			}
+		}
+		random_list = {
+			50 = {
+				country_event = {
+					id = th_danmaku_event.12
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}			
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
 			}
 		}
 	}
