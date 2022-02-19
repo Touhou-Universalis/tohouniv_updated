@@ -15,12 +15,7 @@ country_event = {
 	trigger = {
 		th_incident_check_year_for_incident = { incident = sixty_year_cycle_incident year = 1525 }
 		NOT = { th_incident_has_been_resolved = { incident = sixty_year_cycle_incident } }
-		#th_incident_can_trigger_generic_check = yes
-		#Special trigger condition, can happen while another incident is active too
-		th_has_incidents_enabled = yes
-		capital_scope = {
-			superregion = gensokyo_superregion
-		}
+		th_lesser_incident_can_trigger_generic_check = yes
 	}
 	
 	fire_only_once = yes
@@ -36,11 +31,14 @@ country_event = {
 	}
 
 	immediate = {
-		th_incident_forbid_country_to_investigate = { who = HIG }
-		th_incident_forbid_country_to_investigate = { who = SNZ }
+		#th_incident_forbid_country_to_investigate = { who = HIG }
+		#th_incident_forbid_country_to_investigate = { who = SNZ }
 		th_start_incident_effect = {
 			incident = sixty_year_cycle_incident
 		}
+		set_global_flag = th_active_lesser_incident
+		set_global_flag = th_current_incident_sixty_year_cycle_incident
+		set_global_flag = th_POFV_random_matches_active
 		gensokyo_superregion = {
 			limit = {
 				NOT = { has_province_modifier = th_POFV_random_flower_bed }
@@ -73,7 +71,6 @@ country_event = {
 				days = 1
 			}
 		}
-		set_global_flag = th_POFV_random_matches_active
 		ai_chance = { 
 			factor = 100
 		}
@@ -1197,65 +1194,8 @@ country_event = {
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident - OK Outcome
-country_event = { 
-	id = th_sixty_year_cycle_incident_events.10
-	title = "th_sixty_year_cycle_incident_events.10.t"
-	desc = "th_sixty_year_cycle_incident_events.10.desc"
-	picture = SHRINE_eventPicture
-	is_triggered_only = yes
-	major = yes
-
-	immediate = {
-		hidden_effect = { 
-			th_resolve_incident = { incident = sixty_year_cycle_incident }
-		}
-	}
-	
-	option = {		#Finally, it's over.
-		name = "th_sixty_year_cycle_incident_events.10.a"
-		th_solve_incident = {
-			incident = sixty_year_cycle_incident
-		}
-		if = {
-			limit = {
-				exists = HIG
-			}
-			HIG = {
-				add_country_modifier = {
-					name = th_POFV_reorganized_the_shinigami
-					duration = 1825
-				}
-			}
-		}
-		if = {
-			limit = {
-				OR = {
-					was_tag = HKR
-					tag = HKR
-					was_tag = FOM
-					tag = FOM
-				}
-			}
-			add_country_modifier = {
-				name = "th_POFV_inci_overcame_komachi"
-				duration = 9125
-			}
-		}
-		else = {			
-			add_country_modifier = {
-				name = "th_POFV_inci_overcame_komachi"
-				duration = 3650
-			}
-		}
-		add_adm_power = 100
-		add_prestige = 25
-		add_devotion = 10
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Good Outcome
-country_event = { #Okuu tells Reimu/Marisa about these weird gods
+#Sixty Year Cycle Great Barrier Incident - Ok Outcome
+country_event = { #Eiki lectures the player, but still won
 	id = th_sixty_year_cycle_incident_events.11
 	title = "th_sixty_year_cycle_incident_events.11.t"
 	desc = "th_sixty_year_cycle_incident_events.11.desc"
@@ -1265,7 +1205,7 @@ country_event = { #Okuu tells Reimu/Marisa about these weird gods
 	
 	immediate = {
 		hidden_effect = { 
-			th_resolve_incident = { incident = sixty_year_cycle_incident }
+			th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
 		}
 	}
 	
@@ -1310,18 +1250,23 @@ country_event = { #Okuu tells Reimu/Marisa about these weird gods
 	}
 }
 
-#Sixty Year Cycle Great Barrier Incident - EXTRA Outcome Good
-country_event = { #Their plan succeeded nonetheless...
+#Sixty Year Cycle Great Barrier Incident - Good Outcome
+country_event = { #Eiki has no reason to lecture
 	id = th_sixty_year_cycle_incident_events.12
 	title = "th_sixty_year_cycle_incident_events.12.t"
 	desc = "th_sixty_year_cycle_incident_events.12.desc"
-	picture = KANAKOSUWAKO_eventPicture	
+	picture = EIKI_eventPicture
 	is_triggered_only = yes	
 	major = yes
 	
 	option = {		#The rain will stop eventually. She can stay here for awhile.
 		name = "th_sixty_year_cycle_incident_events.12.a"	
 		custom_tooltip = th_sixty_year_cycle_incident_events.12.a.tt
+		hidden_effect = {
+			th_solve_incident = {
+				incident = sixty_year_cycle_incident
+			}
+		}
 		th_solve_incident_extra = {
 			incident = sixty_year_cycle_incident
 		}
@@ -1381,7 +1326,7 @@ country_event = {
 
 	immediate = {
 		hidden_effect = { 
-			th_resolve_incident = { incident = sixty_year_cycle_incident }
+			th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
 		}
 	}
 	
@@ -1581,6 +1526,10 @@ country_event = {
 		th_current_incident = { incident = sixty_year_cycle_incident }
 		any_owned_province = {
 			has_province_modifier = th_POFV_random_flower_bed
+			NOT = { has_province_modifier = th_POFV_wonders_of_spring }
+			NOT = { has_province_modifier = th_POFV_passion_of_summer }
+			NOT = { has_province_modifier = th_POFV_change_of_fall }
+			NOT = { has_province_modifier = th_POFV_grace_of_winter }
 		}
 		NOT = { th_is_or_was_tag = { tag = HIG } }
 		OR = {
@@ -1608,10 +1557,55 @@ country_event = {
 	
 	option = {	#The flowers bloom!
 		name = th_sixty_year_cycle_incident_events.25.a
+		event_target:flower_bed_province = {
+			random_list = {
+				1 = {
+					add_permanent_province_modifier = {
+						name = th_POFV_wonders_of_spring
+						duration = 1825
+					}
+					add_devastation = 25
+				}
+				1 = {
+					add_permanent_province_modifier = {
+						name = th_POFV_passion_of_summer
+						duration = 1825
+					}
+					add_nationalism = 5
+				}
+				1 = {
+					add_permanent_province_modifier = {
+						name = th_POFV_change_of_fall
+						duration = 1825
+					}
+					spawn_rebels = {
+						type = anti_tax_rebels
+						size = 3
+					}
+				}
+				1 = {
+					add_permanent_province_modifier = {
+						name = th_POFV_grace_of_winter
+						duration = 1825
+					}
+					add_local_autonomy = 25
+				}
+				1 = {}
+			}
+		}
 		
 		ai_chance = { 
 			factor = 100
 		}		
+	}
+
+	option = { #Ensure the flowers don't bloom!
+		name = th_sixty_year_cycle_incident_events.25.a
+		add_treasury = -0.15
+		
+		ai_chance = { 
+			factor = 0
+		}
 	}
 }
 
@@ -1625,9 +1619,7 @@ country_event = {
 	trigger = {
 		th_does_not_have_current_incident = { incident = sixty_year_cycle_incident }
 		any_owned_province = {
-			OR = {
-				has_province_modifier = th_POFV_random_flower_bed
-			}
+			has_province_modifier = th_POFV_random_flower_bed
 		}
 	}
 	
@@ -1640,6 +1632,10 @@ country_event = {
 	option = {
 		every_owned_province = {
 			remove_province_modifier = th_POFV_random_flower_bed
+			remove_province_modifier = th_POFV_wonders_of_spring
+			remove_province_modifier = th_POFV_passion_of_summer
+			remove_province_modifier = th_POFV_change_of_fall
+			remove_province_modifier = th_POFV_grace_of_winter
 		}
 		
 		ai_chance = { 
@@ -1650,7 +1646,7 @@ country_event = {
 
 
 
-#Sixty Year Cycle Great Barrier Incident - Special Case: nobody can become investigator
+#Sixty Year Cycle Great Barrier Incident - Special Case: incident resolves itself after given enough time
 country_event = {
 	id = th_sixty_year_cycle_incident_events.26
 	title = "th_sixty_year_cycle_incident_events.26.t"
@@ -1658,17 +1654,12 @@ country_event = {
 	picture = HIGAN_eventPicture
 	
 	trigger = {
-		th_current_incident = { incident = sixty_year_cycle_incident }		
-		gensokyo_superregion = {
-			owner = {
-				OR = {
-					th_is_or_was_tag = { tag = HIG }
-					is_subject_of = HIG
-				}
-			}
-		}
-		th_is_or_was_tag = { tag = HIG }
-		all_country = { th_incident_can_not_become_investigator = yes }
+		th_current_incident = { incident = sixty_year_cycle_incident }	
+		had_global_flag = {
+			flag = th_current_incident_sixty_year_cycle_incident
+			days = 10950
+		}	
+		capital_scope = { continent = gensokyo_continent }
 		NOT = { th_incident_has_been_resolved = { incident = sixty_year_cycle_incident } }
 	}
 	
@@ -1678,7 +1669,7 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = { 
-			th_resolve_incident = { incident = sixty_year_cycle_incident }
+			th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
 		}
 	}
 	
@@ -1686,64 +1677,18 @@ country_event = {
 	
 	option = {		#Time to resolve this issue on my own
 		name = "th_sixty_year_cycle_incident_events.26.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.26.a.tt					
-		add_country_modifier = {
-			name = "th_POFV_reorganized_the_shinigami"
-			duration = 9125
-		}		
-	}
-}
-
-#Sixty Year Cycle Great Barrier Incident - Special Case: nobody can become investigator, but Gensokyo was NOT united by Eiki
-country_event = {
-	id = th_sixty_year_cycle_incident_events.27
-	title = "th_sixty_year_cycle_incident_events.27.t"
-	desc = "th_sixty_year_cycle_incident_events.27.desc"
-	picture = HIGAN_eventPicture
-	
-	trigger = {
-		th_current_incident = { incident = sixty_year_cycle_incident }	
-		any_province = {
-			superregion = gensokyo_superregion
-			NOT = { owned_by = HIG }
-			NOT = { owner = { is_subject_of = HIG } }
-		}	
-		owns = 5007
-		all_country = {
-			th_incident_can_not_become_investigator = yes
+		custom_tooltip = th_sixty_year_cycle_incident_events.26.a.tt
+		if = {
+			limit = {
+				exists = HIG
+			}
+			HIG = {
+				add_country_modifier = {
+					name = "th_POFV_reorganized_the_shinigami"
+					duration = 9125
+				}
+			}
 		}
-		NOT = { th_incident_has_been_resolved = { incident = sixty_year_cycle_incident } }
-	}
-	
-	mean_time_to_happen = {
-		days = 5
-	}
-	
-	immediate = {
-		hidden_effect = { 
-			th_resolve_incident = { incident = sixty_year_cycle_incident }
-		}
-	}
-	
-	major = yes
-	
-	option = {		#I will have to resolve it myself then
-		name = "th_sixty_year_cycle_incident_events.27.a"
-		trigger = {
-			th_is_or_was_tag = { tag = HIG }
-		}				
-		add_country_modifier = {
-			name = "th_POFV_reorganized_the_shinigami"
-			duration = 3650
-		}
-	}
-	option = {		#Nobody is investigating. We can only pray for mist`s gone
-		name = "th_sixty_year_cycle_incident_events.27.b"
-		trigger = {
-			NOT = { tag = HIG }
-			NOT = { was_tag = HIG }
-		}
-		add_stability = -2
 	}
 }
 
@@ -1759,7 +1704,7 @@ country_event = { #The Yamaxandu resolves the incident on her own
 	
 	immediate = {
 		hidden_effect = {
-			th_resolve_incident = { incident = sixty_year_cycle_incident }
+			th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
 		}
 	}
 	major = yes
