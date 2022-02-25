@@ -166,14 +166,14 @@ country_event = {
     }
 
     trigger = {
-        any_country = {
-            has_country_flag = th_has_already_a_planned_aggressor
-        }
-        calc_true_if = {
-            all_country = {
-                has_country_flag = th_is_planned_aggressor_of_@ROOT
+        has_country_flag = th_has_already_a_planned_aggressor
+        NOT = {
+            calc_true_if = {
+                all_country = {
+                    has_country_flag = th_is_planned_aggressor_of_@ROOT
+                }
+                amount = 1
             }
-            amount = 0
         }
     }
 
@@ -436,30 +436,24 @@ country_event = {
 	title = th_diplo_events.10.t
 	desc = th_diplo_events.10.desc
 	picture = SHRINE_eventPicture
-
-    mean_time_to_happen = {
-        days = 1
-    }
-
-    trigger = {
-        any_country = {
-            has_country_flag = th_pledged_to_religion_to_@ROOT
-            NOT = { has_country_modifier = th_pledged_to_remain_religious }
-        }
-    }
+    
+    is_triggered_only = yes
 
     option = {
         name = th_diplo_events.10.a
-        every_country = {
+        every_known_country = {
             limit = {
-                has_country_flag = th_pledged_to_religion_to_@ROOT
+                has_country_flag = th_pledged_religious_loyalty
                 NOT = { has_country_modifier = th_pledged_to_remain_religious }
             }
             reverse_add_casus_belli = {
                 type = cb_touhou_penance_war
                 target = ROOT
             }
-            clr_country_flag = th_pledged_to_religion_to_@ROOT
+            hidden_effect = {
+                clr_country_flag = th_pledged_religious_loyalty
+                ROOT = { clr_country_flag = th_has_gotten_pledged_to_religion_from_@PREV }
+            }
         }
 
         ai_chance = {
@@ -2061,54 +2055,18 @@ country_event = {
     title = th_diplo_events.44.t
     desc = th_diplo_events.44.desc
     picture = SATORI_eventPicture
-    
-    trigger = {
-        any_country = {
-            had_country_flag = {
-                flag = th_satoris_command_flag_by_@ROOT
-                days = 1825
-            }
-            NOT = {
-                had_country_flag = {
-                    flag = th_satoris_command_flag_by_@ROOT
-                    days = 5475
-                }
-            }
-            NOT = { has_country_modifier = th_satoris_command }
-            NOT = { has_country_modifier = th_awoken_from_the_hybnosis }
-        }
-    }
-
-    mean_time_to_happen = {
-        days = 1
-    }
+    is_triggered_only = yes
     hidden = yes
 
     option = {  #Curses
         name = th_diplo_events.44.a
-        random_country = {
+        if = {
             limit = {
-                had_country_flag = {
-                    flag = th_satoris_command_flag_by_@ROOT
-                    days = 1825
-                }
-                NOT = {
-                    had_country_flag = {
-                        flag = th_satoris_command_flag_by_@ROOT
-                        days = 5475
-                    }
-                }
-                NOT = { has_country_modifier = th_satoris_command }
-                NOT = { has_country_modifier = th_awoken_from_the_hybnosis }
+                is_subject_of_type = th_satori_vassal
             }
-            if = {
-                limit = {
-                    is_subject_of_type = th_satori_vassal
-                }
-                add_country_modifier = {
-                    name = th_awoken_from_the_hybnosis
-                    duration = 3650
-                }
+            add_country_modifier = {
+                name = th_awoken_from_the_hybnosis
+                duration = 3650
             }
         }
 
@@ -2367,16 +2325,16 @@ country_event = {
     
     trigger = {
         NOT = { has_country_modifier = th_mry_crusade_target }
-        any_country = {
+        any_known_country = {
             has_country_modifier = th_mry_crusade_target
             war_with = ROOT
             NOT = { religion = ROOT }
         }
         OR = {
-            any_country = {
-                religion = ROOT
+            any_known_country = {
                 mry_uses_faith_power = yes
                 NOT = { tag = ROOT }
+                religion = ROOT
             }
             mry_uses_faith_power = yes
         }
@@ -2411,17 +2369,17 @@ country_event = {
         OR = {
             is_at_war = no
             NOT = {
-                any_country = {
+                any_known_country = {
                     war_with = ROOT
                     NOT = { has_country_modifier = th_mry_crusade_target }
                 }
             }
             AND = {
                 NOT = {
-                    any_country = {
-                        religion = ROOT
+                    any_known_country = {
                         mry_uses_faith_power = yes
                         NOT = { tag = ROOT }
+                        religion = ROOT
                     }
                 }
                 NOT = { mry_uses_faith_power = yes }
