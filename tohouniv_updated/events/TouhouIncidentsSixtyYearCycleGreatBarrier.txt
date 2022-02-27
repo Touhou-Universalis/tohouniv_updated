@@ -15,7 +15,7 @@ country_event = {
 	trigger = {
 		th_incident_check_year_for_incident = { incident = sixty_year_cycle_incident year = 1525 }
 		NOT = { th_incident_has_been_resolved = { incident = sixty_year_cycle_incident } }
-		NOT = { th_current_incident = { incident = spring_snow_incident } }
+		th_does_not_have_current_incident = { incident = sixty_year_cycle_incident }
 		th_lesser_incident_can_trigger_generic_check = yes
 	}
 	
@@ -1132,10 +1132,10 @@ country_event = {
 		hidden_effect = {
 			subtract_variable = {
 				which = th_POFV_personal_fight_counter
-				value = 3
+				value = 2
 			}
+			1 = { change_variable = { which = eiki_counter value = 1 } }
 		}
-		1 = { change_variable = { which = eiki_counter value = 1 } }
 	}
 	
 	option = {
@@ -1171,8 +1171,8 @@ country_event = { #Eiki lectures the player, but still won
 		}
 	}
 	
-	option = {		#The rain will stop eventually. She can stay here for awhile.
-		name = "th_sixty_year_cycle_incident_events.11.b"
+	option = {
+		name = "th_sixty_year_cycle_incident_events.11.a"
 		th_solve_incident = {
 			incident = sixty_year_cycle_incident
 		}
@@ -1343,80 +1343,57 @@ country_event = {
 }
 
 #Sixty Year Cycle Great Barrier Incident - Random Flower events - Eiki demands her land back
-province_event = {
+country_event = {
 	id = th_sixty_year_cycle_incident_events.19
 	title = "th_sixty_year_cycle_incident_events.19.t"
 	desc = "th_sixty_year_cycle_incident_events.19.desc"
 	picture = FORMERHELL_eventPicture
-	goto = ROOT
+	goto = higan_revolting_province
 	trigger = {
-		owner = {
-			ai = no
-			NOT = { th_is_or_was_tag = { tag = HIG } }
-			is_free_or_tributary_trigger = yes
-			num_of_cities = 4
-		}
 		th_current_incident = { incident = sixty_year_cycle_incident }
-		NOT = { has_province_flag = higan_revolt }
-		NOT = { local_autonomy = 1 }
-		region = hell_region
-		culture = Higanean
+		ai = no
+		NOT = { th_is_or_was_tag = { tag = HIG } }
+		is_free_or_tributary_trigger = yes
+		num_of_cities = 4
+		any_owned_province = {
+			NOT = { has_province_flag = higan_revolt }
+			NOT = { local_autonomy = 1 }
+			region = hell_region
+			culture = Higanean
+		}
 	}
 
 	mean_time_to_happen = {
 		months = 30
 		modifier = {
 			factor = 0.5
-			any_neighbor_province = {
-				has_province_flag = higan_revolt
+			war_with = HIG 
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = higan_revolt }
+					NOT = { local_autonomy = 1 }
+					region = hell_region
+					culture = Higanean
+				}
+				save_event_target_as = higan_revolting_province
 			}
-		}
-		modifier = {
-			factor = 0.5
-			has_owner_religion = no
-		}
-		modifier = {
-			factor = 0.5
-			owner = {
-				NOT = { culture_group = ROOT }
-			}
-		}
-		modifier = {
-			factor = 0.5
-			owner = {
-				NOT = { primary_culture = ROOT }
-				NOT = { accepted_culture = ROOT }
-			}
-		}
-		modifier = {
-			factor = 0.5
-			owner = { war_with = HIG }
-		}
-		modifier = {
-			factor = 0.75
-			unrest = 3
-		}
-		modifier = {
-			factor = 0.75
-			unrest = 5
-		}
-		modifier = {
-			factor = 0.75
-			unrest = 7
-		}
-		modifier = {
-			factor = 0.75
-			unrest = 9
 		}
 	}
 
 	option = {
 		name = "th_sixty_year_cycle_incident_events.19.a"
-		set_province_flag = higan_revolt
-		spawn_rebels = {
-			type = nationalist_rebels
-			size = 1
-			friend = HIG
+		event_target:higan_revolting_province = {
+			set_province_flag = higan_revolt
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+				friend = HIG
+			}
 		}
 		
 		ai_chance = { 
@@ -1425,7 +1402,9 @@ province_event = {
 	}
 	option = {
 		name = "th_sixty_year_cycle_incident_events.19.b"
-		cede_province = HIG
+		event_target:higan_revolting_province = {
+			cede_province = HIG
+		}
 		
 		ai_chance = { 
 			factor = 10
@@ -1561,7 +1540,7 @@ country_event = {
 	}
 
 	option = { #Ensure the flowers don't bloom!
-		name = th_sixty_year_cycle_incident_events.25.a
+		name = th_sixty_year_cycle_incident_events.25.b
 		add_treasury = -0.15
 		
 		ai_chance = { 
@@ -1638,7 +1617,7 @@ country_event = {
 	
 	option = {		#Time to resolve this issue on my own
 		name = "th_sixty_year_cycle_incident_events.26.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.26.a.tt
+		th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
 		if = {
 			limit = {
 				exists = HIG
@@ -1657,8 +1636,8 @@ country_event = {
 #Sixty Year Cycle Great Barrier Incident - Bad Outcome
 country_event = { #The Yamaxandu resolves the incident on her own
 	id = th_sixty_year_cycle_incident_events.100
-	title = "th_sixty_year_cycle_incident_events.10.t"
-	desc = "th_sixty_year_cycle_incident_events.10.desc"
+	title = "th_sixty_year_cycle_incident_events.26.t"
+	desc = "th_sixty_year_cycle_incident_events.26.desc"
 	picture = HIGAN_eventPicture
 
 	is_triggered_only = yes
@@ -1671,8 +1650,8 @@ country_event = { #The Yamaxandu resolves the incident on her own
 	major = yes
 	
 	option = {		#Well, I've done what I could.
-		name = "th_sixty_year_cycle_incident_events.10.a"
-		custom_tooltip = th_sixty_year_cycle_incident_events.10.a.tt
+		name = "th_sixty_year_cycle_incident_events.26.a"
+		th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
 		if = {
 			limit = {
 				exists = HIG
