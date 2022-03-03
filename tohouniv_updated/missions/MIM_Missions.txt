@@ -17,7 +17,9 @@ mim_first_slot = {
 			has_dip_advisor = yes
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_mim.1
+			}
 		}
 	}
 	
@@ -36,10 +38,36 @@ mim_first_slot = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			owns_or_non_sovereign_subject_of = 5183
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Old_hakurei_shrine_state
+					area = Eastern_old_hakurei_shrine_state
+				}
+				value = 5
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					NOT = { owns = 5183 }
+				}
+				5183 = {
+					cede_province = ROOT
+				}
+			}
+			5183 = {
+				add_core = ROOT
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
+				change_culture = ROOT
+				add_province_modifier = {
+					name = mim_shrine_of_mima
+					duration = -1
+				}
+			}
+			add_patriarch_authority = 0.1
 		}
 	}
 	
@@ -50,10 +78,26 @@ mim_first_slot = {
 		}
 		position = 4
 		trigger = {
-			always = yes
+			religion = th_oldhakurei
+			if = {
+				limit = {
+					has_dlc = "Third Rome"
+				}
+				current_icon = old_hakurei_icon_mima
+			}
+			religious_unity = 1
+			OR = {
+				inquisitor = 2
+				theologian = 2
+			}
+			capital_scope = {
+				has_tax_building_trigger = yes
+			}
 		}
 		effect = {
-			custom_tooltip = MIM_SCHOLARS_OF_MAGIC_SCHOOLS
+			country_event = {
+				id = flavor_mim.3
+			}
 		}
 	}
 	
@@ -61,8 +105,42 @@ mim_first_slot = {
 		icon = mission_rb_a_mighty_fleet
 		required_missions = {}
 		position = 5
+		provinces_to_highlight = {
+			OR = {
+				owned_by = FOM
+				province_id = 5090
+			}
+		}
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					exists = FOM
+				}
+				FOM = {
+					OR = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+						th_has_lost_danmaku_duel_against_root = yes
+					}
+				}
+			}
+			else = {
+				5090 = {
+					owner = {
+						OR = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+							th_has_lost_danmaku_duel_against_root = yes
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
@@ -150,10 +228,10 @@ mim_first_slot = {
 			owns_core_province = 5183
 		}
 		effect = {
-			#add_country_modifier = {
-			#	name = "MIM_nuclear_powered_robot_maid"
-			#	duration = 5475
-			#}
+			add_country_modifier = {
+				name = "mim_nuclear_powered_robot_maid"
+				duration = 5475
+			}
 			hidden_effect = {
 				change_variable = {
 					which = MIM_maids_counter
@@ -173,6 +251,22 @@ mim_second_slot = {
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
+	
+	MIM_the_astral_knight = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = { MIM_armies_of_mima }
+		position = 2
+		provinces_to_highlight = {
+			area = Konngaras_state
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			always = yes
+		}
+		effect = {
+			custom_tooltip = cool_effect
+		}
+	}
 	
 	MIM_defeat_shinki = {
 		icon = mission_rb_a_mighty_fleet
@@ -244,10 +338,10 @@ mim_second_slot = {
 			NOT = { exists = GNU }	
 		}
 		effect = {
-			#add_country_modifier = {
-			#	name = "MIM_unnamed_dream_world_maid"
-			#	duration = 5475
-			#}
+			add_country_modifier = {
+				name = "mim_unnamed_dream_world_maid"
+				duration = 5475
+			}
 			hidden_effect = {
 				change_variable = {
 					which = MIM_maids_counter
@@ -273,19 +367,53 @@ mim_third_slot = {
 		required_missions = {  }
 		position = 1
 		trigger = {
-			always = yes
+			has_mil_advisor = yes
+			army_size_percentage = 1
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_mim.2
+			}
+			Konngaras_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Rika_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
-	MIM_the_astral_knight = {
+	MIM_engines_of_destruction = {
 		icon = mission_rb_a_mighty_fleet
 		required_missions = { MIM_armies_of_mima }
 		position = 2
 		provinces_to_highlight = {
-			area = Konngaras_state
+			OR = {
+				area = Old_hakurei_shrine_state
+				area = Eastern_old_hakurei_shrine_state
+			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
@@ -296,9 +424,9 @@ mim_third_slot = {
 		}
 	}
 	
-	MIM_engines_of_destruction = {
+	MIM_yumemi_vs_mima = {
 		icon = mission_rb_a_mighty_fleet
-		required_missions = {  }
+		required_missions = { MIM_engines_of_destruction }
 		position = 4
 		provinces_to_highlight = {
 			OR = {
@@ -394,10 +522,10 @@ mim_third_slot = {
 			}
 		}
 		effect = {
-			#add_country_modifier = {
-			#	name = MIM_all_maids_assembled
-			#	duration = -1
-			#}
+			add_country_modifier = {
+				name = mim_all_maids_assembled
+				duration = -1
+			}
 		}
 	}
 }
@@ -496,11 +624,12 @@ mim_fourth_slot = {
 		trigger = {
 			owns_core_province = 4968
 			owns_core_province = 5074	
-		}		effect = {
-			#add_country_modifier = {
-			#	name = "MIM_scarlet_devil_mansion_maid"
-			#	duration = 5475
-			#}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "mim_scarlet_devil_mansion_maid"
+				duration = 5475
+			}
 			hidden_effect = {
 				change_variable = {
 					which = MIM_maids_counter
@@ -660,10 +789,10 @@ mim_fith_slot = {
 			owns_core_province = 5074	
 		}
 		effect = {
-			#add_country_modifier = {
-			#	name = "MIM_scarlet_devil_mansion_maid"
-			#	duration = 5475
-			#}
+			add_country_modifier = {
+				name = "mim_scarlet_devil_mansion_maid"
+				duration = 5475
+			}
 			hidden_effect = {
 				change_variable = {
 					which = MIM_maids_counter
@@ -695,10 +824,10 @@ mim_fith_slot = {
 			}
 		}
 		effect = {
-			#add_country_modifier = {
-			#	name = "MIM_cactus_robot_maid"
-			#	duration = 5475
-			#}
+			add_country_modifier = {
+				name = "mim_cactus_robot_maid"
+				duration = 5475
+			}
 			hidden_effect = {
 				change_variable = {
 					which = MIM_maids_counter
