@@ -15,6 +15,18 @@ mim_first_slot = {
 		trigger = {
 			num_of_allies = 2
 			has_dip_advisor = yes
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = mim_chose_spell_school_tt
+					OR = {
+						has_country_flag = th_specialized_for_age_of_discovery
+						has_country_flag = th_specialized_for_age_of_reformation
+						has_country_flag = th_specialized_for_age_of_absolutism
+						has_country_flag = th_specialized_for_age_of_revolutions
+					}
+				}
+			}
 		}
 		effect = {
 			country_event = {
@@ -138,6 +150,18 @@ mim_first_slot = {
 							tag = ROOT
 							is_subject_of = ROOT
 						}
+					}
+				}
+			}
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = mim_chose_spell_school_tt
+					OR = {
+						has_country_flag = th_specialized_for_age_of_discovery
+						has_country_flag = th_specialized_for_age_of_reformation
+						has_country_flag = th_specialized_for_age_of_absolutism
+						has_country_flag = th_specialized_for_age_of_revolutions
 					}
 				}
 			}
@@ -349,9 +373,9 @@ mim_second_slot = {
 			5167 = {
 				change_religion = ROOT
 			}
-			add_adm_power = 150
-			add_dip_power = 150
-			add_mil_power = 150
+			add_adm_power = 75
+			add_dip_power = 75
+			add_mil_power = 75
 			makai_region = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -421,21 +445,42 @@ mim_second_slot = {
 		}
 		position = 4
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = MIM_host_for_mima_tt
-				OR = {
-					AND = {
+			if = {
+				limit = {
+					NOT = { mission_completed = MIM_defeat_shinki }
+				}
+				custom_trigger_tooltip = {
+					tooltip = MIM_host_for_mima_tt
+					mission_completed = MIM_defeat_shinki
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = MIM_harvested_makai_flesh_tt
+					OR = {
 						has_country_flag = mim_harvested_makai_flesh
-						has_country_flag = mim_harvested_old_hells_souls
-						has_country_flag = mim_harvested_zealots_blood
+						mission_completed = MIM_host_for_mima
 					}
-					mission_completed = MIM_host_for_mima
+				}
+				custom_trigger_tooltip = {
+					tooltip = MIM_harvested_old_hells_souls_tt
+					OR = {
+						has_country_flag = mim_harvested_old_hells_souls
+						mission_completed = MIM_host_for_mima
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = MIM_harvested_zealots_blood_tt
+					OR = {
+						has_country_flag = mim_harvested_zealots_blood
+						mission_completed = MIM_host_for_mima
+					}
 				}
 			}
 		}
 		effect = {
 			country_event = {
-				id = th_magic_schools.12
+				id = flavor_mim.10
 			}
 			hidden_effect = {
 				clr_country_flag = mim_harvested_makai_flesh
@@ -453,10 +498,30 @@ mim_second_slot = {
 		}
 		position = 5
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					religion = th_oldhakurei
+					has_dlc = "Third Rome"
+				}
+				current_icon = old_hakurei_icon_mima
+				patriarch_authority = 0.50
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					religion = ROOT
+					value = 15
+				}
+			}
+			else = {
+				religious_unity = 1
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					religion = ROOT
+					value = 30
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = MIMA_GOD_MODIFIER
+			country_event = {
+				id = flavor_mim.11
+			}
 		}
 	}
 
@@ -510,6 +575,18 @@ mim_third_slot = {
 		trigger = {
 			has_mil_advisor = yes
 			army_size_percentage = 1
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = mim_chose_spell_school_tt
+					OR = {
+						has_country_flag = th_specialized_for_age_of_discovery
+						has_country_flag = th_specialized_for_age_of_reformation
+						has_country_flag = th_specialized_for_age_of_absolutism
+						has_country_flag = th_specialized_for_age_of_revolutions
+					}
+				}
+			}
 		}
 		effect = {
 			country_event = {
@@ -551,17 +628,34 @@ mim_third_slot = {
 		required_missions = { MIM_armies_of_mima }
 		position = 2
 		provinces_to_highlight = {
-			OR = {
-				area = Old_hakurei_shrine_state
-				area = Eastern_old_hakurei_shrine_state
-			}
+			area = Rika_state
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 3
+				area = Rika_state
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			custom_tooltip = MIM_engines_of_destruction_tt
+			hidden_effect = {
+				capital_scope = {
+					artillery = ROOT
+					artillery = ROOT
+					artillery = ROOT
+					artillery = ROOT
+					artillery = ROOT
+				}
+			}
+			add_army_tradition = 20
+			Yumemi_space_state = {
+				limit = { 
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -570,17 +664,88 @@ mim_third_slot = {
 		required_missions = { MIM_engines_of_destruction }
 		position = 4
 		provinces_to_highlight = {
-			OR = {
-				area = Old_hakurei_shrine_state
-				area = Eastern_old_hakurei_shrine_state
-			}
+			area = Yumemi_space_state
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				area = Yumemi_space_state
+				value = 3
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					has_government_attribute = th_has_spell_schools
+				}
+				if = {
+					limit = {
+						NOT = { has_country_flag = th_specialized_for_age_of_discovery }
+						NOT = { has_country_flag = th_specialized_for_age_of_reformation }
+						NOT = { has_country_flag = th_specialized_for_age_of_absolutism }
+						NOT = { has_country_flag = th_specialized_for_age_of_revolutions }
+					}
+					custom_tooltip = MIM_yumemi_vs_mima_at
+				}
+				else = {
+					if = { 
+						limit = { has_country_modifier = th_conjuration_level_1 }
+						add_yearly_manpower = 2
+						add_yearly_sailors = 2
+						custom_tooltip = MIM_yumemi_vs_mima_conjuration_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_evocation_level_1 }
+						add_army_tradition = 40
+						add_navy_tradition = 40
+						add_army_professionalism = 0.05
+						custom_tooltip = MIM_yumemi_vs_mima_evocation_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_divination_level_1 }
+						custom_tooltip = MIM_yumemi_vs_mima_spy_tt
+						hidden_effect = {
+							every_neighbor_country = {
+								limit = {
+									NOT = { alliance_with = ROOT }
+									NOT = { is_subject_of = ROOT }
+								}
+								add_spy_network_from = {
+									who = ROOT
+									value = 100
+								}
+							}
+						}
+						custom_tooltip = MIM_yumemi_vs_mima_divination_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_transmutation_level_1 }
+						capital_scope = {
+							th_add_manufactory = yes
+						}
+						custom_tooltip = MIM_yumemi_vs_mima_transmutation_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_enchanting_level_1 }
+						add_adm_power = 100
+						add_dip_power = 100
+						add_mil_power = 100
+						custom_tooltip = MIM_yumemi_vs_mima_enchanting_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_abjuration_level_1 }
+						add_years_of_income = 3
+						custom_tooltip = MIM_yumemi_vs_mima_abjuration_tt
+					}
+				}
+			}
+			else = {
+				add_stability_or_adm_power = yes
+			}
+			add_country_modifier = {
+				name = mim_the_technology_of_the_future
+				duration = 9125
+			}
 		}
 	}
 	
@@ -589,12 +754,36 @@ mim_third_slot = {
 		required_missions = {  }
 		position = 5
 		provinces_to_highlight = {
+			OR = {
+				region = makai_region
+				region = sunflower_region
+			}
+			NOT = { owned_by = ROOT }
 		}
 		trigger = {
-			always = yes
+			total_development = 500
+			land_forcelimit = 75
+			prestige = 50
+			num_of_owned_provinces_with = {
+				OR = {
+					region = makai_region
+					region = sunflower_region
+				}
+				value = 30
+			}
 		}
 		effect = {
 			override_country_name = MIM_EMPIRE
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
+			add_country_modifier = {
+				name = mim_mimas_empire
+				duration = -1
+			}
 		}
 	}
 	
@@ -605,12 +794,30 @@ mim_third_slot = {
 			MIM_magical_power
 		}
 		position = 6
+		provinces_to_highlight = {
+			area = World_of_fantasies
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+			}
+		}
 		trigger = {
-			always = yes
+			adm_power_cost = 500
+			dip_power_cost = 500
+			mil_power_cost = 500
+			World_of_fantasies = {
+				owned_by = ROOT
+				is_core = ROOT
+				type = all
+			}
 		}
 		effect = {
-			custom_tooltip = MIM_UNLOCK_IMPERIALISM_CB
-			custom_tooltip = MIM_UNLOCK_666_MIMA
+			adm_power_cost = 500
+			dip_power_cost = 500
+			mil_power_cost = 500
+			country_event = {
+				id = flavor_mim.12
+			}
 		}
 	}
 	
@@ -619,17 +826,31 @@ mim_third_slot = {
 		required_missions = { MIM_the_new_gensokyo }
 		position = 7
 		provinces_to_highlight = {
-			OR = {
-				area = Old_hakurei_shrine_state
-				area = Eastern_old_hakurei_shrine_state
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			province_id = 5011
 		}
 		trigger = {
-			always = yes
+			5011 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_mim.13
+			}
+			define_general = {
+				name = "Mizuchi Miyadeguchi"
+				female = yes
+				shock = 4
+				fire = 4
+				manuever = 6
+				siege = 6
+				trait = th_jailbreak_king_personality
+			}
 		}
 	}
 	
@@ -798,6 +1019,18 @@ mim_fith_slot = {
 		trigger = {
 			num_of_total_ports = 10
 			navy_size_percentage = 0.9
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = mim_chose_spell_school_tt
+					OR = {
+						has_country_flag = th_specialized_for_age_of_discovery
+						has_country_flag = th_specialized_for_age_of_reformation
+						has_country_flag = th_specialized_for_age_of_absolutism
+						has_country_flag = th_specialized_for_age_of_revolutions
+					}
+				}
+			}
 		}
 		effect = {
 			add_prestige = 15
