@@ -6,7 +6,10 @@ th_lecture_ruler = {
 
 	is_visible = {
 		has_government_attribute = enables_yama_authority
-		FROM = { NOT = { has_country_modifier = th_lectured_modifier } }
+		FROM = { 
+			NOT = { has_country_modifier = th_lectured_modifier }
+			NOT = { has_country_modifier = th_lectured_modifier_upgraded }
+		}
 		FROM = {
 			capital_scope = {
 				continent = gensokyo_continent
@@ -98,46 +101,6 @@ th_lecture_ruler = {
 				loyalty = 10
 			}
 		}
-		if = {
-			limit = {
-				NOT = { has_country_flag = th_improved_lecturing }
-			}
-			OR = {
-				FROM = { NOT = { total_development = 51 } }
-				AND = {
-					FROM = { NOT = { total_development = 101 } }
-					estate_influence = {
-						estate = estate_yama
-						influence = 15
-					}
-				}
-				AND = {
-					FROM = { NOT = { total_development = 201 } }
-					estate_influence = {
-						estate = estate_yama
-						influence = 30
-					}
-				}
-				AND = {
-					FROM = { NOT = { total_development = 301 } }
-					estate_influence = {
-						estate = estate_yama
-						influence = 45
-					}
-				}
-				AND = {
-					FROM = { NOT = { total_development = 401 } }
-					estate_influence = {
-						estate = estate_yama
-						influence = 60
-					}
-				}
-				estate_influence = {
-					estate = estate_yama
-					influence = 75
-				}
-			}
-		}
 	}
 
 	on_accept = {
@@ -167,7 +130,12 @@ th_lift_lecture = {
 
 	is_visible = {
 		has_government_attribute = enables_yama_authority
-		FROM = { has_country_modifier = th_lectured_modifier }
+		FROM = { 
+			OR = {
+				has_country_modifier = th_lectured_modifier 
+				has_country_modifier = th_lectured_modifier_upgraded
+			}
+		}
 	}
 
 	is_allowed = {
@@ -195,7 +163,10 @@ th_bestow_yama_grace = {
 
 	is_visible = {
 		has_government_attribute = enables_yama_authority
-		FROM = { NOT = { has_country_modifier = th_lectured_modifier } }
+		FROM = { 
+			NOT = { has_country_modifier = th_lectured_modifier } 
+			NOT = { has_country_modifier = th_lectured_modifier_upgraded } 
+		}
 		FROM = {
 			capital_scope = {
 				continent = gensokyo_continent
@@ -1277,6 +1248,12 @@ th_appoint_executor = {
 			}
 			NOT = { war_with = FROM }
 		}
+		if = {
+			limit = {
+				FROM = { total_development = 300 }
+			}
+			FROM = { NOT = { total_development = 300 } }
+		}
 	}
 
 	on_accept = {
@@ -1335,6 +1312,18 @@ th_appoint_executor = {
 				value = 0.4
 			}
 		}
+        add_entry = {
+            name = TH_YAMA_INFLUENCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = modifier:accept_yama_actions_reasons
+				who = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 100
+			}
+        }
 		add_entry = {
 			name = TH_DIPLO_TOTAL_DEVELOPMENT
 			export_to_variable = {
@@ -1494,6 +1483,20 @@ th_appoint_executor = {
 				value = -0.25
 			}
 		}
+        add_entry = {
+            name = TH_IS_THE_ASTRALKNIGHT
+			limit = {
+				FROM = { tag = KNN }
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 100
+			}
+        }
     }
 	ai_will_do = {
 		always = no
