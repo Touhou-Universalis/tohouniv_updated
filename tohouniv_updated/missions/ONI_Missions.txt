@@ -14,102 +14,81 @@ oni_missions_army_slot = {
 		position = 1
 		trigger = {
 			army_size_percentage = 1
-			has_mil_advisor = yes
+			has_mil_advisor_2 = yes
+			is_in_deficit = no
 		}
 		effect = {
 			add_country_modifier = {
-				name = oni_build_army
-				duration = 7300
+				name = oni_military_reform_lv1
+				duration = -1
 			}
 			create_general = {
 				tradition = 40
 			}
 		}
 	}
-
-	ONI_organize_army = {
-		icon = mission_touhou_army
+	
+	ONI_ruler_honor = {
+		icon = mission_touhou_yuugi_warrior
 		required_missions = { ONI_build_army }
 		position = 2
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = ONI_ruler_honor_tt
+				check_variable = {
+					which = oni_won_battles_counter
+					value = 30
+				}
+			}
+		}
+		effect = {
+			remove_country_modifier = oni_military_reform_lv1
+			add_country_modifier = {
+				name = oni_military_reform_lv2
+				duration = -1
+			}
+		}
+	}
+	
+	ONI_organize_army = {
+		icon = mission_touhou_army
+		required_missions = { ONI_ruler_honor }
+		position = 3
 		trigger = {
 			has_idea = ONI_drunken_revelry
 			if = {
 				limit = {
 					has_dlc = "Cradle of Civilization"
 				}
-				army_professionalism = 0.20
+				army_professionalism = 0.50
 			}
 			else = {
 				has_global_modifier_value = {
 					which = discipline
-					value = 0.1
+					value = 0.75
 				}
 			}
 		}
 		effect = {
+			remove_country_modifier = oni_military_reform_lv2
 			add_country_modifier = {
-				name = oni_organized_army
+				name = oni_military_reform_lv3
 				duration = -1
 			}
 		}
 	}
 	
-	ONI_gathering_merc = {
+	ONI_battle_passionate = {
 		icon = touhou_assemble_army
 		required_missions = { ONI_organize_army }
-		position = 3
-		trigger = {
-			if = {
-				limit = {
-					has_dlc = "Cradle of Civilization"
-				}
-				army_professionalism = 0.40
-			}
-			any_hired_mercenary_company = {
-				template = merc_th_oni_warriors
-			}
-			is_in_deficit = no
-			owns_core_province = 5008
-		}
-		effect = {
-			custom_tooltip = ONI_gathering_merc_tt
-			set_country_flag = oni_has_completed_merc_mission
-			hidden_effect = {
-				set_variable = {
-					which = oni_won_battles_counter
-					value = 0
-				}
-			}
-		}
-	}
-	
-	ONI_ruler_honor = {
-		icon = mission_touhou_yuugi_warrior
-		required_missions = { ONI_gathering_merc }
 		position = 4
 		trigger = {
-			if = {
-				limit = {
-					mission_completed = ONI_gathering_merc
-				}
-				custom_trigger_tooltip = {
-					tooltip = ONI_ruler_honor_tt
-					check_variable = {
-						which = oni_won_battles_counter
-						value = 20
-					}
-				}
-			}
-			else = {
-				custom_trigger_tooltip = {
-					tooltip = ONI_ruler_honor_at
-					always = no
-				}
-			}
+			army_size = 120
 		}
 		effect = {
+			remove_country_modifier = oni_military_reform_lv3
 			add_country_modifier = {
-				name = oni_ruler_autonomy
+				name = oni_military_reform_lv4
 				duration = -1
 			}
 		}
@@ -126,10 +105,37 @@ oni_missions_conquest_slot = {
 	}
 	has_country_shield = yes
 	
-	ONI_subjugate_kappa = {
-		icon = mission_touhou_kappas
+	ONI_miracle_mallet = {
+		icon = mission_miracle_mallet
 		required_missions = { ONI_reclaim_mountain }
 		position = 5
+		provinces_to_highlight = {
+			area = Shining_needle_state
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			Shining_needle_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+		}
+		effect = {
+			add_years_of_income = 1
+			add_adm_power = 100
+			add_dip_power = 100
+			add_mil_power = 100
+			add_casus_belli = {
+				target = KPP
+				type = cb_vassalize_mission
+				months = 900
+			}
+		}
+	}
+	
+	ONI_subjugate_kappa = {
+		icon = mission_touhou_kappas
+		required_missions = { ONI_miracle_mallet }
+		position = 6
 		provinces_to_highlight = {
 			OR = {
 				area = Kappa_state
@@ -154,70 +160,10 @@ oni_missions_conquest_slot = {
 			}
 		}
 	}
-
-	
-	ONI_miracle_mallet = {
-		icon = mission_miracle_mallet
-		required_missions = { ONI_establish_onigashima }
-		position = 6
-		provinces_to_highlight = {
-			area = Shining_needle_state
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			Shining_needle_state = {
-				country_or_non_sovereign_subject_holds = ROOT
-				type = all
-			}
-		}
-		effect = {
-			add_years_of_income = 1
-			add_adm_power = 100
-			add_dip_power = 100
-			add_mil_power = 100
-		}
-	}
-	
-	ONI_beat_vampire = {
-		icon = mission_touhou_remilia
-		required_missions = { ONI_powers_gensokyo }
-		position = 8
-		trigger = {
-			OR = {
-				AND = {
-					NOT = { exists = SCR }
-					NOT = { exists = SCD }
-					Scarlet_island = {
-						owned_by = ROOT
-						type = all
-					}
-				}
-				if = {
-					limit = {
-						exists = SCD
-					}
-					SCD = {
-						is_subject_of = ROOT
-					}
-				}
-				else = {
-					SCR = {
-						is_subject_of = ROOT
-					}
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_beat_vampire
-				duration = 9125
-			}
-		}
-	}
 }
 
-oni_missions_ally_slot = {
-	slot = 2
+oni_liquor_one_slot = {
+	slot = 1
 	generic = no
 	ai = yes
 	potential = {
@@ -226,18 +172,71 @@ oni_missions_ally_slot = {
 	}
 	has_country_shield = yes
 	
-	ONI_get_ally = {
-		icon = mission_alliances
+	ONI_unexplainable_phenomenon = {
+		icon = mission_kowtow
 		required_missions = {  }
-		position = 1
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2140	#Confucius family liquor
+				province_id = 2148	#Shaoxing wine
+				province_id = 2168	#Maotai
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			num_of_allies = 2
+			if = {
+				limit = {
+					NOT = { mission_completed = ONI_training_ocean_navy }
+				}
+				custom_trigger_tooltip = {
+					tooltip = ONI_training_ocean_navy_ct
+					mission_completed = ONI_training_ocean_navy
+				}
+			}
+			else = {
+				owns_or_non_sovereign_subject_of = 2140
+				owns_or_non_sovereign_subject_of = 2148
+				owns_or_non_sovereign_subject_of = 2168
+			}
 		}
 		effect = {
-			add_country_modifier = {
-				name = oni_diplomacy
-				duration = 7300
+			country_event = {
+				id = TH_mission_events.3
+			}			
+		}
+	}
+	
+	ONI_mexican_tequila = {
+		icon = mission_kowtow
+		required_missions = {  }
+		position = 8
+		provinces_to_highlight = {
+			region = mexico_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			if = {
+				limit = {
+					NOT = { mission_completed = ONI_training_ocean_navy }
+				}
+				custom_trigger_tooltip = {
+					tooltip = ONI_training_ocean_navy_ct
+					mission_completed = ONI_training_ocean_navy
+				}
 			}
+			else = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					region = mexico_region
+					value = 10
+				}
+				owns_or_non_sovereign_subject_of = 854
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_oni.11
+			}		
 		}
 	}
 }
@@ -252,47 +251,197 @@ ONI_missions_chireiden_slot = {
 	}
 	has_country_shield = yes
 	
+	ONI_relation_chireiden = {
+		icon = mission_touhou_chireiden
+		required_missions = {  }
+		position = 1
+		trigger = {
+			OR = {
+				AND = {
+					ai = no
+					CRD = {
+						has_been_insulted_by_root = yes
+						has_spy_network_from = {
+							who = ROOT
+							value = 25
+						}
+					}					
+				}
+				AND = {
+					ai = no
+					OR = {
+						AND = {
+							is_subject_of = CRD
+							is_subject_of_type = tributary_state
+						}
+						is_subject = no
+					}
+					total_development = CRD
+				}
+				AND = {
+					ai = yes
+					AND = {
+						is_subject_of = CRD
+						is_subject_of_type = tributary_state
+					}
+					reverse_has_opinion = {
+						who = CRD
+						value = 100
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					ai = yes
+					reverse_has_opinion = {
+						who = CRD
+						value = 100
+					}			
+				}
+				add_treasury = 250
+				add_country_modifier = {
+					name = oni_diplo_chireiden
+					duration = 5475
+				}
+			}
+			else_if = {
+				limit = {
+					ai = no
+					OR = {
+						AND = {
+							is_subject_of = CRD
+							is_subject_of_type = tributary_state
+						}
+						is_subject = no
+					}
+					total_development = CRD
+				}
+				Oni_exclave_state = {
+					limit = {
+						owned_by = CRD
+					}
+					add_core = ROOT
+					cede_province = ROOT
+				}
+				Chireiden_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Blazing_hell_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Road_to_hell_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Chireiden_canal_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				country_event = {
+					id = flavor_oni.102
+				}			
+			}
+			else_if = {
+				limit = {
+					ai = no
+					CRD = {
+						has_been_insulted_by_root = yes
+						has_spy_network_from = {
+							who = ROOT
+							value = 25
+						}
+					}
+					NOT = { total_development = CRD }
+				}
+				Oni_exclave_state = {
+					limit = {
+						owned_by = CRD
+					}
+					add_core = ROOT
+					cede_province = ROOT
+				}
+				Chireiden_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Blazing_hell_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Road_to_hell_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Chireiden_canal_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				if = {
+					limit = {
+						is_subject_of = CRD
+						is_subject_of_type = tributary_state
+					}
+					grant_independence = yes
+				}
+				CRD = {
+					country_event = {
+						id = flavor_oni.1
+					}
+				}
+			}
+			else = {
+				custom_tooltip = ONI_relation_chireiden_tt			
+			}
+		}
+	}	
+	
 	ONI_diplomacy_or_war = {
 		icon = mission_touhou_satori2
-		required_missions = { ONI_relation_chireiden }
+		required_missions = {
+			ONI_relation_chireiden
+			ONI_get_ally
+		}
 		position = 2
 		provinces_to_highlight = {
 			OR = {
 				province_id = 5009
 				province_id = 5284
 				province_id = 5285
-				province_id = 5007
 			}
 			NOT = { owned_by = ROOT }
 		}
 		trigger = {
-			OR = {
-				AND = {
-					owns_core_province = 5009
-					owns_core_province = 5284			
-					owns_core_province = 5285	
-				}
-				AND = {
-					war_with = CRD
-					war_score = 80
-					if = {
-						limit = {
-							5007 = { owned_by = CRD }
-						}
-						controls = 5007
-					}
-				}
-				AND = {
-					NOT = {
-						war_with = CRD
-					}
-					reverse_has_opinion = {
-						who = CRD
-						value = 120
-					}
-					treasury = 600
-				}
-			}
+			owns_or_non_sovereign_subject_of = 5009
+			owns_or_non_sovereign_subject_of = 5284			
+			owns_or_non_sovereign_subject_of = 5285	
 		}
 		effect = {
 			Southern_youkai_mountains = {
@@ -300,49 +449,18 @@ ONI_missions_chireiden_slot = {
 					NOT = { is_permanent_claim = ROOT }
 					NOT = { is_core = ROOT }
 				}
-				add_core = ROOT
+				add_permanent_claim = ROOT
 			}
 			Youkai_Mountains = {
 				limit = {
 					NOT = { is_permanent_claim = ROOT }
 					NOT = { is_core = ROOT }
 				}
-				add_core = ROOT
+				add_permanent_claim = ROOT
 			}
-			if = {
-				limit = {
-					war_with = CRD
-				}
-				country_event = {
-					id = flavor_oni.3
-				}
-			}
-			else_if = {
-				limit = {
-					AND = {
-						reverse_has_opinion = {
-							who = CRD
-							value = 120
-						}
-						treasury = 600
-					}
-				}
-				country_event = {
-					id = flavor_oni.2
-				}
-			}
-			else_if = {
-				limit = {
-					owns_core_province = 5009
-					owns_core_province = 5284			
-					owns_core_province = 5285
-				}
-				add_adm_power = 100
-				add_dip_power = 100
-				add_mil_power = 100
-			}
-			else = {
-				custom_tooltip = ONI_diplomacy_or_war_tt			
+			add_country_modifier = {
+				name = oni_goto_mountain
+				duration = 7300
 			}
 		}
 	}
@@ -357,35 +475,32 @@ oni_missions_onigashima_slot = {
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
+	
 	ONI_comeback_mountain = {
 		icon = mission_touhou_aya
 		required_missions = { ONI_diplomacy_or_war }
 		position = 3
 		provinces_to_highlight = {
 			OR = {
-				area = Youkai_Mountains
-				area = Southern_youkai_mountains
+				province_id = 4963
+				province_id = 5199
 			}
 			NOT = { owned_by = ROOT }
 		}
 		trigger = {
-			num_of_owned_provinces_with = {
-				value = 5
-				OR = {
-					area = Youkai_Mountains
-					area = Southern_youkai_mountains
-				}
-			}
-			4963 = {
-				owned_by = ROOT
-			}
+			owns_core_province = 4963
+			owns_core_province = 5199
 		}
 		effect = {
 			youkai_mountain_region = {
 				limit = {
 					NOT = { is_core = ROOT }
 				}
-				add_core = ROOT
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = oni_legitimate_owner
+				duration = 7300
 			}
 		}
 	}
@@ -399,29 +514,25 @@ oni_missions_onigashima_slot = {
 			NOT = { owned_by = ROOT }
 		}
 		trigger = {
-			4963 = {
-				owned_by = ROOT
+			num_of_owned_provinces_with = {
+				value = 10
+				region = youkai_mountain_region
+				is_core = ROOT
 			}
 			4964 = {
 				owned_by = ROOT
 			}
-			OR = {
-				AND = {
-					num_of_owned_provinces_with = {
-						value = 12
-						region = youkai_mountain_region
-					}
-					NOT = { exists = TGU }
-				}
-				youkai_mountain_region = {
-					owned_by = ROOT
-					type = all
-				}
-			}
 		}
 		effect = {
-			th_increase_ruler_mil_stat = {
-				mil = 1
+			country_event = {
+				id = flavor_oni.7
+			}
+			Shining_needle_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
 			Kappa_state = {
 				limit = {
@@ -437,35 +548,40 @@ oni_missions_onigashima_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
-			add_casus_belli = {
-				target = KPP
-				type = cb_vassalize_mission
-				months = 900
+			Moriya_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
-		}
-	}
-	
-	ONI_establish_onigashima = {
-		icon = mission_touhou_yuugisuika
-		required_missions = { 
-			ONI_reclaim_mountain
-			ONI_join_kasen
-		}
-		position = 5
-		trigger = {
-			4964 = {
-				owned_by = ROOT
-				is_core = ROOT
+			Southern_moriya = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
-			stability = 1
-			OR = {
-				reform_level = 4
-				has_reform = TH_oni_bureaucracy_reform
+			Moriya_coast_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
-		}
-		effect = {
-			country_event = {
-				id = flavor_oni.7
+			Great_youkai_forest = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_youkai_forest = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
 			Senkai_state = {
 				limit = {
@@ -499,18 +615,39 @@ oni_missions_onigashima_slot = {
 					add_permanent_claim = ROOT
 				}
 			}
-			Shining_needle_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
+		}
+	}
+	
+	ONI_foot_of_mountain = {
+		icon = mission_touhou_aya
+		required_missions = { ONI_reclaim_mountain }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				area = Great_youkai_forest
+				area = Eastern_youkai_forest
+			}
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Great_youkai_forest
+					area = Eastern_youkai_forest
 				}
-				add_permanent_claim = ROOT
+				value = 6
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = oni_mountain_stabilization
+				duration = 7300
 			}
 		}
 	}
 }
 
-oni_missions_gensokyo_slot = {
+oni_liquor_two_slot = {
 	slot = 2
 	generic = no
 	ai = yes
@@ -519,448 +656,77 @@ oni_missions_gensokyo_slot = {
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
-	
-	ONI_powers_gensokyo = {
-		icon = mission_touhou_battle_cry
-		required_missions = { ONI_establish_onigashima }
+
+	ONI_attack_france = {
+		icon = centralize_france
+		required_missions = {  }
 		position = 7
+		provinces_to_highlight = {
+			region = france_region
+			th_produces_wine_or_champagne = yes
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
 			if = {
 				limit = {
-					exists = SCD
+					NOT = { mission_completed = ONI_training_ocean_navy }
 				}
-				OR = {
-					total_development = SCD
-					is_rival = SCD
-					SCD = {
-						OR = {
-							is_rival = ROOT
-							is_subject_of = ROOT
-						}
-					}
-					NOT = { exists = SCD }
+				custom_trigger_tooltip = {
+					tooltip = ONI_training_ocean_navy_ct
+					mission_completed = ONI_training_ocean_navy
 				}
 			}
-			if = {
-				limit = {
-					exists = SCR
-				}
-				OR = {
-					total_development = SCR
-					is_rival = SCR
-					SCR = {
-						OR = {
-							is_rival = ROOT
-							is_subject_of = ROOT
-						}
-					}
-					NOT = { exists = SCR }
-				}
-			}
-			if = {
-				limit = {
-					exists = LEM
-					NOT = { exists = LCU }
-				}
-				OR = {
-					total_development = LEM
-					is_rival = LEM
-					LEM = {
-						OR = {
-							is_rival = ROOT
-							is_subject_of = ROOT
-						}
-					}
-					NOT = { exists = LEM }
-				}
-			}
-			if = {
-				limit = {
-					exists = LCU
-				}
-				OR = {
-					total_development = LCU
-					is_rival = LCU
-					LCU = {
-						OR = {
-							is_rival = ROOT
-							is_subject_of = ROOT
-						}
-					}
-					NOT = { exists = LCU }
-				}
-			}
-
-			OR = {
-				total_development = SFF
-				is_rival = SFF
-				SFF = {
-					OR = {
-						is_rival = ROOT
-						is_subject_of = ROOT
-					}
-				}
-				NOT = { exists = SFF }
-			}
-		}
-		effect = {
-			Sunny_plains = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Perfect_cut_coast = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Western_moon_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Southern_moon_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Scarlet_island = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Scarlet_mountain = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Scarlett_domain = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			add_casus_belli = {
-				target = SCR
-				type = cb_vassalize_mission
-				months = 900
-			}
-		}
-	}
-
-	
-	ONI_beat_yuuka = {
-		icon = mission_touhou_yuuka_ominous
-		required_missions = { ONI_powers_gensokyo }
-		position = 8
-		trigger = {
-			OR = {
-				AND = {
-					NOT = { exists = SFF }
-					5152 = {
-						country_or_non_sovereign_subject_holds = ROOT
-					}
-					5156 = {
-						country_or_non_sovereign_subject_holds = ROOT
-					}
-				}
-				AND = {
-					war_with = SFF
-					war_score = 90
+			else = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					th_produces_wine_or_champagne = yes
+					region = france_region
+					value = 6
 				}
 			}
 		}
 		effect = {
 			add_country_modifier = {
-				name = oni_beat_yuuka
-				duration = 9125
-			}
-		}
-	}
-	
-	ONI_gensokyo_champion = {
-		icon = mission_touhou_suika2
-		required_missions = { 
-			ONI_beat_vampire
-			ONI_beat_yuuka
-			ONI_beat_lunarian
-		}
-		position = 9
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = ONI_gensokyo_champion_tt
-				NOT = {
-					any_country = {
-						capital_scope = {
-							continent = gensokyo_continent
-						}
-						total_own_and_non_tributary_subject_development = ROOT
-					}
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_gensokyo_champion
+				name = oni_french_wine
 				duration = -1
 			}
 		}
 	}
-}
-
-oni_missions_big_four_slot = {
-	slot = 3
-	generic = no
-	ai = yes
-	potential = {
-		tag = ONI
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
 	
-	ONI_relation_chireiden = {
-		icon = mission_touhou_chireiden
+	ONI_scotch_whisky = {
+		icon = centralize_france
 		required_missions = {  }
-		position = 1
-		trigger = {
-			OR = {
-				AND = {
-					is_subject_of_type = tributary_state
-					reverse_has_opinion = {
-						who = CRD
-						value = 100
-					}
-				}
-				AND = {
-					NOT = {
-						is_subject_of_type = tributary_state
-					}
-					is_subject = no
-					CRD = {
-						has_been_insulted_by_root = yes
-					}					
-				}
-				total_development = CRD
-			}
-		}
-		effect = {
-			if = {
-				limit = {
-					reverse_has_opinion = {
-						who = CRD
-						value = 100
-					}			
-				}
-				add_country_modifier = {
-					name = oni_diplo_chireiden
-					duration = 5475
-				}
-			}
-			else_if = {
-				limit = {
-					NOT = {
-						is_subject_of_type = tributary_state
-					}
-					is_subject = no
-					CRD = {
-						has_been_insulted_by_root = yes
-					}	
-				}
-				Road_to_hell_state = {
-					limit = {
-						NOT = { is_permanent_claim = ROOT }
-						NOT = { is_core = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-				Chireiden_canal_state = {
-					limit = {
-						NOT = { is_permanent_claim = ROOT }
-						NOT = { is_core = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-				CRD = {
-					country_event = {
-						id = flavor_oni.1
-					}
-				}
-			}
-			else_if = {
-				limit = {
-					total_development = CRD
-				}
-				country_event = {
-					id = flavor_oni.102
-				}			
-			}
-			else = {
-				custom_tooltip = ONI_relation_chireiden_tt			
-			}
-		}
-	}
-
-	ONI_find_suika = {
-		icon = mission_touhou_suika
-		required_missions = { ONI_develop_brewery }
-		position = 2
+		position = 8
 		provinces_to_highlight = {
-			if = {
-				limit = {
-					HKR = {
-						OR = {
-							has_country_flag = hkr_met_suika
-							has_country_flag = th_suika_is_ruler
-						}
-					}
-				}
-				province_id = 5057
-				NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			}
-			else = {
-				OR = {
-					province_id = 4955
-					province_id = 4989
-					province_id = 4978
-				}
-				NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			}
-		}
-		trigger = {
-			if = {
-				limit = {
-					HKR = {
-						OR = {
-							has_country_flag = hkr_met_suika
-							has_country_flag = th_suika_is_ruler
-						}
-					}
-				}
-				OR = {
-					reverse_has_opinion = {
-						who = HKR
-						value = 150
-					}
-					5057 = {
-						owned_by = ROOT
-					}
-				}
-			}
-			else = {
-				advisor = spymaster
-				4955 = {
-					OR = {
-						owned_by = ROOT
-						owner = {
-							has_spy_network_from = {
-								who = ROOT
-								value = 20
-							}
-						}
-					}
-				}
-				4989 = {
-					OR = {
-						owned_by = ROOT
-						owner = {
-							has_spy_network_from = {
-								who = ROOT
-								value = 20
-							}
-						}
-					}
-				}
-				4978 = {
-					OR = {
-						owned_by = ROOT
-						owner = {
-							has_spy_network_from = {
-								who = ROOT
-								value = 20
-							}
-						}
-					}
-				}
-			}
-		}
-		effect = {			
-			if = {
-				limit = {
-					HKR = {
-						OR = {
-							has_country_flag = hkr_met_suika
-							has_country_flag = th_suika_is_ruler
-						}
-					}
-				}
-				country_event = {
-					id = flavor_oni.5
-				}				
-			}
-			else = {
-				country_event = {
-					id = flavor_oni.4
-				}						
-			}
-		}
-	}
-	
-	ONI_mountain_hermit = {
-		icon = mission_touhou_kasen
-		required_missions = { ONI_find_suika }
-		position = 3
-		trigger = {
 			OR = {
-				reverse_has_opinion = {
-					who = KSE
-					value = 100
-				}
-				NOT = { exists = KSE }
+				area = highlands_area
+				area = lowlands_area
 			}
-		}
-		effect = {
-			th_increase_ruler_dip_stat = {
-				dip = 1
-			}
-		}
-	}
-	
-	ONI_join_kasen = {
-		icon = mission_touhou_ibaraki
-		required_missions = { ONI_mountain_hermit }
-		position = 4
-		provinces_to_highlight = {
-			province_id = 5191
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			NOT = { owned_by = ROOT }
 		}
 		trigger = {
-			owns_or_non_sovereign_subject_of = 5191
-			KSE = {
-				OR = {
-					AND = {
-						is_subject_of = ROOT
-						NOT = { total_development = 100 }
+			if = {
+				limit = {
+					NOT = { mission_completed = ONI_training_ocean_navy }
+				}
+				custom_trigger_tooltip = {
+					tooltip = ONI_training_ocean_navy_ct
+					mission_completed = ONI_training_ocean_navy
+				}
+			}
+			else = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					OR = {
+						area = highlands_area
+						area = lowlands_area
 					}
-					exists = no
+					value = 5
 				}
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_oni.6
+			add_country_modifier = {
+				name = oni_scotch_whisky
+				duration = -1
 			}
 		}
 	}
@@ -976,46 +742,394 @@ oni_missions_empire_slot = {
 	}
 	has_country_shield = yes
 	
+	ONI_get_ally = {
+		icon = mission_alliances
+		required_missions = {  }
+		position = 1
+		trigger = {
+			num_of_allies = 2
+		}
+		effect = {
+			add_country_modifier = {
+				name = oni_diplomacy
+				duration = 7300
+			}
+		}
+	}	
+	
+	ONI_reform_society = {
+		icon = mission_touhou_yuugisuika
+		required_missions = {  }
+		position = 2
+		trigger = {
+			OR = {
+				reform_level = 4
+				has_reform = TH_oni_bureaucracy_reform
+			}
+		}
+		effect = {
+			change_government_reform_progress = 100
+			add_country_modifier = {
+				name = oni_society
+				duration = 7300
+			}
+		}
+	}	
+	
 	ONI_onigashima_empire = {
 		icon = mission_touhou_onigashima
-		required_missions = {  }
-		position = 5
+		required_missions = { ONI_establish_onigashima }
+		position = 4
 		trigger = {
-			if = {
-				limit = {
-					mission_completed = ONI_establish_onigashima
-				}
-				has_reform = Gensokyan_oni_brawling_kingdom
+			OR = {
+				tag = GNK
+				government_rank = 3
 			}
-			else = {
-				custom_trigger_tooltip = {
-					tooltip = ONI_onigashima_empire_tt
-					always = no
-				}
-			}
-			total_development = 800
-			army_size = 150
+			total_development = 650
 		}
 		effect = {
 			add_country_modifier = {
 				name = oni_onigashima_empire
 				duration = -1
 			}
+		}
+	}
+	
+	ONI_moriya_shrine = {
+		icon = mission_touhou_kappas
+		required_missions = { ONI_reclaim_mountain }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				area = Moriya_state
+				area = Moriya_coast_state
+				area = Southern_moriya
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Moriya_state
+					area = Moriya_coast_state
+					area = Southern_moriya
+				}
+				value = 6
+			}
+			owns_or_non_sovereign_subject_of = 4998
+		}
+		effect = {
+			country_event = {
+				id = flavor_oni.9
+			}
+		}
+	}	
+	
+	ONI_training_ocean_navy = {
+		icon = mission_corsairs_of_the_north_sea
+		required_missions = { ONI_form_navy }
+		position = 6
+		trigger = {
+			num_of_total_ports = 20
+			OR = {
+				num_of_heavy_ship = 30
+				num_of_light_ship = 50
+			}
 			if = {
 				limit = {
-					NOT = {
-						government_rank = 3
+					has_dlc = "Golden Century"
+				}
+				has_flagship = yes
+			}
+			else = {
+				navy_tradition = 40
+			}
+		}
+		effect = {
+			create_explorer = { tradition = 50 }
+			custom_tooltip = ONI_training_ocean_navy_tt
+			hidden_effect = {
+				shandong_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				zhejiang_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				chuannan_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				highlands_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				lowlands_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				france_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				upper_bavaria_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				lower_bavaria_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				east_bavaria_area = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				russia_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				mexico_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+}
+
+oni_liquor_three_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = ONI
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	ONI_attack_germany = {
+		icon = interfere_in_germany
+		required_missions = {  }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				area = upper_bavaria_area
+				area = lower_bavaria_area
+				area = east_bavaria_area
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			if = {
+				limit = {
+					NOT = { mission_completed = ONI_training_ocean_navy }
+				}
+				custom_trigger_tooltip = {
+					tooltip = ONI_training_ocean_navy_ct
+					mission_completed = ONI_training_ocean_navy
+				}
+			}
+			else = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					OR = {
+						area = upper_bavaria_area
+						area = lower_bavaria_area
+						area = east_bavaria_area
+					}
+					value = 6
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = oni_german_beer
+				duration = -1
+			}
+		}
+	}
+	
+	ONI_russian_vodka = {
+		icon = centralize_france
+		required_missions = {  }
+		position = 8
+		provinces_to_highlight = {
+			region = russia_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			if = {
+				limit = {
+					NOT = { mission_completed = ONI_training_ocean_navy }
+				}
+				custom_trigger_tooltip = {
+					tooltip = ONI_training_ocean_navy_ct
+					mission_completed = ONI_training_ocean_navy
+				}
+			}
+			else = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					region = russia_region
+					value = 10
+				}
+				owns_or_non_sovereign_subject_of = 295
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = oni_russian_vodka
+				duration = -1
+			}
+		}
+	}
+}
+
+oni_missions_oniking_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = ONI
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	ONI_mountain_hermit = {
+		icon = mission_touhou_kasen
+		required_missions = {  }
+		position = 1
+		trigger = {
+			OR = {
+				AND = {
+					KSE = {
+						OR = {
+							is_subject = no
+							is_subject_of = ROOT
+						}
+					}
+					reverse_has_opinion = {
+						who = KSE
+						value = 100
 					}
 				}
-				set_government_rank = 3
+				NOT = { exists = KSE }
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_oni.6
+			}
+			5191 = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	ONI_join_kasen = {
+		icon = mission_touhou_ibaraki
+		required_missions = { ONI_mountain_hermit }
+		position = 2
+		provinces_to_highlight = {
+			province_id = 5191
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = ONI_join_kasen_tt	
+					has_country_flag = oni_join_kasen
+				}
+				AND = {
+					owns_or_non_sovereign_subject_of = 5191
+					KSE = {
+						OR = {
+							exists = no
+							AND = {
+								is_subject_of = ROOT
+								is_subject_of_type = personal_union
+							}
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = oni_hermit_kasen
+				duration = -1
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = oni_can_fight_kasen
+					}
+					clr_country_flag = oni_can_fight_kasen
+				}
 			}
 		}
 	}
 
+	ONI_establish_onigashima = {
+		icon = mission_touhou_yuugisuika
+		required_missions = {
+			ONI_reform_society
+			ONI_join_kasen
+			ONI_join_suika
+		}
+		position = 3
+		trigger = {
+			is_at_war = no
+			stability = 1
+			legitimacy = 100
+		}
+		effect = {
+			country_event = {
+				id = flavor_oni.10
+			}
+		}
+	}	
+	
 	ONI_arrest_seiga = {
 		icon = mission_touhou_seiga
-		required_missions = { ONI_establish_onigashima }
-		position = 6
+		required_missions = { ONI_reclaim_mountain }
+		position = 5
 		provinces_to_highlight = {
 			OR = {
 				province_id = 5014
@@ -1040,169 +1154,6 @@ oni_missions_empire_slot = {
 			}
 		}
 	}
-	
-	ONI_beat_lunarian = {
-		icon = mission_touhou_lunarian_throne
-		required_missions = { ONI_powers_gensokyo }
-		position = 8
-		trigger = {
-			OR = {
-				AND = {
-					NOT = { exists = LEM }
-					NOT = { exists = LCU }
-					5320 = {
-							country_or_non_sovereign_subject_holds = ROOT
-					}
-				}
-				if = {
-					limit = {
-						exists = LEM
-					}
-					AND = {
-						war_with = LEM
-						war_score = 90
-					}
-				}
-				else = {
-					AND = {
-						war_with = LCU
-						war_score = 90
-					}
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_beat_lunarian
-				duration = 9125
-			}	
-		}
-	}
-}
-
-oni_missions_human_slot = {
-	slot = 4
-	generic = no
-	ai = yes
-	potential = {
-		tag = ONI
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-	
-	ONI_develop_brewery = {
-		icon = mission_touhou_yuugi
-		required_missions = {  }
-		position = 1
-		trigger = {
-			5299 = {
-				owned_by = ROOT
-				base_production = 8
-				OR = {
-					has_building = workshop
-					has_building = counting_house
-				}				
-			}
-		}
-		effect = {
-			5299 = {
-				add_permanent_province_modifier = {
-					name = oni_sake_production
-					duration = -1
-				}
-			}
-		}
-	}
-
-	ONI_build_barrack = {
-		icon = mission_touhou_former_capital
-		required_missions = { ONI_develop_brewery }
-		position = 2
-		trigger = {
-			OR = {
-				barracks = 10
-				training_fields = 10
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_training_soldier
-				duration = 7300
-			}	
-		}
-	}
-	
-	ONI_revenge_samurai = {
-		icon = mission_japanese_samurai
-		required_missions = { 
-			ONI_find_suika
-			ONI_break_the_barrier
-		}
-		position = 3
-		provinces_to_highlight = {
-			province_id = 1020
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			NOT = { controlled_by = ROOT }
-		}
-		trigger = {
-			OR = {
-				AND = {
-					1020 = {
-						owner = {
-							war_with = ROOT
-						}
-					}
-					war_score = 70
-					controls = 1020
-				}
-				1020 = {
-					owned_by = ROOT
-					is_core = ROOT
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_revenge_samurai
-				duration = 9125
-			}	
-			liaoning_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			hebei_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			south_hebei_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			shandong_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			korea_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
 }
 
 oni_missions_outworld_slot = {
@@ -1215,56 +1166,10 @@ oni_missions_outworld_slot = {
 	}
 	has_country_shield = yes
 
-	ONI_unexplainable_phenomenon = {
-		icon = mission_kowtow
-		required_missions = { ONI_revenge_samurai }
-		position = 4
-		provinces_to_highlight = {
-			OR = {
-				area = liaoning_area
-				area = hebei_area
-				area = south_hebei_area
-				area = shandong_area
-				region = korea_region
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			AND = {
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					OR = {
-						area = liaoning_area
-						area = hebei_area
-						area = south_hebei_area
-						area = shandong_area
-					}
-					value = 10
-				}
-				owns_or_non_sovereign_subject_of = 1816
-			}
-			AND = {
-				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-					region = korea_region
-					value = 5
-				}
-				owns_or_non_sovereign_subject_of = 735
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_unexplainable_phenomenon
-				duration = -1
-			}
-			country_event = {
-				id = TH_mission_events.3
-			}			
-		}
-	}
-
 	ONI_wide_outworld = {
 		icon = mission_touhou_sultan_of_the_middle_east
-		required_missions = { ONI_training_ocean_navy }
-		position = 5
+		required_missions = { ONI_break_the_barrier }
+		position = 7
 		provinces_to_highlight = {
 			OR = {
 				region = arabia_region
@@ -1288,251 +1193,13 @@ oni_missions_outworld_slot = {
 				name = oni_go_west
 				duration = 9125
 			}
-			khuzestan_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			basra_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-
-	ONI_attack_ottoman = {
-		icon = mission_ottoman_diplomacy
-		required_missions = { ONI_toward_west }
-		position = 7
-		trigger = {
-			OR = {
-				AND = {
-					war_with = TUR
-					war_score = 80
-					NOT = {
-						war_exhaustion = 2
-					}
-					TUR = {
-						war_exhaustion = 5
-					}
-				}
-				TUR = {
-					OR = {
-						is_subject_of = ROOT
-						exists = no
-					}
-				}
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_scourge_of_scourge
-				duration = 9125
-			}
-			france_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			south_german_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	ONI_attack_germany = {
-		icon = interfere_in_germany
-		required_missions = { ONI_attack_ottoman }
-		position = 8
-		provinces_to_highlight = {
-			OR = {
-				area = upper_bavaria_area
-				area = lower_bavaria_area
-				area = east_bavaria_area
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {
-					area = upper_bavaria_area
-					area = lower_bavaria_area
-					area = east_bavaria_area
-				}
-				value = 6
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_german_beer
-				duration = -1
-			}
-		}
-	}
-	
-	ONI_terror_oni = {
-		icon = mission_touhou_suikafear
-		required_missions = { 
-			ONI_attack_germany
-			ONI_attack_france
-		}
-		position = 9
-		trigger = {
-			OR = {
-				is_hegemon = yes
-				custom_trigger_tooltip = {
-					tooltip = ONI_capital_in_europe_asia_tt
-					NOT = {
-						any_country = {
-							OR = {
-								capital_scope = {
-									continent = europe
-								}
-								capital_scope = {
-									continent = asia
-								}
-							}
-							total_development = ROOT
-							NOT = { tag = ROOT }
-							NOT = { is_subject_of = ROOT }
-						}
-					}
-				}
-			}
-			calc_true_if = {
-				all_country = {
-					OR = {
-						is_subject_of = ROOT
-						truce_with = ROOT
-					}
-					custom_trigger_tooltip = {
-						tooltip = ONI_capital_in_europe_asia_ct
-						OR = {
-							capital_scope = {
-								continent = europe
-							}
-							capital_scope = {
-								continent = asia
-							}
-						}
-					}
-				}
-				amount = 20
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = oni_terror_of_oni
-				duration = -1
-			}
-		}
-	}
-}
-
-oni_missions_navy_slot = {
-	slot = 5
-	generic = no
-	ai = yes
-	potential = {
-		tag = ONI
-		NOT = { map_setup = map_setup_random }
-	}
-	has_country_shield = yes
-	
-	ONI_form_navy = {
-		icon = mission_rb_a_mighty_fleet
-		required_missions = {  }
-		position = 1
-		trigger = {
-			num_of_total_ports = 10
-			navy_size_percentage = 0.9
-		}
-		effect = {
-			add_prestige = 15
-			create_explorer = { tradition = 30 }
-		}
-	}
-
-	ONI_break_the_barrier = {
-		icon = mission_establish_high_seas_navy
-		required_missions = { ONI_form_navy }
-		position = 2
-		provinces_to_highlight = {
-			OR = {
-				region = moluccas_region
-				region = australia_region
-				region = indo_china_region
-			}
-			NOT = { has_discovered = ROOT }
-		}
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = th_break_the_barrier_tt
-				OR = {
-					moluccas_region = { has_discovered = ROOT }
-					australia_region = { has_discovered = ROOT }
-					indo_china_region = { has_discovered = ROOT }
-				}
-			}
-		}
-		effect = {
-			add_dip_power = 75
-			add_navy_tradition = 35
-			kinai_area = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	ONI_training_ocean_navy = {
-		icon = mission_corsairs_of_the_north_sea
-		required_missions = { ONI_break_the_barrier }
-		position = 4
-		trigger = {
-			num_of_total_ports = 20
-			sailors_percentage = 0.6
-			OR = {
-				num_of_heavy_ship = 30
-				num_of_light_ship = 50
-			}
-			if = {
-				limit = {
-					has_dlc = "Golden Century"
-				}
-				has_flagship = yes
-			}
-			else = {
-				navy_tradition = 40
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = touhou_ocean_navy
-				duration = 9125
-			}
-			create_explorer = { tradition = 50 }
 		}
 	}
 	
 	ONI_discover_europe = {
 		icon = mission_invade_england
-		required_missions = { ONI_training_ocean_navy }
-		position = 5
+		required_missions = { ONI_wide_outworld }
+		position = 8
 		provinces_to_highlight = {
 			OR = {
 				region = iberia_region
@@ -1563,7 +1230,7 @@ oni_missions_navy_slot = {
 	}
 }
 
-oni_missions_europe_slot = {
+oni_missions_suika_slot = {
 	slot = 5
 	generic = no
 	ai = yes
@@ -1573,82 +1240,283 @@ oni_missions_europe_slot = {
 	}
 	has_country_shield = yes
 	
-	ONI_toward_west = {
-		icon = mission_touhou_expanded_navy
-		required_missions = { 
-			ONI_discover_europe
-			ONI_wide_outworld
-		}
-		position = 6
+	ONI_find_suika = {
+		icon = mission_touhou_suika
+		required_missions = {  }
+		position = 1
 		provinces_to_highlight = {
 			OR = {
-				area = khuzestan_area
-				area = basra_area
+				province_id = 4955
+				province_id = 4989
+				province_id = 4978
 			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+			advisor = spymaster
+			4955 = {
 				OR = {
-					area = khuzestan_area
-					area = basra_area
+					owned_by = ROOT
+					owner = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 20
+						}
+					}
 				}
-				value = 4
+			}
+			4989 = {
+				OR = {
+					owned_by = ROOT
+					owner = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 20
+						}
+					}
+				}
+			}
+			4978 = {
+				OR = {
+					owned_by = ROOT
+					owner = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 20
+						}
+					}
+				}
 			}
 		}
-		effect = {
-			anatolia_region = {
+		effect = {			
+			if = {
 				limit = {
-					NOT = { is_core = ROOT }
+					HKR = {
+						OR = {
+							has_country_flag = hkr_met_suika
+							has_country_flag = th_suika_is_ruler
+						}
+					}
+				}
+				country_event = {
+					id = flavor_oni.3
+				}				
+			}
+			else = {
+				country_event = {
+					id = flavor_oni.2
+				}						
+			}
+			Hakurei_state = {
+				limit = {
 					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
-			thrace_area = {
+			Hakurei_peninsula_state = {
 				limit = {
-					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
-			iraq_arabi_area = {
+			Hakurei_western_coast = {
 				limit = {
-					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			al_jazira_area = {
-				limit = {
 					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
 		}
 	}
 	
-	ONI_attack_france = {
-		icon = centralize_france
-		required_missions = { ONI_attack_ottoman }
-		position = 8
+	ONI_join_suika = {
+		icon = mission_touhou_ibaraki
+		required_missions = { ONI_find_suika }
+		position = 2
 		provinces_to_highlight = {
-			region = france_region
-			th_produces_wine_or_champagne = yes
+			OR = {
+				province_id = 4955
+				province_id = 5057
+			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				th_produces_wine_or_champagne = yes
-				region = france_region
-				value = 6
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = ONI_join_suika_tt		
+					has_country_flag = oni_join_suika
+				}
+				AND = {
+					owns_or_non_sovereign_subject_of = 4955
+					owns_or_non_sovereign_subject_of = 5057
+					OR = {
+						HKR = {
+							exists = no
+							AND = {
+								is_subject_of = ROOT
+								is_subject_of_type = personal_union
+							}
+						}
+					}
+				}
 			}
 		}
 		effect = {
 			add_country_modifier = {
-				name = oni_french_wine
+				name = oni_power_suika
 				duration = -1
 			}
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = oni_can_fight_suika
+					}
+					clr_country_flag = oni_can_fight_suika
+				}
+			}
+		}
+	}
+	
+	ONI_build_barrack = {
+		icon = mission_touhou_former_capital
+		required_missions = {  }
+		position = 3
+		trigger = {
+			OR = {
+				barracks = 10
+				training_fields = 10
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = oni_training_soldier
+				duration = 7300
+			}	
+		}
+	}
+	
+	ONI_develop_brewery = {
+		icon = mission_touhou_yuugi
+		required_missions = {  }
+		position = 4
+		provinces_to_highlight = {
+			province_id = 5299
+		}
+		trigger = {
+			5299 = {
+				owned_by = ROOT
+				base_production = 8
+				has_production_building_trigger = yes			
+			}
+		}
+		effect = {
+			5299 = {
+				add_permanent_province_modifier = {
+					name = oni_sake_production
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+oni_missions_navy_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = ONI
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	ONI_form_navy = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
+		position = 5
+		trigger = {
+			num_of_total_ports = 10
+			navy_size_percentage = 0.9
+		}
+		effect = {
+			add_prestige = 15
+			create_explorer = { tradition = 30 }
+		}
+	}
+	
+	ONI_break_the_barrier = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { ONI_form_navy }
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+		}
+	}
+	
+	ONI_explore_north_america = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { ONI_break_the_barrier }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				region = cascadia_region
+				region = california_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = ONI_explore_north_america_tt
+				OR = {
+					cascadia_region = { has_discovered = ROOT }
+					california_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+		}
+	}
+	
+	ONI_explore_central_america = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { ONI_explore_north_america }
+		position = 8
+		provinces_to_highlight = {
+			region = mexico_region
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = ONI_explore_central_america_tt
+				mexico_region = { has_discovered = ROOT }
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
 		}
 	}
 }

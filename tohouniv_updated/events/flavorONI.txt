@@ -6,7 +6,7 @@ namespace = flavor_oni
 
 ###ONI Flavor events###
 
-#Recommand to ONI - Back to Tributary
+#Oni's Rebellious Activity - How react?
 country_event = {
 	id = flavor_oni.1
 	title = flavor_oni.1.t
@@ -15,31 +15,68 @@ country_event = {
 	is_triggered_only = yes
 	major = yes
 
-	option = {		# Recommand them
+	option = {		# Time to subjugate them
 		name = flavor_oni.1.a
 		custom_tooltip = flavor_oni.1.a.tt
+		declare_war_with_cb = {
+			casus_belli = cb_former_hell_war
+			who = ONI
+		}
+		
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 100
+				personality = ai_militarist
+			}
+		}
+	}
+	
+	option = {		# Let's soothe them
+		name = flavor_oni.1.b
+		custom_tooltip = flavor_oni.1.b.tt
+		if = {
+			limit = {
+				5009 = { owned_by = CRD }
+			}
+			5009 = {
+				cede_province = ONI
+			}
+		}
+		if = {
+			limit = {
+				5284 = { owned_by = CRD }
+			}
+			5284 = {
+				cede_province = ONI
+			}
+		}
+		if = {
+			limit = {
+				5285 = { owned_by = CRD }
+			}
+			5285 = {
+				cede_province = ONI
+			}
+		}
 		ONI = { 
 			country_event = {
 				id = flavor_oni.101
 				days = 10
 			}
-		}
+		}		
 		
 		ai_chance = { 
-			factor = 100
-		}
-	}
-	
-	option = {		# No matter
-		name = flavor_oni.1.b
-		custom_tooltip = flavor_oni.1.b.tt
-		ai_chance = { 
-			factor = 0
+			factor = 50
+			modifier = {
+				factor = 100
+				personality = personality = ai_diplomat
+			}
 		}
 	}
 }
 
-#Conflict with Chireiden - War or Tributary agajn
+#crossroads of the choice
 country_event = {
 	id = flavor_oni.101
 	title = flavor_oni.101.t
@@ -48,34 +85,38 @@ country_event = {
 	is_triggered_only = yes
 	major = yes
 
-	option = {			#Tributary agajn
+	option = {			#Enough
 		name = flavor_oni.101.a
 		custom_tooltip = flavor_oni.101.a.tt
-		CRD = {
-			create_subject = {
-				subject_type = th_satori_vassal
-				subject = ONI
-			}
-		}
-		add_truce_with = CRD
-		add_country_modifier = {
-			name = oni_disharmony_chireiden
-			duration = 7300
-		}
 		
+		add_truce_with = CRD
+
 		ai_chance = { 
 			factor = 100
 		}
 	}
 	
-	option = {			#Go war!
+	option = {			#NOT Enough
 		name = flavor_oni.101.b
 
 		declare_war_with_cb = {
 			casus_belli = cb_former_hell_war
 			who = CRD
 		}
-
+		if = {
+			limit = {
+				5294 = { owned_by = CRD }
+			}
+			5294 = {
+				add_core = ROOT
+				change_controller = ROOT
+			}
+		}
+		add_country_modifier = {
+			name = oni_hell_war
+			duration = 1825
+		}
+		
 		ai_chance = { 
 			factor = 0
 			modifier = {
@@ -86,7 +127,7 @@ country_event = {
 	}
 }
 
-#Chireiden is fall, do it ourselves
+#pressure CRD
 country_event = {
 	id = flavor_oni.102
 	title = flavor_oni.102.t
@@ -97,165 +138,143 @@ country_event = {
 
 	option = {		
 		name = flavor_oni.102.a
-		Chireiden_state = {
+		if = {
 			limit = {
-				NOT = { is_permanent_claim = ROOT }
-				NOT = { is_core = ROOT }
+				5009 = { owned_by = CRD }
 			}
-			add_permanent_claim = ROOT
-		}	
-		Blazing_hell_state = {
-			limit = {
-				NOT = { is_permanent_claim = ROOT }
-				NOT = { is_core = ROOT }
+			5009 = {
+				add_core = ROOT
+				cede_province = ROOT
 			}
-			add_permanent_claim = ROOT
-		}	
-		Road_to_hell_state = {
-			limit = {
-				NOT = { is_permanent_claim = ROOT }
-				NOT = { is_core = ROOT }
-			}
-			add_permanent_claim = ROOT
 		}
-		Chireiden_canal_state = {
+		if = {
 			limit = {
-				NOT = { is_permanent_claim = ROOT }
-				NOT = { is_core = ROOT }
+				5284 = { owned_by = CRD }
 			}
-			add_permanent_claim = ROOT
-		}		
+			5284 = {
+				add_core = ROOT
+				cede_province = ROOT
+			}
+		}
+		if = {
+			limit = {
+				5285 = { owned_by = CRD }
+			}
+			5285 = {
+				add_core = ROOT
+				cede_province = ROOT
+			}
+		}
+		add_truce_with = CRD
+		
 		ai_chance = { 
 			factor = 100
 		}
 	}
 }
 
-#Negotiation with Chireiden
+#Fight Suika
 country_event = {
 	id = flavor_oni.2
 	title = flavor_oni.2.t
 	desc = flavor_oni.2.desc
-	picture = KOMEIJI_eventPicture
+	picture = SUIKA_eventPicture
 	is_triggered_only = yes
 
-	option = {			#suggest to them
-		name = flavor_oni.2.a
-		custom_tooltip = flavor_oni.2.a.tt
-		CRD = { 
-			country_event = {
-				id = flavor_oni.201
-				days = 5
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Yuugi"
+					dynasty = "Hoshiguma"
+				}
+				th_getruler_fighting_skill = {
+					skill_boni = 500
+					type = normal
+				}
 			}
+			else = {
+				th_getruler_fighting_skill = {
+					skill_boni = 0
+					type = normal
+				}
+			}
+			#Yuugis base fight skills
+			set_variable = {
+				which = th_oni_suika_combat_skills
+				value = 1800
+			}
+			#'Desperate' Fighting Skills
+			th_defineopponent_fighting_skill = {
+				variable = th_oni_suika_combat_skills
+				type = normal
+			}	
 		}
+	}
+
+	option = {		#fight now!
+		name = flavor_oni.2.a
+		highlight = yes
+		custom_tooltip = flavor_oni.2.a.tt
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_oni.21
+			draw_event = flavor_oni.21
+			defeat_event = flavor_oni.22
+			days = 10
+		}	
 		
 		ai_chance = { 
 			factor = 0
 		}
 	}
 	
-	option = {			#do it ourselves
+	option = {			#fight after
 		name = flavor_oni.2.b
 		custom_tooltip = flavor_oni.2.b.tt
+		hidden_effect = {
+			set_country_flag = oni_can_fight_suika
+		}
 		ai_chance = { 
 			factor = 100
 		}
 	}
 }
 
-#Chireiden's answer
+#fight Suika - win!
 country_event = {
-	id = flavor_oni.201
-	title = flavor_oni.201.t
-	desc = flavor_oni.201.desc
+	id = flavor_oni.21
+	title = flavor_oni.21.t
+	desc = flavor_oni.21.desc
 	picture = YUUGI_eventPicture
 	is_triggered_only = yes
 
-	option = {			#sure
-		name = flavor_oni.201.a
-		custom_tooltip = flavor_oni.201.a.tt
-		ONI = { 
-			country_event = {
-				id = flavor_oni.202
-				days = 5
-			}
+	option = {			
+		name = flavor_oni.21.a
+		custom_tooltip = flavor_oni.21.a.tt
+		hidden_effect = {
+			set_country_flag = oni_join_suika
+			set_global_flag = suika_not_come_shrine
 		}
 		
 		ai_chance = { 
 			factor = 100
 		}
 	}
-	
-	option = {			#nah
-		name = flavor_oni.201.b
-		custom_tooltip = flavor_oni.201.b.tt
-		ONI = { 
-			country_event = {
-				id = flavor_oni.203
-				days = 5
-			}
-		}
-
-		ai_chance = { 
-			factor = 0
-		}
-	}
 }
 
-#Accepted suggestion
+#fight Suika - lose...
 country_event = {
-	id = flavor_oni.202
-	title = flavor_oni.202.t
-	desc = flavor_oni.202.desc
-	picture = KOMEIJI_eventPicture
+	id = flavor_oni.22
+	title = flavor_oni.22.t
+	desc = flavor_oni.22.desc
+	picture = YUUGI_eventPicture
 	is_triggered_only = yes
 
 	option = {			
-		name = flavor_oni.202.a
-		add_treasury = -150
-		CRD = { 
-			free_vassal = ROOT
-			create_alliance = ROOT
-			add_historical_friend = ROOT
-			add_trust = {
-				who = ROOT
-				value = 10
-			}
-			add_treasury = 150
-		}
-		add_historical_friend = CRD	
-		if = {
-			limit = {
-				5009 = { owned_by = CRD }
-			}
-			5009 = {
-				add_core = ROOT
-				cede_province = ROOT
-			}
-			add_treasury = -150
-			CRD = { add_treasury = 150 }
-		}
-		if = {
-			limit = {
-				5284 = { owned_by = CRD }
-			}
-			5284 = {
-				add_core = ROOT
-				cede_province = ROOT
-			}
-			add_treasury = -150
-			CRD = { add_treasury = 150 }
-		}
-		if = {
-			limit = {
-				5285 = { owned_by = CRD }
-			}
-			5285 = {
-				add_core = ROOT
-				cede_province = ROOT
-			}
-			add_treasury = -150
-			CRD = { add_treasury = 150 }
+		name = flavor_oni.22.a
+		add_country_modifier = {
+			name = oni_defeat_suika
+			duration = 7300
 		}
 		
 		ai_chance = { 
@@ -264,284 +283,106 @@ country_event = {
 	}
 }
 
-#Denied suggestion
-country_event = {
-	id = flavor_oni.203
-	title = flavor_oni.203.t
-	desc = flavor_oni.203.desc
-	picture = KOMEIJI_eventPicture
-	is_triggered_only = yes
-
-	option = {			
-		name = flavor_oni.203.a
-		Road_to_hell_state = {
-			limit = {
-				NOT = { is_permanent_claim = ROOT }
-				NOT = { is_core = ROOT }
-			}
-			add_permanent_claim = ROOT
-		}
-		Chireiden_canal_state = {
-			limit = {
-				NOT = { is_permanent_claim = ROOT }
-				NOT = { is_core = ROOT }
-			}
-			add_permanent_claim = ROOT
-		}
-		add_opinion = {
-			who = CRD
-			modifier = th_denied_suggestion
-		}		
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
-}
-
-#Oni occupy Former Hell
+#Fight Suika - she already in HKR
 country_event = {
 	id = flavor_oni.3
 	title = flavor_oni.3.t
 	desc = flavor_oni.3.desc
-	picture = YUUGI_eventPicture
+	picture = SUIKA_eventPicture
 	is_triggered_only = yes
 
-	option = {		#moderate option
-		name = flavor_oni.3.a
-		custom_tooltip = flavor_oni.3.a.tt
-		if = {
-			limit = {
-				5009 = { owned_by = CRD }
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Yuugi"
+					dynasty = "Hoshiguma"
+				}
+				th_getruler_fighting_skill = {
+					skill_boni = 500
+					type = normal
+				}
 			}
-			5009 = {
-				add_core = ROOT
-				cede_province = ROOT
+			else = {
+				th_getruler_fighting_skill = {
+					skill_boni = 0
+					type = normal
+				}
 			}
+			#Yuugis base fight skills
+			set_variable = {
+				which = th_oni_suika_combat_skills
+				value = 2000
+			}
+			#'Desperate' Fighting Skills
+			th_defineopponent_fighting_skill = {
+				variable = th_oni_suika_combat_skills
+				type = normal
+			}	
 		}
-		if = {
-			limit = {
-				5284 = { owned_by = CRD }
-			}
-			5284 = {
-				add_core = ROOT
-				cede_province = ROOT
-			}
-		}
-		if = {
-			limit = {
-				5285 = { owned_by = CRD }
-			}
-			5285 = {
-				add_core = ROOT
-				cede_province = ROOT
-			}
-		}
-		add_treasury = 100
-		white_peace = CRD
-		if = {
-			limit = {
-				is_subject_of = CRD
-			}
-			grant_independence = yes
-		}
-		CRD = {
-			add_treasury = -100
-			add_opinion = {
-				who = ROOT
-				modifier = th_moderate_treaty
-			}
-		}
+	}
+
+	option = {		#fight now!
+		name = flavor_oni.2.a
+		highlight = yes
+		custom_tooltip = flavor_oni.2.a.tt
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_oni.31
+			draw_event = flavor_oni.31
+			defeat_event = flavor_oni.32
+			days = 10
+		}	
 		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {			#fight after
+		name = flavor_oni.2.b
+		custom_tooltip = flavor_oni.2.b.tt
+		hidden_effect = {
+			set_country_flag = oni_can_fight_suika
+		}
 		ai_chance = { 
 			factor = 100
 		}
 	}
-	
-	option = {		#severe option
-		name = flavor_oni.3.b
-		custom_tooltip = flavor_oni.3.b.tt				
-		Road_to_hell_state = {
-			limit = {
-				owned_by = CRD
-			}
-			add_core = ROOT
-			cede_province = ROOT
-		}
-		Chireiden_canal_state = {
-			limit = {
-				owned_by = CRD
-			}
-			add_core = ROOT
-			cede_province = ROOT
-		}
-		Oni_exclave_state = {
-			limit = {
-				owned_by = CRD
-			}
-			add_core = ROOT
-			cede_province = ROOT
-		}
-		if = {
-			limit = {
-				5282 = { owned_by = CRD }
-			}
-			5282 = {
-				add_core = ROOT
-				cede_province = ROOT
-			}
-		}
-		if = {
-			limit = {
-				5286 = { owned_by = CRD }
-			}
-			5286 = {
-				add_core = ROOT
-				cede_province = ROOT
-			}
-		}
-		if = {
-			limit = {
-				5007 = {
-					owned_by = CRD
-					controlled_by = ROOT
-					development = 25
-				}
-			}
-			5007 = {
-				add_base_tax = -4
-				add_base_production = -4
-				add_base_manpower = -4
-				add_devastation = 25
-			}
-			capital_scope = {
-				add_base_tax = 4
-				add_base_production = 4
-				add_base_manpower = 4
-			}
-		}
-		white_peace = CRD
-		if = {
-			limit = {
-				is_subject_of = CRD
-			}
-			grant_independence = yes
-		}
-		create_subject = {
-			subject_type = vassal
-			subject = CRD
-		}	
-		add_treasury = 500
-		CRD = {
-			add_treasury = -500
-			add_opinion = {
-				who = ROOT
-				modifier = th_severe_treaty
-			}
-		}
-		custom_tooltip = flavor_oni.3.b.ct
-		hidden_effect = {
-			every_known_country = {
-				limit = {
-					capital_scope = {
-						continent = gensokyo_continent
-					}
-					NOT = { is_subject_of = ROOT }
-					NOT = { alliance_with = ROOT }
-					NOT = { tag = CRD }
-				}
-				add_opinion = {
-					who = ROOT
-					modifier = th_rapid_change
-				}
-			}
-		}
-		
-		ai_chance = { 
-			factor = 0
-			modifier = {
-				factor = 100
-				OR = {
-					ruler_has_personality = conqueror_personality
-					ruler_has_personality = greedy_personality
-					ruler_has_personality = cruel_personality
-				}
-			}
-		}
-	}
 }
 
-#Suika return to her compatriot
+#fight Suika of HKR - win!
 country_event = {
-	id = flavor_oni.4
-	title = flavor_oni.4.t
-	desc = flavor_oni.4.desc
-	picture = SUIKA_eventPicture
+	id = flavor_oni.31
+	title = flavor_oni.31.t
+	desc = flavor_oni.31.desc
+	picture = YUUGI_eventPicture
 	is_triggered_only = yes
 
-	option = {
-		name = flavor_oni.4.a
-
-		define_general = {
-			shock = 6
-			fire = 3
-			manuever = 3
-			siege = 3
-			name = "Suika Ibuki"
-			female = yes
-		}
+	option = {			
+		name = flavor_oni.31.a
+		custom_tooltip = flavor_oni.31.a.tt
 		hidden_effect = {
+			set_country_flag = oni_join_suika
 			set_global_flag = suika_not_come_shrine
 		}
-		
-		ai_chance = { 
-			factor = 50
-		}
-	}
-	
-	option = {
-		name = flavor_oni.4.b
-
-		add_country_modifier = {
-			name = oni_suika_return
-			duration = 10950
-		}
-		
-		ai_chance = { 
-			factor = 50
-		}
-	}
-}
-
-#Suika's reluctant return
-country_event = {
-	id = flavor_oni.5
-	title = flavor_oni.5.t
-	desc = flavor_oni.5.desc
-	picture = SADSUIKA_eventPicture
-	is_triggered_only = yes
-
-	option = {
-		name = flavor_oni.5.a
-		add_country_modifier = {
-			name = oni_gloomy_suika
-			duration = 1825
-		}
-		hidden_effect = {
-			set_global_flag = suika_not_come_shrine
-			if = {
-				limit = {
-					HKR = {
-						OR = {
-							AND = {
-								has_ruler = "Suika"
-								dynasty = "Ibuki"
-							}
-							has_ruler_flag = HKR_suika_in_charge
+		if = {
+			limit = {
+				HKR = {
+					OR = {
+						AND = {
+							has_ruler = "Suika"
+							dynasty = "Ibuki"
 						}
-						ai = yes
+						has_ruler_flag = HKR_suika_in_charge
 					}
+					NOT = { total_development = 300 }
 				}
+			}
+			create_subject = {
+				subject_type = personal_union
+				subject = HKR
+			}
+			hidden_effect = {
 				HKR = {
 					kill_ruler = yes
 					clr_ruler_flag = HKR_suika_in_charge
@@ -551,33 +392,61 @@ country_event = {
 					add_stability = 1
 				}
 			}
-			else_if = {
-				limit = {
-					HKR = {
-						has_heir = yes
-						has_heir_flag = touhou_original_heir
-						ai = yes
-					}
-				}
+		}
+		else_if = {
+			limit = {
 				HKR = {
-					kill_heir = {}
-					clr_heir_flag = touhou_character_ruler
-					clr_heir_flag = touhou_original_heir
+					OR = {
+						AND = {
+							has_ruler = "Suika"
+							dynasty = "Ibuki"
+						}
+						has_ruler_flag = HKR_suika_in_charge
+					}
+					total_development = 300
+				}
+			}
+			add_casus_belli = {
+				target = HKR
+				type = cb_touhou_mission_personal_union_war
+				months = 900
+			}
+			hidden_effect = {
+				HKR = {
+					kill_ruler = yes
+					clr_ruler_flag = HKR_suika_in_charge
+					clr_ruler_flag = touhou_character_ruler
+					clr_ruler_flag = touhou_original_ruler
 					clr_country_flag = th_suika_is_ruler
 					add_stability = 1
 				}
 			}
-			else_if = {
-				limit = {
-					HKR = {
-						has_leader = "Suika Ibuki"
-					}
-				}
+		}
+		else_if = {
+			limit = {
 				HKR = {
-					kill_leader = { type = "Suika Ibuki" }
-					clr_country_flag = hkr_suika_general
-					clr_country_flag = hkr_suika_general_unavailable
+					has_heir = yes
+					has_heir_flag = touhou_original_heir
 				}
+			}
+			HKR = {
+				kill_heir = {}
+				clr_heir_flag = touhou_character_ruler
+				clr_heir_flag = touhou_original_heir
+				clr_country_flag = th_suika_is_ruler
+				add_stability = 1
+			}
+		}
+		else_if = {
+			limit = {
+				HKR = {
+					has_leader = "Suika Ibuki"
+				}
+			}
+			HKR = {
+				kill_leader = { type = "Suika Ibuki" }
+				clr_country_flag = hkr_suika_general
+				clr_country_flag = hkr_suika_general_unavailable
 			}
 		}
 		
@@ -587,72 +456,402 @@ country_event = {
 	}
 }
 
-#Kasen return to her compatriot
+#fight Suika of HKR - lose...
 country_event = {
-	id = flavor_oni.6
-	title = flavor_oni.6.t
-	desc = flavor_oni.6.desc
-	picture = KASEN_eventPicture
+	id = flavor_oni.32
+	title = flavor_oni.32.t
+	desc = flavor_oni.32.desc
+	picture = YUUGI_eventPicture
 	is_triggered_only = yes
 
-	option = {
-		name = flavor_oni.6.a
-
-		define_general = {
-			shock = 4
-			fire = 5
-			manuever = 3
-			siege = 3
-			name = "Kasen Ibaraki"
-			female = yes
-		}
-		if = {
-			limit = {
-				exists = KSE
-				KSE = { ai = yes }
-			}
-			inherit = KSE
-			every_province = {
-				limit = {
-					is_core = KSE
-				}
-				remove_core = KSE
-			}
-		}
-		
-		ai_chance = { 
-			factor = 50
-		}
-	}
-	
-	option = {
-		name = flavor_oni.6.b
-
+	option = {			
+		name = flavor_oni.32.a
 		add_country_modifier = {
-			name = oni_kasen_return
-			duration = 10950
+			name = oni_defeat_suika
+			duration = 7300
 		}
 		if = {
 			limit = {
-				exists = KSE
-				KSE = { ai = yes }
-			}
-			inherit = KSE
-			every_province = {
-				limit = {
-					is_core = KSE
+				HKR = {
+					has_ruler = "Ibuki"
+					dynasty = "Suika"
 				}
-				remove_core = KSE
+			}
+			add_casus_belli = {
+				target = HKR
+				type = cb_restore_personal_union
+				months = 900
 			}
 		}
 		
 		ai_chance = { 
-			factor = 50
+			factor = 100
 		}
 	}
 }
 
-#Declare Onigashima's foundation
+#Fight Suika by decision
+country_event = {
+	id = flavor_oni.4
+	title = flavor_oni.4.t
+	desc = flavor_oni.4.desc
+	picture = SUIKA_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Yuugi"
+					dynasty = "Hoshiguma"
+				}
+				th_getruler_fighting_skill = {
+					skill_boni = 500
+					type = normal
+				}
+			}
+			else = {
+				th_getruler_fighting_skill = {
+					skill_boni = 0
+					type = normal
+				}
+			}
+			#Yuugis base fight skills
+			set_variable = {
+				which = th_oni_suika_combat_skills
+				value = 1800
+			}
+			#'Desperate' Fighting Skills
+			th_defineopponent_fighting_skill = {
+				variable = th_oni_suika_combat_skills
+				type = normal
+			}	
+		}
+	}
+
+	option = {		#fight now!
+		name = flavor_oni.2.a
+		highlight = yes
+		custom_tooltip = flavor_oni.2.a.tt
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_oni.21
+			draw_event = flavor_oni.21
+			defeat_event = flavor_oni.22
+			days = 10
+		}	
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {			#fight after
+		name = flavor_oni.2.b
+		custom_tooltip = flavor_oni.2.b.tt
+		hidden_effect = {
+			set_country_flag = oni_can_fight_suika
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Fight Suika of HKR by decision
+country_event = {
+	id = flavor_oni.5
+	title = flavor_oni.5.t
+	desc = flavor_oni.5.desc
+	picture = SUIKA_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Yuugi"
+					dynasty = "Hoshiguma"
+				}
+				th_getruler_fighting_skill = {
+					skill_boni = 500
+					type = normal
+				}
+			}
+			else = {
+				th_getruler_fighting_skill = {
+					skill_boni = 0
+					type = normal
+				}
+			}
+			#Yuugis base fight skills
+			set_variable = {
+				which = th_oni_suika_combat_skills
+				value = 2000
+			}
+			#'Desperate' Fighting Skills
+			th_defineopponent_fighting_skill = {
+				variable = th_oni_suika_combat_skills
+				type = normal
+			}	
+		}
+	}
+
+	option = {		#fight now!
+		name = flavor_oni.2.a
+		highlight = yes
+		custom_tooltip = flavor_oni.2.a.tt
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_oni.31
+			draw_event = flavor_oni.31
+			defeat_event = flavor_oni.32
+			days = 10
+		}	
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {			#fight after
+		name = flavor_oni.2.b
+		custom_tooltip = flavor_oni.2.b.tt
+		hidden_effect = {
+			set_country_flag = oni_can_fight_suika
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Fight Kasen
+country_event = {
+	id = flavor_oni.6
+	title = flavor_oni.6.t
+	desc = flavor_oni.6.desc
+	picture = SUIKA_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Yuugi"
+					dynasty = "Hoshiguma"
+				}
+				th_getruler_fighting_skill = {
+					skill_boni = 500
+					type = normal
+				}
+			}
+			else = {
+				th_getruler_fighting_skill = {
+					skill_boni = 0
+					type = normal
+				}
+			}
+			#Yuugis base fight skills
+			set_variable = {
+				which = th_oni_kasen_combat_skills
+				value = 1900
+			}
+			#'Desperate' Fighting Skills
+			th_defineopponent_fighting_skill = {
+				variable = th_oni_kasen_combat_skills
+				type = normal
+			}	
+		}
+	}
+
+	option = {		#fight now!
+		name = flavor_oni.6.a
+		highlight = yes
+		custom_tooltip = flavor_oni.6.a.tt
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_oni.61
+			draw_event = flavor_oni.61
+			defeat_event = flavor_oni.62
+			days = 10
+		}	
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {			#fight after
+		name = flavor_oni.6.b
+		custom_tooltip = flavor_oni.6.b.tt
+		hidden_effect = {
+			set_country_flag = oni_can_fight_kasen
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#fight Kasen - win!
+country_event = {
+	id = flavor_oni.61
+	title = flavor_oni.61.t
+	desc = flavor_oni.61.desc
+	picture = YUUGI_eventPicture
+	is_triggered_only = yes
+
+	option = {			
+		name = flavor_oni.61.a
+		custom_tooltip = flavor_oni.61.a.tt
+		hidden_effect = {
+			set_country_flag = oni_join_kasen
+		}
+		if = {
+			limit = {
+				KSE = {
+					has_ruler = "Kasen"
+					dynasty = "Ibaraki"
+					NOT = { total_development = 300 }
+				}
+			}
+			KSE = {
+				kill_ruler = yes
+				th_disable_respawn_ability = {
+					custom_tooltip = flavor_oni.61.a.ct
+					duration = -1
+				}
+			}
+			create_subject = {
+				subject_type = personal_union
+				subject = KSE
+			}
+		}
+		else_if = {
+			limit = {
+				KSE = {
+					has_ruler = "Kasen"
+					dynasty = "Ibaraki"
+					total_development = 300
+				}
+			}
+			kill_ruler = yes
+			th_disable_respawn_ability = {
+				custom_tooltip = flavor_oni.61.a.ct
+				duration = -1
+			}
+			add_casus_belli = {
+				target = KSE
+				type = cb_touhou_mission_personal_union_war
+				months = 900
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#fight Kasen - lose...
+country_event = {
+	id = flavor_oni.62
+	title = flavor_oni.62.t
+	desc = flavor_oni.62.desc
+	picture = KASEN_eventPicture
+	is_triggered_only = yes
+
+	option = {			
+		name = flavor_oni.62.a
+		add_country_modifier = {
+			name = oni_defeat_kasen
+			duration = 7300
+		}
+		if = {
+			limit = {
+				KSE = {
+					is_subject = no
+				}
+			}
+			add_casus_belli = {
+				target = KSE
+				type = cb_restore_personal_union
+				months = 900
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Fight Kasen by decision
+country_event = {
+	id = flavor_oni.601
+	title = flavor_oni.601.t
+	desc = flavor_oni.601.desc
+	picture = KASEN_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ruler = "Yuugi"
+					dynasty = "Hoshiguma"
+				}
+				th_getruler_fighting_skill = {
+					skill_boni = 500
+					type = normal
+				}
+			}
+			else = {
+				th_getruler_fighting_skill = {
+					skill_boni = 0
+					type = normal
+				}
+			}
+			#Yuugis base fight skills
+			set_variable = {
+				which = th_oni_kasen_combat_skills
+				value = 1900
+			}
+			#'Desperate' Fighting Skills
+			th_defineopponent_fighting_skill = {
+				variable = th_oni_kasen_combat_skills
+				type = normal
+			}	
+		}
+	}
+
+	option = {		#fight now!
+		name = flavor_oni.6.a
+		highlight = yes
+		custom_tooltip = flavor_oni.6.a.tt
+		th_danmaku_normal_fight_ruler_and_opponent = {
+			win_event = flavor_oni.61
+			draw_event = flavor_oni.61
+			defeat_event = flavor_oni.62
+			days = 10
+		}	
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+	
+	option = {			#fight after
+		name = flavor_oni.6.b
+		custom_tooltip = flavor_oni.6.b.tt
+		hidden_effect = {
+			set_country_flag = oni_can_fight_kasen
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Move Capital?
 country_event = {
 	id = flavor_oni.7
 	title = flavor_oni.7.t
@@ -660,61 +859,39 @@ country_event = {
 	picture = THREEONIS_eventPicture
 	is_triggered_only = yes
 
-	option = {
+	option = {		#yes
 		name = flavor_oni.7.a
-		override_country_name = TH_ONIGASHIMA
-		youkai_mountain_region = {
-			limit = {
-				owned_by = ROOT
-				culture = Tengu
-			}
-			change_culture = ROOT
-		}
-		youkai_mountain_region = {
-			limit = {
-				NOT = { is_core = ROOT }
-			}
-			add_core = ROOT
-		}
-		set_capital = 4964
-		4964 = {
-			change_province_name = "Oni Capital"
-			rename_capital = "Oni Capital"
-			add_core = ROOT
-			add_base_tax = 1
-			add_base_production = 1
-			add_base_manpower = 2
-			change_culture = ROOT
-		}
 		if = {
 			limit = {
-				NOT = { has_country_flag = oni_has_enacted_onigashima }
-			}
-			if = {
-				limit = {
-					NOT = { government = monarchy }
+				4964 = {
+					owned_by = ROOT
+					NOT = { is_core = ROOT }
 				}
-				change_government = monarchy
 			}
-			add_government_reform = Gensokyan_oni_brawling_kingdom
-			hidden_effect = {
-				set_country_flag = oni_has_enacted_onigashima
+			4964 = {
+				add_core = ROOT
+				change_province_name = "Oni Capital"
+				rename_capital = "Oni Capital"
+				add_core = ROOT
+				add_base_manpower = 2
+				change_religion = ROOT
+				change_culture = ROOT
 			}
-		}		
-		add_stability = 1
-		add_prestige = 50
-		if = {
-			limit = {
-				has_ruler = "Yuugi"
-				dynasty = "Hoshiguma"
-			}
-			hidden_effect = {
-				set_country_flag = th_oni_had_yuugi
-			}
+			set_capital = 4964
 		}
+	
+		add_prestige = 25
 		
 		ai_chance = { 
 			factor = 100
+		}
+	}
+	
+	option = {		#no
+		name = flavor_oni.7.b
+		
+		ai_chance = { 
+			factor = 0
 		}
 	}
 }
@@ -780,7 +957,7 @@ country_event = {
 		custom_tooltip = flavor_oni.8.c.tt
 		add_country_modifier = {
 			name = oni_wicked_hermit
-			duration = -1
+			duration = 10950
 		}
 		
 		ai_chance = { 
@@ -793,66 +970,143 @@ country_event = {
 	}
 }
 
-###Free mercs wooh###
+#Treat Moriya
 country_event = {
-	id = flavor_oni.1000
-	title = none
-	desc = none
-	picture = none
-	hidden = yes
+	id = flavor_oni.9
+	title = flavor_oni.9.t
+	desc = flavor_oni.9.desc
+	picture = SHRINE_eventPicture
+	is_triggered_only = yes
+	
+	major = yes
 
-	trigger = {
-		NOT = {
-			any_hired_mercenary_company = {
-				template = merc_th_oni_warriors
+	option = {	#Send the Hakurei Shrine Maidens
+		name = flavor_oni.9.a
+		trigger = {
+			NOT = { religion = th_moriyashinto }
+		}
+		every_heretic_province = {
+			add_province_modifier = { 
+				name = th_banned_heretics
+				duration = 1825
 			}
 		}
-		NOT = { has_country_flag = oni_not_hired_oni_warriors }
-		has_country_flag = oni_has_completed_merc_mission
-		NOT = { has_country_flag = th_free_merc_companies }
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
-
-	option = {
-		set_country_flag = oni_not_hired_oni_warriors
+		reverse_add_opinion = {
+			who = HKR
+			modifier = th_follows_our_religion
+		}
+		add_adm_power = -100
 
 		ai_chance = { 
-			factor = 1
+			factor = 50
+		}
+	}
+	
+	option = {	#Convert to Moriya
+		name = flavor_oni.9.b
+		trigger = {
+			NOT = { religion = th_moriyashinto }
+		}
+		th_ds_excuse_religion_swapping = yes
+		
+		add_stability = -1
+		change_religion = th_moriyashinto
+		
+		add_country_modifier = { 
+			name = th_converted_to_moriya
+			duration = 5475
+		}
+		reverse_add_opinion = {
+			who = MRY
+			modifier = th_follows_our_religion
+		}
+		
+		ai_chance = { 
+			factor = 50
+		}
+	}
+	
+	option = {	#We are already Moriya
+		name = flavor_oni.9.c
+		trigger = {
+			religion = th_moriyashinto
+		}
+		add_country_modifier = { 
+			name = th_converted_to_moriya
+			duration = 5475
+		}
+		reverse_add_opinion = {
+			who = MRY
+			modifier = th_follows_our_religion
+		}
+		
+		ai_chance = { 
+			factor = 100
 		}
 	}
 }
 
-###Remove Flag for free mercs###
+#Declare Onigashima's foundation
 country_event = {
-	id = flavor_oni.1001
-	title = none
-	desc = none
-	picture = none
-	hidden = yes
-
-	trigger = {
-		any_hired_mercenary_company = {
-			template = merc_th_oni_warriors
-		}
-		has_country_flag = oni_not_hired_oni_warriors
-		NOT = { has_country_flag = th_free_merc_companies }
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
+	id = flavor_oni.10
+	title = flavor_oni.10.t
+	desc = flavor_oni.10.desc
+	picture = THREEONIS_eventPicture
+	is_triggered_only = yes
 
 	option = {
-		clr_country_flag = oni_not_hired_oni_warriors
-		add_army_professionalism = 0.05
-
+		name = flavor_oni.10.a
+		override_country_name = TH_ONIGASHIMA
+		if = {
+			limit = {
+				NOT = { has_country_flag = oni_has_enacted_onigashima }
+			}
+			if = {
+				limit = {
+					NOT = { government = monarchy }
+				}
+				change_government = monarchy
+			}
+			add_government_reform = Gensokyan_oni_brawling_kingdom
+			hidden_effect = {
+				set_country_flag = oni_has_enacted_onigashima
+			}
+		}		
+		add_stability = 1
+		add_prestige = 50
+		if = {
+			limit = {
+				has_ruler = "Yuugi"
+				dynasty = "Hoshiguma"
+			}
+			hidden_effect = {
+				set_country_flag = th_oni_had_yuugi
+			}
+		}
+		
 		ai_chance = { 
-			factor = 1
+			factor = 100
+		}
+	}
+}
+
+#Yuugi Invent Tequilla
+country_event = {
+	id = flavor_oni.11
+	title = flavor_oni.11.t
+	desc = flavor_oni.11.desc
+	picture = THREEONIS_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_oni.11.a
+		add_country_modifier = {
+			name = oni_mexican_tequila
+			duration = -1
+		}
+		
+		ai_chance = { 
+			factor = 100
 		}
 	}
 }
