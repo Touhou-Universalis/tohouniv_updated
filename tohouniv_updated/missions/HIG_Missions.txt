@@ -33,35 +33,7 @@ hig_internal_slot = {
 				name = hig_oni_strike_force
 				duration = 9125
 			}
-			Keiki_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Saki_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Yachie_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Great_border = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Western_great_border = {
+			hell_region = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -71,118 +43,115 @@ hig_internal_slot = {
 		}
 	}
 
-	HIG_reorganize_the_shinigami = {
-		icon = mission_touhou_master_shinigami
+	HIG_take_over_the_road_of_liminality = {
+		icon = mission_touhou_former_capital
 		required_missions = { HIG_recruit_oni_strike_force }
 		position = 2
-		trigger = {
-			NOT = { has_estate_privilege = th_estate_nobles_unorganized_shinigami_authority }
-			NOT = { has_estate_privilege = th_estate_nobles_lack_of_overseers }
-		}
-		effect = {
-			add_country_modifier = {
-				name = hig_shinigami_reforms
-				duration = 9125
-			}
-		}
-	}
-
-	HIG_deal_with_komachis_slack = {
-		icon = mission_touhou_slacking_komachi
-		required_missions = { HIG_reorganize_the_shinigami }
-		position = 3
-		trigger = {
-			estate_loyalty = {
-				estate = estate_nobles
-				loyalty = 75
-			}
-			NOT = { overextension_percentage = 0.01 }
-			adm_tech = 5
-			monthly_adm = 12
-		}
-		effect = {
-			hidden_effect = {
-				set_country_flag = hig_has_dealt_with_slacking_komachi
-			}
-			remove_estate_privilege = th_estate_nobles_slacking_shinigami
-			change_estate_land_share = {
-				estate = estate_nobles
-				share = -25
-			}
-			custom_tooltip = hig_can_use_komachi_tt
-			hidden_effect = {
-				set_country_flag = hig_can_use_komachi
-			}
-		}
-	}
-
-	HIG_improve_hells_infrastructure = {
-		icon = mission_touhou_hell
-		required_missions = { HIG_deal_with_komachis_slack }
-		position = 4
 		provinces_to_highlight = {
-			region = hell_region
-			owned_by = ROOT
+			province_id = 5247
 			OR = {
-				local_autonomy = 5
-				has_production_building_trigger = no
+				NOT = { is_core = ROOT }
+				NOT = { owned_by = ROOT }
 			}
 		}
 		trigger = {
-			num_of_owned_provinces_with = {
-				region = hell_region
-				has_production_building_trigger = yes
-				NOT = { local_autonomy = 5 }
-				value = 25
+			owns_core_province = 5247
+		}
+		effect = {
+			5247 = {
+				change_religion = ROOT
+				change_culture = ROOT
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 3
+				add_province_modifier = {
+					name = hig_got_rid_of_scammers
+					duration = -1
+				}
+			}
+		}
+	}
+
+	HIG_land_of_the_dead = {
+		icon = mission_touhou_kutaka
+		required_missions = { HIG_take_over_the_road_of_liminality }
+		position = 3
+		provinces_to_highlight = {
+			owned_by = LOC
+		}
+		trigger = {
+			LOC = {
+				OR = {
+					exists = no
+					AND = {
+						is_subject_of = ROOT
+						NOT = { is_subject_of_type = tributary_state }
+					}
+					AND = {
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+						trust = {
+							who = ROOT
+							value = 80
+						}
+					}
+				}
 			}
 		}
 		effect = {
-			custom_tooltip = HIG_improve_hells_infrastructure_tt
-			hidden_effect = {
-				if = {
-					limit = {
-						mission_completed = HIG_integrate_kutaka
+			Land_of_the_dead = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					LOC = {
+						is_subject_of = ROOT
+						is_subject_of_type = tributary_state
 					}
-					if = {
-						limit = {
-							exists = CRD
-						}
-						add_casus_belli = {
-							type = cb_vassalize_mission
-							target = CRD
-							months = 600
-						}
-					}
-					else_if = {
-						limit = {
-							SCD = {
-								exists = yes
-								was_tag = CRD
-							}
-						}
-						add_casus_belli = {
-							type = cb_vassalize_mission
-							target = SCD
-							months = 600
-						}
-					}
-					former_hell_region = {
-						limit = {
-							NOT = { is_core = ROOT }
-							NOT = { is_permanent_claim = ROOT }
-						}
-						add_permanent_claim = ROOT
-					}
+				}
+				hidden_effect = {
+					LOC = { grant_independence = yes }
+				}
+				create_subject = {
+					subject_type = vassal
+					subject = LOC
 				}
 			}
-			add_years_of_owned_provinces_production_income = {
-				years = 8
-				trigger = {
-					region = hell_region
-					has_production_building_trigger = yes
-					NOT = { local_autonomy = 5 }
+			if = {
+				limit = {
+					exists = CRD
 				}
-				custom_tooltip = TH_LOW_AUTONOMY_HELL_WORKSHOPS
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = CRD
+					months = 600
+				}
+			}
+			else_if = {
+				limit = {
+					SCD = {
+						exists = yes
+						was_tag = CRD
+					}
+				}
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = SCD
+					months = 600
+				}
+			}
+			former_hell_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
 		}
 	}
@@ -190,8 +159,7 @@ hig_internal_slot = {
 	HIG_take_over_chireiden = {
 		icon = mission_touhou_chireiden
 		required_missions = {
-			HIG_improve_hells_infrastructure
-			HIG_integrate_kutaka
+			HIG_land_of_the_dead
 		}
 		position = 5
 		provinces_to_highlight = {
@@ -200,20 +168,44 @@ hig_internal_slot = {
 		}
 		trigger = {
 			OR = {
-				AND = {
-					any_subject_country = {
-						th_is_or_was_tag = {
-							tag = CRD
-						}
+				CRD = {
+					alliance_with = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 150
 					}
+					trust = {
+						who = ROOT
+						value = 75
+					}
+				}
+				AND = {
+					is_in_war = {
+						attacker_leader = ROOT
+						defender_leader = CRD
+					}
+					war_score_against = {
+						who = CRD
+						value = 90
+					}
+					calc_true_if = {
+						former_hell_region = {
+							controller = {
+								OR = {
+									tag = ROOT
+									is_subject_of = ROOT
+								}
+							}
+						}
+						amount = 30
+					}
+				}
+				AND = {
+					NOT = { exists = CRD }
 					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 						region = former_hell_region
 						value = 25
 					}
-				}
-				former_hell_region = {
-					country_or_subject_holds = ROOT
-					type = all
 				}
 			}
 		}
@@ -226,123 +218,71 @@ hig_internal_slot = {
 			}
 			if = {
 				limit = {
-					any_subject_country = {
-						th_is_or_was_tag = {
-							tag = CRD
+					exists = CRD
+				}
+				if = {
+					limit = {
+						CRD = {
+							alliance_with = ROOT
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+							trust = {
+								who = ROOT
+								value = 75
+							}
 						}
 					}
-				}
-				country_event = {
-					id = flavor_hig.3
-				}
-			}
-			else = {
-				custom_tooltip = HIG_take_over_chireiden_tt
-			}
-			add_country_modifier = {
-				name = hig_hells_in_yama_possession
-				duration = 9125
-			}
-		}
-	}
-
-	HIG_side_with_a_shrine_maiden = {
-		icon = mission_touhou_reimu_vs_sanae
-		required_missions = {  }
-		position = 6
-		provinces_to_highlight = {
-			OR = {
-				owned_by = HKR
-				owned_by = MRY
-				owned_by = OKR
-				owned_by = SNK
-				owned_by = MYO
-			}
-		}
-		trigger = {
-			OR = {
-				AND = {
-					alliance_with = HKR
-					has_opinion = {
-						who = HKR
-						value = 75
+					country_event = {
+						id = flavor_hig.23
 					}
 				}
-				AND = {
-					alliance_with = MRY
-					has_opinion = {
-						who = MRY
-						value = 75
+				else_if = {
+					limit = {
+						is_in_war = {
+							attacker_leader = ROOT
+							defender_leader = CRD
+						}
+						war_score_against = {
+							who = CRD
+							value = 90
+						}
+						calc_true_if = {
+							former_hell_region = {
+								controller = {
+									OR = {
+										tag = ROOT
+										is_subject_of = ROOT
+									}
+								}
+							}
+							amount = 30
+						}
+					}
+					country_event = {
+						id = flavor_hig.3
 					}
 				}
-				AND = {
-					alliance_with = OKR
-					has_opinion = {
-						who = OKR
-						value = 75
-					}
-				}
-				AND = {
-					alliance_with = SNK
-					has_opinion = {
-						who = SNK
-						value = 75
-					}
-				}
-				AND = {
-					alliance_with = MYO
-					has_opinion = {
-						who = MYO
-						value = 75
-					}
-				}
-				AND = {
-					NOT = { exists = HKR }
-					NOT = { exists = MRY }
-					NOT = { exists = OKR }
-					NOT = { exists = SNK }
-					NOT = { exists = MYO }
+				else = {
+					custom_tooltip = HIG_take_over_chireiden_tt
 				}
 			}
-			estate_loyalty = {
-				estate = estate_church
-				loyalty = 65
-			}
-		}
-		effect = {
-			if = {
-				limit = {
-					NOT = { exists = HKR }
-					NOT = { exists = MRY }
-					NOT = { exists = OKR }
-					NOT = { exists = SNK }
-					NOT = { exists = MYO }
-				}
-				country_event = {
-					id = flavor_hig.2
-				}
-			}
-			else = {
-				country_event = {
-					id = flavor_hig.4
-				}
-			}
+			add_adm_power = 100
+			add_dip_power = 100
+			add_mil_power = 100
 		}
 	}
 
 	HIG_remove_tenshi_from_heaven = {
 		icon = mission_touhou_tenshi_stress
-		required_missions = {  }
+		required_missions = { HIG_improve_hells_infrastructure }
 		position = 7
 		provinces_to_highlight = {
 			is_capital_of = HVR
 		}
 		trigger = {
 			OR = {
-				HVR = {
-					exists = yes
-					NOT = { has_ruler = "Tenshi" }
-				}
 				NOT = { exists = HVR }
 				AND = {
 					war_with = HVR
@@ -370,10 +310,7 @@ hig_internal_slot = {
 		effect = {
 			if = {
 				limit = {
-					HVR = {
-						exists = yes
-						has_ruler = "Tenshi"
-					}
+					exists = HVR
 				}
 				country_event = {
 					id = flavor_hig.5
@@ -417,20 +354,22 @@ hig_internal_slot = {
 		required_missions = { HIG_enact_the_first_reform_tier }
 		position = 9
 		trigger = {
-			calc_true_if = {
-				all_known_country = {
-					OR = {
-						has_country_modifier = th_lectured_modifier
-						has_country_modifier = th_lectured_modifier_upgraded
+			OR = {
+				calc_true_if = {
+					all_known_country = {
+						OR = {
+							has_country_modifier = th_lectured_modifier
+							has_country_modifier = th_lectured_modifier_upgraded
+						}
 					}
+					amount = 3
 				}
-				amount = 3
-			}
-			calc_true_if = {
-				all_known_country = {
-					has_country_modifier = th_grace_of_the_yama
+				calc_true_if = {
+					all_known_country = {
+						has_country_modifier = th_grace_of_the_yama
+					}
+					amount = 3
 				}
-				amount = 3
 			}
 		}
 		effect = {
@@ -519,223 +458,130 @@ hig_gensokyo_slot = {
 			}
 		}
 		effect = {
-			if = {
-				limit = {
-					GGS = {
-						is_subject_of_type_with_overlord = {
-							who = ROOT
-							type = tributary_state
-						}
-					}
-				}
-				country_event = {
-					id = flavor_hig.7
-				}
-			}
-			else_if = {
-				limit = {
-					LOC = {
-						is_subject_of_type_with_overlord = {
-							who = ROOT
-							type = tributary_state
-						}
-					}
-				}
-				hidden_effect = {
-					LOC = {
-						grant_independence = yes
-					}
-				}
-				create_subject = {
-					subject_type = vassal
-					subject = LOC
-				}
-			}
-			else = {
-				Land_of_the_dead = {
-					limit =  {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-				Gate_to_the_dead = {
-					limit =  {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
+			add_country_modifier = {
+				name = hig_hells_in_yama_possession
+				duration = 9125
 			}
 		}
 	}
 
-	HIG_integrate_kutaka = {
-		icon = mission_touhou_kutaka
-		required_missions = { HIG_stablize_the_animal_realms }
+	HIG_reorganize_the_shinigami = {
+		icon = mission_touhou_master_shinigami
+		required_missions = {  }
 		position = 4
-		provinces_to_highlight = {			
-			area = Land_of_the_dead
-			NOT = { owned_by = ROOT }
-		}
 		trigger = {
-			Land_of_the_dead = {
-				owned_by = ROOT
-				type = all
-			}
+			NOT = { has_estate_privilege = th_estate_nobles_unorganized_shinigami_authority }
+			NOT = { has_estate_privilege = th_estate_nobles_lack_of_overseers }
 		}
 		effect = {
-			custom_tooltip = HIG_integrate_kutaka_tt
-			hidden_effect = {
-				if = {
-					limit = {
-						mission_completed = HIG_improve_hells_infrastructure
-					}
-					if = {
-						limit = {
-							exists = CRD
-						}
-						add_casus_belli = {
-							type = cb_vassalize_mission
-							target = CRD
-							months = 600
-						}
-					}
-					else_if = {
-						limit = {
-							SCD = {
-								exists = yes
-								was_tag = CRD
-							}
-						}
-						add_casus_belli = {
-							type = cb_vassalize_mission
-							target = SCD
-							months = 600
-						}
-					}
-					former_hell_region = {
-						limit = {
-							NOT = { is_core = ROOT }
-							NOT = { is_permanent_claim = ROOT }
-						}
-						add_permanent_claim = ROOT
-					}
-				}
-			}
-			5005 = {
-				th_build_uptodate_fort = yes
-				add_base_tax = 2
-				add_base_production = 2
-				add_base_manpower = 1
+			add_country_modifier = {
+				name = hig_shinigami_reforms
+				duration = 9125
 			}
 		}
 	}
 
-	HIG_show_yukaris_place = {
-		icon = mission_touhou_ominous_yukari
-		required_missions = {  }
+	HIG_deal_with_komachis_slack = {
+		icon = mission_touhou_slacking_komachi
+		required_missions = { HIG_reorganize_the_shinigami }
 		position = 5
-		provinces_to_highlight = {
-			OR = {
-				owned_by = MHG
-				owned_by = NMG
-			}
-		}
 		trigger = {
-			if = {
-				limit = {
-					exists = NMG
-				}
-				OR = {
-					NOT = { exists = NMG }
-					NMG = { humiliated_by = ROOT }
-					AND = {
-						has_won_war_against = { who = NMG }
-						NMG = { th_has_lost_danmaku_duel_against_root = yes }
-					}
-				}
-				NOT = { exists = MHG }
+			estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 75
 			}
-			else = {
-				OR = {
-					NOT = { exists = MHG }
-					MHG = { humiliated_by = ROOT }
-					AND = {
-						has_won_war_against = { who = MHG }
-						MHG = { th_has_lost_danmaku_duel_against_root = yes }
-					}
-				}
-			}
+			NOT = { overextension_percentage = 0.01 }
+			adm_tech = 5
+			monthly_adm = 12
 		}
 		effect = {
-			country_event = {
-				id = flavor_hig.9
+			hidden_effect = {
+				set_country_flag = hig_has_dealt_with_slacking_komachi
+			}
+			remove_estate_privilege = th_estate_nobles_slacking_shinigami
+			change_estate_land_share = {
+				estate = estate_nobles
+				share = -25
+			}
+			custom_tooltip = hig_can_use_komachi_tt
+			hidden_effect = {
+				set_country_flag = hig_can_use_komachi
 			}
 		}
 	}
 
-	HIG_resolve_the_immortal_conflict = {
-		icon = mission_touhou_mokou_vs_kaguy_childish
-		required_missions = {  }
+	HIG_improve_hells_infrastructure = {
+		icon = mission_touhou_hell
+		required_missions = { HIG_deal_with_komachis_slack }
 		position = 6
 		provinces_to_highlight = {
+			region = hell_region
+			owned_by = ROOT
 			OR = {
-				AND = {
-					OR = {
-						province_id = 4991
-						province_id = 4997
-					}
-					NOT = { controlled_by = ROOT }
-				}
-				owned_by = FUJ
-				owned_by = EIT
+				local_autonomy = 5
+				has_production_building_trigger = no
 			}
 		}
 		trigger = {
-			OR = {
-				AND = {
-					controls = 4991
-					controls = 4997
-				}
-				AND = {
-					OR = {
-						NOT = { exists = EIT }
-						AND = {
-							EIT = { is_excommunicated = yes }
-							war_score_against = {
-								who = EIT
-								value = 50
-							}
-						}
-					}
-					OR = {
-						NOT = { exists = FUJ }
-						AND = {
-							FUJ = { is_excommunicated = yes }
-							war_score_against = {
-								who = FUJ
-								value = 50
-							}
-						}
-					}
-				}
+			num_of_owned_provinces_with = {
+				region = hell_region
+				has_production_building_trigger = yes
+				NOT = { local_autonomy = 5 }
+				value = 25
 			}
 		}
 		effect = {
+			custom_tooltip = hig_has_return_hecatia_war_cb_flag_tt
+			hidden_effect = {
+				set_country_flag = hig_has_return_hecatia_war_cb_flag
+			}
 			if = {
 				limit = {
-					OR = {
-						exists = EIT
-						exists = FUJ
-					}
+					exists = NET
 				}
-				country_event = {
-					id = flavor_hig.10
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = NET
+					months = 600
 				}
 			}
+			netherworld_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_years_of_owned_provinces_production_income = {
+				years = 8
+				trigger = {
+					region = hell_region
+					has_production_building_trigger = yes
+					NOT = { local_autonomy = 5 }
+				}
+				custom_tooltip = TH_LOW_AUTONOMY_HELL_WORKSHOPS
+			}
+		}
+	}
+
+	HIG_take_control_over_netherworld = {
+		icon = mission_touhou_yuyuko
+		required_missions = { HIG_improve_hells_infrastructure }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4958
+				province_id = 5106
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 4958
+			owns_or_non_sovereign_subject_of = 5106
+		}
+		effect = {
 			add_country_modifier = {
-				name = hig_handled_immortal_debate
+				name = hig_might_of_netherworld
 				duration = 9125
 			}
 		}
@@ -776,34 +622,36 @@ hig_gensokyo_slot = {
 			owned_by = KNN
 		}
 		trigger = {
-			if = {
-				limit = {
-					exists = KNN
-				}
-				KNN = {
-					is_subject_of = ROOT
-					is_subject_of_type = th_yama_executor
-				}
-			}
-			else_if = {
-				limit = {
-					has_estate_privilege = th_estate_yama_unite_gensokyo
-				}
-				Konngaras_state = {
-					owned_by = ROOT
-					type = all
-				}
-			}
-			else = {
+			OR = {
 				any_subject_country = {
 					is_subject_of_type = th_yama_executor
+				}
+				Konngaras_state = {
+					country_or_non_sovereign_subject_holds = ROOT
+					type = all
 				}
 			}
 		}
 		effect = {
-			add_mil_power = 200
 			add_army_professionalism = 0.02
 			add_army_tradition = 15
+			if = {
+				limit = {
+					KNN = {
+						is_subject_of = ROOT
+						is_subject_of_type = th_yama_executor
+					}
+				}
+				KNN = {
+					add_country_modifier = {
+						name = hig_administrative_support
+						duration = -1
+					}
+				}
+			}
+			else = {
+				custom_tooltip = HIG_appoint_competent_executor_tt
+			}
 		}
 	}
 }
@@ -839,66 +687,52 @@ hig_reform_gensokyo_slot = {
 			is_in_deficit = no
 		}
 		effect = {
-			The_hills = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Eastern_hills = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Northern_hills = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
+			add_country_modifier = {
+				name = hig_well_advised
+				duration = 9125
 			}
 		}
 	}
 
-	HIG_take_over_the_road_of_liminality = {
-		icon = mission_touhou_former_capital
+	HIG_improve_the_sanzu_river_income = {
+		icon = mission_touhou_sanzu_river
 		required_missions = { HIG_hire_yama_advisors }
-		position = 2
+		position = 3
 		provinces_to_highlight = {
-			province_id = 5247
-			OR = {
-				NOT = { is_core = ROOT }
-				NOT = { owned_by = ROOT }
-			}
+			province_id = 4969
 		}
 		trigger = {
-			owns_core_province = 5247
+			owns_core_province = 4969
+			4969 = {
+				has_trade_building_trigger = yes
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+				has_production_building_trigger = yes
+			}
 		}
 		effect = {
-			5247 = {
-				change_religion = ROOT
-				change_culture = ROOT
+			4969 = {
+				add_center_of_trade_level = 2
 				add_base_tax = 3
 				add_base_production = 3
 				add_base_manpower = 3
 				add_province_modifier = {
-					name = hig_got_rid_of_scammers
+					name = hig_sanzu_infrastructure
 					duration = -1
 				}
+			}
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 20
 			}
 		}
 	}
 
 	HIG_move_the_ministry_to_gensokyo = {
 		icon = mission_touhou_judge_of_gensokyo
-		required_missions = { 
-			HIG_take_over_the_road_of_liminality
-			HIG_improve_the_sanzu_river_income
-		}
-		position = 3
+		required_missions = { HIG_improve_the_sanzu_river_income }
+		position = 5
 		provinces_to_highlight = {
 			province_id = 4983
 		}
@@ -945,56 +779,75 @@ hig_reform_gensokyo_slot = {
 			country_event = {
 				id = flavor_hig.8
 			}
-			if = {
-				limit = {
-					exists = NET
-				}
-				add_casus_belli = {
-					type = cb_vassalize_mission
-					target = NET
-					months = 600
-				}
-			}
-			netherworld_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
 		}
 	}
 
-	HIG_take_control_over_netherworld = {
-		icon = mission_touhou_yuyuko
-		required_missions = { HIG_move_the_ministry_to_gensokyo }
-		position = 5
+	HIG_show_yukaris_place = {
+		icon = mission_touhou_ominous_yukari
+		required_missions = {  }
+		position = 6
 		provinces_to_highlight = {
 			OR = {
-				province_id = 4958
-				province_id = 5106
+				owned_by = MHG
+				owned_by = NMG
 			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4958
-			owns_or_non_sovereign_subject_of = 5106
+			if = {
+				limit = {
+					exists = NMG
+				}
+				NMG = {
+					OR = {
+						exists = no
+						AND = {
+							th_has_lost_danmaku_duel_against_root = yes
+							is_excommunicated = yes
+						}
+						AND = {
+							war_with = ROOT
+							NOT = {
+								war_score_against = {
+									who = ROOT
+									value = -70
+								}
+							}
+						}
+					}
+				}
+				NOT = { exists = MHG }
+			}
+			else = {
+				MHG = {
+					OR = {
+						exists = no
+						AND = {
+							th_has_lost_danmaku_duel_against_root = yes
+							is_excommunicated = yes
+						}
+						AND = {
+							war_with = ROOT
+							NOT = {
+								war_score_against = {
+									who = ROOT
+									value = -70
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = hig_has_return_hecatia_war_cb_flag_tt
-			hidden_effect = {
-				set_country_flag = hig_has_return_hecatia_war_cb_flag
-			}
-			add_country_modifier = {
-				name = hig_might_of_netherworld
-				duration = 9125
+			country_event = {
+				id = flavor_hig.9
 			}
 		}
 	}
 
 	HIG_hecatia_and_eiki = {
 		icon = mission_touhou_hecatia
-		required_missions = { HIG_take_control_over_netherworld }
+		required_missions = { HIG_improve_hells_infrastructure }
 		position = 7
 		provinces_to_highlight = {
 			province_id = 5053
@@ -1057,37 +910,86 @@ hig_outworld_slot = {
 	}
 	has_country_shield = yes
 
-	HIG_improve_the_sanzu_river_income = {
-		icon = mission_touhou_sanzu_river
-		required_missions = { HIG_hire_yama_advisors }
+	HIG_side_with_a_shrine_maiden = {
+		icon = mission_touhou_reimu_vs_sanae
+		required_missions = {  }
 		position = 2
 		provinces_to_highlight = {
-			province_id = 4969
+			OR = {
+				owned_by = HKR
+				owned_by = MRY
+				owned_by = OKR
+				owned_by = SNK
+				owned_by = MYO
+			}
 		}
 		trigger = {
-			owns_core_province = 4969
-			4969 = {
-				has_trade_building_trigger = yes
-				th_has_up_to_date_fort_building = {
-					tag = ROOT
+			OR = {
+				AND = {
+					alliance_with = HKR
+					has_opinion = {
+						who = HKR
+						value = 75
+					}
 				}
-				has_production_building_trigger = yes
+				AND = {
+					alliance_with = MRY
+					has_opinion = {
+						who = MRY
+						value = 75
+					}
+				}
+				AND = {
+					alliance_with = OKR
+					has_opinion = {
+						who = OKR
+						value = 75
+					}
+				}
+				AND = {
+					alliance_with = SNK
+					has_opinion = {
+						who = SNK
+						value = 75
+					}
+				}
+				AND = {
+					alliance_with = MYO
+					has_opinion = {
+						who = MYO
+						value = 75
+					}
+				}
+				AND = {
+					NOT = { exists = HKR }
+					NOT = { exists = MRY }
+					NOT = { exists = OKR }
+					NOT = { exists = SNK }
+					NOT = { exists = MYO }
+				}
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 65
 			}
 		}
 		effect = {
-			4969 = {
-				add_center_of_trade_level = 2
-				add_base_tax = 3
-				add_base_production = 3
-				add_base_manpower = 3
-				add_province_modifier = {
-					name = hig_sanzu_infrastructure
-					duration = -1
+			if = {
+				limit = {
+					NOT = { exists = HKR }
+					NOT = { exists = MRY }
+					NOT = { exists = OKR }
+					NOT = { exists = SNK }
+					NOT = { exists = MYO }
+				}
+				country_event = {
+					id = flavor_hig.2
 				}
 			}
-			add_estate_loyalty = {
-				estate = estate_nobles
-				loyalty = 20
+			else = {
+				country_event = {
+					id = flavor_hig.4
+				}
 			}
 		}
 	}
@@ -1269,6 +1171,66 @@ hig_outworld_slot = {
 		}
 	}
 
+	HIG_resolve_the_immortal_conflict = {
+		icon = mission_touhou_mokou_vs_kaguy_childish
+		required_missions = {  }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 4991
+						province_id = 4997
+					}
+					NOT = { controlled_by = ROOT }
+				}
+				owned_by = FUJ
+				owned_by = EIT
+			}
+		}
+		trigger = {
+			OR = {
+				OR = {
+					controls = 4991
+					controls = 4997
+				}
+				OR = {
+					AND = {
+						NOT = { exists = EIT }
+						NOT = { exists = FUJ }
+					}
+					war_score_against = {
+						who = EIT
+						value = 50
+					}
+					war_score_against = {
+						who = FUJ
+						value = 50
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						exists = EIT
+						exists = FUJ
+					}
+				}
+				country_event = {
+					id = flavor_hig.10
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = hig_handled_immortal_debate
+					duration = 9125
+				}
+			}
+		}
+	}
+
 	HIG_enact_the_third_reform_tier = {
 		icon = mission_touhou_might_of_the_yama
 		required_missions = {}
@@ -1446,12 +1408,6 @@ hig_colonial_slot = {
 			th_colonize_dev_province_for_root = {
 				province = 2701
 				trade_goods = coffee
-			}
-			2701 = {
-				add_province_modifier = {
-					name = hig_yama_coffe
-					duration = -1
-				}
 			}
 			west_java_area = {
 				limit = {
