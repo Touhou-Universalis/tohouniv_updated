@@ -36,6 +36,12 @@ country_event = {
 			clr_country_flag = th_oni_had_suika
 			clr_country_flag = th_oni_had_kasen
 			set_country_flag = th_oni_had_yuugi
+			define_ruler_to_general = {
+				fire = 0
+				shock = 6
+				manuever = 4
+				siege = 5
+			}
 		}
 		ai_chance = {
 			factor = 100
@@ -69,6 +75,12 @@ country_event = {
 			set_country_flag = th_oni_had_suika
 			clr_country_flag = th_oni_had_kasen
 			clr_country_flag = th_oni_had_yuugi
+			define_ruler_to_general = {
+				fire = 3
+				shock = 6
+				manuever = 3
+				siege = 3
+			}
 		}
 		ai_chance = {
 			factor = 100
@@ -102,6 +114,12 @@ country_event = {
 			clr_country_flag = th_oni_had_suika
 			set_country_flag = th_oni_had_kasen
 			clr_country_flag = th_oni_had_yuugi
+			define_ruler_to_general = {
+				fire = 5
+				shock = 5
+				manuever = 4
+				siege = 1
+			}
 		}
 		ai_chance = {
 			factor = 100
@@ -119,6 +137,11 @@ country_event = {
 			clr_country_flag = th_oni_had_suika
 			clr_country_flag = th_oni_had_kasen
 			clr_country_flag = th_oni_had_yuugi
+			if = {
+				limit = { is_female = yes } 
+				convert_female_ruler_to_general = yes
+			}
+			else = { convert_ruler_to_general = yes }
 		}
 		add_ruler_modifier = {
 			name = oni_new_fighting_innovativeness
@@ -133,6 +156,11 @@ country_event = {
 		name = "th_oni_succession.1.e"
 		custom_tooltip = "th_oni_succession.1.e.tt"
 		add_legitimacy = 20
+		if = {
+			limit = { is_female = yes } 
+			convert_female_ruler_to_general = yes
+		}
+		else = { convert_ruler_to_general = yes }
 		hidden_effect = {
 			clr_country_flag = th_oni_had_suika
 			clr_country_flag = th_oni_had_kasen
@@ -142,14 +170,6 @@ country_event = {
 			factor = 100
 		}
 	}
-
-	after = {
-		if = {
-			limit = { is_female = yes } 
-			convert_female_ruler_to_general = yes
-		}
-		else = { convert_ruler_to_general = yes }
-	}
 }
 
 #Events for Oni Battle Passion
@@ -158,10 +178,9 @@ namespace = th_oni_battle_passion
 #Initialize variable
 country_event = {
 	id = th_oni_battle_passion.1
-	title = none
-	desc = none
+	title = th_oni_battle_passion.100.t
+	desc = th_oni_battle_passion.100.desc
 	picture = YUUGI_eventPicture
-	hidden = yes
 	trigger = {
 		has_government_attribute = th_has_battle_passion
 		NOT = { has_country_flag = th_initialized_battle_passion }
@@ -169,15 +188,79 @@ country_event = {
 	mean_time_to_happen = {
 		days = 1
 	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_initialized_battle_passion
+			set_variable = {
+				which = th_battle_passion
+				value = 250
+			}
+		}
+	}
 	
 	option = {
-		set_country_flag = th_initialized_battle_passion
-		set_variable = {
-			which = th_battle_passion
-			value = 250
+		name = th_oni_battle_passion.100.a
+		tooltip = {
+			add_country_modifier = {
+				name = oni_overpowering_battle_passion
+				duration = 1
+			}
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.100.b
+		tooltip = {
+			add_country_modifier = {
+				name = oni_high_battle_passion
+				duration = 1
+			}
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.100.c
+		tooltip = {
+			add_country_modifier = {
+				name = oni_battle_passion
+				duration = 1
+			}
 		}
 		ai_chance = {
 			factor = 1
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.100.d
+		tooltip = {
+			add_country_modifier = {
+				name = oni_low_battle_passion
+				duration = 1
+			}
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.100.e
+		tooltip = {
+			add_country_modifier = {
+				name = oni_horrendous_battle_passion
+				duration = 1
+			}
+		}
+		ai_chance = {
+			factor = 0
 		}
 	}
 }
@@ -350,6 +433,17 @@ country_event = {
 			factor = 1
 		}
 	}
+	after = {
+		if = {
+			limit = {
+				ai = no
+				NOT = { has_country_flag = oni_has_update_enabled }
+			}
+			country_event = {
+				id = th_oni_battle_passion.101
+			}
+		}
+	}
 }
 
 #Add monthly Battle Passion
@@ -380,6 +474,102 @@ country_event = {
 		th_add_monthly_battle_passion = yes
 		ai_chance = {
 			factor = 1
+		}
+	}
+}
+
+#Apply Force Limit Debuff
+country_event = {
+	id = th_oni_battle_passion.5
+	title = th_oni_battle_passion.5.t
+	desc = th_oni_battle_passion.5.desc
+	picture = YUUGI_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = th_oni_battle_passion.5.a
+		remove_country_modifier = oni_forcelimit_nerf_1
+		remove_country_modifier = oni_forcelimit_nerf_2
+		remove_country_modifier = oni_forcelimit_nerf_3
+		remove_country_modifier = oni_forcelimit_nerf_4
+		remove_country_modifier = oni_forcelimit_nerf_5
+		ai_chance = {
+			factor = 1
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.5.b
+		remove_country_modifier = oni_forcelimit_nerf_2
+		remove_country_modifier = oni_forcelimit_nerf_3
+		remove_country_modifier = oni_forcelimit_nerf_4
+		remove_country_modifier = oni_forcelimit_nerf_5
+		add_country_modifier = {
+			name = oni_forcelimit_nerf_1
+			duration = -1
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.5.c
+		remove_country_modifier = oni_forcelimit_nerf_1
+		remove_country_modifier = oni_forcelimit_nerf_3
+		remove_country_modifier = oni_forcelimit_nerf_4
+		remove_country_modifier = oni_forcelimit_nerf_5
+		add_country_modifier = {
+			name = oni_forcelimit_nerf_2
+			duration = -1
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.5.d
+		remove_country_modifier = oni_forcelimit_nerf_1
+		remove_country_modifier = oni_forcelimit_nerf_2
+		remove_country_modifier = oni_forcelimit_nerf_4
+		remove_country_modifier = oni_forcelimit_nerf_5
+		add_country_modifier = {
+			name = oni_forcelimit_nerf_3
+			duration = -1
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.5.e
+		remove_country_modifier = oni_forcelimit_nerf_1
+		remove_country_modifier = oni_forcelimit_nerf_2
+		remove_country_modifier = oni_forcelimit_nerf_3
+		remove_country_modifier = oni_forcelimit_nerf_5
+		add_country_modifier = {
+			name = oni_forcelimit_nerf_4
+			duration = -1
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_oni_battle_passion.5.f
+		remove_country_modifier = oni_forcelimit_nerf_1
+		remove_country_modifier = oni_forcelimit_nerf_2
+		remove_country_modifier = oni_forcelimit_nerf_3
+		remove_country_modifier = oni_forcelimit_nerf_4
+		add_country_modifier = {
+			name = oni_forcelimit_nerf_5
+			duration = -1
+		}
+		ai_chance = {
+			factor = 0
 		}
 	}
 }
@@ -469,6 +659,86 @@ country_event = {
 		}
 		ai_chance = {
 			factor = 0
+		}
+	}
+}
+
+#Update Event
+country_event = {
+	id = th_oni_battle_passion.101
+	title = th_oni_battle_passion.101.t
+	desc = th_oni_battle_passion.101.desc
+	picture = YUUGI_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = th_oni_battle_passion.101.a
+		if = {
+			limit = {
+				check_variable = {
+					which = th_battle_passion
+					value = 400
+				}
+			}
+			tooltip = {
+				add_country_modifier = {
+					name = oni_overpowering_battle_passion
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_battle_passion
+					value = 300
+				}
+			}
+			tooltip = {
+				add_country_modifier = {
+					name = oni_high_battle_passion
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_battle_passion
+					value = 200
+				}
+			}
+			tooltip = {
+				add_country_modifier = {
+					name = oni_battle_passion
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_battle_passion
+					value = 100
+				}
+			}
+			tooltip = {
+				add_country_modifier = {
+					name = oni_low_battle_passion
+					duration = -1
+				}
+			}
+		}
+		else = {
+			tooltip = {
+				add_country_modifier = {
+					name = oni_horrendous_battle_passion
+					duration = -1
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
 		}
 	}
 }
