@@ -143,9 +143,9 @@ th_incident_all_incidents_are_resolved = {
 		has_global_flag = th_spring_snow_incident_solved
 		#has_global_flag = th_oni_night_parade_incident_solved
 		has_global_flag = th_eternal_night_incident_solved
-		#has_global_flag = th_sixty_year_cycle_incident_solved
+		has_global_flag = th_sixty_year_cycle_incident_solved
 		has_global_flag = th_mountain_of_faith_incident_solved
-		#has_global_flag = th_subterranean_animism_incident_solved
+		has_global_flag = th_subterranean_animism_incident_solved
 		#has_global_flag = th_undefined_fantastic_incident_solved
 		#has_global_flag = th_hisoutensoku_incident_solved
 		#has_global_flag = th_ten_desires_incident_solved
@@ -172,14 +172,15 @@ th_incident_check_point_result = {
 
 #Checks if it is random incident, and the incident got chosen, or if the year has come
 th_incident_check_year_for_incident = {
-	if = {
-		limit = {
+	OR = {
+		AND = {
 			has_global_flag = th_random_incident_active
+			has_global_flag = th_picked_rng_$incident$
 		}
-		has_global_flag = th_picked_rng_$incident$
-	}
-	else = {
-		is_year = $year$
+		AND = {
+			NOT = { has_global_flag = th_random_incident_active }
+			is_year = $year$
+		}
 	}
 }
 
@@ -187,12 +188,26 @@ th_incident_check_year_for_incident = {
 th_incident_can_trigger_generic_check = {
 	th_has_incidents_enabled = yes
 	NOT = { has_global_flag = th_active_incident }
-	if = {
-		limit = { has_global_flag = th_recently_solved_incident_flag }
-		had_global_flag = { flag = th_recently_solved_incident_flag days = 1825 }
-	}
-	else = {
+	OR = {
+		AND = {
+			has_global_flag = th_recently_solved_incident_flag
+			had_global_flag = { flag = th_recently_solved_incident_flag days = 1825 }
+		}
 		NOT = { has_global_flag = th_recently_solved_incident_flag }
+	}
+	capital_scope = {
+		superregion = gensokyo_superregion
+	}
+}
+th_lesser_incident_can_trigger_generic_check = {
+	th_has_incidents_enabled = yes
+	NOT = { has_global_flag = th_active_lesser_incident }
+	OR = {
+		AND = {
+			has_global_flag = th_recently_solved_lesser_incident_flag
+			had_global_flag = { flag = th_recently_solved_lesser_incident_flag days = 1825 }
+		}
+		NOT = { has_global_flag = th_recently_solved_lesser_incident_flag }
 	}
 	capital_scope = {
 		superregion = gensokyo_superregion
@@ -330,7 +345,7 @@ th_is_major_main_character = {		#Gives HKR a higher priority than FOM
 			OR = {
 				NOT = { exists = HKR }
 				HKR = {
-					is_subject_other_than_tributary_trigger = yes
+					th_is_subject_other_than_tributary_trigger = yes
 				}
 			}
 			NOT = {
@@ -404,7 +419,7 @@ th_is_minor_main_character = {		#Gives MRY a higher chance
 			OR = {
 				NOT = { exists = MRY }
 				MRY = {
-					is_subject_other_than_tributary_trigger = yes
+					th_is_subject_other_than_tributary_trigger = yes
 				}
 			}
 			OR = {
@@ -476,11 +491,25 @@ th_has_a_religious_center = {
 	}
 }
 
+th_next_chosen_enemy = {
+	has_country_flag = th_POFV_$who$_fight
+}
+
+th_did_not_fight_enemy = {
+	NOT = { has_country_flag = th_POFV_had_$who$_fight }
+}
+
 th_has_investigation_partner = {
 	custom_trigger_tooltip = {
 		tooltip = th_has_investigation_partner_$partner$_tt
 		has_country_modifier = th_sa_partner_$partner$
 	}
+}
+
+th_tag_is_valid_enemy = {
+	$tag$ = { has_country_flag = th_POFV_joined_the_investigation }
+	NOT = { tag = $tag$ }
+	NOT = { was_tag = $tag$ }
 }
 
 th_has_any_investigation_partner = {

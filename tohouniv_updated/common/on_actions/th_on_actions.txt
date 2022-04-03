@@ -1,6 +1,91 @@
 #When adding effects directly in on_actions always consider if it would be best to do so through a scripted effect. on_actions with a lot of script in them are harder to get an overview of.
 
 # country
+on_startup = {
+	set_global_flag = touhou_universalis_is_active #Global flag. Needed for mod support
+	if = {
+		limit = {
+			current_age = age_of_discovery
+		}
+		LXA = {
+			if = {
+				limit = {
+					NOT = { has_country_flag = lxa_loyalty_flag }
+				}
+				add_estate_loyalty = {
+					estate = estate_church
+					loyalty = -10
+				}
+				set_country_flag = lxa_loyalty_flag
+			}
+		}
+	}
+	emperor = {
+		save_global_event_target_as = Emperor
+	}
+	if = {
+		limit = {
+			is_emperor_of_china = yes
+		}
+		save_global_event_target_as = EmperorOfChina
+	}
+	if = {
+		limit = {
+			has_government_attribute = enables_yama_authority
+		}
+		save_global_event_target_as = YamaOfGensokyo
+	}
+	events = {
+		muslim_school_events.20 #Pick School
+	#flavor_fra.15000 #Make the French Revolution happen if starting in 1789
+	}
+	if = {
+		limit = {
+			has_dlc = "Cradle of Civilization"
+			has_country_modifier = tur_janissary
+		}
+		remove_country_modifier = tur_janissary
+	}
+	initialize_schools_effect = yes #This is only used here but is used for readability of on_action file.
+
+	if = {
+		limit = {
+			NOT = { has_country_flag = new_flavour_bav_13_has_been_triggered }
+			OR = {
+				tag = UBV
+				tag = LBV
+				tag = ING
+			}
+		}
+		set_country_flag = new_flavour_bav_13_has_been_triggered
+		country_event = { id = new_flavour_bav.13 days = 90 } #better not to allow almost instant DOWs
+	}
+	if = {
+		limit = {
+			tag = FRA
+			started_in = 1789.7.14
+			NOT = { is_year = 1790 }
+			NOT = { has_disaster = french_revolution }
+		}
+		add_disaster_progress = {
+			value = 100
+			disaster = french_revolution
+		}
+	}
+	if = {
+		limit = {
+			exists = SUK
+		}
+		SUK = {
+			set_ruler_flag = suk_monarch_flag
+		}
+		AYU = {
+			set_country_flag = ayu_monarch_flag
+		}
+	}
+}
+
+# country
 on_religion_change = {
 	on_religion_change_estate_privileges_effect = yes
 	judaism_on_religion_change_effect = yes
@@ -147,10 +232,113 @@ on_religion_change = {
 			}
 		}
 	}
+	if = {
+		limit = {
+			has_country_flag = th_pledged_religious_loyalty
+		}
+		random_known_country = {
+			limit = {
+				has_country_flag = th_has_gotten_pledged_to_religion_from_@ROOT
+			}
+			country_event = {
+				id = th_diplo_events.10
+			}
+            clr_country_flag = th_has_gotten_pledged_to_religion_from_@ROOT
+		}
+	}
 	events = {
 		muslim_school_events.20 #Pick School
 		propagate_religion_events.7 #Propagated Country is now Muslim
 	}
+}
+
+# country
+# root = winning country, from = loser country
+on_war_won = {
+	FROM = { country_event = { id = flavor_cri.6 } }
+	ROOT = { country_event = { id = tributary_events.32 } }
+	
+	if = {
+		limit = {
+			is_part_of_hre = yes
+			FROM  = { is_part_of_hre = yes }
+		}
+		ROOT = { save_global_event_target_as = hre_winner }
+		FROM = { save_global_event_target_as = hre_loser }
+		random_known_country = {
+			limit = {
+				has_reform = free_city
+				NOT = {
+					prestige = 40
+				}
+				NOT = {
+					has_country_modifier = fc_treatyconference_timer
+				}
+			}
+			add_country_modifier = {
+				name = fc_treatyconference_timer
+				duration = 3650
+				hidden = yes
+			}
+			country_event = {
+				id = free_cities.7
+				days = 7
+			}
+		}
+	}
+
+	if = {
+		limit = {
+			tag = MLO
+			NOT = { has_country_flag = emp_mlo_won_war_with_swiss_mercs }
+			any_hired_mercenary_company = {
+				home_province = {
+					OR = {
+						area = switzerland_area
+						area = romandie_area
+					}
+				}
+			}
+		}
+		set_country_flag = emp_mlo_won_war_with_swiss_mercs
+	}
+	
+	if = {
+		limit = {
+			is_hiring_condottiere_from = SWI
+		}
+		SWI = { set_country_flag = won_condottiere_war }
+		if = {
+			limit = {
+				tag = PAP
+			}
+			SWI = {
+				set_country_flag = hired_to_pope
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			primary_culture = melanesian
+			NOT = { has_country_modifier = warlord_mod }
+		}
+		FROM = {
+			country_event = {
+				id = polynesian.17
+			}
+		}
+	}
+	if = {
+		limit = {
+			ROOT = {
+				religion = jewish
+				has_church_aspect = judaism_purim_teachings_aspect
+			}
+		}
+		add_church_power = 10
+	}
+	th_yama_on_war_won_effect = yes
 }
 
 # country
@@ -190,6 +378,32 @@ on_battle_won_country = {
 		variable = crd_oni_battle_counter
 		max_value = 10
 		country_event = th_core_event.1	#No event for CRD
+	}
+	if = {
+		limit = {
+			has_country_modifier = oni_german_beer
+		}
+		th_add_battle_passion = {
+			value = 15
+		}
+	}
+	else = {
+		th_add_battle_passion = {
+			value = 10
+		}
+	}
+}
+
+# country
+# root = loser country, from = winner country
+on_battle_lost_country = {
+	battle_cult_spreading_effect = yes #Scripted effect for fetishist cult mechanics.
+	th_reduce_battle_passion = {
+		value = 5
+	}
+	random_events = {
+		90 = 0
+		10 = friendship_events.1 #Historical Friendship Broken
 	}
 }
 
@@ -298,6 +512,20 @@ on_battle_won_unit = {
 			change_variable = {
 				which = fuj_mokou_exp
 				value = 10
+			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				NOT = { mission_completed = ONI_ruler_honor }
+			}
+			is_ruler_commanding_unit = yes
+		}
+		unit_owner = {
+			change_variable = {
+				which = oni_won_battles_counter
+				value = 1
 			}
 		}
 	}
@@ -520,9 +748,9 @@ on_new_monarch = {
 		}
 		if = {
 			limit = { is_female = yes } 
-			convert_female_ruler_to_general = yes
+			convert_female_ruler_to_general = 50
 		}
-		else = { convert_ruler_to_general = yes }
+		else = { convert_ruler_to_general = 50 }
 	}
 	# ambrosian_republic_effect = yes
 	succession_culture_religion_effect = yes
@@ -533,6 +761,26 @@ on_new_monarch = {
 	if = {
 		limit = { has_any_heir_cult_active = yes }
 		remove_heir_cult = yes
+	}
+	if = {
+		limit = {
+			has_government_attribute = th_has_questioned_legitimacy
+			legitimacy = 50
+		}
+		add_legitimacy = -100
+		add_legitimacy = 50
+	}
+	if = {
+		limit = {
+			has_government_attribute = th_legitimacy_through_battles
+			NOT = { has_government_attribute = th_has_oni_succession }
+			NOT = { is_monarch_leader = yes }
+		}
+		if = {
+			limit = { is_female = yes } 
+			convert_female_ruler_to_general = 50
+		}
+		else = { convert_ruler_to_general = 50 }
 	}
 	events = {
 		tribal_succession.1		# Harsh anti-tribals.
@@ -695,8 +943,19 @@ on_adm_development = {
 	if = {
 		limit = {
 			owner = {
-				has_government_attribute = th_can_overload_provinces
-				has_country_modifier = th_hellfairy_provinces_to_overload
+				OR = {
+					AND = {
+						has_government_attribute = th_can_overload_provinces
+						has_country_modifier = th_hellfairy_provinces_to_overload
+					}
+					AND = {
+						is_subject = yes
+						overlord = {
+							has_government_attribute = th_can_overload_provinces
+							has_country_modifier = th_hellfairy_provinces_to_overload
+						}
+					}
+				}
 			}
 		}
 		add_base_tax = -1
@@ -756,8 +1015,19 @@ on_dip_development = {
 	if = {
 		limit = {
 			owner = {
-				has_government_attribute = th_can_overload_provinces
-				has_country_modifier = th_hellfairy_provinces_to_overload
+				OR = {
+					AND = {
+						has_government_attribute = th_can_overload_provinces
+						has_country_modifier = th_hellfairy_provinces_to_overload
+					}
+					AND = {
+						is_subject = yes
+						overlord = {
+							has_government_attribute = th_can_overload_provinces
+							has_country_modifier = th_hellfairy_provinces_to_overload
+						}
+					}
+				}
 			}
 		}
 		add_base_production = -1
@@ -817,8 +1087,19 @@ on_mil_development = {
 	if = {
 		limit = {
 			owner = {
-				has_government_attribute = th_can_overload_provinces
-				has_country_modifier = th_hellfairy_provinces_to_overload
+				OR = {
+					AND = {
+						has_government_attribute = th_can_overload_provinces
+						has_country_modifier = th_hellfairy_provinces_to_overload
+					}
+					AND = {
+						is_subject = yes
+						overlord = {
+							has_government_attribute = th_can_overload_provinces
+							has_country_modifier = th_hellfairy_provinces_to_overload
+						}
+					}
+				}
 			}
 		}
 		add_base_manpower = -1
@@ -871,6 +1152,58 @@ on_mil_development = {
 		}
 	}
 	th_wandering_state_on_development = { base_type = base_manpower }
+}
+
+on_thri_yearly_pulse_4 = {
+	random_events = {
+		#Low Mandate Events
+		10 = china_events.45
+		10 = china_events.46
+		50 = china_events.47
+		10 = china_events.48
+		10 = china_events.49
+		10 = china_events.50
+		50 = china_events.51
+		10 = china_events.52
+		10 = china_events.53
+		50 = china_events.54
+		#10 = china_events.55 (triggers via neighbors)
+		10 = china_events.56
+		75 = china_events.57
+		50 = china_events.58
+		10 = china_events.59
+		50 = china_events.60
+	}	
+
+	events = {
+		th_sixty_year_cycle_incident_events.2
+	}
+}
+
+on_four_year_pulse_4 = {
+	random_events = {
+		100 = touhou_events.3
+		1000 = 0
+	}
+}
+
+on_five_year_pulse_3 = {
+	random_events = {
+		100 = propagate_religion_events.1
+		100 = propagate_religion_events.2
+		100 = propagate_religion_events.3
+		100 = propagate_religion_events.4
+		100 = propagate_religion_events.5
+		100 = propagate_religion_events.6
+		100 = propagate_religion_events.8
+		100 = propagate_religion_events.9
+		100 = propagate_religion_events.10
+		#100 = propagate_religion_events.11 #Province event
+		1000 = 0
+	}
+	events = {
+		th_diplo_events.17
+	}
 }
 
 # province
@@ -1153,35 +1486,30 @@ on_harmonized_th_lunarian_religion = {
 on_mercenary_recruited = {
 	if = {
 		limit = {
-			FROM = {
-				NOT = { has_country_flag = th_free_merc_companies }
-				has_country_flag = th_pay_mil_instead_of_prof
+			OR = {
+				FROM = { NOT = { has_country_flag = oyo_cavalry_do_not_consume_ap } }
+				ROOT = { NOT = { mercenary_company = merc_oyo_cavalry } }
 			}
+			th_is_not_free_merc_company = yes
+			NOT = { has_country_flag = th_pay_mil_instead_of_prof }
+			NOT = { has_country_flag = th_free_merc_companies }
 		}
 		FROM = {
-			add_mil_power = -150
-		}
-	}
-	else_if = {
-		limit = {
-			FROM = {
-				NOT = { has_country_flag = th_free_merc_companies }
-				NOT = { has_country_flag = th_pay_mil_instead_of_prof }
-				has_country_flag = th_merc_eighty_percent_professionalism_cost
+			if = {
+				limit = {
+					has_country_flag = th_pay_mil_instead_of_prof
+				}
+				add_mil_power = -150
 			}
-		}
-		FROM = {
-			add_army_professionalism = -0.04
-		}
-	}
-	else_if = {
-		limit = {
-			FROM = {
-				NOT = { has_country_flag = th_free_merc_companies }
+			else_if = {
+				limit = {
+					has_country_flag = th_merc_eighty_percent_professionalism_cost
+				}
+				add_army_professionalism = -0.04
 			}
-		}
-		FROM = {
-			add_army_professionalism = -0.05
+			else = {
+				add_army_professionalism = -0.05
+			}
 		}
 	}
 	if = {
@@ -1214,65 +1542,6 @@ on_mercenary_recruited = {
 			}
 		}
 	}
-	###TODO UPDATE IT AS SOON "mercenary_company" IS FIXED###
-	#if = {
-	#	limit = {
-	#		OR = {
-	#			FROM = { NOT = { has_country_flag = oyo_cavalry_do_not_consume_ap } }
-	#			ROOT = { NOT = { mercenary_company = merc_oyo_cavalry } }
-	#		}
-	#		th_is_not_free_merc_company = yes
-	#		NOT = { has_country_flag = th_pay_mil_instead_of_prof }
-	#		NOT = { has_country_flag = th_free_merc_companies }
-	#	}
-	#	FROM = {
-	#		if = {
-	#			limit = {
-	#				has_country_flag = th_pay_mil_instead_of_prof
-	#			}
-	#			add_mil_power = -150
-	#		}
-	#		else_if = {
-	#			limit = {
-	#				has_country_flag = th_merc_eighty_percent_professionalism_cost
-	#			}
-	#			add_army_professionalism = -0.04
-	#		}
-	#		else = {
-	#			add_army_professionalism = -0.05
-	#		}
-	#	}
-	#}
-	#if = {
-	#	limit = {
-	#		FROM = {
-	#			has_country_flag = th_merc_suppress_revolt
-	#		}
-	#	}
-	#	THIS = {
-	#		add_province_modifier = {
-	#			name = th_suppresed_revolters
-	#			duration = 1825
-	#		}
-	#	}
-	#}
-	#if = {
-	#	limit = {
-	#		FROM = {
-	#			has_country_flag = th_enabled_instant_loot_on_merc_recruitment
-	#		}
-	#		THIS = {
-	#			controlled_by = FROM
-	#			NOT = { owned_by = FROM }
-	#		}
-	#	}
-	#	THIS = {
-	#		remove_loot = {
-	#			who = FROM
-	#			amount = 250
-	#		}
-	#	}
-	#}
 }
 
 # ROOT = Overlord, FROM = Minor
@@ -1303,6 +1572,9 @@ on_dependency_gained = {
 					is_subject_of_type = th_yuuka_gatekeeper
 					is_subject_of_type = th_pet_state
 					is_subject_of_type = th_sister_state
+					is_subject_of_type = th_yama_subject_to_law
+					is_subject_of_type = th_yama_executor
+					is_subject_of_type = th_shinigami_subject
 				}
 			}
 		}
@@ -1385,6 +1657,15 @@ on_create_vassal = {
 		change_religion = catholic
 		add_government_reform = papacy_reform
 		adopt_reform_progress = FROM
+	}
+	if = {
+		limit = {
+			tag = HIG
+		}
+		change_government = monarchy
+		add_government_reform = Gensokyan_hig_yama_government
+		adopt_reform_progress = FROM
+		save_global_event_target_as = YamaOfGensokyo
 	}
 }
 
@@ -1476,6 +1757,20 @@ on_country_released = {
 			change_religion = FROM
 		}
 	}
+	if = {
+		limit = {
+			tag = HIG
+		}
+		change_government = monarchy
+		add_government_reform = Gensokyan_hig_yama_government
+		adopt_reform_progress = FROM
+		if = {
+			limit = {
+				NOT = { has_saved_event_target = YamaOfGensokyo }
+			}
+			save_global_event_target_as = YamaOfGensokyo
+		}
+	}
 }
 
 # province:  spawned whenever a new owner takes over the province
@@ -1495,5 +1790,43 @@ on_conquest = {
 		owner = {
 			th_pirate_add_conquer_fame = yes
 		}
+	}
+}
+
+on_country_creation = {
+	if = {
+		limit = {
+			tag = PAP
+			OR = {
+				NOT = {
+					religion = catholic
+				}
+				NOT = {
+					has_reform = papacy_reform
+				}
+				NOT = {
+					government = theocracy
+				}
+			}
+		}
+		change_religion = catholic
+		change_government = theocracy
+		add_government_reform = papacy_reform
+	}
+	if = {
+		limit = {
+			tag = HIG
+			OR = {
+				NOT = {
+					has_reform = Gensokyan_hig_yama_government
+				}
+				NOT = {
+					government = monarchy
+				}
+			}
+		}
+		change_government = monarchy
+		add_government_reform = Gensokyan_hig_yama_government
+		save_global_event_target_as = YamaOfGensokyo
 	}
 }

@@ -1,0 +1,1691 @@
+########################################
+# Incident Events
+########################################
+
+namespace = th_sixty_year_cycle_incident_events
+#incident = sixty_year_cycle_incident
+
+#Sixty Year Cycle Great Barrier Incident - Set up the incident
+country_event = {
+	id = th_sixty_year_cycle_incident_events.0
+	title = "th_sixty_year_cycle_incident_events.0.t"
+	desc = none
+	picture = HIGAN_eventPicture
+
+	trigger = {
+		th_incident_check_year_for_incident = { incident = sixty_year_cycle_incident year = 1525 }
+		NOT = { th_incident_has_been_resolved = { incident = sixty_year_cycle_incident } }
+		th_does_not_have_current_incident = { incident = sixty_year_cycle_incident }
+		th_lesser_incident_can_trigger_generic_check = yes
+	}
+	
+	fire_only_once = yes
+	hidden = yes	
+	
+	mean_time_to_happen = {
+		months = 12
+
+		modifier = {
+			factor = 0.5
+			exists = HIG
+		}
+	}
+
+	immediate = {
+		#th_incident_forbid_country_to_investigate = { who = HIG }
+		#th_incident_forbid_country_to_investigate = { who = SNZ }
+		th_start_lesser_incident_effect = {
+			incident = sixty_year_cycle_incident
+		}
+		set_global_flag = th_POFV_random_matches_active
+		gensokyo_superregion = {
+			limit = {
+				NOT = { has_province_modifier = th_POFV_random_flower_bed }
+			}
+			add_permanent_province_modifier = {
+				name = th_POFV_random_flower_bed
+				duration = -1
+			}
+		}
+	}
+
+	option = {		#Check any possible investigator country
+		#random_country = {
+		#	limit = { 
+		#		th_incident_can_become_investigator = yes
+		#	}
+		#	th_incident_setup_investigator = yes
+		#	th_incident_introduction_event = {
+		#		id = th_sixty_year_cycle_incident_events.1
+		#	}
+		#}
+		every_country = {
+			limit = {
+				capital_scope = {
+					superregion = gensokyo_superregion
+				}				
+			}
+			country_event = {
+				id = th_sixty_year_cycle_incident_events.1
+				days = 1
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Introduction of incident
+country_event = {
+	id = th_sixty_year_cycle_incident_events.1
+	title = "th_sixty_year_cycle_incident_events.1.t"
+	desc = {
+		desc = "th_sixty_year_cycle_incident_events.1.desc.a"
+		trigger = {
+			NOT = { tag = HIG }
+			NOT = { was_tag = HIG }
+			NOT = { tag = SNZ }
+			NOT = { was_tag = SNZ }
+		}
+	}
+	desc = {
+		desc = "th_sixty_year_cycle_incident_events.1.desc.b"
+		trigger = {
+			OR = {
+				tag = HIG
+				was_tag = HIG
+				tag = SNZ
+				was_tag = SNZ
+			}
+		}
+	}
+	picture = HIGAN_eventPicture
+
+	is_triggered_only = yes	
+
+	option = {		#Curious... I will investigate this phenomenon
+		name = "th_sixty_year_cycle_incident_events.1.a"
+		custom_tooltip = th_sixty_year_cycle_incident_events.1.a.tt
+		trigger = {
+			NOT = { tag = HIG }
+			NOT = { was_tag = HIG }
+			NOT = { tag = SNZ }
+			NOT = { was_tag = SNZ }
+		}
+		highlight = yes	
+		hidden_effect = {
+			set_country_flag = th_POFV_joined_the_investigation
+			set_variable = {
+				which = th_POFV_personal_fight_counter
+				value = 0
+			}
+			if = {
+				limit = {
+					ai = no
+					NOT = { has_country_flag = th_incident_had_info }
+				}
+				country_event = {
+					id = th_danmaku_event.1
+					days = 1
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {		#These flowerbeds need investigations
+		name = "th_sixty_year_cycle_incident_events.1.b"
+		th_start_incident_tooltip = { incident = sixty_year_cycle_incident }
+		trigger = {
+			NOT = { tag = HIG }
+			NOT = { was_tag = HIG }
+			NOT = { tag = SNZ }
+			NOT = { was_tag = SNZ }
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = {		#Oh no... not again. Komachi must have been slacking off again
+		name = "th_sixty_year_cycle_incident_events.1.c"
+		trigger = {
+			th_is_or_was_tag = {
+				tag = HIG
+			}
+		}
+		th_start_incident_tooltip = { incident = sixty_year_cycle_incident }
+		highlight = yes	
+		add_army_tradition = 15
+		add_navy_tradition = 15
+		add_treasury = 200
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+	
+	option = {		#Oh no... not again. Eiki will be so mad...
+		name = "th_sixty_year_cycle_incident_events.1.d"
+		trigger = {
+			th_is_or_was_tag = {
+				tag = SNZ
+			}
+		}
+		th_start_incident_tooltip = { incident = sixty_year_cycle_incident }
+		highlight = yes	
+		add_army_tradition = 15
+		add_navy_tradition = 15
+		add_treasury = 200
+		add_stability = -1
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters!
+country_event = {
+	id = th_sixty_year_cycle_incident_events.2
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	hidden = yes
+	
+	trigger = {
+		th_current_incident = { incident = sixty_year_cycle_incident }
+		has_global_flag = th_POFV_random_matches_active
+		has_country_flag = th_POFV_joined_the_investigation
+	}
+
+	is_triggered_only = yes
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	option = {
+		if = {
+			limit = {
+				is_variable_equal = {
+					which = th_POFV_personal_fight_counter
+					value = 7
+				}
+			}
+			country_event = {
+				id = th_sixty_year_cycle_incident_events.7
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_POFV_personal_fight_counter
+					value = 8
+				}
+			}
+			country_event = {
+				id = th_sixty_year_cycle_incident_events.8
+			}
+		}
+		else = {
+			random_list = {
+				#Stage 1 - 2 Bracket
+				1 = { #Cirno
+					trigger = {
+						NOT = { tag = CIN }
+						NOT = { was_tag = CIN }
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						th_did_not_fight_enemy = { who = cirno }
+					}
+					th_choose_new_danmaku_enemy = { who = cirno }
+				}
+				1 = { #Mystia
+					trigger = {
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						th_did_not_fight_enemy = { who = mystia }
+					}
+					th_choose_new_danmaku_enemy = { who = mystia }
+				}
+				#Stage 2 - 4 bracket
+				1 = { #Prismriver
+					trigger = {
+						NOT = { tag = PRI }
+						NOT = { was_tag = PRI }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 2
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						th_did_not_fight_enemy = { who = prismriver }
+					}
+					th_choose_new_danmaku_enemy = { who = prismriver }
+				}
+				1 = { #Tewi
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 2
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						th_did_not_fight_enemy = { who = tewi }
+					}
+					th_choose_new_danmaku_enemy = { who = tewi }
+				}
+				#Stage 3 - 5 bracket
+				1 = { #Reisen
+					trigger = {
+						NOT = { tag = EIT }
+						NOT = { was_tag = EIT }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 6
+							}
+						}
+						th_did_not_fight_enemy = { who = reisen }
+					}
+					th_choose_new_danmaku_enemy = { who = reisen }
+				}
+				1 = { #Youmu
+					trigger = {
+						NOT = { tag = NET }
+						NOT = { was_tag = NET }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 6
+							}
+						}
+						th_did_not_fight_enemy = { who = youmu }
+					}
+					th_choose_new_danmaku_enemy = { who = youmu }
+				}
+				1 = { #Sakuya
+					trigger = {
+						NOT = { tag = SCR }
+						NOT = { was_tag = SCR }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 6
+							}
+						}
+						th_did_not_fight_enemy = { who = sakuya }
+					}
+					th_choose_new_danmaku_enemy = { who = sakuya }
+				}
+				#Stage 5 - 6 bracket
+				1 = { #Medicine
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_did_not_fight_enemy = { who = medicine }
+					}
+					th_choose_new_danmaku_enemy = { who = medicine }
+				}
+				1 = { #Yuuka
+					trigger = {
+						NOT = { tag = SFF }
+						NOT = { was_tag = SFF }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_did_not_fight_enemy = { who = yuuka }
+					}
+					th_choose_new_danmaku_enemy = { who = yuuka }
+				}
+				1 = { #Aya
+					trigger = {
+						NOT = { tag = TGU }
+						NOT = { was_tag = TGU }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_did_not_fight_enemy = { who = aya }
+					}
+					th_choose_new_danmaku_enemy = { who = aya }
+				}
+				1 = { #Marisa
+					trigger = {
+						NOT = { tag = FOM }
+						NOT = { was_tag = FOM }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_did_not_fight_enemy = { who = marisa }
+					}
+					th_choose_new_danmaku_enemy = { who = marisa }
+				}
+				1 = { #Reimu
+					trigger = {
+						NOT = { tag = HKR }
+						NOT = { was_tag = HKR }
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_did_not_fight_enemy = { who = reimu }
+					}
+					th_choose_new_danmaku_enemy = { who = reimu }
+				}
+				#Bonus bosses if there are more investigators
+				#Stage 1 - 2
+				1 = { #Lily
+					trigger = {
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						th_tag_is_valid_enemy = { tag = LIL }
+						th_did_not_fight_enemy = { who = lily }
+					}
+					th_choose_new_danmaku_enemy = { who = lily }
+				}
+				1 = { #Larva
+					trigger = {
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						th_tag_is_valid_enemy = { tag = LRV }
+						th_did_not_fight_enemy = { who = larva }
+					}
+					th_choose_new_danmaku_enemy = { who = larva }
+				}
+				1 = { #Three Fairies
+					trigger = {
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						th_tag_is_valid_enemy = { tag = TFR }
+						th_did_not_fight_enemy = { who = three_fairies }
+					}
+					th_choose_new_danmaku_enemy = { who = three_fairies }
+				}
+				1 = { #Rumia
+					trigger = {
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						th_tag_is_valid_enemy = { tag = FOM }
+						th_did_not_fight_enemy = { who = rumia }
+					}
+					th_choose_new_danmaku_enemy = { who = rumia }
+				}
+				1 = { #Wriggle
+					trigger = {
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 3
+							}
+						}
+						th_tag_is_valid_enemy = { tag = FOM }
+						th_did_not_fight_enemy = { who = wriggle }
+					}
+					th_choose_new_danmaku_enemy = { who = wriggle }
+				}
+				#Stage 3 - 4
+				1 = { #Nitori
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						th_tag_is_valid_enemy = { tag = KPP }
+						th_did_not_fight_enemy = { who = nitori }
+					}
+					th_choose_new_danmaku_enemy = { who = nitori }
+				}
+				1 = { #Yumemi
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						th_tag_is_valid_enemy = { tag = YUM }
+						th_did_not_fight_enemy = { who = yumemi }
+					}
+					th_choose_new_danmaku_enemy = { who = yumemi }
+				}
+				1 = { #Tenshi
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						th_tag_is_valid_enemy = { tag = HVR }
+						th_did_not_fight_enemy = { who = tenshi }
+					}
+					th_choose_new_danmaku_enemy = { who = tenshi }
+				}
+				1 = { #Yuugi
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						th_tag_is_valid_enemy = { tag = ONI }
+						th_did_not_fight_enemy = { who = yuugi }
+					}
+					th_choose_new_danmaku_enemy = { who = yuugi }
+				}
+				1 = { #Hina
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 3
+						}
+						NOT = {
+							check_variable = {
+								which = th_POFV_personal_fight_counter
+								value = 5
+							}
+						}
+						th_tag_is_valid_enemy = { tag = YOF }
+						th_did_not_fight_enemy = { who = hina }
+					}
+					th_choose_new_danmaku_enemy = { who = hina }
+				}
+				#Stage 5+
+				1 = { #Remilia
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = SCR }
+						th_did_not_fight_enemy = { who = remilia }
+					}
+					th_choose_new_danmaku_enemy = { who = remilia }
+				}
+				1 = { #Yuyuko
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = NET }
+						th_did_not_fight_enemy = { who = yuyuko }
+					}
+					th_choose_new_danmaku_enemy = { who = yuyuko }
+				}
+				1 = { #Yukari
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = MHG }
+						th_did_not_fight_enemy = { who = yukari }
+					}
+					th_choose_new_danmaku_enemy = { who = yukari }
+				}
+				1 = { #Okina
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = OKI }
+						th_did_not_fight_enemy = { who = okina }
+					}
+					th_choose_new_danmaku_enemy = { who = okina }
+				}
+				1 = { #Kasen
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = KSE }
+						th_did_not_fight_enemy = { who = kasen }
+					}
+					th_choose_new_danmaku_enemy = { who = kasen }
+				}
+				1 = { #Meira
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = OKR }
+						th_did_not_fight_enemy = { who = meira }
+					}
+					th_choose_new_danmaku_enemy = { who = meira }
+				}
+				1 = { #Shinki
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = MKI }
+						th_did_not_fight_enemy = { who = shinki }
+					}
+					th_choose_new_danmaku_enemy = { who = shinki }
+				}
+				1 = { #Mima
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = MIM }
+						th_did_not_fight_enemy = { who = mima }
+					}
+					th_choose_new_danmaku_enemy = { who = mima }
+				}
+				1 = { #Satori
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = HIG }
+						th_did_not_fight_enemy = { who = satori }
+					}
+					th_choose_new_danmaku_enemy = { who = satori }
+				}
+				1 = { #Mokou
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = FUJ }
+						th_did_not_fight_enemy = { who = mokou }
+					}
+					th_choose_new_danmaku_enemy = { who = mokou }
+				}
+				1 = { #Kaguya
+					trigger = {
+						check_variable = {
+							which = th_POFV_personal_fight_counter
+							value = 5
+						}
+						th_tag_is_valid_enemy = { tag = EIT }
+						th_did_not_fight_enemy = { who = kaguya }
+					}
+					th_choose_new_danmaku_enemy = { who = kaguya }
+				}
+			}
+			country_event = {
+				id = th_sixty_year_cycle_incident_events.3
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Encounters!
+country_event = {
+	id = th_sixty_year_cycle_incident_events.3
+	title = th_sixty_year_cycle_incident_events.3.t
+	desc = th_sixty_year_cycle_incident_events.3.desc
+	picture = { trigger = { th_next_chosen_enemy = { who = cirno } }		picture = CIRNO_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = mystia } }		picture = MYSTIA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = prismriver } }	picture = PRISMRIVER_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = tewi } }			picture = TEWI_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = reisen } }		picture = REISEN_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = youmu } }		picture = YOUMU2_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = sakuya } }		picture = SAKUYA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = medicine } }		picture = MEDICINE_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = yuuka } }		picture = YUUKABOSS_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = aya } }			picture = AYABOSS_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = marisa } }		picture = MARISA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = reimu } }		picture = REIMU_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = lily } }			picture = LILYWHITE_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = larva } }		picture = ETERNITY_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = rumia } }		picture = RUMIA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = wriggle } }		picture = WRIGGLE_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = nitori } }		picture = NITORIBOSS_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = yumemi } }		picture = YUMEMIBOSS_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = tenshi } }		picture = TENSHI_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = yuugi } }		picture = YUUGI_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = hina } }			picture = HINA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = remilia } }		picture = REMILIA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = yuyuko } }		picture = YUYUKO_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = yukari } }		picture = YUKARIFIGHT_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = okina } }		picture = OKINA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = kasen } }		picture = KASEN_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = meira } }		picture = MEIRA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = shinki } }		picture = SHINKI_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = mima } }			picture = MIMA_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = satori } }		picture = SATORIBOSS_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = mokou } }		picture = MOKOU_eventPicture }
+	picture = { trigger = { th_next_chosen_enemy = { who = kaguya } }		picture = KAGUYA_eventPicture }
+	picture = {
+		trigger = {
+			NOT = { th_next_chosen_enemy = { who = cirno } }
+			NOT = { th_next_chosen_enemy = { who = mystia } }
+			NOT = { th_next_chosen_enemy = { who = prismriver } }
+			NOT = { th_next_chosen_enemy = { who = tewi } }
+			NOT = { th_next_chosen_enemy = { who = reisen } }
+			NOT = { th_next_chosen_enemy = { who = youmu } }
+			NOT = { th_next_chosen_enemy = { who = sakuya } }
+			NOT = { th_next_chosen_enemy = { who = medicine } }
+			NOT = { th_next_chosen_enemy = { who = yuuka } }
+			NOT = { th_next_chosen_enemy = { who = aya } }
+			NOT = { th_next_chosen_enemy = { who = marisa } }
+			NOT = { th_next_chosen_enemy = { who = reimu } }
+			NOT = { th_next_chosen_enemy = { who = lily } }
+			NOT = { th_next_chosen_enemy = { who = larva } }
+			NOT = { th_next_chosen_enemy = { who = rumia } }
+			NOT = { th_next_chosen_enemy = { who = wriggle } }
+			NOT = { th_next_chosen_enemy = { who = nitori } }
+			NOT = { th_next_chosen_enemy = { who = yumemi } }
+			NOT = { th_next_chosen_enemy = { who = tenshi } }
+			NOT = { th_next_chosen_enemy = { who = yuugi } }
+			NOT = { th_next_chosen_enemy = { who = hina } }
+			NOT = { th_next_chosen_enemy = { who = remilia } }
+			NOT = { th_next_chosen_enemy = { who = yuyuko } }
+			NOT = { th_next_chosen_enemy = { who = yukari } }
+			NOT = { th_next_chosen_enemy = { who = okina } }
+			NOT = { th_next_chosen_enemy = { who = kasen } }
+			NOT = { th_next_chosen_enemy = { who = meira } }
+			NOT = { th_next_chosen_enemy = { who = shinki } }
+			NOT = { th_next_chosen_enemy = { who = mima } }
+			NOT = { th_next_chosen_enemy = { who = satori } }
+			NOT = { th_next_chosen_enemy = { who = mokou } }
+		}
+		picture = HIGAN_eventPicture
+	}
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = lesser_incident
+			}
+			#Komachi's Base Fighting Skills
+			set_variable = {
+				which = th_POFV_random_encounter_combat_skill
+				value = 250
+			}
+			if = {
+				limit = {
+					check_variable = {
+						which = th_POFV_personal_fight_counter
+						value = 1
+					}
+				}
+				multiply_variable = {
+					which = th_POFV_random_encounter_combat_skill
+					which = th_POFV_personal_fight_counter
+				}
+			}
+			change_variable = {
+				which = th_POFV_random_encounter_combat_skill
+				value = 1000
+			}
+			random_list = {
+				1 = {
+					change_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = 100
+					}
+				}
+				1 = {
+					change_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = 250
+					}
+				}
+				1 = {
+					change_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = 500
+					}
+				}
+				1 = {
+					change_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = -100
+					}
+				}
+				1 = {
+					change_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = -250
+					}
+				}
+				1 = {
+					change_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = -500
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = 1.25
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = 1.5
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = 0.75
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_random_encounter_combat_skill
+						value = 0.5
+					}
+				}
+			}
+			th_defineopponent_fighting_skill = {
+				type = lesser_incident
+				variable = th_POFV_random_encounter_combat_skill
+			}	
+		}
+	}
+	
+	option = {
+		name = th_sixty_year_cycle_incident_events.3.a
+		custom_tooltip = th_sixty_year_cycle_incident_events.3.a.tt
+		highlight = yes
+		th_danmaku_lesser_incident_fight_ruler_and_opponent = {
+			win_event = th_sixty_year_cycle_incident_events.4
+			draw_event = th_sixty_year_cycle_incident_events.5
+			defeat_event = th_sixty_year_cycle_incident_events.6
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+
+	after = {
+		th_clear_all_selected_enemies = yes
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Won Random Encounter
+country_event = {
+	id = th_sixty_year_cycle_incident_events.4
+	title = "th_sixty_year_cycle_incident_events.4.t"
+	desc = "th_sixty_year_cycle_incident_events.4.desc"
+	picture = HIGAN_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			change_variable = {
+				which = th_POFV_personal_fight_counter
+				value = 1
+			}
+		}
+	}
+	
+	option = {
+		name = "th_sixty_year_cycle_incident_events.4.a"
+		custom_tooltip = th_sixty_year_cycle_incident_events.4.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Draw Random Encounter
+country_event = {
+	id = th_sixty_year_cycle_incident_events.5
+	title = "th_sixty_year_cycle_incident_events.5.t"
+	desc = "th_sixty_year_cycle_incident_events.5.desc"
+	picture = HIGAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "th_sixty_year_cycle_incident_events.5.a"
+		custom_tooltip = th_sixty_year_cycle_incident_events.5.a.tt		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Lose Random Encounter
+country_event = {
+	id = th_sixty_year_cycle_incident_events.6
+	title = "th_sixty_year_cycle_incident_events.6.t"
+	desc = "th_sixty_year_cycle_incident_events.6.desc"
+	picture = HIGAN_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			subtract_variable = {
+				which = th_POFV_personal_fight_counter
+				value = 1
+			}
+		}
+	}
+	
+	option = {
+		name = "th_sixty_year_cycle_incident_events.6.a"
+		custom_tooltip = th_sixty_year_cycle_incident_events.6.a.tt
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+
+#Sixty Year Cycle Great Barrier Incident - Komachi Encounter
+country_event = {
+	id = th_sixty_year_cycle_incident_events.7
+	title = "th_sixty_year_cycle_incident_events.7.t"
+	desc = "th_sixty_year_cycle_incident_events.7.desc"
+	picture = KOMACHI_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = lesser_incident
+			}
+			#Komachi's Base Fighting Skills
+			set_variable = {
+				which = th_POFV_komachi_combat_skills
+				value = 2000
+			}
+			random_list = {
+				1 = {
+					multiply_variable = {
+						which = th_POFV_komachi_combat_skills
+						value = 1.05
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_komachi_combat_skills
+						value = 1.1
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_komachi_combat_skills
+						value = 1.15
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_komachi_combat_skills
+						value = 1.2
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_komachi_combat_skills
+						value = 1.25
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_komachi_combat_skills
+						value = 0.9
+					}
+				}
+				1 = {
+					multiply_variable = {
+						which = th_POFV_komachi_combat_skills
+						value = 0.8
+					}
+				}
+			}
+			th_defineopponent_fighting_skill = {
+				type = lesser_incident
+				variable = th_POFV_komachi_combat_skills
+			}	
+		}
+	}
+	
+	option = {		#I will have to defeat her myself
+		name = "th_sixty_year_cycle_incident_events.7.a"
+		custom_tooltip = th_sixty_year_cycle_incident_events.7.a.tt
+		highlight = yes
+		th_danmaku_lesser_incident_fight_ruler_and_opponent = {
+			win_event = th_sixty_year_cycle_incident_events.4
+			draw_event = th_sixty_year_cycle_incident_events.5
+			defeat_event = th_sixty_year_cycle_incident_events.6
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Eiki Encounter
+country_event = {
+	id = th_sixty_year_cycle_incident_events.8
+	title = "th_sixty_year_cycle_incident_events.8.t"
+	desc = "th_sixty_year_cycle_incident_events.8.desc"
+	picture = EIKIBOSS_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+				type = incident
+			}
+			#Eiki's Base Fighting Skills
+			set_variable = {
+				which = th_POFV_eiki_combat_skills
+				value = 2750
+			}
+			th_defineopponent_fighting_skill = {
+				type = incident
+				variable = th_POFV_eiki_combat_skills
+			}	
+			if = {
+				limit = {
+					NOT = { has_global_flag = th_POFV_eiki_counter }
+				}
+				set_global_flag = th_POFV_eiki_counter
+				1 = { set_variable = { which = eiki_counter value = 0 } }
+			}
+		}
+	}
+	
+	option = {		#Oh no...
+		name = "th_sixty_year_cycle_incident_events.8.a"
+		custom_tooltip = th_sixty_year_cycle_incident_events.8.a.tt
+		highlight = yes
+		th_danmaku_lesser_incident_fight_ruler_and_opponent = {
+			win_event = th_sixty_year_cycle_incident_events.12
+			draw_event = th_sixty_year_cycle_incident_events.11
+			defeat_event = th_sixty_year_cycle_incident_events.9
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Lose to Eiki
+country_event = {
+	id = th_sixty_year_cycle_incident_events.9
+	title = "th_sixty_year_cycle_incident_events.9.t"
+	desc = "th_sixty_year_cycle_incident_events.9.desc"
+	picture = EIKIBOSS_eventPicture
+	is_triggered_only = yes
+	major = yes
+
+	immediate = {
+		hidden_effect = {
+			subtract_variable = {
+				which = th_POFV_personal_fight_counter
+				value = 2
+			}
+			1 = { change_variable = { which = eiki_counter value = 1 } }
+		}
+	}
+	
+	option = {
+		name = "th_sixty_year_cycle_incident_events.9.a"
+		custom_tooltip = th_sixty_year_cycle_incident_events.9.a.tt
+		if = {
+			limit = {
+				1 = { check_variable = { which = eiki_counter value = 4 } }
+			}
+			country_event = {
+				id = th_sixty_year_cycle_incident_events.13
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Ok Outcome
+country_event = { #Eiki lectures the player, but still won
+	id = th_sixty_year_cycle_incident_events.11
+	title = "th_sixty_year_cycle_incident_events.11.t"
+	desc = "th_sixty_year_cycle_incident_events.11.desc"
+	picture = EIKIJUDGE_eventPicture
+	is_triggered_only = yes
+	major = yes
+	
+	immediate = {
+		hidden_effect = { 
+			th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
+		}
+	}
+	
+	option = {
+		name = "th_sixty_year_cycle_incident_events.11.a"
+		th_solve_incident = {
+			incident = sixty_year_cycle_incident
+		}
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+				}
+			}
+			add_country_modifier = {
+				name = "th_POFV_inci_overcame_komachi"
+				duration = 9125
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_POFV_inci_overcame_komachi"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_POFV_inci_overcame_komachi"
+				duration = 3650
+			}
+		}
+		add_adm_power = 150
+		add_prestige = 25
+		add_devotion = 10
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Good Outcome
+country_event = { #Eiki has no reason to lecture
+	id = th_sixty_year_cycle_incident_events.12
+	title = "th_sixty_year_cycle_incident_events.12.t"
+	desc = "th_sixty_year_cycle_incident_events.12.desc"
+	picture = EIKI_eventPicture
+	is_triggered_only = yes	
+	major = yes
+	
+	option = {		#The rain will stop eventually. She can stay here for awhile.
+		name = "th_sixty_year_cycle_incident_events.12.a"
+		hidden_effect = {
+			th_solve_incident = {
+				incident = sixty_year_cycle_incident
+			}
+		}
+		th_solve_incident_extra = {
+			incident = sixty_year_cycle_incident
+		}
+		if = {
+			limit = {
+				OR = {
+					was_tag = HKR
+					tag = HKR
+				}
+			}
+			add_country_modifier = {
+				name = "th_POFV_inci_extra"
+				duration = 9125
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					was_tag = FOM
+					tag = FOM
+				}
+			}
+			add_country_modifier = {
+				name = "th_POFV_inci_extra"
+				duration = 9125
+			}
+		}
+		else = {			
+			add_country_modifier = {
+				name = "th_POFV_inci_extra"
+				duration = 3650
+			}
+		}
+		add_adm_power = 150
+		if = {
+			limit = {
+				has_country_flag = th_increased_donations_from_events
+			}
+			add_years_of_income = 3
+		}
+		else = {
+			add_years_of_income = 2
+		}
+		add_prestige = 50
+		add_devotion = 10
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Bad Outcome - Way too many lost to Eiki
+country_event = { 
+	id = th_sixty_year_cycle_incident_events.13
+	title = "th_sixty_year_cycle_incident_events.13.t"
+	desc = "th_sixty_year_cycle_incident_events.13.desc"
+	picture = SHRINE_eventPicture
+	is_triggered_only = yes
+	major = yes
+
+	immediate = {
+		hidden_effect = { 
+			th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
+		}
+	}
+	
+	option = {		#Finally, it's over.
+		name = "th_sixty_year_cycle_incident_events.13.a"
+		th_solve_incident = {
+			incident = sixty_year_cycle_incident
+		}
+		if = {
+			limit = {
+				exists = HIG
+			}
+			HIG = {
+				add_country_modifier = {
+					name = th_POFV_reorganized_the_shinigami
+					duration = 9125
+				}
+			}
+		}
+		add_adm_power = -100
+		add_prestige = -50
+	}
+}
+
+
+
+#Sixty Year Cycle Great Barrier Incident - Random events - HIG gets buff
+country_event = {
+	id = th_sixty_year_cycle_incident_events.14
+	title = "th_sixty_year_cycle_incident_events.14.t"
+	desc = "th_sixty_year_cycle_incident_events.14.desc"
+	picture = EIKIBOSS_eventPicture
+	
+	trigger = {
+		th_is_or_was_tag = { tag = HIG }
+		th_current_incident = { incident = sixty_year_cycle_incident }
+	}
+	
+	fire_only_once = yes
+	major = yes
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {	#Looks like I have to do more lecutres in the near future
+		name = "th_sixty_year_cycle_incident_events.14.a"
+		add_country_modifier = {
+			name = th_POFV_the_lecturing
+			duration = 9125
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Flower events - Eiki demands her land back
+country_event = {
+	id = th_sixty_year_cycle_incident_events.19
+	title = "th_sixty_year_cycle_incident_events.19.t"
+	desc = "th_sixty_year_cycle_incident_events.19.desc"
+	picture = FORMERHELL_eventPicture
+	goto = higan_revolting_province
+	trigger = {
+		th_current_incident = { incident = sixty_year_cycle_incident }
+		ai = no
+		NOT = { th_is_or_was_tag = { tag = HIG } }
+		is_free_or_tributary_trigger = yes
+		num_of_cities = 4
+		any_owned_province = {
+			NOT = { has_province_flag = higan_revolt }
+			NOT = { local_autonomy = 1 }
+			region = hell_region
+			culture = Higanean
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 30
+		modifier = {
+			factor = 0.5
+			war_with = HIG 
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = higan_revolt }
+					NOT = { local_autonomy = 1 }
+					region = hell_region
+					culture = Higanean
+				}
+				save_event_target_as = higan_revolting_province
+			}
+		}
+	}
+
+	option = {
+		name = "th_sixty_year_cycle_incident_events.19.a"
+		event_target:higan_revolting_province = {
+			set_province_flag = higan_revolt
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+				friend = HIG
+			}
+		}
+		
+		ai_chance = { 
+			factor = 90
+		}
+	}
+	option = {
+		name = "th_sixty_year_cycle_incident_events.19.b"
+		event_target:higan_revolting_province = {
+			cede_province = HIG
+		}
+		
+		ai_chance = { 
+			factor = 10
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Flower events - Eiki demands her independence back
+country_event = {
+	id = th_sixty_year_cycle_incident_events.20
+	title = "th_sixty_year_cycle_incident_events.20.t"
+	desc = "th_sixty_year_cycle_incident_events.20.desc"
+	picture = FORMERHELL_eventPicture
+	
+	trigger = {
+		th_current_incident = { incident = sixty_year_cycle_incident }
+		overlord_of = HIG
+		HIG = { NOT = { has_country_modifier = th_POFV_demands_independence } }
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {		#Nah
+		name = "th_sixty_year_cycle_incident_events.20.a"
+		HIG = {
+			add_country_modifier = {
+				name = "th_POFV_demands_independence"
+				duration = 5475
+			}
+		}
+		
+		ai_chance = { 
+			factor = 90
+		}
+	}
+	
+	option = {		#The satori is the stress not worth.
+		name = "th_sixty_year_cycle_incident_events.20.b"
+		HIG = {
+			grant_independence = yes 
+		}
+		
+		ai_chance = { 
+			factor = 10
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Random Flower events - Province gets a random flower modifier + effect (Spring/Summer/Fall/Winter) TODO
+country_event = {
+	id = th_sixty_year_cycle_incident_events.25
+	title = th_sixty_year_cycle_incident_events.25.t
+	desc = th_sixty_year_cycle_incident_events.25.desc
+	picture = HIGAN_eventPicture
+	goto = flower_bed_province
+	trigger = {
+		th_current_incident = { incident = sixty_year_cycle_incident }
+		any_owned_province = {
+			has_province_modifier = th_POFV_random_flower_bed
+			NOT = { has_province_modifier = th_POFV_wonders_of_spring }
+			NOT = { has_province_modifier = th_POFV_passion_of_summer }
+			NOT = { has_province_modifier = th_POFV_change_of_fall }
+			NOT = { has_province_modifier = th_POFV_grace_of_winter }
+		}
+		NOT = { th_is_or_was_tag = { tag = HIG } }
+		OR = {
+			is_free_or_tributary_trigger = yes
+			overlord = {
+				NOT = { th_is_or_was_tag = { tag = HIG } }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 60
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = th_POFV_random_flower_bed
+				}
+				save_event_target_as = flower_bed_province
+			}
+		}
+	}
+	
+	option = {	#The flowers bloom!
+		name = th_sixty_year_cycle_incident_events.25.a
+		event_target:flower_bed_province = {
+			random_list = {
+				1 = {
+					add_permanent_province_modifier = {
+						name = th_POFV_wonders_of_spring
+						duration = 1825
+					}
+					add_devastation = 25
+				}
+				1 = {
+					add_permanent_province_modifier = {
+						name = th_POFV_passion_of_summer
+						duration = 1825
+					}
+					add_nationalism = 5
+				}
+				1 = {
+					add_permanent_province_modifier = {
+						name = th_POFV_change_of_fall
+						duration = 1825
+					}
+					spawn_rebels = {
+						type = anti_tax_rebels
+						size = 3
+					}
+				}
+				1 = {
+					add_permanent_province_modifier = {
+						name = th_POFV_grace_of_winter
+						duration = 1825
+					}
+					add_local_autonomy = 25
+				}
+				1 = {}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}		
+	}
+
+	option = { #Ensure the flowers don't bloom!
+		name = th_sixty_year_cycle_incident_events.25.b
+		add_years_of_income = -0.15
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - Province cleans itself
+country_event = {
+	id = th_sixty_year_cycle_incident_events.260
+	title = none
+	desc = none
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		th_does_not_have_current_incident = { incident = sixty_year_cycle_incident }
+		any_owned_province = {
+			has_province_modifier = th_POFV_random_flower_bed
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {
+		every_owned_province = {
+			remove_province_modifier = th_POFV_random_flower_bed
+			remove_province_modifier = th_POFV_wonders_of_spring
+			remove_province_modifier = th_POFV_passion_of_summer
+			remove_province_modifier = th_POFV_change_of_fall
+			remove_province_modifier = th_POFV_grace_of_winter
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}		
+}
+
+
+
+#Sixty Year Cycle Great Barrier Incident - Special Case: incident resolves itself after given enough time
+country_event = {
+	id = th_sixty_year_cycle_incident_events.26
+	title = "th_sixty_year_cycle_incident_events.26.t"
+	desc = "th_sixty_year_cycle_incident_events.26.desc"
+	picture = HIGAN_eventPicture
+	
+	trigger = {
+		th_current_incident = { incident = sixty_year_cycle_incident }	
+		had_global_flag = {
+			flag = th_current_incident_sixty_year_cycle_incident
+			days = 10950
+		}	
+		capital_scope = { continent = gensokyo_continent }
+		NOT = { th_incident_has_been_resolved = { incident = sixty_year_cycle_incident } }
+	}
+	
+	mean_time_to_happen = {
+		days = 5
+	}
+	
+	immediate = {
+		hidden_effect = { 
+			th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
+		}
+	}
+	
+	major = yes
+	
+	option = {		#Time to resolve this issue on my own
+		name = "th_sixty_year_cycle_incident_events.26.a"
+		th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
+		if = {
+			limit = {
+				exists = HIG
+			}
+			HIG = {
+				add_country_modifier = {
+					name = "th_POFV_reorganized_the_shinigami"
+					duration = 9125
+				}
+			}
+		}
+	}
+}
+
+############################TERMINATION############################
+#Sixty Year Cycle Great Barrier Incident - Bad Outcome
+country_event = { #The Yamaxandu resolves the incident on her own
+	id = th_sixty_year_cycle_incident_events.100
+	title = "th_sixty_year_cycle_incident_events.26.t"
+	desc = "th_sixty_year_cycle_incident_events.26.desc"
+	picture = HIGAN_eventPicture
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
+		}
+	}
+	major = yes
+	
+	option = {		#Well, I've done what I could.
+		name = "th_sixty_year_cycle_incident_events.26.a"
+		th_resolve_lesser_incident = { incident = sixty_year_cycle_incident }
+		if = {
+			limit = {
+				exists = HIG
+			}
+			HIG = {
+				add_country_modifier = {
+					name = th_POFV_reorganized_the_shinigami
+					duration = 9125
+				}
+			}
+		}
+		add_adm_power = -100
+		add_prestige = -10
+		add_devotion = -10
+	}
+}
+
+#Sixty Year Cycle Great Barrier Incident - DEBUG - Start Incident
+country_event = {
+	id = th_sixty_year_cycle_incident_events.1000
+	title = none
+	desc = none
+	picture = HIGAN_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		th_incident_forbid_country_to_investigate = { who = HIG }
+		th_incident_forbid_country_to_investigate = { who = SNZ }
+		th_start_incident_effect = {
+			incident = sixty_year_cycle_incident
+		}
+		gensokyo_superregion = {
+			limit = {
+				NOT = { has_province_modifier = th_POFV_random_flower_bed }
+			}
+			add_province_modifier = {
+				name = th_POFV_random_flower_bed
+				duration = -1
+			}
+		}
+	}
+
+	option = {		#Check any possible investigator country
+		random_country = {
+			limit = { 
+				th_incident_can_become_investigator = yes
+			}
+			th_incident_setup_investigator = yes
+			th_incident_introduction_event = {
+				id = th_sixty_year_cycle_incident_events.1
+			}
+		}
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}

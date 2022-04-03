@@ -1,0 +1,1506 @@
+mim_first_slot = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = MIM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	MIM_unlikely_allies = {
+		icon = mission_touhou_sultan_of_the_middle_east
+		required_missions = {  }
+		position = 1
+		trigger = {
+			num_of_allies = 2
+			has_dip_advisor = yes
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = mim_chose_spell_school_tt
+					OR = {
+						has_country_flag = th_specialized_for_age_of_discovery
+						has_country_flag = th_specialized_for_age_of_reformation
+						has_country_flag = th_specialized_for_age_of_absolutism
+						has_country_flag = th_specialized_for_age_of_revolutions
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.1
+			}
+		}
+	}
+	
+	MIM_old_hakurei = {
+		icon = mission_touhou_meira
+		required_missions = { 
+			MIM_unlikely_allies
+			MIM_armies_of_mima
+		}
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				area = Old_hakurei_shrine_state
+				area = Eastern_old_hakurei_shrine_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 5183
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Old_hakurei_shrine_state
+					area = Eastern_old_hakurei_shrine_state
+				}
+				value = 5
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { owns = 5183 }
+				}
+				5183 = {
+					cede_province = ROOT
+				}
+			}
+			5183 = {
+				add_core = ROOT
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
+				change_culture = ROOT
+				add_province_modifier = {
+					name = mim_shrine_of_mima
+					duration = -1
+				}
+			}
+			add_patriarch_authority = 0.1
+		}
+	}
+	
+	MIM_cult_of_mima = {
+		icon = mission_touhou_cult_of_mima
+		required_missions = { 
+			MIM_defeat_shinki
+		}
+		position = 4
+		trigger = {
+			religion = th_oldhakurei
+			if = {
+				limit = {
+					has_dlc = "Third Rome"
+				}
+				current_icon = old_hakurei_icon_mima
+			}
+			religious_unity = 1
+			OR = {
+				inquisitor = 2
+				theologian = 2
+			}
+			capital_scope = {
+				has_tax_building_trigger = yes
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.3
+			}
+		}
+	}
+	
+	MIM_contact_with_marisa = {
+		icon = mission_touhou_marisa
+		required_missions = {}
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				owned_by = FOM
+				province_id = 5090
+			}
+		}
+		trigger = {
+			if = {
+				limit = {
+					exists = FOM
+				}
+				FOM = {
+					OR = {
+						th_has_lost_danmaku_duel_against_root = yes
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+			else = {
+				5090 = {
+					owner = {
+						OR = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+							th_has_lost_danmaku_duel_against_root = yes
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = mim_chose_spell_school_tt
+					OR = {
+						has_country_flag = th_specialized_for_age_of_discovery
+						has_country_flag = th_specialized_for_age_of_reformation
+						has_country_flag = th_specialized_for_age_of_absolutism
+						has_country_flag = th_specialized_for_age_of_revolutions
+					}
+				}
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				any_neighbor_province = {
+					OR = {
+						area = Forest_of_magic
+						area = Forest_edge_state
+					}
+				}
+				value = 1
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					exists = FOM
+				}
+				country_event = {
+					id = flavor_mim.4
+				}
+			}
+			else = {
+				Forest_edge_state = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Forest_coast_state = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Forest_of_magic = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+	
+	MIM_the_new_gensokyo = {
+		icon = mission_touhou_youkai_forest
+		required_missions = { MIM_contact_with_marisa }
+		position = 6
+		provinces_to_highlight = {
+			owner = {
+				capital_scope = {
+					NOT = { region = makai_region }
+					NOT = { region = sunflower_region }
+					NOT = { region = orbital_region }
+				}
+				OR = {
+					religion = th_hakureishinto
+					religion = th_moriyashinto
+					religion = th_buddhist
+					religion = th_taoist
+				}
+			}
+		}
+		trigger = {
+			OR = {
+				calc_true_if = {
+					all_known_country = {
+						OR = {
+							is_subject_of = ROOT
+							custom_trigger_tooltip = {
+								tooltip = MIM_the_new_gensokyo_tt
+								current_war_losses = {
+									who_with = ROOT
+									type = all
+									cause = battle
+									amount = 20000
+								}
+							}
+						}						
+						capital_scope = {
+							NOT = { region = makai_region }
+							NOT = { region = sunflower_region }
+							NOT = { region = orbital_region }
+						}
+						OR = {
+							religion = th_hakureishinto
+							religion = th_moriyashinto
+							religion = th_buddhist
+							religion = th_taoist
+						}
+					}
+					amount = 3
+				}
+				total_development = 750
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.5
+			}
+		}
+	}
+	
+	MIM_tease_reimu = {
+		icon = mission_touhou_reimu
+		required_missions = { MIM_the_new_gensokyo }
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4955
+				is_capital_of = HKR
+			}
+		}
+		trigger = {
+			OR = {
+				controls = 4955
+				HKR = {
+					OR = {
+						exists = no
+						capital_scope = {
+							controlled_by = ROOT
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.6
+			}
+		}
+	}
+	
+	MIM_capture_alice = {
+		icon = mission_touhou_alice_maid
+		required_missions = {}
+		position = 9
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5018
+				province_id = 5093
+			}
+			NOT = { controlled_by = ROOT }
+		}
+		trigger = {
+			mission_completed = MIM_the_hunt_for_the_maids
+			controls = 5018
+			controls = 5093
+		}
+		effect = {
+			add_country_modifier = {
+				name = mim_doll_master_maid
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = MIM_maids_counter
+					value = 1
+				}
+			}
+		}
+	}
+	
+	MIM_capture_ruukoto = {
+		icon = mission_touhou_ruukoto
+		required_missions = {  }
+		position = 10
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5304
+				province_id = 5302
+				province_id = 5183
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			mission_completed = MIM_the_hunt_for_the_maids
+			owns_core_province = 5304
+			owns_core_province = 5302
+			owns_core_province = 5183
+		}
+		effect = {
+			add_country_modifier = {
+				name = "mim_nuclear_powered_robot_maid"
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = MIM_maids_counter
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+mim_second_slot = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = MIM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	MIM_the_astral_knight = {
+		icon = mission_touhou_konngara
+		required_missions = { MIM_armies_of_mima }
+		position = 2
+		provinces_to_highlight = {
+			province_id = 5167
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_core_province = 5167
+		}
+		effect = {
+			5167 = {
+				change_religion = ROOT
+			}
+			add_adm_power = 75
+			add_dip_power = 75
+			add_mil_power = 75
+			makai_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	MIM_defeat_shinki = {
+		icon = mission_touhou_shinki
+		required_missions = { e
+			MIM_the_astral_knight
+			MIM_old_hakurei
+		}
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				area = Makai_area
+				area = Makai_coast_state
+				area = Makai_peninsula_state
+				area = Western_makai_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Makai_area
+					area = Makai_coast_state
+					area = Makai_peninsula_state
+					area = Western_makai_state
+				}
+				value = 10
+			}
+			owns_or_non_sovereign_subject_of = 5019
+			owns_or_non_sovereign_subject_of = 5214
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.7
+			}
+			hidden_effect = {
+				set_country_flag = mim_can_harvest_makai_flesh
+				set_country_flag = mim_can_harvest_old_hells_souls
+				set_country_flag = mim_can_harvest_zealots_blood
+			}
+		}
+	}
+	
+	MIM_host_for_mima = {
+		icon = mission_touhou_realm_of_the_dead
+		required_missions = {
+			MIM_defeat_shinki
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5033
+				province_id = 5164
+				province_id = 5167
+				province_id = 5183
+				province_id = 5214
+				province_id = 5019
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		position = 4
+		trigger = {
+			if = {
+				limit = {
+					NOT = { mission_completed = MIM_defeat_shinki }
+				}
+				custom_trigger_tooltip = {
+					tooltip = MIM_host_for_mima_tt
+					mission_completed = MIM_defeat_shinki
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = MIM_harvested_makai_flesh_tt
+					OR = {
+						has_country_flag = mim_harvested_makai_flesh
+						mission_completed = MIM_host_for_mima
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = MIM_harvested_old_hells_souls_tt
+					OR = {
+						has_country_flag = mim_harvested_old_hells_souls
+						mission_completed = MIM_host_for_mima
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = MIM_harvested_zealots_blood_tt
+					OR = {
+						has_country_flag = mim_harvested_zealots_blood
+						mission_completed = MIM_host_for_mima
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.10
+			}
+			hidden_effect = {
+				clr_country_flag = mim_harvested_makai_flesh
+				clr_country_flag = mim_harvested_old_hells_souls
+				clr_country_flag = mim_harvested_zealots_blood
+			}
+		}
+	}
+	
+	MIM_spiritual_power = {
+		icon = mission_touhou_mima_magic
+		required_missions = {
+			MIM_cult_of_mima
+			MIM_host_for_mima
+		}
+		position = 5
+		trigger = {
+			if = {
+				limit = {
+					religion = th_oldhakurei
+					has_dlc = "Third Rome"
+				}
+				current_icon = old_hakurei_icon_mima
+				patriarch_authority = 0.50
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					religion = ROOT
+					value = 15
+				}
+			}
+			else = {
+				religious_unity = 1
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					religion = ROOT
+					value = 30
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.11
+			}
+		}
+	}
+
+	MIM_capture_mugetsu = {
+		icon = mission_touhou_mugetsu
+		required_missions = {}
+		position = 10
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5160
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			mission_completed = MIM_the_hunt_for_the_maids
+			owns_core_province = 5159				
+			owns_core_province = 5160
+			owns_core_province = 5161
+			NOT = { exists = GNU }	
+		}
+		effect = {
+			add_country_modifier = {
+				name = "mim_unnamed_dream_world_maid"
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = MIM_maids_counter
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+mim_third_slot = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = MIM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	MIM_armies_of_mima = {
+		icon = touhou_assemble_army
+		required_missions = {  }
+		position = 1
+		trigger = {
+			has_mil_advisor = yes
+			army_size_percentage = 1
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = mim_chose_spell_school_tt
+					OR = {
+						has_country_flag = th_specialized_for_age_of_discovery
+						has_country_flag = th_specialized_for_age_of_reformation
+						has_country_flag = th_specialized_for_age_of_absolutism
+						has_country_flag = th_specialized_for_age_of_revolutions
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.2
+			}
+			Konngaras_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Rika_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Sunny_plains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Gengetsu_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Perfect_cut_coast = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	MIM_engines_of_destruction = {
+		icon = mission_touhou_rika
+		required_missions = { MIM_armies_of_mima }
+		position = 2
+		provinces_to_highlight = {
+			area = Rika_state
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 3
+				area = Rika_state
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.24
+			}
+			country_event = {
+				id = flavor_mim.9
+			}
+			Yumemi_space_state = {
+				limit = { 
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	MIM_yumemi_vs_mima = {
+		icon = mission_touhou_yumemi
+		required_missions = { MIM_engines_of_destruction }
+		position = 4
+		provinces_to_highlight = {
+			area = Yumemi_space_state
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				area = Yumemi_space_state
+				value = 3
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					has_government_attribute = th_has_spell_schools
+				}
+				if = {
+					limit = {
+						NOT = { has_country_flag = th_specialized_for_age_of_discovery }
+						NOT = { has_country_flag = th_specialized_for_age_of_reformation }
+						NOT = { has_country_flag = th_specialized_for_age_of_absolutism }
+						NOT = { has_country_flag = th_specialized_for_age_of_revolutions }
+					}
+					custom_tooltip = MIM_yumemi_vs_mima_at
+				}
+				else = {
+					if = { 
+						limit = { has_country_modifier = th_conjuration_level_1 }
+						add_yearly_manpower = 2
+						add_yearly_sailors = 2
+						custom_tooltip = MIM_yumemi_vs_mima_conjuration_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_evocation_level_1 }
+						add_army_tradition = 20
+						add_navy_tradition = 20
+						add_army_professionalism = 0.05
+						custom_tooltip = MIM_yumemi_vs_mima_evocation_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_divination_level_1 }
+						custom_tooltip = MIM_yumemi_vs_mima_spy_tt
+						hidden_effect = {
+							every_neighbor_country = {
+								limit = {
+									NOT = { alliance_with = ROOT }
+									NOT = { is_subject_of = ROOT }
+								}
+								add_spy_network_from = {
+									who = ROOT
+									value = 50
+								}
+							}
+						}
+						custom_tooltip = MIM_yumemi_vs_mima_divination_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_transmutation_level_1 }
+						capital_scope = {
+							th_add_manufactory = yes
+						}
+						custom_tooltip = MIM_yumemi_vs_mima_transmutation_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_enchanting_level_1 }
+						add_adm_power = 25
+						add_dip_power = 25
+						add_mil_power = 25
+						custom_tooltip = MIM_yumemi_vs_mima_enchanting_tt
+					}
+					if = { 
+						limit = { has_country_modifier = th_abjuration_level_1 }
+						add_years_of_income = 2
+						custom_tooltip = MIM_yumemi_vs_mima_abjuration_tt
+					}
+				}
+			}
+			else = {
+				add_stability_or_adm_power = yes
+			}
+		}
+	}
+	
+	MIM_empire_of_mima = {
+		icon = mission_touhou_master_mima
+		required_missions = {  }
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				region = makai_region
+				region = sunflower_region
+			}
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			total_development = 500
+			land_forcelimit = 75
+			prestige = 50
+			num_of_owned_provinces_with = {
+				OR = {
+					region = makai_region
+					region = sunflower_region
+				}
+				value = 30
+			}
+		}
+		effect = {
+			override_country_name = MIM_EMPIRE
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
+			add_country_modifier = {
+				name = mim_mimas_empire
+				duration = -1
+			}
+		}
+	}
+	
+	MIM_rebirth_of_mima = {
+		icon = mission_touhou_reborn_mima
+		required_missions = {
+			MIM_spiritual_power
+			MIM_magical_power
+		}
+		position = 6
+		provinces_to_highlight = {
+			area = World_of_fantasies
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+			}
+		}
+		trigger = {
+			adm_power_cost = 500
+			dip_power_cost = 500
+			mil_power_cost = 500
+			World_of_fantasies = {
+				owned_by = ROOT
+				is_core = ROOT
+				type = all
+			}
+		}
+		effect = {
+			adm_power_cost = 500
+			dip_power_cost = 500
+			mil_power_cost = 500
+			country_event = {
+				id = flavor_mim.12
+			}
+		}
+	}
+	
+	MIM_fool_the_detective_satori = {
+		icon = mission_touhou_mizuchi
+		required_missions = { MIM_the_new_gensokyo }
+		position = 7
+		provinces_to_highlight = {
+			province_id = 5011
+		}
+		trigger = {
+			5011 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.13
+			}
+			define_general = {
+				name = "Mizuchi Miyadeguchi"
+				female = yes
+				shock = 1
+				fire = 1
+				manuever = 4
+				siege = 4
+				trait = th_jailbreak_king_personality
+			}
+		}
+	}
+	
+	MIM_master_of_gensokyo = {
+		icon = mission_touhou_mistress_mima
+		required_missions = {
+			MIM_tease_reimu
+			MIM_fool_the_detective_satori
+			MIM_outwit_the_yamaxanadu
+		}
+		position = 8
+		trigger = {
+			government_rank = 3
+			custom_trigger_tooltip = {
+				tooltip = MIM_master_of_gensokyo_tt
+				NOT = {
+					any_known_country = {
+						capital_scope = {
+							continent = gensokyo_continent
+						}
+						total_development = ROOT
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+			}
+			num_of_owned_provinces_with = {
+				continent = gensokyo_continent
+				value = 150
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.14
+			}
+		}
+	}
+
+	MIM_the_hunt_for_the_maids = {
+		icon = mission_touhou_army
+		required_missions = {}
+		position = 9
+		trigger = {
+			total_own_and_non_tributary_subject_development = 200
+		}
+		effect = {
+			Scarlet_island = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			mashriq_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			egypt_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			arabia_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			syria_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			palestine_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			trans_jordan_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	MIM_all_maids_assembled = {
+		icon = mission_touhou_maids_collection
+		required_missions = { MIM_the_hunt_for_the_maids }
+		position = 10
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = MIM_all_maids_assembled_tooltip
+				check_variable = {
+					which = MIM_maids_counter
+					value = 6
+				}
+			}
+		}
+		effect = {
+			mim_gain_new_skill_reward = yes
+			add_country_modifier = {
+				name = mim_all_maids_assembled
+				duration = -1
+			}
+		}
+	}
+}
+
+mim_fourth_slot = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = MIM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	MIM_seeds_of_chaos = {
+		icon = mission_touhou_yuuka_empire
+		required_missions = { 
+			MIM_armies_of_mima
+			MIM_ghostly_fleet
+		}
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				area = Sunny_plains
+				area = Gengetsu_state
+				area = Perfect_cut_coast
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Sunny_plains
+					area = Gengetsu_state
+					area = Perfect_cut_coast
+				}
+				value = 8
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.15
+			}
+			Eientei_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Bamboo_forest_of_the_lost = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Fujiwara_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	MIM_guts_of_the_immortals = {
+		icon = mission_touhou_empty_potion
+		required_missions = { MIM_seeds_of_chaos }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				area = Eientei_state
+				area = Bamboo_forest_of_the_lost
+				area = Fujiwara_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Eientei_state
+					area = Bamboo_forest_of_the_lost
+					area = Fujiwara_state
+				}
+				value = 10
+			}
+			4991 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			4997 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.16
+			}
+			moon_continent = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	MIM_power_of_the_moon = {
+		icon = mission_touhou_moon_land
+		required_missions = { MIM_guts_of_the_immortals }
+		position = 4
+		provinces_to_highlight = {
+			continent = moon_continent
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 5320
+			owns_or_non_sovereign_subject_of = 5322
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				continent = moon_continent
+				value = 10
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.17
+			}
+		}
+	}
+	
+	MIM_magical_power = {
+		icon = mission_touhou_iku
+		required_missions = {
+			MIM_power_of_the_moon
+		}
+		position = 5
+		provinces_to_highlight = {
+			OR = {
+				area = Dragon_islands
+				area = Eastern_dragon_islands
+				area = Western_dragon_islands
+			}
+			controller = {
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+		trigger = {
+			Dragon_islands = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						AND = {
+							NOT = { owns = PREV }
+							alliance_with = ROOT
+						}
+					}
+				}
+				type = all
+			}
+			Eastern_dragon_islands = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						AND = {
+							NOT = { owns = PREV }
+							alliance_with = ROOT
+						}
+					}
+				}
+				type = all
+			}
+			Western_dragon_islands = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						AND = {
+							NOT = { owns = PREV }
+							alliance_with = ROOT
+						}
+					}
+				}
+				type = all
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.19
+			}
+		}
+	}
+
+	MIM_capture_sakuya = {
+		icon = mission_touhou_sakuya
+		required_missions = {}
+		position = 10
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4968
+				province_id = 5074
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			mission_completed = MIM_the_hunt_for_the_maids
+			owns_core_province = 4968
+			owns_core_province = 5074	
+		}
+		effect = {
+			add_country_modifier = {
+				name = "mim_scarlet_devil_mansion_maid"
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = MIM_maids_counter
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+mim_fith_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = MIM
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	MIM_ghostly_fleet = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
+		position = 1
+		trigger = {
+			num_of_total_ports = 10
+			navy_size_percentage = 0.9
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = mim_chose_spell_school_tt
+					OR = {
+						has_country_flag = th_specialized_for_age_of_discovery
+						has_country_flag = th_specialized_for_age_of_reformation
+						has_country_flag = th_specialized_for_age_of_absolutism
+						has_country_flag = th_specialized_for_age_of_revolutions
+					}
+				}
+			}
+		}
+		effect = {
+			add_prestige = 15
+			create_explorer = { tradition = 30 }
+			country_event = {
+				id = flavor_mim.20
+			}
+		}
+	}
+	
+	MIM_break_through_the_barrier = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { MIM_ghostly_fleet }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+		}
+	}
+	
+	MIM_beyond_the_veil = {
+		icon = mission_corsairs_of_the_north_sea
+		required_missions = { MIM_break_through_the_barrier }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				province_id = 1469
+				province_id = 1580
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			has_discovered = 1469
+			has_discovered = 1580
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.21
+			}
+		}
+	}
+	
+	MIM_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { MIM_beyond_the_veil }
+		position = 4
+		provinces_to_highlight = {
+			OR = {
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
+			}
+			country_event = { id = TH_mission_events.4 }			
+		}
+	}
+	
+	MIM_the_humans_of_the_outworld = {
+		icon = mission_touhou_evil_mima
+		required_missions = { MIM_discover_europe }
+		position = 5
+		provinces_to_highlight = {
+			NOT = { continent = gensokyo_continent }
+			NOT = { continent = moon_continent }
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				NOT = { continent = gensokyo_continent }
+				NOT = { continent = moon_continent }
+				value = 10
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
+			add_country_modifier = {
+				name = mim_management_of_the_outworld
+				duration = -1
+			}
+		}
+	}
+	
+	MIM_perfect_magic_class = {
+		icon = mission_touhou_power_of_mima
+		required_missions = {  }
+		position = 6
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+			NOT = { has_building = university }
+		}
+		trigger = {
+			capital_scope = {
+				has_building = university
+			}
+			OR = {
+				NOT = { has_government_attribute = th_has_spell_schools }
+				custom_trigger_tooltip = {
+					tooltip = MIM_perfect_magic_class_tt
+					check_variable = {
+						which = th_magic_school_total_skill_points
+						value = 4
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.22
+			}
+		}
+	}
+	
+	MIM_outwit_the_yamaxanadu = {
+		icon = mission_touhou_yama_of_gensokyo
+		required_missions = { MIM_the_new_gensokyo }
+		position = 7
+		provinces_to_highlight = {
+			province_id = 4982
+		}
+		trigger = {
+			4982 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_mim.23
+			}
+		}
+	}
+
+	MIM_capture_yumeko = {
+		icon = mission_touhou_yumeko
+		required_missions = {}
+		position = 9
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5208
+				province_id = 5214
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			mission_completed = MIM_the_hunt_for_the_maids
+			owns_core_province = 5208
+			owns_core_province = 5214	
+		}
+		effect = {
+			add_country_modifier = {
+				name = "mim_makaian_maid"
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = MIM_maids_counter
+					value = 1
+				}
+			}
+		}
+	}
+
+	MIM_capture_vivit = {
+		icon = mission_touhou_vivit
+		required_missions = {}
+		position = 10
+		provinces_to_highlight = {
+			province_id = 2327
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			mission_completed = MIM_the_hunt_for_the_maids
+			owns_core_province = 2327
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 20
+				OR = {
+					region = mashriq_region
+					region = egypt_region
+					region = arabia_region 
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "mim_cactus_robot_maid"
+				duration = 5475
+			}
+			hidden_effect = {
+				change_variable = {
+					which = MIM_maids_counter
+					value = 1
+				}
+			}
+		}
+	}
+}

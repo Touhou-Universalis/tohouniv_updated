@@ -36,6 +36,9 @@ personal_union = {}
 client_vassal = {}
 client_march = {}
 colony = {}
+crown_colony = {}
+private_enterprise = {}
+self_governing_colony = {}
 tributary_state = {}
 th_yukari_daimyo = {}
 th_yukari_puppet_state = {}
@@ -48,6 +51,12 @@ th_trade_union = {}
 th_yuuka_gatekeeper = {}
 th_rebellious_subject = {}
 th_pet_state = {}
+th_sister_state = {}
+th_yama_sphere_of_influence = {}
+th_yama_subject_to_law = {}
+th_yama_executor = {}
+th_shinigami_subject = {}
+th_exarch_subject = {}
 
 default = {
 	# Graphics:
@@ -103,7 +112,6 @@ default = {
 	liberty_desire_development_ratio = 0.0
 	liberty_desire_same_dynasty = 0.0
 	pays_overlord = 0.0									# 1.0 represents the amount payed by vassals
-	forcelimit_bonus = 0.0								# 1.0 represents bonus from having a vassal
 	military_focus = 1.0								# How much the AI subject should spend etc. on army and forts. 0 should make them spend nothing. Very high values will probably not make a big difference since there will be sanity checks.
 
 	relative_power_class = 1 							# See description above
@@ -284,6 +292,7 @@ th_yukari_puppet_state = {
 	cities_required_for_bonuses = 10
 	trust_on_start = 0
 	max_government_rank = 0
+	extend_trading_range = yes
 	
 	base_liberty_desire = 0.0
 	military_focus = 1.2
@@ -375,6 +384,7 @@ th_yukari_march = {
 	can_be_annexed = yes
 	forcelimit_to_overlord = 0.2
 	max_government_rank = 0
+	extend_trading_range = yes
 
 	relative_power_class = 1
 
@@ -456,6 +466,7 @@ th_special_march = {
 	can_have_subjects_of_other_types = yes
 	can_use_claims = yes
 	overlord_protects_external = yes
+	extend_trading_range = yes
 
 	pays_overlord = 0.25
 	military_focus = 1.5
@@ -529,6 +540,7 @@ th_satori_vassal = {
 	base_liberty_desire = 0.0
 	forcelimit_to_overlord = 0.15
 	can_be_annexed = yes
+	extend_trading_range = yes
 
 	# Subject Interactions:
 	subsidize_armies = yes
@@ -666,7 +678,6 @@ th_religious_tributary = {
 	overlord_can_fabricate_for = no
 	does_overlord_size_count_for_warscore_cost = no
 	can_concentrate_development = no
-	knowledge_sharing = yes
 	
 	liberty_desire_development_ratio = 0.175
 	trust_on_start = 0
@@ -912,11 +923,11 @@ th_trade_union = {	#TODO use it for HMC
 	max_government_rank = 0
 	uses_military_focus = no
 	can_set_mil_focus = no
+	extend_trading_range = yes
 
 	liberty_desire_development_ratio = 0.25
 	liberty_desire_same_dynasty = -5.0
 	pays_overlord = 1.0
-	forcelimit_bonus = 1.0
 	forcelimit_to_overlord = 0.1
 
 	relative_power_class = 0
@@ -960,6 +971,7 @@ th_yuuka_gatekeeper = {
 	can_be_annexed = yes
 	eats_overlords_colonies = yes
 	has_colonial_parent = yes
+	extend_trading_range = yes
 	
 	pays_overlord = 0.0
 	military_focus = 1.5
@@ -1044,13 +1056,13 @@ th_rebellious_subject = {
 	can_transfer_in_peace = no
 	can_set_mil_focus = no
 	can_concentrate_development = no
+	extend_trading_range = no
 
 	max_government_rank = 0
 	
 	base_liberty_desire = 30.0
 	liberty_desire_negative_prestige = 1.0
 	pays_overlord = 0
-	forcelimit_bonus = 0
 	forcelimit_to_overlord = 0.1
 
 	relative_power_class = 1
@@ -1096,6 +1108,7 @@ th_pet_state = {
 	contribute_to_capital = yes
 	force_isolation = no
 	conscript_general = yes
+	extend_trading_range = yes
 
 	# Modifiers:
 	modifier_overlord = clear #We don't want to duplicate the ones inherited from vassal
@@ -1154,10 +1167,10 @@ th_sister_state = {
 	does_overlord_size_count_for_warscore_cost = no
 	can_concentrate_development = no
 	military_focus = 1
-	base_liberty_desire = 0.0
 	liberty_desire_development_ratio = 0
 	forcelimit_to_overlord = 0.15
 	can_be_annexed = yes
+	extend_trading_range = yes
 	
 	overlord_opinion_modifier = is_tributary
 	subject_opinion_modifier = is_tributary
@@ -1221,6 +1234,444 @@ th_sister_state = {
 		trigger = {
 			NOT = {
 				development_of_overlord_fraction = 0.25
+			}
+		}
+		expiration_message_overlord = MARCHTOOLARGE
+		expiration_message_subject = MARCHTOOLARGEUS
+	}
+}
+
+th_yama_sphere_of_influence = {
+	#If similar subject added check if it needs to be added to these scripted triggers:
+	#is_subject_except_tributary_trigger
+	#is_free_or_tributary_trigger
+	copy_from = default
+
+	# Triggers:
+	is_potential_overlord = {
+		NOT = { 
+			is_subject_of_type = th_yama_sphere_of_influence
+		}
+	}
+	
+	# Graphics:
+	sprite = GFX_subject_tributary_state
+	diplomacy_overlord_sprite = GFX_diplomacy_leadtributary
+	diplomacy_subject_sprite = GFX_diplomacy_amtributary
+
+	# Properties:
+	can_fight_independence_war = yes
+	joins_overlords_wars = no
+	joins_colonial_wars = no
+	is_voluntary = no
+	overlord_can_attack = yes
+	takes_diplo_slot = no
+	base_liberty_desire = -25
+	can_release_in_peace = no
+	relative_power_class = 0
+	should_quit_wars_on_activation = yes
+	can_send_tribute = no
+	can_have_subjects_of_other_types = yes
+	uses_military_focus = no
+	overlord_protects_external = yes
+	counts_for_borders = yes
+	can_use_claims = no
+	share_rebel_popup = no
+	can_transfer_in_peace = no
+	can_set_mil_focus = no
+	can_send_missionary_to_subject = no
+	overlord_can_fabricate_for = no
+	does_overlord_size_count_for_warscore_cost = no
+	can_concentrate_development = no
+	
+	liberty_desire_development_ratio = 0
+	trust_on_start = 0
+	
+	overlord_opinion_modifier = is_tributary
+	subject_opinion_modifier = is_tributary
+	
+	can_fight = {
+		independent_nations = yes
+		same_overlord = th_yama_sphere_of_influence
+		other_overlord = all
+	}
+	can_rival = {
+		independent_nations = yes
+		same_overlord = th_yama_sphere_of_influence
+		other_overlord = all
+	}
+	can_ally = {
+		independent_nations = yes
+		same_overlord = th_yama_sphere_of_influence
+		other_overlord = all
+	}
+	can_marry = {
+		independent_nations = yes
+		same_overlord = th_yama_sphere_of_influence
+		other_overlord = all
+	}
+
+	# Subject Interactions:
+	# (immediate)
+	enforce_religion = no
+	grant_core_claim = no
+	bestow_gifts = no
+	send_additional_troops = no
+	demand_artifacts = no
+	demand_additional_tribute = no
+	block_settlement_growth = no
+	allow_settlement_growth = no
+	placate_rulers = no
+	knowledge_sharing = no
+	# (continuous)
+	embargo_rivals = no
+
+	# Modifiers:
+	modifier_subject = clear # Tributaries don't get the ordinary subject_nation penalty 
+}
+
+th_yama_subject_to_law = {
+	#If similar subject added check if it needs to be added to these scripted triggers:
+	#is_subject_except_tributary_trigger
+	#is_free_or_tributary_trigger
+	copy_from = default
+
+	# Triggers:
+	is_potential_overlord = {
+		NOT = { 
+			is_subject_of_type = th_yama_subject_to_law
+		}
+	}
+	
+	# Graphics:
+	sprite = GFX_subject_tributary_state
+	diplomacy_overlord_sprite = GFX_diplomacy_leadtributary
+	diplomacy_subject_sprite = GFX_diplomacy_amtributary
+
+	# Properties:
+	can_fight_independence_war = yes
+	joins_overlords_wars = no
+	joins_colonial_wars = no
+	is_voluntary = no
+	overlord_can_attack = yes
+	takes_diplo_slot = no
+	base_liberty_desire = -25
+	can_release_in_peace = no
+	relative_power_class = 0
+	should_quit_wars_on_activation = yes
+	can_send_tribute = no
+	can_have_subjects_of_other_types = yes
+	uses_military_focus = no
+	overlord_protects_external = yes
+	counts_for_borders = yes
+	can_use_claims = no
+	share_rebel_popup = no
+	can_transfer_in_peace = no
+	can_set_mil_focus = no
+	can_send_missionary_to_subject = no
+	overlord_can_fabricate_for = no
+	does_overlord_size_count_for_warscore_cost = no
+	can_concentrate_development = no
+	extend_trading_range = yes
+	
+	liberty_desire_development_ratio = 0
+	trust_on_start = 0
+	
+	overlord_opinion_modifier = is_tributary
+	subject_opinion_modifier = is_tributary
+	
+	can_fight = {
+		independent_nations = yes
+		other_overlord = all
+	}
+	can_rival = {
+		independent_nations = yes
+		other_overlord = all
+	}
+	can_ally = {
+		independent_nations = yes
+		same_overlord = th_yama_sphere_of_influence
+		other_overlord = all
+	}
+	can_marry = {
+		independent_nations = yes
+		same_overlord = th_yama_sphere_of_influence
+		other_overlord = all
+	}
+
+	# Subject Interactions:
+	# (immediate)
+	enforce_religion = no
+	grant_core_claim = no
+	bestow_gifts = no
+	send_additional_troops = no
+	demand_artifacts = no
+	demand_additional_tribute = no
+	block_settlement_growth = no
+	allow_settlement_growth = no
+	placate_rulers = no
+	knowledge_sharing = no
+	# (continuous)
+	embargo_rivals = no
+
+	# Modifiers:
+	modifier_subject = clear # Tributaries don't get the ordinary subject_nation penalty 
+}
+
+th_yama_executor = {
+	copy_from = vassal
+	
+	# Graphics:	#TODO
+	sprite = GFX_icon_special_march
+	diplomacy_overlord_sprite = GFX_diplomacy_lead_special_march
+	diplomacy_subject_sprite = GFX_diplomacy_am_special_march
+
+	# Properties:
+	has_power_projection = yes
+	takes_diplo_slot = yes
+	gives_daimyo_bonuses = no
+	separatists_become_subjects = no
+	allows_taking_land_without_independence = yes
+	can_have_subjects_of_other_types = yes
+	overlord_protects_external = yes
+	counts_for_borders = no
+	can_use_claims = no
+	can_transfer_in_peace = no
+
+	pays_overlord = 0.25
+	military_focus = 1.5
+	relative_power_class = 0
+	can_be_annexed = yes
+	forcelimit_to_overlord = 0.2
+	max_government_rank = 0
+	liberty_desire_development_ratio = 0.1
+	extend_trading_range = yes
+
+	# Subject Interactions:
+	scutage = yes
+	subsidize_armies = yes
+	fortify_march = yes
+	grant_core_claim = yes
+	grant_province = no
+	place_relative_on_throne = no
+	enforce_religion = yes
+	enforce_culture = no
+	seize_territory = no
+	
+	send_officers = yes
+
+	# Modifiers:
+	modifier_overlord = clear #We don't want to duplicate the ones inherited from vassal
+	modifier_subject = clear #Ditto
+	modifier_subject = {
+		modifier = subject_nation
+	}
+	modifier_overlord = {
+		modifier = march_subject
+	}
+	modifier_subject = {
+		modifier = th_executor_bonus
+	}
+	modifier_overlord = { 
+		modifier = th_yama_slightly_too_many_executor_provinces 
+		trigger = { 
+			ROOT = {
+				num_of_owned_provinces_with = {
+					continent = gensokyo_continent
+					NOT = { region = former_hell_region }
+					NOT = { region = hell_region }
+					NOT = { region = netherworld_region }
+					NOT = { area = Konngaras_state }
+					value = 5
+				}
+			} 
+		} 
+	}
+	modifier_overlord = { 
+		modifier = th_yama_too_many_executor_provinces 
+		trigger = { 
+			ROOT = {
+				num_of_owned_provinces_with = {
+					continent = gensokyo_continent
+					NOT = { region = former_hell_region }
+					NOT = { region = hell_region }
+					NOT = { region = netherworld_region }
+					NOT = { area = Konngaras_state }
+					value = 10
+				}
+			} 
+		} 
+	}
+	modifier_overlord = { 
+		modifier = th_yama_way_too_many_executor_provinces 
+		trigger = { 
+			ROOT = {
+				num_of_owned_provinces_with = {
+					continent = gensokyo_continent
+					NOT = { region = former_hell_region }
+					NOT = { region = hell_region }
+					NOT = { region = netherworld_region }
+					NOT = { area = Konngaras_state }
+					value = 15
+				}
+			} 
+		} 
+	}
+}
+
+th_shinigami_subject = {
+	copy_from = vassal
+	
+	# Graphics:	#TODO
+	sprite = GFX_icon_vassal
+	diplomacy_overlord_sprite = GFX_diplomacy_leadvassal
+	diplomacy_subject_sprite = GFX_diplomacy_amvassal
+
+	# Properties:
+	transfer_trade_if_merchant_republic = no
+	can_be_annexed = yes
+	has_power_projection = yes
+	gets_help_with_rebels = yes
+	forms_trade_companies = no
+	joins_overlords_wars = no
+	can_have_subjects_of_other_types = yes
+	can_transfer_in_peace = no
+	can_set_mil_focus = no
+	can_concentrate_development = no
+
+	max_government_rank = 0
+	
+	base_liberty_desire = -25.0
+	liberty_desire_negative_prestige = 0.0
+	pays_overlord = 0
+	forcelimit_to_overlord = 0.1
+
+	relative_power_class = 1
+	should_quit_wars_on_activation = yes
+
+	restoration_cb = cb_disloyal_vassal
+
+	# Subject Interactions:
+	embargo_rivals = no
+	support_loyalists = yes
+	bestow_gifts = yes
+	scutage = no
+	place_relative_on_throne = no
+	sacrifice_ruler = no
+	sacrifice_heir = no
+	divert_trade = no
+	seize_territory = no
+	
+	can_fight = {
+		independent_nations = yes
+		other_overlord = all
+	}
+	can_rival = {
+		independent_nations = yes
+		other_overlord = all
+	}
+	can_ally = {
+		independent_nations = yes
+		same_overlord = th_shinigami_subject
+		other_overlord = all
+	}
+	can_marry = {
+		independent_nations = yes
+		same_overlord = th_shinigami_subject
+		other_overlord = all
+	}
+
+	# Modifiers:
+	modifier_subject = {
+		modifier = vassal_nation
+	}
+	modifier_overlord = {
+		modifier = vassal_subject
+	}
+
+	overlord_opinion_modifier = is_vassal
+	subject_opinion_modifier = is_vassal
+}
+
+th_exarch_subject = {
+	copy_from = vassal
+	
+	# Graphics:	#TODO
+	sprite = GFX_icon_special_march
+	diplomacy_overlord_sprite = GFX_diplomacy_lead_special_march
+	diplomacy_subject_sprite = GFX_diplomacy_am_special_march
+
+	# Properties:
+	has_power_projection = yes
+	takes_diplo_slot = no
+	gives_daimyo_bonuses = no
+	transfer_trade_power = yes
+	separatists_become_subjects = no
+	allows_taking_land_without_independence = no
+	can_have_subjects_of_other_types = yes
+	can_use_claims = yes
+	overlord_protects_external = yes
+	extend_trading_range = yes
+
+	pays_overlord = 1
+	military_focus = 1.5
+	relative_power_class = 0
+	can_be_annexed = yes
+	forcelimit_to_overlord = 0.2
+	max_government_rank = 0
+	liberty_desire_development_ratio = 0
+
+	can_fight = {
+	}
+	can_rival = {
+		independent_nations = yes
+		other_overlord = all
+	}
+	can_ally = {
+	}
+	can_marry = {
+		same_overlord = th_exarch_subject
+	}
+
+	# Subject Interactions:
+	# (continuous)
+	embargo_rivals = yes
+	support_loyalists = yes
+	subsidize_armies = yes
+	scutage = yes
+	send_officers = yes
+	divert_trade= yes
+	# (immediate)
+	placate_rulers = yes
+	enforce_religion = yes
+	grant_province = yes
+	enforce_culture = no
+	fortify_march = yes
+	seize_territory = yes
+	grant_core_claim = yes
+	takeondebt = yes
+	bestow_gifts = yes
+	send_additional_troops = yes
+	press_sailors = yes
+	contribute_to_capital = yes
+	return_land = yes
+	conscript_general = yes
+	knowledge_sharing = yes
+
+	# Modifiers:
+	modifier_overlord = clear #We don't want to duplicate the ones inherited from vassal
+	modifier_subject = clear #Ditto
+	modifier_subject = {
+		modifier = subject_nation
+	}
+	modifier_overlord = {
+		modifier = march_subject
+	}
+	modifier_subject = {
+		modifier = march_bonus
+		trigger = {
+			NOT = {
+				development_of_overlord_fraction = 1.00
 			}
 		}
 		expiration_message_overlord = MARCHTOOLARGE

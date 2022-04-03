@@ -1,6 +1,20 @@
 #This file is for all submodders, who want to add new countries, which have respawnable rulers
 
-th_respawn_ruler_effect = {
+th_respawn_ruler_with_new_stats_effect = {
+	hidden_effect = {
+		set_variable = {
+			which = th_respawn_adm_stat
+			which = th_ruler_adm_stat
+		}
+		set_variable = {
+			which = th_respawn_dip_stat
+			which = th_ruler_dip_stat
+		}
+		set_variable = {
+			which = th_respawn_mil_stat
+			which = th_ruler_mil_stat
+		}
+	}
 	hidden_effect = {
 		remove_heir = { allow_new_heir = no }
 	}
@@ -196,7 +210,7 @@ th_respawn_ruler_effect = {
 		}
 		if = {
 			limit = {
-				NOT = { has_country_modifier = fom_magician_hourai_elixir }
+				has_country_modifier = fom_magician_hourai_elixir
 			}
 			define_ruler = {
 				name = "Marisa"
@@ -370,31 +384,54 @@ th_respawn_ruler_effect = {
 			}
 		}
 	}
-	else_if = {	#Tenshi
+	else_if = { #Tenshi / Iku
 		limit = {
 			OR = {
 				tag = HVR
 				was_tag = HVR
 			}
 		}
-		define_ruler = {
-			name = "Tenshi"
-			dynasty = "Hinanawi"
-			culture = Heavenish
-			adm = 3
-			dip = 5
-			mil = 6
-			age = 20
-			claim = 100
-			female = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = hvr_cannot_get_tenshi }
+			}
+			define_ruler = { #Tenshi
+				name = "Tenshi"
+				dynasty = "Hinanawi"
+				culture = Heavenish
+				adm = 3
+				dip = 5
+				mil = 6
+				age = 20
+				claim = 100
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+			}
+			add_ruler_personality = babbling_buffoon_personality
+			add_ruler_personality = free_thinker_personality
 		}
-		hidden_effect = {
-			add_ruler_personality = immortal_personality
-			set_ruler_flag = touhou_character_ruler
-			set_ruler_flag = touhou_original_ruler
+		else = {
+			define_ruler = { #Iku
+				name = "Iku"
+				dynasty = "Nagae"
+				culture = Youkai
+				adm = 5
+				dip = 6
+				mil = 4
+				age = 20
+				claim = 100
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+			}
 		}
-		add_ruler_personality = babbling_buffoon_personality
-		add_ruler_personality = free_thinker_personality
 	}
 	else_if = {	#Junko
 		limit = {
@@ -986,6 +1023,30 @@ th_respawn_ruler_effect = {
 			set_ruler_flag = touhou_original_ruler
 		}
 	}
+	else_if = {	#Yuuma
+		limit = {
+			OR = {
+				tag = GYK
+				was_tag = GYK
+			}
+		}
+		define_ruler = {
+			name = "Yuuma"
+			dynasty = "Toutetsu"
+			culture = Higanean
+			adm = 6
+			dip = 4
+			mil = 4
+			age = 20
+			claim = 100
+			female = yes
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+	}
 	else_if = {	#Sakata
 		limit = {
 			OR = {
@@ -1255,6 +1316,54 @@ th_respawn_ruler_effect = {
 			set_ruler_flag = touhou_original_ruler
 		}
 	}
+	else_if = {	#Kutaka
+		limit = {
+			OR = {
+				tag = GGS
+				was_tag = GGS
+			}
+		}
+		define_ruler = {
+			name = "Kutaka"
+			dynasty = "Niwatari"
+			culture = Higanean
+			adm = 5
+			dip = 5
+			mil = 4
+			age = 15
+			claim = 100
+			female = yes
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+	}
+	else_if = {	#Komachi
+		limit = {
+			OR = {
+				tag = SNZ
+				was_tag = SNZ
+			}
+		}
+		define_ruler = {
+			name = "Komachi"
+			dynasty = "Onozuka"
+			culture = Higanean
+			adm = 3
+			dip = 5
+			mil = 6
+			age = 15
+			claim = 100
+			female = yes
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+	}
 	else_if = {	#ZUN
 		limit = {
 			OR = {
@@ -1282,9 +1391,91 @@ th_respawn_ruler_effect = {
 	else = {
 		custom_tooltip = th_debug_effect_should_not_occur
 	}
+	hidden_effect = {
+		export_to_variable = {
+			variable_name = th_start_stat_adm
+			value = ADM
+			who = ROOT
+		}
+		export_to_variable = {
+			variable_name = th_start_stat_dip
+			value = DIP
+			who = ROOT
+		}
+		export_to_variable = {
+			variable_name = th_start_stat_mil
+			value = MIL
+			who = ROOT
+		}
+		subtract_variable = {
+			which = th_respawn_adm_stat
+			which = th_start_stat_adm
+		}
+		subtract_variable = {
+			which = th_respawn_dip_stat
+			which = th_start_stat_dip
+		}
+		subtract_variable = {
+			which = th_respawn_mil_stat
+			which = th_start_stat_mil
+		}
+	}
+	while = {
+		limit = {
+			check_variable = {
+				which = th_respawn_adm_stat
+				value = 1
+			}
+		}
+		change_adm = 1
+		subtract_variable = {
+			which = th_respawn_adm_stat
+			value = 1
+		}
+	}
+	while = {
+		limit = {
+			check_variable = {
+				which = th_respawn_dip_stat
+				value = 1
+			}
+		}
+		change_dip = 1
+		subtract_variable = {
+			which = th_respawn_dip_stat
+			value = 1
+		}
+	}
+	while = {
+		limit = {
+			check_variable = {
+				which = th_respawn_mil_stat
+				value = 1
+			}
+		}
+		change_mil = 1
+		subtract_variable = {
+			which = th_respawn_mil_stat
+			value = 1
+		}
+	}
 }
 
-th_respawn_heir_effect = {
+th_respawn_heir_with_new_stats_effect = {
+	hidden_effect = {
+		set_variable = {
+			which = th_respawn_heir_adm_stat
+			which = th_heir_adm_stat
+		}
+		set_variable = {
+			which = th_respawn_heir_dip_stat
+			which = th_heir_dip_stat
+		}
+		set_variable = {
+			which = th_respawn_heir_mil_stat
+			which = th_heir_mil_stat
+		}
+	}
 	if = {	#Akis
 		limit = {
 			OR = {
@@ -1564,110 +1755,6 @@ th_respawn_heir_effect = {
 			set_heir_flag = touhou_original_heir
 		}
 	}
-}
-
-th_respawn_ruler_with_new_stats_effect = {
-	hidden_effect = {
-		set_variable = {
-			which = th_respawn_adm_stat
-			which = th_ruler_adm_stat
-		}
-		set_variable = {
-			which = th_respawn_dip_stat
-			which = th_ruler_dip_stat
-		}
-		set_variable = {
-			which = th_respawn_mil_stat
-			which = th_ruler_mil_stat
-		}
-	}
-	th_respawn_ruler_effect = yes
-	hidden_effect = {
-		export_to_variable = {
-			variable_name = th_start_stat_adm
-			value = ADM
-			who = ROOT
-		}
-		export_to_variable = {
-			variable_name = th_start_stat_dip
-			value = DIP
-			who = ROOT
-		}
-		export_to_variable = {
-			variable_name = th_start_stat_mil
-			value = MIL
-			who = ROOT
-		}
-		subtract_variable = {
-			which = th_respawn_adm_stat
-			which = th_start_stat_adm
-		}
-		subtract_variable = {
-			which = th_respawn_dip_stat
-			which = th_start_stat_dip
-		}
-		subtract_variable = {
-			which = th_respawn_mil_stat
-			which = th_start_stat_mil
-		}
-	}
-	while = {
-		limit = {
-			check_variable = {
-				which = th_respawn_adm_stat
-				value = 1
-			}
-		}
-		change_adm = 1
-		subtract_variable = {
-			which = th_respawn_adm_stat
-			value = 1
-		}
-	}
-	while = {
-		limit = {
-			check_variable = {
-				which = th_respawn_dip_stat
-				value = 1
-			}
-		}
-		change_dip = 1
-		subtract_variable = {
-			which = th_respawn_dip_stat
-			value = 1
-		}
-	}
-	while = {
-		limit = {
-			check_variable = {
-				which = th_respawn_mil_stat
-				value = 1
-			}
-		}
-		change_mil = 1
-		subtract_variable = {
-			which = th_respawn_mil_stat
-			value = 1
-		}
-	}
-}
-
-th_respawn_heir_with_new_stats_effect = {
-	hidden_effect = {
-		set_variable = {
-			which = th_respawn_heir_adm_stat
-			which = th_heir_adm_stat
-		}
-		set_variable = {
-			which = th_respawn_heir_dip_stat
-			which = th_heir_dip_stat
-		}
-		set_variable = {
-			which = th_respawn_heir_mil_stat
-			which = th_heir_mil_stat
-		}
-	}
-	th_respawn_heir_effect = yes
 	hidden_effect = {
 		export_to_variable = {
 			variable_name = th_heir_start_stat_adm

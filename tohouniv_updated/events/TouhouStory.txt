@@ -3,7 +3,6 @@
 namespace = touhou_events
 
 ###OLD MAPS FROM JAPAN###
-
 country_event = {
 	id = touhou_events.1
 	title = "touhou_events.1.t"
@@ -11,7 +10,7 @@ country_event = {
 	picture = TOUHOUMAPS_eventPicture
 
 	trigger = {
-		capital_scope = {  th_gensokyo_or_moon_continent = yes  }
+		capital_scope = { th_gensokyo_or_moon_continent = yes }
 		NOT = { has_country_flag = TH_has_discovered_japan }
 	}
 	
@@ -19,7 +18,7 @@ country_event = {
 		months = 1
 	}
 
-	Option = {
+	option = {
 		name = "touhou_events.1.a" #Interesting.
 
 		set_country_flag = TH_has_discovered_japan 
@@ -42,7 +41,6 @@ country_event = {
 }
 
 ###FORMATION OF GENSOKYO###
-
 country_event = {
 	id = touhou_events.2
 	title = "touhou_events.2.t"
@@ -53,7 +51,7 @@ country_event = {
 
 	option = {	#We are Gensokyo
 		name = "touhou_events.2.a"
-		
+		th_disable_incidents = yes
 		change_tag = GNK
 		ai_chance = {
 			factor = 100
@@ -62,8 +60,626 @@ country_event = {
 
 	option = {	#We shouldn't lose our way
 		name = "touhou_events.2.b"
+		th_disable_incidents = yes
 		ai_chance = {
 			factor = 0
+		}
+	}
+}
+
+###WILD YOUKAI MUTANT CAUSES PROBLEMS###
+country_event = {
+	id = touhou_events.3
+	title = "touhou_events.3.t"
+	desc = "touhou_events.3.desc"
+	picture = YOUKAIMOUNTAIN_eventPicture
+	is_triggered_only = yes
+	goto = feral_youkai_province
+	mean_time_to_happen = {
+		days = 1
+	}
+	trigger = {
+		NOT = { has_country_flag = th_has_wild_youkai_in_country }
+		num_of_cities = 4
+		NOT = { primary_culture = Youkai }
+		OR = {
+			has_cultural_union = no
+			NOT = { culture_group = Gensokyan_culture }
+		}
+		NOT = { accepted_culture = Youkai }
+		any_owned_province = { continent = gensokyo_continent }
+		NOT = { any_owned_province = { has_province_modifier = th_feral_youkai_chaos } }
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { continent = gensokyo_continent }
+				save_event_target_as = feral_youkai_province
+			}
+			set_country_flag = th_has_wild_youkai_in_country
+		}
+	}
+	option = { #We need somebody to deal with the feral youkai!
+		name = "touhou_events.3.a"
+		trigger = { NOT = { has_reform = Gensokyan_shrine_theocracy } }
+		event_target:feral_youkai_province = {
+			add_province_modifier = {
+				name = th_feral_youkai_chaos
+				duration = 9125
+			}
+		}
+		if = {
+			limit = { any_known_country = { has_reform = Gensokyan_shrine_theocracy } }
+			random_known_country = {
+				limit = { has_reform = Gensokyan_shrine_theocracy }
+				country_event = {
+					id = touhou_events.4
+					days = 21
+				}
+			}
+		}
+		else = {
+			custom_tooltip = touhou_events.3.a.tt
+			hidden_effect = {
+				country_event = {
+					id = touhou_events.8
+					days = 21
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				all_known_country = {
+					OR = {
+						NOT = { has_reform = Gensokyan_shrine_theocracy }
+						is_enemy = ROOT
+						is_rival = ROOT
+						ai_attitude = { who = ROOT attitude = attitude_hostile }
+						ai_attitude = { who = ROOT attitude = attitude_outraged }
+					}
+				}
+			}
+		}
+	}
+	option = { #I can take on with this beast myself!
+		name = "touhou_events.3.b"
+		trigger = { NOT = { has_reform = Gensokyan_shrine_theocracy } }
+		event_target:feral_youkai_province = {
+			add_province_modifier = {
+				name = th_feral_youkai_chaos
+				duration = 9125
+			}
+		}
+		custom_tooltip = touhou_events.3.b.tt
+		hidden_effect = {
+			country_event = {
+				id = touhou_events.10
+				days = 50
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				any_known_country = {
+					has_reform = Gensokyan_shrine_theocracy
+					NOT = { is_enemy = ROOT }
+					NOT = { is_rival = ROOT }
+					NOT = { ai_attitude = { who = ROOT attitude = attitude_hostile } }
+					NOT = { ai_attitude = { who = ROOT attitude = attitude_outraged } }
+				}
+			}
+		}
+	}
+	option = { #Just another tuesday
+		name = "touhou_events.3.c"
+		trigger = { has_reform = Gensokyan_shrine_theocracy }
+		event_target:feral_youkai_province = {
+			add_province_modifier = {
+				name = th_feral_youkai_chaos
+				duration = 9125
+			}
+		}
+		custom_tooltip = touhou_events.3.b.tt
+		hidden_effect = {
+			country_event = {
+				id = touhou_events.7
+				days = 50
+			}
+		}
+
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Shrine Maiden path
+country_event = {
+	id = touhou_events.4
+	title = "touhou_events.4.t"
+	desc = "touhou_events.4.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {	#Just a simple feral youkai? This should be easy
+		name = "touhou_events.4.a"
+		custom_tooltip = touhou_events.4.a.tt
+		hidden_effect = {
+			country_event = {
+				id = touhou_events.5
+				days = 10
+			}
+			FROM = {
+				country_event = {
+					id = touhou_events.6
+					days = 10
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Terminates the Beast with ease!
+country_event = {
+	id = touhou_events.5
+	title = "touhou_events.5.t"
+	desc = "touhou_events.5.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {	#Just a simple feral youkai? This should be easy
+		name = "touhou_events.5.a"
+		if = {
+			limit = {
+				has_country_flag = th_increased_youkai_hunt_income
+			}
+			if = {
+				limit = {
+					NOT = { monthly_income = 10 }
+				}
+				add_treasury = 170
+			}
+			else = {
+				add_years_of_income = 0.8
+			}
+		}
+		else = {
+			add_treasury = 75
+		}
+		hidden_effect = {
+			random = {
+				country_event = {
+					id = touhou_events.14
+					days = 90
+				}
+				chance = 1
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#The Shrine Maiden defeated the wild youkai!
+country_event = {
+	id = touhou_events.6
+	title = "touhou_events.6.t"
+	desc = "touhou_events.6.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	goto = feral_youkai_province
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = th_feral_youkai_chaos
+				}
+				save_event_target_as = feral_youkai_province
+			}
+		}
+	}
+
+	option = {	#Toss a coin to your Shrine Maiden
+		name = "touhou_events.6.a"
+		add_years_of_income = -0.5
+		event_target:feral_youkai_province = {
+			remove_province_modifier = th_feral_youkai_chaos
+		}
+		add_stability_or_adm_power = yes
+		hidden_effect = { clr_country_flag = th_has_wild_youkai_in_country }
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Shrine Maiden deals with her own problems
+country_event = {
+	id = touhou_events.7
+	title = "touhou_events.7.t"
+	desc = "touhou_events.7.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	goto = feral_youkai_province
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = th_feral_youkai_chaos
+				}
+				save_event_target_as = feral_youkai_province
+			}
+		}
+	}
+
+	option = {	#That was quite easy
+		name = "touhou_events.7.a"
+		event_target:feral_youkai_province = {
+			remove_province_modifier = th_feral_youkai_chaos
+		}
+		add_stability_or_adm_power = yes
+		hidden_effect = {
+			clr_country_flag = th_has_wild_youkai_in_country
+			random = {
+				country_event = {
+					id = touhou_events.14
+					days = 90
+				}
+				chance = 1
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#A youkai hunter appears at the court
+country_event = {
+	id = touhou_events.8
+	title = "touhou_events.8.t"
+	desc = "touhou_events.8.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	goto = ROOT
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = th_feral_youkai_chaos
+				}
+				save_event_target_as = feral_youkai_province
+			}
+		}
+	}
+
+	option = {	#Toss a coin to your youkai hunter!
+		name = "touhou_events.8.a"
+		add_years_of_income = -1
+		custom_tooltip = touhou_events.8.a.tt
+		hidden_effect = {
+			country_event = {
+				id = touhou_events.9
+				days = 60
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {	#The beast is not worth the financial cost
+		name = "touhou_events.8.b"
+		custom_tooltip = touhou_events.8.b.tt
+		event_target:feral_youkai_province = {
+			add_devastation = 20
+			extend_province_modifier = {
+				name = th_feral_youkai_chaos
+				duration = 3650
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#The Youkai Hunter defeated the wild youkai!
+country_event = {
+	id = touhou_events.9
+	title = "touhou_events.9.t"
+	desc = "touhou_events.9.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	goto = feral_youkai_province
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = th_feral_youkai_chaos
+				}
+				save_event_target_as = feral_youkai_province
+			}
+		}
+	}
+
+	option = {	#That was quite easy
+		name = "touhou_events.9.a"
+		event_target:feral_youkai_province = {
+			remove_province_modifier = th_feral_youkai_chaos
+		}
+		add_stability_or_adm_power = yes
+		hidden_effect = { clr_country_flag = th_has_wild_youkai_in_country }
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Enter a danmaku fight with the youkai!
+country_event = {
+	id = touhou_events.10
+	title = "touhou_events.10.t"
+	desc = "touhou_events.10.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	
+	is_triggered_only = yes	
+	
+	immediate = {
+		hidden_effect = {
+			export_to_variable = {
+				which = th_youkai_hunt_own_development
+				value = total_development
+				who = ROOT
+			}
+			if = {
+				limit = {
+					total_development = 300
+				}
+				multiply_variable = {
+					which = th_youkai_hunt_own_development
+					value = 1.5
+				}
+				change_variable = {
+					which = th_youkai_hunt_own_development
+					value = 1550
+				}
+			}
+			else = {
+				multiply_variable = {
+					which = th_youkai_hunt_own_development
+					value = 4
+				}
+				change_variable = {
+					which = th_youkai_hunt_own_development
+					value = 800
+				}
+			}
+			FROM = {
+				set_variable = {
+					which = th_youkai_hunt_youkai_development
+					value = 0
+				}
+			}
+			th_getruler_fighting_skill = {
+				skill_boni = 0
+                type = normal
+            }            
+			set_variable = {
+				which = th_youkai_hunt_youkai_combat_skills
+				value = 0
+            }
+            change_variable = {
+                which = th_youkai_hunt_youkai_combat_skills
+                which = th_youkai_hunt_youkai_development
+            }
+			th_defineopponent_fighting_skill = {
+				variable = th_youkai_hunt_youkai_combat_skills
+				type = normal
+			}
+		}
+	}
+
+	option = {	#Time to face the beast
+		name = "touhou_events.10.a"
+		custom_tooltip = touhou_events.10.a.tt
+        highlight = yes
+		th_danmaku_normal_fight_ruler_and_opponent = {
+            win_event = touhou_events.11
+            draw_event = touhou_events.12
+            defeat_event = touhou_events.13
+            days = 1
+        }
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Victory over the beast
+country_event = {
+	id = touhou_events.11
+	title = "touhou_events.11.t"
+	desc = "touhou_events.11.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	goto = feral_youkai_province
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = th_feral_youkai_chaos
+				}
+				save_event_target_as = feral_youkai_province
+			}
+		}
+	}
+
+	option = {	#Its corpse shall make a great trophy!
+		name = "touhou_events.11.a"
+		add_years_of_income = 1
+		event_target:feral_youkai_province = {
+			remove_province_modifier = th_feral_youkai_chaos
+		}
+		add_stability_or_adm_power = yes
+		hidden_effect = { clr_country_flag = th_has_wild_youkai_in_country }
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Draw over the beast
+country_event = {
+	id = touhou_events.12
+	title = "touhou_events.12.t"
+	desc = "touhou_events.12.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	goto = feral_youkai_province
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = th_feral_youkai_chaos
+				}
+				save_event_target_as = feral_youkai_province
+			}
+		}
+	}
+
+	option = {	#At least I managed to scare the beast off
+		name = "touhou_events.12.a"
+		event_target:feral_youkai_province = {
+			remove_province_modifier = th_feral_youkai_chaos
+		}
+		hidden_effect = { clr_country_flag = th_has_wild_youkai_in_country }
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Defeat against the beast
+country_event = {
+	id = touhou_events.13
+	title = "touhou_events.13.t"
+	desc = "touhou_events.13.desc"
+	picture = GENSOKYOSGUARDIAN_eventPicture
+	goto = feral_youkai_province
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = th_feral_youkai_chaos
+				}
+				save_event_target_as = feral_youkai_province
+			}
+		}
+	}
+
+	option = {	#This hurts my pride more than I would like to admit
+		name = "touhou_events.13.a"
+		event_target:feral_youkai_province = {
+			remove_province_modifier = th_feral_youkai_chaos
+		}
+		add_years_of_income = -1
+		add_prestige = -15
+		hidden_effect = { clr_country_flag = th_has_wild_youkai_in_country }
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Toss a coin to your miko!
+country_event = {
+	id = touhou_events.14
+	title = "touhou_events.14.t"
+	desc = "touhou_events.14.desc"
+	picture = {
+		picture = REIMU_eventPicture
+		trigger = {
+			th_is_or_was_tag = {
+				tag = HKR
+			}
+		}
+	}
+	picture = {
+		picture = SANAEBOSS_eventPicture
+		trigger = {
+			th_is_or_was_tag = {
+				tag = MRY
+			}
+		}
+	}
+	picture = {
+		picture = TOUHOUMAPS_eventPicture
+		trigger = {
+			NOT = {
+				th_is_or_was_tag = {
+					tag = HKR
+				}
+			}
+			NOT = {
+				th_is_or_was_tag = {
+					tag = MRY
+				}
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+	trigger = {
+		is_female = yes
+	}
+
+	option = {	#I love the sound of gold
+		name = "touhou_events.14.a"
+		if = {
+			limit = {
+				has_country_flag = th_increased_youkai_hunt_income
+			}
+			add_treasury = 900
+		}
+		else = {
+			add_treasury = 600
+		}
+		add_prestige = 25
+
+		ai_chance = {
+			factor = 1
 		}
 	}
 }

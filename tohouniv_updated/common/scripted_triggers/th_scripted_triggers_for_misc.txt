@@ -53,11 +53,122 @@ th_is_gensokyan_or_japanese = {
 	}
 }
 
+th_province_is_or_accepts_culture = {
+	OR = {
+		has_owner_culture = yes
+		has_owner_accepted_culture = yes
+	}
+}
+
+th_secondary_religion_group = {
+	[[christian]
+		OR = {
+			secondary_religion = catholic
+			secondary_religion = hussite
+			secondary_religion = coptic
+			secondary_religion = orthodox
+			secondary_religion = protestant
+			secondary_religion = reformed
+			secondary_religion = anglican
+		}
+	]
+	[[muslim]
+		OR = {
+			secondary_religion = sunni
+			secondary_religion = shiite
+			secondary_religion = ibadi
+		}
+	]
+	[[eastern]
+		OR = {
+			secondary_religion = buddhism
+			secondary_religion = vajrayana
+			secondary_religion = mahayana
+			secondary_religion = confucianism
+			secondary_religion = shinto
+		}
+	]
+	[[dharmic]
+		OR = {
+			secondary_religion = hinduism
+			secondary_religion = sikhism
+		}
+	]
+	[[pagan]
+		OR = {
+			secondary_religion = animism
+			secondary_religion = shamanism
+			secondary_religion = totemism
+			secondary_religion = inti
+			secondary_religion = nahuatl
+			secondary_religion = mesoamerican_religion
+			secondary_religion = norse_pagan_reformed
+			secondary_religion = tengri_pagan_reformed
+			secondary_religion = dreamtime
+		}
+	]
+	[[jewish_group]
+		secondary_religion = jewish
+	]
+	[[zoroastrian_group]
+		secondary_religion = zoroastrian
+	]
+	[[Touhou]
+		OR = {
+			secondary_religion = th_hakureishinto
+			secondary_religion = th_moriyashinto
+			secondary_religion = th_oldhakurei
+			secondary_religion = th_shinkism
+			secondary_religion = th_christian
+			secondary_religion = th_buddhist
+			secondary_religion = th_taoist
+			secondary_religion = th_lunarian_religion
+		}
+	]
+}
+
+th_province_is_or_accepts_religion_group = {
+	custom_trigger_tooltip = {
+		tooltip = province_is_or_accepts_$religion_group$_tt
+		OR = {
+			AND = {
+				religion_group = $religion_group$
+				has_owner_religion = yes
+			}
+			AND = {
+				owner = { th_secondary_religion_group = { $religion_group$ = yes } }
+				OR = {
+					religion_group = $religion_group$
+					has_owner_religion = yes
+				}
+			}
+		}
+	}
+}
+
 ###IS CHRISTIAN###
 th_is_christian = {
 	OR = {
-		religion = th_christian
-		religion_group = christian
+		th_province_is_or_accepts_religion_group = {
+			religion_group = christian
+		}
+		AND = {
+			religion = th_christian
+			has_owner_religion = yes
+		}
+	}
+}
+
+###CAN USE DHARMIC###
+th_can_use_dharmic_monuments = {
+	OR = {
+		th_province_is_or_accepts_religion_group = {
+			religion_group = dharmic
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_can_use_dharmic_monuments_tt
+			owner = { has_country_flag = hig_can_use_dharmic_monuments }
+		}
 	}
 }
 
@@ -71,6 +182,101 @@ th_is_shinto = {
 	}
 }
 
+#Buddhism is its own can of worms due to the so many aspects of it
+#This was one of the few moments where it was almost worth considering putting Buddhism in its own religion group - almost
+province_is_buddhist_or_accepts_buddhism = {
+	OR = {
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_at
+			OR = {
+				AND = {
+					religion = buddhism
+					OR = {
+						has_owner_religion = yes
+						owner = { has_harmonized_with = buddhism }
+						secondary_religion = buddhism
+					}
+				}
+				AND = {
+					religion = vajrayana
+					OR = {
+						has_owner_religion = yes
+						owner = { has_harmonized_with = vajrayana }
+						secondary_religion = vajrayana
+					}
+				}
+				AND = {
+					religion = mahayana
+					OR = {
+						has_owner_religion = yes
+						owner = { has_harmonized_with = mahayana }
+						secondary_religion = mahayana
+					}
+				}
+				AND = {
+					religion = th_buddhist
+					OR = {
+						has_owner_religion = yes
+						owner = { has_harmonized_with = th_buddhist }
+						secondary_religion = th_buddhist
+					}
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_bt
+			owner = {
+				OR = {
+					has_harmonized_with = buddhism
+					has_harmonized_with = vajrayana
+					has_harmonized_with = mahayana
+					has_harmonized_with = th_buddhist
+				}
+			}
+			has_owner_religion = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_ct
+			owner = {
+				OR = {
+					secondary_religion = buddhism
+					secondary_religion = vajrayana
+					secondary_religion = mahayana
+					secondary_religion = th_buddhist
+				}
+			}
+			has_owner_religion = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_dt
+			religion = shinto
+			has_owner_religion = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_et
+			owner = { has_personal_deity = buddha }
+			has_owner_religion = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_ft
+			owner = { has_adopted_cult = buddhism_cult }
+			has_owner_religion = yes
+		}
+		#For the case the province has a religion which the player has already harmonized with and cannot convert
+		#It's a hidden trigger because the tooltip is already super flooded and it is incredibly niche
+		hidden_trigger = {
+			owner = {
+				OR = {
+					has_harmonized_with = buddhism
+					has_harmonized_with = vajrayana
+					has_harmonized_with = mahayana
+				}
+				has_harmonized_with = ROOT
+			}
+		}
+	}
+}
+
 ###PRIVILEGES###
 #Supports the following privileges
 # th_estate_nobles_third_eye
@@ -80,6 +286,10 @@ th_has_unlocked_privilege = {
 		tooltip = th_has_unlocked_$estate_privilege$_privilege_tt
 		has_country_flag = th_unlocked_$estate_privilege$_privilege
 	}
+}
+#Supports all reforms
+th_has_unlocked_privilege_no_tooltip = {
+	has_country_flag = th_unlocked_$estate_privilege$_privilege
 }
 
 ###MRY SHINTO TRIGGERS###
@@ -132,6 +342,22 @@ th_fuj_has_level = {
 	}
 }
 
+###HIG has any revokable reform###
+th_hig_has_revokable_reform_active = {
+	OR = {
+		has_estate_privilege = th_estate_yama_eternal_peace
+		has_estate_privilege = th_estate_yama_expand_roles
+		has_estate_privilege = th_estate_yama_centralize_gensokyan_authority
+		has_estate_privilege = th_estate_yama_establish_laws_of_war
+		has_estate_privilege = th_estate_yama_reform_the_judicative
+		has_estate_privilege = th_estate_yama_appoint_executor
+		has_estate_privilege = th_estate_yama_enforce_peace
+		has_estate_privilege = th_estate_yama_establish_lecturing
+		has_estate_privilege = th_estate_yama_internal_higan_reform
+		has_estate_privilege = th_estate_yama_regulate_conquest
+	}
+}
+
 ###PLEDGED TO RELIGION###
 th_religious_pledged = {
 	custom_trigger_tooltip = {
@@ -143,21 +369,6 @@ th_religious_pledged = {
 				has_country_modifier = th_subjugated_in_penance
 			}
 		}
-	}
-}
-
-###MASKED ILLUSION IS RULER###
-th_ruler_is_a_masked_illusion = {
-	custom_trigger_tooltip = {
-		tooltip = th_ruler_is_a_masked_illusion_tt
-		has_ruler_flag = th_a_feminist_major
-	}
-}
-
-th_ruler_is_not_a_masked_illusion = {
-	custom_trigger_tooltip = {
-		tooltip = th_ruler_is_not_a_masked_illusion_tt
-		NOT = { has_ruler_flag = th_a_feminist_major }
 	}
 }
 
@@ -281,6 +492,19 @@ th_is_allowed_to_recruit_mercenaries = {
 	NOT = { has_idea_group = LCU_ideas }
 	NOT = { has_country_flag = th_disabled_mercenaries }
 	NOT = { has_country_flag = scr_professional_meiling_troops_only }
+}
+
+###Supports following merc companies
+# merc_th_level_titania
+# merc_th_goliath_doll
+# merc_th_level_leviathan
+# merc_th_yukaris_royal_guard
+# merc_th_law_enforcers_of_higan
+th_unlocked_mercenary_company = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_unlocked_$mercenary_company$_tt
+		has_country_flag = th_unlock_$mercenary_company$
+	}
 }
 
 ###IS NOT AN OCCUPIED PROVINCE###
@@ -446,6 +670,22 @@ mry_uses_faith_power = {
 	}
 }
 
+mry_num_of_miracles_caused = {
+	if = {
+		limit = { mry_uses_faith_power = yes }
+		check_variable = {
+			which = mry_miracle_counter
+			value = $amount$
+		}
+	}
+	else = {
+		custom_trigger_tooltip = {
+			tooltip = mry_num_of_miracles_caused_tt
+			mry_uses_faith_power = yes
+		}
+	}
+}
+
 ###NET CUISINE MECHANIC###
 net_uses_cuisine_mechanic = {
 	custom_trigger_tooltip = {
@@ -480,6 +720,28 @@ net_has_cuisine_flag_with_no_modifier = {
 			NOT = { has_country_modifier = net_$cuisine$_cuisine_modifier }
 		}
 	]
+}
+
+###MIM MAGIC SCHOOL MECHANIC###
+#conjuration
+#evocation
+#divination
+#transmutation
+#enchanting
+#abjuration
+mim_has_not_reached_max_level_of_school = {
+	NOT = {		
+		check_variable = {
+			which = th_magic_school_$school$
+			value = 4
+		}
+	}
+}
+mim_has_reached_max_level_of_school = {
+	check_variable = {
+		which = th_magic_school_$school$
+		value = 4
+	}
 }
 
 th_can_convert_on_colonization_religion_check = {
@@ -714,6 +976,7 @@ th_is_not_free_merc_company = {
 	ROOT = { NOT = { mercenary_company = merc_th_goliath_doll } }
 	ROOT = { NOT = { mercenary_company = merc_th_level_titania } }
 	ROOT = { NOT = { mercenary_company = merc_th_level_leviathan } }
+	ROOT = { NOT = { mercenary_company = merc_th_law_enforcers_of_higan } }
 }
 
 th_has_final_tier_reforms_trigger = {
@@ -741,5 +1004,103 @@ th_has_final_tier_reforms_trigger = {
 			has_reform = TH_fairies_become_absolute_monarchy_reform
 			has_reform = TH_i_am_the_shrine
 		}
+	}
+}
+
+#Check if Peace is in Gensokyo
+# Countries of the Hell regions are not checked because they are HIG's territory
+# Fairies are not checked because nobody cares about them
+th_has_gensokyan_peace = {
+	4999 = { owner = { is_at_war = no } } #MRY
+	4965 = { owner = { is_at_war = no } } #KPP
+	5214 = { owner = { is_at_war = no } } #MKI
+	5183 = { owner = { is_at_war = no } } #OKR
+	5301 = { owner = { is_at_war = no } } #YUM
+	5035 = { owner = { is_at_war = no } } #NSC
+	5025 = { owner = { is_at_war = no } } #SNK
+	5033 = { owner = { is_at_war = no } } #MIM
+	5032 = { owner = { is_at_war = no } } #HVR
+	5148 = { owner = { is_at_war = no } } #THR
+	5160 = { owner = { is_at_war = no } } #GNU
+	5152 = { owner = { is_at_war = no } } #SFF
+	5128 = { owner = { is_at_war = no } } #RAI
+	5119 = { owner = { is_at_war = no } } #SEK
+	4991 = { owner = { is_at_war = no } } #EIT
+	4978 = { owner = { is_at_war = no } } #HMC
+	5129 = { owner = { is_at_war = no } } #KOG
+	4987 = { owner = { is_at_war = no } } #MYO
+	5136 = { owner = { is_at_war = no } } #KKO
+	5138 = { owner = { is_at_war = no } } #SKT
+	4964 = { owner = { is_at_war = no } } #TGU
+	5191 = { owner = { is_at_war = no } } #KSE
+	5187 = { owner = { is_at_war = no } } #YOF
+	5134 = { owner = { is_at_war = no } } #AKI
+	5132 = { owner = { is_at_war = no } } #OKI
+	5090 = { owner = { is_at_war = no } } #FOM
+	4997 = { owner = { is_at_war = no } } #FUJ
+	4989 = { owner = { is_at_war = no } } #MHG
+	4956 = { owner = { is_at_war = no } } #HKR
+	4968 = { owner = { is_at_war = no } } #SCR
+}
+
+th_gensokyan_countries_exist = {
+	1 = {
+		check_variable = {
+			which = th_gensokyan_counter
+			value = $min$
+		}
+		NOT = {
+			check_variable = {
+				which = th_gensokyan_counter
+				value = $max$
+			}
+		}
+	}
+}
+
+th_gensokyan_countries_exist_at_least = {
+	1 = {
+		check_variable = {
+			which = th_gensokyan_counter
+			value = $num$
+		}
+	}
+}
+
+th_gensokyan_countries_approve_yama = {
+	1 = {
+		check_variable = {
+			which = th_approving_gensokyan_counter
+			value = $min$
+		}
+		NOT = {
+			check_variable = {
+				which = th_approving_gensokyan_counter
+				value = $max$
+			}
+		}
+	}
+}
+
+th_gensokyan_countries_approve_yama_at_least = {
+	1 = {
+		check_variable = {
+			which = th_approving_gensokyan_counter
+			value = $num$
+		}
+	}
+}
+
+th_has_been_lectured = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_been_lectured_tt
+		is_excommunicated = yes
+	}
+}
+
+th_has_not_been_lectured = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_not_been_lectured_tt
+		is_excommunicated = no
 	}
 }

@@ -413,8 +413,8 @@ country_event = {
 		tooltip = {
 			add_army_tradition = -100
 			add_navy_tradition = -100
-			add_yearly_manpower = -100
-			add_yearly_sailors = -100
+			add_yearly_manpower = -10
+			add_yearly_sailors = -10
 		}
 		hidden_effect = {
 			add_mil_power = 50
@@ -996,8 +996,10 @@ country_event = {
 		months = 120
 		modifier = {
 			factor = 0.5
-			any_province = {
-				sieged_by = ROOT
+			any_local_enemy = {
+				any_owned_province = {
+					sieged_by = ROOT
+				}
 			}
 		}
 	}
@@ -1809,20 +1811,20 @@ country_event = {
 	
 	option = {
 		name = th_deity_events.23.a
-		add_yearly_manpower = -0.75
-		add_army_professionalism = 0.03
+		add_yearly_manpower = -1
+		add_army_professionalism = 0.025
 	}
 
 	option = {
 		name = th_deity_events.23.b
-		add_yearly_manpower = -0.75
+		add_yearly_manpower = -1
 		add_army_tradition = 20
 	}
 
 	option = {
 		name = th_deity_events.23.c
-		add_yearly_manpower = 0.75
-		add_army_tradition = -20
+		add_yearly_manpower = 1
+		add_army_tradition = -10
 	}
 }
 
@@ -2774,6 +2776,460 @@ country_event = {
 	option = {
 		name = th_deity_events.41.d
 		add_stability = 1
+	}
+}
+
+########################################
+# Kutaka Events
+########################################
+
+#Enforce worship of Kutaka for an estate
+country_event = {
+	id = th_deity_events.57
+	title = th_deity_events.57.t
+	desc = th_deity_events.57.desc
+	picture = KUTAKA_eventPicture
+
+	trigger = {
+		has_personal_deity = Kutaka
+		OR = {
+			NOT = { has_country_flag = th_had_deity_event }
+			had_country_flag = {
+				flag = th_had_deity_event
+				days = 1825
+			}
+		}
+		NOT = { has_country_flag = th_deity_penalty_active }
+		NOT = { has_country_flag = th_having_a_deity_event }
+		NOT = { has_country_modifier = th_deity_war_misfortune }
+	}
+
+	immediate = {
+		clr_country_flag = th_had_deity_event
+		set_country_flag = th_having_a_deity_event
+	}
+
+	after = {
+		set_country_flag = th_had_deity_event
+		clr_country_flag = th_having_a_deity_event
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {	#The clergy should pay attention to Kunaka!
+		name = th_deity_events.57.a
+		add_adm_power = 15
+		add_estate_influence_modifier = {
+			estate = estate_church
+			influence = -20
+			desc = TH_HAS_TO_WORSHIP_KUTAKA
+			duration = 1825
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {	#The burghers should finally donate to Kunaka!
+		name = th_deity_events.57.b
+		add_dip_power = 15
+		add_estate_influence_modifier = {
+			estate = estate_burghers
+			influence = -20
+			desc = TH_HAS_TO_WORSHIP_KUTAKA
+			duration = 1825
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {	#The nobles shall no longer eat meat until they pay respect!
+		name = th_deity_events.57.c
+		add_mil_power = 15
+		add_estate_influence_modifier = {
+			estate = estate_nobles
+			influence = -20
+			desc = TH_HAS_TO_WORSHIP_KUTAKA
+			duration = 1825
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {	#They all should pay attention!
+		name = th_deity_events.57.d
+		add_estate_influence_modifier = {
+			estate = estate_church
+			influence = -10
+			desc = TH_HAS_TO_WORSHIP_KUTAKA
+			duration = 1825
+		}
+		add_estate_influence_modifier = {
+			estate = estate_burghers
+			influence = -10
+			desc = TH_HAS_TO_WORSHIP_KUTAKA
+			duration = 1825
+		}
+		add_estate_influence_modifier = {
+			estate = estate_nobles
+			influence = -10
+			desc = TH_HAS_TO_WORSHIP_KUTAKA
+			duration = 1825
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	
+	option = {	#I think it really does not matter
+		name = th_deity_events.57.e
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 20
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 20
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 20
+		}
+		add_stability = -1
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Early Bird
+country_event = {
+	id = th_deity_events.58
+	title = th_deity_events.58.t
+	desc = th_deity_events.58.desc
+	picture = KUTAKA_eventPicture
+
+	trigger = {
+		has_personal_deity = Kutaka
+		OR = {
+			NOT = { has_country_flag = th_had_deity_event }
+			had_country_flag = {
+				flag = th_had_deity_event
+				days = 1460
+			}
+		}
+		NOT = { has_country_flag = th_deity_penalty_active }
+		NOT = { has_country_flag = th_having_a_deity_event }
+	}
+
+	immediate = {
+		clr_country_flag = th_had_deity_event
+		set_country_flag = th_having_a_deity_event
+	}
+
+	after = {
+		set_country_flag = th_had_deity_event
+		clr_country_flag = th_having_a_deity_event
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+	}
+	
+	option = {
+		name = th_deity_events.58.a
+		trigger = {
+			NOT = {
+				national_focus = ADM
+			}
+		}
+		th_change_national_focus = {
+			type = ADM
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_deity_events.58.b
+		trigger = {
+			NOT = {
+				national_focus = DIP
+			}
+		}
+		th_change_national_focus = {
+			type = DIP
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	option = {
+		name = th_deity_events.58.c
+		trigger = {
+			NOT = {
+				national_focus = MIL
+			}
+		}
+		th_change_national_focus = {
+			type = MIL
+		}
+		ai_chance = {
+			factor = 0
+		}
+	}
+	
+	#option = {
+	#	name = th_deity_events.58.d
+	#	trigger = {
+	#		OR = {
+	#			national_focus = ADM
+	#			national_focus = DIP
+	#			national_focus = MIL
+	#		}
+	#	}
+	#	th_change_national_focus = {
+	#		type = none
+	#	}
+	#	ai_chance = {
+	#		factor = 0
+	#	}
+	#}
+	
+	option = {
+		name = th_deity_events.58.e
+		if = {
+			limit = {
+				national_focus = ADM
+			}
+			add_adm_power = 60
+		}
+		else_if = {
+			limit = {
+				national_focus = DIP
+			}
+			add_dip_power = 60
+		}
+		else_if = {
+			limit = {
+				national_focus = MIL
+			}
+			add_mil_power = 60
+		}
+		else = {
+			add_adm_power = 20
+			add_dip_power = 20
+			add_mil_power = 20
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Passage denied!
+country_event = {
+	id = th_deity_events.59
+	title = th_deity_events.59.t
+	desc = th_deity_events.59.desc
+	picture = KUTAKA_eventPicture
+
+	trigger = {
+		has_personal_deity = Kutaka
+		OR = {
+			NOT = { has_country_flag = th_had_deity_event }
+			had_country_flag = {
+				flag = th_had_deity_event
+				days = 1460
+			}
+		}
+		NOT = { has_country_flag = th_deity_penalty_active }
+		NOT = { has_country_flag = th_having_a_deity_event }
+		OR = {
+			is_in_war = { defender_leader = ROOT }
+			num_of_owned_provinces_with = {
+				NOT = { controlled_by = ROOT }
+				value = 5
+			}
+			any_owned_province = {
+				th_has_outdated_fort_building = {
+					tag = ROOT
+				}
+			}
+		}
+	}
+
+	immediate = {
+		clr_country_flag = th_had_deity_event
+		set_country_flag = th_having_a_deity_event
+	}
+
+	after = {
+		set_country_flag = th_had_deity_event
+		clr_country_flag = th_having_a_deity_event
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+	}
+	
+	option = {
+		name = th_deity_events.59.a
+		random_owned_province = {
+			limit = {
+				NOT = {
+					th_has_outdated_fort_building = {
+						tag = ROOT
+					}
+				}
+			}
+			th_build_uptodate_fort = yes
+		}
+		add_yearly_manpower = 0.5
+		capital_scope = {
+			if = {
+				limit = {
+					has_province_modifier = th_deity_kutakas_blessing
+				}
+				extend_province_modifier = {
+					name = th_deity_kutakas_blessing
+					duration = 1825
+				}
+			}
+			else = {
+				add_province_modifier = {
+					name = th_deity_kutakas_blessing
+					duration = 3650
+				}
+			}
+		}
+	}
+}
+
+#Healing of Throat Illnesses
+country_event = {
+	id = th_deity_events.60
+	title = th_deity_events.60.t
+	desc = th_deity_events.60.desc
+	picture = KUTAKA_eventPicture
+
+	trigger = {
+		has_personal_deity = Kutaka
+		OR = {
+			NOT = { has_country_flag = th_had_deity_event }
+			had_country_flag = {
+				flag = th_had_deity_event
+				days = 1460
+			}
+		}
+		NOT = { has_country_flag = th_deity_penalty_active }
+		NOT = { has_country_flag = th_having_a_deity_event }
+		num_of_allies = 1
+	}
+
+	immediate = {
+		clr_country_flag = th_had_deity_event
+		set_country_flag = th_having_a_deity_event
+	}
+
+	after = {
+		set_country_flag = th_had_deity_event
+		clr_country_flag = th_having_a_deity_event
+	}
+	
+	mean_time_to_happen = {
+		months = 24
+	}
+	
+	option = { #Use Kutaka to heal friend's illness
+		name = th_deity_events.60.a
+		add_dip_power = 20
+		random_ally = {
+			add_trust = {
+				who = PREV
+				value = 5
+			}
+		}
+	}
+	
+	option = { #I need it more than anyone else!
+		name = th_deity_events.60.b
+		trigger = {
+			NOT = { legitimacy_equivalent = 50 }
+			NOT = { government = native }
+		}
+		custom_tooltip = th_deity_events.60.b.tt
+		hidden_effect = {
+			add_legitimacy = -100
+			add_legitimacy = 50
+			add_republican_tradition = -100
+			add_republican_tradition = 50
+			add_devotion = -100
+			add_devotion = 50
+			add_meritocracy = -100
+			add_meritocracy = 50
+			add_horde_unity = -100
+			add_horde_unity = 50
+		}
+	}
+}
+
+#Connections to Eiki
+country_event = {
+	id = th_deity_events.61
+	title = th_deity_events.61.t
+	desc = th_deity_events.61.desc
+	picture = KUTAKA_eventPicture
+
+	trigger = {
+		has_personal_deity = Kutaka
+		OR = {
+			NOT = { has_country_flag = th_had_deity_event }
+			had_country_flag = {
+				flag = th_had_deity_event
+				days = 1460
+			}
+		}
+		NOT = { has_country_flag = th_deity_penalty_active }
+		NOT = { has_country_flag = th_having_a_deity_event }
+		OR = {
+			has_country_modifier = th_lectured_modifier
+			has_country_modifier = th_lectured_modifier_upgraded
+			th_has_been_lectured = yes
+		}
+		always = no
+	}
+
+	immediate = {
+		clr_country_flag = th_had_deity_event
+		set_country_flag = th_having_a_deity_event
+	}
+
+	after = {
+		set_country_flag = th_had_deity_event
+		clr_country_flag = th_having_a_deity_event
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	option = {	#Lift the lecture
+		name = th_deity_events.61.a
+		if = {
+			limit = {
+				th_has_been_lectured = yes
+			}
+			excommunicate = ROOT
+		}
+		remove_country_modifier = th_lectured_modifier
+		remove_country_modifier = th_lectured_modifier_upgraded
 	}
 }
 

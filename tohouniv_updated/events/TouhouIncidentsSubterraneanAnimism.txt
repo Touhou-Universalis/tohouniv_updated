@@ -16,8 +16,6 @@ country_event = {
 		th_incident_check_year_for_incident = { incident = subterranean_animism_incident year = 1550 }
 		NOT = { th_incident_has_been_resolved = { incident = subterranean_animism_incident } }
 		th_incident_can_trigger_generic_check = yes
-		#TODO Add the incident to the game properly
-		always = no
 	}
 	
 	fire_only_once = yes
@@ -594,21 +592,6 @@ country_event = {
 			factor = 100
 		}
 	}
-	
-	option = {		#Let's roll, lol
-		name = "th_subterranean_animism_incident_events.4.d"
-		custom_tooltip = th_subterranean_animism_incident_events.4.d.tt
-		trigger = {
-			has_country_flag = th_oni_had_yuugi
-		}
-		th_incident_change_points = {
-			value = 3
-		}
-		
-		ai_chance = { 
-			factor = 100
-		}
-	}
 }
 
 #Subterranean Animism Incident - Satori Encounter
@@ -994,7 +977,7 @@ country_event = { #Nothing changes and more unrest spirits appear
 				}
 			}
 		}
-		add_adm_power = 100
+		add_adm_power = -100
 		add_prestige = -10
 		add_devotion = -10
 		custom_tooltip = th_subterranean_animism_incident_events_hot_geysers
@@ -1092,7 +1075,7 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 				}
 			}
 		}
-		add_adm_power = 100
+		add_adm_power = -100
 		add_prestige = -10
 		add_devotion = -10
 		custom_tooltip = th_subterranean_animism_incident_events_hot_geysers
@@ -1844,24 +1827,24 @@ country_event = {
 }
 
 #Subterranean Animism Incident - Random Geyser events - Satori demands her land back
-province_event = {
+country_event = {
 	id = th_subterranean_animism_incident_events.19
 	title = "th_subterranean_animism_incident_events.19.t"
 	desc = "th_subterranean_animism_incident_events.19.desc"
 	picture = FORMERHELL_eventPicture
-	goto = ROOT
+	goto = th_SA_revolt_province
 	trigger = {
-		owner = { ai = no }
+		ai = no
 		th_current_incident = { incident = subterranean_animism_incident }
-		NOT = { has_province_flag = chireiden_revolt }
-		NOT = { local_autonomy = 1 }
-		region = former_hell_region
-		culture = Chireidean
-		owner = {
-			NOT = { th_is_or_was_tag = { tag = CRD } }
-			NOT = { tag = SCD }
-			is_free_or_tributary_trigger = yes
-			num_of_cities = 4
+		NOT = { th_is_or_was_tag = { tag = CRD } }
+		NOT = { tag = SCD }
+		is_free_or_tributary_trigger = yes
+		num_of_cities = 4
+		any_owned_province = {
+			NOT = { has_province_flag = chireiden_revolt }
+			NOT = { local_autonomy = 1 }
+			region = former_hell_region
+			culture = Chireidean
 		}
 	}
 
@@ -1869,56 +1852,65 @@ province_event = {
 		months = 30
 		modifier = {
 			factor = 0.5
-			any_neighbor_province = {
-				has_province_flag = chireiden_revolt
+			any_owned_province = {
+				NOT = { has_province_flag = chireiden_revolt }
+				NOT = { local_autonomy = 1 }
+				region = former_hell_region
+				culture = Chireidean
+				any_neighbor_province = {
+					has_province_flag = chireiden_revolt
+				}
 			}
 		}
 		modifier = {
 			factor = 0.5
-			has_owner_religion = no
+			any_owned_province = {
+				NOT = { has_province_flag = chireiden_revolt }
+				NOT = { local_autonomy = 1 }
+				region = former_hell_region
+				culture = Chireidean
+				has_owner_religion = no
+			}
 		}
 		modifier = {
 			factor = 0.5
-			owner = {
+			any_owned_province = {
+				NOT = { has_province_flag = chireiden_revolt }
+				NOT = { local_autonomy = 1 }
+				region = former_hell_region
+				culture = Chireidean
 				NOT = { culture_group = ROOT }
 			}
 		}
 		modifier = {
 			factor = 0.5
-			owner = {
-				NOT = { primary_culture = ROOT }
-				NOT = { accepted_culture = ROOT }
+			war_with = CRD 
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = chireiden_revolt }
+					NOT = { local_autonomy = 1 }
+					region = former_hell_region
+					culture = Chireidean
+				}
+				save_event_target_as = th_SA_revolt_province
 			}
-		}
-		modifier = {
-			factor = 0.5
-			owner = { war_with = CRD }
-		}
-		modifier = {
-			factor = 0.75
-			unrest = 3
-		}
-		modifier = {
-			factor = 0.75
-			unrest = 5
-		}
-		modifier = {
-			factor = 0.75
-			unrest = 7
-		}
-		modifier = {
-			factor = 0.75
-			unrest = 9
 		}
 	}
 
 	option = {
 		name = "th_subterranean_animism_incident_events.19.a"
-		set_province_flag = chireiden_revolt
-		spawn_rebels = {
-			type = nationalist_rebels
-			size = 1
-			friend = CRD
+		event_target:th_SA_revolt_province = {
+			set_province_flag = chireiden_revolt
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+				friend = CRD
+			}
 		}
 		
 		ai_chance = { 
@@ -1927,7 +1919,9 @@ province_event = {
 	}
 	option = {
 		name = "th_subterranean_animism_incident_events.19.b"
-		cede_province = CRD
+		event_target:th_SA_revolt_province = {
+			cede_province = CRD
+		}
 		
 		ai_chance = { 
 			factor = 10
@@ -2001,25 +1995,25 @@ country_event = {
 }
 
 #Subterranean Animism Incident - Random Geyser events - Province gets a geyser modifier
-province_event = {
+country_event = {
 	id = th_subterranean_animism_incident_events.25
 	title = none
 	desc = none
 	picture = UNDERGROUND_eventPicture
 	
 	trigger = {
-		NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
-		NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
 		th_current_incident = { incident = subterranean_animism_incident }
-		superregion = gensokyo_superregion
-		NOT = { culture = Chireidean }
-		owner = {
-			NOT = { th_is_or_was_tag = { tag = CRD } }
-			OR = {
-				is_free_or_tributary_trigger = yes
-				overlord = {
-					NOT = { th_is_or_was_tag = { tag = CRD } }
-				}
+		NOT = { th_is_or_was_tag = { tag = CRD } }
+		any_owned_province = {
+			superregion = gensokyo_superregion
+			NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+			NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+			NOT = { culture = Chireidean }
+		}
+		OR = {
+			is_free_or_tributary_trigger = yes
+			overlord = {
+				NOT = { th_is_or_was_tag = { tag = CRD } }
 			}
 		}
 	}
@@ -2031,18 +2025,26 @@ province_event = {
 	hidden = yes
 	
 	option = {		#A geyser popped up!
-		random_list = {
-			90 = {
-				add_province_modifier = {
-					name = th_SA_wandering_vengeful_spirits
-					duration = -1
-					desc = th_incident_duration_tt
-				}
+		random_owned_province = {
+			limit = {
+				superregion = gensokyo_superregion
+				NOT = { has_province_modifier = th_SA_wandering_vengeful_spirits }
+				NOT = { has_province_modifier = th_SA_wandering_helpful_spirits }
+				NOT = { culture = Chireidean }
 			}
-			10 = {
-				add_province_modifier = {
-					name = th_SA_wandering_helpful_spirits
-					duration = 1460
+			random_list = {
+				90 = {
+					add_province_modifier = {
+						name = th_SA_wandering_vengeful_spirits
+						duration = -1
+						desc = th_incident_duration_tt
+					}
+				}
+				10 = {
+					add_province_modifier = {
+						name = th_SA_wandering_helpful_spirits
+						duration = 1460
+					}
 				}
 			}
 		}
@@ -2054,7 +2056,7 @@ province_event = {
 }
 
 #Subterranean Animism Incident - Province cleans itself
-province_event = {
+country_event = {
 	id = th_subterranean_animism_incident_events.260
 	title = none
 	desc = none
@@ -2062,17 +2064,15 @@ province_event = {
 	
 	trigger = {
 		OR = {
-			has_province_modifier = th_SA_wandering_vengeful_spirits
-			has_province_modifier = th_SA_wandering_helpful_spirits
-		}
-		OR = {
-			owner = {
-				OR = { 
-					th_is_or_was_tag = { tag = CRD } 
-					is_subject_of = CRD
-				}
-			}
 			th_does_not_have_current_incident = { incident = subterranean_animism_incident }
+			th_is_or_was_tag = { tag = CRD } 
+			is_subject_of = CRD
+		}
+		any_owned_province = {
+			OR = {
+				has_province_modifier = th_SA_wandering_vengeful_spirits
+				has_province_modifier = th_SA_wandering_helpful_spirits
+			}
 		}
 	}
 	
@@ -2083,8 +2083,10 @@ province_event = {
 	hidden = yes
 	
 	option = {
-		remove_province_modifier = th_SA_wandering_vengeful_spirits
-		remove_province_modifier = th_SA_wandering_helpful_spirits		
+		every_owned_province = {
+			remove_province_modifier = th_SA_wandering_vengeful_spirits
+			remove_province_modifier = th_SA_wandering_helpful_spirits		
+		}
 		
 		ai_chance = { 
 			factor = 100
@@ -2184,8 +2186,7 @@ country_event = {
 	
 	trigger = {
 		th_current_incident = { incident = subterranean_animism_incident }	
-		any_province = {
-			superregion = gensokyo_superregion
+		gensokyo_superregion = {
 			NOT = { owned_by = CRD }
 			NOT = { owner = { is_subject_of = CRD } }
 			NOT = { owned_by = SCD }
@@ -2317,7 +2318,7 @@ country_event = { #Nothing changes and Scarlett Realm Mists grow
 				}
 			}
 		}
-		add_adm_power = 100
+		add_adm_power = -100
 		add_prestige = -10
 		add_devotion = -10
 		custom_tooltip = th_subterranean_animism_incident_events_hot_geysers
