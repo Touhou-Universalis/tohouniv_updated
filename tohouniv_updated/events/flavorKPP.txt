@@ -277,3 +277,423 @@ country_event = {
 		}
 	}
 }
+
+# Election! - Death
+country_event = {
+	id = flavor_kpp.2
+	title = "EVTNAME700"
+	desc = "EVTDESC701"
+	picture = ELECTION_REPUBLICAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_kappa_elections
+	}
+	
+	option = {
+		name = "EVTOPTB700"	# An administrator type
+		ai_chance = { factor = 40 }
+		if = {
+			limit = { republic_with_female_rulers_trigger = yes }
+			define_ruler = {
+				mil = 1
+				adm = 4
+				dip = 1					
+				random_gender = yes # Allows random gender for republics
+			}
+		}
+		else = {
+			define_ruler = {
+				mil = 1
+				adm = 4
+				dip = 1					
+			}
+		}
+		if = {
+			limit = { 
+				has_faction = mr_guilds 
+			}
+			add_faction_influence = {
+				faction = mr_guilds
+				influence = 20
+			}				
+		}
+	}
+	option = {
+		name = "EVTOPTC700"	# A diplomat
+		ai_chance = { factor = 30 }
+		if = {
+			limit = { republic_with_female_rulers_trigger = yes }
+			define_ruler = {
+				dip = 4
+				adm = 1
+				mil = 1					
+				random_gender = yes # Allows random gender for republics
+			}
+		}
+		else = {
+			define_ruler = {
+				dip = 4
+				adm = 1
+				mil = 1					
+			}
+		}
+		if = {
+			limit = { 
+				has_faction = mr_traders 
+			}
+			add_faction_influence = {
+				faction = mr_traders
+				influence = 20
+			}				
+		}			
+	}
+	option = {
+		name = "EVTOPTD700"	# A military man
+		ai_chance = { factor = 30 }
+		if = {
+			limit = { republic_with_female_rulers_trigger = yes }
+			define_ruler = {
+				mil = 4
+				adm = 1
+				dip = 1					
+				random_gender = yes # Allows random gender for republics
+			}
+		}
+		else = {
+			define_ruler = {
+				mil = 4
+				adm = 1
+				dip = 1					
+			}
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 20
+			}				
+		}		
+	}
+	option = { # Nepotism choice, re-electing within dynasty
+		name = "EVTOPTE700"
+		trigger = {
+			has_government_attribute = enables_nepotism
+		}
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				has_country_flag = strengthened_signoria_flag
+			}
+			custom_tooltip = strengthened_signoria_election_tt
+			clr_country_flag = strengthened_signoria_flag
+		}
+		else = {
+			add_scaled_republican_tradition = -4
+		}
+		if = {
+			limit = { 
+				republic_with_female_rulers_trigger = yes
+				NOT = { has_reform = signoria_reform }
+			}
+			define_ruler = {
+				change_mil = -2
+				change_adm = -2
+				change_dip = -2
+				min_age = 30
+				max_age = 50
+				name = "lastname"
+				random_gender = yes # Allows random gender for republics
+			}
+		}
+		else_if = {
+			limit = { 
+				republic_with_female_rulers_trigger = yes
+				has_reform = signoria_reform
+			}
+			define_ruler = {
+				min_age = 30
+				max_age = 50
+				name = "lastname"
+				random_gender = yes # Allows random gender for republics
+			}
+		}
+		else_if = {
+			limit = { 
+				has_reform = signoria_reform
+			}
+			define_ruler = {
+				min_age = 30
+				max_age = 50
+				name = "lastname"
+				random_gender = yes # Allows random gender for republics
+			}
+		}
+		else = {
+			define_ruler = {
+				change_mil = -2
+				change_adm = -2
+				change_dip = -2
+				min_age = 30
+				max_age = 50
+				name = "lastname"
+			}
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 10
+			}				
+		}
+	}
+}
+
+# The Establishment of the Kappa Corps
+country_event = {
+	id = flavor_kpp.3
+	title = flavor_kpp.3.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_kpp.3.desc
+	is_triggered_only = yes
+
+	#Welcome to the Corps!
+	option = {
+		name = flavor_kpp.3.a
+		capital_scope = {
+			marine_infantry = ROOT
+			marine_infantry = ROOT
+			marine_infantry = ROOT
+			marine_infantry = ROOT
+		}
+		add_country_modifier = {
+			name = kpp_the_kappa_conscription
+			duration = -1
+		}
+		add_army_professionalism = 0.05
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Settlement of Guinea
+country_event = {
+	id = flavor_kpp.4
+	title = flavor_kpp.4.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = {
+		desc = flavor_kpp.4.desc.a
+		trigger = {
+			guinea_region = {
+				is_empty = yes
+				has_port = yes
+			}
+		}
+	}
+	desc = {
+		desc = flavor_kpp.4.desc.b
+		trigger = {
+			guinea_region = {
+				OR = {
+					has_port = no
+					is_empty = no
+				}
+				type = all
+			}
+		}
+	}
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					guinea_region = {
+						is_empty = yes
+						has_port = yes
+					}
+				}
+				random_province = {
+					limit = {
+						region = guinea_region
+						is_empty = yes
+						has_port = yes
+						NOT = { has_province_flag = kpp_province_target }
+					}
+					save_event_target_as = kpp_african_province_to_settle_1
+					set_province_flag = kpp_province_target
+				}
+				random_province = {
+					limit = {
+						region = guinea_region
+						is_empty = yes
+						has_port = yes
+						NOT = { has_province_flag = kpp_province_target }
+					}
+					save_event_target_as = kpp_african_province_to_settle_2
+					set_province_flag = kpp_province_target
+				}
+				random_province = {
+					limit = {
+						region = guinea_region
+						is_empty = yes
+						has_port = yes
+						NOT = { has_province_flag = kpp_province_target }
+					}
+					save_event_target_as = kpp_african_province_to_settle_3
+					set_province_flag = kpp_province_target
+				}
+				random_province = {
+					limit = {
+						region = guinea_region
+						is_empty = yes
+						has_port = yes
+						NOT = { has_province_flag = kpp_province_target }
+					}
+					save_event_target_as = kpp_african_province_to_settle_4
+					set_province_flag = kpp_province_target
+				}
+				random_province = {
+					limit = {
+						region = guinea_region
+						is_empty = yes
+						has_port = yes
+						NOT = { has_province_flag = kpp_province_target }
+					}
+					save_event_target_as = kpp_african_province_to_settle_5
+					set_province_flag = kpp_province_target
+				}
+			}
+		}
+	}
+	after = {
+		every_province = {
+			limit = {
+				has_province_flag = kpp_province_target
+			}
+			clr_province_flag = kpp_province_target
+		}
+	}
+
+	#Colonize province 1
+	option = {
+		name = flavor_kpp.4.a
+		goto = kpp_african_province_to_settle_1
+		trigger = {
+			has_saved_event_target = kpp_african_province_to_settle_1
+		}
+		event_target:kpp_african_province_to_settle_1 = {
+			th_colonize_province_for_country = {
+				who = ROOT
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#Colonize province 2
+	option = {
+		name = flavor_kpp.4.b
+		goto = kpp_african_province_to_settle_2
+		trigger = {
+			has_saved_event_target = kpp_african_province_to_settle_2
+		}
+		event_target:kpp_african_province_to_settle_2 = {
+			th_colonize_province_for_country = {
+				who = ROOT
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#Colonize province 3
+	option = {
+		name = flavor_kpp.4.c
+		goto = kpp_african_province_to_settle_3
+		trigger = {
+			has_saved_event_target = kpp_african_province_to_settle_3
+		}
+		event_target:kpp_african_province_to_settle_3 = {
+			th_colonize_province_for_country = {
+				who = ROOT
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#Colonize province 4
+	option = {
+		name = flavor_kpp.4.d
+		goto = kpp_african_province_to_settle_4
+		trigger = {
+			has_saved_event_target = kpp_african_province_to_settle_4
+		}
+		event_target:kpp_african_province_to_settle_4 = {
+			th_colonize_province_for_country = {
+				who = ROOT
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#Colonize province 5
+	option = {
+		name = flavor_kpp.4.e
+		goto = kpp_african_province_to_settle_5
+		trigger = {
+			has_saved_event_target = kpp_african_province_to_settle_5
+		}
+		event_target:kpp_african_province_to_settle_5 = {
+			th_colonize_province_for_country = {
+				who = ROOT
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#Nothing to colonize...
+	option = {
+		name = flavor_kpp.4.f
+		trigger = {
+			guinea_region = {
+				OR = {
+					has_port = no
+					is_empty = no
+				}
+				type = all
+			}
+		}
+		guinea_region = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
