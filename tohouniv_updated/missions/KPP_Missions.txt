@@ -384,10 +384,15 @@ kpp_missions_tech_slot = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			Yumemi_space_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_kpp.9
+			}
 		}
 	}
 	
@@ -412,14 +417,50 @@ kpp_missions_tech_slot = {
 		required_missions = { KPP_push_to_africa }
 		position = 8
 		provinces_to_highlight = {
-			area = Yumemi_space_state
+			region = south_africa_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = south_africa_region
+				value = 20
+			}
+			owns_core_province = 1177
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					mission_completed = KPP_take_over_east_africa
+					mission_completed = KPP_colonize_the_horn
+				}
+				central_africa_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				kongo_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			else = {
+				custom_tooltip = KPP_colonize_the_cape_tt
+			}
+			1177 = {
+				change_province_name = "New Kappapolis"
+				add_center_of_trade_level = 2
+				add_base_tax = 6
+				add_base_production = 6
+				add_base_manpower = 4
+				change_religion = ROOT
+				change_culture = ROOT
+				change_trade_goods = coal
+			}
 		}
 	}
 }
@@ -460,6 +501,12 @@ kpp_missions_war_slot = {
 				}
 				add_core = ROOT
 			}
+			Genbu_ravine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+				}
+				add_core = ROOT
+			}
 			Mountain_kappa_land = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -478,6 +525,7 @@ kpp_missions_war_slot = {
 				area = Kappa_delta
 				area = Kappa_state
 				area = Mountain_kappa_land
+				area = Genbu_ravine_state
 			}
 			OR = {
 				NOT = { is_core = ROOT }
@@ -491,6 +539,11 @@ kpp_missions_war_slot = {
 				type = all
 			}
 			Kappa_state = {
+				is_core = ROOT
+				owned_by = ROOT
+				type = all
+			}
+			Genbu_ravine_state = {
 				is_core = ROOT
 				owned_by = ROOT
 				type = all
@@ -544,14 +597,74 @@ kpp_missions_war_slot = {
 		required_missions = { KPP_annex_the_mountain_kappas }
 		position = 3
 		provinces_to_highlight = {
-			area = Yumemi_space_state
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			OR = {
+				province_id = 5356
+				province_id = 5354
+				province_id = 5221
+				province_id = 5353
+			}
+			OR = {
+				NOT = { is_core = ROOT }
+				NOT = { owned_by = ROOT }
+				NOT = { th_has_up_to_date_fort_building = { tag = ROOT } }
+			}
 		}
 		trigger = {
-			always = yes
+			5356 = {
+				is_core = ROOT
+				owned_by = ROOT
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+			}
+			5354 = {
+				is_core = ROOT
+				owned_by = ROOT
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+			}
+			5221 = {
+				is_core = ROOT
+				owned_by = ROOT
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+			}
+			5353 = {
+				is_core = ROOT
+				owned_by = ROOT
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_mil_power = 150
+			5356 = {
+				add_province_modifier = {
+					name = kpp_expanded_local_defenses
+					duration = -1
+				}
+			}
+			5354 = {
+				add_province_modifier = {
+					name = kpp_expanded_local_defenses
+					duration = -1
+				}
+			}
+			5221 = {
+				add_province_modifier = {
+					name = kpp_expanded_local_defenses
+					duration = -1
+				}
+			}
+			5353 = {
+				add_province_modifier = {
+					name = kpp_expanded_local_defenses
+					duration = -1
+				}
+			}
 		}
 	}
 	
@@ -564,14 +677,28 @@ kpp_missions_war_slot = {
 		}
 		position = 4
 		provinces_to_highlight = {
-			area = Yumemi_space_state
+			OR = {
+				area = Yumemi_space_state
+				area = Rika_state
+			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			Yumemi_space_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			Rika_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			legitimacy_equivalent = 95
+			stability = 1
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_kpp.5
+			}
 		}
 	}
 	
@@ -600,14 +727,55 @@ kpp_missions_war_slot = {
 		required_missions = { KPP_break_through_the_barrier }
 		position = 7
 		provinces_to_highlight = {
-			area = Yumemi_space_state
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			continent = africa
+			is_sea = no
+			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = KPP_push_to_africa_tt
+				africa = {
+					is_sea = no
+					has_discovered = ROOT
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			kongo_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			central_africa_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			east_africa_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			horn_of_africa_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			south_africa_region = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -616,14 +784,42 @@ kpp_missions_war_slot = {
 		required_missions = { KPP_push_to_africa }
 		position = 8
 		provinces_to_highlight = {
-			area = Yumemi_space_state
+			region = east_africa_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = east_africa_region
+				value = 40
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					mission_completed = KPP_colonize_the_cape
+					mission_completed = KPP_colonize_the_horn
+				}
+				central_africa_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				kongo_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			else = {
+				custom_tooltip = KPP_take_over_east_africa_tt
+			}
+			country_event = {
+				id = flavor_kpp.6
+			}
 		}
 	}
 	
@@ -636,14 +832,26 @@ kpp_missions_war_slot = {
 		}
 		position = 9
 		provinces_to_highlight = {
-			area = Yumemi_space_state
+			OR = {
+				region = central_africa_region
+				region = kongo_region
+			}
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					region = central_africa_region
+					region = kongo_region
+				}
+				value = 50
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = kpp_rulers_of_africa
+				duration = -1
+			}
 		}
 	}
 }
@@ -667,10 +875,15 @@ kpp_missions_invention_slot = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			Rika_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_kpp.10
+			}
 		}
 	}
 	
@@ -695,14 +908,42 @@ kpp_missions_invention_slot = {
 		required_missions = { KPP_push_to_africa }
 		position = 8
 		provinces_to_highlight = {
-			area = Yumemi_space_state
+			region = horn_of_africa_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = horn_of_africa_region
+				value = 50
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					mission_completed = KPP_take_over_east_africa
+					mission_completed = KPP_colonize_the_cape
+				}
+				central_africa_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				kongo_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			else = {
+				custom_tooltip = KPP_colonize_the_horn_tt
+			}
+			country_event = {
+				id = flavor_kpp.7
+			}
 		}
 	}
 }
@@ -806,14 +1047,27 @@ kpp_missions_internal_struggle_slot = {
 		required_missions = { KPP_break_through_the_barrier }
 		position = 7
 		provinces_to_highlight = {
-			area = Yumemi_space_state
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			region = australia_region
+			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = KPP_discover_australia_tt
+				australia_region = { has_discovered = ROOT }
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = kpp_australian_colonization
+				duration = 14600
+			}
+			australia_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}		
 		}
 	}
 	
@@ -822,14 +1076,30 @@ kpp_missions_internal_struggle_slot = {
 		required_missions = { KPP_discover_australia }
 		position = 8
 		provinces_to_highlight = {
-			area = Yumemi_space_state
+			region = australia_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = australia_region
+				value = 30
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			custom_tooltip = KPP_colonize_australia_tt
+			hidden_effect = {
+				australia_region = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+				}
+			}
+			add_adm_power = 50
+			add_dip_power = 50
+			add_mil_power = 50
 		}
 	}
 	
@@ -838,14 +1108,26 @@ kpp_missions_internal_struggle_slot = {
 		required_missions = { KPP_colonize_australia }
 		position = 9
 		provinces_to_highlight = {
-			area = Yumemi_space_state
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			region = australia_region
 		}
 		trigger = {
-			always = yes
+			mil_tech = 15
+			custom_trigger_tooltip = {
+				tooltip = KPP_weaponize_australian_wildlife_tt
+				australia_region = {
+					infantry_in_province = 25
+				}
+			}
+			australia_region = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			is_at_war = no
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_kpp.8
+			}
 		}
 	}
 }
