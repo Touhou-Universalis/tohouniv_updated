@@ -36,8 +36,18 @@ country_event = {
 	option = {
 		name = "EVTOPTA700"	# Current ruler stays
 		trigger = {
+			ai = no
 			has_regency = no
 			NOT = { has_ruler_flag = leader_has_been_pushed_out }
+			OR = {
+				NOT = { has_government_attribute = th_max_four_termrs }
+				NOT = {
+					check_variable = {
+						which = election_term
+						value = 4
+					}
+				}
+			}
 		}
 		ai_chance = { 
 			factor = 60
@@ -59,44 +69,18 @@ country_event = {
 			}		
 		}
 		custom_tooltip = remains_ruler
+		if = {
+			limit = { has_government_attribute = th_max_four_termrs }
+			custom_tooltip = th_current_term_tt
+		}
 		change_adm = 1
 		change_dip = 1
 		change_mil = 1
 		if = {
 			limit = {
-				is_tribal = no 
-				government = republic
-				NOT = { republican_tradition = 20 }				
-				NOT = { is_revolutionary_republic_trigger = yes }
-				has_dlc = "Res Publica"
+				has_ruler_modifier = th_elected_kappa_tinker
 			}
-			add_government_reform = presidential_despot_reform	
-		}
-		else_if = {
-			limit = {
-				government = republic
-				NOT = { republican_tradition = 20 }	
-				is_revolutionary_republic_trigger = yes
-			}
-			change_government_to_monarchy = yes
-			add_government_reform = revolutionary_empire_reform
-		}
-		if = {
-			limit = {
-				is_tribal = no  
-				government = republic
-				NOT = { republican_tradition = 20 }
-				NOT = { has_dlc = "Res Publica" }
-			}
-			change_government_to_monarchy = yes
-			#set_legacy_government = despotic_monarchy
-		}
-		if = {
-			limit = {
-				has_country_flag = strengthened_signoria_flag
-			}
-			custom_tooltip = strengthened_signoria_election_tt
-			clr_country_flag = strengthened_signoria_flag
+			add_scaled_republican_tradition = -5
 		}
 		else = {
 			add_scaled_republican_tradition = -10
@@ -113,6 +97,12 @@ country_event = {
 			}
 		}
 		add_karma = -5
+		hidden_effect = {
+			change_variable = {
+				which = election_term
+				value = 1
+			}
+		}
 	}
 	option = {
 		name = "EVTOPTB700"	# An administrator type
@@ -143,6 +133,12 @@ country_event = {
 			}				
 		}
 		add_karma = 10
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
 	}
 	option = {
 		name = "EVTOPTC700"	# A diplomat
@@ -173,6 +169,12 @@ country_event = {
 			}				
 		}
 		add_karma = 10		
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
 	}
 	option = {
 		name = "EVTOPTD700"	# A military man
@@ -203,6 +205,12 @@ country_event = {
 			}				
 		}
 		add_karma = 10
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
 	}
 
 	option = { # Nepotism choice, re-electing within dynasty
@@ -274,6 +282,57 @@ country_event = {
 				faction = mr_aristocrats
 				influence = 10
 			}				
+		}
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+	}
+
+	option = { # Nitori choice
+		name = flavor_kpp.1.e
+		trigger = {
+			OR = {
+				ai = yes
+				AND = {
+					has_government_attribute = th_kpp_can_elect_nitori
+					th_has_not_original_ruler = yes
+				}
+			}
+		}
+		ai_chance = { factor = 100 }
+		define_ruler = {
+			name = "Nitori"
+			dynasty = "Kawashiro"
+			age = 20
+			adm = 6
+			dip = 5
+			mil = 3
+			female = yes
+		}
+		hidden_effect = {
+			add_ruler_modifier = {
+				name = th_elected_kappa_tinker
+				duration = -1
+			}
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+	}
+
+	after = {
+		if = {
+			limit = { has_government_attribute = th_has_kappa_rebels }
+			country_event = {
+				id = flavor_kpp.30
+			}
 		}
 	}
 }
@@ -450,6 +509,21 @@ country_event = {
 				faction = mr_aristocrats
 				influence = 10
 			}				
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+		if = {
+			limit = { has_government_attribute = th_has_kappa_rebels }
+			country_event = {
+				id = flavor_kpp.30
+			}
 		}
 	}
 }
@@ -706,10 +780,10 @@ country_event = {
 	desc = flavor_kpp.5.desc
 	is_triggered_only = yes
 
-	#A great day for the engineers, inventors and tinkerers!
+	#A great day for the engineers, inventors and tinkers!
 	option = {
 		name = flavor_kpp.5.a
-		add_government_reform = kpp_the_tinkerer_federation
+		add_government_reform = kpp_the_tinker_federation
 		change_innovativeness = 4
 		add_adm_power = 50
 		add_dip_power = 50
@@ -1038,6 +1112,374 @@ country_event = {
 
 		ai_chance = {
 			factor = 1
+		}
+	}
+}
+
+#Kappa Rebellions on elections / new rulers
+
+# Kappa Rebellion
+country_event = {
+	id = flavor_kpp.30
+	title = flavor_kpp.30.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_kpp.30.desc
+	is_triggered_only = yes
+	trigger = {
+		has_government_attribute = th_has_kappa_rebels
+		NOT = { has_ruler_modifier = th_elected_kappa_tinker }
+		ai = no	#Too dificult for the AI too handle probably
+	}
+	goto = th_kappa_rebellion_province
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_overseas = no
+				}
+				save_event_target_as = th_kappa_rebellion_province
+			}
+		}
+	}
+
+	#Cursed
+	option = {
+		name = flavor_kpp.30.a
+		event_target:th_kappa_rebellion_province = {
+			tooltip = {
+				spawn_rebels = {
+					size = 1
+					type = th_kappa_rebels
+				}
+			}
+			hidden_effect = {
+				random_list = {
+					1 = {
+						spawn_rebels = {
+							size = 1
+							type = th_kappa_rebels
+						}
+					}
+					1 = {
+						spawn_rebels = {
+							size = 1
+							type = th_kappa_rebels
+							female = yes
+						}
+					}
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Kappa Anti-Centralization events
+
+# Start of the Reforms
+country_event = {
+	id = flavor_kpp.40
+	title = flavor_kpp.40.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_kpp.40.desc
+	is_triggered_only = yes
+
+	#The reforms need to be done. Better be it quick and painful than too slow.
+	#Makes Kappa disasters much easier to trigger
+	option = {
+		name = flavor_kpp.40.a
+		custom_tooltip = flavor_kpp.40.a.tt
+		set_country_flag = kpp_enabled_easier_disasters
+		change_government_reform_progress = 100
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#The reforms have to come slowly and steadily.
+	option = {
+		name = flavor_kpp.40.b
+		custom_tooltip = flavor_kpp.40.b.tt
+		add_stability_or_adm_power = yes
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Kappa Counter Movement - Start
+country_event = {
+	id = flavor_kpp.41
+	title = flavor_kpp.41.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_kpp.41.desc
+	is_triggered_only = yes
+	goto = th_kappa_rebellion_province
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_overseas = no
+				}
+				save_event_target_as = th_kappa_rebellion_province
+				spawn_rebels = {
+					type = th_kappa_rebels
+					size = 1
+					female = yes
+				}
+			}
+			set_country_flag = active_kappa_counter_movement_disaster
+		}
+	}
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = flavor_kpp.41.a
+		add_stability = -3
+		every_owned_province = {
+			add_local_autonomy = 5
+		}
+		event_target:th_kappa_rebellion_province = {
+			tooltip = {
+				spawn_rebels = {
+					type = th_kappa_rebels
+					size = 1
+				}
+			}
+		}
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+# Kappa Counter Movement - End
+country_event = {
+	id = flavor_kpp.42
+	title = flavor_kpp.42.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_kpp.42.desc
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			set_country_flag = kpp_had_counter_movement_disaster
+		}
+	}
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = flavor_kpp.42.a
+		change_government_reform_progress = 200
+		change_innovativeness = 10
+		add_stability_or_adm_power = yes
+		add_ruler_modifier = {
+			name = th_elected_kappa_tinker
+			duration = -1
+		}
+		change_adm = 1
+		change_dip = 1
+		change_mil = 1
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Absolute Tinker Republic events
+# Establishment of the United Tinker Republic
+country_event = {
+	id = flavor_kpp.60
+	title = flavor_kpp.60.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_kpp.60.desc
+	is_triggered_only = yes
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = flavor_kpp.60.a
+		remove_country_modifier = th_elected_kappa_tinker
+		add_government_reform = Gensokyan_kpp_united_kappa_republic
+		add_republican_tradition = 100
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+# Tinker Contest!
+country_event = {
+	id = flavor_kpp.61
+	title = flavor_kpp.61.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_kpp.61.desc
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_tinker_contests
+	}
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = th_administrative_tinker
+			remove_country_modifier = th_diplomatic_tinker
+			remove_country_modifier = th_military_tinker
+			remove_country_modifier = th_allrounder_tinker
+		}
+	}
+
+	option = {	#Choose the administrative tinker
+		name = flavor_kpp.61.a
+		add_ruler_modifier = {
+			name = th_administrative_tinker
+			duration = -1
+		}
+		add_scaled_republican_tradition = -15
+		add_adm_power = 60
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Choose the diplomatic tinker
+		name = flavor_kpp.61.b
+		add_ruler_modifier = {
+			name = th_diplomatic_tinker
+			duration = -1
+		}
+		add_scaled_republican_tradition = -15
+		add_dip_power = 60
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Choose the military tinker
+		name = flavor_kpp.61.c
+		add_ruler_modifier = {
+			name = th_military_tinker
+			duration = -1
+		}
+		add_scaled_republican_tradition = -15
+		add_mil_power = 60
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Choose the allrounder tinker
+		name = flavor_kpp.61.d
+		add_ruler_modifier = {
+			name = th_allrounder_tinker
+			duration = -1
+		}
+		add_scaled_republican_tradition = -15
+		add_adm_power = 20
+		add_dip_power = 20
+		add_mil_power = 20
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Let the public decide
+		name = flavor_kpp.61.e
+		random_list = {
+			1 = {
+				add_ruler_modifier = {
+					name = th_administrative_tinker
+					duration = -1
+				}
+				add_adm_power = 60
+			}
+			1 = {
+				add_ruler_modifier = {
+					name = th_diplomatic_tinker
+					duration = -1
+				}
+				add_dip_power = 60
+			}
+			1 = {
+				add_ruler_modifier = {
+					name = th_military_tinker
+					duration = -1
+				}
+				add_mil_power = 60
+			}
+			1 = {
+				add_ruler_modifier = {
+					name = th_allrounder_tinker
+					duration = -1
+				}
+				add_adm_power = 20
+				add_dip_power = 20
+				add_mil_power = 20
+			}
+		}
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Participate yourself in it
+		name = flavor_kpp.61.f
+		add_scaled_republican_tradition = 5
+		add_adm_power = 33
+		add_dip_power = 33
+		add_mil_power = 33
+		change_innovativeness = 5
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+# Election! - Death
+country_event = {
+	id = flavor_kpp.62
+	title = flavor_kpp.62.t
+	desc = flavor_kpp.62.desc
+	picture = NITORIBOSS_eventPicture	#TODO
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_kappa_elections
+	}
+	
+	#Elect Nitori
+	option = {
+		name = flavor_kpp.62.a
+		ai_chance = { factor = 40 }
+		define_ruler = {
+			name = "Nitori"
+			dynasty = "Kawashiro"
+			age = 20
+			adm = 6
+			dip = 5
+			mil = 3
+			female = yes
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+			set_variable = {
+				which = election_term
+				value = 1
+			}
 		}
 	}
 }
