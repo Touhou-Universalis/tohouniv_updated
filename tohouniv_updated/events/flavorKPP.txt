@@ -1333,39 +1333,12 @@ country_event = {
 	desc = flavor_kpp.43.desc
 	is_triggered_only = yes
 	major = yes
-	goto = th_kappa_rebellion_province
-	immediate = {
-		hidden_effect = {
-			random_owned_province = {
-				limit = {
-					is_overseas = no
-				}
-				save_event_target_as = th_kappa_rebellion_province
-				spawn_rebels = {
-					type = th_kappa_rebels
-					size = 1
-					female = yes
-				}
-			}
-			set_country_flag = active_kappa_counter_movement_disaster
-		}
-	}
 
 	#If you are not for the reforms then you are an enemy of the state!
 	option = {
 		name = flavor_kpp.43.a
 		add_stability = -3
-		every_owned_province = {
-			add_local_autonomy = 5
-		}
-		event_target:th_kappa_rebellion_province = {
-			tooltip = {
-				spawn_rebels = {
-					type = th_kappa_rebels
-					size = 1
-				}
-			}
-		}
+		add_years_of_income = -5
 		
 		ai_chance = {
 			factor = 100
@@ -1592,54 +1565,93 @@ country_event = {
 }
 
 #Random Disaster events - Anti Teamwork Coalition
-# 
+# Sabotage at factory
 country_event = {
 	id = flavor_kpp.50
 	title = flavor_kpp.50.t
 	desc = flavor_kpp.50.desc
 	picture = NITORIBOSS_eventPicture	#TODO
 	trigger = {
+		num_of_cities = 2
+		any_owned_province = {
+			is_capital = no
+			NOT = { has_province_modifier = kpp_factory_sabotage }
+		}
 	}	
 	is_triggered_only = yes
 	mean_time_to_happen = {
 		days = 1
-	}	
-	option = {
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { 
+					is_capital = no
+					NOT = { has_province_modifier = kpp_factory_sabotage }
+				}
+				save_event_target_as = kpp_autonomy_province
+			}
+		}
+	}
+
+	option = {	#Oh well
 		name = flavor_kpp.50.a
+		goto = kpp_autonomy_province
+		event_target:kpp_autonomy_province = {
+			add_province_modifier = {
+				name = kpp_factory_sabotage
+				duration = 730
+			}
+			add_devastation = 25
+		}
+		ai_chance = { factor = 10 }
+	}
+
+	option = {	#Repair the damage asap
+		name = flavor_kpp.50.b
+		add_years_of_income = -0.25
 		ai_chance = { factor = 10 }
 	}
 }
-# 
+# Plundering of the Treasury
 country_event = {
 	id = flavor_kpp.51
 	title = flavor_kpp.51.t
 	desc = flavor_kpp.51.desc
 	picture = NITORIBOSS_eventPicture	#TODO
-	trigger = {
-	}	
 	is_triggered_only = yes
 	mean_time_to_happen = {
 		days = 1
 	}	
-	option = {
+	option = {	#Print more money!
 		name = flavor_kpp.51.a
+		add_inflation = 2
+		ai_chance = { factor = 10 }
+	}
+	option = {	#We will have to live with that
+		name = flavor_kpp.51.b
+		add_years_of_income = -0.5
 		ai_chance = { factor = 10 }
 	}
 }
-# 
+# Bribery amongst the state officials
 country_event = {
 	id = flavor_kpp.52
 	title = flavor_kpp.52.t
 	desc = flavor_kpp.52.desc
 	picture = NITORIBOSS_eventPicture	#TODO
-	trigger = {
-	}	
 	is_triggered_only = yes
 	mean_time_to_happen = {
 		days = 1
 	}	
-	option = {
+	option = {	#Ignore it
 		name = flavor_kpp.52.a
+		add_corruption = 3
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Expel the corrupt officials
+		name = flavor_kpp.52.b
+		add_stability = -1
 		ai_chance = { factor = 10 }
 	}
 }
