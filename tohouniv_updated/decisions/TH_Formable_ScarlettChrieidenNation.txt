@@ -1,0 +1,303 @@
+country_decisions = {
+	scarlett_chireiden_nation = {
+		major = yes
+		potential = {
+			normal_or_historical_nations = yes
+			NOT = { has_country_flag = formed_scarlett_chireiden_flag }
+			was_never_end_game_tag_trigger = yes
+			OR = {
+				ai = no
+				is_playing_custom_nation = no
+			}
+			NOT = { exists = SCD }
+			NOT = { tag = PAP }
+			NOT = { tag = HLR }
+			NOT = { tag = GNK }
+			OR = {
+				AND = {
+					tag = CRD
+					NOT = { exists = SCR }
+				}
+				AND = {
+					tag = SCR
+					NOT = { exists = CRD }
+				}
+			}
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 3
+				}
+			}
+			is_colonial_nation = no
+			OR = {
+				is_former_colonial_nation = no
+				AND = {
+					is_former_colonial_nation = yes
+					ai = no
+				}
+			}
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4968		# Scalett Devil Mansion
+				province_id = 5037		# Abandoned Mansion
+				province_id = 5007		# Chireiden
+				province_id = 5013		# Nuclear Furnance
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_free_or_tributary_trigger = yes
+			is_nomad = no
+			is_at_war = no
+			owns_core_province = 4968		# Scalett Devil Mansion
+			owns_core_province = 5037		# Abandoned Mansion
+			owns_core_province = 5007		# Chireiden
+			owns_core_province = 5013		# Nuclear Furnance
+			if = {
+				limit = {
+					th_is_or_was_tag = {
+						tag = SCR
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = scr_has_appeased_satori_tt
+					has_country_flag = scr_eligible_to_see_scd_decision
+				}
+			}
+			if = {
+				limit = {
+					th_is_or_was_tag = {
+						tag = CRD
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = crd_has_appeased_remilia_tt
+					has_country_flag = crd_eligible_to_see_scd_decision
+				}
+			}
+		}
+		effect = {
+			hidden_effect = {
+				if = {
+					limit = { tag = SCR }
+					set_country_flag = scr_formed_scd
+				}
+				if = {
+					limit = { tag = CRD }
+					set_country_flag = crd_formed_scd
+				}
+			}
+			change_tag = SCD
+			remove_non_electors_emperors_from_empire_effect = yes
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
+			Scarlett_domain = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_permanent_claim = SCD
+			}
+			Chireiden_state = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_permanent_claim = SCD
+			}
+			add_prestige = 25
+			add_accepted_culture = Scarlett
+			add_accepted_culture = Chireidean
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+					is_emperor_of_china = yes
+				}
+				set_mandate = 100
+				add_country_modifier = {
+					name = "th_support_for_the_new_empire"
+					duration = 3650
+				}
+			}
+			set_country_flag = formed_scarlett_chireiden_flag
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	scarlett_chireiden_nation_diplomatically = {
+		major = yes
+		potential = {
+			normal_or_historical_nations = yes
+			was_never_end_game_tag_trigger = yes
+			NOT = { exists = SCD }
+			OR = {
+				ai = no
+				is_playing_custom_nation = no
+			}
+			OR = {
+				AND = {
+					tag = SCR
+					OR = {
+						ai = no
+						AND = {
+							ai = yes
+							CRD = {	is_subject_of = SCR	}
+							#This overlaps with allow for AI, is meant to negate do_not_integrate
+							CRD = { NOT = { num_of_cities = 50 } } #Keep this number the same as in allow
+						}
+					}
+				}
+				AND = {
+					tag = CRD
+					OR = {
+						ai = no
+						AND = {
+							ai = yes
+							SCR = {	is_subject_of = CRD	}
+							#This overlaps with allow for AI, is meant to negate do_not_integrate
+							SCR = { NOT = { num_of_cities = 50 } } #Keep this number the same as in allow
+						}
+					}
+				}
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_free_or_tributary_trigger = yes
+			is_nomad = no
+			is_at_war = no
+			legitimacy = 100
+			OR = {
+				AND = {
+					tag = SCR
+					OR = {
+						CRD = {	junior_union_with = SCR	}
+						CRD = {	is_subject_of = SCR	}
+					}
+					CRD = { NOT = { num_of_cities = 50 } } #Keep this number the same as in potential
+				}
+				AND = {
+					tag = CRD
+					OR = {
+						SCR = {	junior_union_with = CRD	}
+						SCR = {	is_subject_of = CRD	}
+					}
+					SCR = { NOT = { num_of_cities = 50 } } #Keep this number the same as in potential
+				}
+			}
+			if = {
+				limit = {
+					th_is_or_was_tag = {
+						tag = SCR
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = scr_has_appeased_satori_tt
+					has_country_flag = scr_eligible_to_see_scd_decision
+				}
+			}
+			if = {
+				limit = {
+					th_is_or_was_tag = {
+						tag = CRD
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = crd_has_appeased_remilia_tt
+					has_country_flag = crd_eligible_to_see_scd_decision
+				}
+			}
+		}
+		effect = {
+			hidden_effect = {
+				if = {
+					limit = { tag = SCR }
+					set_country_flag = scr_formed_scd
+				}
+				if = {
+					limit = { tag = CRD }
+					set_country_flag = crd_formed_scd
+				}
+			}
+			if = {
+				limit = {
+					tag = SCR
+					CRD = {
+						ai = yes
+					}
+				}
+				inherit = CRD
+			}
+			if = {
+				limit = {
+					tag = CRD
+					SCR = {
+						ai = yes
+					}
+				}
+				inherit = SCR
+			}
+			change_tag = SCD
+			remove_non_electors_emperors_from_empire_effect = yes
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
+			Scarlett_domain = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_permanent_claim = SCD
+			}
+			Chireiden_state = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_permanent_claim = SCD
+			}
+			add_prestige = 25
+			add_accepted_culture = Scarlett
+			add_accepted_culture = Chireidean
+			
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+					is_emperor_of_china = yes
+				}
+				set_mandate = 100
+				add_country_modifier = {
+					name = "th_support_for_the_new_empire"
+					duration = 3650
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 200
+		do_not_integrate = SCR
+		do_not_integrate = CRD
+	}
+}
