@@ -13,12 +13,57 @@ kpp_missions_marines_colonization_slot = {
 		required_missions = {  }
 		position = 1
 		provinces_to_highlight = {
+			owned_by = TGU
 		}
 		trigger = {
-			always = yes
+			OR = {
+				NOT = { exists = TGU }
+				reverse_has_opinion = {
+					who = TGU
+					value = 100
+				}
+				is_rival = TGU
+				is_enemy = TGU
+			}
+			army_size_percentage = 1
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					NOT = { exists = TGU }
+				}
+				add_adm_power = 75
+				add_dip_power = 75
+				add_mil_power = 75
+			}
+			else_if = {
+				limit = {
+					reverse_has_opinion = {
+						who = TGU
+						value = 100
+					}
+				}
+				country_event = {
+					id = flavor_kpp.17
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						is_rival = TGU
+						is_enemy = TGU
+					}
+				}
+				define_general = {
+					shock = 4
+					fire = 4
+					manuever = 3
+					siege = 2
+				}
+			}
+			else = {
+				custom_tooltip = KPP_diplomacy_with_tengus_tt
+			}
 		}
 	}
 	
@@ -30,12 +75,44 @@ kpp_missions_marines_colonization_slot = {
 		}
 		position = 2
 		provinces_to_highlight = {
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			owner = {
+				has_discovered = ROOT
+				is_subject = no
+				total_development = 150
+				NOT = { alliance_with = ROOT }
+				NOT = { is_rival = ROOT }
+				NOT = { is_enemy = ROOT }
+			}
 		}
 		trigger = {
-			always = yes
+			OR = {
+				total_development = 500
+				calc_true_if = {
+					desc = KPP_a_net_of_alliances_tt
+					all_ally = {
+						total_development = 150
+					}
+					amount = 3
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			custom_tooltip = KPP_a_net_of_alliances_ct
+			hidden_effect = {
+				every_ally = {
+					ROOT = {
+						add_favors = {
+							who = PREV
+							amount = 10
+						}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = kpp_alliance_makers
+				duration = 9125
+			}
 		}
 	}
 	
@@ -84,7 +161,7 @@ kpp_missions_marines_colonization_slot = {
 			}
 			add_country_modifier = {
 				name = kpp_kappa_curiosity_modifier
-				duration = 9125
+				duration = -1
 			}
 		}
 	}
@@ -115,28 +192,40 @@ kpp_missions_marines_colonization_slot = {
 			add_prestige = 15
 			add_country_modifier = {
 				name = kpp_explorer_spirit
-				duration = 9125
+				duration = 27375
 			}
 		}
 	}
 	
-	KPP_go_west = {
+	KPP_discover_india = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_break_through_the_barrier }
 		position = 10
 		provinces_to_highlight = {
+			superregion = india_superregion
+			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = KPP_discover_india_tt
+				india_superregion = {
+					has_discovered = ROOT
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = kpp_western_discoveries
+				duration = 9125
+			}
+			create_explorer = { tradition = 100 }
+			create_explorer = { tradition = 100 }
 		}
 	}
 
 	KPP_explore_far_west = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_go_west }
+		required_missions = { KPP_discover_india }
 		position = 11
 		provinces_to_highlight = {
 			region = guinea_region
@@ -158,7 +247,7 @@ kpp_missions_marines_colonization_slot = {
 	KPP_discover_europe = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_explore_far_west }
-		position = 12
+		position = 13
 		provinces_to_highlight = {
 			OR = {
 				region = iberia_region
@@ -185,79 +274,6 @@ kpp_missions_marines_colonization_slot = {
 				duration = 7300
 			}
 			country_event = { id = TH_mission_events.4 }			
-		}
-	}
-	
-	KPP_trade_with_the_europeans = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_discover_europe }
-		position = 13
-		provinces_to_highlight = {
-			#TODO - Replace with is_european_trade_node_province in the future
-			OR = {
-				province_id = 1293
-				province_id = 1295
-				province_id = 1298
-				province_id = 1308
-				province_id = 137
-				province_id = 1320
-				province_id = 1322
-				province_id = 280
-				province_id = 153
-				province_id = 134
-				province_id = 61
-				province_id = 45
-				province_id = 1876
-				province_id = 186
-				province_id = 1269
-				province_id = 1276
-				province_id = 1975
-				province_id = 1926
-				province_id = 33
-				province_id = 1652
-				province_id = 1082
-				province_id = 464
-			}
-			NOT = {
-				trade_share = {
-					country = ROOT
-					share = 5
-				}
-			}
-		}
-		trigger = {
-			calc_true_if = {
-				desc = KPP_trade_with_the_europeans_tt
-				1293 = { trade_share = { country = ROOT share = 5 } }
-				1295 = { trade_share = { country = ROOT share = 5 } }
-				1298 = { trade_share = { country = ROOT share = 5 } }
-				1308 = { trade_share = { country = ROOT share = 5 } }
-				137 = { trade_share = { country = ROOT share = 5 } }
-				1320 = { trade_share = { country = ROOT share = 5 } }
-				1322 = { trade_share = { country = ROOT share = 5 } }
-				280 = { trade_share = { country = ROOT share = 5 } }
-				153 = { trade_share = { country = ROOT share = 5 } }
-				134 = { trade_share = { country = ROOT share = 5 } }
-				61 = { trade_share = { country = ROOT share = 5 } }
-				45 = { trade_share = { country = ROOT share = 5 } }
-				1876 = { trade_share = { country = ROOT share = 5 } }
-				186 = { trade_share = { country = ROOT share = 5 } }
-				1269 = { trade_share = { country = ROOT share = 5 } }
-				1276 = { trade_share = { country = ROOT share = 5 } }
-				1975 = { trade_share = { country = ROOT share = 5 } }
-				1926 = { trade_share = { country = ROOT share = 5 } }
-				33 = { trade_share = { country = ROOT share = 5 } }
-				1652 = { trade_share = { country = ROOT share = 5 } }
-				1082 = { trade_share = { country = ROOT share = 5 } }
-				464 = { trade_share = { country = ROOT share = 5 } }
-				amount = 3
-			}
-		}
-		effect = {
-			add_country_modifier = {
-				name = kpp_masters_of_trade
-				duration = -1
-			}
 		}
 	}
 }
@@ -291,11 +307,14 @@ kpp_missions_tech_slot = {
 				spymaster = 2
 				NOT = { exists = MRY }
 			}
+			is_subject = no
 		}
 		effect = {
 			if = {
 				limit = {
 					exists = MRY
+					NOT = { alliance_with = MRY }
+					NOT = { is_subject_of = MRY }
 				}
 				country_event = {
 					id = flavor_kpp.14
@@ -402,18 +421,31 @@ kpp_missions_tech_slot = {
 		required_missions = { KPP_annex_the_mountain_kappas }
 		position = 4
 		provinces_to_highlight = {
-			area = Yumemi_space_state
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			owned_by = YUM
 		}
 		trigger = {
-			Yumemi_space_state = {
-				country_or_non_sovereign_subject_holds = ROOT
-				type = all
+			OR = {
+				reverse_has_opinion = {
+					who = YUM
+					value = 100
+				}
+				NOT = { exists = YUM }
 			}
+			diplomatic_reputation = 1
 		}
 		effect = {
 			country_event = {
 				id = flavor_kpp.9
+			}
+			if = {
+				limit = { exists = YUM }
+				YUM = { add_historical_friend = ROOT }
+				add_historical_friend = YUM
+			}
+			else = {
+				Yumemi_space_state = {
+					add_core = ROOT
+				}
 			}
 		}
 	}
@@ -614,12 +646,13 @@ kpp_missions_war_slot = {
 		position = 1
 		trigger = {
 			army_size_percentage = 1
-			has_leaders = {
-				value = 2
-				type = general
-				include_monarch = yes
-				include_heir = yes
-			}
+			num_of_generals = 1
+			#has_leaders = {
+			#	value = 2
+			#	type = general
+			#	include_monarch = yes
+			#	include_heir = yes
+			#}
 		}
 		effect = {
 			Kappa_delta = {
@@ -688,40 +721,11 @@ kpp_missions_war_slot = {
 			}
 		}
 		effect = {
-			if = {
-				limit = {
-					exists = YUM
-				}
-				add_casus_belli = {
-					type = cb_vassalize_mission
-					target = YUM
-					months = 300
-				}
+			add_country_modifier = {
+				name = kpp_takanes_diplomats
+				duration = 10950
 			}
-			if = {
-				limit = {
-					exists = THR
-				}
-				add_casus_belli = {
-					type = cb_vassalize_mission
-					target = THR
-					months = 300
-				}
-			}
-			Yumemi_space_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			Rika_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
+			add_stability_or_adm_power = yes
 		}
 	}
 	
@@ -735,19 +739,64 @@ kpp_missions_war_slot = {
 		position = 5
 		provinces_to_highlight = {
 			OR = {
-				area = Yumemi_space_state
-				area = Rika_state
+				AND = {
+					NOT = { exists = YUM }
+					area = Yumemi_space_state
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+				owned_by = YUM
+				AND = {
+					NOT = { exists = THR }
+					area = Rika_state
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+				owned_by = THR
 			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			Yumemi_space_state = {
-				country_or_non_sovereign_subject_holds = ROOT
-				type = all
+			OR = {
+				YUM = {
+					OR = {
+						alliance_with = ROOT
+						is_subject_of = ROOT
+					}
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+					trust = {
+						who = ROOT
+						value = 75
+					}
+				}
+				AND = {
+					NOT = { exists = YUM }
+					Yumemi_space_state = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
 			}
-			Rika_state = {
-				country_or_non_sovereign_subject_holds = ROOT
-				type = all
+			OR = {
+				THR = {
+					OR = {
+						alliance_with = ROOT
+						is_subject_of = ROOT
+					}
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+					trust = {
+						who = ROOT
+						value = 75
+					}
+				}
+				AND = {
+					NOT = { exists = THR }
+					Rika_state = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
 			}
 			legitimacy_equivalent = 95
 			stability = 1
@@ -800,23 +849,81 @@ kpp_missions_war_slot = {
 		}
 	}
 	
-	KPP_colonize_mexico = {
+	KPP_colonize_peru = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_go_east }
+		required_missions = { KPP_discover_south_america }
 		position = 9
 		provinces_to_highlight = {
+			colonial_region = colonial_peru
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				colonial_region = colonial_peru
+				value = 25
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = { gold = 1 }
+				add_years_of_owned_provinces_production_income = {
+					years = 4
+					trigger = {
+						trade_goods = gold
+					}
+					custom_tooltip = MONOPOLY_INCOME_GOLD_DESC
+				}
+			}
+			if = {
+				limit = {
+					any_subject_country = {
+						capital_scope = { colonial_region = colonial_peru }
+						gold = 1
+					}
+				}
+				hidden_effect = {
+					every_subject_country = {
+						limit = {
+							capital_scope = { colonial_region = colonial_peru }
+							gold = 1
+						}
+						export_to_variable = {
+							which = kpp_old_subject_money
+							value = treasury
+						}
+						add_years_of_owned_provinces_production_income = {
+							years = 4
+							trigger = {
+								trade_goods = gold
+							}
+							custom_tooltip = MONOPOLY_INCOME_GOLD_DESC
+						}
+						export_to_variable = {
+							which = kpp_new_subject_money
+							value = treasury
+						}
+						subtract_variable = {
+							which = kpp_new_subject_money
+							which = kpp_old_subject_money
+						}
+						transfer_treasury = {
+							giver = THIS
+							taker = ROOT
+							variable = kpp_new_subject_money
+						}
+					}
+				}
+			}
+			custom_tooltip = KPP_colonize_peru_ct
+			country_event = {
+				id = flavor_kpp.19
+			}
 		}
 	}
 	
 	KPP_push_to_africa = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_go_west }
+		required_missions = { KPP_discover_india }
 		position = 11
 		provinces_to_highlight = {
 			continent = africa
@@ -1116,18 +1223,31 @@ kpp_missions_invention_slot = {
 		required_missions = { KPP_annex_the_mountain_kappas }
 		position = 4
 		provinces_to_highlight = {
-			area = Rika_state
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			owned_by = THR
 		}
 		trigger = {
-			Rika_state = {
-				country_or_non_sovereign_subject_holds = ROOT
-				type = all
+			OR = {
+				reverse_has_opinion = {
+					who = THR
+					value = 100
+				}
+				NOT = { exists = THR }
 			}
+			diplomatic_reputation = 1
 		}
 		effect = {
 			country_event = {
 				id = flavor_kpp.10
+			}
+			if = {
+				limit = { exists = THR }
+				YUM = { add_historical_friend = ROOT }
+				add_historical_friend = THR
+			}
+			else = {
+				Rika_state = {
+					add_core = ROOT
+				}
 			}
 		}
 	}
@@ -1162,17 +1282,32 @@ kpp_missions_invention_slot = {
 		}
 	}
 	
-	KPP_colonize_panama = {
+	KPP_colonize_colombia = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_go_east }
+		required_missions = { KPP_discover_south_america }
 		position = 9
 		provinces_to_highlight = {
+			colonial_region = colonial_colombia
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				colonial_region = colonial_colombia
+				value = 25
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			835 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = -1
+					power = 100
+					key = KPP_colonize_colombia_tt
+				}
+			}
+			country_event = {
+				id = flavor_kpp.19
+			}
 		}
 	}
 	
@@ -1252,8 +1387,7 @@ kpp_missions_internal_struggle_slot = {
 			num_of_owned_provinces_with = {
 				culture = Kappa
 				has_production_building_trigger = yes
-				has_trade_building_trigger = yes
-				value = 8
+				value = 6
 			}
 		}
 		effect = {
@@ -1265,20 +1399,6 @@ kpp_missions_internal_struggle_slot = {
 			th_unlock_estate_privilege = {
 				estate_privilege = th_estate_burghers_swamp_developers
 			}
-		}
-	}
-	
-	KPP_grand_trade_fleet = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = {  }
-		position = 2
-		provinces_to_highlight = {
-		}
-		trigger = {
-			always = yes
-		}
-		effect = {
-			custom_tooltip = cool_effect
 		}
 	}
 	
@@ -1399,49 +1519,241 @@ kpp_missions_internal_struggle_slot = {
 		}
 	}
 	
-	KPP_go_east = {
+	KPP_discover_south_america = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_break_through_the_barrier }
 		position = 8
 		provinces_to_highlight = {
+			continent = south_america
+			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = KPP_discover_south_america_tt
+				south_america = { has_discovered = ROOT }
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			colonial_colombia = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			colonial_brazil = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			colonial_peru = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			th_colonize_dev_province_for_root = {
+				province = 1988
+			}
 		}
 	}
 	
-	KPP_colonize_peru = {
+	KPP_colonize_brazil = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_go_east }
+		required_missions = { KPP_discover_south_america }
 		position = 9
 		provinces_to_highlight = {
+			colonial_region = colonial_brazil
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				colonial_region = colonial_brazil
+				value = 40
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			country_event = {
+				id = flavor_kpp.19
+			}
+			add_dip_power = 200
+			capital_scope = {
+				add_base_production = 6
+			}
 		}
 	}
 	
 	KPP_new_world_colonization = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = {
+			KPP_colonize_colombia
 			KPP_colonize_peru
-			KPP_colonize_panama
-			KPP_colonize_mexico
+			KPP_colonize_brazil
 		}
 		position = 10
 		provinces_to_highlight = {
+			OR = {
+				continent = north_america
+				continent = south_america
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			has_discovered = ROOT
 		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					continent = north_america
+					continent = south_america
+				}
+				value = 200
+			}
+			NOT = {
+				any_subject_country = {
+					is_colonial_nation = yes
+					liberty_desire = 30
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			custom_tooltip = KPP_new_world_colonization_tt
+			hidden_effect = {
+				south_america = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+						trade_goods = gold
+					}
+					add_province_modifier = {
+						name = kpp_perfect_gold_mining
+						duration = -1
+					}
+				}
+			}
+			add_country_modifier = {
+				name = kpp_colonial_empire
+				duration = -1
+			}
+		}
+	}
+	
+	KPP_grand_trade_fleet = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = {  }
+		position = 11
+		provinces_to_highlight = {
+		}
+		trigger = {
+			num_of_light_ship = 50
+			OR = {
+				full_idea_group = trade_ideas
+				full_idea_group = maritime_ideas
+				full_idea_group = plutocracy_ideas
+				mercantilism = 50
+				trader = 3
+				trade_efficiency = 1
+			}
+			navy_tradition = 40
+			if = {
+				limit = {
+					has_dlc = "Golden Century"
+				}
+				has_flagship = yes
+			}
+		}
+		effect = {
+			random_owned_province = {
+				limit = {
+					has_port = yes
+				}
+				create_flagship = {
+					name = "The Flying Kappa"
+					type = light_ship
+				}
+			}
+			add_mercantilism = 10
+		}
+	}
+	
+	KPP_monopolize_moriya_trade = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_grand_trade_fleet }
+		position = 13
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 5019
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 50
+						}
+					}
+				}
+				AND = {
+					province_id = 5032
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 50
+						}
+					}
+				}
+				AND = {
+					province_id = 4999
+					OR = {
+						NOT = {
+							trade_share = {
+								country = ROOT
+								share = 90
+							}
+						}
+						highest_value_trade_node = no
+					}
+				}
+				AND = {
+					province_id = 4965
+					OR = {
+						NOT = { is_core = ROOT }
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+		trigger = {
+			4999 = {
+				trade_share = {
+					country = ROOT
+					share = 90
+				}
+				highest_value_trade_node = yes
+			}
+			5019 = {
+				trade_share = {
+					country = ROOT
+					share = 50
+				}
+			}
+			5032 = {
+				trade_share = {
+					country = ROOT
+					share = 50
+				}
+			}
+			owns_core_province = 4965
+		}
+		effect = {
+			4965 = {
+				add_province_modifier = {
+					name = kpp_main_port_to_gensokyo
+					duration = -1
+				}
+			}
+			add_years_of_trade_income = {
+				years = 4
+				custom_tooltip = zan_settle_trade_posts_ct
+			}
 		}
 	}
 }
