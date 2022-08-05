@@ -928,6 +928,104 @@ country_event = {
 	}
 }
 
+# Tributary Status of the Kappas
+country_event = {
+	id = flavor_kpp.14
+	title = flavor_kpp.14.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_kpp.14.desc
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = MRY
+	}
+	#We shall serve the Moriya Clan with our services
+	option = {
+		name = flavor_kpp.14.a
+		trigger = {
+			exists = MRY
+			MRY = { religion = th_moriyashinto }
+			religion = th_moriyashinto
+		}
+		MRY = {
+			create_subject = {
+				subject_type = th_religious_tributary
+				subject = ROOT
+			}
+		}
+		add_trust = {
+			who = MRY
+			value = 25
+			mutual = yes
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = flavor_kpp.14.b
+		trigger = {
+			exists = MRY
+			OR = {
+				MRY = { NOT = { religion = th_moriyashinto } }
+				NOT = { religion = th_moriyashinto }
+			}
+		}
+		MRY = {
+			create_subject = {
+				subject_type = tributary_state
+				subject = ROOT
+			}
+		}
+		add_trust = {
+			who = MRY
+			value = 25
+			mutual = yes
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#All we need is an alliance with Moriya Clan
+	option = {
+		name = flavor_kpp.14.c
+		trigger = {
+			exists = MRY
+		}
+		if = {
+			limit = { is_rival = MRY }
+			remove_rival = MRY
+		}
+		if = {
+			limit = { is_enemy = MRY }
+			MRY = { remove_rival = ROOT }
+		}
+		create_alliance = MRY
+		add_trust = {
+			who = MRY
+			value = 25
+			mutual = yes
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#We are good on our own
+	option = {
+		name = flavor_kpp.14.d
+		add_dip_power = 100
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
 #Random Innovativeness events
 
 # Nitori gadget
@@ -1075,6 +1173,7 @@ country_event = {
 			random_owned_province = {
 				limit = {
 					is_overseas = no
+					same_continent = ROOT
 				}
 				save_event_target_as = th_kappa_rebellion_province
 			}
@@ -1153,6 +1252,7 @@ country_event = {
 			random_owned_province = {
 				limit = {
 					is_overseas = no
+					same_continent = ROOT
 				}
 				save_event_target_as = th_kappa_rebellion_province
 				spawn_rebels = {
@@ -1360,18 +1460,21 @@ country_event = {
 			random_owned_province = {
 				limit = {
 					is_overseas = no
+					same_continent = ROOT
 				}
 				save_event_target_as = th_super_capitalists_province
 			}
 			random_owned_province = {
 				limit = {
 					is_overseas = no
+					same_continent = ROOT
 				}
 				save_event_target_as = th_explosion_enjoyers_province
 			}
 			random_owned_province = {
 				limit = {
 					is_overseas = no
+					same_continent = ROOT
 				}
 				save_event_target_as = th_independent_marines_province
 			}
@@ -1382,11 +1485,11 @@ country_event = {
 	#Support the th_super_capitalists faction
 	option = {
 		name = flavor_kpp.45.a
-		custom_tooltip = flavor_kpp.45.tt
+		custom_tooltip = flavor_kpp.45.a.tt
 		define_ruler = {
 			adm = 2
 			dynasty = "of the Super Capitalists"
-			hide_skill = yes
+			hide_skills = yes
 			female = yes
 			claim = 50
 		}
@@ -1417,11 +1520,11 @@ country_event = {
 	#Support the th_explosion_enjoyers faction
 	option = {
 		name = flavor_kpp.45.b
-		custom_tooltip = flavor_kpp.45.tt
+		custom_tooltip = flavor_kpp.45.b.tt
 		define_ruler = {
 			dip = 2
 			dynasty = "Explosion-Enjoyers"
-			hide_skill = yes
+			hide_skills = yes
 			female = yes
 			claim = 50
 		}
@@ -1452,11 +1555,11 @@ country_event = {
 	#Support the th_independent_marines faction
 	option = {
 		name = flavor_kpp.45.c
-		custom_tooltip = flavor_kpp.45.tt
+		custom_tooltip = flavor_kpp.45.c.tt
 		define_ruler = {
 			mil = 2
 			dynasty = "Kappamander"
-			hide_skill = yes
+			hide_skills = yes
 			female = yes
 			claim = 50
 		}
@@ -1487,8 +1590,7 @@ country_event = {
 	#If you are not for the reforms then you are an enemy of the state!
 	option = {
 		name = flavor_kpp.45.d
-		custom_tooltip = flavor_kpp.45.tt
-		add_stability = -4
+		add_stability = -6
 		event_target:th_super_capitalists_province = {
 			spawn_rebels = {
 				type = th_super_capitalists
@@ -1589,7 +1691,10 @@ country_event = {
 	desc = flavor_kpp.47.desc
 	picture = NITORIBOSS_eventPicture	#TODO
 	trigger = {
-		num_of_cities = 2
+		any_owned_province = {
+			is_capital = no
+			same_continent = ROOT
+		}
 	}	
 	is_triggered_only = yes
 	mean_time_to_happen = {
@@ -1598,7 +1703,10 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			random_owned_province = {
-				limit = { is_capital = no }
+				limit = { 
+					is_capital = no
+					same_continent = ROOT
+				}
 				save_event_target_as = kpp_autonomy_province
 			}
 		}
@@ -1686,6 +1794,7 @@ country_event = {
 		num_of_cities = 2
 		any_owned_province = {
 			is_capital = no
+			same_continent = ROOT
 			NOT = { has_province_modifier = kpp_factory_sabotage }
 		}
 	}	
@@ -1698,6 +1807,7 @@ country_event = {
 			random_owned_province = {
 				limit = { 
 					is_capital = no
+					same_continent = ROOT
 					NOT = { has_province_modifier = kpp_factory_sabotage }
 				}
 				save_event_target_as = kpp_autonomy_province
@@ -1781,10 +1891,16 @@ country_event = {
 	mean_time_to_happen = {
 		days = 1
 	}	
+	immediate = {
+		add_corruption = 1
+	}
 	option = {	#Defend the government from th_super_capitalists
 		name = flavor_kpp.53.a
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 4
 				type = th_super_capitalists
@@ -1793,11 +1909,11 @@ country_event = {
 		ai_chance = { factor = 10 }
 	}
 	option = {
-		name = flavor_kpp.53.a
+		name = flavor_kpp.53.b
 		define_ruler = {
 			adm = 2
 			dynasty = "of the Super Capitalists"
-			hide_skill = yes
+			hide_skills = yes
 			female = yes
 			claim = 50
 		}
@@ -1806,14 +1922,20 @@ country_event = {
 			duration = 1825
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 1
 				type = th_super_capitalists
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 1
 				type = th_super_capitalists
@@ -1822,41 +1944,124 @@ country_event = {
 		ai_chance = { factor = 10 }
 	}
 	option = {	#Get Nitori in power! NOW!
-		name = flavor_kpp.53.a
-		define_ruler = {
-			name = "Nitori"
-			dynasty = "Kawashiro"
-			age = 20
-			adm = 6
-			dip = 5
-			mil = 3
-			female = yes
+		name = flavor_kpp.53.c
+		trigger = {
+			NOT = { has_ruler_flag = touhou_original_ruler }
 		}
-		hidden_effect = {
-			add_ruler_personality = immortal_personality
-			set_ruler_flag = touhou_character_ruler
-			set_ruler_flag = touhou_original_ruler
-			set_variable = {
-				which = election_turn
-				value = 1
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
 			}
 		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_super_capitalists
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_explosion_enjoyers
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = flavor_kpp.53.d
+		trigger = {
+			has_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_independent_marines
@@ -1878,10 +2083,27 @@ country_event = {
 	mean_time_to_happen = {
 		days = 1
 	}	
+	immediate = {
+		random_owned_province = {
+			limit = {
+				same_continent = ROOT
+			}
+			add_devastation = 50
+		}
+		random_owned_province = {
+			limit = {
+				same_continent = ROOT
+			}
+			add_devastation = 50
+		}
+	}
 	option = {	#Defend the government from th_explosion_enjoyers
 		name = flavor_kpp.54.a
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 4
 				type = th_explosion_enjoyers
@@ -1890,11 +2112,11 @@ country_event = {
 		ai_chance = { factor = 10 }
 	}
 	option = {
-		name = flavor_kpp.54.a
+		name = flavor_kpp.54.b
 		define_ruler = {
 			dip = 2
 			dynasty = "Explosion-Enjoyers"
-			hide_skill = yes
+			hide_skills = yes
 			female = yes
 			claim = 50
 		}
@@ -1903,14 +2125,20 @@ country_event = {
 			duration = 1825
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 1
 				type = th_explosion_enjoyers
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 1
 				type = th_explosion_enjoyers
@@ -1919,41 +2147,124 @@ country_event = {
 		ai_chance = { factor = 10 }
 	}
 	option = {	#Get Nitori in power! NOW!
-		name = flavor_kpp.54.a
-		define_ruler = {
-			name = "Nitori"
-			dynasty = "Kawashiro"
-			age = 20
-			adm = 6
-			dip = 5
-			mil = 3
-			female = yes
+		name = flavor_kpp.54.c
+		trigger = {
+			NOT = { has_ruler_flag = touhou_original_ruler }
 		}
-		hidden_effect = {
-			add_ruler_personality = immortal_personality
-			set_ruler_flag = touhou_character_ruler
-			set_ruler_flag = touhou_original_ruler
-			set_variable = {
-				which = election_turn
-				value = 1
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
 			}
 		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_super_capitalists
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_explosion_enjoyers
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = flavor_kpp.54.d
+		trigger = {
+			has_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_independent_marines
@@ -1975,10 +2286,16 @@ country_event = {
 	mean_time_to_happen = {
 		days = 1
 	}	
+	immediate = {
+		add_stability = -1
+	}
 	option = {	#Defend the government from th_independent_marines
 		name = flavor_kpp.55.a
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 4
 				type = th_independent_marines
@@ -1987,11 +2304,11 @@ country_event = {
 		ai_chance = { factor = 10 }
 	}
 	option = {
-		name = flavor_kpp.55.a
+		name = flavor_kpp.55.b
 		define_ruler = {
 			mil = 2
 			dynasty = "Kappamander"
-			hide_skill = yes
+			hide_skills = yes
 			female = yes
 			claim = 50
 		}
@@ -2000,14 +2317,20 @@ country_event = {
 			duration = 1825
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 1
 				type = th_independent_marines
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 1
 				type = th_independent_marines
@@ -2016,41 +2339,124 @@ country_event = {
 		ai_chance = { factor = 10 }
 	}
 	option = {	#Get Nitori in power! NOW!
-		name = flavor_kpp.55.a
-		define_ruler = {
-			name = "Nitori"
-			dynasty = "Kawashiro"
-			age = 20
-			adm = 6
-			dip = 5
-			mil = 3
-			female = yes
+		name = flavor_kpp.55.c
+		trigger = {
+			NOT = { has_ruler_flag = touhou_original_ruler }
 		}
-		hidden_effect = {
-			add_ruler_personality = immortal_personality
-			set_ruler_flag = touhou_character_ruler
-			set_ruler_flag = touhou_original_ruler
-			set_variable = {
-				which = election_turn
-				value = 1
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
 			}
 		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_super_capitalists
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_explosion_enjoyers
 			}
 		}
 		random_owned_province = {
-			limit = { is_overseas = no }
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = flavor_kpp.55.d
+		trigger = {
+			has_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 2
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
 			spawn_rebels = {
 				size = 2
 				type = th_independent_marines
@@ -2146,6 +2552,7 @@ country_event = {
 			duration = -1
 		}
 		hidden_effect = {
+			set_country_flag = kpp_unlock_kappa_anti_teamwork_coalition_disaster_decision
 			change_variable = {
 				which = max_election_term
 				value = 1
@@ -2174,6 +2581,7 @@ country_event = {
 			duration = -1
 		}
 		hidden_effect = {
+			set_country_flag = kpp_unlock_kappa_guild_wars_disaster_decision
 			change_variable = {
 				which = max_election_term
 				value = 1
