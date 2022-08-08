@@ -591,6 +591,7 @@ Gensokyan_tfr_pirate_government_legacy = {
 		enables_aristocratic_idea_group = no
 		has_fairy_pirate_estate = yes
 		force_admiral_leader = yes
+		cannot_become_dictatorship = yes
 	}
 
 	ai = {
@@ -641,6 +642,7 @@ Gensokyan_tfr_pirate_government = {
 		enables_aristocratic_idea_group = no
 		has_fairy_pirate_estate = yes
 		force_admiral_leader = yes
+		cannot_become_dictatorship = yes
 	}
 }
 
@@ -2207,27 +2209,55 @@ Gensokyan_kpp_kappa_state_legacy = {
 
 	valid_for_nation_designer = yes
 	nation_designer_cost = 40
-
-	monarchy = yes
+	duration = 5
 	modifiers = {
-		global_unrest = -1
-		legitimacy = 0.5
-		global_autonomy = -0.05
-		governing_capacity = 150
+		global_autonomy = 0.1
+		burghers_influence_modifier = 0.05
+		burghers_loyalty_modifier = 0.2
+		republican_tradition = -0.5
+		max_terms = 0.02
+		reform_progress_growth = -1
 	}
 	effect = {
 		hidden_effect = {
-			if = {
-				limit = { is_female = yes } 
-				convert_female_ruler_to_general = 40
+			set_variable = {
+				which = election_term
+				value = 1
 			}
-			else = { convert_ruler_to_general = 40 }
+			set_variable = {
+				which = max_election_term
+				value = 2
+			}
 		}
 	}
+	removed_effect = {
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+			remove_country_modifier = kpp_overcame_counter_movement_disaster
+			remove_country_modifier = kpp_overcame_anti_teamwork_disaster
+			remove_country_modifier = kpp_overcame_guild_wars_disaster
+		}
+	}
+	republican_name = no
 
 	custom_attributes = {
-		th_has_oni_succession = yes
-		th_disable_respawn = yes
+		th_has_kappa_elections = yes
+		th_has_limited_terms = yes
+		enables_plutocratic_idea_group = yes
+		enables_aristocratic_idea_group = no
+		th_has_kappa_rebels = yes
+		cannot_become_dictatorship = yes
+	}
+	conditional = {
+		allow = { has_dlc = "Rule Britannia" }
+		custom_attributes = {
+			th_kappa_gadgets = yes
+			th_innovativeness_from_elections = yes
+			th_innovativeness_from_embracing_institutions = yes
+		}
 	}
 
 	ai = {
@@ -2294,6 +2324,7 @@ Gensokyan_kpp_kappa_state = {
 		enables_plutocratic_idea_group = yes
 		enables_aristocratic_idea_group = no
 		th_has_kappa_rebels = yes
+		cannot_become_dictatorship = yes
 	}
 	conditional = {
 		allow = { has_dlc = "Rule Britannia" }
@@ -2325,12 +2356,14 @@ Gensokyan_kpp_united_kappa_republic_legacy = {
 		burghers_loyalty_modifier = 0.2
 		development_cost = -0.1
 	}
+	republican_name = no
 
 	custom_attributes = {
 		enables_plutocratic_idea_group = yes
 		enables_aristocratic_idea_group = no
 		th_has_tinker_contests = yes
 		th_has_tinker_elections_on_ruler_death = yes
+		cannot_become_dictatorship = yes
 	}
 	conditional = {
 		allow = { has_dlc = "Rule Britannia" }
@@ -2378,6 +2411,7 @@ Gensokyan_kpp_united_kappa_republic = {
 		enables_aristocratic_idea_group = no
 		th_has_tinker_contests = yes
 		th_has_tinker_elections_on_ruler_death = yes
+		cannot_become_dictatorship = yes
 	}
 	conditional = {
 		allow = { has_dlc = "Rule Britannia" }
@@ -2416,8 +2450,8 @@ Gensokyan_tgu_caste_system_legacy = {
 	}
 
 	custom_attributes = {
-		th_has_oni_succession = yes
-		th_disable_respawn = yes
+		has_wolf_tengu_estate = yes
+		has_high_tengu_estate = yes
 	}
 
 	ai = {
@@ -2436,6 +2470,7 @@ Gensokyan_tgu_caste_system = {
 				is_playing_custom_nation = yes
 				have_had_reform = Gensokyan_tgu_caste_system
 			}
+			has_reform = Gensokyan_tgu_caste_system
 		}
 	}
 	legacy_equivalent = Gensokyan_tgu_caste_system_legacy
@@ -2448,20 +2483,130 @@ Gensokyan_tgu_caste_system = {
 		global_autonomy = -0.05
 		governing_capacity = 150
 	}
-	effect = {
-		hidden_effect = {
-			if = {
-				limit = { is_female = yes } 
-				convert_female_ruler_to_general = 40
-			}
-			else = { convert_ruler_to_general = 40 }
-		}
+
+	custom_attributes = {
+		has_wolf_tengu_estate = yes
+		has_high_tengu_estate = yes
+	}
+}
+
+Gensokyan_tgu_absolute_reign_legacy = {
+	allow_normal_conversion = no
+	icon = "tengu_state_reform"
+	legacy_government = yes
+	valid_for_new_country = no
+	allow_convert = no
+
+	valid_for_nation_designer = yes
+	nation_designer_cost = 40
+
+	monarchy = yes
+	modifiers = {
+		global_unrest = -1
+		legitimacy = 0.5
+		global_autonomy = -0.05
+		governing_capacity = 150
 	}
 
 	custom_attributes = {
-		th_has_oni_succession = yes
-		th_disable_respawn = yes
-		th_legitimacy_through_battles = yes
+		has_wolf_tengu_estate = yes
+		has_high_tengu_estate = yes
+	}
+
+	ai = {
+		factor = 5
+	}
+}
+
+Gensokyan_tgu_absolute_reign = {
+	lock_level_when_selected = yes
+	icon = "tengu_state_reform"
+	allow_normal_conversion = no
+	potential = {
+		OR = {
+			has_country_flag = tgu_has_caste_system
+			AND = {
+				is_playing_custom_nation = yes
+				have_had_reform = Gensokyan_tgu_caste_system
+			}
+			has_reform = Gensokyan_tgu_absolute_reign
+		}
+	}
+	legacy_equivalent = Gensokyan_tgu_absolute_reign_legacy
+	valid_for_new_country = no
+	valid_for_nation_designer = yes
+	nation_designer_cost = 40
+	modifiers = {
+		global_unrest = -1
+		legitimacy = 0.5
+		global_autonomy = -0.05
+		governing_capacity = 150
+	}
+
+	custom_attributes = {
+		has_wolf_tengu_estate = yes
+		has_high_tengu_estate = yes
+	}
+}
+
+Gensokyan_tgu_tengu_republic_legacy = {
+	allow_normal_conversion = no
+	icon = "tengu_state_reform"
+	legacy_government = yes
+	valid_for_new_country = no
+	allow_convert = no
+
+	valid_for_nation_designer = yes
+	nation_designer_cost = 40
+
+	monarchy = yes
+	modifiers = {
+		global_unrest = -1
+		legitimacy = 0.5
+		global_autonomy = -0.05
+		governing_capacity = 150
+	}
+
+	custom_attributes = {
+		has_wolf_tengu_estate = yes
+		has_high_tengu_estate = yes
+		cannot_become_dictatorship = yes
+	}
+
+	ai = {
+		factor = 5
+	}
+}
+
+Gensokyan_tgu_tengu_republic = {
+	lock_level_when_selected = yes
+	icon = "tengu_state_reform"
+	allow_normal_conversion = no
+	potential = {
+		OR = {
+			has_country_flag = tgu_has_caste_system
+			AND = {
+				is_playing_custom_nation = yes
+				have_had_reform = Gensokyan_tgu_caste_system
+			}
+			has_reform = Gensokyan_tgu_tengu_republic
+		}
+	}
+	legacy_equivalent = Gensokyan_tgu_tengu_republic_legacy
+	valid_for_new_country = no
+	valid_for_nation_designer = yes
+	nation_designer_cost = 40
+	modifiers = {
+		global_unrest = -1
+		legitimacy = 0.5
+		global_autonomy = -0.05
+		governing_capacity = 150
+	}
+
+	custom_attributes = {
+		has_wolf_tengu_estate = yes
+		has_high_tengu_estate = yes
+		cannot_become_dictatorship = yes
 	}
 }
 
