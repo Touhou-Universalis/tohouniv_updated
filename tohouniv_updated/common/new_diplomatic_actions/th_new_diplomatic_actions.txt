@@ -777,3 +777,812 @@ th_proclaim_assert_dominance_cb = {
 		always = no
 	}
 }
+
+#Charter Trade Post
+th_charter_trade_post = {
+	category = th_diplo_action
+	alert_index = 30
+	alert_tooltip = th_charter_trade_post_tooltip
+	require_acceptance = yes
+
+	is_visible = {
+		has_country_flag = th_unlocked_charter_trade_post_diplo_action
+		is_free_or_tributary_trigger = yes
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { NOT = { num_of_ports = 1 } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_needs_one_port
+				FROM = { num_of_ports = 1 }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { capital_scope = { has_port = yes } NOT = { num_of_ports = 2 } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_cannot_sell_capital
+				FROM = { OR = { capital_scope = { has_port = no } num_of_ports = 2 } }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { same_continent = ROOT }
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_cannot_buy_from_same_continent_competitors
+				FROM = { NOT = { same_continent = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					any_owned_province = {
+						is_capital = no
+						has_port = yes
+						region_for_scope_province = {
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_has_province_in_uncontested_region
+				FROM = {
+					any_owned_province = {
+						is_capital = no
+						has_port = yes
+						NOT = {
+							region_for_scope_province = {
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					NOT = {
+						any_owned_province = {
+							is_capital = no
+							has_port = yes
+							NOT = {
+								region_for_scope_province = {
+									country_or_non_sovereign_subject_holds = ROOT
+								}
+							}
+							range = ROOT
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_has_province_is_in_range
+				FROM = {
+					any_owned_province = {
+						is_capital = no
+						has_port = yes
+						NOT = {
+							region_for_scope_province = {
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+						}
+						range = ROOT
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = th_has_trade_post_event_open
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_is_not_currently_trying_to_charter_trade_post
+				NOT = { has_country_flag = th_has_trade_post_event_open }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { has_country_flag = th_has_trade_deal_event }
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_has_not_trade_deal_event_open
+				FROM = { NOT = { has_country_flag = th_has_trade_deal_event } }
+			}
+		}
+		if = {
+			limit = {
+				is_at_war = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_cannot_buy_during_war
+				is_at_war = no
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_at_war = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_cannot_buy_during_war_from
+				FROM = { is_at_war = no }
+			}
+		}
+		years_of_income = 3
+	}
+
+	on_accept = {
+		FROM = {
+			country_event = {
+				id = th_diplo_events.48
+			}
+		}
+	}
+
+	on_decline = {
+	}
+
+    ai_acceptance = {
+		add_entry = {
+			name = CHARTER_BASE_RELUCTANCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -25
+			}
+		}
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = TH_DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = 0.25
+			multiply_variable = {
+				which = ai_value
+				value = 0.25
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 4
+			multiply_variable = {
+				which = ai_value
+				value = 4
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+    }
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Purchase War Support	#TODO
+th_purchase_war_support = {
+	category = th_diplo_action
+	alert_index = 30
+	alert_tooltip = th_purchase_war_support_tooltip
+	require_acceptance = yes
+
+	is_visible = {
+		has_country_flag = th_unlocked_purchase_war_support_diplo_action
+		is_free_or_tributary_trigger = yes
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = { FROM = { is_at_war = yes } }
+			custom_trigger_tooltip = {
+				tooltip = th_cannot_buy_during_war_from
+				FROM = { is_at_war = no }
+			}
+		}
+		if = {
+			limit = { is_at_war = no }
+			custom_trigger_tooltip = {
+				tooltip = th_needs_to_be_at_war
+				is_at_war = yes
+			}
+		}
+		years_of_income = 5
+	}
+
+	on_accept = {
+		FROM = {
+			country_event = {
+				id = th_diplo_events.48
+			}
+		}
+	}
+
+	on_decline = {
+	}
+
+    ai_acceptance = {
+		add_entry = {
+			name = CHARTER_BASE_RELUCTANCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -25
+			}
+		}
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = TH_DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = 0.25
+			multiply_variable = {
+				which = ai_value
+				value = 0.25
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 4
+			multiply_variable = {
+				which = ai_value
+				value = 4
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+    }
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Purchase Truce
+th_purchase_truce = {
+	category = th_diplo_action
+	alert_index = 30
+	alert_tooltip = th_purchase_truce_tooltip
+	require_acceptance = yes
+
+	is_visible = {
+		has_country_flag = th_unlocked_purchase_truce_diplo_action
+		is_free_or_tributary_trigger = yes
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		years_of_income = 4
+	}
+
+	on_accept = {
+		FROM = {
+			country_event = {
+				id = th_diplo_events.50
+			}
+		}
+	}
+
+	on_decline = {
+	}
+
+    ai_acceptance = {
+		add_entry = {
+			name = CHARTER_BASE_RELUCTANCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -25
+			}
+		}
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = TH_DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = 0.25
+			multiply_variable = {
+				which = ai_value
+				value = 0.25
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 4
+			multiply_variable = {
+				which = ai_value
+				value = 4
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+    }
+	ai_will_do = {
+		always = no
+	}
+}

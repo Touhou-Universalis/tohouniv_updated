@@ -159,7 +159,7 @@ country_event = {
 		name = th_kappa_disasters.3.a
 		goto = kpp_autonomy_province
 		event_target:kpp_autonomy_province = {
-			add_local_autonomy = 10
+			add_local_autonomy = 20
 		}
 		ai_chance = { factor = 10 }
 	}
@@ -289,6 +289,12 @@ country_event = {
 	picture = NITORIBOSS_eventPicture	#TODO
 	fire_only_once = yes
 	is_triggered_only = yes
+	trigger = {
+		had_country_flag = {
+			flag = active_kappa_counter_movement_disaster
+			days = 365
+		}
+	}
 	mean_time_to_happen = {
 		days = 1
 	}
@@ -378,13 +384,11 @@ country_event = {
 				type = th_kappa_rebels
 			}
 		}
-		add_republican_tradition = 10
 		ai_chance = { factor = 10 }
 	}
 	#Expel them. Quietly.
 	option = {
 		name = th_kappa_disasters.10.b
-		add_stability = 1
 		add_republican_tradition = -5
 		ai_chance = { factor = 10 }
 	}
@@ -397,6 +401,12 @@ country_event = {
 	picture = NITORIBOSS_eventPicture	#TODO
 	is_triggered_only = yes
 	fire_only_once = yes
+	trigger = {
+		had_country_flag = {
+			flag = active_kappa_counter_movement_disaster
+			days = 730
+		}
+	}
 	mean_time_to_happen = {
 		days = 1
 	}
@@ -427,6 +437,84 @@ country_event = {
 			manuever = 5
 			siege = 2
 		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Counter Movement provokes a putch
+country_event = {
+	id = th_kappa_disasters.28
+	title = th_kappa_disasters.28.t
+	desc = th_kappa_disasters.28.desc
+	picture = NITORIBOSS_eventPicture	#TODO
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kappa_rebel_province
+			}
+		}
+	}
+
+	#Provoke rebels
+	option = {
+		name = th_kappa_disasters.28.a
+		goto = kappa_rebel_province
+		event_target:kappa_rebel_province = {
+			add_devastation = 10
+		}
+		ai_chance = { factor = 10 }
+	}
+
+	#Handle it diplomatically
+	option = {
+		name = th_kappa_disasters.28.b
+		add_republican_tradition = -5
+		ai_chance = { factor = 10 }
+	}
+}
+# Economy suffers
+country_event = {
+	id = th_kappa_disasters.29
+	title = th_kappa_disasters.29.t
+	desc = th_kappa_disasters.29.desc
+	picture = NITORIBOSS_eventPicture	#TODO
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	#Provoke rebels
+	option = {
+		name = th_kappa_disasters.29.a
+		add_inflation = 2
+		ai_chance = { factor = 10 }
+	}
+
+	#Provoke rebels
+	option = {
+		name = th_kappa_disasters.29.b
+		add_corruption = 2
+		ai_chance = { factor = 10 }
+	}
+
+	#Provoke rebels
+	option = {
+		name = th_kappa_disasters.29.c
+		add_yearly_manpower = -2
+		ai_chance = { factor = 10 }
+	}
+
+	#Handle it diplomatically
+	option = {
+		name = th_kappa_disasters.29.d
+		add_republican_tradition = -5
 		ai_chance = { factor = 10 }
 	}
 }
@@ -674,6 +762,10 @@ country_event = {
 	picture = NITORIBOSS_eventPicture	#TODO
 	trigger = {
 		NOT = { has_ruler_flag = kpp_super_capitalists_in_power }
+		had_country_flag = {
+			flag = kpp_had_putch_event
+			days = 1000
+		}
 	}	
 	is_triggered_only = yes
 	mean_time_to_happen = {
@@ -681,6 +773,10 @@ country_event = {
 	}	
 	immediate = {
 		add_corruption = 1
+		hidden_effect = {
+			clr_country_flag = kpp_had_putch_event
+			set_country_flag = kpp_had_putch_event
+		}
 	}
 	option = {	#Defend the government from th_super_capitalists
 		name = th_kappa_disasters.14.a
@@ -709,6 +805,11 @@ country_event = {
 			name = kpp_super_capitalists_in_power_modifier
 			duration = 1825
 		}
+		set_ruler_flag = kpp_super_capitalists_in_power
+		if = {
+			limit = { NOT = { has_country_flag = kpp_had_super_capitalists_in_power } }
+			set_country_flag = kpp_had_super_capitalists_in_power
+		}
 		random_owned_province = {
 			limit = { 
 				is_overseas = no
@@ -716,7 +817,7 @@ country_event = {
 			}
 			spawn_rebels = {
 				size = 1
-				type = th_super_capitalists
+				type = th_explosion_enjoyers
 			}
 		}
 		random_owned_province = {
@@ -726,7 +827,7 @@ country_event = {
 			}
 			spawn_rebels = {
 				size = 1
-				type = th_super_capitalists
+				type = th_independent_marines
 			}
 		}
 		ai_chance = { factor = 10 }
@@ -868,6 +969,10 @@ country_event = {
 	picture = NITORIBOSS_eventPicture	#TODO
 	trigger = {
 		NOT = { has_ruler_flag = kpp_explosion_enjoyers_in_power }
+		had_country_flag = {
+			flag = kpp_had_putch_event
+			days = 1000
+		}
 	}	
 	is_triggered_only = yes
 	mean_time_to_happen = {
@@ -885,6 +990,10 @@ country_event = {
 				same_continent = ROOT
 			}
 			add_devastation = 50
+		}
+		hidden_effect = {
+			clr_country_flag = kpp_had_putch_event
+			set_country_flag = kpp_had_putch_event
 		}
 	}
 	option = {	#Defend the government from th_explosion_enjoyers
@@ -914,6 +1023,11 @@ country_event = {
 			name = kpp_explosion_enjoyers_in_power_modifier
 			duration = 1825
 		}
+		set_ruler_flag = kpp_explosion_enjoyers_in_power
+		if = {
+			limit = { NOT = { has_country_flag = kpp_had_explosion_enjoyers_in_power } }
+			set_country_flag = kpp_had_explosion_enjoyers_in_power
+		}
 		random_owned_province = {
 			limit = { 
 				is_overseas = no
@@ -921,7 +1035,7 @@ country_event = {
 			}
 			spawn_rebels = {
 				size = 1
-				type = th_explosion_enjoyers
+				type = th_super_capitalists
 			}
 		}
 		random_owned_province = {
@@ -931,7 +1045,7 @@ country_event = {
 			}
 			spawn_rebels = {
 				size = 1
-				type = th_explosion_enjoyers
+				type = th_independent_marines
 			}
 		}
 		ai_chance = { factor = 10 }
@@ -1073,6 +1187,10 @@ country_event = {
 	picture = NITORIBOSS_eventPicture	#TODO
 	trigger = {
 		NOT = { has_ruler_flag = kpp_independent_marines_in_power }
+		had_country_flag = {
+			flag = kpp_had_putch_event
+			days = 1000
+		}
 	}	
 	is_triggered_only = yes
 	mean_time_to_happen = {
@@ -1080,6 +1198,10 @@ country_event = {
 	}	
 	immediate = {
 		add_stability = -1
+		hidden_effect = {
+			clr_country_flag = kpp_had_putch_event
+			set_country_flag = kpp_had_putch_event
+		}
 	}
 	option = {	#Defend the government from th_independent_marines
 		name = th_kappa_disasters.16.a
@@ -1108,6 +1230,11 @@ country_event = {
 			name = kpp_independent_marines_in_power_modifier
 			duration = 1825
 		}
+		set_ruler_flag = kpp_independent_marines_in_power
+		if = {
+			limit = { NOT = { has_country_flag = kpp_had_independent_marines_in_power } }
+			set_country_flag = kpp_had_independent_marines_in_power
+		}
 		random_owned_province = {
 			limit = { 
 				is_overseas = no
@@ -1115,7 +1242,7 @@ country_event = {
 			}
 			spawn_rebels = {
 				size = 1
-				type = th_independent_marines
+				type = th_explosion_enjoyers
 			}
 		}
 		random_owned_province = {
@@ -1125,7 +1252,7 @@ country_event = {
 			}
 			spawn_rebels = {
 				size = 1
-				type = th_independent_marines
+				type = th_super_capitalists
 			}
 		}
 		ai_chance = { factor = 10 }
@@ -1725,6 +1852,13 @@ country_event = {
 			}
 		}
 		add_republican_tradition = 10
+		ai_chance = { factor = 10 }
+	}
+	#Focus on your work
+	option = {
+		name = th_kappa_disasters.26.b
+		add_republican_tradition = -15
+		add_years_of_income = 0.25
 		ai_chance = { factor = 10 }
 	}
 }

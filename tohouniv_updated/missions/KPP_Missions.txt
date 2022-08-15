@@ -191,19 +191,19 @@ kpp_missions_marines_colonization_slot = {
 				}
 			}
 		}
-		effect = {
-			add_prestige = 15
+		effect = {			
+			th_enable_charter_trade_post_diplo_action = yes
 			add_country_modifier = {
 				name = kpp_explorer_spirit
 				duration = 27375
 			}
 		}
 	}
-	
+
 	KPP_discover_india = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_break_through_the_barrier }
-		position = 10
+		position = 9
 		provinces_to_highlight = {
 			superregion = india_superregion
 			NOT = { has_discovered = ROOT }
@@ -225,11 +225,10 @@ kpp_missions_marines_colonization_slot = {
 			create_explorer = { tradition = 100 }
 		}
 	}
-
 	KPP_explore_far_west = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_discover_india }
-		position = 11
+		position = 10
 		provinces_to_highlight = {
 			region = guinea_region
 			NOT = { has_discovered = ROOT }
@@ -246,11 +245,10 @@ kpp_missions_marines_colonization_slot = {
 			}
 		}
 	}
-	
 	KPP_discover_europe = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_explore_far_west }
-		position = 13
+		position = 11
 		provinces_to_highlight = {
 			OR = {
 				region = iberia_region
@@ -277,6 +275,152 @@ kpp_missions_marines_colonization_slot = {
 				duration = 7300
 			}
 			country_event = { id = TH_mission_events.4 }			
+		}
+	}
+	KPP_trade_with_the_dutch = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_discover_europe }
+		position = 12
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 1269
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 5
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 1931
+						province_id = 96
+						province_id = 1860
+						province_id = 167
+						province_id = 89
+					}
+					owner = {
+						OR = {
+							NOT = {
+								has_opinion_modifier = {
+									who = ROOT
+									modifier = sent_gift
+								}
+							}
+							NOT = {
+								has_opinion = {
+									who = ROOT
+									value = 75
+								}
+							}
+						}
+					}
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		}
+		trigger = {
+			1269 = {
+				trade_share = {
+					country = ROOT
+					share = 5
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = KPP_trade_with_the_dutch_tt
+				calc_true_if = {
+					1931 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					96 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					1860 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					167 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					89 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					amount = 2
+				}
+			}
+			years_of_income = 1
+		}
+		effect = {
+			country_event = {
+				id = flavor_kpp.24
+			}
+			1269 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = 36500
+					power = 25
+					key = KPP_trade_with_the_dutch_ct
+				}
+			}
+		}
+	}
+	KPP_european_trade_posts = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = {
+			KPP_trade_with_the_dutch
+			KPP_the_italian_trade
+		}
+		position = 13
+		provinces_to_highlight = {
+		}
+		trigger = {
+			OR = {
+				calc_true_if = {
+					desc = KPP_european_trade_posts_tt
+					all_known_country = {
+						capital_scope = {
+							continent = europe
+						}
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = transfers_trade_power
+						}
+					}
+					amount = 4
+				}
+				num_of_owned_provinces_with = {
+					custom_trigger_tooltip = {
+						tooltip = KPP_european_trade_posts_ct
+						continent = europe
+						OR = {
+							is_owned_by_trade_company = yes
+							has_trade_building_trigger = yes
+						}
+					}
+					value = 6
+				}
+			}
+			calc_true_if = {
+				desc = KPP_european_trade_posts_bt
+				1293 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1295 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1298 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1308 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				137 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1320 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1322 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				280 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				153 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				134 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				61 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				45 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1876 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				186 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1269 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1276 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1975 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1926 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				33 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1652 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				1082 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				464 = { OR = { is_strongest_trade_power = ROOT trade_share = { country = ROOT share = 15 } } }
+				amount = 3
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_kpp.29
+			}
 		}
 	}
 }
@@ -329,16 +473,40 @@ kpp_missions_tech_slot = {
 		}
 	}
 	
-	KPP_construct_kappa_defenses = {
+	KPP_secure_defensive_ground = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_great_army_of_the_republic }
 		position = 2
+		provinces_to_highlight = {
+			area = Shining_needle_state
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			Shining_needle_state = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+		}
+		effect = {
+			add_adm_power = 100
+			add_country_modifier = {
+				name = kpp_miracle_mallet
+				duration = 9125
+			}
+		}
+	}
+	
+	KPP_construct_kappa_defenses = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_secure_defensive_ground }
+		position = 3
 		provinces_to_highlight = {
 			OR = {
 				province_id = 5356
 				province_id = 5354
 				province_id = 5221
 				province_id = 5353
+				province_id = 5200
 			}
 			OR = {
 				NOT = { is_core = ROOT }
@@ -375,28 +543,69 @@ kpp_missions_tech_slot = {
 					tag = ROOT
 				}
 			}
+			5200 = {
+				is_core = ROOT
+				owned_by = ROOT
+				th_has_up_to_date_fort_building = {
+					tag = ROOT
+				}
+			}
 		}
 		effect = {
-			add_mil_power = 150
+			add_country_modifier = {
+				name = kpp_fortification_of_kappapolis
+				duration = 36500
+			}
 			5356 = {
+				if = {
+					limit = { NOT = { has_fort_building_trigger = yes } }
+					custom_tooltip = KPP_construct_kappa_defenses_ct
+				}
+				else = { upgrade_building = { fort = yes } }
 				add_province_modifier = {
 					name = kpp_expanded_local_defenses
 					duration = -1
 				}
 			}
 			5354 = {
+				if = {
+					limit = { NOT = { has_fort_building_trigger = yes } }
+					custom_tooltip = KPP_construct_kappa_defenses_ct
+				}
+				else = { upgrade_building = { fort = yes } }
 				add_province_modifier = {
 					name = kpp_expanded_local_defenses
 					duration = -1
 				}
 			}
 			5221 = {
+				if = {
+					limit = { NOT = { has_fort_building_trigger = yes } }
+					custom_tooltip = KPP_construct_kappa_defenses_ct
+				}
+				else = { upgrade_building = { fort = yes } }
 				add_province_modifier = {
 					name = kpp_expanded_local_defenses
 					duration = -1
 				}
 			}
 			5353 = {
+				if = {
+					limit = { NOT = { has_fort_building_trigger = yes } }
+					custom_tooltip = KPP_construct_kappa_defenses_ct
+				}
+				else = { upgrade_building = { fort = yes } }
+				add_province_modifier = {
+					name = kpp_expanded_local_defenses
+					duration = -1
+				}
+			}
+			5200 = {
+				if = {
+					limit = { NOT = { has_fort_building_trigger = yes } }
+					custom_tooltip = KPP_construct_kappa_defenses_ct
+				}
+				else = { upgrade_building = { fort = yes } }
 				add_province_modifier = {
 					name = kpp_expanded_local_defenses
 					duration = -1
@@ -448,17 +657,17 @@ kpp_missions_tech_slot = {
 		trigger = {
 			OR = {
 				num_of_owned_and_controlled_institutions = 2
-				innovativeness = 75
+				innovativeness = 95
 				AND = {
-					monthly_adm = 10
-					monthly_dip = 10
-					monthly_mil = 10
+					monthly_adm = 12
+					monthly_dip = 12
+					monthly_mil = 12
 				}
 			}
 			custom_trigger_tooltip = {
 				tooltip = KPP_the_cyber_technology_of_the_future_tt
 				NOT = {
-					any_neighbor_country = {
+					any_country = {
 						OR = {
 							institution_difference = {
 								who = ROOT
@@ -469,6 +678,13 @@ kpp_missions_tech_slot = {
 					}
 				}
 			}
+			calc_true_if = {
+				desc = KPP_the_cyber_technology_of_the_future_ct
+				amount = 2
+				has_completed_idea_group_of_category = { adm_ideas = yes }
+				has_completed_idea_group_of_category = { dip_ideas = yes }
+				has_completed_idea_group_of_category = { mil_ideas = yes }
+			}
 		}
 		effect = {
 			country_event = {
@@ -477,99 +693,148 @@ kpp_missions_tech_slot = {
 		}
 	}
 	
-	KPP_discover_australia = {
+	KPP_settle_in_the_philippines = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_break_through_the_barrier }
+		required_missions = { 
+			KPP_break_through_the_barrier
+		}
 		position = 8
 		provinces_to_highlight = {
-			region = australia_region
-			NOT = { has_discovered = ROOT }
+			OR = {
+				AND = {
+					province_id = 4358
+					NOT = { trade_share = { country = ROOT share = 20 } }
+				}
+				AND = {
+					province_id = 1357
+					NOT = { trade_share = { country = ROOT share = 10 } }
+				}
+				AND = {
+					region = moluccas_region
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
 		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = KPP_discover_australia_tt
-				australia_region = { has_discovered = ROOT }
+			4358 = {
+				trade_share = {
+					country = ROOT
+					share = 20
+				}
 			}
+			1357 = {
+				trade_share = {
+					country = ROOT
+					share = 10
+				}
+			}
+			num_of_owned_provinces_with = {
+				region = moluccas_region
+				value = 5
+			}
+
 		}
 		effect = {
-			add_country_modifier = {
-				name = kpp_australian_colonization
-				duration = 14600
+			add_treasury = 200
+			country_event = {
+				id = flavor_kpp.33
 			}
-			australia_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}		
 		}
 	}
 	
-	KPP_colonize_australia = {
+	KPP_trade_in_malacca_and_moluccas = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_discover_australia }
+		required_missions = { KPP_settle_in_the_philippines }
 		position = 9
 		provinces_to_highlight = {
-			region = australia_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				region = australia_region
-				value = 30
-			}
-		}
-		effect = {
-			custom_tooltip = KPP_colonize_australia_tt
-			hidden_effect = {
-				australia_region = {
-					limit = {
-						country_or_non_sovereign_subject_holds = ROOT
+			OR = {
+				AND = {
+					province_id = 4358
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 50
+						}
 					}
-					add_base_tax = 1
-					add_base_production = 1
-					add_base_manpower = 1
+				}
+				AND = {
+					province_id = 1357
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 35
+						}
+					}
+				}
+				AND = {
+					province_id = 1361
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 25
+						}
+					}
 				}
 			}
-			add_adm_power = 50
-			add_dip_power = 50
-			add_mil_power = 50
-		}
-	}
-	
-	KPP_weaponize_australian_wildlife = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_colonize_australia }
-		position = 10
-		provinces_to_highlight = {
-			region = australia_region
 		}
 		trigger = {
-			mil_tech = 15
-			custom_trigger_tooltip = {
-				tooltip = KPP_weaponize_australian_wildlife_tt
-				australia_region = {
-					infantry_in_province = 25
-				}
+			4358 = { trade_share = { country = ROOT share = 50 } }
+			1357 = { trade_share = { country = ROOT share = 35 } }
+			1361 = { trade_share = { country = ROOT share = 25 } }
+			OR = {
+				trade_efficiency = 0.5
+				diplomatic_reputation = 2
 			}
-			australia_region = {
-				country_or_non_sovereign_subject_holds = ROOT
-				type = all
-			}
-			is_at_war = no
 		}
 		effect = {
 			country_event = {
-				id = flavor_kpp.8
+				id = flavor_kpp.31
 			}
 		}
 	}
-
+	
+	KPP_charter_indian_trade_outpost = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_discover_india }
+		position = 10
+		provinces_to_highlight = {
+			superregion = india_superregion
+			has_port = yes
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			india_superregion = {
+				has_port = yes
+				owned_by = ROOT
+			}
+		}
+		effect = {
+			custom_tooltip = KPP_charter_indian_trade_outpost_ct
+			hidden_effect = {
+				random_owned_province = {
+					limit = {
+						superregion = india_superregion
+						has_port = yes
+					}
+					change_province_name = "New Kappapolis"
+					rename_capital = "New Kappapolis"
+					add_building = stock_exchange
+					add_base_tax = 6
+					add_base_production = 6
+					add_base_manpower = 4
+				}
+			}
+			define_advisor = {
+				type = trader
+				skill = 3
+				cost_multiplier = 0.2
+			}
+		}
+	}
 	KPP_colonize_the_cape = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_push_to_africa }
-		position = 12
+		required_missions = { KPP_explore_far_west }
+		position = 11
 		provinces_to_highlight = {
 			region = south_africa_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
@@ -577,36 +842,14 @@ kpp_missions_tech_slot = {
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				region = south_africa_region
-				value = 20
+				value = 5
 			}
 			owns_core_province = 1177
 		}
 		effect = {
-			if = {
-				limit = {
-					mission_completed = KPP_take_over_east_africa
-					mission_completed = KPP_colonize_the_horn
-				}
-				central_africa_region = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-				kongo_region = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-			}
-			else = {
-				custom_tooltip = KPP_colonize_the_cape_tt
-			}
 			1177 = {
-				change_province_name = "New Kappapolis"
+				change_province_name = "Kappa Town"
+				rename_capital = "Kappa Town"
 				add_center_of_trade_level = 2
 				add_base_tax = 6
 				add_base_production = 6
@@ -615,6 +858,93 @@ kpp_missions_tech_slot = {
 				change_culture = ROOT
 				change_trade_goods = coal
 			}
+		}
+	}
+	KPP_the_italian_trade = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_discover_europe }
+		position = 12
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 1289
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 5
+						}
+					}
+				}
+				AND = {
+					province_id = 1308
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 5
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 1247
+						province_id = 126
+						province_id = 163
+						province_id = 321
+						province_id = 333
+					}
+					owner = {
+						OR = {
+							NOT = {
+								has_opinion_modifier = {
+									who = ROOT
+									modifier = sent_gift
+								}
+							}
+							NOT = {
+								has_opinion = {
+									who = ROOT
+									value = 75
+								}
+							}
+						}
+					}
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		}
+		trigger = {
+			OR = {
+				1289 = {
+					trade_share = {
+						country = ROOT
+						share = 5
+					}
+				}
+				1308 = {
+					trade_share = {
+						country = ROOT
+						share = 5
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = KPP_trade_with_the_dutch_tt
+				calc_true_if = {
+					1247 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					126 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					163 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					321 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					333 = { OR = { country_or_non_sovereign_subject_holds = ROOT owner = { has_opinion = { who = ROOT value = 75 } has_opinion_modifier = { who = ROOT modifier = sent_gift } } } }
+					amount = 2
+				}
+			}
+			years_of_income = 1
+		}
+		effect = {
+			country_event = {
+				id = flavor_kpp.28
+			}
+			add_mercantilism = 5
 		}
 	}
 }
@@ -661,6 +991,19 @@ kpp_missions_war_slot = {
 					NOT = { is_core = ROOT }
 				}
 				add_core = ROOT
+			}
+			Genbu_ravine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+				}
+				add_core = ROOT
+			}
+			Shining_needle_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
 			}
 		}
 	}
@@ -784,6 +1127,7 @@ kpp_missions_war_slot = {
 			legitimacy_equivalent = 95
 			stability = 1
 			reform_level = 5
+			government_rank = 2
 		}
 		effect = {
 			country_event = {
@@ -832,215 +1176,151 @@ kpp_missions_war_slot = {
 		}
 	}
 	
-	KPP_colonize_peru = {
+	KPP_discover_australia = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_discover_south_america }
-		position = 9
+		required_missions = { KPP_break_through_the_barrier }
+		position = 8
 		provinces_to_highlight = {
-			colonial_region = colonial_peru
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				colonial_region = colonial_peru
-				value = 25
-			}
-		}
-		effect = {
-			if = {
-				limit = { gold = 1 }
-				add_years_of_owned_provinces_production_income = {
-					years = 4
-					trigger = {
-						trade_goods = gold
-					}
-					custom_tooltip = MONOPOLY_INCOME_GOLD_DESC
-				}
-			}
-			if = {
-				limit = {
-					any_subject_country = {
-						capital_scope = { colonial_region = colonial_peru }
-						gold = 1
-					}
-				}
-				hidden_effect = {
-					every_subject_country = {
-						limit = {
-							capital_scope = { colonial_region = colonial_peru }
-							gold = 1
-						}
-						export_to_variable = {
-							which = kpp_old_subject_money
-							value = treasury
-						}
-						add_years_of_owned_provinces_production_income = {
-							years = 4
-							trigger = {
-								trade_goods = gold
-							}
-							custom_tooltip = MONOPOLY_INCOME_GOLD_DESC
-						}
-						export_to_variable = {
-							which = kpp_new_subject_money
-							value = treasury
-						}
-						subtract_variable = {
-							which = kpp_new_subject_money
-							which = kpp_old_subject_money
-						}
-						transfer_treasury = {
-							giver = THIS
-							taker = ROOT
-							variable = kpp_new_subject_money
-						}
-					}
-				}
-			}
-			custom_tooltip = KPP_colonize_peru_ct
-			country_event = {
-				id = flavor_kpp.19
-			}
-		}
-	}
-	
-	KPP_push_to_africa = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_discover_india }
-		position = 11
-		provinces_to_highlight = {
-			continent = africa
-			is_sea = no
+			region = australia_region
 			NOT = { has_discovered = ROOT }
 		}
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = KPP_push_to_africa_tt
-				africa = {
-					is_sea = no
-					has_discovered = ROOT
-				}
-			}
-		}
-		effect = {
-			kongo_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			central_africa_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			east_africa_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			horn_of_africa_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			south_africa_region = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_core = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	KPP_take_over_east_africa = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_push_to_africa }
-		position = 12
-		provinces_to_highlight = {
-			OR = {
-				AND = {
-					has_discovered = ROOT
-					continent = africa
-					trade_goods = ivory
-				}
-			}
-			region = east_africa_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				region = east_africa_region
-				value = 20
-			}
-			ivory = 12
-		}
-		effect = {
-			if = {
-				limit = {
-					mission_completed = KPP_colonize_the_cape
-					mission_completed = KPP_colonize_the_horn
-				}
-				central_africa_region = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-				kongo_region = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-			}
-			else = {
-				custom_tooltip = KPP_take_over_east_africa_tt
-			}
-			country_event = {
-				id = flavor_kpp.6
-			}
-		}
-	}
-	
-	KPP_scramble_for_africa = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = {
-			KPP_colonize_the_cape
-			KPP_take_over_east_africa
-			KPP_colonize_the_horn
-		}
-		position = 13
-		provinces_to_highlight = {
-			OR = {
-				region = central_africa_region
-				region = kongo_region
-			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {
-					region = central_africa_region
-					region = kongo_region
-				}
-				value = 50
+				tooltip = KPP_discover_australia_tt
+				australia_region = { has_discovered = ROOT }
 			}
 		}
 		effect = {
 			add_country_modifier = {
-				name = kpp_rulers_of_africa
-				duration = -1
+				name = kpp_australian_colonization
+				duration = 14600
+			}
+			australia_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}		
+		}
+	}
+	
+	KPP_colonize_australia = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_discover_australia }
+		position = 9
+		provinces_to_highlight = {
+			region = australia_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = australia_region
+				value = 30
+			}
+		}
+		effect = {
+			custom_tooltip = KPP_colonize_australia_tt
+			hidden_effect = {
+				australia_region = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+				}
+			}
+			add_adm_power = 50
+			add_dip_power = 50
+			add_mil_power = 50
+		}
+	}
+	
+	KPP_weaponize_australian_wildlife = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_colonize_australia }
+		position = 10
+		provinces_to_highlight = {
+			region = australia_region
+		}
+		trigger = {
+			mil_tech = 15
+			custom_trigger_tooltip = {
+				tooltip = KPP_weaponize_australian_wildlife_tt
+				australia_region = {
+					infantry_in_province = 25
+				}
+			}
+			australia_region = {
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			is_at_war = no
+		}
+		effect = {
+			country_event = {
+				id = flavor_kpp.8
+			}
+		}
+	}
+	KPP_take_over_east_africa = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_explore_far_west }
+		position = 11
+		provinces_to_highlight = {
+			OR = {
+				area = zimbabwe_area
+				area = butua_area
+				area = quelimane_area
+			}
+			trade_goods = gold
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			num_of_owned_provinces_with = {
+				OR = {
+					area = zimbabwe_area
+					area = butua_area
+					area = quelimane_area
+				}
+				trade_goods = gold
+				value = 3
+			}
+		}
+		effect = {
+			custom_tooltip = KPP_take_over_east_africa_tt
+			hidden_effect = {
+				zimbabwe_area = {
+					limit = {
+						owned_by = ROOT
+						trade_goods = gold
+					}
+					add_province_modifier = {
+						name = kpp_perfect_gold_mining
+						duration = -1
+					}
+				}
+				butua_area = {
+					limit = {
+						owned_by = ROOT
+						trade_goods = gold
+					}
+					add_province_modifier = {
+						name = kpp_perfect_gold_mining
+						duration = -1
+					}
+				}
+				quelimane_area = {
+					limit = {
+						owned_by = ROOT
+						trade_goods = gold
+					}
+					add_province_modifier = {
+						name = kpp_perfect_gold_mining
+						duration = -1
+					}
+				}
 			}
 		}
 	}
@@ -1097,10 +1377,10 @@ kpp_missions_invention_slot = {
 				limit = {
 					has_dlc = "Cradle of Civilization"
 				}
-				army_professionalism = 0.4
+				army_professionalism = 0.3
 			}
 			else = {
-				army_tradition = 50
+				army_tradition = 35
 			}
 			navy_tradition = 50
 			if = {
@@ -1173,10 +1453,10 @@ kpp_missions_invention_slot = {
 				limit = {
 					has_dlc = "Cradle of Civilization"
 				}
-				army_professionalism = 0.8
+				army_professionalism = 0.5
 			}
 			else = {
-				army_tradition = 75
+				army_tradition = 60
 			}
 			navy_tradition = 75
 			navy_size = 50
@@ -1265,10 +1545,144 @@ kpp_missions_invention_slot = {
 		}
 	}
 	
+	KPP_discover_north_america = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { 
+			KPP_break_through_the_barrier
+		}
+		position = 8
+		provinces_to_highlight = {
+			continent = north_america
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = KPP_discover_north_america_tt
+				north_america = { has_discovered = ROOT }
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					2022 = { owner = { NOT = { technology_group = north_american } } }
+				}
+				th_colonize_dev_province_for_root = {
+					province = 2022
+				}
+			}
+			else = {
+				2022 = {
+					cede_province = ROOT
+					add_core = ROOT
+					change_religion = ROOT
+					change_culture = ROOT
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+				}
+			}
+		}
+	}
+	
+	KPP_colonize_west_coast = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { 
+			KPP_discover_north_america
+		}
+		position = 10
+		provinces_to_highlight = {
+			OR = {
+				area = central_valley_area
+				area = california_area
+				area = baja_california_area
+				area = northern_california_area
+				area = columbia_river_area
+				area = oregon_area
+				area = salish_sea_area
+				area = straits_of_georgia_area
+				area = hecate_strait_area
+				area = east_alaska_area
+				area = alaska_area
+				area = sonora_area
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				custom_trigger_tooltip = {
+					tooltip = KPP_colonize_west_coast_tt
+					OR = {
+						area = central_valley_area
+						area = california_area
+						area = baja_california_area
+						area = northern_california_area
+						area = columbia_river_area
+						area = oregon_area
+						area = salish_sea_area
+						area = straits_of_georgia_area
+						area = hecate_strait_area
+						area = east_alaska_area
+						area = alaska_area
+						area = sonora_area
+					}
+				}
+				value = 10
+			}
+		}
+		effect = {
+			mexico_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			central_america_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	KPP_mexican_trade_posts = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { 
+			KPP_colonize_west_coast
+		}
+		position = 11
+		provinces_to_highlight = {
+			OR = {
+				region = mexico_region
+				region = central_america_region
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					region = mexico_region
+					region = central_america_region
+				}
+				value = 15
+			}
+		}
+		effect = {
+			colombia_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
 	KPP_colonize_colombia = {
 		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_discover_south_america }
-		position = 9
+		required_missions = { KPP_mexican_trade_posts }
+		position = 12
 		provinces_to_highlight = {
 			colonial_region = colonial_colombia
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
@@ -1277,7 +1691,7 @@ kpp_missions_invention_slot = {
 			owns_or_non_sovereign_subject_of = 835
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				colonial_region = colonial_colombia
-				value = 25
+				value = 10
 			}
 		}
 		effect = {
@@ -1293,55 +1707,6 @@ kpp_missions_invention_slot = {
 			set_country_flag = can_construct_panama_canal
 			country_event = {
 				id = flavor_kpp.19
-			}
-		}
-	}
-	
-	KPP_colonize_the_horn = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_push_to_africa }
-		position = 12
-		provinces_to_highlight = {
-			region = horn_of_africa_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				region = horn_of_africa_region
-				value = 20
-			}
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				region = horn_of_africa_region
-				trade_goods = coffee
-				value = 5
-			}
-		}
-		effect = {
-			if = {
-				limit = {
-					mission_completed = KPP_take_over_east_africa
-					mission_completed = KPP_colonize_the_cape
-				}
-				central_africa_region = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-				kongo_region = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-					}
-					add_permanent_claim = ROOT
-				}
-			}
-			else = {
-				custom_tooltip = KPP_colonize_the_horn_tt
-			}
-			country_event = {
-				id = flavor_kpp.7
 			}
 		}
 	}
@@ -1510,7 +1875,6 @@ kpp_missions_internal_struggle_slot = {
 			}
 		}
 	}
-	
 	KPP_discover_south_america = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_break_through_the_barrier }
@@ -1526,21 +1890,14 @@ kpp_missions_internal_struggle_slot = {
 			}
 		}
 		effect = {
-			colonial_colombia = {
+			peru_region = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
-			colonial_brazil = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			colonial_peru = {
+			upper_peru_region = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -1552,11 +1909,88 @@ kpp_missions_internal_struggle_slot = {
 			}
 		}
 	}
-	
-	KPP_colonize_brazil = {
+	KPP_colonize_peru = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = { KPP_discover_south_america }
-		position = 9
+		position = 10
+		provinces_to_highlight = {
+			colonial_region = colonial_peru
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				colonial_region = colonial_peru
+				value = 10
+			}
+		}
+		effect = {
+			if = {
+				limit = { gold = 1 }
+				add_years_of_owned_provinces_production_income = {
+					years = 4
+					trigger = {
+						trade_goods = gold
+					}
+					custom_tooltip = MONOPOLY_INCOME_GOLD_DESC
+				}
+			}
+			if = {
+				limit = {
+					any_subject_country = {
+						capital_scope = { colonial_region = colonial_peru }
+						gold = 1
+					}
+				}
+				hidden_effect = {
+					every_subject_country = {
+						limit = {
+							capital_scope = { colonial_region = colonial_peru }
+							gold = 1
+						}
+						export_to_variable = {
+							which = kpp_old_subject_money
+							value = treasury
+						}
+						add_years_of_owned_provinces_production_income = {
+							years = 4
+							trigger = {
+								trade_goods = gold
+							}
+							custom_tooltip = MONOPOLY_INCOME_GOLD_DESC
+						}
+						export_to_variable = {
+							which = kpp_new_subject_money
+							value = treasury
+						}
+						subtract_variable = {
+							which = kpp_new_subject_money
+							which = kpp_old_subject_money
+						}
+						transfer_treasury = {
+							giver = THIS
+							taker = ROOT
+							variable = kpp_new_subject_money
+						}
+					}
+				}
+			}
+			custom_tooltip = KPP_colonize_peru_ct
+			country_event = {
+				id = flavor_kpp.19
+			}
+			brazil_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	KPP_colonize_brazil = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { KPP_colonize_peru }
+		position = 12
 		provinces_to_highlight = {
 			colonial_region = colonial_brazil
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
@@ -1564,7 +1998,7 @@ kpp_missions_internal_struggle_slot = {
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				colonial_region = colonial_brazil
-				value = 40
+				value = 15
 			}
 		}
 		effect = {
@@ -1577,15 +2011,13 @@ kpp_missions_internal_struggle_slot = {
 			}
 		}
 	}
-	
 	KPP_new_world_colonization = {
 		icon = mission_touhou_youkai_mountain
 		required_missions = {
-			KPP_colonize_colombia
-			KPP_colonize_peru
 			KPP_colonize_brazil
+			KPP_colonize_peru
 		}
-		position = 10
+		position = 13
 		provinces_to_highlight = {
 			OR = {
 				continent = north_america
@@ -1600,7 +2032,7 @@ kpp_missions_internal_struggle_slot = {
 					continent = north_america
 					continent = south_america
 				}
-				value = 200
+				value = 50
 			}
 			NOT = {
 				any_subject_country = {
@@ -1626,125 +2058,6 @@ kpp_missions_internal_struggle_slot = {
 			add_country_modifier = {
 				name = kpp_colonial_empire
 				duration = -1
-			}
-		}
-	}
-	
-	KPP_grand_trade_fleet = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = {  }
-		position = 11
-		provinces_to_highlight = {
-		}
-		trigger = {
-			num_of_light_ship = 50
-			OR = {
-				full_idea_group = trade_ideas
-				full_idea_group = maritime_ideas
-				full_idea_group = plutocracy_ideas
-				mercantilism = 50
-				trader = 3
-				trade_efficiency = 1
-			}
-			navy_tradition = 40
-			if = {
-				limit = {
-					has_dlc = "Golden Century"
-				}
-				has_flagship = yes
-			}
-		}
-		effect = {
-			random_owned_province = {
-				limit = {
-					has_port = yes
-				}
-				create_flagship = {
-					name = "The Flying Kappa"
-					type = light_ship
-				}
-			}
-			add_mercantilism = 10
-		}
-	}
-	
-	KPP_monopolize_moriya_trade = {
-		icon = mission_touhou_youkai_mountain
-		required_missions = { KPP_grand_trade_fleet }
-		position = 13
-		provinces_to_highlight = {
-			OR = {
-				AND = {
-					province_id = 5019
-					NOT = {
-						trade_share = {
-							country = ROOT
-							share = 50
-						}
-					}
-				}
-				AND = {
-					province_id = 5032
-					NOT = {
-						trade_share = {
-							country = ROOT
-							share = 50
-						}
-					}
-				}
-				AND = {
-					province_id = 4999
-					OR = {
-						NOT = {
-							trade_share = {
-								country = ROOT
-								share = 90
-							}
-						}
-						highest_value_trade_node = no
-					}
-				}
-				AND = {
-					province_id = 4965
-					OR = {
-						NOT = { is_core = ROOT }
-						NOT = { owned_by = ROOT }
-					}
-				}
-			}
-		}
-		trigger = {
-			4999 = {
-				trade_share = {
-					country = ROOT
-					share = 90
-				}
-				highest_value_trade_node = yes
-			}
-			5019 = {
-				trade_share = {
-					country = ROOT
-					share = 50
-				}
-			}
-			5032 = {
-				trade_share = {
-					country = ROOT
-					share = 50
-				}
-			}
-			owns_core_province = 4965
-		}
-		effect = {
-			4965 = {
-				add_province_modifier = {
-					name = kpp_main_port_to_gensokyo
-					duration = -1
-				}
-			}
-			add_years_of_trade_income = {
-				years = 4
-				custom_tooltip = zan_settle_trade_posts_ct
 			}
 		}
 	}
