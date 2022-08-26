@@ -18,14 +18,7 @@ lcu_slot1_branch = {
 			num_of_generals = 1
 		}
 
-		effect = {
-			Southern_moon_state = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}						
+		effect = {						
 			Northern_moon_state = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -43,7 +36,7 @@ lcu_slot1_branch = {
 			
 			add_country_modifier = {
 				name = lcu_prepare_for_war_modifier
-				duration = 7300
+				duration = 9125
 			}			
 		}
 		 
@@ -86,16 +79,20 @@ lcu_slot1_branch = {
 		icon = mission_secure_the_moon
 		required_missions = { LCU_retake_our_land }
 		position = 3
+		provinces_to_highlight = {
+			OR = {
+				area = Northern_moon_state
+				area = Uncolonized_moon_state
+				area = Hecetias_colony
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
 			NOT = { exists = CLP }
 			NOT = { exists = JNK }
-			Northern_moon_state = {
+			Hecetias_colony = {
+				owned_by = ROOT
 				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				area = Hecetias_colony
-				value = 5
 			}
 		}
 		effect = {				
@@ -147,6 +144,12 @@ lcu_slot1_branch = {
 		}
 
 		trigger = {
+			5160 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			5159 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				OR = {
 					area = Perfect_cut_coast
@@ -158,56 +161,84 @@ lcu_slot1_branch = {
 		}
 
 		effect = {
-			add_country_modifier = {
-				name = lcu_purify_gensokyo
-				duration = 9125
-		    }
+			country_event = {
+				id = flavor_lcu.21
+			}
 	    }  
     }
 
 	LCU_old_ties = {
-		icon = mission_touhou_kaguya
+		icon = mission_eirin_and_kaguya
 		required_missions = { LCU_lunarian_invasion }
 		position = 5
 
 		trigger = {
-			total_development = 500
-			prestige = 50
-			stability = 2
+			OR = {
+				reverse_has_opinion = {
+					who = EIT
+					value = 100
+				}
+				AND = {
+					has_spy_network_in = { 
+						who = EIT 
+						value = 50 
+					}
+					army_size = EIT
+				}
+				NOT = { exists = EIT }	
+			}
 		}
 
 		effect = {
-			add_casus_belli = {
-				target = EIT
-				type = cb_restore_personal_union
-				months = 600
-			}
-			Eientei_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
+			custom_tooltip = LCU_old_ties.tooltip
+			hidden_effect = {
+				if = {
+					limit = { exists = EIT reverse_has_opinion = { who = EIT value = 100 } }
+					country_event = { id = flavor_lcu.22 }
 				}
-				add_permanent_claim = ROOT
-			}
-			Bamboo_forest_of_the_lost = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
+	
+				else_if = {
+					limit = { 
+					exists = EIT 
+					has_spy_network_in = { who = EIT value = 50 } 
+					army_size = EIT
+					}
+					add_casus_belli = { 
+						target = EIT 
+						type = cb_restore_personal_union 
+						months = 600 
+					}
+				}	
+	
+				else = {
+					Eientei_state = {
+						limit = {
+							NOT = { is_permanent_claim = ROOT	}
+							NOT = { is_core = ROOT	}
+						}
+						add_permanent_claim = ROOT
+					}
+					Bamboo_forest_of_the_lost = {
+						limit = {
+							NOT = { is_permanent_claim = ROOT	}
+							NOT = { is_core = ROOT	}
+						}
+						add_permanent_claim = ROOT
+					}
+					Fujiwara_state = {
+						limit = {
+							NOT = { is_permanent_claim = ROOT	}
+							NOT = { is_core = ROOT	}
+						}
+						add_permanent_claim = ROOT
+					}
 				}
-				add_permanent_claim = ROOT
-			}
-			Fujiwara_state = {
-				limit = {
-					NOT = { is_permanent_claim = ROOT	}
-					NOT = { is_core = ROOT	}
-				}
-				add_permanent_claim = ROOT
-			}											
+			}										
 	    }  
     }
-
+	
 	LCU_eientei_is_ours = {
-		icon = mission_eirin_and_kaguya
+		icon = mission_eirin_and_reisen
 		required_missions = { LCU_old_ties }
 		position = 6
 		provinces_to_highlight = {
@@ -218,12 +249,15 @@ lcu_slot1_branch = {
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
+			4991 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				OR = {
 					area = Eientei_state
 					area = Bamboo_forest_of_the_lost
                 }
-				value = 8
+				value = 6
 			}			
 			OR = {
 				NOT = { exists = EIT }
@@ -257,12 +291,19 @@ lcu_slot1_branch = {
 		}
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = FUJ_hostile_mistress_of_netherworld.tooltip
-				num_of_owned_provinces_with = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					OR = {
+						area = Netherworld_state
+						area = Eastern_netherworld
+						area = Southern_netherworld
+						area = Western_netherworld
+						area = Northern_netherworld
+					}
 					value = 8
-					region = netherworld_region
 				}
-				owns_core_province = 4958
+				4958 = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
 			}
 		}
 
@@ -307,12 +348,15 @@ lcu_slot1_branch = {
 		}		
 
 		trigger = {
-			num_of_owned_provinces_with = {
-				value = 9
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				OR = {
 					area = Eastern_mountains
 					area = Mayohiga_state
 					area = Ran_state
+				}
+				value = 6
+				4989 = {
+					country_or_non_sovereign_subject_holds = ROOT
 				}
 			}
 			
@@ -321,10 +365,9 @@ lcu_slot1_branch = {
 		effect = {
 			country_event = { id = flavor_lcu.7 }
 			add_prestige = 50
-			change_innovativeness = 5
-			add_adm_power = 150
-			add_mil_power = 150
-			add_dip_power = 150
+			add_adm_power = 75
+			add_mil_power = 75
+			add_dip_power = 75
 			Hakurei_state = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -421,6 +464,9 @@ lcu_slot2_branch = {
 		}
 		trigger = {
 			5320 = {
+				owned_by = ROOT
+			} 
+			5320 = {
 				th_has_up_to_date_fort_building = {
 					tag = ROOT
 				}
@@ -428,7 +474,7 @@ lcu_slot2_branch = {
 		}
 		effect = {
 			add_mil_power = 50
-			Western_moon_state = {
+			5320 = {
 				limit = {
 					owned_by = ROOT
 				}
