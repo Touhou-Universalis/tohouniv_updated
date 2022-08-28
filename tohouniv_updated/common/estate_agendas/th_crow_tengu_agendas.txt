@@ -87,1154 +87,14 @@ estate_crow_tengu_fire_advisor = {
     }
 }
 
-#Give us 3 privileges
-estate_crow_tengu_three_privileges = {
-	can_select = {
-		NOT = {
-			num_of_estate_privileges = {
-				estate = estate_crow_tengu
-				value = 2
-			}
-		}
-	}
-	selection_weight = {
-		factor = 1
-	}
-	pre_effect = {
-		set_variable = {
-			which = estate_crow_tengu_three_privileges_var
-			value = 0
-		}
-		if = {
-			limit = {
-				num_of_estate_privileges = {
-					estate = estate_crow_tengu
-					value = 1
-				}
-			}
-			set_variable = {
-				which = estate_crow_tengu_three_privileges_var
-				value = 2
-			}
-		}
-		else = {
-			set_variable = {
-				which = estate_crow_tengu_three_privileges_var
-				value = 1
-			}
-		}
-	}
-	task_requirements = {
-		if = {
-			limit = {
-				check_variable = {
-					which = estate_crow_tengu_three_privileges_var
-					value = 2
-				}
-			}
-			num_of_estate_privileges = {
-				estate = estate_crow_tengu
-				value = 3
-			}
-		}
-		else = {
-			num_of_estate_privileges = {
-				estate = estate_crow_tengu
-				value = 2
-			}
-		}
-	}
-    task_completed_effect = {
-		add_estate_loyalty = {
-			estate = estate_crow_tengu
-			loyalty = 20
-		}
-    }
-    failing_effect = {
-        add_estate_loyalty_modifier = {
-            estate = estate_crow_tengu
-			desc = EST_VAL_AGENDA_DENIED
-			loyalty = -5
-			duration = 7300
-        }
-    }
-}
-
-#Insult X rival
-estate_crow_tengu_reply_of_the_zaporozhian = {
-	can_select = {
-		any_rival_country = {
-			NOT = { has_estate = estate_crow_tengu }
-			army_balance = {
-				who = root
-				value = 1.25
-			}
-			NOT = {
-				custom_trigger_tooltip = {
-					tooltip = has_been_insulted_by_root
-					OR = {
-						has_opinion_modifier = {
-							who = ROOT
-							modifier = insulted
-						}
-						has_opinion_modifier = {
-							who = ROOT
-							modifier = scornfully_insulted
-						}
-					}
-				}
-			}
-		}
-		NOT = {
-			has_country_modifier = recent_estate_crow_tengu_reply_of_the_zaporozhian_timer
-		}
-	}
-	selection_weight = {
-		factor = 1.5
-	}
-	pre_effect = {
-		random_rival_country = {
-			limit = {
-				NOT = { has_estate = estate_crow_tengu }
-				army_balance = {
-					who = root
-					value = 1.25
-				}
-				NOT = {
-					custom_trigger_tooltip = {
-						tooltip = has_been_insulted_by_root
-						OR = {
-							has_opinion_modifier = {
-								who = ROOT
-								modifier = insulted
-							}
-							has_opinion_modifier = {
-								who = ROOT
-								modifier = scornfully_insulted
-							}
-						}
-					}
-				}
-			}
-			save_event_target_as = agenda_country
-		}
-	}
-	immediate_effect = {
-		hidden_effect = {
-			add_country_modifier = {
-				name = recent_estate_crow_tengu_reply_of_the_zaporozhian_timer
-				duration = 9125
-				hidden = yes
-			}
-		}
-	}
-	provinces_to_highlight = {
-		is_capital_of = event_target:agenda_country
-	}
-	task_requirements = {
-		if = {
-			limit = {
-				event_target:agenda_country = {
-					num_of_cities = 1
-				}
-			}
-			event_target:agenda_country = {
-				custom_trigger_tooltip = {
-					tooltip = has_been_insulted_by_root
-					OR = {
-						has_opinion_modifier = {
-							who = ROOT
-							modifier = insulted
-						}
-						has_opinion_modifier = {
-							who = ROOT
-							modifier = scornfully_insulted
-						}
-					}
-				}
-			}
-		}
-		else = {
-			always = yes
-		}
-	}
-    task_completed_effect = {
-		add_estate_loyalty = {
-			estate = estate_crow_tengu
-			loyalty = 10
-		}
-		add_army_tradition = 3
-    }
-    failing_effect = {
-        add_estate_loyalty_modifier = {
-            estate = estate_crow_tengu
-			desc = EST_VAL_AGENDA_DENIED
-			loyalty = -5
-			duration = 7300
-        }
-    }
-}
-
-#Conquer X steppe area from country you don't have great relations with
-estate_crow_tengu_expand_into_x = {
-	can_select = {
-		is_free_or_tributary_trigger = yes
-		is_at_war = no
-		any_neighbor_country = {
-			num_of_cities = 6
-			is_free_or_tributary_trigger = yes
-			NOT = { is_subject_of = root }
-			NOT = { overlord_of = root }
-			NOT = { alliance_with = root }
-			NOT = { ROOT = { truce_with = prev } }
-			NOT = { 
-				has_opinion = {
-					who = root
-					value = 25
-				}
-			}
-			NOT = {
-				any_owned_province = { #No need for this agenda if covered by a mission
-					OR = {
-						is_permanent_claim = root
-						is_core = root
-					}
-				}
-			}
-			ROOT = {
-				knows_country = prev
-			}
-			any_owned_province = {
-				OR = {
-					has_terrain = steppe
-					culture_group = east_slavic
-					region = east_siberia_region
-					region = west_siberia_region
-				}
-				any_neighbor_province = {
-					owned_by = root
-				}
-				NOT = {
-					area_for_scope_province = {
-						OR = {
-							is_empty = yes
-							owned_by = root
-						}
-					}
-				}
-			}
-			OR = {
-				is_part_of_hre = no
-				NOT = { hre_reform_passed = landfriede }
-				ROOT = { is_part_of_hre = no }
-			}
-		}
-	}
-	selection_weight = {
-		factor = 2
-		modifier = {
-			factor = 0.5
-			has_non_generic_missions = yes
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 20
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 25
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 30
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 40
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 50
-		}
-		modifier = {
-			factor = 0.25
-			any_country = {
-				coalition_target = root
-			}
-		}
-	}
-	pre_effect = {
-		random_neighbor_country = {
-			limit = {
-				num_of_cities = 6
-				is_free_or_tributary_trigger = yes
-				NOT = { is_subject_of = root }
-				NOT = { overlord_of = root }
-				NOT = { alliance_with = root }
-				NOT = { ROOT = { truce_with = prev } }
-				NOT = { 
-					has_opinion = {
-						who = root
-						value = 25
-					}
-				}
-				NOT = {
-					any_owned_province = { #No need for this agenda if covered by a mission
-						OR = {
-							is_permanent_claim = root
-							is_core = root
-						}
-					}
-				}
-				ROOT = {
-					knows_country = prev
-				}
-				any_owned_province = {
-					OR = {
-						has_terrain = steppe
-						culture_group = east_slavic
-						region = east_siberia_region
-						region = west_siberia_region
-					}
-					any_neighbor_province = {
-						owned_by = root
-					}
-					area_for_scope_province = {
-						type = all
-						NOT = { owned_by = root }
-					}
-				}
-				OR = {
-					is_part_of_hre = no
-					NOT = { hre_reform_passed = landfriede }
-					ROOT = { is_part_of_hre = no }
-				}
-			}
-			random_owned_province = {
-				limit = {
-					OR = {
-						has_terrain = steppe
-						culture_group = east_slavic
-						region = east_siberia_region
-						region = west_siberia_region
-					}
-					any_neighbor_province = {
-						owned_by = root
-					}
-					area_for_scope_province = {
-						type = all
-						NOT = { owned_by = root }
-						is_empty = no
-					}
-				}
-				save_event_target_as = agenda_province
-			}
-		}
-	}
-	immediate_effect = {
-		if = {
-			limit = {
-				event_target:agenda_province = {
-					area_for_scope_province = {
-						NOT = { is_claim = root }
-						NOT = { is_core = root }
-					}
-				}
-			}
-			event_target:agenda_province = {
-				area = {
-					limit = {
-						NOT = { is_claim = root }
-						NOT = { is_core = root }
-					}
-					add_claim = root
-				}
-			}
-		}
-	}
-	on_invalid = {
-		if = {
-			limit = {
-				event_target:agenda_province = {
-					area_for_scope_province = {
-						is_claim = root
-						NOT = { is_permanent_claim = root }
-					}
-				}
-			}
-			event_target:agenda_province = {
-				area = {
-					limit = {
-						is_claim = root
-						NOT = { is_permanent_claim = root }
-					}
-					remove_claim = root
-				}
-			}
-		}
-	}
-	provinces_to_highlight = {
-		area_for_scope_province = {
-			province_id = event_target:agenda_province
-		}
-	}
-	task_requirements = {
-		event_target:agenda_province = {
-			area_for_scope_province = {
-				owned_by = root
-			}
-		}
-	}
-	fail_if = {
-		event_target:agenda_province = {
-			area_for_scope_province = {
-				type = all
-				NOT = { is_claim = root }
-				NOT = { is_core = root }
-				NOT = { owned_by = root }
-			}
-		}
-	}
-	task_completed_effect = {
-		add_estate_loyalty = {
-			estate = estate_crow_tengu
-			loyalty = 15
-		}
-		add_adm_power = 50
-	}
-    failing_effect = {
-        add_estate_loyalty_modifier = {
-            estate = estate_crow_tengu
-			desc = EST_VAL_AGENDA_DENIED
-			loyalty = -5
-			duration = 7300
-        }
-		if = {
-			limit = {
-				event_target:agenda_province = {
-					area_for_scope_province = {
-						is_claim = root
-						NOT = { is_permanent_claim = root }
-					}
-				}
-			}
-			event_target:agenda_province = {
-				area = {
-					limit = {
-						is_claim = root
-						NOT = { is_permanent_claim = root }
-					}
-					remove_claim = root
-				}
-			}
-		}
-	}
-}
-
-#Complete conquest of X steppe area from country you don't have great relations with
-estate_crow_tengu_complete_conquest_of_x = {
-	can_select = {
-		is_free_or_tributary_trigger = yes
-		is_at_war = no
-		any_neighbor_country = {
-			num_of_cities = 6
-			is_free_or_tributary_trigger = yes
-			NOT = { is_subject_of = root }
-			NOT = { overlord_of = root }
-			NOT = { alliance_with = root }
-			NOT = { ROOT = { truce_with = prev } }
-			NOT = { 
-				has_opinion = {
-					who = root
-					value = 25
-				}
-			}
-			NOT = {
-				any_owned_province = { #No need for this agenda if covered by a mission
-					OR = {
-						is_permanent_claim = root
-						is_core = root
-					}
-				}
-			}
-			ROOT = {
-				knows_country = prev
-			}
-			any_owned_province = {
-				OR = {
-					has_terrain = steppe
-					culture_group = east_slavic
-				}
-				any_neighbor_province = {
-					owned_by = root
-				}
-				area_for_scope_province = {
-					owned_by = root
-				}
-				NOT = {
-					area_for_scope_province = {
-						owner = {
-							OR = {
-								alliance_with = root
-								ROOT = { truce_with = prev }
-								is_subject_of = root
-								AND = {
-									is_part_of_hre = yes
-									hre_reform_passed = landfriede
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	selection_weight = {
-		factor = 2.5
-		modifier = {
-			factor = 0.5
-			has_non_generic_missions = yes
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 20
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 25
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 30
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 40
-		}
-		modifier = {
-			factor = 1.5
-			num_of_cities = 50
-		}
-		modifier = {
-			factor = 0.25
-			any_country = {
-				coalition_target = root
-			}
-		}
-	}
-	pre_effect = {
-		random_neighbor_country = {
-			limit = {
-				num_of_cities = 6
-				is_free_or_tributary_trigger = yes
-				NOT = { is_subject_of = root }
-				NOT = { overlord_of = root }
-				NOT = { alliance_with = root }
-				NOT = { ROOT = { truce_with = prev } }
-				NOT = { 
-					has_opinion = {
-						who = root
-						value = 25
-					}
-				}
-				NOT = {
-					any_owned_province = { #No need for this agenda if covered by a mission
-						OR = {
-							is_permanent_claim = root
-							is_core = root
-						}
-					}
-				}
-				ROOT = {
-					knows_country = prev
-				}
-				any_owned_province = {
-					OR = {
-						has_terrain = steppe
-						culture_group = east_slavic
-					}
-					any_neighbor_province = {
-						owned_by = root
-					}
-					area_for_scope_province = {
-						owned_by = root
-					}
-					NOT = {
-						area_for_scope_province = {
-							owner = {
-								OR = {
-									alliance_with = root
-									ROOT = { truce_with = prev }
-									is_subject_of = root
-									AND = {
-										is_part_of_hre = yes
-										hre_reform_passed = landfriede
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			random_owned_province = {
-				limit = {
-					OR = {
-						has_terrain = steppe
-						culture_group = east_slavic
-					}
-					any_neighbor_province = {
-						owned_by = root
-					}
-					area_for_scope_province = {
-						owned_by = root
-					}
-					NOT = {
-						area_for_scope_province = {
-							owner = {
-								OR = {
-									alliance_with = root
-									ROOT = { truce_with = prev }
-									is_subject_of = root
-									AND = {
-										is_part_of_hre = yes
-										hre_reform_passed = landfriede
-									}
-								}
-							}
-						}
-					}
-				}
-				save_event_target_as = agenda_province
-			}
-		}
-	}
-	immediate_effect = {
-		if = {
-			limit = {
-				event_target:agenda_province = {
-					area_for_scope_province = {
-						NOT = { is_claim = root }
-						NOT = { is_core = root }
-					}
-				}
-			}
-			event_target:agenda_province = {
-				area = {
-					limit = {
-						NOT = { is_claim = root }
-						NOT = { is_core = root }
-					}
-					add_claim = root
-				}
-			}
-		}
-	}
-	on_invalid = {
-		if = {
-			limit = {
-				event_target:agenda_province = {
-					area_for_scope_province = {
-						is_claim = root
-						NOT = { is_permanent_claim = root }
-					}
-				}
-			}
-			event_target:agenda_province = {
-				area = {
-					limit = {
-						is_claim = root
-						NOT = { is_permanent_claim = root }
-					}
-					remove_claim = root
-				}
-			}
-		}
-	}
-	provinces_to_highlight = {
-		area_for_scope_province = {
-			province_id = event_target:agenda_province
-		}
-		NOT = { owned_by = root }
-	}
-	task_requirements = {
-		event_target:agenda_province = {
-			area_for_scope_province = {
-				type = all
-				OR = {
-					owned_by = root
-					owner = {
-						is_subject_of = root
-					}
-				}
-			}
-		}
-	}
-	fail_if = {
-		event_target:agenda_province = {
-			area_for_scope_province = {
-				type = all
-				NOT = { is_claim = root }
-				NOT = { is_core = root }
-				NOT = { owned_by = root }
-			}
-		}
-	}
-	task_completed_effect = {
-		add_estate_loyalty = {
-			estate = estate_crow_tengu
-			loyalty = 15
-		}
-		add_adm_power = 50
-	}
-    failing_effect = {
-        add_estate_loyalty_modifier = {
-            estate = estate_crow_tengu
-			desc = EST_VAL_AGENDA_DENIED
-			loyalty = -5
-			duration = 7300
-        }
-		if = {
-			limit = {
-				event_target:agenda_province = {
-					area_for_scope_province = {
-						is_claim = root
-						NOT = { is_permanent_claim = root }
-					}
-				}
-			}
-			event_target:agenda_province = {
-				area = {
-					limit = {
-						is_claim = root
-						NOT = { is_permanent_claim = root }
-					}
-					remove_claim = root
-				}
-			}
-		}
-    }
-}
-
-
-#Settle random neighbouring steppe province
-estate_crow_tengu_colonise_X = {
-	can_select = {
-		OR = {
-			num_of_colonists = 1
-			has_idea = siberian_frontier
-		}
-		any_owned_province = {
-			any_empty_neighbor_province = {
-				ROOT = { has_discovered = prev }
-				is_city = no
-				is_wasteland = no
-				OR = {
-					region = ural_region
-					region = west_siberia_region
-					region = east_siberia_region
-				}
-			}
-		}
-	}
-	selection_weight = {
-		factor = 2.5
-		modifier = {
-			factor = 2
-			num_of_colonists = 2
-		}
-		modifier = {
-			factor = 2
-			tag = RUS
-		}
-	}
-	pre_effect = {
-		random_owned_province = {
-			limit = {
-				any_empty_neighbor_province = {
-					has_discovered = root
-					is_city = no
-					is_wasteland = no
-					OR = {
-						region = ural_region
-						region = west_siberia_region
-						region = east_siberia_region
-					}
-				}
-			}
-			random_empty_neighbor_province = {
-				limit = {
-					has_discovered = root
-					is_city = no
-					is_wasteland = no
-					OR = {
-						region = ural_region
-						region = west_siberia_region
-						region = east_siberia_region
-					}
-				}
-				save_event_target_as = agenda_province
-				choose_random_development_bonus_effect = yes
-			}
-		}
-	}
-	on_invalid = {
-		event_target:agenda_province = {
-			clear_random_development_bonus_flags_effect = yes
-		}
-	}
-	provinces_to_highlight = {
-		province_id = event_target:agenda_province
-	}
-	task_requirements = {
-		event_target:agenda_province = {
-			owned_by = root
-			is_city = yes
-		}
-	}
-	task_completed_effect = {
-		add_estate_loyalty = {
-			estate = estate_crow_tengu
-			loyalty = 10
-		}
-		event_target:agenda_province = {
-			apply_random_development_bonus_bonus_effect = yes
-		}
-	}
-	fail_if = {
-		OR = {
-			AND = {
-				NOT = { num_of_colonists = 1 }
-				NOT = { has_idea = siberian_frontier }
-				event_target:agenda_province = {
-					NOT = { owned_by = root }
-				}
-			}
-			event_target:agenda_province = {
-				NOT = { range = root }
-			}
-			event_target:agenda_province = {
-				is_city = yes
-				NOT = { owned_by = root }
-			}
-		}
-	}
-    failing_effect = {
-		event_target:agenda_province = {
-			clear_random_development_bonus_flags_effect = yes
-		}
-        add_estate_loyalty_modifier = {
-            estate = estate_crow_tengu
-			desc = EST_VAL_AGENDA_DENIED
-			loyalty = -5
-			duration = 7300
-        }
-    }
-}
-
-
-#Privateer
-estate_crow_tengu_go_privateering = {
-	can_select = {
-		OR = {
-			has_dlc = "Mare Nostrum"
-			has_dlc = "Golden Century"
-		}
-		any_owned_province = {
-			has_port = yes
-		}
-		NOT = { num_ships_privateering = 1 }
-		NOT = { navy_size = 30 }
-		NOT = { has_country_modifier = agenda_privateering_cossacks }
-		navy_size = 1
-	}
-	selection_weight = {
-		factor = 1.5
-	}
-	task_requirements = {
-		num_ships_privateering = 10
-	}
-	task_completed_effect = {
-		add_estate_loyalty = {
-			estate = estate_crow_tengu
-			loyalty = 10
-		}
-		add_country_modifier = {
-			name = agenda_privateering_cossacks
-			duration = 5475
-		}
-	}
-	fail_if = {
-		NOT = {
-			any_owned_province = {
-				has_port = yes
-			}
-		}
-	}
-    failing_effect = {
-        add_estate_loyalty_modifier = {
-            estate = estate_crow_tengu
-			desc = EST_VAL_AGENDA_DENIED
-			loyalty = -5
-			duration = 7300
-        }
-    }
-}
-
-#Privateer Better
-estate_crow_tengu_go_privateering_2 = {
-	can_select = {
-		OR = {
-			has_dlc = "Mare Nostrum"
-			has_dlc = "Golden Century"
-		}
-		any_owned_province = {
-			has_port = yes
-		}
-		navy_size = 30
-		NOT = {
-			any_active_trade_node = {
-				privateer_power = {
-					share = 30
-					country = root
-				}
-			}
-		}
-		any_active_trade_node = {
-			NOT = {
-				trade_share = {
-					country = root
-					share = 25
-				}
-			}
-			any_trade_node_member_province = {
-				has_port = yes
-			}
-		}
-		NOT = { has_country_modifier = agenda_privateering_cossacks }
-	}
-	selection_weight = {
-		factor = 1.5
-	}
-	pre_effect = {
-		random_active_trade_node = {
-			limit = {
-				NOT = {
-					trade_share = {
-						country = root
-						share = 25
-					}
-				}
-				any_trade_node_member_province = {
-					has_port = yes
-				}
-			}
-			save_event_target_as = agenda_trade_node
-		}
-		random_active_trade_node = {
-			limit = {
-				NOT = {
-					trade_share = {
-						country = root
-						share = 25
-					}
-				}
-				privateer_power = {
-					share = 1
-					country = root
-				}
-				any_trade_node_member_province = {
-					has_port = yes
-				}
-			}
-			save_event_target_as = agenda_trade_node
-		}
-		event_target:agenda_trade_node = {
-			if = {
-				limit = {
-					OR = {
-						is_sea = yes
-						has_port = no
-					}
-				}
-				save_event_target_as = agenda_trade_node_sea
-			}
-			else = {
-				sea_zone = {
-					save_event_target_as = agenda_trade_node_sea
-				}
-			}
-		}
-	}
-	provinces_to_highlight = {
-		province_id = event_target:agenda_trade_node
-	}
-	task_requirements = {
-		event_target:agenda_trade_node = {
-			privateer_power = {
-				share = 30
-				country = root
-			}
-		}
-	}
-	task_completed_effect = {
-		add_estate_loyalty = {
-			estate = estate_crow_tengu
-			loyalty = 10
-		}
-		add_country_modifier = {
-			name = agenda_privateering_cossacks
-			duration = 5475
-		}
-	}
-	fail_if = {
-		NOT = {
-			any_owned_province = {
-				has_port = yes
-			}
-		}
-	}
-    failing_effect = {
-        add_estate_loyalty_modifier = {
-            estate = estate_crow_tengu
-			desc = EST_VAL_AGENDA_DENIED
-			loyalty = -5
-			duration = 7300
-        }
-    }
-}
-
-#Loot X province with at least 12 development ("Despoil X")
-estate_crow_tengu_despoil_x = {
-	can_select = {
-		is_at_war = yes
-		NOT = {
-			is_in_war = {
-				duration = 1825
-			}
-		}
-		any_neighbor_country = {
-			war_with = root
-			any_owned_province = {
-				development = 12
-				is_looted = no
-				continent = root
-				controlled_by = owner
-				area_for_scope_province = {
-					type = all
-					owned_by = prev
-				}
-			}
-		}
-		NOT = { has_country_modifier = agenda_looting_zeal }
-	}
-	selection_weight = {
-		factor = 2.5
-	}
-	pre_effect = {
-		random_neighbor_country = {
-			limit = {
-				war_with = root
-				any_owned_province = {
-					development = 12
-					is_looted = no
-					continent = root
-					controlled_by = owner
-					area_for_scope_province = {
-						type = all
-						owned_by = prev
-					}
-				}
-			}
-			random_owned_province = {
-				limit = {
-					development = 12
-					is_looted = no
-					continent = root
-					controlled_by = owner
-					area_for_scope_province = {
-						type = all
-						owned_by = prev
-					}
-				}
-				save_event_target_as = agenda_province
-			}
-			random_owned_province = {
-				limit = {
-					development = 16
-					is_looted = no
-					continent = root
-					controlled_by = owner
-					area_for_scope_province = {
-						type = all
-						owned_by = prev
-					}
-				}
-				save_event_target_as = agenda_province
-			}
-			random_owned_province = {
-				limit = {
-					development = 20
-					is_looted = no
-					continent = root
-					controlled_by = owner
-					area_for_scope_province = {
-						type = all
-						owned_by = prev
-					}
-				}
-				save_event_target_as = agenda_province
-			}
-		}
-	}
-	provinces_to_highlight = {
-		province_id = event_target:agenda_province
-	}
-	task_requirements = {
-		event_target:agenda_province = {
-			area_for_scope_province = {
-				type = all
-				is_looted = yes
-			}
-		}
-	}
-	fail_if = {
-		event_target:agenda_province = {
-			owner = {
-				NOT = {
-					war_with = root
-				}
-			}
-		}
-	}
-    task_completed_effect = {
-		add_estate_loyalty = {
-			estate = estate_crow_tengu
-			loyalty = 10
-		}
-		add_country_modifier = {
-			name = agenda_looting_zeal
-			duration = 3650
-		}
-    }
-    failing_effect = {
-        add_estate_loyalty_modifier = {
-            estate = estate_crow_tengu
-			desc = EST_VAL_AGENDA_DENIED
-			loyalty = -5
-			duration = 7300
-        }
-    }
-}
-
-
 #Recruit more cossacks
 estate_crow_tengu_recruit_more_cossacks = {
 	can_select = {
-		has_estate_privilege = estate_crow_tengu_establish_the_cossack_regiments
+		has_estate_privilege = estate_crow_tengu_establish_tenma_vanguards
 		OR = {
 			NOT = { cossacks_percentage = 0.1 }
 			AND = {
-				has_estate_privilege = estate_crow_tengu_expand_the_cossack_regiments
+				has_estate_privilege = estate_crow_tengu_expand_the_tenma_vanguards
 				NOT = { cossacks_percentage = 0.2 }
 			}
 		}
@@ -1314,7 +174,7 @@ estate_crow_tengu_recruit_more_cossacks = {
 		}
 	}
 	fail_if = {
-		NOT = { has_estate_privilege = estate_crow_tengu_establish_the_cossack_regiments }
+		NOT = { has_estate_privilege = estate_crow_tengu_establish_tenma_vanguards }
 	}
     task_completed_effect = {
 		add_estate_loyalty = {
@@ -1333,3 +193,3354 @@ estate_crow_tengu_recruit_more_cossacks = {
     }
 }
 
+estate_crow_tengu_build_trade_building_in_y = {
+	can_select = {
+		dip_tech = 4
+		any_owned_province = {
+			is_state_core = root
+			NOT = { has_building = stock_exchange }
+			OR = {
+				AND = {
+					NOT = { has_building = marketplace }
+					NOT = { has_building = trade_depot }
+					num_free_building_slots = 1
+				}
+				AND = {
+					ROOT = { dip_tech = 17 }
+					NOT = { has_building = trade_depot }
+					OR = {
+						num_free_building_slots = 1
+						has_building = marketplace
+					}
+				}
+				AND = {
+					ROOT = { dip_tech = 22 }
+					OR = {
+						num_free_building_slots = 1
+						has_building = trade_depot
+					}
+				}
+			}
+		}
+	}
+	selection_weight = {
+		factor = 1
+		modifier = {
+			factor = 0.65
+			NOT = {
+				any_owned_province = {
+					is_state_core = root
+					OR = {
+						province_has_center_of_trade_of_level = 1
+						province_trade_power = 10
+					}
+					NOT = { has_building = stock_exchange }
+					OR = {
+						AND = {
+							NOT = { has_building = marketplace }
+							NOT = { has_building = trade_depot }
+							num_free_building_slots = 1
+						}
+						AND = {
+							ROOT = { dip_tech = 17 }
+							NOT = { has_building = trade_depot }
+							OR = {
+								num_free_building_slots = 1
+								has_building = marketplace
+							}
+						}
+						AND = {
+							ROOT = { dip_tech = 22 }
+							OR = {
+								num_free_building_slots = 1
+								has_building = trade_depot
+							}
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 1.2
+			any_owned_province = {
+				is_state_core = root
+				OR = {
+					province_has_center_of_trade_of_level = 2
+					province_trade_power = 20
+				}
+				NOT = { has_building = stock_exchange }
+				OR = {
+					AND = {
+						NOT = { has_building = marketplace }
+						NOT = { has_building = trade_depot }
+						num_free_building_slots = 1
+					}
+					AND = {
+						ROOT = { dip_tech = 17 }
+						NOT = { has_building = trade_depot }
+						OR = {
+							num_free_building_slots = 1
+							has_building = marketplace
+						}
+					}
+					AND = {
+						ROOT = { dip_tech = 22 }
+						OR = {
+							num_free_building_slots = 1
+							has_building = trade_depot
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			is_institution_enabled = global_trade
+			NOT = { has_institution = global_trade }
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				crown_land_share = 15
+			}
+		}
+	}
+	pre_effect = {
+		set_variable = {
+			which = estate_crow_tengu_build_trade_building_in_y_var
+			value = 0
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				NOT = { has_building = stock_exchange }
+				OR = {
+					AND = {
+						NOT = { has_building = marketplace }
+						NOT = { has_building = trade_depot }
+						num_free_building_slots = 1
+					}
+					AND = {
+						ROOT = { dip_tech = 17 }
+						NOT = { has_building = trade_depot }
+						OR = {
+							num_free_building_slots = 1
+							has_building = marketplace
+						}
+					}
+					AND = {
+						ROOT = { dip_tech = 22 }
+						OR = {
+							num_free_building_slots = 1
+							has_building = trade_depot
+						}
+					}
+				}
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				OR = {
+					province_has_center_of_trade_of_level = 1
+					province_trade_power = 10
+				}
+				NOT = { has_building = stock_exchange }
+				OR = {
+					AND = {
+						NOT = { has_building = marketplace }
+						NOT = { has_building = trade_depot }
+						num_free_building_slots = 1
+					}
+					AND = {
+						ROOT = { dip_tech = 17 }
+						NOT = { has_building = trade_depot }
+						OR = {
+							num_free_building_slots = 1
+							has_building = marketplace
+						}
+					}
+					AND = {
+						ROOT = { dip_tech = 22 }
+						OR = {
+							num_free_building_slots = 1
+							has_building = trade_depot
+						}
+					}
+				}
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				OR = {
+					province_has_center_of_trade_of_level = 2
+					province_trade_power = 20
+				}
+				NOT = { has_building = stock_exchange }
+				OR = {
+					AND = {
+						NOT = { has_building = marketplace }
+						NOT = { has_building = trade_depot }
+						num_free_building_slots = 1
+					}
+					AND = {
+						ROOT = { dip_tech = 17 }
+						NOT = { has_building = trade_depot }
+						OR = {
+							num_free_building_slots = 1
+							has_building = marketplace
+						}
+					}
+					AND = {
+						ROOT = { dip_tech = 22 }
+						OR = {
+							num_free_building_slots = 1
+							has_building = trade_depot
+						}
+					}
+				}
+			}
+			save_event_target_as = agenda_province
+		}
+		event_target:agenda_province = {
+			if = {
+				limit = {
+					has_building = trade_depot
+				}
+				ROOT = {
+					set_variable = {
+						which = estate_crow_tengu_build_trade_building_in_y_var
+						value = 3
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					has_building = marketplace
+				}
+				ROOT = {
+					set_variable = {
+						which = estate_crow_tengu_build_trade_building_in_y_var
+						value = 2
+					}
+				}
+			}
+			else = {
+				ROOT = {
+					set_variable = {
+						which = estate_crow_tengu_build_trade_building_in_y_var
+						value = 1
+					}
+				}
+			}
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_province
+	}
+	fail_if = {
+		event_target:agenda_province = {
+			NOT = { owned_by = root }
+		}
+	}
+    task_requirements = {
+		if = {
+			limit = {
+				check_variable = {
+					which = estate_crow_tengu_build_trade_building_in_y_var
+					value = 3
+				}
+			}
+			event_target:agenda_province = {
+				has_building = stock_exchange
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = estate_crow_tengu_build_trade_building_in_y_var
+					value = 2
+				}
+			}
+			event_target:agenda_province = {
+				OR = {
+					has_building = trade_depot
+					has_building = stock_exchange
+				}
+			}
+		}
+		else = {
+			event_target:agenda_province = {
+				OR = {
+					has_building = marketplace
+					has_building = trade_depot
+					has_building = stock_exchange
+				}
+			}
+		}
+    }
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		if = {
+			limit = {
+				NOT = { crown_land_share = 15 }
+				estate_territory = {
+					estate = estate_crow_tengu
+					territory = 10
+				}
+			}
+			take_estate_land_share_small = { estate = estate_crow_tengu }
+		}
+		else = {
+			event_target:agenda_province = {
+				add_base_production = 1
+			}
+		}
+    }
+    failing_effect = {
+		event_target:agenda_province = {
+			if = {
+				limit = { owned_by = root }
+				add_named_unrest = {
+					name = local_burghers_displeased
+					value = 5
+				}
+			}
+		}
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+estate_crow_tengu_build_production_building_in_y = {
+	can_select = {
+		adm_tech = 6
+		any_owned_province = {
+			is_state_core = root
+			NOT = { has_building = counting_house }
+			OR = {
+				AND = {
+					NOT = { has_building = workshop }
+					num_free_building_slots = 1
+				}
+				AND = {
+					ROOT = { adm_tech = 24 }
+					OR = {
+						has_building = workshop
+						num_free_building_slots = 1
+					}
+				}
+			}
+			NOT = { trade_goods = gold }
+		}
+	}
+	selection_weight = {
+		factor = 1
+		modifier = {
+			factor = 0.65
+			NOT = {
+				any_owned_province = {
+					is_state_core = root
+					base_production = 4
+					NOT = { has_building = counting_house }
+					OR = {
+						AND = {
+							NOT = { has_building = workshop }
+							num_free_building_slots = 1
+						}
+						AND = {
+							ROOT = { adm_tech = 24 }
+							OR = {
+								has_building = workshop
+								num_free_building_slots = 1
+							}
+						}
+					}
+					NOT = { trade_goods = gold }
+				}
+			}
+		}
+		modifier = {
+			factor = 1.2
+			any_owned_province = {
+				is_state_core = root
+				OR = {
+					base_production = 7
+					has_building = wharf
+					has_building = weapons
+					has_building = textile
+					has_building = tradecompany
+					has_building = farm_estate
+					has_building = mills
+					has_building = plantations
+					has_building = furnace
+				}
+				NOT = { has_building = counting_house }
+				OR = {
+					AND = {
+						NOT = { has_building = workshop }
+						num_free_building_slots = 1
+					}
+					AND = {
+						ROOT = { adm_tech = 24 }
+						OR = {
+							has_building = workshop
+							num_free_building_slots = 1
+						}
+					}
+				}
+				NOT = { trade_goods = gold }
+			}
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				crown_land_share = 15
+			}
+		}
+	}
+	pre_effect = {
+		set_variable = {
+			which = estate_crow_tengu_build_production_building_in_y_var
+			value = 0
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				NOT = { has_building = counting_house }
+				OR = {
+					AND = {
+						NOT = { has_building = workshop }
+						num_free_building_slots = 1
+					}
+					AND = {
+						ROOT = { adm_tech = 24 }
+						OR = {
+							has_building = workshop
+							num_free_building_slots = 1
+						}
+					}
+				}
+				NOT = { trade_goods = gold }
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				base_production = 4
+				NOT = { has_building = counting_house }
+				OR = {
+					AND = {
+						NOT = { has_building = workshop }
+						num_free_building_slots = 1
+					}
+					AND = {
+						ROOT = { adm_tech = 24 }
+						OR = {
+							has_building = workshop
+							num_free_building_slots = 1
+						}
+					}
+				}
+				NOT = { trade_goods = gold }
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				OR = {
+					base_production = 7
+					has_building = wharf
+					has_building = weapons
+					has_building = textile
+					has_building = tradecompany
+					has_building = farm_estate
+					has_building = mills
+					has_building = plantations
+					has_building = furnace
+				}
+				NOT = { has_building = counting_house }
+				OR = {
+					AND = {
+						NOT = { has_building = workshop }
+						num_free_building_slots = 1
+					}
+					AND = {
+						ROOT = { adm_tech = 24 }
+						OR = {
+							has_building = workshop
+							num_free_building_slots = 1
+						}
+					}
+				}
+				NOT = { trade_goods = gold }
+			}
+			save_event_target_as = agenda_province
+		}
+		event_target:agenda_province = {
+			if = {
+				limit = {
+					has_building = workshop
+				}
+				ROOT = {
+					set_variable = {
+						which = estate_crow_tengu_build_production_building_in_y_var
+						value = 2
+					}
+				}
+			}
+			else = {
+				ROOT = {
+					set_variable = {
+						which = estate_crow_tengu_build_production_building_in_y_var
+						value = 1
+					}
+				}
+			}
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_province
+	}
+	fail_if = {
+		event_target:agenda_province = {
+			NOT = { owned_by = root }
+		}
+	}
+    task_requirements = {
+		if = {
+			limit = {
+				check_variable = {
+					which = estate_crow_tengu_build_production_building_in_y_var
+					value = 2
+				}
+			}
+			event_target:agenda_province = {
+				has_building = counting_house
+			}
+		}
+		else = {
+			event_target:agenda_province = {
+				OR = {
+					has_building = workshop
+					has_building = counting_house
+				}
+			}
+		}
+    }
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		if = {
+			limit = {
+				NOT = { crown_land_share = 15 }
+				estate_territory = {
+					estate = estate_crow_tengu
+					territory = 10
+				}
+			}
+			take_estate_land_share_small = { estate = estate_crow_tengu }
+		}
+		else = {
+			event_target:agenda_province = {
+				add_base_production = 1
+			}
+		}
+    }
+    failing_effect = {
+		event_target:agenda_province = {
+			if = {
+				limit = { owned_by = root }
+				add_named_unrest = {
+					name = local_burghers_displeased
+					value = 5
+				}
+			}
+		}
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#should be 2x as likely
+estate_crow_tengu_build_manufactory_in_y = {
+	can_select = {
+		any_owned_province = {
+			is_state_core = root
+			root_can_build_manufactory_here_trigger = yes
+			has_burghers_trade_good_trigger = yes
+		}
+		monthly_income = 30
+	}
+	selection_weight = {
+		factor = 2
+		modifier = {
+			factor = 0.5
+			OR = {
+				current_age = age_of_discovery
+				current_age = age_of_reformation
+			}
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { monthly_income = 40 }
+		}
+		modifier = {
+			factor = 2
+			monthly_income = 60
+		}
+		modifier = {
+			factor = 2
+			is_institution_enabled = manufactories
+			NOT = { has_institution = manufactories }
+		}
+	}
+	pre_effect = {
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				root_can_build_manufactory_here_trigger = yes
+				has_burghers_trade_good_trigger = yes
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				base_production = 5
+				root_can_build_manufactory_here_trigger = yes
+				has_burghers_trade_good_trigger = yes
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				base_production = 10
+				root_can_build_manufactory_here_trigger = yes
+				has_burghers_trade_good_trigger = yes
+			}
+			save_event_target_as = agenda_province
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_province
+	}
+	fail_if = {
+		event_target:agenda_province = {
+			NOT = { owned_by = root }
+		}
+	}
+    task_requirements = {
+		event_target:agenda_province = {
+			custom_trigger_tooltip = {
+				tooltip = has_manufactory_trigger_tooltip
+				OR = {
+					if = {
+						limit = {
+							OR = {
+								trade_goods = naval_supplies
+								trade_goods = fish
+								trade_goods = salt
+							}
+						}
+						has_building = wharf
+					}
+					else_if = {
+						limit = {
+							OR = {
+								trade_goods = copper
+								trade_goods = iron
+							}
+						}
+						has_building = weapons
+					}
+					else_if = {
+						limit = {
+							OR = {
+								trade_goods = wool
+								trade_goods = cloth
+								trade_goods = silk
+								trade_goods = dyes
+							}
+						}
+						has_building = textile
+					}
+					else_if = {
+						limit = {
+							OR = {
+								trade_goods = ivory
+								trade_goods = slaves
+								trade_goods = spices
+								trade_goods = cloves
+								trade_goods = fur
+								trade_goods = incense
+							}
+						}
+						has_building = tradecompany
+					}
+					else_if = {
+						limit = {
+							OR = {
+								trade_goods = grain
+								trade_goods = livestock
+								trade_goods = wine
+							}
+						}
+						has_building = farm_estate
+					}
+					else_if = {
+						limit = {
+							OR = {
+								trade_goods = paper
+								trade_goods = gems
+								trade_goods = tropical_wood
+								trade_goods = glass
+								trade_goods = chinaware
+							}
+						}
+						has_building = mills
+					}
+					else_if = {
+						limit = {
+							trade_goods = coal
+						}
+						has_building = furnace
+					}
+					else = {
+						has_building = plantations
+					}
+					has_building = ramparts
+					has_building = soldier_households
+					has_building = impressment_offices
+					has_building = state_house
+				}
+			}
+		}
+    }
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		event_target:agenda_province = {
+			add_base_production = 1
+			add_province_modifier = {
+				name = prospering_production
+				duration = 5475
+			}
+		}
+    }
+    failing_effect = {
+		event_target:agenda_province = {
+			if = {
+				limit = { owned_by = root }
+				add_named_unrest = {
+					name = local_burghers_displeased
+					value = 5
+				}
+			}
+		}
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+estate_crow_tengu_build_university_in_y = {
+	can_select = {
+		government = republic
+		adm_tech = 17
+		any_owned_province = {
+			is_state_core = root
+			NOT = { has_building = university }
+			OR = {
+				development = 10
+				is_capital = yes
+			}
+		}
+	}
+	selection_weight = {
+		factor = 1
+		modifier = {
+			factor = 0.75
+			NOT = {
+				any_owned_province = {
+					is_state_core = root
+					NOT = { has_building = university }
+					development = 15
+				}
+			}
+		}
+		modifier = {
+			factor = 1.2
+			any_owned_province = {
+				is_state_core = root
+				NOT = { has_building = university }
+				development = 20
+			}
+		}
+		modifier = {
+			factor = 2
+			is_institution_enabled = enlightenment
+			NOT = { has_institution = enlightenment }
+		}
+	}
+	pre_effect = {
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				NOT = { has_building = university }
+				development = 10
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				NOT = { has_building = university }
+				development = 15
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				NOT = { has_building = university }
+				development = 20
+			}
+			save_event_target_as = agenda_province
+		}
+		random_owned_province = {
+			limit = {
+				is_state_core = root
+				NOT = { has_building = university }
+				is_capital = yes
+			}
+			save_event_target_as = agenda_province
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_province
+	}
+	fail_if = {
+		event_target:agenda_province = {
+			NOT = { owned_by = root }
+		}
+	}
+    task_requirements = {
+		event_target:agenda_province = {
+			has_building = university
+		}
+    }
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_adm_power = 35
+		add_dip_power = 35
+		add_mil_power = 35
+    }
+    failing_effect = {
+		event_target:agenda_province = {
+			if = {
+				limit = { owned_by = root }
+				add_named_unrest = {
+					name = local_burghers_displeased
+					value = 5
+				}
+			}
+		}
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+estate_crow_tengu_develop_x = {
+	selection_weight = {
+		factor = 1
+	}
+	can_select = {
+		capital_scope = {
+			is_state_core = root
+		}
+	}
+	pre_effect = {
+		random_list = {
+			1 = {
+				random_owned_province = {
+					limit = {
+						is_state_core = root
+						area_for_scope_province = {
+							is_capital_of = root
+						}
+					}
+					save_event_target_as = agenda_province
+				}
+			}
+			2 = {
+				trigger = {
+					any_owned_province = {
+						is_state_core = root
+						OR = {
+							AND = {
+								religion = root
+								OR = {
+									culture = root
+									has_owner_accepted_culture = yes
+								}
+							}
+						}
+						region_for_scope_province = {
+							is_capital_of = root
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						is_state_core = root
+						OR = {
+							AND = {
+								religion = root
+								OR = {
+									culture = root
+									has_owner_accepted_culture = yes
+								}
+							}
+						}
+						region_for_scope_province = {
+							is_capital_of = root
+						}
+					}
+					save_event_target_as = agenda_province
+				}
+			}
+			1 = {
+				random_owned_province = {
+					limit = {
+						is_state_core = root
+					}
+					save_event_target_as = agenda_province
+				}
+			}
+		}
+		event_target:agenda_province = {
+			if = {
+				limit = {
+					check_variable = {
+						which = province_dip_var
+						value = 1
+					}
+				}
+				set_variable = {
+					which = province_dip_var
+					value = 0
+				}
+			}
+			export_to_variable = {
+				which = province_dip_var
+				value = trigger_value:base_production
+			}
+			change_variable = {
+				which = province_dip_var
+				value = 2
+			}
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_province
+	}
+	fail_if = {
+		event_target:agenda_province = {
+			NOT = { owned_by = root }
+		}
+	}
+    task_requirements = {
+		event_target:agenda_province = {
+			base_production = "province_dip_var"
+		}
+    }
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_years_of_income = 0.3
+    }
+    failing_effect = {
+		event_target:agenda_province = {
+			if = {
+				limit = { owned_by = root }
+				add_named_unrest = {
+					name = local_burghers_displeased
+					value = 5
+				}
+			}
+		}
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Pay off loans
+estate_crow_tengu_pay_off_loans = {
+	can_select = {
+		num_of_loans = 5
+		is_bankrupt = no
+	}
+	selection_weight = {
+		factor = 2
+		modifier = {
+			factor = 0.5
+			is_at_war = yes
+		}
+		modifier = {
+			factor = 1.5
+			num_of_loans = 10
+		}
+		modifier = {
+			factor = 1.5
+			num_of_loans = 15
+		}
+		modifier = {
+			factor = 1.5
+			num_of_loans = 20
+		}
+	}
+	fail_if = {
+		is_bankrupt = yes
+	}
+	task_requirements = {
+		NOT = { num_of_loans = 1 }
+		hidden_trigger = {
+			is_bankrupt = no
+		}
+	}
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		generate_scaled_advisor_of_type_and_religion_effect = {
+			type = master_of_mint
+			religion = root
+			discount = yes
+		}
+    }
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Restore republican tradition
+estate_crow_tengu_restore_republican_tradition = {
+	can_select = {
+		NOT = { republican_tradition = 65 }
+		republican_tradition = 20
+		OR = {
+			government = republic
+			government = dictatorship
+		}
+		NOT = { has_country_modifier = agenda_republicanism_restored }
+	}
+	selection_weight = {
+		factor = 2
+		modifier = {
+			factor = 1.5
+			NOT = { republican_tradition = 50 }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { republican_tradition = 35 }
+		}
+	}
+	fail_if = {
+		NOT = { government = republic }
+		NOT = { government = dictatorship }
+	}
+	task_requirements = {
+		republican_tradition = 85
+	}
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = agenda_republicanism_restored
+			duration = 5475
+		}
+    }
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Reduce Inflation
+estate_crow_tengu_restore_currency = {
+	can_select = {
+		inflation = 10
+		NOT = {
+			inflation = 30
+		}
+		NOT = { has_country_modifier = boom_economy }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 2
+			inflation = 20
+		}
+	}
+	fail_if = {
+		inflation = 35
+	}
+	task_requirements = {
+		NOT = { inflation = 5 }
+	}
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = boom_economy
+			duration = 5475
+		}
+    }
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Recover Abysmal Inflation
+estate_crow_tengu_recovery_from_hyperinflation = {
+	can_select = {
+		inflation = 30
+	}
+	selection_weight = {
+		factor = 5
+	}
+	task_requirements = {
+		NOT = { inflation = 15 }
+	}
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_stability_or_adm_power = yes
+		add_inflation = -10
+    }
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Improve trade power in node X
+estate_crow_tengu_increase_trade_power_in_X = {
+	can_select = {
+		any_active_trade_node = {
+			trade_share = {
+				country = root
+				share = 5
+			}
+			NOT = {
+				trade_share = {
+					country = root
+					share = 50
+				}
+			}
+			any_trade_node_member_province = {
+				has_port = yes
+			}
+		}
+	}
+	selection_weight = {
+		factor = 1.5
+		modifier = { #a good indication that you should be doing trade stuff
+			factor = 2
+			num_of_merchants = 3
+		}
+		modifier = {
+			factor = 2
+			num_of_merchants = 4
+		}
+		modifier = {
+			factor = 2
+			trade_income_percentage = 0.3
+		}
+	}
+	pre_effect = {
+		set_variable = {
+			which = estate_crow_tengu_increase_trade_power_in_X_var
+			value = 0
+		}
+		random_active_trade_node = {
+			limit = {
+				trade_share = {
+					country = root
+					share = 5
+				}
+				NOT = {
+					trade_share = {
+						country = root
+						share = 50
+					}
+				}
+				any_trade_node_member_province = {
+					has_port = yes
+				}
+			}
+			save_event_target_as = agenda_trade_node
+			if = {
+				limit = {
+					trade_share = { #Requires 65
+						country = root
+						share = 40
+					}
+				}
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_increase_trade_power_in_X_var
+						value = 7
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					trade_share = { #Requires 50
+						country = root
+						share = 30
+					}
+				}
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_increase_trade_power_in_X_var
+						value = 6
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					trade_share = { #Requires 40
+						country = root
+						share = 23
+					}
+				}
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_increase_trade_power_in_X_var
+						value = 5
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					trade_share = { #Requires 30
+						country = root
+						share = 15
+					}
+				}
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_increase_trade_power_in_X_var
+						value = 4
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					trade_share = { #Requires 25
+						country = root
+						share = 10
+					}
+				}
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_increase_trade_power_in_X_var
+						value = 3
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					trade_share = { #Requires 20
+						country = root
+						share = 7
+					}
+				}
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_increase_trade_power_in_X_var
+						value = 2
+					}
+				}
+			}
+			else = { #Requires 15
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_increase_trade_power_in_X_var
+						value = 1
+					}
+				}
+			}
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_trade_node
+	}
+	task_requirements = {
+		event_target:agenda_trade_node = {
+			if = {
+				limit = {
+					root = {
+						check_variable = {
+							which = estate_crow_tengu_increase_trade_power_in_X_var
+							value = 7
+						}
+					}
+				}
+				trade_share = {
+					country = root
+					share = 65
+				}
+			}
+			else_if = {
+				limit = {
+					root = {
+						check_variable = {
+							which = estate_crow_tengu_increase_trade_power_in_X_var
+							value = 6
+						}
+					}
+				}
+				trade_share = {
+					country = root
+					share = 50
+				}
+			}
+			else_if = {
+				limit = {
+					root = {
+						check_variable = {
+							which = estate_crow_tengu_increase_trade_power_in_X_var
+							value = 5
+						}
+					}
+				}
+				trade_share = {
+					country = root
+					share = 40
+				}
+			}
+			else_if = {
+				limit = {
+					root = {
+						check_variable = {
+							which = estate_crow_tengu_increase_trade_power_in_X_var
+							value = 4
+						}
+					}
+				}
+				trade_share = {
+					country = root
+					share = 30
+				}
+			}
+			else_if = {
+				limit = {
+					root = {
+						check_variable = {
+							which = estate_crow_tengu_increase_trade_power_in_X_var
+							value = 3
+						}
+					}
+				}
+				trade_share = {
+					country = root
+					share = 25
+				}
+			}
+			else_if = {
+				limit = {
+					root = {
+						check_variable = {
+							which = estate_crow_tengu_increase_trade_power_in_X_var
+							value = 2
+						}
+					}
+				}
+				trade_share = {
+					country = root
+					share = 20
+				}
+			}
+			else_if = {
+				limit = {
+					root = {
+						check_variable = {
+							which = estate_crow_tengu_increase_trade_power_in_X_var
+							value = 1
+						}
+					}
+				}
+				trade_share = {
+					country = root
+					share = 15
+				}
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		generate_scaled_advisor_of_type_and_religion_effect = {
+			type = trader
+			religion = root
+			discount = yes
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Access to the Sea
+estate_crow_tengu_access_sea = {
+	can_select = {
+		is_free_or_tributary_trigger = yes
+		NOT = {
+			any_owned_province = {
+				has_port = yes
+			}
+		}
+		any_owned_province = {
+			any_neighbor_province = {
+				has_port = yes
+				owner = {
+					NOT = { overlord_of = root }
+					NOT = { is_subject_of = root }
+					NOT = { alliance_with = root }
+					NOT = { ROOT = { truce_with = prev } }
+					NOT = {
+						has_opinion = {
+							who = root
+							value = 50
+						}
+					}
+					OR = {
+						is_part_of_hre = no
+						NOT = { hre_reform_passed = landfriede }
+						ROOT = { is_part_of_hre = no }
+					}
+				}
+			}
+		}
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 0.25
+			any_country = {
+				coalition_target = root
+			}
+		}
+	}
+	pre_effect = {
+		random_owned_province = {
+			limit = {
+				any_neighbor_province = {
+					has_port = yes
+					owner = {
+						NOT = { overlord_of = root }
+						NOT = { is_subject_of = root }
+						NOT = { alliance_with = root }
+						NOT = { ROOT = { truce_with = prev } }
+						NOT = {
+							has_opinion = {
+								who = root
+								value = 50
+							}
+						}
+						OR = {
+							is_part_of_hre = no
+							NOT = { hre_reform_passed = landfriede }
+							ROOT = { is_part_of_hre = no }
+						}
+					}
+				}
+			}
+			random_neighbor_province = {
+				limit = {
+					has_port = yes
+					owner = {
+						NOT = { overlord_of = root }
+						NOT = { is_subject_of = root }
+						NOT = { alliance_with = root }
+						NOT = { ROOT = { truce_with = prev } }
+						NOT = {
+							has_opinion = {
+								who = root
+								value = 50
+							}
+						}
+						OR = {
+							is_part_of_hre = no
+							NOT = { hre_reform_passed = landfriede }
+							ROOT = { is_part_of_hre = no }
+						}
+					}
+				}
+				save_event_target_as = agenda_province
+			}
+		}
+	}
+	provinces_to_highlight = {
+		OR = {
+			province_id = event_target:agenda_province
+			AND = {
+				OR = {
+					is_claim = root
+					is_core = root
+				}
+				has_port = yes
+			}
+		}
+	}
+	task_requirements = {
+		any_owned_province = {
+			has_port = yes
+		}
+	}
+	immediate_effect = {
+		if = {
+			limit = {
+				event_target:agenda_province = {
+					NOT = { is_core = root }
+					NOT = { is_claim = root }
+				}
+			}
+			event_target:agenda_province = {
+				add_claim = root
+			}
+		}
+	}
+	on_invalid = {
+		event_target:agenda_province = {
+			if = {
+				limit = {
+					is_claim = root
+					NOT = { is_permanent_claim = root }
+				}
+				remove_claim = root
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_sailors = 500
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+		event_target:agenda_province = {
+			if = {
+				limit = {
+					is_claim = root
+					NOT = { is_permanent_claim = root }
+				}
+				remove_claim = root
+			}
+		}
+    }
+}
+
+#Bigger Fleet
+estate_crow_tengu_build_a_fleet = {
+	can_select = {
+		primitives = no
+		any_owned_province = {
+			has_port = yes
+			is_core = root
+		}
+		navy_size = 1
+		NOT = { navy_size_percentage = 0.5 }
+		NOT = { navy_size = 250 }
+		NOT = { has_country_modifier = thriving_ship_building_sector }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 1.5
+			any_rival_country = {
+				NOT = { truce_with = root }
+				navy_size = root
+			}
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { navy_size_percentage = 0.3 }
+			NOT = { navy_size = 150 }
+		}
+		modifier = {
+			factor = 0.5
+			navy_size = 100
+		}
+		modifier = {
+			factor = 0.25
+			navy_size = 200
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { num_of_ports = 3 }
+		}
+		modifier = {
+			factor = 2
+			has_idea_group = naval_ideas
+		}
+	}
+	task_requirements = {
+		navy_size_percentage = 0.75
+	}
+	fail_if = {
+		NOT = {
+			any_owned_province = {
+				has_port = yes
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		create_admiral = {
+			tradition = 40
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Bigger Fleet than Rival
+estate_crow_tengu_bigger_fleet_than_rival = {
+	can_select = {
+		primitives = no
+		any_owned_province = {
+			has_port = yes
+			is_core = root
+		}
+		NOT = { government = native }
+		NOT = { has_country_modifier = naval_enthusiasm_mission }
+
+		NOT = { navy_size_percentage = 1 }
+
+		any_rival_country = {
+			NOT = { war_with = root }
+			NOT = { root = { navy_size = prev } }
+			navy_balance = {
+				who = root
+				value = 1.05
+			}
+			NOT = {
+				navy_balance = {
+					who = root
+					value = 1.25
+				}
+			}
+		}
+	}
+	selection_weight = {
+		factor = 5
+	}
+	pre_effect = {
+		random_rival_country = {
+			limit = {
+				NOT = { war_with = root }
+				NOT = { root = { navy_size = prev } }
+				navy_balance = {
+					who = root
+					value = 1.05
+				}
+				NOT = {
+					navy_balance = {
+						who = root
+						value = 1.25
+					}
+				}
+			}
+			save_event_target_as = agenda_country
+		}
+	}
+	provinces_to_highlight = {
+		is_capital_of = event_target:agenda_country
+	}
+	task_requirements = {
+		if = {
+			limit = { event_target:agenda_country = { num_of_cities = 1 } }
+			navy_size = event_target:agenda_country
+		}
+		else = {
+			always = yes
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = naval_enthusiasm_mission
+			duration = 3650
+		}
+	}
+	fail_if = {
+		NOT = {
+			any_owned_province = {
+				has_port = yes
+			}
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Improve dip rep
+estate_crow_tengu_improve_dip_rep = {
+	can_select = {
+		NOT = { diplomatic_reputation = -2 }
+	}
+	selection_weight = {
+		factor = 1
+	}
+	task_requirements = {
+		diplomatic_reputation = 1
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_prestige = 10
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Get a treasury
+estate_crow_tengu_get_cash = {
+	can_select = {
+		NOT = { years_of_income = 0.5 }
+		NOT = { num_of_loans = 1 }
+		is_at_war = no
+	}
+	selection_weight = {
+		factor = 1
+	}
+	task_requirements = {
+		years_of_income = 2.5
+		NOT = { num_of_loans = 1 }
+	}
+	fail_if = {
+		num_of_loans = 1
+	}
+	task_completed_effect = {
+		if = {
+			limit = {
+				inflation = 5
+			}
+			add_estate_loyalty = {
+				estate = estate_crow_tengu
+				loyalty = 10
+			}
+			generate_scaled_advisor_of_type_and_religion_effect = {
+				type = master_of_mint
+				religion = root
+				discount = yes
+			}
+		}
+		else = {
+			add_estate_loyalty = {
+				estate = estate_crow_tengu
+				loyalty = 10
+			}
+			add_country_modifier = {
+				name = growing_economy
+				duration = 5475
+			}
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Discover X in America
+estate_crow_tengu_discover_X_in_america = {
+	can_select = {
+		OR = {
+			num_of_conquistadors = 1
+			num_of_explorers = 1
+		}
+		num_of_ports = 1
+		any_province = {
+			range = root
+			OR = {
+				continent = north_america
+				continent = south_america
+				continent = new_world
+			}
+			has_port = yes
+			is_wasteland = no
+			is_city = no
+			NOT = { has_discovered = root }
+			area_for_scope_province = {
+				type = all
+				NOT = { has_discovered = root }
+			}
+		}
+		NOT = { has_country_modifier = colonial_enthusiasm }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 2
+			OR = {
+				tag = POR
+				tag = CAS
+				tag = GBR
+				tag = NED
+				tag = FRA
+				tag = NAV
+				tag = DAN
+				tag = NOR
+			}
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { num_of_colonists = 1 }
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				num_of_conquistadors = 2
+				num_of_explorers = 2
+			}
+		}
+	}
+	pre_effect = {
+		random_province = {
+			limit = {
+				range = root
+				OR = {
+					continent = north_america
+					continent = south_america
+					continent = new_world
+				}
+				has_port = yes
+				is_wasteland = no
+				is_city = no
+				NOT = { has_discovered = root }
+				area_for_scope_province = {
+					type = all
+					NOT = { has_discovered = root }
+				}
+			}
+			save_event_target_as = agenda_province
+		}
+	}
+	task_requirements = {
+		event_target:agenda_province = {
+			area_for_scope_province = {
+				custom_trigger_tooltip = {
+					tooltip = discovered_by_root
+					has_discovered = root
+				}
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = colonial_enthusiasm
+			duration = 3650
+		}
+	}
+	fail_if = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			has_not_any_exploration_ideas = yes
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Colonise something in X area
+estate_crow_tengu_colonise_X = {
+	can_select = {
+		num_of_colonists = 1
+		num_of_ports = 1
+		any_province = {
+			range = root
+			is_city = no
+			is_wasteland = no
+			OR = {
+				has_port = yes
+				any_neighbor_province = {
+					OR = {
+						owned_by = root
+						owner = {
+							is_colonial_nation_of = root
+						}
+					}
+				}
+			}
+			has_discovered = root
+			area_for_scope_province = {
+				type = all
+				NOT = { owned_by = root }
+				NOT = {
+					owner = {
+						is_colonial_nation_of = root
+					}
+				}
+			}
+			OR = {
+				NOT = { colonial_claim_by_anyone_of_religion = root }
+				is_religion_grant_colonial_claim = root
+			}
+		}
+		NOT = { has_country_modifier = colonial_enthusiasm }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 2
+			OR = {
+				tag = POR
+				tag = CAS
+				tag = GBR
+				tag = NED
+				tag = FRA
+				tag = NAV
+				tag = DAN
+				tag = NOR
+			}
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 1.5
+			any_country = {
+				is_colonial_nation_of = root
+			}
+		}
+	}
+	pre_effect = {
+		random_province = {
+			limit = {
+				range = root
+				is_city = no
+				is_wasteland = no
+				OR = {
+					has_port = yes
+					any_neighbor_province = {
+						OR = {
+							owned_by = root
+							owner = {
+								is_colonial_nation_of = root
+							}
+						}
+					}
+				}
+				has_discovered = root
+				area_for_scope_province = {
+					type = all
+					NOT = { owned_by = root }
+					NOT = {
+						owner = {
+							is_colonial_nation_of = root
+						}
+					}
+				}
+				OR = {
+					NOT = { colonial_claim_by_anyone_of_religion = root }
+					is_religion_grant_colonial_claim = root
+				}
+			}
+			save_event_target_as = agenda_province
+		}
+		random_province = {
+			limit = {
+				range = root
+				is_city = no
+				is_wasteland = no
+				any_neighbor_province = {
+					OR = {
+						owned_by = root
+						owner = {
+							is_colonial_nation_of = root
+						}
+					}
+				}
+				has_discovered = root
+				area_for_scope_province = {
+					type = all
+					NOT = { owned_by = root }
+					NOT = {
+						owner = {
+							is_colonial_nation_of = root
+						}
+					}
+				}
+				OR = {
+					continent = north_america
+					continent = south_america
+					continent = new_world
+				}
+				OR = {
+					NOT = { colonial_claim_by_anyone_of_religion = root }
+					is_religion_grant_colonial_claim = root
+				}
+			}
+			save_event_target_as = agenda_province
+		}
+	}
+	provinces_to_highlight = {
+		area_for_scope_province = {
+			province_id = event_target:agenda_province
+		}
+	}
+	task_requirements = {
+		custom_trigger_tooltip = {
+			tooltip = estate_crow_tengu_colonise_X_requirements
+			event_target:agenda_province = {
+				area_for_scope_province = {
+					is_city = yes
+					OR = {
+						owned_by = root
+						owner = {
+							is_colonial_nation_of = root
+						}
+					}
+				}
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = colonial_enthusiasm
+			duration = 3650
+		}
+	}
+	fail_if = {
+		OR = {
+			AND = {
+				NOT = { num_of_colonists = 1 }
+				event_target:agenda_province = {
+					NOT = { country_or_non_sovereign_subject_holds = root }
+				}
+			}
+			event_target:agenda_province = {
+				NOT = { range = root }
+				is_colony = no
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			}
+			event_target:agenda_province = {
+				area_for_scope_province = {
+					type = all
+					is_city = yes
+					NOT = { country_or_non_sovereign_subject_holds = root }
+				}
+			}
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Colonise more in X area
+estate_crow_tengu_colonise_more_X = {
+	can_select = {
+		num_of_colonists = 1
+		num_of_ports = 1
+		any_province = {
+			range = root
+			is_city = no
+			is_wasteland = no
+			has_discovered = root
+			area_for_scope_province = {
+				OR = {
+					owned_by = root
+					owner = {
+						is_colonial_nation_of = root
+					}
+				}
+				is_city = yes
+			}
+			area_for_scope_province = {
+				type = all
+				OR = {
+					owned_by = root
+					owner = {
+						is_colonial_nation_of = root
+					}
+					is_city = no
+				}
+			}
+			OR = {
+				NOT = { colonial_claim_by_anyone_of_religion = root }
+				is_religion_grant_colonial_claim = root
+			}
+		}
+		NOT = { has_country_modifier = colonial_enthusiasm }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 2
+			OR = {
+				tag = POR
+				tag = CAS
+				tag = GBR
+				tag = NED
+				tag = FRA
+				tag = NAV
+				tag = DAN
+				tag = NOR
+			}
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 1.5
+			any_country = {
+				is_colonial_nation_of = root
+			}
+		}
+	}
+	pre_effect = {
+		random_province = {
+			limit = {
+				range = root
+				is_city = no
+				is_wasteland = no
+				has_discovered = root
+				area_for_scope_province = {
+					OR = {
+						owned_by = root
+						owner = {
+							is_colonial_nation_of = root
+						}
+					}
+					is_city = yes
+				}
+				area_for_scope_province = {
+					type = all
+					OR = {
+						owned_by = root
+						owner = {
+							is_colonial_nation_of = root
+						}
+						is_city = no
+					}
+				}
+				OR = {
+					NOT = { colonial_claim_by_anyone_of_religion = root }
+					is_religion_grant_colonial_claim = root
+				}
+			}
+			save_event_target_as = agenda_province
+			area = {
+				limit = {
+					OR = {
+						owned_by = root
+						owner = {
+							is_colonial_nation_of = root
+						}
+					}
+					is_city = yes
+				}
+				save_event_target_as = agenda_owned_province
+			}
+		}
+	}
+	provinces_to_highlight = {
+		area_for_scope_province = {
+			province_id = event_target:agenda_province
+		}
+		OR = {
+			is_city = no
+			owner = {
+				NOT = { tag = root }
+				NOT = { is_colonial_nation_of = root }
+			}
+		}
+	}
+	task_requirements = {
+		custom_trigger_tooltip = {
+			tooltip = estate_crow_tengu_colonise_more_X_requirements
+			event_target:agenda_province = {
+				area_for_scope_province = {
+					type = all
+					is_city = yes
+					OR = {
+						owned_by = root
+						owner = {
+							is_colonial_nation_of = root
+						}
+					}
+				}
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = colonial_enthusiasm
+			duration = 3650
+		}
+	}
+	fail_if = {
+		event_target:agenda_province = {
+			area_for_scope_province = {
+				is_city = yes
+				NOT = { owned_by = root }
+				NOT = {
+					owner = {
+						is_colonial_nation_of = root
+					}
+				}
+			}
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Get a Colonial Nation in X colonial region
+estate_crow_tengu_colonial_nation = {
+	can_select = {
+		num_of_colonists = 1
+		num_of_ports = 1
+		any_owned_province = {
+			OR = {
+				continent = north_america
+				continent = south_america
+				continent = new_world
+			}
+			NOT = {
+				calc_true_if = {
+					amount = 5
+					colonial_region_for_scope_province = {
+						type = all
+						country_or_non_sovereign_subject_holds = root
+					}
+				}
+			}
+			calc_true_if = {
+				amount = 3
+				colonial_region_for_scope_province = {
+					type = all
+					country_or_non_sovereign_subject_holds = root
+					is_city = yes
+				}
+			}
+			OR = {
+				NOT = { colonial_claim_by_anyone_of_religion = root }
+				is_religion_grant_colonial_claim = root
+			}
+		}
+		NOT = { has_country_modifier = agenda_colonial_administration }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 2
+			OR = {
+				tag = POR
+				tag = CAS
+				tag = GBR
+				tag = NED
+				tag = FRA
+				tag = NAV
+				tag = DAN
+				tag = NOR
+			}
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 1.5
+			any_country = {
+				is_colonial_nation_of = root
+			}
+		}
+	}
+	pre_effect = {
+		random_owned_province = {
+			limit = {
+				OR = {
+					continent = north_america
+					continent = south_america
+					continent = new_world
+				}
+				NOT = {
+					calc_true_if = {
+						amount = 5
+						colonial_region_for_scope_province = {
+							type = all
+							country_or_non_sovereign_subject_holds = root
+						}
+					}
+				}
+				calc_true_if = {
+					amount = 3
+					colonial_region_for_scope_province = {
+						type = all
+						country_or_non_sovereign_subject_holds = root
+						is_city = yes
+					}
+				}
+				OR = {
+					NOT = { colonial_claim_by_anyone_of_religion = root }
+					is_religion_grant_colonial_claim = root
+				}
+			}
+			save_event_target_as = agenda_province
+		}
+	}
+	provinces_to_highlight = {
+		colonial_region = event_target:agenda_province
+	}
+	task_requirements = {
+		custom_trigger_tooltip = {
+			tooltip = estate_crow_tengu_colonial_nation_requirements_tooltip
+			any_subject_country = {
+				is_colonial_nation_of = root
+				capital_scope = { colonial_region = event_target:agenda_province }
+				num_of_cities = 5
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = agenda_colonial_administration
+			duration = 5475
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Get X provinces in a trade company in X region
+estate_crow_tengu_expand_trade_company = {
+	can_select = {
+		num_of_ports = 1
+		any_owned_province = {
+			is_owned_by_trade_company = yes
+			NOT = { trade_company_size = 10 }
+		}
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 2
+			OR = {
+				tag = POR
+				tag = CAS
+				tag = GBR
+				tag = NED
+			}
+		}
+		modifier = {
+			factor = 1.5
+			num_of_colonists = 1
+		}
+		modifier = {
+			factor = 2
+			num_of_trade_companies = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_strong_trade_companies = 2
+		}
+	}
+	pre_effect = {
+		set_variable = {
+			which = estate_crow_tengu_expand_trade_company_variable
+			value = 0
+		}
+		random_owned_province = {
+			limit = {
+				is_owned_by_trade_company = yes
+				NOT = { trade_company_size = 10 }
+			}
+			save_event_target_as = agenda_province
+
+			if = {
+				limit = {
+					NOT = { trade_company_size = 4 }
+				}
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_expand_trade_company_variable
+						value = 1
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = { trade_company_size = 6 }
+				}
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_expand_trade_company_variable
+						value = 2
+					}
+				}
+			}
+			else = {
+				root = {
+					set_variable = {
+						which = estate_crow_tengu_expand_trade_company_variable
+						value = 3
+					}
+				}
+			}
+		}
+	}
+	provinces_to_highlight = {
+		trade_company_region = event_target:agenda_province
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				check_variable = {
+					which = estate_crow_tengu_expand_trade_company_variable
+					value = 3
+				}
+			}
+			event_target:agenda_province = {
+				trade_company_size = 10
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = estate_crow_tengu_expand_trade_company_variable
+					value = 2
+				}
+			}
+			event_target:agenda_province = {
+				trade_company_size = 8
+			}
+		}
+		else = {
+			event_target:agenda_province = {
+				trade_company_size = 5
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 15
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Trade post in India
+estate_crow_tengu_trade_post_in_india = {
+	can_select = {
+		is_at_war = no
+		capital_scope = {
+			continent = europe
+		}
+		num_of_ports = 6
+		NOT = {
+			any_owned_province = {
+				superregion = india_superregion
+			}
+		}
+		any_province = { #india_superregion scope does not work due to load order
+			superregion = india_superregion
+			has_port = yes
+			range = ROOT
+			has_discovered = ROOT
+		}
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 1.5
+			num_of_colonists = 1
+		}
+		modifier = {
+			factor = 2
+			num_of_trade_companies = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_strong_trade_companies = 2
+		}
+	}
+	provinces_to_highlight = {
+		superregion = india_superregion
+		OR = {
+			trade_goods = spices
+			trade_goods = silk
+		}
+		has_port = yes
+	}
+	task_requirements = {
+		any_owned_province = {
+			superregion = india_superregion
+			OR = {
+				trade_goods = spices
+				trade_goods = silk
+			}
+			has_port = yes
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_owned_province = {
+						superregion = india_superregion
+						OR = {
+							trade_goods = spices
+							trade_goods = silk
+						}
+						has_port = yes
+					}
+				}
+			}
+			custom_tooltip = estate_crow_tengu_trade_post_in_india_reward_tooltip
+		}
+		else = {
+			random_owned_province = {
+				limit = {
+					superregion = india_superregion
+					OR = {
+						trade_goods = spices
+						trade_goods = silk
+					}
+					has_port = yes
+				}
+				add_province_modifier = {
+					name = trade_post_in_india
+					duration = -1
+				}
+			}
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Trade post in Malacca
+estate_crow_tengu_trade_post_in_malacca = {
+	can_select = {
+		is_at_war = no
+		capital_scope = {
+			continent = europe
+		}
+		num_of_ports = 6
+		NOT = {
+			any_owned_province = {
+				trade_company_region = trade_company_indonesia
+			}
+		}
+		any_province = {
+			trade_company_region = trade_company_indonesia
+			has_port = yes
+			range = ROOT
+			has_discovered = ROOT
+		}
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 1.5
+			num_of_colonists = 1
+		}
+		modifier = {
+			factor = 2
+			num_of_trade_companies = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_strong_trade_companies = 2
+		}
+	}
+	provinces_to_highlight = {
+		trade_company_region = trade_company_indonesia
+		OR = {
+			trade_goods = spices
+			trade_goods = cloves
+		}
+		has_port = yes
+	}
+	task_requirements = {
+		any_owned_province = {
+			trade_company_region = trade_company_indonesia
+			OR = {
+				trade_goods = spices
+				trade_goods = cloves
+			}
+			has_port = yes
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_owned_province = {
+						trade_company_region = trade_company_indonesia
+						OR = {
+							trade_goods = spices
+							trade_goods = cloves
+						}
+						has_port = yes
+					}
+				}
+			}
+			custom_tooltip = estate_crow_tengu_trade_post_in_malacca_reward_tooltip
+		}
+		else = {
+			random_owned_province = {
+				limit = {
+					trade_company_region = trade_company_indonesia
+					OR = {
+						trade_goods = spices
+						trade_goods = cloves
+					}
+					has_port = yes
+				}
+				add_province_modifier = {
+					name = trade_post_in_malacca
+					duration = -1
+				}
+			}
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Trade post in China
+estate_crow_tengu_trade_post_in_china = {
+	can_select = {
+		is_at_war = no
+		capital_scope = {
+			continent = europe
+		}
+		num_of_ports = 6
+		NOT = { chinaware = 1 }
+		any_province = {
+			superregion = china_superregion
+			has_port = yes
+			range = ROOT
+			has_discovered = ROOT
+		}
+		NOT = {
+			any_owned_province = {
+				superregion = china_superregion
+			}
+		}
+		NOT = { has_country_modifier = growing_chinaware_trade }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 1.5
+			num_of_colonists = 1
+		}
+		modifier = {
+			factor = 2
+			num_of_trade_companies = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_strong_trade_companies = 2
+		}
+	}
+	provinces_to_highlight = {
+		superregion = china_superregion
+		trade_goods = chinaware
+		has_port = yes
+	}
+	task_requirements = {
+		any_owned_province = {
+			superregion = china_superregion
+			trade_goods = chinaware
+			has_port = yes
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = growing_chinaware_trade
+			duration = 3650
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_owned_province = {
+						superregion = china_superregion
+						trade_goods = chinaware
+						has_port = yes
+					}
+				}
+			}
+			custom_tooltip = estate_crow_tengu_trade_post_in_china_reward_tooltip
+		}
+		else = {
+			random_owned_province = {
+				limit = {
+					superregion = china_superregion
+					trade_goods = chinaware
+					has_port = yes
+				}
+				add_province_modifier = {
+					name = trade_post_in_china
+					duration = -1
+				}
+			}
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Get 3 silk provinces
+estate_crow_tengu_silk_trade = {
+	can_select = {
+		is_at_war = no
+		capital_scope = {
+			continent = europe
+		}
+		any_owned_province = {
+			OR = {
+				superregion = india_superregion
+				superregion = china_superregion
+			}
+		}
+		NOT = { silk = 2 }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 1.5
+			num_of_colonists = 1
+		}
+		modifier = {
+			factor = 2
+			num_of_trade_companies = 3
+		}
+		modifier = {
+			factor = 2
+			num_of_strong_trade_companies = 2
+		}
+	}
+	provinces_to_highlight = {
+		trade_goods = silk
+		OR = {
+			has_port = yes
+			any_neighbor_province = {
+				owned_by = root
+			}
+		}
+		has_discovered = root
+		NOT = { owned_by = root }
+	}
+	task_requirements = {
+		silk = 3
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = growing_silk_trade
+			duration = 5475
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Get 5 spice provinces
+estate_crow_tengu_spice_trade = {
+	can_select = {
+		is_at_war = no
+		capital_scope = {
+			continent = europe
+		}
+		any_owned_province = {
+			OR = {
+				superregion = india_superregion
+				trade_company_region = trade_company_indonesia
+			}
+		}
+		NOT = { spices = 3 }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 1.5
+			num_of_colonists = 1
+		}
+		modifier = {
+			factor = 2
+			num_of_trade_companies = 3
+		}
+		modifier = {
+			factor = 2
+			num_of_strong_trade_companies = 2
+		}
+	}
+	provinces_to_highlight = {
+		trade_goods = spices
+		OR = {
+			has_port = yes
+			any_neighbor_province = {
+				owned_by = root
+			}
+		}
+		has_discovered = root
+		NOT = { owned_by = root }
+	}
+	task_requirements = {
+		spices = 5
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = growing_spice_trade
+			duration = 5475
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Get 3 tea provinces
+estate_crow_tengu_tea_trade = {
+	can_select = {
+		is_at_war = no
+		capital_scope = {
+			continent = europe
+		}
+		any_owned_province = {
+			superregion = china_superregion
+		}
+		NOT = { tea = 2 }
+	}
+	selection_weight = {
+		factor = 2.5
+		modifier = {
+			factor = 1.5
+			num_of_colonists = 1
+		}
+		modifier = {
+			factor = 2
+			num_of_trade_companies = 3
+		}
+		modifier = {
+			factor = 2
+			num_of_strong_trade_companies = 2
+		}
+		modifier = {
+			factor = 2.5
+			OR = {
+				tag = ENG
+				tag = GBR
+			}
+		}
+	}
+	provinces_to_highlight = {
+		trade_goods = tea
+		OR = {
+			has_port = yes
+			any_neighbor_province = {
+				owned_by = root
+			}
+		}
+		has_discovered = root
+		NOT = { owned_by = root }
+	}
+	task_requirements = {
+		tea = 3
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = growing_tea_trade
+			duration = 5475
+		}
+	}
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Reduce corruption
+estate_crow_tengu_reduce_corruption = {
+	can_select = {
+		corruption = 5
+		is_bankrupt = no
+		NOT = { has_country_modifier = freedom_from_corruption }
+	}
+	selection_weight = {
+		factor = 1.5
+		modifier = {
+			factor = 0.5
+			is_at_war = yes
+		}
+		modifier = {
+			factor = 2
+			corruption = 10
+		}
+		modifier = {
+			factor = 1.5
+			corruption = 15
+		}
+		modifier = {
+			factor = 1.5
+			corruption = 20
+		}
+	}
+	pre_effect = {
+		set_variable = {
+			which = estate_crow_tengu_reduce_corruption_var
+			value = 0
+		}
+		if = {
+			limit = {
+				NOT = {
+					corruption = 10
+				}
+			}
+			set_variable = {
+				which = estate_crow_tengu_reduce_corruption_var
+				value = 1
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					corruption = 15
+				}
+			}
+			set_variable = {
+				which = estate_crow_tengu_reduce_corruption_var
+				value = 2
+			}
+		}
+		else = {
+			set_variable = {
+				which = estate_crow_tengu_reduce_corruption_var
+				value = 3
+			}
+		}
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				check_variable = {
+					which = estate_crow_tengu_reduce_corruption_var
+					value = 3
+				}
+			}
+			NOT = { corruption = 10 }
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = estate_crow_tengu_reduce_corruption_var
+					value = 2
+				}
+			}
+			NOT = { corruption = 5 }
+		}
+		else = {
+			NOT = { corruption = 1 }
+		}
+	}
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = freedom_from_corruption
+			duration = 5475
+		}
+    }
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}
+
+#Protect against Piracy
+estate_crow_tengu_protect_against_piracy = {
+	can_select = {
+		any_active_trade_node = {
+			trade_share = {
+				country = root
+				share = 20
+			}
+			privateer_power = {
+				share = 20
+			}
+			NOT = {
+				privateer_power = {
+					share = 1
+					country = root
+				}
+			}
+		}
+	}
+	selection_weight = {
+		factor = 2
+		modifier = {
+			factor = 2
+			any_active_trade_node = {
+				trade_share = {
+					country = root
+					share = 20
+				}
+				privateer_power = {
+					share = 20
+				}
+				NOT = {
+					privateer_power = {
+						share = 1
+						country = root
+					}
+				}
+				OR = {
+					trade_share = {
+						country = root
+						share = 35
+					}
+					privateer_power = {
+						share = 35
+					}
+				}
+			}
+		}
+	}
+	pre_effect = {
+		random_active_trade_node = {
+			limit = {
+				trade_share = {
+					country = root
+					share = 20
+				}
+				privateer_power = {
+					share = 20
+				}
+				NOT = {
+					privateer_power = {
+						share = 1
+						country = root
+					}
+				}
+			}
+			save_event_target_as = agenda_trade_node
+		}
+		random_active_trade_node = {
+			limit = {
+				trade_share = {
+					country = root
+					share = 20
+				}
+				privateer_power = {
+					share = 20
+				}
+				NOT = {
+					privateer_power = {
+						share = 1
+						country = root
+					}
+				}
+				OR = {
+					trade_share = {
+						country = root
+						share = 35
+					}
+					privateer_power = {
+						share = 35
+					}
+				}
+			}
+			save_event_target_as = agenda_trade_node
+			if = {
+				limit = {
+					OR = {
+						is_sea = yes
+						has_port = no #shouldn't ever be the case, but just in case...
+					}
+				}
+				save_event_target_as = agenda_trade_node_sea
+			}
+			else = {
+				sea_zone = {
+					save_event_target_as = agenda_trade_node_sea
+				}
+			}
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_trade_node
+	}
+	task_requirements = {
+		event_target:agenda_trade_node = {
+			trade_share = {
+				country = root
+				share = 20
+			}
+		}
+		NOT = {
+			any_country = {
+				event_target:agenda_trade_node = {
+					privateer_power = {
+						share = 3
+						country = PREV
+					}
+				}
+			}
+		}
+	}
+	fail_if = {
+		event_target:agenda_trade_node = {
+			NOT = {
+				trade_share = {
+					country = root
+					share = 10
+				}
+			}
+		}
+	}
+    task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 15
+		}
+    }
+    failing_effect = {
+        add_estate_loyalty_modifier = {
+            estate = estate_crow_tengu
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+}

@@ -133,12 +133,22 @@ country_event = {
 				has_estate = estate_brahmins
 				NOT = {	num_of_estate_privileges = { estate = estate_brahmins	value = 4 } }
 			}
+			AND = {
+				has_estate = estate_crow_tengu
+				NOT = {	num_of_estate_privileges = { estate = estate_crow_tengu	value = 4 } }
+			}
+			AND = {
+				has_estate = estate_great_tengu
+				NOT = {	num_of_estate_privileges = { estate = estate_great_tengu	value = 4 } }
+			}
 		}
 		NOT = {
             has_estate_privilege = estate_brahmins_statutory_rights
             has_estate_privilege = estate_nobles_statutory_rights
             has_estate_privilege = estate_burghers_statutory_rights
             has_estate_privilege = estate_church_statutory_rights
+			has_estate_privilege = estate_great_tengu_statutory_rights
+			has_estate_privilege = estate_crow_tengu_statutory_rights
         }
 	}
 
@@ -175,20 +185,37 @@ country_event = {
 		else_if = {
 			limit = {
 				government = monarchy
+				has_estate = estate_nobles
 			}
 			set_estate_privilege = estate_nobles_statutory_rights
 		}
 		else_if = {
 			limit = {
 				government = republic
+				has_estate = estate_burghers
 			}
 			set_estate_privilege = estate_burghers_statutory_rights
 		}
 		else_if = {
 			limit = {
 				government = theocracy
+				has_estate = estate_church
 			}
 			set_estate_privilege = estate_church_statutory_rights
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_great_tengu
+				NOT = {	num_of_estate_privileges = { estate = estate_great_tengu	value = 4 } }
+			}
+			set_estate_privilege = estate_great_tengu_statutory_rights
+		}
+		else_if = {
+			limit = {
+				has_estate = estate_crow_tengu
+				NOT = {	num_of_estate_privileges = { estate = estate_crow_tengu	value = 4 } }
+			}
+			set_estate_privilege = estate_crow_tengu_statutory_rights
 		}
 	}
 
@@ -207,10 +234,10 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			pick_random_estate_if_present = { flag = present_agenda estate_action = generate_estate_agenda }
-			pick_random_estate_if_present = { flag = present_agenda estate_action = generate_estate_agenda }
-			pick_random_estate_if_present = { flag = present_agenda estate_action = generate_estate_agenda }
-			pick_random_estate_if_present = { flag = present_agenda estate_action = generate_estate_agenda }
+			th_pick_random_estate_if_present = { flag = present_agenda estate_action = generate_estate_agenda }
+			th_pick_random_estate_if_present = { flag = present_agenda estate_action = generate_estate_agenda }
+			th_pick_random_estate_if_present = { flag = present_agenda estate_action = generate_estate_agenda }
+			th_pick_random_estate_if_present = { flag = present_agenda estate_action = generate_estate_agenda }
 		}
 	}
 
@@ -953,12 +980,20 @@ country_event = {
 		OR = {
 			has_estate_privilege = estate_nobles_supremacy_over_crown
 			has_estate_privilege = estate_brahmins_supremacy_over_crown
+			has_estate_privilege = estate_great_tengu_supremacy_over_crown
+			has_estate_privilege = estate_great_tengu_tenma_rulership
 		}
 		NOT = { has_any_active_estate_agenda = yes }
 	}
 
 	immediate = {
-		country_event = { id = estate_privileges_and_agendas_events.3 }
+		if = {
+			limit = { has_estate_privilege = estate_great_tengu_tenma_rulership }
+			#country_event = { id = estate_privileges_and_agendas_events.3 }	#TODO
+		}
+		else = {
+			country_event = { id = estate_privileges_and_agendas_events.3 }
+		}
 	}
 
 	option = {
