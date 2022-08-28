@@ -89,9 +89,42 @@ on_startup = {
 			set_country_flag = ayu_monarch_flag
 		}
 	}
+	#TOUHOU
 	if = {
 		limit = { ai = no NOT = { has_country_flag = th_had_newspaper_event } capital_scope = { continent = gensokyo_continent } }
 		country_event = { id = touhou_news.1 }
+	}
+	if = {
+		limit = {
+			has_government_attribute = uses_purified_land
+		}
+		every_owned_province = {
+			if = {
+				limit = { has_province_modifier = th_pure_land }
+				remove_province_modifier = th_pure_land
+			}
+			if = {
+				limit = { has_province_modifier = th_impure_land }
+				remove_province_modifier = th_impure_land
+			}
+			if = {
+				limit = { has_owner_culture = yes }
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_owner_culture = no
+					has_owner_accepted_culture = no
+				}
+				add_province_modifier = {
+					name = th_impure_land
+					duration = -1
+				}
+			}
+		}
 	}
 }
 
@@ -1044,6 +1077,21 @@ on_adm_development = {
 			add_adm_power = 5
 		}
 	}
+	if = {
+		limit = {
+			owner = { has_country_modifier = th_hunt_for_the_impure }
+		}
+		add_base_tax = -1
+		if = {
+			limit = { 
+				has_owner_culture = no 
+				nationalism = 1 
+				owner = { is_at_war = no }
+			}
+			add_nationalism = -5
+			create_revolt = 1
+		}
+	}
 	th_wandering_state_on_development = { base_type = base_tax }
 }
 
@@ -1119,6 +1167,21 @@ on_dip_development = {
 			add_dip_power = 5
 		}
 	}
+	if = {
+		limit = {
+			owner = { has_country_modifier = th_hunt_for_the_impure }
+		}
+		add_base_production = -1
+		if = {
+			limit = { 
+				has_owner_culture = no 
+				nationalism = 1 
+				owner = { is_at_war = no }
+			}
+			add_nationalism = -5
+			create_revolt = 1
+		}
+	}
 	th_wandering_state_on_development = { base_type = base_production }
 }
 
@@ -1192,6 +1255,21 @@ on_mil_development = {
 		}
 		owner = {
 			add_mil_power = 5
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_country_modifier = th_hunt_for_the_impure }
+		}
+		add_base_manpower = -1
+		if = {
+			limit = { 
+				has_owner_culture = no 
+				nationalism = 1 
+				owner = { is_at_war = no }
+			}
+			add_nationalism = -5
+			create_revolt = 1
 		}
 	}
 	th_wandering_state_on_development = { base_type = base_manpower }
@@ -1298,6 +1376,14 @@ on_province_religion_converted = {
 			development_factor = 0.25
 		}
 	}
+}
+
+# province
+on_province_culture_converted = {
+	on_province_culture_converted_estate_privilges_effect = yes
+	judaism_on_province_culture_converted_effect = yes
+	kongo_on_province_change_culture_or_change_owner_effect = yes
+	th_on_province_culture_change_effect = yes
 }
 
 # province
@@ -1598,6 +1684,191 @@ on_mercenary_recruited = {
 			remove_loot = {
 				who = FROM
 				amount = 250
+			}
+		}
+	}
+}
+
+# THIS = One province in the state
+on_add_pasha = {
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = pashas_purify_land
+			}
+		}
+		hidden_effect = {
+			owner = {
+				save_event_target_as = province_owner
+			}
+		}
+		area = {
+			limit = { owned_by = event_target:province_owner }
+			add_province_modifier = { name = th_purifying_pasha duration = -1 }
+		}
+	}
+}
+
+# THIS = One province in the state
+on_remove_pasha = {
+	hidden_effect = {
+		owner = {
+			save_event_target_as = province_owner
+		}
+	}
+
+	area = {
+		limit = { owned_by = event_target:province_owner }
+		add_or_extend_province_modifier_effect = { MODIFIER = pasha_removed_modifier DURATION = 3650 }
+		remove_province_modifier = th_purifying_pasha
+	}
+}
+
+on_culture_promoted = {
+	on_culture_promoted_estate_privileges_effect = yes
+	judaism_on_culture_country_effect = yes
+	kongo_on_culture_country_effect = yes
+	if = {
+		limit = {
+			has_government_attribute = uses_purified_land
+		}
+		every_owned_province = {
+			if = {
+				limit = { has_province_modifier = th_pure_land }
+				remove_province_modifier = th_pure_land
+			}
+			if = {
+				limit = { has_province_modifier = th_impure_land }
+				remove_province_modifier = th_impure_land
+			}
+			if = {
+				limit = { has_owner_culture = yes }
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_owner_culture = no
+					has_owner_accepted_culture = no
+				}
+				add_province_modifier = {
+					name = th_impure_land
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+on_culture_demoted = {
+	on_culture_demoted_estate_privileges_effect = yes
+	judaism_on_culture_country_effect = yes
+	kongo_on_culture_country_effect = yes
+	if = {
+		limit = {
+			has_country_modifier = plc_polish_lithuanian_union
+			OR = {
+				AND = {
+					primary_culture = polish
+					NOT = { accepted_culture = lithuanian }
+				}
+				AND = {
+					primary_culture = lithuanian
+					NOT = { accepted_culture = polish }
+				}
+				AND = {
+					OR = {
+						NOT = { accepted_culture = lithuanian }
+						NOT = { accepted_culture = polish }
+					}
+					NOT = { primary_culture = polish }
+					NOT = { primary_culture = lithuanian }
+				}
+			}
+		}
+		remove_country_modifier = plc_polish_lithuanian_union
+	}
+	if = {
+		limit = {
+			has_government_attribute = uses_purified_land
+		}
+		every_owned_province = {
+			if = {
+				limit = { has_province_modifier = th_pure_land }
+				remove_province_modifier = th_pure_land
+			}
+			if = {
+				limit = { has_province_modifier = th_impure_land }
+				remove_province_modifier = th_impure_land
+			}
+			if = {
+				limit = { has_owner_culture = yes }
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_owner_culture = no
+					has_owner_accepted_culture = no
+				}
+				add_province_modifier = {
+					name = th_impure_land
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+on_primary_culture_changed = {
+	on_primary_culture_changed_privileges_effect = yes
+	judaism_on_culture_country_effect = yes
+	if = {
+		limit = {
+			has_country_modifier = kon_south_african_hegemony
+			NOT = { culture_group = kongo_group }
+		}
+		remove_country_modifier = kon_south_african_hegemony
+		every_owned_province = {
+			limit = {
+				has_province_modifier = kon_south_african_hegemony_province
+			}
+			remove_province_modifier = kon_south_african_hegemony_province
+		}
+	}
+	if = {
+		limit = {
+			has_government_attribute = uses_purified_land
+		}
+		every_owned_province = {
+			if = {
+				limit = { has_province_modifier = th_pure_land }
+				remove_province_modifier = th_pure_land
+			}
+			if = {
+				limit = { has_province_modifier = th_impure_land }
+				remove_province_modifier = th_impure_land
+			}
+			if = {
+				limit = { has_owner_culture = yes }
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_owner_culture = no
+					has_owner_accepted_culture = no
+				}
+				add_province_modifier = {
+					name = th_impure_land
+					duration = -1
+				}
 			}
 		}
 	}
