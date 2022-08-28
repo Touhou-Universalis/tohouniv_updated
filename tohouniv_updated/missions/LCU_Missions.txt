@@ -362,6 +362,7 @@ lcu_slot1_branch = {
 
 		effect = {
 			country_event = { id = flavor_lcu.7 }
+			#### Comrade, we need a prestige script here
 			add_prestige = 50
 			add_adm_power = 75
 			add_mil_power = 75
@@ -538,21 +539,9 @@ lcu_slot2_branch = {
 			}
 	    }
 		effect = {
-			5338 = {
-				cede_province = ROOT
-				change_culture = ROOT
-				change_religion = ROOT
-			}
-			5337 = {
-				cede_province = ROOT
-				change_culture = ROOT
-				change_religion = ROOT
-			}
-			5336 = {
-				cede_province = ROOT
-				change_culture = ROOT
-				change_religion = ROOT
-			}
+			th_colonize_dev_province_for_root = { province = 5338 }
+			th_colonize_dev_province_for_root = { province = 5337 }
+			th_colonize_dev_province_for_root = { province = 5336 }
 		}
 	}
 
@@ -565,6 +554,16 @@ lcu_slot2_branch = {
 				owned_by = ROOT
 				type = all
 			}
+			num_of_estate_agendas_completed = {
+				estate = estate_nobles
+				value = 2
+			}
+			num_of_estate_agendas_completed = {
+				estate = estate_lunarian_rabbits
+				value = 2
+			}
+			has_estate_privilege = estate_nobles_land_rights
+			has_estate_privilege = th_estate_lunar_rabbits_rights_for_business
 			estate_loyalty = {
 				estate = estate_nobles
 				loyalty = 60
@@ -573,12 +572,10 @@ lcu_slot2_branch = {
 				estate = estate_lunarian_rabbits
 				loyalty = 60
 			}	
-
 	    }
 		effect = {
-			add_country_modifier = {
-				name = lcu_resolved_conflict
-				duration = -1
+			country_event = {
+				id = flavor_lcu.25
 			}
 		}
 	}
@@ -628,20 +625,19 @@ lcu_slot2_branch = {
 			}
 		}
 		trigger = {
+			#### Comrade, we need a number of battle won (>15) trigger here
 			calc_true_if = {
 				all_province = {
 					th_gensokyo_or_moon_continent = yes
 					religion = ROOT
 					culture = ROOT
 				}
-				amount = 100
-			}
+				amount = 50
+			}	
 		}
 		effect = {
-			add_country_modifier = {
-				name = lcu_purified_gensokyo_modifier
-				duration = -1
-			}
+			custom_tooltip = lcu_purified_gensokyo_tooltip
+			set_country_flag = lcu_purified_gensokyo
 		}
 	}
 
@@ -737,37 +733,37 @@ lcu_slot3_branch = {
 	}
 	
 
-	LCU_enlighten_mistresses = {
-		icon = mission_yorihime_and_toyohime
-		required_missions = { LCU_reisen }
-		position = 4
-		trigger = {
-			if = {
-				limit = {
-					has_dlc = "Cradle of Civilization"
-				}
-				army_professionalism = 1
-			}
-						
-			else = {
-				total_development = 1000
-			}
-		}
-		effect = {
-			th_increase_ruler_adm_stat = {
-				adm = 1
-			}
-			th_increase_ruler_mil_stat = {
-				mil = 1
-			}
-			th_increase_heir_adm_stat = {
-				adm = 1
-			}
-			th_increase_heir_dip_stat = {
-				dip = 1
-			}
-		}
-	}
+#	LCU_enlighten_mistresses = {
+#		icon = mission_yorihime_and_toyohime
+#		required_missions = { LCU_reisen }
+#		position = 4
+#		trigger = {
+#			if = {
+#				limit = {
+#					has_dlc = "Cradle of Civilization"
+#				}
+#				army_professionalism = 1
+#			}
+#						
+#			else = {
+#				total_development = 1000
+#			}
+#		}
+#		effect = {
+#			th_increase_ruler_adm_stat = {
+#				adm = 1
+#			}
+#			th_increase_ruler_mil_stat = {
+#				mil = 1
+#			}
+#			th_increase_heir_adm_stat = {
+#				adm = 1
+#			}
+#			th_increase_heir_dip_stat = {
+#				dip = 1
+#			}
+#		}
+#	}
 
 	LCU_lunarian_science = {
 		icon = Compulsory_Education
@@ -784,9 +780,17 @@ lcu_slot3_branch = {
 			}
 		}
 		effect = {
-			add_country_modifier = {
-				name = "lcu_lunarian_education"
-				duration = -1
+			th_increase_ruler_adm_stat = {
+				adm = 1
+			}
+			th_increase_ruler_mil_stat = {
+				mil = 1
+			}
+			th_increase_heir_adm_stat = {
+				adm = 1
+			}
+			th_increase_heir_dip_stat = {
+				dip = 1
 			}
 		}
 	}		
@@ -811,10 +815,13 @@ lcu_slot3_branch = {
 		icon = mission_lunar_empire
 		required_missions = {  }
 		position = 7
+		provinces_to_highlight = {
+			province_id = 4991
+		}
 		trigger = {
-			AND = {
-				tag = LEM
-				government_rank = 3
+			total_development = 650
+			4991 = {
+				country_or_non_sovereign_subject_holds = ROOT
 			}
 		}
 		effect = {			
@@ -832,18 +839,21 @@ lcu_slot3_branch = {
 		position = 9
 
 		trigger = {
-			4978 = {
-				trade_share = {
-					country = ROOT
-					share = 75
+			OR = {
+				if = {
+					limit = {has_dlc = Emperor}
+					is_hegemon = yes
 				}
-			}
-			236 = {
-				trade_share = {
-					country = ROOT
-					share = 50
+				else = {
+					OR = {
+						monthly_income = 1000
+						num_of_heavy_ship = 250
+						army_size = 1000
+					}
 				}
+
 			}
+
 		}
 
 		effect = {
