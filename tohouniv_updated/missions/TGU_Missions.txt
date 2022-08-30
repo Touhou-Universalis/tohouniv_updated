@@ -8,6 +8,25 @@ tgu_missions_mountain_conquest_slot = {
 	}
 	has_country_shield = yes
 	
+	TGU_clients_of_the_tengu = {
+		icon = mission_touhou_army
+		required_missions = {  }
+		position = 1
+		provinces_to_highlight = {
+		}
+		trigger = {
+			calc_true_if = {
+				all_subject_country = {
+					is_client_nation_of = ROOT
+				}
+				amount = 3
+			}
+		}
+		effect = {
+			custom_tooltip = tgu_enable_client_state_specific_diplo_actions_tt
+		}
+	}
+	
 	TGU_collect_the_mallet = {
 		icon = mission_touhou_army
 		required_missions = { TGU_handle_moriya }
@@ -23,7 +42,13 @@ tgu_missions_mountain_conquest_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_country_modifier = {
+				name = tgu_miracle_mallet
+				duration = 9125
+			}
+			capital_scope = {
+				th_add_manufactory = yes
+			}
 		}
 	}
 	
@@ -148,6 +173,18 @@ tgu_missions_mountain_conquest_slot = {
 				}
 				add_permanent_claim = ROOT
 			}
+			custom_tooltip = TGU_conquer_myouren_temple_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						religion = th_buddhist
+					}
+					add_province_modifier = {
+						name = tgu_religious_freedom
+						duration = 9125
+					}
+				}
+			}
 		}
 	}
 	
@@ -173,7 +210,7 @@ tgu_missions_mountain_conquest_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			add_accepted_culture = Gensokyo_human
 		}
 	}
 	
@@ -305,6 +342,50 @@ tgu_missions_first_branching_slot = {
 		icon = mission_unknown_mission
 		required_missions = { TGU_first_branch_mission_2 }
 		position = 11
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = selectable_mission_trigger_tt
+				always = no
+			}
+			OR = {
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = tgu_caste_path_trigger_tt
+						always = no
+					}
+				}
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = tgu_absolute_path_trigger_tt
+						always = no
+					}
+				}
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = tgu_republic_path_trigger_tt
+						always = no
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = tgu_caste_effect_tt
+
+			custom_tooltip = tgu_absolute_effect_tt
+
+			custom_tooltip = tgu_republic_effect_tt
+		}
+	}
+
+	#[Root.GetSelectableMissionTitle]
+	#[Root.GetSelectableMissionDescription]
+	TGU_second_branch_mission_4 = {
+		icon = mission_unknown_mission
+		required_missions = { 
+			TGU_second_branch_mission_3
+			TGU_first_branch_mission_3
+		}
+		position = 12
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = selectable_mission_trigger_tt
@@ -587,50 +668,6 @@ tgu_missions_second_branching_slot = {
 			TGU_first_branch_mission_2
 		}
 		position = 11
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
-				}
-			}
-		}
-		effect = {
-			custom_tooltip = tgu_caste_effect_tt
-
-			custom_tooltip = tgu_absolute_effect_tt
-
-			custom_tooltip = tgu_republic_effect_tt
-		}
-	}
-
-	#[Root.GetSelectableMissionTitle]
-	#[Root.GetSelectableMissionDescription]
-	TGU_second_branch_mission_4 = {
-		icon = mission_unknown_mission
-		required_missions = { 
-			TGU_second_branch_mission_3
-			TGU_first_branch_mission_3
-		}
-		position = 12
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = selectable_mission_trigger_tt
@@ -949,12 +986,24 @@ tgu_missions_castes_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_build_troops }
 		position = 2
-		provinces_to_highlight = {}
+		provinces_to_highlight = {
+			region = former_hell_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = former_hell_region
+				value = 6
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			former_hell_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -962,12 +1011,26 @@ tgu_missions_castes_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_invade_chireiden }
 		position = 3
-		provinces_to_highlight = {}
+		provinces_to_highlight = {
+			region = former_hell_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
 		trigger = {
-			always = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				region = former_hell_region
+				value = 15
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					exists = ONI
+				}
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = ONI
+				}
+			}
 		}
 	}
 	
@@ -975,9 +1038,16 @@ tgu_missions_castes_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_annex_former_hell }
 		position = 4
-		provinces_to_highlight = {}
+		provinces_to_highlight = {
+			owned_by = ONI
+		}
 		trigger = {
-			always = yes
+			ONI = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
 		}
 		effect = {
 			custom_tooltip = cool_effect
