@@ -804,18 +804,77 @@ th_tenma_demands_sell_newspaper = {
 	can_select = {
 		has_country_flag = th_has_tengu_demands_instead_of_agendas
 		has_government_attribute = enables_tengu_newspaper
+		any_known_country = {
+			NOT = { is_rival = ROOT }
+			NOT = { is_enemy = ROOT }
+			NOT = { war_with = ROOT }
+			OR = {
+				NOT = { has_country_flag = th_received_newspaper_from_@ROOT }
+				had_country_flag = {
+					flag = th_received_newspaper_from_@ROOT
+					days = 3650
+				}
+			}
+			is_free_or_tributary_trigger = yes
+			is_bankrupt = no
+			monthly_income = ROOT
+		}
+		any_owned_province = {
+			trade_goods = paper
+			NOT = { has_province_modifier = th_is_selling_exclusive_newspaper }
+		}
 	}
-	provinces_to_highlight = {}
+	provinces_to_highlight = {
+		is_capital_of = event_target:agenda_country
+	}
 	selection_weight = {
 		factor = 1
 	}
-	pre_effect = {}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				NOT = { is_rival = ROOT }
+				NOT = { is_enemy = ROOT }
+				NOT = { war_with = ROOT }
+				OR = {
+					NOT = { has_country_flag = th_received_newspaper_from_@ROOT }
+					had_country_flag = {
+						flag = th_received_newspaper_from_@ROOT
+						days = 3650
+					}
+				}
+				is_free_or_tributary_trigger = yes
+				is_bankrupt = no
+				monthly_income = ROOT
+			}
+			save_event_target_as = agenda_country
+		}
+	}
 	immediate_effect = {}
 	task_requirements = {
-		always = yes
+		custom_trigger_tooltip = {
+			tooltip = th_tenma_demands_sell_newspaper_tt
+			event_target:agenda_country = {
+				has_country_flag = th_received_newspaper_from_@ROOT
+				NOT = {
+					had_country_flag = {
+						flag = th_received_newspaper_from_@ROOT
+						days = 3650
+					}
+				}
+			}
+		}
 	}
     task_completed_effect = {
-		custom_tooltip = cool_effect
+		add_estate_loyalty = {
+			estate = estate_great_tengu
+			loyalty = 5
+		}
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 20
+		}
+		add_mercantilism = 1
     }
     failing_effect = {
 		if = {
@@ -835,7 +894,15 @@ th_tenma_demands_sell_newspaper = {
 			reduce_stability_or_adm_power = yes
 		}
     }
-	fail_if = {}
+	fail_if = {
+		event_target:agenda_country = {
+			OR = {
+				exists = no
+				war_with = ROOT
+				is_subject_other_than_tributary_trigger = yes
+			}
+		}
+	}
 	on_invalid = {}
 	invalid_trigger = {}
 	modifier = {}
@@ -846,19 +913,77 @@ th_tenma_demands_buy_newspaper = {
 	max_days_active = 1825
 	can_select = {
 		has_country_flag = th_has_tengu_demands_instead_of_agendas
-		always = no
+		any_known_country = {
+			NOT = { is_rival = ROOT }
+			NOT = { is_enemy = ROOT }
+			NOT = { war_with = ROOT }
+			OR = {
+				alliance_with = ROOT
+				total_development = ROOT
+			}
+			OR = {
+				NOT = { has_country_flag = th_got_its_newspaper_bought_by_@ROOT }
+				had_country_flag = {
+					flag = th_got_its_newspaper_bought_by_@ROOT
+					days = 3650
+				}
+			}
+			is_free_or_tributary_trigger = yes
+		}
 	}
-	provinces_to_highlight = {}
+	provinces_to_highlight = {
+		is_capital_of = event_target:agenda_country
+	}
 	selection_weight = {
 		factor = 1
 	}
-	pre_effect = {}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				NOT = { is_rival = ROOT }
+				NOT = { is_enemy = ROOT }
+				NOT = { war_with = ROOT }
+				OR = {
+					alliance_with = ROOT
+					total_development = ROOT
+				}
+				OR = {
+					NOT = { has_country_flag = th_got_its_newspaper_bought_by_@ROOT }
+					had_country_flag = {
+						flag = th_got_its_newspaper_bought_by_@ROOT
+						days = 3650
+					}
+				}
+				is_free_or_tributary_trigger = yes
+			}
+			save_event_target_as = agenda_country
+		}
+	}
 	immediate_effect = {}
 	task_requirements = {
-		always = yes
+		event_target:agenda_country = {
+			custom_trigger_tooltip = {
+				tooltip = th_tenma_demands_buy_newspaper_tt
+				has_country_flag = th_got_its_newspaper_bought_by_@ROOT
+				NOT = {
+					had_country_flag = {
+						flag = th_got_its_newspaper_bought_by_@ROOT
+						days = 3650
+					}
+				}
+			}
+		}
 	}
     task_completed_effect = {
-		custom_tooltip = cool_effect
+		add_estate_loyalty = {
+			estate = estate_great_tengu
+			loyalty = 5
+		}
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 20
+		}
+		add_mercantilism = 1
     }
     failing_effect = {
 		if = {
@@ -878,7 +1003,15 @@ th_tenma_demands_buy_newspaper = {
 			reduce_stability_or_adm_power = yes
 		}
     }
-	fail_if = {}
+	fail_if = {
+		event_target:agenda_country = {
+			OR = {
+				exists = no
+				war_with = ROOT
+				is_subject_other_than_tributary_trigger = yes
+			}
+		}
+	}
 	on_invalid = {}
 	invalid_trigger = {}
 	modifier = {}
@@ -1062,19 +1195,118 @@ th_tenma_demands_remove_crow_tengu_privileges = {
 	max_days_active = 1825
 	can_select = {
 		has_country_flag = th_has_tengu_demands_instead_of_agendas
-		always = no
+		has_estate = estate_crow_tengu
+		estate_influence = {
+			estate = estate_crow_tengu
+			influence = 60
+		}
+		NOT = { has_disaster = estate_crow_tengu_disaster }
 	}
 	provinces_to_highlight = {}
 	selection_weight = {
 		factor = 1
 	}
-	pre_effect = {}
+	pre_effect = {
+		set_variable = {
+			which = th_tenma_reduce_influence_var
+			value = 0
+		}
+		if = {
+			limit = {
+				estate_influence = {
+					estate = estate_crow_tengu
+					influence = 80
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 1
+			}
+		}
+		else_if = {
+			limit = {
+				estate_influence = {
+					estate = estate_crow_tengu
+					influence = 60
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 2
+			}
+		}
+		else_if = {
+			limit = {
+				estate_influence = {
+					estate = estate_crow_tengu
+					influence = 40
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 3
+			}
+		}
+	}
 	immediate_effect = {}
 	task_requirements = {
-		always = yes
+		if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 3
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_crow_tengu
+					influence = 30
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 2
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_crow_tengu
+					influence = 40
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 1
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_crow_tengu
+					influence = 60
+				}
+			}
+		}
+		else = {
+			NOT = {
+				estate_influence = {
+					estate = estate_crow_tengu
+					influence = 20
+				}
+			}
+		}
 	}
     task_completed_effect = {
-		custom_tooltip = cool_effect
+		add_estate_loyalty = {
+			estate = all
+			loyalty = 10
+		}
+		add_dip_power = 50
     }
     failing_effect = {
 		if = {
@@ -1094,7 +1326,9 @@ th_tenma_demands_remove_crow_tengu_privileges = {
 			reduce_stability_or_adm_power = yes
 		}
     }
-	fail_if = {}
+	fail_if = {
+		has_disaster = estate_crow_tengu_disaster
+	}
 	on_invalid = {}
 	invalid_trigger = {}
 	modifier = {}
@@ -1105,19 +1339,118 @@ th_tenma_demands_remove_wolf_tengu_privileges = {
 	max_days_active = 1825
 	can_select = {
 		has_country_flag = th_has_tengu_demands_instead_of_agendas
-		always = no
+		has_estate = estate_wolf_tengu
+		estate_influence = {
+			estate = estate_wolf_tengu
+			influence = 60
+		}
+		NOT = { has_disaster = estate_wolf_tengu_disaster }
 	}
 	provinces_to_highlight = {}
 	selection_weight = {
 		factor = 1
 	}
-	pre_effect = {}
+	pre_effect = {
+		set_variable = {
+			which = th_tenma_reduce_influence_var
+			value = 0
+		}
+		if = {
+			limit = {
+				estate_influence = {
+					estate = estate_wolf_tengu
+					influence = 80
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 1
+			}
+		}
+		else_if = {
+			limit = {
+				estate_influence = {
+					estate = estate_wolf_tengu
+					influence = 60
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 2
+			}
+		}
+		else_if = {
+			limit = {
+				estate_influence = {
+					estate = estate_wolf_tengu
+					influence = 40
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 3
+			}
+		}
+	}
 	immediate_effect = {}
 	task_requirements = {
-		always = yes
+		if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 3
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_wolf_tengu
+					influence = 30
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 2
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_wolf_tengu
+					influence = 40
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 1
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_wolf_tengu
+					influence = 60
+				}
+			}
+		}
+		else = {
+			NOT = {
+				estate_influence = {
+					estate = estate_wolf_tengu
+					influence = 20
+				}
+			}
+		}
 	}
     task_completed_effect = {
-		custom_tooltip = cool_effect
+		add_estate_loyalty = {
+			estate = all
+			loyalty = 10
+		}
+		add_mil_power = 50
     }
     failing_effect = {
 		if = {
@@ -1137,7 +1470,7 @@ th_tenma_demands_remove_wolf_tengu_privileges = {
 			reduce_stability_or_adm_power = yes
 		}
     }
-	fail_if = {}
+	fail_if = { has_disaster = estate_wolf_tengu_disaster }
 	on_invalid = {}
 	invalid_trigger = {}
 	modifier = {}
@@ -1148,19 +1481,118 @@ th_tenma_demands_remove_church_privileges = {
 	max_days_active = 1825
 	can_select = {
 		has_country_flag = th_has_tengu_demands_instead_of_agendas
-		always = no
+		has_estate = estate_church
+		estate_influence = {
+			estate = estate_church
+			influence = 60
+		}
+		NOT = { has_disaster = estate_church_disaster }
 	}
 	provinces_to_highlight = {}
 	selection_weight = {
 		factor = 1
 	}
-	pre_effect = {}
+	pre_effect = {
+		set_variable = {
+			which = th_tenma_reduce_influence_var
+			value = 0
+		}
+		if = {
+			limit = {
+				estate_influence = {
+					estate = estate_church
+					influence = 80
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 1
+			}
+		}
+		else_if = {
+			limit = {
+				estate_influence = {
+					estate = estate_church
+					influence = 60
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 2
+			}
+		}
+		else_if = {
+			limit = {
+				estate_influence = {
+					estate = estate_church
+					influence = 40
+				}
+			}
+			set_variable = {
+				which = th_tenma_reduce_influence_var
+				value = 3
+			}
+		}
+	}
 	immediate_effect = {}
 	task_requirements = {
-		always = yes
+		if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 3
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_church
+					influence = 30
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 2
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_church
+					influence = 40
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = {
+					which = th_tenma_reduce_influence_var
+					value = 1
+				}
+			}
+			NOT = {
+				estate_influence = {
+					estate = estate_church
+					influence = 60
+				}
+			}
+		}
+		else = {
+			NOT = {
+				estate_influence = {
+					estate = estate_church
+					influence = 20
+				}
+			}
+		}
 	}
     task_completed_effect = {
-		custom_tooltip = cool_effect
+		add_estate_loyalty = {
+			estate = all
+			loyalty = 10
+		}
+		add_adm_power = 50
     }
     failing_effect = {
 		if = {
@@ -1180,7 +1612,7 @@ th_tenma_demands_remove_church_privileges = {
 			reduce_stability_or_adm_power = yes
 		}
     }
-	fail_if = {}
+	fail_if = { has_disaster = estate_church_disaster }
 	on_invalid = {}
 	invalid_trigger = {}
 	modifier = {}
@@ -1191,19 +1623,67 @@ th_tenma_demands_add_great_tengu_privileges = {
 	max_days_active = 1825
 	can_select = {
 		has_country_flag = th_has_tengu_demands_instead_of_agendas
-		always = no
+		NOT = {
+			num_of_estate_privileges = {
+				estate = estate_great_tengu
+				value = 2
+			}
+		}
 	}
 	provinces_to_highlight = {}
 	selection_weight = {
 		factor = 1
 	}
-	pre_effect = {}
+	pre_effect = {
+		set_variable = {
+			which = th_tengu_demands_three_privileges_var
+			value = 0
+		}
+		if = {
+			limit = {
+				num_of_estate_privileges = {
+					estate = estate_great_tengu
+					value = 1
+				}
+			}
+			set_variable = {
+				which = th_tengu_demands_three_privileges_var
+				value = 2
+			}
+		}
+		else = {
+			set_variable = {
+				which = th_tengu_demands_three_privileges_var
+				value = 1
+			}
+		}
+	}
 	immediate_effect = {}
 	task_requirements = {
-		always = yes
+		if = {
+			limit = {
+				check_variable = {
+					which = th_tengu_demands_three_privileges_var
+					value = 2
+				}
+			}
+			num_of_estate_privileges = {
+				estate = estate_great_tengu
+				value = 3
+			}
+		}
+		else = {
+			num_of_estate_privileges = {
+				estate = estate_great_tengu
+				value = 2
+			}
+		}
 	}
     task_completed_effect = {
-		custom_tooltip = cool_effect
+		add_estate_loyalty = {
+			estate = estate_great_tengu
+			loyalty = 20
+		}
     }
     failing_effect = {
 		if = {

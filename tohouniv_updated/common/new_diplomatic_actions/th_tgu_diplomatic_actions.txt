@@ -8,7 +8,12 @@ th_write_propaganda = {
 	require_acceptance = no
 
 	is_visible = {
-		has_government_attribute = enables_tengu_newspaper
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
 		FROM = { is_free_or_tributary_trigger = yes }
 	}
 
@@ -58,6 +63,7 @@ th_write_propaganda = {
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
 			clr_country_flag = th_read_propaganda_of_@ROO
 			set_country_flag = th_read_propaganda_of_@ROO
@@ -82,7 +88,12 @@ th_spread_good_image = {
 	require_acceptance = no
 
 	is_visible = {
-		has_government_attribute = enables_tengu_newspaper
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
 		FROM = { is_free_or_tributary_trigger = yes }
 	}
 
@@ -123,6 +134,7 @@ th_spread_good_image = {
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
 			clr_country_flag = th_received_good_image_of_@ROOT
 			set_country_flag = th_received_good_image_of_@ROOT
@@ -155,7 +167,12 @@ th_denounce_allies = {
 	require_acceptance = no
 
 	is_visible = {
-		has_government_attribute = enables_tengu_newspaper
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
 		FROM = { is_free_or_tributary_trigger = yes }
 	}
 
@@ -196,6 +213,7 @@ th_denounce_allies = {
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
 			clr_country_flag = th_had_to_denounce_allies_by_@ROOT
 			set_country_flag = th_had_to_denounce_allies_by_@ROOT
@@ -222,7 +240,12 @@ th_demotivate_military = {
 	require_acceptance = no
 
 	is_visible = {
-		has_government_attribute = enables_tengu_newspaper
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
 		FROM = { is_free_or_tributary_trigger = yes }
 	}
 
@@ -264,6 +287,7 @@ th_demotivate_military = {
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
 			clr_country_flag = th_got_military_demotivated_by_@ROOT
 			set_country_flag = th_got_military_demotivated_by_@ROOT
@@ -288,7 +312,12 @@ th_spread_republican_ideas = {
 	require_acceptance = no
 
 	is_visible = {
-		has_government_attribute = enables_tengu_newspaper
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
 		FROM = { is_free_or_tributary_trigger = yes }
 	}
 
@@ -329,6 +358,7 @@ th_spread_republican_ideas = {
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
 			clr_country_flag = th_was_targeted_for_cb_by_@ROOT
 			set_country_flag = th_was_targeted_for_cb_by_@ROOT
@@ -350,63 +380,371 @@ th_spread_republican_ideas = {
 
 th_sell_newspaper = {
 	category = th_diplo_action
-	require_acceptance = no
+	require_acceptance = yes
 
 	is_visible = {
-		has_government_attribute = enables_tengu_newspaper
-		FROM = { is_free_or_tributary_trigger = yes }
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
 	}
 
 	is_allowed = {
-		has_spy_network_in = {
-			who = FROM
-			value = 20
-		}
-		custom_trigger_tooltip = {
-			tooltip = th_spread_good_image_cd_tt
-			FROM = {
+		if = {
+			limit = {
 				OR = {
-					NOT = { has_country_flag = th_was_targeted_for_cb_by_@ROOT }
-					had_country_flag = {
-						flag = th_was_targeted_for_cb_by_@ROOT
-						days = 5475
+					is_rival = FROM
+					is_enemy = FROM
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_SELL_NEWSPAPER_TO_RIVALS_TT
+				NOT = { is_rival = FROM }
+				NOT = { is_enemy = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_SELL_NEWSPAPER_TO_ENEMIES_TT
+				NOT = { war_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_received_newspaper_from_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_received_newspaper_from_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CAN_SELL_ONLY_EVERY_10_YEARS_TT
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_received_newspaper_from_@ROOT }
+						had_country_flag = {
+							flag = th_received_newspaper_from_@ROOT
+							days = 3650
+						}
 					}
 				}
 			}
 		}
 		if = {
 			limit = {
-				FROM = {
-					OR = {
-						has_country_flag = th_immunity_to_diplomatic_actions
-						has_government_attribute = enables_yama_authority
+				FROM = { is_subject_other_than_tributary_trigger = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_SELL_NEWSPAPER_TO_SUBJECTS_TT
+				FROM = { is_free_or_tributary_trigger = yes }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_owned_province = {
+						trade_goods = paper
+						NOT = { has_province_modifier = th_is_selling_exclusive_newspaper }
 					}
 				}
 			}
 			custom_trigger_tooltip = {
-				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
-				FROM = {
-					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
-					NOT = { has_government_attribute = enables_yama_authority }
+				tooltip = TH_NEEDS_ONE_AVAILABLE_PAPER_PROVINCE_TT
+				any_owned_province = {
+					trade_goods = paper
+					NOT = { has_province_modifier = th_is_selling_exclusive_newspaper }
 				}
 			}
 		}
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
-			clr_country_flag = th_was_targeted_for_cb_by_@ROOT
-			set_country_flag = th_was_targeted_for_cb_by_@ROOT
+			clr_country_flag = th_received_newspaper_from_@ROOT
+			set_country_flag = th_received_newspaper_from_@ROOT
+			country_event = {
+				id = th_diplo_events.51
+			}
 		}
-		add_casus_belli = {
-			target = FROM
-			type = cb_vassalize_mission
-		}
-		add_spy_network_in = {
-			who = FROM
-			value = -20
+		random_owned_province = {
+			limit = {
+				trade_goods = paper
+				NOT = { has_province_modifier = th_is_selling_exclusive_newspaper }
+			}
+			add_province_modifier = {
+				name = th_is_selling_exclusive_newspaper
+				duration = 3650
+			}
 		}
 	}
+
+
+    ai_acceptance = {
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = TH_DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -50
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -50
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 4
+			multiply_variable = {
+				which = ai_value
+				value = 4
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_FOR_FREE
+			limit = {
+				FROM = { NOT = { years_of_income = 0.1 } }
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_CHEAPER
+			limit = {
+				FROM = { 
+					years_of_income = 0.1
+					NOT = { years_of_income = 0.2 } 
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 80
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_CHEAPER
+			limit = {
+				FROM = { 
+					years_of_income = 0.2
+					NOT = { years_of_income = 0.3 } 
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 60
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_CHEAPER
+			limit = {
+				FROM = { 
+					years_of_income = 0.3
+					NOT = { years_of_income = 0.4 } 
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 40
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_CHEAPER
+			limit = {
+				FROM = { 
+					years_of_income = 0.4
+					NOT = { years_of_income = 0.5 } 
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = TH_IS_BANKRUPT
+			limit = {
+				FROM = { 
+					is_bankrupt = yes
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+    }
 
 	ai_will_do = {
 		always = no
@@ -418,58 +756,87 @@ th_buyoff_newspaper = {
 	require_acceptance = no
 
 	is_visible = {
-		has_government_attribute = enables_tengu_newspaper
-		FROM = { is_free_or_tributary_trigger = yes }
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
 	}
 
 	is_allowed = {
-		has_spy_network_in = {
-			who = FROM
-			value = 20
-		}
-		custom_trigger_tooltip = {
-			tooltip = th_spread_good_image_cd_tt
-			FROM = {
+		if = {
+			limit = {
 				OR = {
-					NOT = { has_country_flag = th_was_targeted_for_cb_by_@ROOT }
-					had_country_flag = {
-						flag = th_was_targeted_for_cb_by_@ROOT
-						days = 5475
+					is_rival = FROM
+					is_enemy = FROM
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_SELL_NEWSPAPER_TO_RIVALS_TT
+				NOT = { is_rival = FROM }
+				NOT = { is_enemy = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_SELL_NEWSPAPER_TO_ENEMIES_TT
+				NOT = { war_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_got_its_newspaper_bought_by_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_got_its_newspaper_bought_by_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_ONLY_USABLE_EVERY_10_YEARS_TT
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_got_its_newspaper_bought_by_@ROOT }
+						had_country_flag = {
+							flag = th_got_its_newspaper_bought_by_@ROOT
+							days = 3650
+						}
 					}
 				}
 			}
 		}
 		if = {
 			limit = {
-				FROM = {
-					OR = {
-						has_country_flag = th_immunity_to_diplomatic_actions
-						has_government_attribute = enables_yama_authority
-					}
-				}
+				FROM = { is_subject_other_than_tributary_trigger = yes }
 			}
 			custom_trigger_tooltip = {
-				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
-				FROM = {
-					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
-					NOT = { has_government_attribute = enables_yama_authority }
-				}
+				tooltip = TH_CANNOT_SELL_NEWSPAPER_TO_SUBJECTS_TT
+				FROM = { is_free_or_tributary_trigger = yes }
 			}
+		}
+		if = {
+			limit = {
+				NOT = { years_of_income = 0.25 }
+			}
+			years_of_income = 0.25
 		}
 	}
 
 	on_accept = {
+		th_clear_copy_flag = yes
 		FROM = {
-			clr_country_flag = th_was_targeted_for_cb_by_@ROOT
-			set_country_flag = th_was_targeted_for_cb_by_@ROOT
-		}
-		add_casus_belli = {
-			target = FROM
-			type = cb_vassalize_mission
-		}
-		add_spy_network_in = {
-			who = FROM
-			value = -20
+			clr_country_flag = th_got_its_newspaper_bought_by_@ROOT
+			set_country_flag = th_got_its_newspaper_bought_by_@ROOT
+			country_event = {
+				id = th_diplo_events.53
+			}
 		}
 	}
 
