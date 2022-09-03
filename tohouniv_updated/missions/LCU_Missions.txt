@@ -97,6 +97,14 @@ lcu_slot1_branch = {
 		}
 		effect = {				
 			add_stability = 1
+			5330 = {
+				change_province_name = "Rei'sen Laboratory"
+			}
+
+			5333 = {
+				change_province_name = "Junko's Grave"
+			}
+			
 			Northern_moon_state = {
 				add_local_autonomy = -25
 			}
@@ -203,10 +211,8 @@ lcu_slot1_branch = {
 					has_spy_network_in = { who = EIT value = 50 } 
 					army_size = EIT
 					}
-					add_casus_belli = { 
-						target = EIT 
-						type = cb_restore_personal_union 
-						months = 600 
+					country_event = {
+						id = flavor_lcu.101
 					}
 				}	
 	
@@ -898,30 +904,67 @@ lcu_slot4_branch = {
 	}
 	has_country_shield = yes	
 	
-	LCU_rebuild_our_treasury = {
+
+	LCU_reestablish_our_trade = {
 		icon = mission_african_gold
 		required_missions = {  }
-		position = 1		
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5320
+				province_id = 5316
+				province_id = 5330 
+				province_id = 5327 
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT } 
+			NOT = { province_has_center_of_trade_of_level = 2}
+		}	
 		trigger = {
-			treasury = 1000
-			NOT = { num_of_loans = 1 }			
+			treasury = 500
+			5320 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				province_has_center_of_trade_of_level = 2
+			}
+
+			5316 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				province_has_center_of_trade_of_level = 2
+			}
+
+			5330 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				province_has_center_of_trade_of_level = 2
+			}
+
+			5327 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				province_has_center_of_trade_of_level = 2
+			}		
 		}
 		effect = {
-			5320 = {
-				add_base_tax = 3
+			custom_tooltip = LCU_reestablish_our_trade.tooltip
+			hidden_effect = {
+				add_treasury = -500
+				5320 = {
+					add_building = stock_exchange					
+				}
+				5316 = {
+					add_building = stock_exchange
+				}
+				5330 = {
+					add_building = stock_exchange
+				}
+				5327 = {
+					add_building = stock_exchange
+				}	
 			}
-			5318 = {
-				add_base_tax = 3
-			}
-			5322 = {
-				add_base_tax = 3
-			}						
+					
 		}
 	}
 
 	LCU_build_manufactories = {
 		icon = mission_have_manufactories
-		required_missions = { LCU_rebuild_our_treasury }
+		required_missions = { LCU_reestablish_our_trade }
 		position = 2		
 		provinces_to_highlight = {
 			OR = {
@@ -936,7 +979,7 @@ lcu_slot4_branch = {
 
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 8
+				value = 10
 				OR = {
 					area = Western_moon_state
 					area = Southern_moon_state
@@ -948,15 +991,49 @@ lcu_slot4_branch = {
 			}
 		}
 		effect = {
+			custom_tooltip = LCU_build_manufactories.tooltip
 			add_country_modifier = {
 				name = lcu_hightech_production
 				duration = 7300
 			}
-			capital_scope = {
-				add_base_tax = 2
-				add_base_production = 2
-				add_base_manpower = 2
+			hidden_effect = {
+				Western_moon_state = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+						has_manufactory_trigger = yes
+					}
+					add_base_production = 1
+				}
+				Southern_moon_state = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+						has_manufactory_trigger = yes
+					}
+					add_base_production = 1
+				}
+				Northern_moon_state = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+						has_manufactory_trigger = yes
+					}
+					add_base_production = 1
+				}
+				Hecetias_colony = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+						has_manufactory_trigger = yes
+					}
+					add_base_production = 1
+				}
+				Uncolonized_moon_state = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+						has_manufactory_trigger = yes
+					}
+					add_base_production = 1
+				}
 			}
+			
 		}	
 	}	
 	
@@ -1014,7 +1091,7 @@ lcu_slot4_branch = {
 			add_adm_power = 50
 			add_dip_power = 50
 			add_mil_power = 50
-			change_innovativeness = 5
+			change_innovativeness = 10
 		}
 	}
 
@@ -1134,12 +1211,6 @@ lcu_slot5_branch = {
 		icon = mission_touhou_hakurai_barrier
 		required_missions = { LCU_establish_lunarian_navy }
 		position = 2
-
-		provinces_to_highlight = {
-			province_id = 5323
-			NOT = { owned_by = ROOT }
-			NOT = { is_core = ROOT }
-		}
 		
 		trigger = {
 			num_of_ports = 14
