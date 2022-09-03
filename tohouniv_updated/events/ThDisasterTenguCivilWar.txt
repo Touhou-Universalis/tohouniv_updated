@@ -1,0 +1,299 @@
+########################################
+# Events for the Tengu Civil War
+########################################
+
+namespace = th_tengu_civil_war
+
+#Tengu Civil War Events
+# Tengu Civil War - Start
+country_event = {
+	id = th_tengu_civil_war.1
+	title = th_tengu_civil_war.1.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = th_tengu_civil_war.1.desc
+	is_triggered_only = yes
+	major = yes
+
+	#Side with the Great Tengu
+	option = {
+		name = th_tengu_civil_war.1.a
+		add_country_modifier = {
+			name = tgu_sided_with_great_tengu
+			duration = -1
+			desc = tgu_sided_with_tengu_tt
+		}
+		set_variable = {
+			which = th_tengu_civil_war_score
+			value = 2
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#Side with the Low Tengu
+	option = {
+		name = th_tengu_civil_war.b.a
+		add_country_modifier = {
+			name = tgu_sided_with_low_tengu
+			duration = -1
+			desc = tgu_sided_with_tengu_tt
+		}
+		set_variable = {
+			which = th_tengu_civil_war_score
+			value = -2
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+# Tengu Civil War - End
+country_event = {
+	id = th_tengu_civil_war.2
+	title = th_tengu_civil_war.2.t
+	picture = {
+		picture = NITORIBOSS_eventPicture	#TODO
+		trigger = {
+			check_variable = {
+				which = th_tengu_civil_war_score
+				value = 15
+			}
+		}
+	}
+	picture = {
+		picture = NITORIBOSS_eventPicture	#TODO
+		trigger = {
+			NOT = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = -14
+				}
+			}
+		}
+	}
+	picture = {
+		picture = NITORIBOSS_eventPicture	#TODO
+		trigger = {
+			check_variable = {
+				which = th_tengu_civil_war_score
+				value = -14
+			}
+			NOT = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = 15
+				}
+			}
+		}
+	}
+	desc = {
+		desc = th_tengu_civil_war.2.desc.a
+		trigger = {
+			check_variable = {
+				which = th_tengu_civil_war_score
+				value = 15
+			}
+			has_country_modifier = tgu_sided_with_great_tengu
+		}
+	}
+	desc = {
+		desc = th_tengu_civil_war.2.desc.b
+		trigger = {
+			check_variable = {
+				which = th_tengu_civil_war_score
+				value = 15
+			}
+			NOT = { has_country_modifier = tgu_sided_with_great_tengu }
+		}
+	}
+	desc = {
+		desc = th_tengu_civil_war.2.desc.c
+		trigger = {
+			NOT = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = -14
+				}
+			}
+			has_country_modifier = tgu_sided_with_low_tengu
+		}
+	}
+	desc = {
+		desc = th_tengu_civil_war.2.desc.d
+		trigger = {
+			NOT = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = -14
+				}
+			}
+			NOT = { has_country_modifier = tgu_sided_with_low_tengu }
+		}
+	}
+	desc = {
+		desc = th_tengu_civil_war.2.desc.e
+		trigger = {
+			NOT = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = 15
+				}
+			}
+			check_variable = {
+				which = th_tengu_civil_war_score
+				value = -14
+			}
+		}
+	}
+	is_triggered_only = yes
+	major = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = tgu_had_tengu_civil_war
+		}
+	}
+
+	#The Great Tengu remain supreme!
+	option = {
+		name = th_tengu_civil_war.2.a
+		trigger = {
+			check_variable = {
+				which = th_tengu_civil_war_score
+				value = 15
+			}
+			has_country_modifier = tgu_sided_with_great_tengu
+		}
+		set_country_flag = tgu_picked_absolute_great_tengu
+		if = {
+			limit = {
+				NOT = {
+					government = monarchy
+				}
+			}
+			change_government = monarchy
+		}
+		add_government_reform = Gensokyan_tgu_absolute_reign
+		add_stability = 2
+		add_legitimacy = 50
+		remove_country_modifier = tgu_sided_with_great_tengu
+		remove_country_modifier = tgu_sided_with_low_tengu
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#The revolution failed. Absolute power to the Great Tengu!
+	option = {
+		name = th_tengu_civil_war.2.b
+		trigger = {
+			check_variable = {
+				which = th_tengu_civil_war_score
+				value = 15
+			}
+			NOT = { has_country_modifier = tgu_sided_with_great_tengu }
+		}
+		set_country_flag = tgu_picked_absolute_great_tengu
+		if = {
+			limit = {
+				NOT = {
+					government = monarchy
+				}
+			}
+			change_government = monarchy
+		}
+		add_government_reform = Gensokyan_tgu_absolute_reign
+		add_stability = -3
+		add_legitimacy = -20
+		remove_country_modifier = tgu_sided_with_great_tengu
+		remove_country_modifier = tgu_sided_with_low_tengu
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#The Castes are abolished! Long live the Revolution!
+	option = {
+		name = th_tengu_civil_war.2.c
+		trigger = {
+			NOT = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = -14
+				}
+			}
+			has_country_modifier = tgu_sided_with_low_tengu
+		}
+		set_country_flag = tgu_picked_republican_tengu
+		if = {
+			limit = {
+				NOT = {
+					government = republic
+				}
+			}
+			change_government = republic
+		}
+		add_government_reform = Gensokyan_tgu_tengu_republic
+		add_stability = 2
+		add_republican_tradition = 50
+		remove_country_modifier = tgu_sided_with_great_tengu
+		remove_country_modifier = tgu_sided_with_low_tengu
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#The Low Tengu have overrun us! The Illegitimate Republic now lives!
+	option = {
+		name = th_tengu_civil_war.2.d
+		trigger = {
+			NOT = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = -14
+				}
+			}
+			NOT = { has_country_modifier = tgu_sided_with_low_tengu }
+		}
+		set_country_flag = tgu_picked_republican_tengu
+		if = {
+			limit = {
+				NOT = {
+					government = republic
+				}
+			}
+			change_government = republic
+		}
+		add_government_reform = Gensokyan_tgu_tengu_republic
+		add_stability = -3
+		add_republican_tradition = -20
+		remove_country_modifier = tgu_sided_with_great_tengu
+		remove_country_modifier = tgu_sided_with_low_tengu
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#Event broke off
+	option = {
+		name = th_tengu_civil_war.2.e
+		trigger = {
+			check_variable = {
+				which = th_tengu_civil_war_score
+				value = -14
+			}
+			NOT = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = 15
+				}
+			}
+		}
+		remove_country_modifier = tgu_sided_with_great_tengu
+		remove_country_modifier = tgu_sided_with_low_tengu
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

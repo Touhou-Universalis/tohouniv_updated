@@ -4,15 +4,53 @@ th_tengu_caste_civil_war_disaster = {
 		NOT = { mission_completed = TGU_the_tengu_conflict }
 		has_reform = Gensokyan_tgu_caste_system
 		NOT = { has_country_flag = tgu_had_tengu_civil_war }
+		has_estate = estate_great_tengu
 	}
 	
 	can_start = {
 		has_any_disaster = no
-		custom_trigger_tooltip = {
-			tooltip = kpp_triggered_kappa_counter_movement_disaster_tt
-			has_country_flag = kpp_triggered_kappa_counter_movement_disaster
+		OR = {
+			if = {
+				limit = {
+					has_estate = estate_church
+				}
+				NOT = {
+					estate_loyalty = {
+						estate = estate_church
+						loyalty = 30
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_estate = estate_crow_tengu
+				}
+				NOT = {
+					estate_loyalty = {
+						estate = estate_crow_tengu
+						loyalty = 30
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_estate = estate_wolf_tengu
+				}
+				NOT = {
+					estate_loyalty = {
+						estate = estate_wolf_tengu
+						loyalty = 30
+					}
+				}
+			}
+			estate_influence = {
+				estate = estate_great_tengu
+				influence = 80
+			}
 		}
-		NOT = { has_country_modifier = th_elected_kappa_tinker }
+		NOT = { has_estate_privilege = estate_great_tengu_promote_aya }
+		NOT = { has_estate_privilege = estate_great_tengu_rights_to_the_low_castes }
+		NOT = { stability = 2 }
 	}
 	
 	can_stop = {
@@ -46,56 +84,104 @@ th_tengu_caste_civil_war_disaster = {
 						loyalty = 50
 					}
 				}
-				stability = 1
+				stability = 2
 			}
 			has_estate_privilege = estate_great_tengu_rights_to_the_low_castes
 		}
 	}
 	modifier = {
-		stability_cost_modifier = 0.25
-		republican_tradition = -4
-		global_autonomy = 0.15
+		stability_cost_modifier = 0.33
+		technology_cost = 0.15
+		reform_progress_growth = -1
+		legitimacy = -1
 	}
 		
 	progress = {
 		modifier = {
-			factor = 5
-			custom_trigger_tooltip = {
-				tooltip = kpp_triggered_kappa_counter_movement_disaster_tt
-				has_country_flag = kpp_triggered_kappa_counter_movement_disaster
+			factor = 2
+			NOT = { stability = 1 }
+		}
+		modifier = {
+			factor = 2
+			NOT = { stability = 0 }
+		}
+		modifier = {
+			factor = 2
+			NOT = { stability = -1 }
+		}
+		modifier = {
+			factor = 2
+			NOT = { stability = -2 }
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				estate_loyalty = {
+					estate = estate_church
+					loyalty = 40
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				estate_loyalty = {
+					estate = estate_crow_tengu
+					loyalty = 40
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				estate_loyalty = {
+					estate = estate_wolf_tengu
+					loyalty = 40
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			estate_influence = {
+				estate = estate_great_tengu
+				influence = 80
 			}
 		}
 	}
 	ended_by_country_breaking_to_rebels = no
 	
 	can_end = {
-		OR = {
-			republican_tradition = 90
-			NOT = { government = republic }
+		custom_trigger_tooltip = {
+			tooltip = th_tengu_caste_civil_war_disaster_ct
+			OR = {
+				check_variable = {
+					which = th_tengu_civil_war_score
+					value = 15
+				}
+				NOT = {
+					check_variable = {
+						which = th_tengu_civil_war_score
+						value = -14
+					}
+				}
+			}
 		}
-		stability = 2
 	}
 	
-	on_start = th_kappa_disasters.1
-	on_end = th_kappa_disasters.2
+	on_start = th_tengu_civil_war.1
+	on_end = th_tengu_civil_war.2
 	
 	on_monthly = {
 		events = {
-			th_kappa_disasters.8
-			th_kappa_disasters.11
 		}
 		
 		random_events = { 
 			1000 = 0
-			100 = th_kappa_disasters.3	#Province demands more autonomy!
-			100 = th_kappa_disasters.4	#Question of Authority
-			100 = th_kappa_disasters.5	#Overreaction from Conservative Kappas
-			100 = th_kappa_disasters.6	#Supporters from the public
-			100 = th_kappa_disasters.7	#Kappa unhappiness about the situation
-			100 = th_kappa_disasters.9	#Military is desillusioned by internal policies - Suppressing News consequence
-			100 = th_kappa_disasters.10	#Uprising against the state
-			100 = th_kappa_disasters.28	#Province sabotaged
-			100 = th_kappa_disasters.29	#Economy suffers
 		}
+	}
+	on_start_effect = {
+		custom_tooltip = th_tengu_caste_civil_war_disaster_tt
+		add_stability = -4
+		add_legitimacy = -50
 	}
 }
