@@ -275,13 +275,16 @@ interaction = {
 		}
 		set_country_flag = recent_estate_agenda
 
-        add_estate_influence_modifier = {
-            estate = all
-            desc = EST_VAL_DIET_SUMMONED
-            duration = 7300
-            influence = 5
-            short = yes
-        }
+		if = {
+			limit = { NOT = { has_government_attribute = diet_increases_not_influence } }
+			add_estate_influence_modifier = {
+				estate = all
+				desc = EST_VAL_DIET_SUMMONED
+				duration = 7300
+				influence = 5
+				short = yes
+			}
+		}
 
 		###TOUHOU###
 		hidden_effect = {
@@ -350,6 +353,12 @@ interaction = {
             loyalty = 5
             short = yes
         }
+		if = {
+			limit = {
+				has_government_attribute = republican_tradition_from_diets
+			}
+			add_scaled_republican_tradition = 2
+		}
 
 		###TOUHOU###
 		hidden_effect = {
@@ -493,6 +502,18 @@ interaction = {
 			}
 			NOT = { has_estate_privilege = estate_church_statutory_rights }
 		}
+		else_if = {
+			limit = {
+				has_estate_privilege = estate_crow_tengu_statutory_rights
+			}
+			NOT = { has_estate_privilege = estate_crow_tengu_statutory_rights }
+		}
+		else_if = {
+			limit = {
+				has_estate_privilege = estate_great_tengu_statutory_rights
+			}
+			NOT = { has_estate_privilege = estate_great_tengu_statutory_rights }
+		}
         is_at_war = no
     }
     effect = {
@@ -533,8 +554,18 @@ interaction = {
 						}
 					}
 				}
-				th_add_rival_estate_loyalty = {
-					loyalty = 20
+				if = {
+					limit = {
+						has_government_attribute = seizing_land_loyalty
+					}
+					th_add_rival_estate_loyalty = {
+						loyalty = 15
+					}
+				}
+				else = {
+					th_add_rival_estate_loyalty = {
+						loyalty = 20
+					}
 				}
 			}
 			else = {
@@ -550,9 +581,20 @@ interaction = {
 						}
 					}
 				}
-				add_estate_loyalty = {
-					estate = estate_fairy_pirates
-					loyalty = 20
+				if = {
+					limit = {
+						has_government_attribute = seizing_land_loyalty
+					}
+					add_estate_loyalty = {
+						estate = estate_fairy_pirates
+						loyalty = 15
+					}
+				}
+				else = {
+					add_estate_loyalty = {
+						estate = estate_fairy_pirates
+						loyalty = 20
+					}
 				}
 			}
 			else = {
@@ -568,21 +610,43 @@ interaction = {
 						}
 					}
 				}
-				add_estate_loyalty = {
-					estate = estate_yama
-					loyalty = 20
+				if = {
+					limit = {
+						has_government_attribute = seizing_land_loyalty
+					}
+					add_estate_loyalty = {
+						estate = estate_yama
+						loyalty = 15
+					}
+				}
+				else = {
+					add_estate_loyalty = {
+						estate = estate_yama
+						loyalty = 20
+					}
 				}
 			}
 			else = {
 				set_country_flag = th_yama_is_not_in_rage
 			}
 		}
-
-        add_estate_loyalty = {
-            estate = all
-            loyalty = -20
-            short = yes
-        }
+		if = {
+			limit = {
+				has_government_attribute = seizing_land_loyalty
+			}
+			add_estate_loyalty = {
+				estate = all
+				loyalty = -15
+				short = yes
+			}
+		}
+		else = {
+			add_estate_loyalty = {
+				estate = all
+				loyalty = -20
+				short = yes
+			}
+		}
 
 		###TOUHOU###
 		hidden_effect = {
@@ -590,8 +654,18 @@ interaction = {
 				limit = {
 					has_country_flag = th_rival_is_not_in_rage
 				}
-				th_add_rival_estate_loyalty = {
-					loyalty = 20
+				if = {
+					limit = {
+						has_government_attribute = seizing_land_loyalty
+					}
+					th_add_rival_estate_loyalty = {
+						loyalty = 15
+					}
+				}
+				else = {
+					th_add_rival_estate_loyalty = {
+						loyalty = 20
+					}
 				}
 				clr_country_flag = th_rival_is_not_in_rage
 			}
@@ -599,9 +673,20 @@ interaction = {
 				limit = {
 					has_country_flag = th_fairy_pirate_is_not_in_rage
 				}
-				add_estate_loyalty = {
-					estate = estate_fairy_pirates
-					loyalty = 20
+				if = {
+					limit = {
+						has_government_attribute = seizing_land_loyalty
+					}
+					add_estate_loyalty = {
+						estate = estate_fairy_pirates
+						loyalty = 15
+					}
+				}
+				else = {
+					add_estate_loyalty = {
+						estate = estate_fairy_pirates
+						loyalty = 20
+					}
 				}
 				clr_country_flag = th_fairy_pirate_is_not_in_rage
 			}
@@ -609,14 +694,26 @@ interaction = {
 				limit = {
 					has_country_flag = th_yama_is_not_in_rage
 				}
-				add_estate_loyalty = {
-					estate = estate_yama
-					loyalty = 20
+				if = {
+					limit = {
+						has_government_attribute = seizing_land_loyalty
+					}
+					add_estate_loyalty = {
+						estate = estate_yama
+						loyalty = 15
+					}
+				}
+				else = {
+					add_estate_loyalty = {
+						estate = estate_yama
+						loyalty = 20
+					}
 				}
 				clr_country_flag = th_yama_is_not_in_rage
 			}
-		}				
-
+		}	
+		custom_tooltip = ESTATES_SEIZE_LAND_EXCEPTION_DESC
+		re_add_loyalty_from_seized_land = yes
 		custom_tooltip = seize_land_rebels_tt
 		if = {
 			limit = {
@@ -647,6 +744,12 @@ interaction = {
 			}
 			spawn_rebels_seize_land_switch = yes
 		}
+		if = {
+			limit = {
+				has_government_attribute = seizing_land_takes_karma
+			}
+			add_karma = -10
+		}
 	}
 	ai_will_do = {
 		factor = 50
@@ -661,7 +764,7 @@ interaction = {
 			# This is a hack for countries with enclaves that can be hard to get to, to kill the rebels
 			OR = {
 				tag = TEU
-				tag = COL
+				tag = KOL
 				# Add more as necessary
 			}
 			NOT = {
