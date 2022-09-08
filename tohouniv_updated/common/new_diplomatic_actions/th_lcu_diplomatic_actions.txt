@@ -27,4 +27,113 @@ th_lcu_send_in_lunarian_officers = {
 }
 
 
+th_lcu_demand_war_support = {
+	category = th_diplo_action
+	require_acceptance = no
 
+	is_visible = {
+
+		has_country_flag = th_lunarian_guards
+		
+		FROM = {
+			is_subject_of = ROOT
+		}
+	}
+
+	is_allowed = {
+		FROM = {
+			tag = MRU
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_demand_war_support_has_been_requested_tt
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_was_already_requested_for_soldiers_@ROOT }
+					had_country_flag = {
+						flag = th_was_already_requested_for_soldiers_@ROOT
+						days = 1825
+					}
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_from_is_not_in_war_tt
+			FROM = {
+				is_at_war = no
+			}
+		}
+		
+		custom_trigger_tooltip = {
+			tooltip = th_from_has_at_least_thousand_man
+			FROM = {
+				manpower = 1
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		export_to_variable = {
+			which = th_manpower_to_conscript
+			value = manpower
+			who = FROM
+		}
+		divide_variable = {
+			which = th_manpower_to_conscript
+			value = 20	#20% of manpower gets transferred to LCU
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_manpower_to_conscript
+					value = 0.2
+				}
+			}
+			add_manpower = 0.2
+			FROM = {
+				add_manpower = -0.2
+			}
+			subtract_variable = {
+				which = th_manpower_to_conscript
+				value = 0.2
+			}
+		}
+
+		FROM = {
+			add_trust = {
+				who = ROOT
+				value = -5
+			}
+		}
+
+		FROM = {
+			clr_country_flag = th_was_already_requested_for_soldiers_@ROOT
+			set_country_flag = th_was_already_requested_for_soldiers_@ROOT
+		}
+	}
+
+	on_decline = {
+	}
+
+
+	ai_will_do = {
+		always = no
+	}
+}
