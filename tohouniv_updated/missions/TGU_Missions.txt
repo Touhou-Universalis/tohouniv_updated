@@ -330,33 +330,23 @@ tgu_missions_sophisticated_castes_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_the_tengu_conflict }
 		position = 11
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+			NOT = { development = 50 }
+		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
+			capital_scope = {
+				development = 50
 			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
-				}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				province_has_center_of_trade_of_level = 1
+				has_trade_building_trigger = yes
+				value = 6
 			}
+			monthly_income = 50
 		}
 		effect = {
+			add_adm_power = 75
 			th_enable_touhou_advisor = {
 				advisor = th_advisor_megumu
 			}
@@ -368,32 +358,23 @@ tgu_missions_sophisticated_castes_slot = {
 		required_missions = { TGU_wishes_of_megumu }
 		position = 11
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
+			if = {
+				limit = {
+					th_has_any_estates = yes
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
+				th_num_of_estate_privileges_for_all_estates = {
+					value = 4
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
+				estate_influence = {
+					influence = 60
+					estate = all
 				}
 			}
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { num_of_rebel_controlled_provinces = 1 }
 		}
 		effect = {
+			change_government_reform_progress = 100
 			tgu_enable_support_from_castes_decisions = yes
 		}
 	}
@@ -403,33 +384,26 @@ tgu_missions_sophisticated_castes_slot = {
 		required_missions = { TGU_expand_the_power_of_the_castes }
 		position = 12
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
+			if = {
+				limit = {
+					th_has_any_estates = yes
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
+				th_num_of_all_completed_estate_agendas = {
+					value = 10
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
+				estate_loyalty = {
+					estate = all
+					loyalty = 70
 				}
 			}
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { num_of_rebel_controlled_provinces = 1 }
 		}
 		effect = {
-			custom_tooltip = unlock_megumu
+			add_country_modifier = {
+				name = tgu_tenmas_caste_control
+				duration = -1
+			}
 		}
 	}
 }
@@ -449,33 +423,63 @@ tgu_missions_absolute_tengu_reign_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_the_tengu_conflict }
 		position = 10
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
+		provinces_to_highlight = {
+			owned_by = ROOT
 			OR = {
 				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
+					NOT = { has_production_building_trigger = yes }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								has_production_building_trigger = yes
+								value = 8
+							}
+						}
 					}
 				}
 				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
+					NOT = { has_manufactory_trigger = yes }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								has_manufactory_trigger = yes
+								value = 5
+							}
+						}
 					}
 				}
 				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
+					trade_goods = paper
+					NOT = { base_production = 10 }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								base_production = 10
+								trade_goods = paper
+								value = 5
+							}
+						}
 					}
 				}
 			}
 		}
+		trigger = {
+			num_of_owned_provinces_with = {
+				has_production_building_trigger = yes
+				value = 8
+			}
+			num_of_owned_provinces_with = {
+				has_manufactory_trigger = yes
+				value = 5
+			}
+			num_of_owned_provinces_with = {
+				base_production = 10
+				trade_goods = paper
+				value = 5
+			}
+		}
 		effect = {
+			add_dip_power = 75
 			th_enable_touhou_advisor = {
 				advisor = th_advisor_hatate
 			}
@@ -487,32 +491,53 @@ tgu_missions_absolute_tengu_reign_slot = {
 		required_missions = { TGU_banish_the_traitors }
 		position = 11
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
+			if = {
+				limit = {
+					has_estate = estate_church
+				}
+				NOT = {
+					estate_influence = {
+						estate = estate_church
+						influence = 40
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_estate = estate_crow_tengu
+				}
+				NOT = {
+					estate_influence = {
+						estate = estate_crow_tengu
+						influence = 40
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_estate = estate_wolf_tengu
+				}
+				NOT = {
+					estate_influence = {
+						estate = estate_wolf_tengu
+						influence = 40
+					}
+				}
 			}
 			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
+				crown_land_share = 60
+				estate_territory = {
+					estate = estate_great_tengu
+					territory = 40
 				}
 			}
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { num_of_rebel_controlled_provinces = 1 }
 		}
 		effect = {
+			country_event = {
+				id = flavor_tgu.9
+			}
 			tgu_enable_militaristic_newspaper_actions = yes
 		}
 	}
@@ -522,33 +547,18 @@ tgu_missions_absolute_tengu_reign_slot = {
 		required_missions = { TGU_banish_the_traitors }
 		position = 12
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
-				}
-			}
+			absolutism = 75
+			stability = 3
+			has_any_disaster = no
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { num_of_rebel_controlled_provinces = 1 }
+			is_in_deficit = no
 		}
 		effect = {
-			custom_tooltip = unlock_hatate
+			add_country_modifier = {
+				name = tgu_golden_age_of_tengu_absolutism
+				duration = -1
+			}
 		}
 	}
 }
@@ -568,33 +578,42 @@ tgu_missions_tengu_republic_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_the_tengu_conflict }
 		position = 10
+		provinces_to_highlight = {
+			owned_by = ROOT
+			trade_goods = paper
+			OR = {
+				NOT = { has_manufactory_trigger = yes }
+				NOT = { has_production_building_trigger = yes }
+				NOT = { base_production = 10 }
+			}
+		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
+			calc_true_if = {
+				desc = TGU_aya_the_great_advisor_tt
+				all_known_country = {
+					has_country_flag = tgu_was_newspaper_action_target_of_@ROOT
+				}
+				amount = 4
 			}
 			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
+				trading_bonus = {
+					trade_goods = paper
+					value = yes
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
+				production_leader = {
+					trade_goods = paper
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
+				num_of_owned_provinces_with = {
+					trade_goods = paper
+					has_manufactory_trigger = yes
+					has_production_building_trigger = yes
+					base_production = 10
+					value = 3
 				}
 			}
 		}
 		effect = {
+			add_mil_power = 75
 			th_enable_touhou_advisor = {
 				advisor = th_advisor_aya
 			}
@@ -606,33 +625,40 @@ tgu_missions_tengu_republic_slot = {
 		required_missions = { TGU_aya_the_great_advisor }
 		position = 11
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
+			NOT = { government = monarchy }
+			if = {
+				limit = {
+					has_estate = estate_great_tengu
+				}
+				NOT = {
+					estate_influence = {
+						estate = estate_great_tengu
+						influence = 20
+					}
+				}
+				NOT = {
+					estate_territory = {
+						estate = estate_great_tengu
+						territory = 10
+					}
+				}
 			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
+			else = {
+				NOT = { has_estate = estate_great_tengu }
+			}
+			stability = 3
+			NOT = { corruption = 0.5 }
+			if = {
+				limit = {
+					government = republic
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
-				}
+				republican_tradition = 100
 			}
 		}
 		effect = {
-			tgu_enable_fabricate_spread_republican_ideas_cb = yes
+			country_event = {
+				id = flavor_tgu.10
+			}
 		}
 	}
 
@@ -642,32 +668,35 @@ tgu_missions_tengu_republic_slot = {
 		position = 12
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
+				tooltip = TGU_tengu_liberty_tt
+				check_variable = {
+					which = tgu_spread_republican_ideas_counter
+					value = 10
+				}
 			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
+			if = {
+				limit = {
+					government = republic
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
+				republican_tradition = 100
+			}
+			NOT = { government = monarchy }
+			has_any_disaster = no
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
 				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
+				OR = {
+					in_golden_age = yes
+					has_had_golden_age = yes
 				}
 			}
 		}
 		effect = {
-			custom_tooltip = unlock_aya
+			add_country_modifier = {
+				name = tgu_golden_age_of_liberated_tengu
+				duration = -1
+			}
 		}
 	}
 }
@@ -702,11 +731,33 @@ tgu_missions_branching_slot = {
 						tooltip = tgu_caste_path_trigger_tt
 						always = no
 					}
+					capital_scope = {
+						development = 50
+					}
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						province_has_center_of_trade_of_level = 1
+						has_trade_building_trigger = yes
+						value = 6
+					}
+					monthly_income = 50
 				}
 				AND = {
 					custom_trigger_tooltip = {
 						tooltip = tgu_absolute_path_trigger_tt
 						always = no
+					}
+					num_of_owned_provinces_with = {
+						has_production_building_trigger = yes
+						value = 8
+					}
+					num_of_owned_provinces_with = {
+						has_manufactory_trigger = yes
+						value = 5
+					}
+					num_of_owned_provinces_with = {
+						base_production = 10
+						trade_goods = paper
+						value = 5
 					}
 				}
 				AND = {
@@ -714,15 +765,48 @@ tgu_missions_branching_slot = {
 						tooltip = tgu_republic_path_trigger_tt
 						always = no
 					}
+					calc_true_if = {
+						desc = TGU_aya_the_great_advisor_tt
+						all_known_country = {
+							has_country_flag = tgu_was_newspaper_action_target_of_@ROOT
+						}
+						amount = 4
+					}
+					OR = {
+						trading_bonus = {
+							trade_goods = paper
+							value = yes
+						}
+						production_leader = {
+							trade_goods = paper
+						}
+						num_of_owned_provinces_with = {
+							trade_goods = paper
+							has_manufactory_trigger = yes
+							has_production_building_trigger = yes
+							base_production = 10
+							value = 3
+						}
+					}
 				}
 			}
 		}
 		effect = {
 			custom_tooltip = tgu_caste_effect_tt
-
+			add_adm_power = 75
+			th_enable_touhou_advisor = {
+				advisor = th_advisor_megumu
+			}
 			custom_tooltip = tgu_absolute_effect_tt
-
+			add_dip_power = 75
+			th_enable_touhou_advisor = {
+				advisor = th_advisor_hatate
+			}
 			custom_tooltip = tgu_republic_effect_tt
+			add_mil_power = 75
+			th_enable_touhou_advisor = {
+				advisor = th_advisor_aya
+			}
 		}
 	}
 
@@ -743,27 +827,119 @@ tgu_missions_branching_slot = {
 						tooltip = tgu_caste_path_trigger_tt
 						always = no
 					}
+					if = {
+						limit = {
+							th_has_any_estates = yes
+						}
+						th_num_of_estate_privileges_for_all_estates = {
+							value = 4
+						}
+						estate_influence = {
+							influence = 60
+							estate = all
+						}
+					}
+					NOT = { num_of_rebel_armies = 1 }
+					NOT = { num_of_rebel_controlled_provinces = 1 }
 				}
 				AND = {
 					custom_trigger_tooltip = {
 						tooltip = tgu_absolute_path_trigger_tt
 						always = no
 					}
+					if = {
+						limit = {
+							has_estate = estate_church
+						}
+						NOT = {
+							estate_influence = {
+								estate = estate_church
+								influence = 40
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_estate = estate_crow_tengu
+						}
+						NOT = {
+							estate_influence = {
+								estate = estate_crow_tengu
+								influence = 40
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_estate = estate_wolf_tengu
+						}
+						NOT = {
+							estate_influence = {
+								estate = estate_wolf_tengu
+								influence = 40
+							}
+						}
+					}
+					OR = {
+						crown_land_share = 60
+						estate_territory = {
+							estate = estate_great_tengu
+							territory = 40
+						}
+					}
+					NOT = { num_of_rebel_armies = 1 }
+					NOT = { num_of_rebel_controlled_provinces = 1 }
 				}
 				AND = {
 					custom_trigger_tooltip = {
 						tooltip = tgu_republic_path_trigger_tt
 						always = no
 					}
+					NOT = { government = monarchy }
+					if = {
+						limit = {
+							has_estate = estate_great_tengu
+						}
+						NOT = {
+							estate_influence = {
+								estate = estate_great_tengu
+								influence = 20
+							}
+						}
+						NOT = {
+							estate_territory = {
+								estate = estate_great_tengu
+								territory = 10
+							}
+						}
+					}
+					else = {
+						NOT = { has_estate = estate_great_tengu }
+					}
+					stability = 3
+					NOT = { corruption = 0.5 }
+					if = {
+						limit = {
+							government = republic
+						}
+						republican_tradition = 100
+					}
 				}
 			}
 		}
 		effect = {
 			custom_tooltip = tgu_caste_effect_tt
-
+			change_government_reform_progress = 100
+			tgu_enable_support_from_castes_decisions = yes
 			custom_tooltip = tgu_absolute_effect_tt
-
+			country_event = {
+				id = flavor_tgu.9
+			}
+			tgu_enable_militaristic_newspaper_actions = yes
 			custom_tooltip = tgu_republic_effect_tt
+			country_event = {
+				id = flavor_tgu.10
+			}
 		}
 	}
 
@@ -786,27 +962,83 @@ tgu_missions_branching_slot = {
 						tooltip = tgu_caste_path_trigger_tt
 						always = no
 					}
+					if = {
+						limit = {
+							th_has_any_estates = yes
+						}
+						th_num_of_all_completed_estate_agendas = {
+							value = 10
+						}
+						estate_loyalty = {
+							estate = all
+							loyalty = 70
+						}
+					}
+					NOT = { num_of_rebel_armies = 1 }
+					NOT = { num_of_rebel_controlled_provinces = 1 }
 				}
 				AND = {
 					custom_trigger_tooltip = {
 						tooltip = tgu_absolute_path_trigger_tt
 						always = no
 					}
+					absolutism = 75
+					stability = 3
+					has_any_disaster = no
+					NOT = { num_of_rebel_armies = 1 }
+					NOT = { num_of_rebel_controlled_provinces = 1 }
+					is_in_deficit = no
 				}
 				AND = {
 					custom_trigger_tooltip = {
 						tooltip = tgu_republic_path_trigger_tt
 						always = no
 					}
+					custom_trigger_tooltip = {
+						tooltip = TGU_tengu_liberty_tt
+						check_variable = {
+							which = tgu_spread_republican_ideas_counter
+							value = 10
+						}
+					}
+					if = {
+						limit = {
+							government = republic
+						}
+						republican_tradition = 100
+					}
+					NOT = { government = monarchy }
+					has_any_disaster = no
+					if = {
+						limit = {
+							has_dlc = "Mandate of Heaven"
+						}
+						OR = {
+							in_golden_age = yes
+							has_had_golden_age = yes
+						}
+					}
 				}
 			}
 		}
 		effect = {
 			custom_tooltip = tgu_caste_effect_tt
+			add_country_modifier = {
+				name = tgu_tenmas_caste_control
+				duration = -1
+			}
 
 			custom_tooltip = tgu_absolute_effect_tt
+			add_country_modifier = {
+				name = tgu_golden_age_of_tengu_absolutism
+				duration = -1
+			}
 
 			custom_tooltip = tgu_republic_effect_tt
+			add_country_modifier = {
+				name = tgu_golden_age_of_liberated_tengu
+				duration = -1
+			}
 		}
 	}
 }
@@ -941,8 +1173,8 @@ tgu_missions_youkai_conquest_slot = {
 		required_missions = {  }
 		position = 8
 		trigger = {
+			spymaster = 1
 			calc_true_if = {
-				spymaster = 1
 				all_known_country = {
 					has_spy_network_from = {
 						who = ROOT
@@ -960,111 +1192,96 @@ tgu_missions_youkai_conquest_slot = {
 		}
 	}
 
-	TGU_spread_the_tengu_news = {
+	TGU_the_news_manipulators = {
 		icon = mission_touhou_army
 		required_missions = { TGU_establish_tengu_agency }
 		position = 9
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
+				tooltip = TGU_the_news_manipulators_tt
+				check_variable = {
+					which = tgu_newspaper_action_counter
+					value = 20
 				}
 			}
-		}
-		effect = {
-			tgu_enable_puppet_states = yes
-		}
-	}
-
-	TGU_the_puppets_of_tenma = {
-		icon = mission_touhou_army
-		required_missions = { TGU_spread_the_tengu_news }
-		position = 10
-		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
-				}
-			}
-		}
-		effect = {
-			tgu_enable_extended_puppet_state_actions = yes
-		}
-	}
-
-	TGU_the_news_manipulators = {
-		icon = mission_touhou_army
-		required_missions = { 
-			TGU_the_puppets_of_tenma
-		}
-		position = 11
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = selectable_mission_trigger_tt
-				always = no
-			}
-			OR = {
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_caste_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_absolute_path_trigger_tt
-						always = no
-					}
-				}
-				AND = {
-					custom_trigger_tooltip = {
-						tooltip = tgu_republic_path_trigger_tt
-						always = no
-					}
+				tooltip = TGU_the_news_manipulators_ct
+				check_variable = {
+					which = tgu_newspaper_sold_counter
+					value = 10
 				}
 			}
 		}
 		effect = {
 			tgu_enable_write_white_washing_news = yes
 			tgu_enable_fabricate_truce = yes
+		}
+	}
+
+	TGU_spread_the_tengu_news = {
+		icon = mission_touhou_army
+		required_missions = {  }
+		position = 10
+		trigger = {
+			OR = {
+				AND = {
+					calc_true_if = {
+						desc = TGU_spread_the_tengu_news_ct
+						all_known_country = {
+							has_ruler_modifier = th_gossip_about_rulership
+						}
+						amount = 3
+					}
+					custom_trigger_tooltip = {
+						tooltip = TGU_spread_the_tengu_news_tt
+						check_variable = {
+							which = tgu_newspaper_action_counter
+							value = 5
+						}
+					}
+				}
+				NOT = { has_government_attribute = enables_tengu_newspaper }
+			}
+		}
+		effect = {
+			tgu_enable_puppet_states = yes
+			define_advisor = {
+				type = spymaster
+				cost_multiplier = 0.1
+				skill = 3
+				female = yes
+			}
+		}
+	}
+
+	TGU_the_puppets_of_tenma = {
+		icon = mission_touhou_army
+		required_missions = { TGU_spread_the_tengu_news }
+		position = 11
+		trigger = {
+			calc_true_if = {
+				desc = TGU_the_puppets_of_tenma_tt
+				all_subject_country = {
+					is_subject_of_type = th_tengu_puppet_state
+				}
+				amount = 4
+			}
+		}
+		effect = {
+			custom_tooltip = TGU_the_puppets_of_tenma_ct
+			hidden_effect = {
+				if = {
+					limit = { has_idea_group = spy_ideas }
+					add_country_modifier = {
+						name = tgu_tenmas_puppets
+						duration = 9125
+					}
+				}
+				else = {
+					add_dip_power = 25
+				}
+			}
+			tgu_enable_extended_puppet_state_actions = yes
 		}
 	}
 }
@@ -1408,7 +1625,8 @@ tgu_missions_war_slot = {
 		position = 9
 		provinces_to_highlight = {}
 		trigger = {
-			crown_land_share = 50
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { num_of_rebel_controlled_provinces = 1 }
 			if = {
 				limit = {
 					has_estate = estate_church
@@ -1447,7 +1665,11 @@ tgu_missions_war_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = tgu_unlcok_new_estate_privileges_across_all_tengu_estates
+			tgu_enable_new_tengu_laws = yes
+			add_country_modifier = {
+				name = tgu_satisfaction_of_the_estates
+				duration = 1825
+			}
 		}
 	}
 	
@@ -1474,7 +1696,8 @@ tgu_missions_war_slot = {
 			monthly_adm = 10
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			tgu_disable_tengu_disasters = yes
+			add_adm_power = 200
 		}
 	}
 	
@@ -1501,7 +1724,7 @@ tgu_missions_war_slot = {
 			stability = 3
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			tgu_buff_selling_and_seizing_crownland = yes
 		}
 	}
 }
@@ -1624,12 +1847,87 @@ tgu_missions_castes_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_break_the_barrier }
 		position = 6
-		provinces_to_highlight = {}
+		provinces_to_highlight = {
+			has_discovered = ROOT
+			is_capital = yes
+			continent = asia
+			NOT = { superregion = india_superregion }
+			owner = {
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = th_received_newspaper_from_@ROOT }
+				NOT = { has_country_flag = th_got_its_newspaper_bought_by_@ROOT }
+				NOT = { has_country_flag = th_received_good_image_of_@ROOT }
+			}
+		}
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					has_government_attribute = enables_tengu_newspaper
+				}
+				calc_true_if = {
+					desc = TGU_asian_newspaper_tt
+					all_known_country = {
+						NOT = { tag = ROOT }
+						NOT = { is_subject_of = ROOT }
+						capital_scope = {
+							continent = asia
+							NOT = { superregion = india_superregion }
+						}
+						OR = {
+							has_country_flag = th_received_newspaper_from_@ROOT
+							has_country_flag = th_got_its_newspaper_bought_by_@ROOT
+							has_country_flag = th_received_good_image_of_@ROOT
+						}
+					}
+					amount = 8
+				}
+			}
+			else = {
+				num_of_owned_provinces_with = {
+					continent = asia
+					NOT = { superregion = india_superregion }
+					value = 8
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					has_country_modifier = tgu_level_3_journalism
+				}
+				remove_country_modifier = tgu_level_3_journalism
+				add_country_modifier = {
+					name = tgu_level_4_journalism
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_modifier = tgu_level_2_journalism
+				}
+				remove_country_modifier = tgu_level_2_journalism
+				add_country_modifier = {
+					name = tgu_level_3_journalism
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_modifier = tgu_level_1_journalism
+				}
+				remove_country_modifier = tgu_level_1_journalism
+				add_country_modifier = {
+					name = tgu_level_2_journalism
+					duration = -1
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = tgu_level_1_journalism
+					duration = -1
+				}
+			}
 		}
 	}
 	
@@ -1637,12 +1935,84 @@ tgu_missions_castes_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_asian_newspaper }
 		position = 7
-		provinces_to_highlight = {}
+		provinces_to_highlight = {
+			has_discovered = ROOT
+			is_capital = yes
+			superregion = india_superregion
+			owner = {
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = th_received_newspaper_from_@ROOT }
+				NOT = { has_country_flag = th_got_its_newspaper_bought_by_@ROOT }
+				NOT = { has_country_flag = th_received_good_image_of_@ROOT }
+			}
+		}
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					has_government_attribute = enables_tengu_newspaper
+				}
+				calc_true_if = {
+					desc = TGU_indian_politics_tt
+					all_known_country = {
+						NOT = { tag = ROOT }
+						NOT = { is_subject_of = ROOT }
+						capital_scope = {
+							superregion = india_superregion
+						}
+						OR = {
+							has_country_flag = th_received_newspaper_from_@ROOT
+							has_country_flag = th_got_its_newspaper_bought_by_@ROOT
+							has_country_flag = th_received_good_image_of_@ROOT
+						}
+					}
+					amount = 5
+				}
+			}
+			else = {
+				num_of_owned_provinces_with = {
+					superregion = india_superregion
+					value = 5
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					has_country_modifier = tgu_level_3_journalism
+				}
+				remove_country_modifier = tgu_level_3_journalism
+				add_country_modifier = {
+					name = tgu_level_4_journalism
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_modifier = tgu_level_2_journalism
+				}
+				remove_country_modifier = tgu_level_2_journalism
+				add_country_modifier = {
+					name = tgu_level_3_journalism
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_modifier = tgu_level_1_journalism
+				}
+				remove_country_modifier = tgu_level_1_journalism
+				add_country_modifier = {
+					name = tgu_level_2_journalism
+					duration = -1
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = tgu_level_1_journalism
+					duration = -1
+				}
+			}
 		}
 	}
 	
@@ -1702,7 +2072,7 @@ tgu_missions_castes_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = improve_selling_and_seizing_land_tt
+			tgu_enable_more_targetted_crownland_actions = yes
 		}
 	}
 	
@@ -1741,7 +2111,8 @@ tgu_missions_castes_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = unlock_new_crow_tengu_privileges_tt
+			unlock_estate_privilege = { estate_privilege = estate_crow_tengu_foreign_ministery }
+			unlock_estate_privilege = { estate_privilege = estate_crow_tengu_salesmen_haven }
 		}
 	}
 	
@@ -1775,7 +2146,8 @@ tgu_missions_castes_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = unlock_new_wolf_tengu_privileges_tt
+			unlock_estate_privilege = { estate_privilege = estate_wolf_tengu_enlist_wolf_general }
+			unlock_estate_privilege = { estate_privilege = estate_wolf_tengu_right_for_side_jobs }
 		}
 	}
 	
@@ -1810,8 +2182,8 @@ tgu_missions_castes_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = unlock_new_great_tengu_privileges_tt
-			custom_tooltip = unlock_new_subject_types_tt
+			unlock_estate_privilege = { estate_privilege = estate_great_tengu_court_business }
+			unlock_estate_privilege = { estate_privilege = estate_great_tengu_expanded_government }
 		}
 	}
 }
@@ -1868,26 +2240,28 @@ tgu_missions_external_and_internal_slot = {
 			num_of_light_ship = 5
 		}
 		effect = {
-			random_owned_province = {
-				limit = {
-					has_port = yes
-				}
-				if = {
-					limit = {
-						has_dlc = "Golden Century"
-					}
-					create_flagship = {
-						name = "Tenma's Pride"
-						type = heavy_ship
-					}
-				}
-				else = {
-					heavy_ship = ROOT
-				}
-			}
 			if = {
 				limit = { NOT = { num_of_ports = 1 } }
 				custom_tooltip = TGU_the_first_tengu_fleet_tt
+			}
+			else = {
+				random_owned_province = {
+					limit = {
+						has_port = yes
+					}
+					if = {
+						limit = {
+							has_dlc = "Golden Century"
+						}
+						create_flagship = {
+							name = "Tenma's Pride"
+							type = heavy_ship
+						}
+					}
+					else = {
+						heavy_ship = ROOT
+					}
+				}
 			}
 			define_explorer = {
 				name = "Tenma's Eyes"
@@ -1964,12 +2338,84 @@ tgu_missions_external_and_internal_slot = {
 		icon = mission_touhou_army
 		required_missions = { TGU_discover_europe }
 		position = 7
-		provinces_to_highlight = {}
+		provinces_to_highlight = {
+			has_discovered = ROOT
+			is_capital = yes
+			continent = europe
+			owner = {
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = th_received_newspaper_from_@ROOT }
+				NOT = { has_country_flag = th_got_its_newspaper_bought_by_@ROOT }
+				NOT = { has_country_flag = th_received_good_image_of_@ROOT }
+			}
+		}
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					has_government_attribute = enables_tengu_newspaper
+				}
+				calc_true_if = {
+					desc = TGU_spread_the_newspaper_tt
+					all_known_country = {
+						NOT = { tag = ROOT }
+						NOT = { is_subject_of = ROOT }
+						capital_scope = {
+							continent = europe
+						}
+						OR = {
+							has_country_flag = th_received_newspaper_from_@ROOT
+							has_country_flag = th_got_its_newspaper_bought_by_@ROOT
+							has_country_flag = th_received_good_image_of_@ROOT
+						}
+					}
+					amount = 5
+				}
+			}
+			else = {
+				num_of_owned_provinces_with = {
+					continent = europe
+					value = 5
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					has_country_modifier = tgu_level_3_journalism
+				}
+				remove_country_modifier = tgu_level_3_journalism
+				add_country_modifier = {
+					name = tgu_level_4_journalism
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_modifier = tgu_level_2_journalism
+				}
+				remove_country_modifier = tgu_level_2_journalism
+				add_country_modifier = {
+					name = tgu_level_3_journalism
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_modifier = tgu_level_1_journalism
+				}
+				remove_country_modifier = tgu_level_1_journalism
+				add_country_modifier = {
+					name = tgu_level_2_journalism
+					duration = -1
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = tgu_level_1_journalism
+					duration = -1
+				}
+			}
 		}
 	}
 	
@@ -1980,12 +2426,85 @@ tgu_missions_external_and_internal_slot = {
 			TGU_spread_the_newspaper
 		}
 		position = 8
-		provinces_to_highlight = {}
+		provinces_to_highlight = {
+			has_discovered = ROOT
+			is_capital = yes
+			superregion = india_superregion
+			owner = {
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = { has_country_flag = th_received_newspaper_from_@ROOT }
+				NOT = { has_country_flag = th_got_its_newspaper_bought_by_@ROOT }
+				NOT = { has_country_flag = th_received_good_image_of_@ROOT }
+			}
+		}
 		trigger = {
-			always = yes
+			if = {
+				limit = {
+					has_government_attribute = enables_tengu_newspaper
+				}
+				calc_true_if = {
+					desc = TGU_global_journalism_tt
+					all_known_country = {
+						NOT = { tag = ROOT }
+						NOT = { is_subject_of = ROOT }
+						capital_scope = {
+							superregion = india_superregion
+						}
+						OR = {
+							has_country_flag = th_received_newspaper_from_@ROOT
+							has_country_flag = th_got_its_newspaper_bought_by_@ROOT
+							has_country_flag = th_received_good_image_of_@ROOT
+						}
+					}
+					amount = 30
+				}
+			}
+			else = {
+				num_of_owned_provinces_with = {
+					NOT = { continent = gensokyo_continent }
+					NOT = { continent = moon_continent }
+					value = 100
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = cool_effect
+			if = {
+				limit = {
+					has_country_modifier = tgu_level_3_journalism
+				}
+				remove_country_modifier = tgu_level_3_journalism
+				add_country_modifier = {
+					name = tgu_level_4_journalism
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_modifier = tgu_level_2_journalism
+				}
+				remove_country_modifier = tgu_level_2_journalism
+				add_country_modifier = {
+					name = tgu_level_3_journalism
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_country_modifier = tgu_level_1_journalism
+				}
+				remove_country_modifier = tgu_level_1_journalism
+				add_country_modifier = {
+					name = tgu_level_2_journalism
+					duration = -1
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = tgu_level_1_journalism
+					duration = -1
+				}
+			}
 		}
 	}
 	
@@ -2015,7 +2534,10 @@ tgu_missions_external_and_internal_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = th_unlock_mountain_development
+			capital_scope = {
+				add_base_production = 2
+			}
+			unlock_estate_privilege = { estate_privilege = estate_crow_tengu_mountain_expansion }
 		}
 	}
 	
@@ -2079,7 +2601,19 @@ tgu_missions_external_and_internal_slot = {
 			}
 		}
 		effect = {
-			custom_tooltip = unlock_cossacks_and_cav_privileges_for_tengu_estates
+			if = {
+				limit = {
+					has_dlc = "The Cossacks"
+				}
+				unlock_estate_privilege = { estate_privilege = estate_crow_tengu_vanguard_ambushers }
+				unlock_estate_privilege = { estate_privilege = estate_wolf_tengu_vanguard_defenders }
+				unlock_estate_privilege = { estate_privilege = estate_great_tengu_vanguard_front_breaker }
+			}
+			hidden_effect = {
+				unlock_estate_privilege = { estate_privilege = estate_crow_tengu_vanguard_ambushers }
+				unlock_estate_privilege = { estate_privilege = estate_wolf_tengu_vanguard_defenders }
+				unlock_estate_privilege = { estate_privilege = estate_great_tengu_vanguard_front_breaker }
+			}
 			add_army_tradition = 20
 		}
 	}
