@@ -43,6 +43,7 @@ on_startup = {
 	}
 	events = {
 		muslim_school_events.20 #Pick School
+		flavor_got.1 #Event for Gotland to select their mission tree
 		#flavor_fra.15000 #Make the French Revolution happen if starting in 1789
 	}
 	if = {
@@ -300,6 +301,20 @@ on_religion_change = {
 on_war_won = {
 	FROM = { country_event = { id = flavor_cri.6 } }
 	ROOT = { country_event = { id = tributary_events.32 } }
+	if = {
+		limit = {
+			has_country_flag = can_gain_legendary_pirates_flag
+			NOT = { has_ruler_flag = historical_pirate }
+			has_government_attribute = is_pirate_republic_reform
+			FROM = { total_development = ROOT }
+		}
+		random = {
+			chance = 5
+			country_event = {
+				id = pirates.25
+			}
+		}
+	}
 	
 	if = {
 		limit = {
@@ -374,12 +389,42 @@ on_war_won = {
 	}
 	if = {
 		limit = {
-			ROOT = {
-				religion = jewish
-				has_church_aspect = judaism_purim_teachings_aspect
+			ROOT = { 
+				tag = SWE
+				has_country_modifier = swe_vasa_leads_the_rebellion
+				is_subject = no
 			}
+			FROM = { tag = DAN }
 		}
-		add_church_power = 10
+		country_event = {
+			id = flavor_swe.111
+		}
+	}
+	if = {
+		limit = {
+			ROOT = { 
+				tag = SWE
+				has_country_modifier = swe_any_vasa_leads_the_rebellion
+				is_subject = no
+			}
+			FROM = { tag = DAN }
+		}
+		country_event = {
+			id = flavor_swe.105
+		}
+	}
+	if = {
+		limit = {
+			ROOT = { 
+				tag = SWE
+				has_country_flag = swe_declared_independence_war
+				is_subject = no
+			}
+			FROM = { tag = DAN }
+		}
+		country_event = {
+			id = flavor_swe.121
+		}
 	}
 	th_yama_on_war_won_effect = yes
 }
@@ -409,6 +454,15 @@ on_battle_won_country = {
 		ROOT = {
 			add_war_exhaustion = -0.05
 		}
+	}
+	count_won_battles_and_reward_at_end = {
+		counting_flag = teu_crusader_battle_counter
+		max_value = 20
+		effect = "
+			country_event = {
+				id = flavor_teu.12
+			}
+		"
 	}
 	th_count_won_battles_and_reward_at_end = {
 		counting_flag = scr_battle_counter_ready
@@ -507,6 +561,21 @@ on_battle_won_unit = {
 					value = 1
 				}
 			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				has_government_attribute = winning_battles_increases_legitimacy
+			}
+			is_ruler_commanding_unit = yes
+		}
+		unit_owner = {
+			add_legitimacy = 0.5
+			add_devotion = 0.5
+			add_republican_tradition = 0.1
+			add_revolutionary_zeal = 0.1
+			add_absolutism = 0.1
 		}
 	}
 	if = {
@@ -746,6 +815,7 @@ on_siege_won_country = {
 		flavor_oir.5 # Oirats capture Beijing
 		flavor_lna.1 # Emerald Buddha
 		flavor_son.14 # Djenne surrenders to Songhai Trigger
+		flavor_teu.25 # Payback for the Hussite Wars
 	}
 	random_events = {
 		10 = army_professionalism_events.1 #City Sacked
@@ -812,11 +882,46 @@ on_new_monarch = {
 	succession_culture_religion_effect = yes
 	sheik_ul_islam_effect = yes
 	hab_remove_mission_mods_if_not_emperor_effect = yes
+	if = {
+		limit = {
+			is_or_was_tag = {
+				tag = TEU
+			}
+			is_emperor = no
+			NOT = { tag = HLR }
+			has_country_modifier = teu_pru_imperial_crown
+		}
+		remove_country_modifier = teu_pru_imperial_crown
+	}
 	thu_remain_von_wettin_effect = yes
 	ladislaus_postumus_union_effect = yes
 	if = {
 		limit = { has_any_heir_cult_active = yes }
 		remove_heir_cult = yes
+	}
+	if = {
+		limit = { 
+			has_government_attribute = kalmar_union_succession
+			has_regency = no
+			has_consort_regency = no
+		}
+		if = {
+			limit = { has_country_flag = dan_new_elected_ruler }
+			clr_country_flag = dan_new_elected_ruler
+		}
+		else = {
+			country_event = {
+				id = kalmar_union_events.1	# A new king of the Kalmar Union
+			}
+		}
+	}
+	if = {
+		limit = { has_government_attribute = absolutism_reduction_on_ruler_death }
+		add_absolutism = -60
+		set_variable = {
+			which = election_term
+			value = 1
+		}
 	}
 	if = {
 		limit = {
@@ -875,6 +980,7 @@ on_new_monarch = {
 		flavor_daimyo.4			#Shiba Yoshikado
 		flavor_fra.9000			# François Villon
 		flavor_fuj.106			# Ruler becomes immediately a leveling general
+		flavor_sca.2			# Education Focus of the new Ruler
 		th_oni_succession.1		# Oni Succession mechanic
 	}
 	random_events = {
@@ -930,29 +1036,17 @@ on_monarch_death = {
 		limit = { tag = AYU }
 		country_event = { id = flavor_suk.1 }		 			
 	}
+	if = {
+		limit = { tag = GOT }
+		country_event = { id = flavor_got.37 }
+	}
+	if = {
+		limit = { has_government_attribute = no_stability_loss_on_monarch_death }
+		add_stability = 1
+	}
 	burgundian_inheritance_start_effect = yes
 	ladislaus_postumus_king_died_effect = yes
-	if = {
-		limit = {
-			OR = {
-				has_country_flag = no_stab_hit_on_ruler_death
-				has_a_primary_cult_selected = yes
-			}
-			OR = {
-				government = tribal
-				government = monarchy
-			}
-			NOT = { has_ruler_flag = no_stab_bonus_on_ascending_the_throne }
-			NOT = { has_heir_flag = no_stab_bonus_on_ascending_the_throne }
-		}
-		add_stability = 1
-		if = {
-			limit = {
-				NOT = { heir_age = 15 }
-			}
-			set_heir_flag = no_stab_bonus_on_ascending_the_throne
-		}
-	}
+	joan_de_trastamara_king_died_effect = yes
 	events = {
 		flavor_wal.1 # Vlad the Impaler. So that he doesn't try to usurp his father.
 		flavor_nav.4 # Navarra succession event
@@ -989,7 +1083,7 @@ on_death_election = {
 	}
 	if = {
 		limit = {
-			has_reform = pirate_republic_reform
+			has_government_attribute = is_pirate_republic_reform
 		}
 		set_country_flag = pirate_death_election
 		country_event = { id = pirates.1 }
@@ -1005,8 +1099,30 @@ on_death_election = {
 	}
 }
 
+# country : no heir in theocracy
+on_heir_needed_theocracy = {
+	events = {
+		flavor_sca.2
+		theocracy.1
+		touhou_theocracy.1
+	}
+}
+
 # province
 on_adm_development = {
+	if = {
+		limit = { owner = { has_country_flag = enable_supplemental_development_flag } }
+		random_list = {
+			20 = { add_base_tax = 1 }
+			80 = { }
+		}
+	}
+	if = {
+		limit = { 
+			owner = { has_country_modifier = lit_increased_dev_modifier }
+		}
+		add_base_tax = 1 
+	}
 	if = {
 		limit = {
 			owner = {
@@ -1098,6 +1214,19 @@ on_adm_development = {
 # province
 on_dip_development = {
 	if = {
+		limit = { owner = { has_country_flag = enable_supplemental_development_flag } }
+		random_list = {
+			20 = { add_base_production = 1 }
+			80 = { }
+		}
+	}
+	if = {
+		limit = { 
+			owner = { has_country_modifier = lit_increased_dev_modifier }
+		}
+		add_base_production = 1 
+	}
+	if = {
 		limit = {
 			owner = {
 				OR = {
@@ -1188,6 +1317,19 @@ on_dip_development = {
 # province
 on_mil_development = {
 	if = {
+		limit = { owner = { has_country_flag = enable_supplemental_development_flag } }
+		random_list = {
+			20 = { add_base_manpower = 1 }
+			80 = { }
+		}
+	}
+	if = {
+		limit = { 
+			owner = { has_country_modifier = lit_increased_dev_modifier }
+		}
+		add_base_manpower = 1 
+	}
+	if = {
 		limit = {
 			owner = {
 				OR = {
@@ -1275,6 +1417,12 @@ on_mil_development = {
 	th_wandering_state_on_development = { base_type = base_manpower }
 }
 
+
+on_monthly_pulse = {
+}
+on_yearly_pulse = {
+}
+
 on_thri_yearly_pulse_4 = {
 	random_events = {
 		#Low Mandate Events
@@ -1310,15 +1458,357 @@ on_four_year_pulse_4 = {
 
 on_five_year_pulse = {
 	random_events = {
+
+		# Innovativeness Events
+
+		100 = innovativeness_events.1
+
+		# Aristocracy 		13  (8g 5b)
+		100 = ideagroups.100
+		100 = ideagroups.101
+		100 = ideagroups.102
+		100 = ideagroups.103
+		100 = ideagroups.104
+		100 = ideagroups.105
+		100 = ideagroups.106
+		100 = ideagroups.107
+		100 = ideagroups.108
+		100 = ideagroups.109
+		100 = ideagroups.110
+		100 = ideagroups.111
+		100 = ideagroups.112
+
+
+		# Plutocracy 		19 (12g 7b)
+		100 = ideagroups.200
+		100 = ideagroups.201
+		100 = ideagroups.202
+		100 = ideagroups.203
+		100 = ideagroups.204
+		100 = ideagroups.205
+		100 = ideagroups.206
+		100 = ideagroups.207
+		100 = ideagroups.208
+		100 = ideagroups.209
+		100 = ideagroups.210
+		100 = ideagroups.211
+		100 = ideagroups.212
+		100 = ideagroups.213
+		100 = ideagroups.214
+		100 = ideagroups.215
+		100 = ideagroups.216
+		100 = ideagroups.217
+		100 = ideagroups.218
+
+		# Innovativenes		11 (7g 4b)
+		100 = ideagroups.300
+		100 = ideagroups.301
+		100 = ideagroups.302
+		100 = ideagroups.303
+		100 = ideagroups.304
+		100 = ideagroups.305
+		100 = ideagroups.306
+		100 = ideagroups.307
+		100 = ideagroups.308
+		100 = ideagroups.309
+		100 = ideagroups.310
+
+		# Religious		18 (11g 7b)
+		100 = ideagroups.400
+		100 = ideagroups.401
+		100 = ideagroups.402
+		100 = ideagroups.403
+		100 = ideagroups.404
+		100 = ideagroups.405
+		100 = ideagroups.406
+		100 = ideagroups.407
+		100 = ideagroups.408
+		100 = ideagroups.409
+		100 = ideagroups.410
+		100 = ideagroups.411
+		100 = ideagroups.412
+		100 = ideagroups.413
+		100 = ideagroups.414
+		100 = ideagroups.415
+		100 = ideagroups.416
+		100 = ideagroups.417
+
+
+		# Spy			9 (6g 3b)
+		100 = ideagroups.500
+		100 = ideagroups.501
+		100 = ideagroups.502
+		100 = ideagroups.503
+		100 = ideagroups.504
+		100 = ideagroups.505
+		100 = ideagroups.506
+		100 = ideagroups.507
+		100 = ideagroups.508
+
+
+		# Diplomatic		9 (6g 3b)
+		100 = ideagroups.600
+		100 = ideagroups.601
+		100 = ideagroups.602
+		100 = ideagroups.603
+		100 = ideagroups.604
+		100 = ideagroups.605
+		100 = ideagroups.606
+		100 = ideagroups.607
+		100 = ideagroups.608
+
+
+		# Offensive 		14 (9g 5b)
+		100 = ideagroups.700
+		100 = ideagroups.701
+		100 = ideagroups.702
+		100 = ideagroups.703
+		100 = ideagroups.704
+		100 = ideagroups.705
+		100 = ideagroups.706
+		100 = ideagroups.707
+		100 = ideagroups.708
+		100 = ideagroups.709
+		100 = ideagroups.710
+		100 = ideagroups.711
+		100 = ideagroups.712
+		100 = ideagroups.713
+
+
+		# Defensive		11 (5g 6b)
+		100 = ideagroups.800
+		100 = ideagroups.801
+		100 = ideagroups.802
+		100 = ideagroups.803
+		100 = ideagroups.804
+		100 = ideagroups.805
+		100 = ideagroups.806
+		100 = ideagroups.807
+		100 = ideagroups.808
+		100 = ideagroups.809
+		100 = ideagroups.810
+		100 = ideagroups.811
+		100 = ideagroups.812
+		100 = ideagroups.813
+		100 = ideagroups.814
+		100 = ideagroups.815
+
+
+		# Trade			6 (7g 4b)
+		100 = ideagroups.900
+		100 = ideagroups.901
+		100 = ideagroups.902
+		100 = ideagroups.903
+		100 = ideagroups.904
+		100 = ideagroups.905
+		100 = ideagroups.906
+		100 = ideagroups.907
+		100 = ideagroups.908
+		100 = ideagroups.909
+		100 = ideagroups.910
+
+		# Maritime			22 (14g 8b)
+		100 = ideagroups.1000
+		100 = ideagroups.1001
+		100 = ideagroups.1002
+		100 = ideagroups.1003
+		100 = ideagroups.1004
+		100 = ideagroups.1005
+		100 = ideagroups.1006
+		100 = ideagroups.1007
+		100 = ideagroups.1008
+		100 = ideagroups.1009
+		100 = ideagroups.1010
+		100 = ideagroups.1011
+		100 = ideagroups.1012
+		100 = ideagroups.1013
+		100 = ideagroups.1014
+		100 = ideagroups.1015
+		100 = ideagroups.1016
+		100 = ideagroups.1017
+		100 = ideagroups.1018
+		100 = ideagroups.1019
+		100 = ideagroups.1020
+		100 = ideagroups.1021
+
+		# Economic		11 (7g 4b)
+		100 = ideagroups.1100
+		100 = ideagroups.1101
+		100 = ideagroups.1102
+		100 = ideagroups.1103
+		100 = ideagroups.1104
+		100 = ideagroups.1105
+		100 = ideagroups.1106
+		100 = ideagroups.1107
+		100 = ideagroups.1108
+		100 = ideagroups.1109
+		100 = ideagroups.1110
+
+		# Exploration		11 (7g 4b)
+		100 = ideagroups.1200
+		100 = ideagroups.1201
+		100 = ideagroups.1202
+		100 = ideagroups.1203
+		100 = ideagroups.1204
+		100 = ideagroups.1205
+		100 = ideagroups.1206
+		100 = ideagroups.1207
+		100 = ideagroups.1208
+		100 = ideagroups.1209
+		100 = ideagroups.1210
+
+		# Quality		11 (7g 4b)
+		100 = ideagroups.1300
+		100 = ideagroups.1301
+		100 = ideagroups.1302
+		100 = ideagroups.1303
+		100 = ideagroups.1304
+		100 = ideagroups.1305
+		100 = ideagroups.1306
+		100 = ideagroups.1307
+		100 = ideagroups.1308
+		100 = ideagroups.1309
+		100 = ideagroups.1310
+
+		# Quantity		11 (7g 4b)
+		100 = ideagroups.1400
+		100 = ideagroups.1401
+		100 = ideagroups.1402
+		100 = ideagroups.1403
+		100 = ideagroups.1404
+		100 = ideagroups.1405
+		100 = ideagroups.1406
+		100 = ideagroups.1407
+		100 = ideagroups.1408
+		100 = ideagroups.1409
+		100 = ideagroups.1410
+
+
+		# Expansion		11 (7g 4b)
+		100 = ideagroups.1500
+		100 = ideagroups.1501
+		100 = ideagroups.1502
+		100 = ideagroups.1503
+		100 = ideagroups.1504
+		100 = ideagroups.1505
+		100 = ideagroups.1506
+		100 = ideagroups.1507
+		100 = ideagroups.1508
+		100 = ideagroups.1509
+		100 = ideagroups.1510
+
+		# Administrative	3 (1g 2b)
+		100 = ideagroups.1600
+		100 = ideagroups.1601
+		100 = ideagroups.1602
+		100 = ideagroups.1603
+		100 = ideagroups.1604
+		100 = ideagroups.1605
+		100 = ideagroups.1606
+		100 = ideagroups.1607
+		100 = ideagroups.1608
+		100 = ideagroups.1609
+		100 = ideagroups.1610
+
+		# Naval		11 (7g 4b)
+		100 = ideagroups.1700
+		100 = ideagroups.1701
+		100 = ideagroups.1702
+		100 = ideagroups.1703
+		100 = ideagroups.1704
+		100 = ideagroups.1705
+		100 = ideagroups.1706
+		100 = ideagroups.1707
+		100 = ideagroups.1708
+		100 = ideagroups.1709
+		100 = ideagroups.1710
+
+		# Influence		11 (7g 4b)
+		100 = ideagroups.1800
+		100 = ideagroups.1801
+		100 = ideagroups.1802
+		100 = ideagroups.1803
+		100 = ideagroups.1804
+		100 = ideagroups.1805
+		100 = ideagroups.1806
+		100 = ideagroups.1807
+		100 = ideagroups.1808
+		100 = ideagroups.1809
+		100 = ideagroups.1810
+
+		# Humanist		11 (7g 4b)
+		100 = ideagroups.1900
+		100 = ideagroups.1901
+		100 = ideagroups.1902
+		100 = ideagroups.1903
+		100 = ideagroups.1904
+		100 = ideagroups.1905
+		100 = ideagroups.1906
+		100 = ideagroups.1907
+		100 = ideagroups.1908
+		100 = ideagroups.1909
+		100 = ideagroups.1910
+
+		# Horde Ideas		10 (8g 2b)
+		100 = ideagroups.1922
+		100 = ideagroups.1923
+		100 = ideagroups.1924
+		100 = ideagroups.1925
+		100 = ideagroups.1926
+		100 = ideagroups.1927
+		100 = ideagroups.1928
+		100 = ideagroups.1929
+		100 = ideagroups.1930
+		100 = ideagroups.1931
+		
+		#Theocracy Ideas		11 (9g 2b)
+		100 = ideagroups.1911
+		100 = ideagroups.1912
+		100 = ideagroups.1913
+		100 = ideagroups.1914
+		100 = ideagroups.1915
+		100 = ideagroups.1916
+		100 = ideagroups.1917
+		100 = ideagroups.1918
+		100 = ideagroups.1919
+		100 = ideagroups.1920
+		100 = ideagroups.1921
+
+		# Indigenous		10 (6g 4b)
+		100 = ideagroups.1932
+		100 = ideagroups.1933
+		100 = ideagroups.1934
+		100 = ideagroups.1935
+		100 = ideagroups.1936
+		100 = ideagroups.1937
+		100 = ideagroups.1938
+		100 = ideagroups.1939
+		100 = ideagroups.1940
+		100 = ideagroups.1941
+
+		# Kappa events
 		100 = flavor_kpp.20
 		100 = flavor_kpp.21
 		100 = flavor_kpp.22
 		100 = flavor_kpp.23
+		
+		1000 = 0
+	}
+
+	events = {
+		seven_cities_events.1000 #Clearing of Seven Cities Hunt when goal is no longer possible
 	}
 }
 
 on_five_year_pulse_3 = {
 	random_events = {
+		100 = estate_regency_events.2
+		100 = estate_regency_events.3
+		100 = estate_regency_events.4
+		100 = estate_regency_events.5
+		100 = estate_regency_events.6
+		100 = estate_regency_events.7
+		100 = estate_regency_events.9
 		100 = propagate_religion_events.1
 		100 = propagate_religion_events.2
 		100 = propagate_religion_events.3
@@ -1382,7 +1872,7 @@ on_province_religion_converted = {
 on_province_culture_converted = {
 	on_province_culture_converted_estate_privilges_effect = yes
 	judaism_on_province_culture_converted_effect = yes
-	kongo_on_province_change_culture_or_change_owner_effect = yes
+	imperial_modifiers_on_province_change_culture_or_change_owner_effect = yes
 	th_on_province_culture_change_effect = yes
 }
 
@@ -1392,54 +1882,7 @@ on_province_owner_change = {
 	events = {
 		japan.1
 	}
-	
-	if = {
-		limit = {
-			OR = {
-				has_province_modifier = wine_bonus_prod
-				has_province_modifier = grain_bonus_prod
-			}
-			FROM = { has_reform = monastic_breweries_reform }
-			NOT = { owner = { has_reform = monastic_breweries_reform } }
-		}
-		remove_province_modifier = wine_bonus_prod
-		remove_province_modifier = grain_bonus_prod
-	}
-	
-	if = {
-		limit = {
-			NOT = {
-				OR = {
-					has_province_modifier = wine_bonus_prod
-					has_province_modifier = grain_bonus_prod
-				}
-			}
-			owner = { has_reform = monastic_breweries_reform }
-			NOT = { FROM = { has_reform = monastic_breweries_reform } }
-		}
-		hidden_effect = {
-			if = {
-				limit = {
-					trade_goods = wine
-				}
-				add_province_modifier = { 
-					name = wine_bonus_prod
-					duration = -1
-					hidden = yes
-				}
-			}
-			if = {
-				limit = {
-					trade_goods = grain
-				}
-				add_province_modifier = { 
-					name = grain_bonus_prod
-					duration = -1
-					hidden = yes
-				}
-			}
-		}
-	}
+	on_province_owner_change_government_effect = yes
 
 	if = {
 		limit = {
@@ -1459,7 +1902,7 @@ on_province_owner_change = {
 	}
 	on_province_owner_change_estate_privileges_effect = yes
 	judaism_on_province_change_religion_or_change_owner_effect = yes
-	kongo_on_province_change_culture_or_change_owner_effect = yes
+	imperial_modifiers_on_province_change_culture_or_change_owner_effect = yes
 	th_on_province_owner_change_effect = yes
 	th_on_province_owner_change_estate_privileges_effect = yes
 	
@@ -1500,34 +1943,6 @@ on_province_owner_change = {
 	if = {
 		limit = {
 			owner = {
-				religion = ROOT
-				culture_group = ROOT
-				has_estate_privilege = estate_church_one_faith_one_culture
-			}
-			NOT = { has_province_modifier = estate_church_united_faith_and_culture }
-		}
-		add_province_modifier = {
-			name = estate_church_united_faith_and_culture
-			duration = -1
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				NOT = { culture_group = ROOT }
-				has_estate_privilege = estate_church_one_faith_one_culture
-			}
-			has_owner_accepted_culture = no	#Com from today to Com to the future: please push this line out of the owner scope. Thanks.
-			NOT = { has_province_modifier = estate_church_false_culture }
-		}
-		add_province_modifier = {
-			name = estate_church_false_culture
-			duration = -1
-		}
-	}
-	if = {
-		limit = {
-			owner = {
 				has_country_modifier = son_fetishism_as_secondary_religion
 			}
 			religion = shamanism
@@ -1549,6 +1964,20 @@ on_province_owner_change = {
 		}
 		remove_country_modifier = third_temple_country_modifier
 	}
+	if = {
+		limit = {
+			owner = {
+				has_country_modifier = son_fetishism_as_secondary_religion
+			}
+			religion = shamanism
+			NOT = { has_province_modifier = son_fetishism_as_secondary_religion_province }
+		}
+		add_province_modifier = {
+			name = son_fetishism_as_secondary_religion_province
+			duration = -1
+			desc = son_fetishism_as_secondary_religion_province_desc
+		}
+	}
 	else_if = {
 		limit = {
 			OR = {
@@ -1567,60 +1996,70 @@ on_province_owner_change = {
 
 # country
 on_harmonized_Touhou = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.1
 	}
 }
 on_harmonized_th_hakureishinto = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.2
 	}
 }
 on_harmonized_th_moriyashinto = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.3
 	}
 }
 on_harmonized_th_taoist = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.4
 	}
 }
 on_harmonized_eastern = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.5
 	}
 }
 on_harmonized_th_oldhakurei = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.6
 	}
 }
 on_harmonized_th_shinkism = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.7
 	}
 }
 on_harmonized_th_christian = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.8
 	}
 }
 on_harmonized_th_lunarian_religion = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.9
 	}
 }
 on_harmonized_lunarian_religion_g = {
+	on_harmonized_effect = yes
 	on_harmonized_religion_estate_privileges_effect = yes
 	events = {
 		th_confucian_events.10
@@ -1631,32 +2070,49 @@ on_harmonized_lunarian_religion_g = {
 on_mercenary_recruited = {
 	if = {
 		limit = {
+			FROM = { has_not_free_mercs_trait = yes }
+			is_not_free_merc_company = yes
 			OR = {
 				FROM = { NOT = { has_country_flag = oyo_cavalry_do_not_consume_ap } }
 				ROOT = { NOT = { mercenary_company = merc_oyo_cavalry } }
 			}
-			th_is_not_free_merc_company = yes
-			NOT = { has_country_flag = th_pay_mil_instead_of_prof }
-			NOT = { has_country_flag = th_free_merc_companies }
 		}
-		FROM = {
-			if = {
-				limit = {
-					has_country_flag = th_pay_mil_instead_of_prof
-				}
+		if = {
+			limit = {
+				FROM = { has_country_flag = th_pay_mil_instead_of_prof }
+			}
+			FROM = {
 				add_mil_power = -150
 			}
-			else_if = {
-				limit = {
-					has_country_flag = th_merc_eighty_percent_professionalism_cost
+		}
+		else_if = {
+			limit = {
+				FROM = { 
+					OR = {
+						has_country_flag = fifty_percent_merc_army_professionalism_cost 
+						has_country_modifier = pol_cheap_ap_mercs_modifier
+					}
 				}
+			}
+			FROM = {
+				add_army_professionalism = -0.025
+			}
+		}
+		else_if = {
+			limit = {
+				FROM = { has_country_flag = th_merc_eighty_percent_professionalism_cost }
+			}
+			FROM = {
 				add_army_professionalism = -0.04
 			}
-			else = {
+		}
+		else = {
+			FROM = {
 				add_army_professionalism = -0.05
 			}
 		}
 	}
+	
 	if = {
 		limit = {
 			FROM = {
@@ -1727,7 +2183,7 @@ on_remove_pasha = {
 on_culture_promoted = {
 	on_culture_promoted_estate_privileges_effect = yes
 	judaism_on_culture_country_effect = yes
-	kongo_on_culture_country_effect = yes
+	imperial_modifiers_on_culture_country_effect = yes
 	if = {
 		limit = {
 			has_government_attribute = uses_purified_land
@@ -1765,31 +2221,8 @@ on_culture_promoted = {
 on_culture_demoted = {
 	on_culture_demoted_estate_privileges_effect = yes
 	judaism_on_culture_country_effect = yes
-	kongo_on_culture_country_effect = yes
-	if = {
-		limit = {
-			has_country_modifier = plc_polish_lithuanian_union
-			OR = {
-				AND = {
-					primary_culture = polish
-					NOT = { accepted_culture = lithuanian }
-				}
-				AND = {
-					primary_culture = lithuanian
-					NOT = { accepted_culture = polish }
-				}
-				AND = {
-					OR = {
-						NOT = { accepted_culture = lithuanian }
-						NOT = { accepted_culture = polish }
-					}
-					NOT = { primary_culture = polish }
-					NOT = { primary_culture = lithuanian }
-				}
-			}
-		}
-		remove_country_modifier = plc_polish_lithuanian_union
-	}
+	imperial_modifiers_on_culture_country_effect = yes
+	on_culture_demoted_effect = yes
 	if = {
 		limit = {
 			has_government_attribute = uses_purified_land
@@ -1827,19 +2260,7 @@ on_culture_demoted = {
 on_primary_culture_changed = {
 	on_primary_culture_changed_privileges_effect = yes
 	judaism_on_culture_country_effect = yes
-	if = {
-		limit = {
-			has_country_modifier = kon_south_african_hegemony
-			NOT = { culture_group = kongo_group }
-		}
-		remove_country_modifier = kon_south_african_hegemony
-		every_owned_province = {
-			limit = {
-				has_province_modifier = kon_south_african_hegemony_province
-			}
-			remove_province_modifier = kon_south_african_hegemony_province
-		}
-	}
+	imperial_modifiers_on_primary_culture_change_effect = yes
 	if = {
 		limit = {
 			has_government_attribute = uses_purified_land
@@ -1928,6 +2349,7 @@ on_dependency_lost = {
 
 # ROOT = New vassal, FROM = Overlord
 on_create_vassal = {
+	on_religion_change_estate_privileges_effect = yes
 	if = {
 		limit = {
 			FROM = {
@@ -2012,6 +2434,25 @@ on_raid_coast = {
 	}
 	if = {
 		limit = {
+			has_government_attribute = raiding_increases_pp
+		}
+		add_power_projection = {
+			type = high_sea_power_projection
+			amount = 1
+		}
+	}
+	if = {
+		limit = {
+			has_mission = dan_raid_the_north_sea
+			NOT = { mission_completed = dan_raid_the_north_sea } 
+		}
+		change_variable = {
+			which = num_of_raided_coasts
+			value = 1
+		}
+	}
+	if = {
+		limit = {
 			has_estate = estate_fairy_pirates
 		}
 		add_estate_loyalty = {
@@ -2086,6 +2527,10 @@ on_country_released = {
 		capital_scope = {
 			change_religion = FROM
 		}
+	}
+	if = {
+		limit = { NOT = { is_year = 1445 } }
+		set_country_flag = released_in_1444
 	}
 	if = {
 		limit = {
@@ -2247,7 +2692,18 @@ on_colonist_boosting_colony = {
 
 on_institution_embracement = {
 	if = {
+		limit = {
+			has_government_attribute = monarch_power_on_institutions
+		}
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+	}
+	if = {
 		limit = { has_government_attribute = th_innovativeness_from_embracing_institutions }
 		change_innovativeness = 10
 	}
+}
+
+on_new_age = {
 }
