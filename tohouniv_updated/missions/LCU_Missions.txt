@@ -94,17 +94,14 @@ lcu_slot1_branch = {
 				owned_by = ROOT
 				type = all
 			}
+			owns = 5330
+			owns = 5333
 		}
-		effect = {				
-			add_stability = 1
-			5330 = {
-				change_province_name = "Rei'sen Laboratory"
+		effect = {
+			country_event = {
+				id = flavor_lcu.18
 			}
-
-			5333 = {
-				change_province_name = "Junko's Grave"
-			}
-			
+			5330 = { change_province_name = "Rei'sen Laboratory" }
 			Northern_moon_state = {
 				add_local_autonomy = -25
 			}
@@ -139,7 +136,7 @@ lcu_slot1_branch = {
 	}
 
 	LCU_lunarian_invasion = {
-		icon = mission_touhou_yuuka_garden2
+		icon = mission_touhou_lunarian_invasion
 		required_missions = { LCU_secure_the_moon }
 		position = 4
 		provinces_to_highlight = {
@@ -173,7 +170,9 @@ lcu_slot1_branch = {
 		icon = mission_eirin_and_kaguya
 		required_missions = { LCU_lunarian_invasion }
 		position = 5
-
+		provinces_to_highlight = {
+			owned_by = EIT
+		}
 		trigger = {
 			OR = {
 				reverse_has_opinion = {
@@ -195,21 +194,25 @@ lcu_slot1_branch = {
 			custom_tooltip = LCU_old_ties.tooltip
 			hidden_effect = {
 				if = {
-					limit = { exists = EIT reverse_has_opinion = { who = EIT value = 100 } }
+					limit = { 
+						exists = EIT 
+						reverse_has_opinion = { 
+							who = EIT 
+							value = 100 
+						} 
+					}
 					country_event = { id = flavor_lcu.22 }
-				}
-	
+				}	
 				else_if = {
 					limit = { 
-					exists = EIT 
-					has_spy_network_in = { who = EIT value = 50 } 
-					army_size = EIT
+						exists = EIT 
+						has_spy_network_in = { who = EIT value = 50 } 
+						army_size = EIT
 					}
 					country_event = {
 						id = flavor_lcu.101
 					}
 				}	
-	
 				else = {
 					Eientei_state = {
 						limit = {
@@ -306,7 +309,7 @@ lcu_slot1_branch = {
 		}
 
 		effect = {
-			add_accepted_culture_or_dip_power = {
+			lcu_accept_culture = {
 				culture = Netherlandish
 			}
 			country_event = { id = flavor_lcu.11 }
@@ -648,24 +651,24 @@ lcu_slot2_branch = {
 			}
 		}
 		trigger = {
-			if = {
-				limit = {
-					has_country_flag = lcu_counts_battles
-				}
-				custom_trigger_tooltip = {
-					tooltip = LCU_purified_gensokyo_ct
-					check_variable = {
-						which = lcu_battle_counter
-						value = 15
-					}
-				}
-			}
-			else = {
-				custom_trigger_tooltip = {
-					tooltip = LCU_purified_gensokyo_tt
-					always = no
-				}
-			}
+			#if = {
+			#	limit = {
+			#		has_country_flag = lcu_counts_battles
+			#	}
+			#	custom_trigger_tooltip = {
+			#		tooltip = LCU_purified_gensokyo_ct
+			#		check_variable = {
+			#			which = lcu_battle_counter
+			#			value = 15
+			#		}
+			#	}
+			#}
+			#else = {
+			#	custom_trigger_tooltip = {
+			#		tooltip = LCU_purified_gensokyo_tt
+			#		always = no
+			#	}
+			#}
 			calc_true_if = {
 				all_province = {
 					th_gensokyo_or_moon_continent = yes
@@ -673,10 +676,22 @@ lcu_slot2_branch = {
 					culture = ROOT
 				}
 				amount = 50
-			}	
+			}
+			religion = th_lunarian_religion
 		}
 		effect = {
-			custom_tooltip = lcu_purified_gensokyo_tooltip
+			if = {
+				limit = {
+					has_dlc = "Common Sense"
+				}
+				custom_tooltip = lcu_purified_gensokyo_tooltip
+			}
+			else = {
+				add_country_modifier = {
+					name = lcu_lunarian_faith_dominance
+					duration = -1
+				}
+			}
 			set_country_flag = lcu_purified_gensokyo
 		}
 	}
@@ -773,37 +788,37 @@ lcu_slot3_branch = {
 	}
 	
 
-#	LCU_enlighten_mistresses = {
-#		icon = mission_yorihime_and_toyohime
-#		required_missions = { LCU_reisen }
-#		position = 4
-#		trigger = {
-#			if = {
-#				limit = {
-#					has_dlc = "Cradle of Civilization"
-#				}
-#				army_professionalism = 1
-#			}
-#						
-#			else = {
-#				total_development = 1000
-#			}
-#		}
-#		effect = {
-#			th_increase_ruler_adm_stat = {
-#				adm = 1
-#			}
-#			th_increase_ruler_mil_stat = {
-#				mil = 1
-#			}
-#			th_increase_heir_adm_stat = {
-#				adm = 1
-#			}
-#			th_increase_heir_dip_stat = {
-#				dip = 1
-#			}
-#		}
-#	}
+	#LCU_enlighten_mistresses = {
+	#	icon = mission_yorihime_and_toyohime
+	#	required_missions = { LCU_reisen }
+	#	position = 4
+	#	trigger = {
+	#		if = {
+	#			limit = {
+	#				has_dlc = "Cradle of Civilization"
+	#			}
+	#			army_professionalism = 1
+	#		}
+	#					
+	#		else = {
+	#			total_development = 1000
+	#		}
+	#	}
+	#	effect = {
+	#		th_increase_ruler_adm_stat = {
+	#			adm = 1
+	#		}
+	#		th_increase_ruler_mil_stat = {
+	#			mil = 1
+	#		}
+	#		th_increase_heir_adm_stat = {
+	#			adm = 1
+	#		}
+	#		th_increase_heir_dip_stat = {
+	#			dip = 1
+	#		}
+	#	}
+	#}
 
 	LCU_lunarian_science = {
 		icon = Compulsory_Education
@@ -855,13 +870,30 @@ lcu_slot3_branch = {
 		required_missions = {  }
 		position = 8
 		provinces_to_highlight = {
-			province_id = 4991
+			OR = {
+				AND = {
+					OR = {
+						province_id = 5112
+						province_id = 5115
+						province_id = 4991
+					}
+					OR = {
+						NOT = { owned_by = ROOT }
+						NOT = { country_or_non_sovereign_subject_holds = ROOT}
+						NOT = { is_core = ROOT }
+					}
+				}
+				AND = {
+					region = moon_region
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
 		}
 		trigger = {
-			total_development = 650
-			4991 = {
-				country_or_non_sovereign_subject_holds = ROOT
+			th_is_or_was_tag = {
+				tag = LEM
 			}
+			total_development = 650
 		}
 		effect = {			
 			add_country_modifier = {
@@ -885,28 +917,25 @@ lcu_slot3_branch = {
 		position = 10
 
 		trigger = {
-			OR = {
-				if = {
-					limit = {has_dlc = Emperor}
-					is_hegemon = yes
-				}
-				else = {
-					OR = {
-						monthly_income = 1000
-						num_of_heavy_ship = 250
-						army_size = 1000
-					}
-				}
-
+			if = {
+				limit = { has_dlc = "Emperor" }
+				is_hegemon = yes
 			}
-
+			else = {
+				OR = {
+					monthly_income = 1000
+					num_of_heavy_ship = 250
+					army_size = 1000
+				}
+			}
 		}
 
 		effect = {
-			add_country_modifier = {
-				name = "lcu_world_domination_modifier"
-				duration = -1
+			add_power_projection = {
+				type = lcu_world_domination
+				amount = 100
 			}
+			custom_tooltip = th_permanent_power_projection_tooltip
 		}
 	}		
 
@@ -939,54 +968,45 @@ lcu_slot4_branch = {
 			NOT = { province_has_center_of_trade_of_level = 2}
 		}	
 		trigger = {
-			if = {
-				limit = {
-					has_dlc = "Dharma"
-				}
-				5320 = {
-					country_or_non_sovereign_subject_holds = ROOT
+			5320 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				if = {
+					limit = { has_dlc = "Dharma" }
 					province_has_center_of_trade_of_level = 2
 				}
-	
-				5316 = {
-					country_or_non_sovereign_subject_holds = ROOT
-					province_has_center_of_trade_of_level = 2
-				}
-	
-				5330 = {
-					country_or_non_sovereign_subject_holds = ROOT
-					province_has_center_of_trade_of_level = 2
-				}
-	
-				5327 = {
-					country_or_non_sovereign_subject_holds = ROOT
-					province_has_center_of_trade_of_level = 2
-				}
-				treasury = 500
-			}	
-			else = {
-				treasury = 1500
 			}
-		
+
+			5316 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				if = {
+					limit = { has_dlc = "Dharma" }
+					province_has_center_of_trade_of_level = 2
+				}
+			}
+
+			5330 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				if = {
+					limit = { has_dlc = "Dharma" }
+					province_has_center_of_trade_of_level = 2
+				}
+			}
+
+			5327 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				if = {
+					limit = { has_dlc = "Dharma" }
+					province_has_center_of_trade_of_level = 2
+				}
+			}
+			treasury = 500		
 		}
 		effect = {
-			custom_tooltip = LCU_reestablish_our_trade.tooltip
-			hidden_effect = {
-				add_treasury = -500
-				5320 = {
-					add_building = stock_exchange					
-				}
-				5316 = {
-					add_building = stock_exchange
-				}
-				5330 = {
-					add_building = stock_exchange
-				}
-				5327 = {
-					add_building = stock_exchange
-				}	
-			}
-					
+			add_treasury = -500
+			5320 = { add_building = stock_exchange }
+			5316 = { add_building = stock_exchange }
+			5330 = { add_building = stock_exchange }
+			5327 = { add_building = stock_exchange }
 		}
 	}
 
@@ -1020,48 +1040,19 @@ lcu_slot4_branch = {
 		}
 		effect = {
 			custom_tooltip = LCU_build_manufactories.tooltip
+			hidden_effect = {
+				moon_continent = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+						has_manufactory_trigger = yes
+					}
+					add_base_production = 1
+				}
+			}
 			add_country_modifier = {
 				name = lcu_hightech_production
 				duration = 7300
 			}
-			hidden_effect = {
-				Western_moon_state = {
-					limit = {
-						country_or_non_sovereign_subject_holds = ROOT
-						has_manufactory_trigger = yes
-					}
-					add_base_production = 1
-				}
-				Southern_moon_state = {
-					limit = {
-						country_or_non_sovereign_subject_holds = ROOT
-						has_manufactory_trigger = yes
-					}
-					add_base_production = 1
-				}
-				Northern_moon_state = {
-					limit = {
-						country_or_non_sovereign_subject_holds = ROOT
-						has_manufactory_trigger = yes
-					}
-					add_base_production = 1
-				}
-				Hecetias_colony = {
-					limit = {
-						country_or_non_sovereign_subject_holds = ROOT
-						has_manufactory_trigger = yes
-					}
-					add_base_production = 1
-				}
-				Uncolonized_moon_state = {
-					limit = {
-						country_or_non_sovereign_subject_holds = ROOT
-						has_manufactory_trigger = yes
-					}
-					add_base_production = 1
-				}
-			}
-			
 		}	
 	}	
 	
@@ -1234,7 +1225,6 @@ lcu_slot4_branch = {
 			country_event = { id = flavor_lcu.15 }	
 		}
 	}
-
 }
 
 ### Slot 5
@@ -1378,32 +1368,53 @@ lcu_slot5_branch = {
 		}
 
 		effect = {
-#			custom_tooltip = LCU_outpost_in_india.tooltip
-			# Not sure if I want to purify THAT much provinces. Need opinion regarding this one
-#			hidden_effect = {
-#				south_lanka_area = {
-#					limit = {
-#						country_or_non_sovereign_subject_holds = ROOT
-#					}
-#					add_base_tax = -1
-#					add_base_production = -1
-#					add_base_manpower = -1
-#					add_devastation = 5
-#					change_culture = ROOT
-#					change_religion = ROOT
-#				}
-#				lanka_area = {
-#					limit = {
-#						country_or_non_sovereign_subject_holds = ROOT
-#					}
-#					add_base_tax = -1
-#					add_base_production = -1
-#					add_base_manpower = -1
-#					add_devastation = 5
-#					change_culture = ROOT
-#					change_religion = ROOT
-#				}
-#			}
+			custom_tooltip = LCU_outpost_in_india.tooltip
+			# Not sure if I want to purify THAT much provinces. Need opinion regarding this one^
+			# I say yes to this idea - Comrade
+			hidden_effect = {
+				south_lanka_area = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					add_base_tax = -1
+					add_base_production = -1
+					add_base_manpower = -1
+					add_devastation = 5
+					change_culture = ROOT
+					change_religion = ROOT
+					remove_province_modifier = th_impure_land
+					if = {
+						limit = {
+							owner = { has_government_attribute = uses_purified_land }
+						}
+						add_province_modifier = {
+							name = th_pure_land
+							duration = -1
+						}
+					}
+				}
+				lanka_area = {
+					limit = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					add_base_tax = -1
+					add_base_production = -1
+					add_base_manpower = -1
+					add_devastation = 5
+					change_culture = ROOT
+					change_religion = ROOT
+					remove_province_modifier = th_impure_land
+					if = {
+						limit = {
+							owner = { has_government_attribute = uses_purified_land }
+						}
+						add_province_modifier = {
+							name = th_pure_land
+							duration = -1
+						}
+					}
+				}
+			}
 			somaliland_area = {
 				limit = {
 					NOT = { is_permanent_claim = ROOT }
@@ -1470,66 +1481,66 @@ lcu_slot5_branch = {
 		}
 
 		effect = {
-#      Again, not sure if we want to PURIFY THAT MUCH, so I am commenting out this for now.
-
-#			custom_tooltip = LCU_outpost_in_africa.tooltip
-#			hidden_effect = {
-#				ajuuran_area = {
-#					limit = {
-#						country_or_non_sovereign_subject_holds = ROOT
-#					}
-#					add_base_tax = -1
-#					add_base_production = -1
-#					add_base_manpower = -1
-#					add_devastation = 5
-#					change_culture = ROOT
-#					change_religion = ROOT
-#				}
-#				majarteen_area = {
-#					limit = {
-#						country_or_non_sovereign_subject_holds = ROOT
-#					}
-#					add_base_tax = -1
-#					add_base_production = -1
-#					add_base_manpower = -1
-#					add_devastation = 5
-#					change_culture = ROOT
-#					change_religion = ROOT
-#				}
-#				mogadishu_area = {
-#					limit = {
-#						country_or_non_sovereign_subject_holds = ROOT
-#					}
-#					add_base_tax = -1
-#					add_base_production = -1
-#					add_base_manpower = -1
-#					add_devastation = 5
-#					change_culture = ROOT
-#					change_religion = ROOT
-#				}
-#				somaliland_area = {
-#					limit = {
-#						country_or_non_sovereign_subject_holds = ROOT
-#					}
-#					add_base_tax = -1
-#					add_base_production = -1
-#					add_base_manpower = -1
-#					add_devastation = 5
-#					change_culture = ROOT
-#					change_religion = ROOT
-#				}
-#				ogaden_area = {
-#					limit = {
-#						country_or_non_sovereign_subject_holds = ROOT
-#					}
-#					add_base_tax = -1
-#					add_base_production = -1
-#					add_base_manpower = -1
-#					add_devastation = 5
-#					change_culture = ROOT
-#					change_religion = ROOT
-#				}	
-#			}
+			#Again, not sure if we want to PURIFY THAT MUCH, so I am commenting out this for now.
+			#Yeah okay, that one is a little bit too much - Comrade
+			#custom_tooltip = LCU_outpost_in_africa.tooltip
+			#hidden_effect = {
+			#	ajuuran_area = {
+			#		limit = {
+			#			country_or_non_sovereign_subject_holds = ROOT
+			#		}
+			#		add_base_tax = -1
+			#		add_base_production = -1
+			#		add_base_manpower = -1
+			#		add_devastation = 5
+			#		change_culture = ROOT
+			#		change_religion = ROOT
+			#	}
+			#	majarteen_area = {
+			#		limit = {
+			#			country_or_non_sovereign_subject_holds = ROOT
+			#		}
+			#		add_base_tax = -1
+			#		add_base_production = -1
+			#		add_base_manpower = -1
+			#		add_devastation = 5
+			#		change_culture = ROOT
+			#		change_religion = ROOT
+			#	}
+			#	mogadishu_area = {
+			#		limit = {
+			#			country_or_non_sovereign_subject_holds = ROOT
+			#		}
+			#		add_base_tax = -1
+			#		add_base_production = -1
+			#		add_base_manpower = -1
+			#		add_devastation = 5
+			#		change_culture = ROOT
+			#		change_religion = ROOT
+			#	}
+			#	somaliland_area = {
+			#		limit = {
+			#			country_or_non_sovereign_subject_holds = ROOT
+			#		}
+			#		add_base_tax = -1
+			#		add_base_production = -1
+			#		add_base_manpower = -1
+			#		add_devastation = 5
+			#		change_culture = ROOT
+			#		change_religion = ROOT
+			#	}
+			#	ogaden_area = {
+			#		limit = {
+			#			country_or_non_sovereign_subject_holds = ROOT
+			#		}
+			#		add_base_tax = -1
+			#		add_base_production = -1
+			#		add_base_manpower = -1
+			#		add_devastation = 5
+			#		change_culture = ROOT
+			#		change_religion = ROOT
+			#	}	
+			#}
 			delta_area = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -1634,16 +1645,15 @@ lcu_slot5_branch = {
 		icon = mission_yorihime_declaration_of_war
 		required_missions = { LCU_discover_europe }
 		position = 8
+		provinces_to_highlight = {
+			continent = europe
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			has_discovered = ROOT
+		}
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {
-					region = iberia_region
-					region = italy_region
-					region = france_region
-					region = south_german_region
-             	 }
-
-				value = 1
+				continent = europe
+				value = 2
 			}			
 		}
 		effect = {
@@ -1713,9 +1723,5 @@ lcu_slot5_branch = {
 				duration = -1
 			}				
 		}
-	}	
-
-
-	
-
+	}
 }

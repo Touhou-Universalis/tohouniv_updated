@@ -26,7 +26,6 @@ th_lcu_send_in_lunarian_officers = {
 
 }
 
-
 th_lcu_demand_war_support = {
 	category = th_diplo_action
 	require_acceptance = no
@@ -135,6 +134,193 @@ th_lcu_demand_war_support = {
 	on_decline = {
 	}
 
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_lcu_lend_lunarian_weapons = {
+	category = th_diplo_action
+
+	require_acceptance = yes
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = LCU
+			}
+			has_country_flag = th_lcu_replace_them_with_lunarians
+		}
+		is_free_or_tributary_trigger = yes
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						technology_group = tech_gensokyan
+						technology_group = tech_lunarian
+						technology_group = tech_gensokyan_lunarian
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_lcu_lend_lunarian_weapons_tt
+				FROM = {
+					NOT = { technology_group = tech_gensokyan }
+					NOT = { technology_group = tech_lunarian }
+					NOT = { technology_group = tech_gensokyan_lunarian }
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { mil_power_cost = 100 }
+			}
+			mil_power_cost = 100
+		}
+		if = {
+			limit = {
+				FROM = { is_at_war = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_AT_WAR_TT
+				FROM = { is_at_war = no }
+			}
+		}
+		if = {
+			limit = {
+				is_at_war = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_NOT_AT_WAR_TT
+				is_at_war = no
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		mil_power_cost = 100
+		FROM = {
+			set_country_flag = th_lended_lunarian_weapons_from_@ROOT
+			country_event = {
+				id = th_diplo_events.55
+			}
+		}
+	}
+
+
+    ai_acceptance = {
+		add_entry = {
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = -0.25
+			multiply_variable = {
+				which = ai_value
+				value = -0.25
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 10
+			multiply_variable = {
+				which = ai_value
+				value = 10
+			}
+		}
+    }
 
 	ai_will_do = {
 		always = no
