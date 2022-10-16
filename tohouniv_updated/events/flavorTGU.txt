@@ -294,13 +294,22 @@ country_event = {
 			name = tgu_forgave_the_other_tengu
 			duration = -1
 		}
+		if = {
+			limit = {
+				has_dlc = "The Cossacks"
+			}
+			add_country_modifier = {
+				name = tgu_more_lenient_tengu_warriors
+				duration = -1
+			}
+		}
 		ai_chance = {
 			factor = 0
 		}
 	}
 }
 
-#Down with Tenma!
+#Megumu's Rehabiliation
 country_event = {
 	id = flavor_tgu.10
 	title = flavor_tgu.10.t
@@ -310,14 +319,807 @@ country_event = {
 
 	option = {
 		name = flavor_tgu.10.a
-		add_country_modifier = {
-			name = tgu_banishment_of_tenma
-			duration = -1
+		th_enable_touhou_advisor = {
+			advisor = th_advisor_megumu
 		}
-		tgu_enable_fabricate_spread_republican_ideas_cb = yes
 		ai_chance = {
 			factor = 1
 		}
+	}
+}
+
+#The Religious Question
+country_event = {
+	id = flavor_tgu.11
+	title = flavor_tgu.11.t
+	desc = flavor_tgu.11.desc
+	picture = AYABOSS_eventPicture
+	trigger = {
+		NOT = { has_country_flag = tgu_had_moriya_shinto_event }
+		NOT = { has_country_flag = tgu_has_moriya_shinto_event }
+		th_is_or_was_tag = {
+			tag = TGU
+		}
+		OR = {
+			religion = th_hakureishinto
+			religion = th_moriyashinto
+		}
+	}
+	major = yes
+	mean_time_to_happen = {
+		months = 12
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = tgu_has_moriya_shinto_event
+		}
+	}
+	after = {
+		clr_country_flag = tgu_has_moriya_shinto_event
+		set_country_flag = tgu_had_moriya_shinto_event
+	}
+
+	option = {
+		name = flavor_tgu.11.a
+		custom_tooltip = flavor_tgu.11.a.tt
+		set_country_flag = tgu_sided_with_moriya
+		if = {
+			limit = {
+				owns = 4963
+			}
+			4963 = {
+				change_religion = th_moriyashinto
+			}
+		}
+		if = {
+			limit = {
+				exists = MRY
+			}
+			reverse_add_opinion = {
+				who = MRY
+				modifier = th_sticks_with_moriya
+			}
+		}
+		ai_chance = {
+			factor = 9
+		}
+	}
+
+	option = {
+		name = flavor_tgu.11.b
+		custom_tooltip = flavor_tgu.11.b.tt
+		change_religion = th_hakureishinto
+		capital_scope = {
+			change_religion = th_hakureishinto
+		}
+		reduce_stability_or_adm_power = yes
+		if = {
+			limit = {
+				exists = HKR
+			}
+			reverse_add_opinion = {
+				who = HKR
+				modifier = th_returned_to_hakurei
+			}
+		}
+		if = {
+			limit = {
+				exists = MRY
+			}
+			reverse_add_opinion = {
+				who = MRY
+				modifier = th_abandoned_our_faith
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Tributary Status of the Tengu
+country_event = {
+	id = flavor_tgu.12
+	title = flavor_tgu.12.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_tgu.12.desc
+	is_triggered_only = yes
+	#We shall serve the Moriya Clan with our services
+	option = {
+		name = flavor_tgu.12.a
+		trigger = {
+			exists = MRY
+			MRY = { religion = th_moriyashinto }
+			religion = th_moriyashinto
+		}
+		custom_tooltip = flavor_tgu.12.a.tt
+		hidden_effect = {
+			MRY = {
+				country_event = {
+					id = flavor_tgu.13
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				MRY = { ai = no }
+			}
+		}
+	}
+	option = {
+		name = flavor_tgu.12.b
+		trigger = {
+			exists = MRY
+			OR = {
+				MRY = { NOT = { religion = th_moriyashinto } }
+				NOT = { religion = th_moriyashinto }
+			}
+		}
+		custom_tooltip = flavor_tgu.12.b.tt
+		hidden_effect = {
+			MRY = {
+				country_event = {
+					id = flavor_tgu.13
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#All we need is an alliance with Moriya Clan
+	option = {
+		name = flavor_tgu.12.c
+		trigger = {
+			exists = MRY
+		}
+		custom_tooltip = flavor_tgu.12.c.tt
+		hidden_effect = {
+			MRY = {
+				country_event = {
+					id = flavor_tgu.14
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#We are good on our own
+	option = {
+		name = flavor_tgu.12.d
+		add_dip_power = 100
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Tengu Realm wants to become our tributary
+country_event = {
+	id = flavor_tgu.13
+	title = flavor_tgu.13.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = {
+		desc = flavor_tgu.13.desc.a
+		trigger = {
+			FROM = { religion = th_moriyashinto }
+			religion = th_moriyashinto
+		}
+	}
+	desc = {
+		desc = flavor_tgu.13.desc.b
+		trigger = {
+			OR = {
+				NOT = { FROM = { religion = th_moriyashinto } }
+				NOT = { religion = th_moriyashinto }
+			}
+		}
+	}
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = KPP
+	}
+
+	#Accept their request
+	option = {
+		name = flavor_tgu.13.a
+		if = {
+			limit = {
+				religion = th_moriyashinto
+				FROM = { religion = th_moriyashinto }
+			}
+			create_subject = {
+				subject_type = th_religious_tributary
+				subject = FROM
+			}
+		}
+		else = {
+			set_country_flag = forced_tributary_state
+			create_subject = {
+				subject_type = tributary_state
+				subject = FROM
+			}
+			clr_country_flag = forced_tributary_state
+		}
+		add_trust = {
+			who = FROM
+			value = 25
+			mutual = yes
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#No lol
+	option = {
+		name = flavor_tgu.13.b
+		reverse_add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 60
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_kpp_refused_alliance
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+# Tengu Realm wants to become our ally (Moriya)
+country_event = {
+	id = flavor_tgu.14
+	title = flavor_tgu.14.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_tgu.14.desc
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = KPP
+	}
+
+	#Accept their request
+	option = {
+		name = flavor_tgu.14.a
+		if = {
+			limit = {
+				OR = {
+					is_rival = FROM
+					is_enemy = FROM
+				}
+			}
+			add_trust = {
+				who = FROM
+				value = 25
+				mutual = yes
+			}
+		}
+		if = {
+			limit = { is_rival = FROM }
+			remove_rival = FROM
+		}
+		if = {
+			limit = { is_enemy = FROM }
+			FROM = { remove_rival = ROOT }
+		}
+		create_alliance = FROM
+		if = {
+			limit = {
+				ai = yes
+			}
+			set_ai_attitude = {
+				attitude = attitude_allied
+				who = FROM
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#No lol
+	option = {
+		name = flavor_tgu.14.b
+		reverse_add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 60
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_kpp_refused_alliance
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { is_rival = FROM }
+				NOT = { is_enemy = FROM }
+			}
+		}
+	}
+}
+
+# Tengu Elections
+# Election!
+country_event = {
+	id = flavor_tgu.50
+	title = flavor_tgu.50.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	
+	desc = {
+		trigger = {
+			has_regency = no
+			NOT = { has_ruler_flag = leader_has_been_pushed_out }
+		}
+		desc = flavor_tgu.50.desc.a
+	}
+	
+	desc = {
+		trigger = {
+			OR = {
+				has_regency = yes
+				has_ruler_flag = leader_has_been_pushed_out
+			}
+		}
+		desc = flavor_tgu.50.desc.b
+	}
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_tengu_elections
+	}
+
+	option = {
+		name = "EVTOPTA700"	# Current ruler stays
+		trigger = {
+			ai = no
+			has_regency = no
+			NOT = { has_ruler_flag = leader_has_been_pushed_out }
+			OR = {
+				NOT = { has_government_attribute = th_has_limited_terms }
+				check_variable = {
+					which = max_election_term
+					which = election_term
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 60
+			modifier = {
+				factor = 0
+				NOT = { republican_tradition = 25 }
+			}	
+			modifier = {
+				factor = 0.5
+				NOT = { republican_tradition = 50 }
+			}				
+			modifier = {
+				factor = 0.5
+				NOT = { republican_tradition = 75 }
+			}	
+			modifier = {
+				factor = 2.0
+				republican_tradition = 90
+			}		
+		}
+		custom_tooltip = remains_ruler
+		add_scaled_republican_tradition = -5
+		random_list = {
+			10 = {
+				add_adm_power = 100
+			}
+			10 = {
+				add_dip_power = 100
+			}
+			10 = {
+				add_mil_power = 100
+			}
+		}
+		add_karma = -5
+		if = {
+			limit = {
+				has_country_modifier = th_ruler_of_the_crow_tengu
+			}
+			add_estate_loyalty = {
+				estate = estate_crow_tengu
+				loyalty = 10
+			}
+		}
+		else = {
+			add_estate_loyalty = {
+				estate = estate_crow_tengu
+				loyalty = -5
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = th_ruler_of_the_wolf_tengu
+			}
+			add_estate_loyalty = {
+				estate = estate_wolf_tengu
+				loyalty = 10
+			}
+		}
+		else = {
+			add_estate_loyalty = {
+				estate = estate_wolf_tengu
+				loyalty = -5
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = th_ruler_of_the_great_tengu
+			}
+			add_estate_loyalty = {
+				estate = estate_great_tengu
+				loyalty = 10
+			}
+		}
+		else = {
+			add_estate_loyalty = {
+				estate = estate_great_tengu
+				loyalty = -5
+			}
+		}
+	}
+	option = {
+		name = flavor_tgu.50.a	#Get Hatate in the office
+		trigger = {
+			NOT = { has_ruler_modifier = th_ruler_of_the_great_tengu }
+		}
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Hatate"
+			dynasty = "Himekaidou"
+			adm = 6
+			dip = 4
+			mil = 4
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = th_ruler_of_the_great_tengu
+			duration = -1
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { has_government_attribute = elections_increase_factions_influence }
+			add_influence_to_adm_faction = {
+				influence = 20
+			}
+		}
+		add_karma = 10
+		add_estate_loyalty = {
+			estate = estate_great_tengu
+			loyalty = 10
+		}
+	}
+	option = {
+		name = flavor_tgu.50.b	#Get Aya in the office
+		trigger = {
+			NOT = { has_ruler_modifier = th_ruler_of_the_crow_tengu }
+		}
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Aya"
+			dynasty = "Shameimaru"
+			adm = 4
+			dip = 6
+			mil = 4
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = th_ruler_of_the_crow_tengu
+			duration = -1
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { has_government_attribute = elections_increase_factions_influence }
+			add_influence_to_dip_faction = {
+				influence = 20
+			}
+		}
+		add_karma = 10
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+	}
+	option = {
+		name = flavor_tgu.50.c	#Get Momiji in the office
+		trigger = {
+			NOT = { has_ruler_modifier = th_ruler_of_the_wolf_tengu }
+		}
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Momiji"
+			dynasty = "Inubashiri"
+			adm = 4
+			dip = 4
+			mil = 6
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = th_ruler_of_the_wolf_tengu
+			duration = -1
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { has_government_attribute = elections_increase_factions_influence }
+			add_influence_to_dip_faction = {
+				influence = 20
+			}
+		}
+		add_karma = 10
+		add_estate_loyalty = {
+			estate = estate_wolf_tengu
+			loyalty = 10
+		}
+	}
+
+	option = { # Nepotism choice, re-electing within dynasty
+		name = "EVTOPTE700"
+		trigger = {
+			has_government_attribute = enables_nepotism
+		}
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				has_country_flag = strengthened_signoria_flag
+			}
+			custom_tooltip = strengthened_signoria_election_tt
+			clr_country_flag = strengthened_signoria_flag
+		}
+		else = {
+			add_scaled_republican_tradition = -4
+		}
+		define_ruler = {
+			min_age = 20
+			max_age = 40
+			name = "lastname"
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 10
+			}				
+		}
+	}
+}
+
+# Election! - Death
+country_event = {
+	id = flavor_tgu.51
+	title = flavor_tgu.51.t
+	picture = NITORIBOSS_eventPicture	#TODO
+	desc = flavor_tgu.51.desc
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_tengu_elections
+	}
+	
+	option = {
+		name = flavor_tgu.50.a	#Get Hatate in the office
+		trigger = {
+			NOT = { has_ruler_modifier = th_ruler_of_the_great_tengu }
+		}
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Hatate"
+			dynasty = "Himekaidou"
+			adm = 6
+			dip = 4
+			mil = 4
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = th_ruler_of_the_great_tengu
+			duration = -1
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { has_government_attribute = elections_increase_factions_influence }
+			add_influence_to_adm_faction = {
+				influence = 20
+			}
+		}
+		add_karma = 10
+		add_estate_loyalty = {
+			estate = estate_great_tengu
+			loyalty = 10
+		}
+	}
+	option = {
+		name = flavor_tgu.50.b	#Get Aya in the office
+		trigger = {
+			NOT = { has_ruler_modifier = th_ruler_of_the_crow_tengu }
+		}
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Aya"
+			dynasty = "Shameimaru"
+			adm = 4
+			dip = 6
+			mil = 4
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = th_ruler_of_the_crow_tengu
+			duration = -1
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { has_government_attribute = elections_increase_factions_influence }
+			add_influence_to_dip_faction = {
+				influence = 20
+			}
+		}
+		add_karma = 10
+		add_estate_loyalty = {
+			estate = estate_crow_tengu
+			loyalty = 10
+		}
+	}
+	option = {
+		name = flavor_tgu.50.c	#Get Momiji in the office
+		trigger = {
+			NOT = { has_ruler_modifier = th_ruler_of_the_wolf_tengu }
+		}
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Momiji"
+			dynasty = "Inubashiri"
+			adm = 4
+			dip = 4
+			mil = 6
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = th_ruler_of_the_wolf_tengu
+			duration = -1
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { has_government_attribute = elections_increase_factions_influence }
+			add_influence_to_dip_faction = {
+				influence = 20
+			}
+		}
+		add_karma = 10
+		add_estate_loyalty = {
+			estate = estate_wolf_tengu
+			loyalty = 10
+		}
+	}
+	option = { # Nepotism choice, re-electing within dynasty
+		name = "EVTOPTE700"
+		trigger = {
+			has_government_attribute = enables_nepotism
+		}
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				has_country_flag = strengthened_signoria_flag
+			}
+			custom_tooltip = strengthened_signoria_election_tt
+			clr_country_flag = strengthened_signoria_flag
+		}
+		else = {
+			add_scaled_republican_tradition = -4
+		}
+		define_ruler = {
+			min_age = 20
+			max_age = 40
+			name = "lastname"
+			random_gender = yes # Allows random gender for republics
+		}
+	}
+}
+
+#Test different reforms
+country_event = {
+	id = flavor_tgu.100
+	title = flavor_tgu.100.t
+	desc = flavor_tgu.100.desc
+	picture = AYABOSS_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		set_country_flag = tgu_has_sophisticated_caste_system
+		clr_country_flag = tgu_has_absolute_great_tengu_monarchy
+		clr_country_flag = tgu_has_tengu_republic
+		swap_non_generic_missions = yes
+		if = {
+			limit = {
+				NOT = { government = monarchy }
+			}
+			change_government = monarchy
+		}
+		add_government_reform = Gensokyan_tgu_sophisticated_caste_system
+	}
+
+	option = {
+		clr_country_flag = tgu_has_sophisticated_caste_system
+		set_country_flag = tgu_has_absolute_great_tengu_monarchy
+		clr_country_flag = tgu_has_tengu_republic
+		swap_non_generic_missions = yes
+		if = {
+			limit = {
+				NOT = { government = monarchy }
+			}
+			change_government = monarchy
+		}
+		add_government_reform = Gensokyan_tgu_absolute_reign
+	}
+
+	option = {
+		clr_country_flag = tgu_has_sophisticated_caste_system
+		clr_country_flag = tgu_has_absolute_great_tengu_monarchy
+		set_country_flag = tgu_has_tengu_republic
+		swap_non_generic_missions = yes
+		if = {
+			limit = {
+				NOT = { government = republic }
+			}
+			change_government = republic
+		}
+		add_government_reform = Gensokyan_tgu_tengu_republic
 	}
 }
 
