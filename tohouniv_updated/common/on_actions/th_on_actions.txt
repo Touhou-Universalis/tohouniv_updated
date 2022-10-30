@@ -444,6 +444,76 @@ on_war_won = {
 			id = flavor_swe.121
 		}
 	}
+	th_yama_on_war_won_effect = yes
+}
+
+# country
+# root = winning country, from = loser country
+on_main_war_won = {
+	if = {
+		limit = {
+			has_government_attribute = winning_wars_gives_rt
+		}
+		add_republican_tradition = 5
+	}
+	if = {
+		limit = {
+			has_government_attribute = winning_war_increases_legitimacy
+		}
+		add_legitimacy = 5
+		add_devotion = 5
+		add_meritocracy = 5
+		add_horde_unity = 5
+		add_republican_tradition = 2
+	}
+	if = {
+		limit = {
+			has_country_modifier = swe_fight_for_independence
+			NOT = { has_country_flag = swe_defeated_denmark }
+			FROM = { tag = DAN }
+		}
+		set_country_flag = swe_defeated_denmark
+	}
+	if = {
+		limit = { 
+			has_country_flag = nor_norwegian_independence_modifier 
+			is_subject = no
+			FROM = { tag = DAN }
+		}
+		clr_country_flag = nor_norwegian_independence_modifier
+		remove_country_modifier = nor_norwegian_independence_war_mod
+	}
+	if = {
+		limit = {
+			ROOT = {
+				religion = jewish
+				has_church_aspect = judaism_purim_teachings_aspect
+			}
+		}
+		add_church_power = 75
+	}
+	if = {
+		limit = {
+			has_country_flag = nor_norwegian_independence_modifier
+			is_subject = no
+		}
+		clr_country_flag = nor_norwegian_independence_modifier
+		remove_country_modifier = nor_norwegian_independence_war_mod
+	}
+	if = {
+		limit = {
+			ROOT = {
+				has_mission = swe_devastate_the_christians
+				NOT = { mission_completed = swe_devastate_the_christians }
+				religion = norse_pagan_reformed
+			}
+			FROM = { religion_group = christian }
+		}
+		change_variable = {
+			which = swe_won_wars_against_christians
+			value = 1
+		}
+	}
 	if = {
 		limit = {
 			has_country_flag = th_lended_weapons_and_war
@@ -464,7 +534,9 @@ on_war_won = {
 			}
 		}
 	}
-	th_yama_on_war_won_effect = yes
+	events = {
+		native_americans.7
+	}
 }
 
 # country
@@ -2921,6 +2993,40 @@ on_colonist_boosting_colony = {
 			}
 			change_culture = FROM
 			change_original_culture = FROM
+		}
+		if = {
+			limit = {
+				owner = {
+					has_government_attribute = uses_purified_land
+				}
+			}
+			if = {
+				limit = { has_province_modifier = th_pure_land }
+				remove_province_modifier = th_pure_land
+			}
+			if = {
+				limit = { has_province_modifier = th_impure_land }
+				remove_province_modifier = th_impure_land
+			}
+			if = {
+				limit = {
+					has_owner_culture = yes
+				}
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_owner_culture = no
+					has_owner_accepted_culture = no
+				}
+				add_province_modifier = {
+					name = th_impure_land
+					duration = -1
+				}
+			}
 		}
 	}
 }
