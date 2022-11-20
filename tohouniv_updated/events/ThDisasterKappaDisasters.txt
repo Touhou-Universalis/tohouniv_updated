@@ -1,0 +1,1905 @@
+########################################
+# Events for the Kappa Disasters
+########################################
+
+namespace = th_kappa_disasters
+
+#Kappa Counter Movement Events
+# Kappa Counter Movement - Start
+country_event = {
+	id = th_kappa_disasters.1
+	title = th_kappa_disasters.1.t
+	picture = KAPPA_DISASTER_eventPicture
+	desc = th_kappa_disasters.1.desc
+	is_triggered_only = yes
+	major = yes
+	goto = th_kappa_rebellion_province
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+				}
+				save_event_target_as = th_kappa_rebellion_province
+				spawn_rebels = {
+					type = th_kappa_rebels
+					size = 1
+					female = yes
+				}
+			}
+			set_country_flag = active_kappa_counter_movement_disaster
+		}
+		add_stability = -5
+		add_republican_tradition = -80
+	}
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = th_kappa_disasters.1.a
+		every_owned_province = {
+			add_local_autonomy = 5
+		}
+		event_target:th_kappa_rebellion_province = {
+			tooltip = {
+				spawn_rebels = {
+					type = th_kappa_rebels
+					size = 1
+				}
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+# Kappa Counter Movement - End
+country_event = {
+	id = th_kappa_disasters.2
+	title = th_kappa_disasters.2.t
+	picture = KAPPA_DISASTER_eventPicture
+	desc = th_kappa_disasters.2.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = {
+		hidden_effect = {
+			set_country_flag = kpp_had_counter_movement_disaster
+		}
+	}
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = th_kappa_disasters.2.a
+		change_government_reform_progress = 200
+		change_innovativeness = 10
+		add_stability_or_adm_power = yes
+		remove_country_modifier = kpp_suppressing_news
+		remove_country_modifier = kpp_free_speech
+		if = {
+			limit = {
+				NOT = { has_ruler_flag = touhou_original_ruler }
+			}
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_term
+					value = 1
+				}
+			}
+		}
+		add_ruler_modifier = {
+			name = th_elected_kappa_tinker
+			duration = -1
+		}
+		add_country_modifier = {
+			name = kpp_overcame_counter_movement_disaster
+			duration = -1
+		}
+		custom_tooltip = th_kappa_disasters.2.a.tt
+		hidden_effect = {
+			every_owned_province = {
+				add_local_autonomy = -20
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+# Province demands more autonomy!
+country_event = {
+	id = th_kappa_disasters.3
+	title = th_kappa_disasters.3.t
+	desc = th_kappa_disasters.3.desc
+	picture = KAPPA_DISASTER_eventPicture
+	trigger = {
+		any_owned_province = {
+			is_capital = no
+			same_continent = ROOT
+		}
+	}	
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { 
+					is_capital = no
+					same_continent = ROOT
+				}
+				save_event_target_as = kpp_autonomy_province
+			}
+		}
+	}
+	#Allow them some autonomy
+	option = {
+		name = th_kappa_disasters.3.a
+		goto = kpp_autonomy_province
+		event_target:kpp_autonomy_province = {
+			add_local_autonomy = 20
+		}
+		ai_chance = { factor = 10 }
+	}
+	#No
+	option = {
+		name = th_kappa_disasters.3.b
+		add_republican_tradition = -5
+		ai_chance = { factor = 10 }
+	}
+}
+# Question of Authority
+country_event = {
+	id = th_kappa_disasters.4
+	title = th_kappa_disasters.4.t
+	desc = th_kappa_disasters.4.desc
+	picture = KAPPA_DISASTER_eventPicture
+	trigger = {
+		NOT = { has_ruler_modifier = th_elected_kappa_tinker }
+	}	
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}	
+	# Defend your position
+	option = {
+		name = th_kappa_disasters.4.a
+		add_republican_tradition = -5
+		ai_chance = { factor = 10 }
+	}
+	# Silence them
+	option = {
+		name = th_kappa_disasters.4.b
+		add_yearly_manpower = -1
+		ai_chance = { factor = 10 }
+	}
+}
+# Overreaction from Conservative Kappas
+country_event = {
+	id = th_kappa_disasters.5
+	title = th_kappa_disasters.5.t
+	desc = th_kappa_disasters.5.desc
+	picture = KAPPA_DISASTER_eventPicture
+	trigger = {
+		NOT = { stability = -3 }
+	}	
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = th_kappa_disasters.5.a
+		add_stability = -1
+		ai_chance = { factor = 10 }
+	}
+	option = {
+		name = th_kappa_disasters.5.b
+		add_republican_tradition = -5
+		ai_chance = { factor = 10 }
+	}
+}
+# Supporters from the public
+country_event = {
+	id = th_kappa_disasters.6
+	title = th_kappa_disasters.6.t
+	desc = th_kappa_disasters.6.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = th_kappa_disasters.6.a
+		add_republican_tradition = 10
+		ai_chance = { factor = 10 }
+	}
+	option = {
+		name = th_kappa_disasters.6.b
+		add_stability_or_adm_power = yes
+		ai_chance = { factor = 10 }
+	}
+}
+# Kappa unhappiness about the situation
+country_event = {
+	id = th_kappa_disasters.7
+	title = th_kappa_disasters.7.t
+	desc = th_kappa_disasters.7.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+	#Make Promises to change things
+	option = {
+		name = th_kappa_disasters.7.a
+		add_republican_tradition = -5
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 15
+		}
+		custom_tooltip = th_kappa_disasters.7.a.tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					is_state = yes
+				}
+				add_local_autonomy = -10
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	#It is what it is
+	option = {
+		name = th_kappa_disasters.7.b
+		add_republican_tradition = 10
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -20
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Kappapolis needs to decide how to deal with trouble makers
+country_event = {
+	id = th_kappa_disasters.8
+	title = th_kappa_disasters.8.t
+	desc = th_kappa_disasters.8.desc
+	picture = KAPPA_DISASTER_eventPicture
+	fire_only_once = yes
+	is_triggered_only = yes
+	trigger = {
+		had_country_flag = {
+			flag = active_kappa_counter_movement_disaster
+			days = 365
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#We must censor the news and suppress anti state thoughts
+	option = {
+		name = th_kappa_disasters.8.a
+		custom_tooltip = th_kappa_disasters.8.a.tt
+		add_country_modifier = {
+			name = kpp_suppressing_news
+			duration = -1
+			desc = th_kappa_disasters.8.tt
+		}
+		ai_chance = { factor = 10 }
+	}
+	#A healthy republic must have free speech
+	option = {
+		name = th_kappa_disasters.8.b
+		custom_tooltip = th_kappa_disasters.8.b.tt
+		add_country_modifier = {
+			name = kpp_free_speech
+			duration = -1
+			desc = th_kappa_disasters.8.tt
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Military is desillusioned by internal policies - Suppressing News consequence
+country_event = {
+	id = th_kappa_disasters.9
+	title = th_kappa_disasters.9.t
+	desc = th_kappa_disasters.9.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_country_modifier = kpp_suppressing_news
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#Make an example of the officers
+	option = {
+		name = th_kappa_disasters.9.a
+		add_army_tradition = -10
+		add_army_professionalism = -0.01
+		add_republican_tradition = 10
+		ai_chance = { factor = 10 }
+	}
+	#Ignore the complaints
+	option = {
+		name = th_kappa_disasters.9.b
+		add_yearly_manpower = -2
+		ai_chance = { factor = 10 }
+	}
+}
+# Uprising against the state
+country_event = {
+	id = th_kappa_disasters.10
+	title = th_kappa_disasters.10.t
+	desc = th_kappa_disasters.10.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_country_modifier = kpp_free_speech
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					continent = ROOT
+					is_overseas = no
+				}
+				save_event_target_as = kpp_autonomy_province
+			}
+		}
+	}
+
+	#The state does not negotiate with terrorists
+	option = {
+		name = th_kappa_disasters.10.a
+		goto = kpp_autonomy_province
+		event_target:kpp_autonomy_province = {
+			spawn_rebels = {
+				size = 1
+				type = th_kappa_rebels
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	#Expel them. Quietly.
+	option = {
+		name = th_kappa_disasters.10.b
+		add_republican_tradition = -5
+		ai_chance = { factor = 10 }
+	}
+}
+# Emergence of the three guilds
+country_event = {
+	id = th_kappa_disasters.11
+	title = th_kappa_disasters.11.t
+	desc = th_kappa_disasters.11.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		had_country_flag = {
+			flag = active_kappa_counter_movement_disaster
+			days = 730
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	#Take the support the Super Capitalists
+	option = {
+		name = th_kappa_disasters.11.a
+		add_treasury = 800
+		add_stability_or_adm_power = yes
+		ai_chance = { factor = 10 }
+	}
+
+	#Take the support the Explosion Enjoyers
+	option = {
+		name = th_kappa_disasters.11.b
+		add_republican_tradition = 30
+		ai_chance = { factor = 10 }
+	}
+
+	#Take the support the Independent Marines
+	option = {
+		name = th_kappa_disasters.11.c
+		add_manpower = 10
+		add_sailors = 5000
+		define_general = {
+			shock = 6
+			fire = 6
+			manuever = 5
+			siege = 2
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Counter Movement provokes a putch
+country_event = {
+	id = th_kappa_disasters.28
+	title = th_kappa_disasters.28.t
+	desc = th_kappa_disasters.28.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kappa_rebel_province
+			}
+		}
+	}
+
+	#Provoke rebels
+	option = {
+		name = th_kappa_disasters.28.a
+		goto = kappa_rebel_province
+		event_target:kappa_rebel_province = {
+			add_devastation = 10
+		}
+		ai_chance = { factor = 10 }
+	}
+
+	#Handle it diplomatically
+	option = {
+		name = th_kappa_disasters.28.b
+		add_republican_tradition = -5
+		ai_chance = { factor = 10 }
+	}
+}
+# Economy suffers
+country_event = {
+	id = th_kappa_disasters.29
+	title = th_kappa_disasters.29.t
+	desc = th_kappa_disasters.29.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	#Provoke rebels
+	option = {
+		name = th_kappa_disasters.29.a
+		add_inflation = 2
+		ai_chance = { factor = 10 }
+	}
+
+	#Provoke rebels
+	option = {
+		name = th_kappa_disasters.29.b
+		add_corruption = 2
+		ai_chance = { factor = 10 }
+	}
+
+	#Provoke rebels
+	option = {
+		name = th_kappa_disasters.29.c
+		trigger = {
+			manpower_percentage = 0.2
+		}
+		add_yearly_manpower = -2
+		ai_chance = { factor = 10 }
+	}
+
+	#Handle it diplomatically
+	option = {
+		name = th_kappa_disasters.29.d
+		trigger = {
+			republican_tradition = 5
+		}
+		add_republican_tradition = -5
+		ai_chance = { factor = 10 }
+	}
+}
+
+#Kappa Guild Wars Events
+# Kappa Guild Wars - Start
+country_event = {
+	id = th_kappa_disasters.12
+	title = th_kappa_disasters.12.t
+	picture = KAPPA_DISASTER_eventPicture
+	desc = th_kappa_disasters.12.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+				}
+				save_event_target_as = th_super_capitalists_province
+			}
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+				}
+				save_event_target_as = th_explosion_enjoyers_province
+			}
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+				}
+				save_event_target_as = th_independent_marines_province
+			}
+			set_country_flag = active_kappa_guild_wars_disaster
+		}
+		add_stability = -5
+		add_republican_tradition = -50
+	}
+
+	#Support the th_super_capitalists faction
+	option = {
+		name = th_kappa_disasters.12.a
+		custom_tooltip = th_kappa_disasters.12.a.tt
+		define_ruler = {
+			adm = 2
+			dynasty = "of the Super Capitalists"
+			hide_skills = yes
+			female = yes
+			claim = 50
+		}
+		set_ruler_flag = kpp_super_capitalists_in_power
+		if = { limit = { NOT = { has_country_flag = kpp_had_super_capitalists_in_power } } set_country_flag = kpp_had_super_capitalists_in_power }
+		add_ruler_modifier = {
+			name = kpp_super_capitalists_in_power_modifier
+			duration = 1825
+		}
+		event_target:th_explosion_enjoyers_province = {
+			spawn_rebels = {
+				type = th_explosion_enjoyers
+				size = 1
+			}
+		}
+		event_target:th_independent_marines_province = {
+			spawn_rebels = {
+				type = th_independent_marines
+				size = 1
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#Support the th_explosion_enjoyers faction
+	option = {
+		name = th_kappa_disasters.12.b
+		custom_tooltip = th_kappa_disasters.12.b.tt
+		define_ruler = {
+			dip = 2
+			dynasty = "Explosion-Enjoyers"
+			hide_skills = yes
+			female = yes
+			claim = 50
+		}
+		set_ruler_flag = kpp_explosion_enjoyers_in_power
+		if = { limit = { NOT = { has_country_flag = kpp_had_explosion_enjoyers_in_power } } set_country_flag = kpp_had_explosion_enjoyers_in_power }
+		add_ruler_modifier = {
+			name = kpp_explosion_enjoyers_in_power_modifier
+			duration = 1825
+		}
+		event_target:th_super_capitalists_province = {
+			spawn_rebels = {
+				type = th_super_capitalists
+				size = 1
+			}
+		}
+		event_target:th_independent_marines_province = {
+			spawn_rebels = {
+				type = th_independent_marines
+				size = 1
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#Support the th_independent_marines faction
+	option = {
+		name = th_kappa_disasters.12.c
+		custom_tooltip = th_kappa_disasters.12.c.tt
+		define_ruler = {
+			mil = 2
+			dynasty = "Kappamander"
+			hide_skills = yes
+			female = yes
+			claim = 50
+		}
+		set_ruler_flag = kpp_independent_marines_in_power
+		if = { limit = { NOT = { has_country_flag = kpp_had_explosion_enjoyers_in_power } } set_country_flag = kpp_had_independent_marines_in_power }
+		add_ruler_modifier = {
+			name = kpp_independent_marines_in_power_modifier
+			duration = 1825
+		}
+		event_target:th_super_capitalists_province = {
+			spawn_rebels = {
+				type = th_super_capitalists
+				size = 1
+			}
+		}
+		event_target:th_explosion_enjoyers_province = {
+			spawn_rebels = {
+				type = th_explosion_enjoyers
+				size = 1
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = th_kappa_disasters.12.d
+		add_stability = -1
+		event_target:th_super_capitalists_province = {
+			spawn_rebels = {
+				type = th_super_capitalists
+				size = 1
+			}
+		}
+		event_target:th_explosion_enjoyers_province = {
+			spawn_rebels = {
+				type = th_explosion_enjoyers
+				size = 1
+			}
+		}
+		event_target:th_independent_marines_province = {
+			spawn_rebels = {
+				type = th_independent_marines
+				size = 1
+			}
+		}
+		add_republican_tradition = -20
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+# Kappa Guild Wars - End
+country_event = {
+	id = th_kappa_disasters.13
+	title = th_kappa_disasters.13.t
+	picture = KAPPA_DISASTER_eventPicture
+	desc = th_kappa_disasters.13.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = {
+		hidden_effect = {
+			set_country_flag = kpp_had_guild_wars_disaster
+		}
+	}
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = th_kappa_disasters.13.a
+		change_government_reform_progress = 200
+		change_innovativeness = 10
+		add_stability_or_adm_power = yes
+		if = {
+			limit = {
+				NOT = { has_ruler_flag = touhou_original_ruler }
+			}
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 4
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_term
+					value = 1
+				}
+			}
+		}
+		add_ruler_modifier = {
+			name = th_elected_kappa_tinker
+			duration = -1
+		}
+		add_country_modifier = {
+			name = kpp_overcame_guild_wars_disaster
+			duration = -1
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+# The Super Capitalists try a coup
+country_event = {
+	id = th_kappa_disasters.14
+	title = th_kappa_disasters.14.t
+	desc = th_kappa_disasters.14.desc
+	picture = KAPPA_DISASTER_eventPicture
+	trigger = {
+		NOT = { has_ruler_flag = kpp_super_capitalists_in_power }
+		OR = {
+			NOT = { has_country_flag = kpp_had_putch_event }
+			had_country_flag = {
+				flag = kpp_had_putch_event
+				days = 1000
+			}
+		}
+	}	
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}	
+	immediate = {
+		add_corruption = 1
+		hidden_effect = {
+			clr_country_flag = kpp_had_putch_event
+			set_country_flag = kpp_had_putch_event
+		}
+	}
+	option = {	#Defend the government from th_super_capitalists
+		name = th_kappa_disasters.14.a
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 3
+				type = th_super_capitalists
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {
+		name = th_kappa_disasters.14.b
+		define_ruler = {
+			adm = 2
+			dynasty = "of the Super Capitalists"
+			hide_skills = yes
+			female = yes
+			claim = 50
+		}
+		add_ruler_modifier = {
+			name = kpp_super_capitalists_in_power_modifier
+			duration = 1825
+		}
+		set_ruler_flag = kpp_super_capitalists_in_power
+		if = {
+			limit = { NOT = { has_country_flag = kpp_had_super_capitalists_in_power } }
+			set_country_flag = kpp_had_super_capitalists_in_power
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = th_kappa_disasters.14.c
+		trigger = {
+			NOT = { has_ruler_flag = touhou_original_ruler }
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		add_republican_tradition = -20
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = th_kappa_disasters.14.d
+		trigger = {
+			has_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		add_republican_tradition = -20
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# The Eplosion-Enjoyers strike
+country_event = {
+	id = th_kappa_disasters.15
+	title = th_kappa_disasters.15.t
+	desc = th_kappa_disasters.15.desc
+	picture = KAPPA_DISASTER_eventPicture
+	trigger = {
+		NOT = { has_ruler_flag = kpp_explosion_enjoyers_in_power }
+		OR = {
+			NOT = { has_country_flag = kpp_had_putch_event }
+			had_country_flag = {
+				flag = kpp_had_putch_event
+				days = 1000
+			}
+		}
+	}	
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}	
+	immediate = {
+		random_owned_province = {
+			limit = {
+				same_continent = ROOT
+			}
+			add_devastation = 50
+		}
+		random_owned_province = {
+			limit = {
+				same_continent = ROOT
+			}
+			add_devastation = 50
+		}
+		hidden_effect = {
+			clr_country_flag = kpp_had_putch_event
+			set_country_flag = kpp_had_putch_event
+		}
+	}
+	option = {	#Defend the government from th_explosion_enjoyers
+		name = th_kappa_disasters.15.a
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 3
+				type = th_explosion_enjoyers
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {
+		name = th_kappa_disasters.15.b
+		define_ruler = {
+			dip = 2
+			dynasty = "Explosion-Enjoyers"
+			hide_skills = yes
+			female = yes
+			claim = 50
+		}
+		add_ruler_modifier = {
+			name = kpp_explosion_enjoyers_in_power_modifier
+			duration = 1825
+		}
+		set_ruler_flag = kpp_explosion_enjoyers_in_power
+		if = {
+			limit = { NOT = { has_country_flag = kpp_had_explosion_enjoyers_in_power } }
+			set_country_flag = kpp_had_explosion_enjoyers_in_power
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = th_kappa_disasters.15.c
+		trigger = {
+			NOT = { has_ruler_flag = touhou_original_ruler }
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		add_republican_tradition = -20
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = th_kappa_disasters.15.d
+		trigger = {
+			has_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		add_republican_tradition = -20
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Force of Independent Marines rise up
+country_event = {
+	id = th_kappa_disasters.16
+	title = th_kappa_disasters.16.t
+	desc = th_kappa_disasters.16.desc
+	picture = KAPPA_DISASTER_eventPicture
+	trigger = {
+		NOT = { has_ruler_flag = kpp_independent_marines_in_power }
+		OR = {
+			NOT = { has_country_flag = kpp_had_putch_event }
+			had_country_flag = {
+				flag = kpp_had_putch_event
+				days = 1000
+			}
+		}
+	}	
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}	
+	immediate = {
+		add_stability = -1
+		hidden_effect = {
+			clr_country_flag = kpp_had_putch_event
+			set_country_flag = kpp_had_putch_event
+		}
+	}
+	option = {	#Defend the government from th_independent_marines
+		name = th_kappa_disasters.16.a
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 3
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {
+		name = th_kappa_disasters.16.b
+		define_ruler = {
+			mil = 2
+			dynasty = "Kappamander"
+			hide_skills = yes
+			female = yes
+			claim = 50
+		}
+		add_ruler_modifier = {
+			name = kpp_independent_marines_in_power_modifier
+			duration = 1825
+		}
+		set_ruler_flag = kpp_independent_marines_in_power
+		if = {
+			limit = { NOT = { has_country_flag = kpp_had_independent_marines_in_power } }
+			set_country_flag = kpp_had_independent_marines_in_power
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_super_capitalists
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = th_kappa_disasters.16.c
+		trigger = {
+			NOT = { has_ruler_flag = touhou_original_ruler }
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		add_republican_tradition = -20
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {	#Get Nitori in power! NOW!
+		name = th_kappa_disasters.16.d
+		trigger = {
+			has_ruler_flag = touhou_original_ruler
+		}
+		if = {
+			limit = { NOT = { has_ruler_flag = touhou_original_ruler } }
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+			hidden_effect = {
+				add_ruler_personality = immortal_personality
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_variable = {
+					which = election_turn
+					value = 1
+				}
+			}
+		}
+		else = {
+			add_adm_power = 10
+			add_dip_power = 10
+			add_mil_power = 10
+		}
+		add_republican_tradition = -20
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_super_capitalists
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_explosion_enjoyers
+			}
+		}
+		random_owned_province = {
+			limit = { 
+				is_overseas = no
+				same_continent = ROOT
+			}
+			spawn_rebels = {
+				size = 1
+				type = th_independent_marines
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Capitalists in Power - Financial Overhaul
+country_event = {
+	id = th_kappa_disasters.17
+	title = th_kappa_disasters.17.t
+	desc = th_kappa_disasters.17.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_super_capitalists_in_power
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					continent = ROOT
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kpp_autonomy_province_1
+			}
+			random_owned_province = {
+				limit = {
+					continent = ROOT
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kpp_autonomy_province_2
+			}
+		}
+	}
+
+	#Press them through - on expense of the explosion enjoyers
+	option = {
+		name = th_kappa_disasters.17.a
+		goto = kpp_autonomy_province_1
+		add_years_of_income = 1
+		event_target:kpp_autonomy_province_1 = {
+			spawn_rebels = {
+				type = th_explosion_enjoyers
+				size = 1
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+
+	#Press them through - on expense of the independent marines
+	option = {
+		name = th_kappa_disasters.17.b
+		goto = kpp_autonomy_province_2
+		add_inflation = -2
+		add_corruption = -1
+		event_target:kpp_autonomy_province_2 = {
+			spawn_rebels = {
+				type = th_explosion_enjoyers
+				size = 1
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+
+	#Milder reforms are better
+	option = {
+		name = th_kappa_disasters.17.c
+		add_republican_tradition = 5
+		adm_power_cost = 50
+		ai_chance = { factor = 10 }
+	}
+}
+# Capitalists in Power - Great State Investment
+country_event = {
+	id = th_kappa_disasters.18
+	title = th_kappa_disasters.18.t
+	desc = th_kappa_disasters.18.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_super_capitalists_in_power
+		NOT = { has_ruler_modifier = kpp_great_investment }
+		NOT = { has_ruler_modifier = kpp_state_security_instead }
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#Get the Ducat rolling!
+	option = {
+		name = th_kappa_disasters.18.a
+		add_ruler_modifier = {
+			name = kpp_great_investment
+			duration = -1
+		}
+		add_years_of_income = 1
+		add_stability = -1
+		add_republican_tradition = -10
+		ai_chance = { factor = 10 }
+	}
+	#Focus on keeping the state together instead
+	option = {
+		name = th_kappa_disasters.18.b
+		add_ruler_modifier = {
+			name = kpp_state_security_instead
+			duration = -1
+		}
+		add_stability = 1
+		add_republican_tradition = 20
+		add_years_of_income = -2
+		ai_chance = { factor = 10 }
+	}
+}
+# Capitalists in Power - Extract cash from the population
+country_event = {
+	id = th_kappa_disasters.19
+	title = th_kappa_disasters.19.t
+	desc = th_kappa_disasters.19.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_super_capitalists_in_power
+		stability = -1
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kpp_autonomy_province
+			}
+		}
+	}
+	#Let's do it
+	option = {
+		name = th_kappa_disasters.19.a
+		add_years_of_income = 1
+		random_owned_province = {
+			limit = {
+				is_in_capital_area = yes
+			}
+			spawn_rebels = {
+				type = th_explosion_enjoyers
+				size = 1
+			}
+			spawn_rebels = {
+				type = th_independent_marines
+				size = 1
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	#Better not
+	option = {
+		name = th_kappa_disasters.19.b
+		goto = kpp_autonomy_province
+		add_republican_tradition = 10
+		add_years_of_income = -2
+		event_target:kpp_autonomy_province = {
+			spawn_rebels = {
+				type = th_super_capitalists
+				size = 2
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Explosion Enjoyers in Power - Technological Progress!
+country_event = {
+	id = th_kappa_disasters.20
+	title = th_kappa_disasters.20.t
+	desc = th_kappa_disasters.20.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_explosion_enjoyers_in_power
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = th_kappa_disasters.20.a
+		add_adm_power = 25
+		add_dip_power = 25
+		add_mil_power = 25
+		change_innovativeness = 1
+		add_republican_tradition = -10
+		ai_chance = { factor = 10 }
+	}
+
+	option = {
+		name = th_kappa_disasters.20.b
+		add_republican_tradition = 5
+		add_adm_power = -50
+		add_dip_power = -50
+		add_mil_power = -50
+		ai_chance = { factor = 10 }
+	}
+}
+# Explosion Enjoyers in Power - Bombed other guilds headquarters
+country_event = {
+	id = th_kappa_disasters.21
+	title = th_kappa_disasters.21.t
+	desc = th_kappa_disasters.21.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_explosion_enjoyers_in_power
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					continent = ROOT
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kpp_autonomy_province_1
+			}
+			random_owned_province = {
+				limit = {
+					continent = ROOT
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kpp_autonomy_province_2
+			}
+		}
+	}
+	#Damnit
+	option = {
+		name = th_kappa_disasters.21.a
+		event_target:kpp_autonomy_province_1 = {
+			spawn_rebels = {
+				type = th_super_capitalists
+				size = 1
+			}
+		}
+		event_target:kpp_autonomy_province_2 = {
+			spawn_rebels = {
+				type = th_independent_marines
+				size = 1
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Explosion Enjoyers in Power - Statewide Mental Breakdown
+country_event = {
+	id = th_kappa_disasters.22
+	title = th_kappa_disasters.22.t
+	desc = th_kappa_disasters.22.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_explosion_enjoyers_in_power
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#Seize opportunity for self propaganda
+	option = {
+		name = th_kappa_disasters.22.a
+		change_innovativeness = -20
+		add_republican_tradition = 10
+		ai_chance = { factor = 10 }
+	}
+	#Stabilize the realm
+	option = {
+		name = th_kappa_disasters.22.b
+		change_innovativeness = -20
+		add_stability = 1
+		ai_chance = { factor = 10 }
+	}
+}
+# Independent Marines in Power - Militarization of the State
+country_event = {
+	id = th_kappa_disasters.23
+	title = th_kappa_disasters.23.t
+	desc = th_kappa_disasters.23.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_independent_marines_in_power
+		NOT = { has_ruler_modifier = kpp_militarization_of_the_state }
+		NOT = { has_ruler_modifier = kpp_opposing_the_militarists }
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					continent = ROOT
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kpp_autonomy_province_1
+			}
+			random_owned_province = {
+				limit = {
+					continent = ROOT
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kpp_autonomy_province_2
+			}
+			random_owned_province = {
+				limit = {
+					continent = ROOT
+					is_in_capital_area = yes
+				}
+				save_event_target_as = kpp_autonomy_province
+			}
+		}
+	}
+
+	option = {
+		name = th_kappa_disasters.23.a
+		event_target:kpp_autonomy_province_1 = {
+			spawn_rebels = {
+				type = th_super_capitalists
+				size = 3
+			}
+		}
+		event_target:kpp_autonomy_province_2 = {
+			spawn_rebels = {
+				type = th_explosion_enjoyers
+				size = 3
+			}
+		}
+		add_ruler_modifier = {
+			name = kpp_militarization_of_the_state
+			duration = -1
+		}
+		ai_chance = { factor = 10 }
+	}
+
+	option = {
+		name = th_kappa_disasters.23.b
+		goto = kpp_autonomy_province
+		event_target:kpp_autonomy_province = {
+			spawn_rebels = {
+				type = th_independent_marines
+				size = 2
+			}
+		}
+		add_ruler_modifier = {
+			name = kpp_opposing_the_militarists
+			duration = -1
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Independent Marines in Power - Force Recruitment
+country_event = {
+	id = th_kappa_disasters.24
+	title = th_kappa_disasters.24.t
+	desc = th_kappa_disasters.24.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_independent_marines_in_power
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#We need the soldiers against the other guilds
+	option = {
+		name = th_kappa_disasters.24.a
+		add_yearly_manpower = 2
+		add_republican_tradition = -10
+		ai_chance = { factor = 10 }
+	}
+	#We need the soldiers against the other guilds
+	option = {
+		name = th_kappa_disasters.24.b
+		add_mil_power = -50
+		add_republican_tradition = 5
+		ai_chance = { factor = 10 }
+	}
+}
+# Independent Marines in Power - Officers in charge
+country_event = {
+	id = th_kappa_disasters.25
+	title = th_kappa_disasters.25.t
+	desc = th_kappa_disasters.25.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = kpp_independent_marines_in_power
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#Keep them
+	option = {
+		name = th_kappa_disasters.25.a
+		add_army_tradition = 10
+		add_republican_tradition = -10
+		ai_chance = { factor = 10 }
+	}
+	#Remove them from office
+	option = {
+		name = th_kappa_disasters.25.b
+		add_army_tradition = -20
+		add_republican_tradition = 5
+		ai_chance = { factor = 10 }
+	}
+}
+# Nitori in Power - The kappa stand behind Nitori
+country_event = {
+	id = th_kappa_disasters.26
+	title = th_kappa_disasters.26.t
+	desc = th_kappa_disasters.26.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = touhou_original_ruler
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#Together we shall defeat the guilds!
+	option = {
+		name = th_kappa_disasters.26.a
+		add_republican_tradition = 10
+		ai_chance = { factor = 10 }
+	}
+}
+# Nitori in Power - Tinker of the Kappas
+country_event = {
+	id = th_kappa_disasters.27
+	title = th_kappa_disasters.27.t
+	desc = th_kappa_disasters.27.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_ruler_flag = touhou_original_ruler
+		NOT = { has_ruler_modifier = kpp_tinker_of_the_kappas }
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = th_kappa_disasters.27.a
+		add_stability_or_adm_power = yes
+		add_ruler_modifier = {
+			name = kpp_tinker_of_the_kappas
+			duration = 3650
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+# Nitori in Power - Faction Opposition
+country_event = {
+	id = th_kappa_disasters.30
+	title = th_kappa_disasters.30.t
+	desc = th_kappa_disasters.30.desc
+	picture = KAPPA_DISASTER_eventPicture
+	is_triggered_only = yes
+	goto = th_kappa_rebellion_province
+	trigger = {
+		has_ruler_flag = touhou_original_ruler
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_in_capital_area = yes
+				}
+				save_event_target_as = th_kappa_rebellion_province
+				random_list = {
+					1 = { set_province_flag = kpp_spawn_sc_rebels }
+					1 = { set_province_flag = kpp_spawn_ee_rebels }
+					1 = { set_province_flag = kpp_spawn_im_rebels }
+				}
+			}
+		}
+	}
+
+	option = {
+		name = th_kappa_disasters.30.a
+		event_target:th_kappa_rebellion_province = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				kpp_spawn_sc_rebels = {
+					spawn_rebels = {
+						type = th_super_capitalists
+						size = 3
+						female = yes
+					}
+					clr_province_flag = kpp_spawn_sc_rebels
+				}
+				kpp_spawn_ee_rebels = {
+					spawn_rebels = {
+						type = th_explosion_enjoyers
+						size = 3
+						female = yes
+					}
+					clr_province_flag = kpp_spawn_ee_rebels
+				}
+				kpp_spawn_im_rebels = {
+					spawn_rebels = {
+						type = th_independent_marines
+						size = 3
+						female = yes
+					}
+					clr_province_flag = kpp_spawn_im_rebels
+				}
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+}

@@ -1,0 +1,180 @@
+
+######################################################################
+# Cossack rebels.
+######################################################################
+th_wolf_tengu_rebels = {
+	color = { 190 55 55 }
+	
+	area = nation 					# Stays within the nation
+	government = monarchy		# Don't care about gov type				
+	defection = none				# Will not defect
+	independence = none				# Does not strive for independence
+	gfx_type = culture_province
+	will_relocate = yes	
+
+	resilient = yes					# Can retreat
+	reinforcing = yes				# Can reinforce
+	general = yes					# Does use generals
+	smart = yes						# Do assault forts, tactically withdraw from battle, etc.
+	unit_transfer = no				# Units do not remain after enforcing demands.
+	
+	artillery = 0.4
+	infantry = 0.56
+	cavalry = 0.04
+	
+	morale = 1.15
+	
+	# Possible handle actions
+	handle_action_negotiate = yes
+	handle_action_stability = yes
+	
+	# The rebel type with the highest modifier for this province gets picked
+	spawn_chance = {
+		factor = 20		
+		modifier = {
+			factor = 0.2
+			is_core = owner
+		}
+		modifier = {
+			factor = 0.2
+			is_overseas = yes # Prefer other types overseas
+		}
+		modifier = {
+			factor = 0.8
+			religion = owner
+		}
+		modifier = {
+			factor = 0
+			NOT = { owner = { has_estate = estate_wolf_tengu } }		
+		}	
+		modifier = {
+			factor = 2.0
+			culture = Tengu
+		}
+		modifier = {
+			factor = 2.0
+			owner = {
+				estate_territory = {
+					estate = estate_wolf_tengu
+					territory = 20
+				}
+			}
+		}
+	}
+ 
+ 	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 2.0
+			is_capital = yes
+		}
+		modifier = {
+			factor = 5.0
+			OR = {
+				has_terrain = mountain
+				has_terrain = highlands
+				has_terrain = hills
+			}
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+	
+ 	# Province Scope
+ 	siege_won_trigger = {
+ 		NOT = { local_autonomy = 50 }
+		OR = {
+			has_terrain = mountain
+			has_terrain = highlands
+			has_terrain = hills
+		}
+ 	}
+	siege_won_effect = {
+		add_local_autonomy = 10	
+		owner = {
+			change_estate_land_share = {
+				estate = estate_wolf_tengu
+				share = 10.0
+				province = ROOT
+			}
+		}
+	}	
+	
+	# Country scope
+	can_negotiate_trigger = {
+		always = yes
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		NOT = { has_disaster = th_tengu_caste_civil_war_disaster }
+	}
+
+	# Localisation for their demands
+	demands_description = "th_wolf_tengu_rebels_demand"
+	
+	# Country scope
+	demands_enforced_effect = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = just_lost_to_rebels
+				duration = 10
+				hidden = yes
+			}
+		}
+		if = {
+			limit = {
+				has_disaster = th_tengu_caste_civil_war_disaster
+				has_country_modifier = tgu_sided_with_great_tengu
+			}
+			change_variable = {
+				which = th_tengu_civil_war_score
+				value = -2
+			}
+		}
+		else_if = {
+			limit = {
+				has_disaster = th_tengu_caste_civil_war_disaster
+				has_country_modifier = tgu_sided_with_low_tengu
+			}
+			change_variable = {
+				which = th_tengu_civil_war_score
+				value = 2
+			}
+		}
+		create_independent_estate = {
+			estate = estate_wolf_tengu
+			government = monarchy
+			government_reform = Gensokyan_hak_wolf_tengu_society
+			custom_national_ideas = touhou_ideas
+			play_as = no
+		}
+		change_estate_land_share = {
+			estate = estate_wolf_tengu
+			share = -30.0
+		}
+		change_estate_land_share = {
+			estate = all
+			share = 20.0
+		}
+	}
+}

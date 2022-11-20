@@ -44,6 +44,26 @@ th_add_random_ruler_personality_republic = {
 	}
 }
 
+th_mry_holy_site_activation_effect = {
+	set_global_flag = $holy_site_flag$
+	every_country = {
+		limit = { religion = th_moriyashinto }
+		country_event = {
+			id = $activation_event$
+		}
+	}
+}
+
+th_mry_holy_site_deactivation_effect = {
+	clr_global_flag = $holy_site_flag$
+	every_country = {
+		limit = { religion = th_moriyashinto }
+		country_event = {
+			id = $deactivation_event$
+		}
+	}
+}
+
 th_on_province_religion_converted_effect = {
 	if = {
 		limit = {
@@ -133,6 +153,192 @@ th_on_province_owner_change_effect = {
 	}
 	if = {
 		limit = {
+			owner = { NOT = { has_government_attribute = th_own_provinces_go_berserk } }
+			th_hellfairy_has_any_flag = yes
+		}
+		if = {
+			limit = { th_hellfairy_has_positive_berserk = yes }
+			hellfairy_add_negative_berserk = {
+				days = 1825
+			}
+		}
+		hellfairy_remove_all_berserk_stack = yes
+	}
+	if = {
+		limit = {
+			religion = th_hakureishinto
+			has_province_modifier = th_accepted_heretics
+			owner = { NOT = { has_country_flag = revolution_of_shintoism_flag } }
+		}
+		remove_province_modifier = th_accepted_heretics
+	}
+	if = {
+		limit = {
+			religion = th_hakureishinto
+			NOT = { has_province_modifier = th_accepted_heretics }
+			owner = { has_country_flag = revolution_of_shintoism_flag }
+		}
+		add_province_modifier = {
+			name = th_accepted_heretics
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			has_pasha = yes
+			owner = { has_government_attribute = pashas_purify_land }
+		}
+		add_province_modifier = {
+			name = th_purifying_pasha
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = uses_purified_land
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					lcu_is_accepted_province_culture = yes
+					has_owner_culture = yes
+				}
+			}
+			add_province_modifier = {
+				name = th_pure_land
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_owner_accepted_culture = no
+				lcu_is_not_accepted_province_culture = yes
+			}
+			add_province_modifier = {
+				name = th_impure_land
+				duration = -1
+			}
+		}
+	}
+}
+
+th_on_province_culture_change_effect = {
+	remove_province_modifier = th_pure_land
+	remove_province_modifier = th_impure_land
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = uses_purified_land
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					lcu_is_accepted_province_culture = yes
+					has_owner_culture = yes
+				}
+			}
+			add_province_modifier = {
+				name = th_pure_land
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_owner_accepted_culture = no
+				lcu_is_not_accepted_province_culture = yes
+			}
+			add_province_modifier = {
+				name = th_impure_land
+				duration = -1
+			}
+		}
+	}
+}
+
+th_on_province_owner_change_estate_privileges_effect = {
+	#Dev Cost Reductions
+	if = {
+		limit = {
+			owner = {
+				has_estate_privilege = th_estate_burghers_swamp_developers
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = marsh
+			}
+			add_province_modifier = {
+				name = th_estate_burghers_swamp_developers_marsh_modifier
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = grasslands
+			}
+			add_province_modifier = {
+				name = th_estate_burghers_swamp_developers_grassland_modifier
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = farmlands
+			}
+			add_province_modifier = {
+				name = th_estate_burghers_swamp_developers_farmlands_modifier
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = jungle
+			}
+			add_province_modifier = {
+				name = th_estate_burghers_swamp_developers_jungle_modifier
+				duration = -1
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_estate_privilege = estate_burghers_mountain_expansion
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = mountain
+			}
+			add_province_modifier = {
+				name = estate_crow_tengu_mountain_expansion_mountains
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = highlands
+			}
+			add_province_modifier = {
+				name = estate_crow_tengu_mountain_expansion_highlands
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = hills
+			}
+			add_province_modifier = {
+				name = estate_crow_tengu_mountain_expansion_hills
+				duration = -1
+			}
+		}
+	}
+	if = {
+		limit = {
 			OR = {
 				area = Land_of_the_dead
 				area = Eastern_higan
@@ -143,6 +349,161 @@ th_on_province_owner_change_effect = {
 		add_local_autonomy = 50
 		add_province_modifier = {
 			name = hig_slacking_shinigami
+			duration = -1
+		}
+	}
+	#Monopolies
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_crow_tengu_monopoly_of_textiles }
+			OR = {
+				trade_goods = cloth
+				trade_goods = silk
+			}
+		}
+		add_province_modifier = {
+			name = estate_crow_tengu_monopoly_of_textiles_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_crow_tengu_monopoly_of_dyes }
+			trade_goods = dyes
+		}
+		add_province_modifier = {
+			name = estate_crow_tengu_monopoly_of_dyes_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_crow_tengu_monopoly_of_glass }
+			trade_goods = glass
+		}
+		add_province_modifier = {
+			name = estate_crow_tengu_monopoly_of_glass_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_crow_tengu_monopoly_of_paper }
+			trade_goods = paper
+		}
+		add_province_modifier = {
+			name = estate_crow_tengu_monopoly_of_paper_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_great_tengu_monopoly_of_metals }
+			OR = {
+				trade_goods = copper
+				trade_goods = iron
+			}
+		}
+		add_province_modifier = {
+			name = estate_great_tengu_monopoly_of_metals_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_great_tengu_monopoly_of_livestock }
+			trade_goods = livestock
+		}
+		add_province_modifier = {
+			name = estate_great_tengu_monopoly_of_livestock_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_great_tengu_monopoly_of_gems }
+			trade_goods = gems
+		}
+		add_province_modifier = {
+			name = estate_great_tengu_monopoly_of_gems_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_wolf_tengu_monopoly_of_wood }
+			OR = {
+				trade_goods = tropical_wood
+				trade_goods = naval_supplies
+			}
+		}
+		add_province_modifier = {
+			name = estate_wolf_tengu_monopoly_of_wood_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_wolf_tengu_monopoly_of_cotton_and_sugar }
+			OR = {
+				trade_goods = cotton
+				trade_goods = sugar
+			}
+		}
+		add_province_modifier = {
+			name = estate_wolf_tengu_monopoly_of_cotton_and_sugar_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_wolf_tengu_monopoly_of_grain_and_fish }
+			OR = {
+				trade_goods = grain
+				trade_goods = fish
+			}
+		}
+		add_province_modifier = {
+			name = estate_wolf_tengu_monopoly_of_grain_and_fish_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = th_estate_lunar_rabbits_monopoly_of_wood }
+			OR = {
+				trade_goods = tropical_wood
+				trade_goods = naval_supplies
+			}
+		}
+		add_province_modifier = {
+			name = th_estate_lunar_rabbits_monopoly_of_wood_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = th_estate_lunar_rabbits_monopoly_of_cotton_and_sugar }
+			OR = {
+				trade_goods = cotton
+				trade_goods = sugar
+			}
+		}
+		add_province_modifier = {
+			name = th_estate_lunar_rabbits_monopoly_of_cotton_and_sugar_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = th_estate_lunar_rabbits_monopoly_of_grain_and_fish }
+			OR = {
+				trade_goods = grain
+				trade_goods = fish
+			}
+		}
+		add_province_modifier = {
+			name = th_estate_lunar_rabbits_monopoly_of_grain_and_fish_mod
 			duration = -1
 		}
 	}
@@ -2149,4 +2510,131 @@ mim_gain_new_skill_reward = {
 		add_dip_power = 50
 		add_mil_power = 50
 	}
+}
+
+###KPP GADGET EFFECTS###
+#optical_camouflage
+#perfect_cucumber_fertilizer
+#machine_extending_arm
+#sanpei_battleship
+#super_scope_3D
+#kappa_tanks
+#aerial_torpedo
+#australian_wildlife
+#hisoutensoku
+#kappa_shredder
+#spice_fuel_engine
+#bookkeep_inator
+#kiku_ichimonji_compressor
+#ooze_flooding
+kpp_increase_gadget_usage_counter = {
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = num_of_$gadget$_used
+						value = 25
+					}
+				}
+			}
+			change_variable = {
+				which = num_of_$gadget$_used
+				value = 1
+			}
+		}
+	}
+}
+kpp_apply_gadget = {
+	add_country_modifier = {
+		name = th_$gadget$_modifier
+		duration = $duration$
+	}
+}
+kpp_unlock_gadget = {
+	custom_tooltip = kpp_unlock_$gadget$_tt
+	hidden_effect = { set_country_flag = kpp_unlocked_$gadget$_gadget }
+}
+
+#TGU Mechanic
+th_select_a_tenma_demand = {
+	if = {
+		limit = {
+			has_estate = estate_great_tengu
+			NOT = { has_country_flag = estate_great_tengu_$flag$ }
+		}
+		set_country_flag = estate_great_tengu_$flag$
+		[[estate_action]
+		$estate_action$ = estate_great_tengu
+		]
+	}
+}
+
+###BUY PROVINCE SCRIPTED EFFECT###
+th_designate_provinces_for_purchase = {
+	[[purchasable_province_1]
+		if = {
+			limit = {
+				$purchasable_province_1$ = {
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+					$trigger$
+				}
+			}
+			$purchasable_province_1$ = {
+				save_event_target_as = purchasable_province_1
+			}
+		}
+	]
+	[[purchasable_province_2]
+		if = {
+			limit = {
+				$purchasable_province_2$ = {
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+					$trigger$
+				}
+			}
+			$purchasable_province_2$ = {
+				save_event_target_as = purchasable_province_2
+			}
+		}
+	]
+	[[purchasable_province_3]
+		if = {
+			limit = {
+				$purchasable_province_3$ = {
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+					$trigger$
+				}
+			}
+			$purchasable_province_3$ = {
+				save_event_target_as = purchasable_province_3
+			}
+		}
+	]
+	[[purchasable_province_4]
+		if = {
+			limit = {
+				$purchasable_province_4$ = {
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+					$trigger$
+				}
+			}
+			$purchasable_province_4$ = {
+				save_event_target_as = purchasable_province_4
+			}
+		}
+	]
+	[[purchasable_province_5]
+		if = {
+			limit = {
+				$purchasable_province_5$ = {
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+					$trigger$
+				}
+			}
+			$purchasable_province_5$ = {
+				save_event_target_as = purchasable_province_5
+			}
+		}
+	]
 }
