@@ -52,4 +52,84 @@ country_decisions = {
 			factor = 0
 		}
 	}
+	lcu_update_purification = {
+		potential = {
+			has_government_attribute = uses_purified_land
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			nationalism = 1
+		}
+		allow = {
+			custom_trigger_tooltip = {
+				tooltip = lcu_update_purification_ct
+				OR = {
+					NOT = { has_country_flag = lcu_updated_purification_flag }
+					had_country_flag = {
+						flag = lcu_updated_purification_flag
+						days = 30
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = lcu_update_purification_tt
+			hidden_effect = {
+				clr_country_flag = lcu_updated_purification_flag
+				set_country_flag = lcu_updated_purification_flag
+				every_owned_province = {
+					if = {
+						limit = { has_province_modifier = th_impure_land }
+						remove_province_modifier = th_impure_land
+					}
+					if = {
+						limit = { has_province_modifier = th_pure_land }
+						remove_province_modifier = th_pure_land
+					}
+					if = {
+						limit = { has_province_modifier = th_lunarian_accepted_culture }
+						remove_province_modifier = th_lunarian_accepted_culture
+					}
+					if = {
+						limit = {
+							OR = {
+								has_owner_culture = yes
+								has_owner_accepted_culture = yes
+							}
+						}
+						add_province_modifier = {
+							name = th_pure_land
+							duration = -1
+						}
+					}
+					else_if = {
+						limit = {
+							lcu_is_accepted_province_culture = yes
+						}
+						add_province_modifier = {
+							name = th_lunarian_accepted_culture
+							duration = -1
+						}
+						add_province_modifier = {
+							name = th_pure_land
+							duration = -1
+						}
+					}
+					else_if = {
+						limit = {
+							lcu_is_not_accepted_province_culture = yes
+						}
+						add_province_modifier = {
+							name = th_impure_land
+							duration = -1
+						}
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
 }
