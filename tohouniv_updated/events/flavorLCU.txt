@@ -4,6 +4,24 @@
 
 namespace = flavor_lcu
 
+#Information event - Purified Land
+country_event = {
+	id = flavor_lcu.0
+	title = flavor_lcu.0.t
+	desc = flavor_lcu.0.desc
+	picture = LUNARWAR_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_lcu.0.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
 #Information event - can NOT hire any mercs
 country_event = {
 	id = flavor_lcu.1
@@ -48,27 +66,12 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	option = {	#Royal guard!
-		name = "flavor_lcu.2.a"
-		add_country_modifier = {
-			name = lcu_royal_guard
-			duration = -1
-	    }
-
-		ai_chance = { 
-			factor = 50
-		}
-	}
-
-	option = { # Common army
-		name = "flavor_lcu.2.b"
-		add_country_modifier = {
-			name = lcu_royal_guard_2
-			duration = -1
-	    }
-
-		ai_chance = { 
-			factor = 50
+	option = {	#Support both of reforms
+		name = flavor_lcu.2.a
+		custom_tooltip = flavor_lcu.2.a.tt
+		add_army_tradition = 15
+		hidden_effect = {
+			set_country_flag = lcu_toyohime_and_yorihime_army_reforms
 		}
 	}
 }
@@ -78,25 +81,50 @@ country_event = {
 	id = flavor_lcu.3
 	title = flavor_lcu.3.t
 	desc = flavor_lcu.3.desc
-	picture = KAGUYA_eventPicture
+	picture = EIRINREISEN_eventPicture
 	
 	is_triggered_only = yes
 	
 	option = {	#Eientei is ours!
-		name = "flavor_lcu.3.a"
+		name = flavor_lcu.3.a
 		add_prestige = 25
-		add_country_modifier = {
-			name = lcu_eientei_is_ours_modifier
-			duration = -1
-	    }
+		4991 = {
+			add_province_modifier = {
+				name = lcu_control_over_eientei
+				duration = -1
+			}
+			change_culture = ROOT
+			change_religion = ROOT
+			remove_province_modifier = th_impure_land
+			if = {
+				limit = {
+					owner = { has_government_attribute = uses_purified_land }
+				}
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}	
+		}
 
-		EIT = {
-			add_prestige = 25
-			add_historical_friend = ROOT
-			remove_rival = ROOT
-		}		
+		th_enable_touhou_advisor = {
+			advisor = th_advisor_eirin
+		}
+		th_enable_touhou_advisor = {
+			advisor = th_advisor_reisen
+		}
+		hidden_effect = {
+			if = {
+				limit = { exists = EIT }
+				EIT = {
+					add_prestige = 25
+					add_accepted_culture = Lunarian_culture
+					add_historical_friend = ROOT
+					remove_rival = ROOT
+				}
+			}
+		}
 	}
-
 }
 
 ### Moon rabbits question
@@ -109,35 +137,64 @@ country_event = {
 	is_triggered_only = yes
 	
 	option = {	#Harsh treatment for the moon rabbits
-		name = "flavor_lcu.4.a"	
+		name = flavor_lcu.4.a	
 		set_country_flag = harsh_treatment_for_rabbits
+		adm_power_cost = 100
 		add_country_modifier = {
 			name = lcu_harsh_treatment
 			duration = -1
 	    }
 		
+		if = {
+			limit = {
+				has_country_flag = lcu_rabbits_are_plebs
+			}
+			add_estate_loyalty = {
+				estate = estate_lunarian_rabbits
+				loyalty = -20
+			}	
+		}
+
 		ai_chance = { 
-			factor = 20
+			factor = 25
 		}
 	}
 
-
-
 	option = {	#Give some rights to moon rabbits
-		name = "flavor_lcu.4.c"	
+		name = flavor_lcu.4.c	
+		adm_power_cost = 100
 		add_country_modifier = {
 			name = lcu_some_rights_for_rabbits
 			duration = -1
 	    }
-		
+
+		if = {
+			limit = {
+				has_country_flag = lcu_resolved_conflict			
+			}
+			add_estate_loyalty = {
+				estate = estate_lunarian_rabbits
+				loyalty = 10
+			}	
+		}
 		ai_chance = { 
-			factor = 60
+			factor = 50
 		}
 	}
 
 	option = {	#Give land & rights for rabbits / creates vassal
-		name = "flavor_lcu.4.d"	
+		name = flavor_lcu.4.d	
+		adm_power_cost = 100
 		custom_tooltip = flavor_lcu.4.d.tt
+		if = {
+			limit = {
+				has_country_flag = lcu_rabbits_are_friends
+			}
+			add_estate_loyalty = {
+				estate = estate_lunarian_rabbits
+				loyalty = 15
+			}	
+		}
 		hidden_effect = {
 			set_country_flag = th_lunarian_guards
 			country_event = {
@@ -145,7 +202,7 @@ country_event = {
 			}
 	    }
 		ai_chance = { 
-			factor = 20
+			factor = 25
 		}		
     }
 }
@@ -159,13 +216,15 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	option = {	#Discover Europe / buy some land.
-		name = "flavor_lcu.5.a"
-		4560 = {
-			add_core = ROOT
-			cede_province = ROOT
+	option = {	#Discover Europe / Seize some land
+		name = flavor_lcu.5.a
+		126 = {
+			owner = {
+				country_event = {
+					id = flavor_lcu.110					
+				}
+			}
 		}
-		add_treasury = -1500
 
 		hidden_effect = {
 			iberia_region = {
@@ -226,77 +285,9 @@ country_event = {
 		}
 	}
 
-	option = {	#Full offensive
-		name = "flavor_lcu.5.b"	
-		alentejo_area = {
-			limit = {
-				NOT = { is_core = ROOT }
-				NOT = { is_permanent_claim = ROOT }
-			}
-			add_permanent_claim = ROOT				
-		}
-
-		hidden_effect = {
-			iberia_region = {
-				discover_country = ROOT
-			}
-			low_countries_region = {
-				discover_country = ROOT
-			}
-			france_region = {
-				discover_country = ROOT
-			}
-			british_isles_region = {
-				discover_country = ROOT
-			}
-			mediterrenean_region = {
-				discover_country = ROOT
-			}
-			carpathia_region = {
-				discover_country = ROOT
-			}
-			balkan_region = {
-				discover_country = ROOT
-			}
-			north_german_region = {
-				discover_country = ROOT
-			}
-			south_german_region = {
-				discover_country = ROOT
-			}
-			italy_region = {
-				discover_country = ROOT
-			}
-			celtic_sea_area = {
-				discover_country = ROOT
-			}
-			english_channel_area = {
-				discover_country = ROOT
-			}
-			bay_of_biscay_area = {
-				discover_country = ROOT
-			}
-			north_sea_area = {
-				discover_country = ROOT
-			}
-			1290 = {
-				discover_country = ROOT
-			}
-			1291 = {
-				discover_country = ROOT
-			}
-			1292 = {
-				discover_country = ROOT
-			}
-		}
-		
-		ai_chance = { 
-			factor = 10
-		}
-	}
 }
 
-### Declaration of war to earthlings
+### Decide what to do with earthlings
 country_event = {
 	id = flavor_lcu.6
 	title = flavor_lcu.6.t
@@ -305,8 +296,8 @@ country_event = {
 
 	is_triggered_only = yes
 	
-	option = {	#Declare war! & Make contact with humans
-		name = "flavor_lcu.6.a"	
+	option = {	#Contact humans, unique diplomatic action
+		name = flavor_lcu.6.a	
 		custom_tooltip = flavor_lcu.6.a.tt
 		country_event = {
 			id = flavor_lcu.19
@@ -314,8 +305,8 @@ country_event = {
 		}			
 	}
 
-	option = {	#There is no need to contact humans, only extermination for them.
-		name = "flavor_lcu.6.b"	
+	option = {	#There is no need to contact humans, only extermination for them. CB.
+		name = flavor_lcu.6.b	
 		custom_tooltip = flavor_lcu.6.b.tt
 		country_event = {
 			id = flavor_lcu.20
@@ -331,92 +322,84 @@ country_event = {
 	id = flavor_lcu.7
 	title = flavor_lcu.7.t
 	desc = flavor_lcu.7.desc
-	picture = YUKARI2_eventPicture
-
+	picture = SOMBER_YUKARI_eventPicture
 	is_triggered_only = yes
 	
 	option = {	#Purify the land immediately / expell yokai
-		name = "flavor_lcu.7.a"	
+		name = flavor_lcu.7.a	
 		custom_tooltip = flavor_lcu.7.a.tt
 		hidden_effect = {
-			4989 = {
-				add_base_tax = -2
-				add_base_production = -2
-				add_base_manpower = -3
-				change_culture = ROOT
-				change_religion = ROOT
-			}
-	
-	
-			5067 = {
-				add_base_tax = -2
-				add_base_production = -2
-				add_base_manpower = -3
-				change_culture = ROOT
-				change_religion = ROOT
-			}
-	
-			
-			5068 = {
+			Ran_state = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
 				add_base_tax = -1
 				add_base_production = -1
 				add_base_manpower = -1
+				add_devastation = 5
 				change_culture = ROOT
 				change_religion = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}
 			}
-			
-			5070 = {
+			Mayohiga_state = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
 				add_base_tax = -1
 				add_base_production = -1
 				add_base_manpower = -1
+				add_devastation = 5
 				change_culture = ROOT
 				change_religion = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}
 			}
-			
-			5069 = {
+			Eastern_mountains = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
 				add_base_tax = -1
 				add_base_production = -1
 				add_base_manpower = -1
+				add_devastation = 5
 				change_culture = ROOT
 				change_religion = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}
 			}
-			
-			5040 = {
-				add_base_tax = -1
-				add_base_production = -1
-				add_base_manpower = -1
-				change_culture = ROOT
-				change_religion = ROOT
-			}
-			
-			5066 = {
-				add_base_tax = -1
-				add_base_production = -1
-				add_base_manpower = -1
-				change_culture = ROOT
-				change_religion = ROOT
-			}
-			
-			5065 = {
-				add_base_tax = -1
-				add_base_production = -1
-				add_base_manpower = -1
-				change_culture = ROOT
-				change_religion = ROOT
-			}
-			
-			4988 = {
-				add_base_tax = -1
-				add_base_production = -1
-				add_base_manpower = -1
-				change_culture = ROOT
-				change_religion = ROOT
-			}															
-
 		}
 				
 	}
 
+	option = {	
+		name = flavor_lcu.7.b
+		add_stability_or_adm_power = yes
+	}
 }
 
 ### Break the barrier
@@ -429,13 +412,37 @@ country_event = {
 	is_triggered_only = yes
 	
 	option = {	
-		name = "flavor_lcu.8.a"	
+		name = flavor_lcu.8.a	
 		add_treasury = -200
 		1998 = {
 			cede_province = ROOT
 			change_culture = ROOT
+			remove_province_modifier = th_impure_land
+			if = {
+				limit = {
+					owner = { has_government_attribute = uses_purified_land }
+				}
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}	
 			change_religion = ROOT
 			add_core = ROOT
+		}		
+		lanka_area = {
+			limit = {
+				NOT = { is_permanent_claim = ROOT	}
+				NOT = { is_core = ROOT	}
+			}
+			add_permanent_claim = ROOT
+		}
+		south_lanka_area = {
+			limit = {
+				NOT = { is_permanent_claim = ROOT	}
+				NOT = { is_core = ROOT	}
+			}
+			add_permanent_claim = ROOT
 		}
 		hidden_effect = {
 			south_china_sea_region = {
@@ -459,7 +466,6 @@ country_event = {
 
 }
 
-
 ### Rei'sen event
 country_event = {
 	id = flavor_lcu.9
@@ -470,14 +476,14 @@ country_event = {
 	is_triggered_only = yes
 
 	option = {  ### Agree with Rei'sen
-		name = "flavor_lcu.9.a"	
+		name = flavor_lcu.9.a	
 		custom_tooltip = flavor_lcu.9.a.tt
-		add_mil_power = -400
-		add_treasury = -2000
+		mil_power_cost = 300
+		add_years_of_income = -1
 		hidden_effect = {
 			country_event = {
-				id = flavor_lcu.10
-				days = 900
+				id = flavor_lcu.26
+				days = 1
 			}		
 		}
 		
@@ -487,43 +493,50 @@ country_event = {
 	}
 	
 	
-	option = { ### Refuse Rei'sen proposal, make her into general
-		name = "flavor_lcu.9.b"	
-		add_mil_power = 200	
-		define_general = {
-			name = "Rei'sen"
-			shock = 5
-			fire = 6
-			manuever = 5
-			siege = 4
-			female = yes
-			trait = ruthless_personality
-		}
-
-		ai_chance = { 
-			factor = 30
+	option = { ### Refuse Rei'sen proposal
+		name = flavor_lcu.9.b	
+		custom_tooltip = flavor_lcu.9.b.tt
+		hidden_effect = {
+			country_event = {
+				id = flavor_lcu.10
+				days = 800
+			}		
 		}
 	}
 
 }
 
-
-### Rei'sen event continue
+### Rei'sen event continue - Rei'sen returns from the battlefield
 country_event = {
 	id = flavor_lcu.10
 	title = flavor_lcu.10.t
 	desc = flavor_lcu.10.desc
-	picture = TOUHOUMOON_eventPicture
+	picture = REISENWAR_eventPicture
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.10.a"
-		add_country_modifier = {
-			name = lcu_reisen_reforms
-			duration = -1
-		}	
+		name = flavor_lcu.10.a
+		random_list = {
+			10 = {
+				add_country_modifier = {
+					name = lcu_reisen_reforms_first
+					duration = -1
+				}
+			}
+			10 = {
+				add_country_modifier = {
+					name = lcu_reisen_reforms_second
+					duration = -1
+				}
+			}
+			10 = {
+				add_country_modifier = {
+					name = lcu_reisen_reforms_third
+					duration = -1
+				}
+			}
+		}
 	}
-
 }
 
 ## Yuyuko treasures event
@@ -535,7 +548,7 @@ country_event = {
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.11.a"
+		name = flavor_lcu.11.a
 		custom_tooltip = flavor_lcu.11.a.tt
 		hidden_effect = {
 			country_event = {
@@ -547,7 +560,7 @@ country_event = {
 	}
 
 	option = {	
-		name = "flavor_lcu.11.b"
+		name = flavor_lcu.11.b
 		custom_tooltip = flavor_lcu.11.b.tt         
 		hidden_effect = {
 			country_event = {
@@ -559,7 +572,7 @@ country_event = {
 	}
 
 	option = {	
-		name = "flavor_lcu.11.c"
+		name = flavor_lcu.11.c
 		custom_tooltip = flavor_lcu.11.c.tt
 		hidden_effect = {
 			country_event = {
@@ -581,8 +594,8 @@ country_event = {
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.12.a"
-		add_treasury = 1500
+		name = flavor_lcu.12.a
+		add_treasury = 1000
 	}
 }
 
@@ -595,10 +608,10 @@ country_event = {
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.13.a"
+		name = flavor_lcu.13.a
 		add_country_modifier = {
 			name = lcu_yuyuko_medium_treasure
-			duration = 7300
+			duration = 9125
 		}
 	}
 }
@@ -612,11 +625,11 @@ country_event = {
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.14.a"
+		name = flavor_lcu.14.a
 		add_mercantilism = 5
 		add_country_modifier = {
 			name = lcu_yuyuko_large_treasure
-			duration = 7300
+			duration = 9125
 		}
 	}
 
@@ -631,7 +644,7 @@ country_event = {
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.15.a"
+		name = flavor_lcu.15.a
 
 		change_price = {
 			trade_goods = wine
@@ -641,7 +654,7 @@ country_event = {
 		}
 		add_country_modifier = {
 			name = lcu_goods_from_europe
-			duration = 18250
+			duration = -1
 		}
 	}
 
@@ -656,10 +669,14 @@ country_event = {
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.16.a"
+		name = flavor_lcu.16.a
+		add_power_projection = {
+			type = mission_rewards_power_projection
+			amount = 25
+		}
 		add_country_modifier = {
 		name = lcu_fate_manipulation
-		duration = 9125
+		duration = -1
 		}
 	}
 
@@ -674,7 +691,7 @@ country_event = {
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.17.a"
+		name = flavor_lcu.17.a
 		custom_tooltip = flavor_lcu.17.a.tt
 		trigger = {
 			5159 = {
@@ -741,9 +758,10 @@ country_event = {
 				}
 				MRU = {
 					change_government = monarchy
-					add_government_reform = Gensokyan_monarchy
+					add_government_reform = Gensokyan_mru_rabbit_federal_monarchy
 					adopt_reform_progress = ROOT
-					change_primary_culture = ROOT
+					change_primary_culture = Gyokuto
+					add_accepted_culture = ROOT
 					change_religion = ROOT
 					add_historical_friend = ROOT
 					add_adm_power = 200
@@ -761,7 +779,7 @@ country_event = {
 					change_estate_land_share = {
 						estate = estate_burghers
 						share = 20
-					}					
+					}
 					define_ruler = {
 						name = "Rei'sen"
 						dynasty = "Udonge"
@@ -795,6 +813,16 @@ country_event = {
 					add_base_manpower = 2
 					add_base_production = 2
 					change_culture = ROOT
+					remove_province_modifier = th_impure_land
+					if = {
+						limit = {
+							owner = { has_government_attribute = uses_purified_land }
+						}
+						add_province_modifier = {
+							name = th_pure_land
+							duration = -1
+						}
+					}	
 				}
 		
 				5160 = {
@@ -802,6 +830,16 @@ country_event = {
 					add_base_manpower = 2
 					add_base_production = 2
 					change_culture = ROOT
+					remove_province_modifier = th_impure_land
+					if = {
+						limit = {
+							owner = { has_government_attribute = uses_purified_land }
+						}
+						add_province_modifier = {
+							name = th_pure_land
+							duration = -1
+						}
+					}	
 				}
 		
 				5161 = {
@@ -809,12 +847,33 @@ country_event = {
 					add_base_manpower = 2
 					add_base_production = 2
 					change_culture = ROOT
+					remove_province_modifier = th_impure_land
+					if = {
+						limit = {
+							owner = { has_government_attribute = uses_purified_land }
+						}
+						add_province_modifier = {
+							name = th_pure_land
+							duration = -1
+						}
+					}	
 				}
 				
 				5001 = {
 					add_base_tax = 2
 					add_base_manpower = 2
-					add_base_production = 2					
+					add_base_production = 2	
+					change_culture = ROOT
+					remove_province_modifier = th_impure_land
+					if = {
+						limit = {
+							owner = { has_government_attribute = uses_purified_land }
+						}
+						add_province_modifier = {
+							name = th_pure_land
+							duration = -1
+						}
+					}			
 				}
 			}	
 		}
@@ -822,7 +881,7 @@ country_event = {
 	}
 
 	option = {	
-		name = "flavor_lcu.17.b"
+		name = flavor_lcu.17.b
 		custom_tooltip = flavor_lcu.17.b.tt
 		hidden_effect = {
 			if = {
@@ -856,7 +915,7 @@ country_event = {
 			}
 			MRU = {
 				change_government = monarchy
-				add_government_reform = Gensokyan_monarchy
+				add_government_reform = Gensokyan_mru_rabbit_federal_monarchy
 				adopt_reform_progress = ROOT
 				change_primary_culture = ROOT
 				change_religion = ROOT
@@ -910,6 +969,16 @@ country_event = {
 				add_base_manpower = 2
 				add_base_production = 2
 				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}	
 			}
 	
 			5315 = {
@@ -917,6 +986,16 @@ country_event = {
 				add_base_manpower = 2
 				add_base_production = 2
 				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}	
 			}
 	
 			5323 = {
@@ -924,93 +1003,76 @@ country_event = {
 				add_base_manpower = 2
 				add_base_production = 2
 				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}	
 			}		
 		}
 	}
 
 }
 
-### Hina event
+### Junko Imprisonment event
 country_event = {
 	id = flavor_lcu.18
 	title = flavor_lcu.18.t
 	desc = flavor_lcu.18.desc
-	picture = HINA_eventPicture
+	picture = SOMBER_JUNKO_eventPicture
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.18.a"
-		custom_tooltip = flavor_lcu.18.a.tt
-		th_enable_touhou_advisor = {
-			advisor = th_advisor_hina
-		}
-		add_country_modifier = {
-			name = lcu_hina_accepted
-			duration = -1
+		name = flavor_lcu.18.a
+		5333 = {
+			change_province_name = "The Prison of Junko"
+			rename_capital = "The Prison of Junko"
+			add_province_modifier = {
+				name = lcu_prison_of_junko
+				duration = -1
 			}
-	}
+		}
+		5330 = {
+			change_province_name = "Rei'sen Laboratory"
+			rename_capital = "Rei'sen Laboratory"
+			add_province_modifier = {
+				name = lcu_reisen_lab
+				duration = -1
+			}
+		}
 
-	option = {	
-		name = "flavor_lcu.18.b"
-		add_prestige = 100		
+		th_add_stability_or_adm_power = {
+			amount = 3
+		}
 	}
 }
 
 
-### Declaration of war on Europe
+### Diplo approach for Europe
 country_event = {
 	id = flavor_lcu.19
 	title = flavor_lcu.19.t
 	desc = flavor_lcu.19.desc
-	picture = YORIHIME_eventPicture
+	picture = TOYOHIME_eventPicture
 	is_triggered_only = yes
 
 	option = {	# Declare war!
-		name = "flavor_lcu.19.a"	
+		name = flavor_lcu.19.a
+		lcu_unlock_lend_weapons = yes
 		custom_tooltip = flavor_lcu.19.a.tt
+		set_country_flag = th_lcu_replace_them_with_lunarians
 		add_country_modifier = {
 			name = lcu_europe_integration
 			duration = -1			
 		}
+
 		hidden_effect = {
-		
-			british_isles_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			france_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			italy_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}				
-
-			north_german_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			south_german_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			iberia_region = {
+			ile_de_france_area = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -1018,86 +1080,893 @@ country_event = {
 				add_permanent_claim = ROOT
 			}
 
-			low_countries_region = {
+			home_counties_area = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
-		
+
+			toledo_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+
+			lazio_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+
+			austria_proper_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+
+			mittelmark_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
-
-
-		hidden_effect = {
-			every_known_country = {
-				limit = { 
-					religion = catholic
-				}
-				add_opinion = {
-					who = ROOT
-					modifier = th_lcu_declared_war
-				}
-			}
-			every_known_country = {
-				limit = { 
-					religion = protestant
-				}
-				add_opinion = {
-					who = ROOT
-					modifier = th_lcu_declared_war
-				}
-			}
-			every_known_country = {
-				limit = { 
-					religion = reformed
-				}
-				add_opinion = {
-					who = ROOT
-					modifier = th_lcu_declared_war
-				}
-			}
-			every_known_country = {
-				limit = { 
-					religion = anglican
-				}
-				add_opinion = {
-					who = ROOT
-					modifier = th_lcu_declared_war
-				}
-			}
-			every_known_country = {
-				limit = { 
-					religion = hussite
-				}
-				add_opinion = {
-					who = ROOT
-					modifier = th_lcu_declared_war
-				}
-			}	
-			TUR = {
-				add_opinion = {
-					who = ROOT
-					modifier = th_lcu_declared_war
-				}
-			}			
-		}		
+	
 	}
 
 }
 
+## Gain CB against earth
 country_event = {
 	id = flavor_lcu.20
 	title = flavor_lcu.20.t
 	desc = flavor_lcu.20.desc
-	picture = TOYOHIME_eventPicture
+	picture = YORIHIME_eventPicture
 	is_triggered_only = yes
 
 	option = {	
-		name = "flavor_lcu.20.a"
+		name = flavor_lcu.20.a
 		custom_tooltip = flavor_lcu.20.a.tt
 		set_country_flag = lcu_extermination_time
+
+		hidden_effect = {
+			ile_de_france_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+
+			home_counties_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+
+			toledo_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+
+			lazio_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+
+			austria_proper_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+
+			mittelmark_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
 	}
 
+}
 
+### Landing in Gensokyo, smell of napalm
+country_event = {
+	id = flavor_lcu.21
+	title = flavor_lcu.21.t
+	desc = flavor_lcu.21.desc
+	picture = LUNARWAR_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.21.a
+		custom_tooltip = flavor_lcu.21.a.tt
+		hidden_effect = {
+			Perfect_cut_coast = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				add_base_tax = -1
+				add_base_production = -1
+				add_base_manpower = -1
+				add_devastation = 5
+				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}
+				change_religion = ROOT
+			}
+			Gengetsu_state = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				add_base_tax = -1
+				add_base_production = -1
+				add_base_manpower = -1
+				add_devastation = 5
+				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}
+				change_religion = ROOT
+			}
+			Sunny_plains = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				add_base_tax = -1
+				add_base_production = -1
+				add_base_manpower = -1
+				add_devastation = 5
+				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}
+				change_religion = ROOT
+			}
+		}
+	
+	}
+}
+
+
+### Diplomatic offer to Eientei
+country_event = {
+	id = flavor_lcu.22
+	title = flavor_lcu.22.t
+	desc = flavor_lcu.22.desc
+	picture = KAGUYA_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.22.a
+		custom_tooltip = flavor_lcu.22.a.tt
+		hidden_effect = {
+			EIT = {
+				country_event = {
+					id = flavor_lcu.100 
+					days = 1 
+				}
+			}
+		}
+	}
+	option = {
+		name = flavor_lcu.22.b
+		add_dip_power = 100
+	}
+}
+
+#### They accepted our offer
+country_event = {
+	id = flavor_lcu.23
+	title = flavor_lcu.23.t
+	desc = flavor_lcu.23.desc
+	picture = KAGUYA_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.23.a
+		create_union = FROM
+	}
+}
+
+
+
+### They refused our offer, and declared war on us
+country_event = {
+	id = flavor_lcu.24
+	title = flavor_lcu.24.t
+	desc = flavor_lcu.24.desc
+	picture = KAGUYA_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.24.a
+		FROM = {
+			declare_war_with_cb = {
+				casus_belli = cb_eit_lcu_war
+				who = ROOT
+			}
+		}
+	}
+}
+
+### Lunar Nobles & Rabbits event
+country_event = {
+	id = flavor_lcu.25
+	title = flavor_lcu.25.t
+	desc = flavor_lcu.25.desc
+	picture = LUNAR_NOBLES_AND_RABBITS_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.25.a
+		add_country_modifier = {
+			name = lcu_rabbits_are_friends
+			duration = -1
+		}
+		hidden_effect = {
+			set_country_flag = lcu_rabbits_are_friends
+		}
+	}
+
+	option = {	
+		name = flavor_lcu.25.b
+		add_country_modifier = {
+			name = lcu_resolved_conflict
+			duration = -1
+		}
+		hidden_effect = {
+			set_country_flag = lcu_resolved_conflict
+		}
+	}
+	
+	option = {	
+		name = flavor_lcu.25.c
+		add_country_modifier = {
+			name = lcu_rabbits_are_plebs
+			duration = -1
+		}
+		hidden_effect = {
+			set_country_flag = lcu_rabbits_are_plebs
+		}
+	}
+}
+
+### Rei'sen reforms
+country_event = {
+	id = flavor_lcu.26
+	title = flavor_lcu.26.t
+	desc = flavor_lcu.26.desc
+	picture = TOUHOUMOON_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.26.a
+		custom_tooltip = flavor_lcu.26.a.tt
+		hidden_effect = {
+			set_country_flag = lcu_reisen_reforms_first 
+			country_event = {
+				id = flavor_lcu.27
+				days = 500
+			}
+		}
+		
+	}
+
+	option = {	
+		name = flavor_lcu.26.b
+		custom_tooltip = flavor_lcu.26.b.tt
+		hidden_effect = {
+			set_country_flag = lcu_reisen_reforms_second
+			country_event = {
+				id = flavor_lcu.27
+				days = 500
+			}
+		}
+	}
+
+	option = {	
+		name = flavor_lcu.26.c
+		custom_tooltip = flavor_lcu.26.c.tt
+		hidden_effect = {
+			set_country_flag = lcu_reisen_reforms_third
+			country_event = {
+				id = flavor_lcu.27
+				days = 500
+			}
+		}
+	}
+
+}
+
+### Rei'sen reform continue
+country_event = {
+	id = flavor_lcu.27
+	title = flavor_lcu.27.t
+	desc = flavor_lcu.27.desc
+	picture = REISEN2_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.27.a
+		if = {
+			limit = {
+				has_country_flag = lcu_reisen_reforms_first 
+			}	
+			add_country_modifier = {
+				name = lcu_reisen_reforms_first
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = { 
+				has_country_flag = lcu_reisen_reforms_second
+			}
+			add_country_modifier = {
+				name = lcu_reisen_reforms_second
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = { 
+				has_country_flag = lcu_reisen_reforms_third
+			}
+			add_country_modifier = {
+				name = lcu_reisen_reforms_third
+				duration = -1
+			}
+		}
+	
+	}
+
+}
+
+### Kaguya event
+
+country_event = {
+	id = flavor_lcu.28
+	title = flavor_lcu.28.t
+	desc = flavor_lcu.28.desc
+	picture = KAGUYA_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.28.a
+		custom_tooltip = flavor_lcu.28.a.tt
+		hidden_effect = {
+			th_enable_touhou_advisor = {
+				advisor = th_advisor_kaguya
+			}
+			set_country_flag = lcu_kaguya_is_allowed
+		}	
+	}
+
+}
+
+### Kaguya event part 2
+country_event = {
+	id = flavor_lcu.29
+	title = flavor_lcu.29.t
+	desc = flavor_lcu.29.desc
+	picture = KAGUYALUNAR_eventPicture
+
+	fire_only_once = yes
+	trigger = {
+		th_advisor_kaguya = 3
+	}
+
+	mean_time_to_happen = {
+		months = 50
+	}
+
+	option = {	
+		name = flavor_lcu.29.a
+		add_years_of_income = -0.20
+		hidden_effect = {
+			set_country_flag = lcu_kaguya_is_getting_on_our_nerves
+		}
+	}
+}
+
+### Kaguya event part 3
+country_event = {
+	id = flavor_lcu.30
+	title = flavor_lcu.30.t
+	desc = flavor_lcu.30.desc
+	picture = KAGUYALUNAR_eventPicture
+
+	fire_only_once = yes
+
+	trigger = {
+		th_advisor_kaguya = 3
+		has_country_flag = lcu_kaguya_is_getting_on_our_nerves
+	}
+
+	mean_time_to_happen = {
+		months = 50
+	}
+
+	option = {	
+		name = flavor_lcu.30.a
+		add_corruption = 2
+		hidden_effect = {
+			set_country_flag = lcu_kaguya_is_really_getting_on_our_nerves
+		}
+	}
+
+}
+
+### Kaguya IS DEAD
+country_event = {
+	id = flavor_lcu.31
+	title = flavor_lcu.31.t
+	desc = flavor_lcu.31.desc
+	picture = YORIHIME_eventPicture
+
+	fire_only_once = yes
+
+	trigger = {
+		th_advisor_kaguya = 3
+		has_country_flag = lcu_kaguya_is_really_getting_on_our_nerves
+	}
+
+	mean_time_to_happen = {
+		months = 50
+	}
+
+	option = {	
+		name = flavor_lcu.31.a
+		custom_tooltip = flavor_lcu.31.a.tt
+		add_prestige = -20
+		kill_advisor = th_advisor_kaguya
+		hidden_effect = {
+			clr_country_flag = lcu_kaguya_is_allowed
+			clr_country_flag = lcu_kaguya_is_getting_on_our_nerves
+			clr_country_flag = lcu_kaguya_is_really_getting_on_our_nerves
+		}
+	}
+
+}
+
+
+### Build Suez Canal
+country_event = {
+	id = flavor_lcu.32
+	title = flavor_lcu.32.t
+	desc = flavor_lcu.32.desc
+	picture = SUEZ_CANAL_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.32.a
+		custom_tooltip = flavor_lcu.32.a.tt
+		set_country_flag = lcu_build_suez_canal	
+		4316 = {
+			add_province_modifier = {
+				name = lcu_ambitious_project
+				duration = -1
+			}
+		}
+		2315 = {
+			add_province_modifier = {
+				name = lcu_ambitious_project
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			delta_area = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				add_base_tax = -1
+				add_base_production = -1
+				add_base_manpower = -1
+				add_devastation = 5
+				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}	
+				change_religion = ROOT
+			}
+			bahari_area = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				add_base_tax = -1
+				add_base_production = -1
+				add_base_manpower = -1
+				add_devastation = 5
+				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}	
+				change_religion = ROOT
+			}
+			gulf_of_arabia_area = {
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				add_base_tax = -1
+				add_base_production = -1
+				add_base_manpower = -1
+				add_devastation = 5
+				change_culture = ROOT
+				remove_province_modifier = th_impure_land
+				if = {
+					limit = {
+						owner = { has_government_attribute = uses_purified_land }
+					}
+					add_province_modifier = {
+						name = th_pure_land
+						duration = -1
+					}
+				}	
+				change_religion = ROOT
+			}	
+		}
+	}
+
+}
+
+
+country_event = {
+	id = flavor_lcu.33
+	title = flavor_lcu.33.t
+	desc = flavor_lcu.33.desc
+	picture = THMIDDLEEAST_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.33.a
+		custom_tooltip = flavor_lcu.33.a.tt
+
+		151 = {
+			remove_core = TUR
+			add_core = ROOT
+			cede_province = ROOT
+			change_religion = ROOT
+			change_culture = ROOT
+			remove_province_modifier = th_impure_land
+			if = {
+				limit = {
+					owner = { has_government_attribute = uses_purified_land }
+				}
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}	
+			change_province_name = "Lunapolis"
+			rename_capital = "Lunapolis"
+			add_province_modifier = {
+				name = lcu_pearl_of_moon
+				duration = -1
+			}
+		}
+	}	
+}   
+
+
+
+
+### Diplomatic offer to form PU from LCU to EIT
+country_event = {
+	id = flavor_lcu.100
+	title = flavor_lcu.100.t
+	desc = flavor_lcu.100.desc
+	picture = TOYOHIME_eventPicture
+	is_triggered_only = yes
+
+	option = {	 ## Offer accepted
+		name = flavor_lcu.100.a
+			FROM = {
+				tooltip = {
+					create_union = ROOT
+				}
+				hidden_effect = {
+					country_event = { id = flavor_lcu.23 }
+				}
+			}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				total_development = 200
+			}
+		}
+	}
+	option = {	### We want war
+		name = flavor_lcu.100.b
+		custom_tooltip = flavor_lcu.100.b.tt
+		tooltip = {
+			declare_war_with_cb = {
+				casus_belli = cb_eit_lcu_war
+				who = FROM
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { 
+					id = flavor_lcu.24 
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { total_development = 200 }
+			}
+		}
+	}
+}
+
+
+### Espionage option
+country_event = {
+	id = flavor_lcu.101
+	title = flavor_lcu.101.t
+	desc = flavor_lcu.101.desc
+	picture = ETERNALNIGHT_eventPicture
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_lcu.101.a
+		add_casus_belli = { 
+			target = EIT 
+			type = cb_eit_lcu_war
+			months = 600 
+		}
+		add_dip_power = 50
+		add_mil_power = 50
+	}
+}
+
+
+
+### Diplomatic offer to owner of Malta
+country_event = {
+	id = flavor_lcu.110
+	title = flavor_lcu.110.t
+	desc = flavor_lcu.110.desc
+	picture = TOYOHIME_eventPicture
+	is_triggered_only = yes
+
+	option = {	# Cede island
+		name = flavor_lcu.110.a
+		custom_tooltip = flavor_lcu.110.a.tt
+		126 = {
+			remove_core = ROOT
+			add_core = FROM
+			cede_province = FROM
+			change_religion = FROM
+			change_culture = FROM
+			remove_province_modifier = th_impure_land
+			if = {
+				limit = {
+					owner = { has_government_attribute = uses_purified_land }
+				}
+				add_province_modifier = {
+					name = th_pure_land
+					duration = -1
+				}
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = {
+					id = flavor_lcu.111
+				}
+			}
+		}
+
+
+		ai_chance = { 
+			factor = 80
+		}
+	}
+
+	option = {	#This island shall remain ours
+		name = flavor_lcu.110.b
+		custom_tooltip = flavor_lcu.110.b.tt
+		126 = {
+			add_core = FROM
+		}
+		add_prestige = 25
+		hidden_effect = {
+			FROM = {
+				country_event = {
+					id = flavor_lcu.112
+				}
+			}
+		}	
+
+		ai_chance = { 
+			factor = 20
+		}
+}
+
+}
+
+
+#### Malta seized by Lunarians
+country_event = {
+	id = flavor_lcu.111
+	title = flavor_lcu.111.t
+	desc = flavor_lcu.111.desc
+	picture = TOUHOUCHURCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#
+		name = flavor_lcu.111.a
+		custom_tooltip = flavor_lcu.111.a.tt
+		126 = {
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 2
+			add_devastation = 3
+		}
+
+		hidden_effect = {
+			2982 = {
+				add_core = ROOT
+			}
+			124 = {
+				add_core = ROOT
+			}
+			4737 = {
+				add_core = ROOT
+			}
+			4736 = {
+				add_core = ROOT
+			}
+			125 = {
+				add_core = ROOT
+			}		
+			every_known_country = {
+					limit = { 
+						religion = catholic
+					}
+					add_opinion = {
+						who = ROOT
+						modifier = th_lcu_declared_war
+					}
+			}
+			every_known_country = {
+					limit = { 
+						religion = protestant
+					}
+					add_opinion = {
+						who = ROOT
+						modifier = th_lcu_declared_war
+					}
+			}
+			every_known_country = {
+					limit = { 
+						religion = reformed
+					}
+					add_opinion = {
+						who = ROOT
+						modifier = th_lcu_declared_war
+					}
+			}
+			every_known_country = {
+					limit = { 
+						religion = anglican
+					}
+					add_opinion = {
+						who = ROOT
+						modifier = th_lcu_declared_war
+					}
+			}
+			every_known_country = {
+					limit = { 
+						religion = hussite
+					}
+					add_opinion = {
+						who = ROOT
+						modifier = th_lcu_declared_war
+					}
+			}	
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+### They refused our offer
+country_event = {
+	id = flavor_lcu.112
+	title = flavor_lcu.112.t
+	desc = flavor_lcu.112.desc
+	picture = TOUHOUCHURCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#They refused
+		name = flavor_lcu.112.a
+		custom_tooltip = flavor_lcu.112.a.tt
+
+		hidden_effect = {
+			2982 = {
+				add_core = ROOT
+			}
+			124 = {
+				add_core = ROOT
+			}
+			4737 = {
+				add_core = ROOT
+			}
+			4736 = {
+				add_core = ROOT
+			}
+			125 = {
+				add_core = ROOT
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
 }

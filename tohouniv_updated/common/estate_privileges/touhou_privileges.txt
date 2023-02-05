@@ -98,7 +98,11 @@ th_estate_church_danmaku_support = {
 	influence = 0.1
 	loyalty = 0.0
 	is_valid = {
-		religion_group = Touhou
+		OR = {
+			religion_group = Touhou
+			religion_group = lunarian_religion_g
+		}
+		
 	}
 	can_select = {
 	}
@@ -122,6 +126,35 @@ th_estate_church_danmaku_support = {
 	}
 }
 
+th_estate_church_spread_gensokyan_faith = {
+	icon = privilege_missionaries
+	max_absolutism = -5
+	influence = 0.1
+	loyalty = 0.0
+	is_valid = {
+		OR = {
+			religion_group = Touhou
+			religion_group = lunarian_religion_g
+		}		
+	}
+	can_select = {
+	}
+	on_granted = {
+	}
+	on_revoked = {
+	}
+	penalties = {
+		tolerance_heathen = -2
+	}
+	benefits = {
+		global_heathen_missionary_strength = 0.02
+		missionary_maintenance_cost = -0.25
+	}
+	ai_will_do = {
+		factor = 10
+	}
+}
+
 th_estate_nobles_third_eye = {
 	icon = th_privilege_third_eye
 	max_absolutism = -5
@@ -135,9 +168,7 @@ th_estate_nobles_third_eye = {
 		any_subject_country = {
 			NOT = { is_subject_of_type = tributary_state }
 		}
-		th_has_unlocked_privilege = {
-			estate_privilege = th_estate_nobles_third_eye
-		}
+		has_unlocked_estate_privilege = { estate_privilege = th_estate_nobles_third_eye }
 	}
 	can_select = {
 		legitimacy_equivalent = 75	#If Satori is not legitimate enough then why should any vassal obey her?
@@ -165,7 +196,7 @@ th_estate_burghers_governmental_focus = {
 	loyalty = 0.0
 	is_valid = {
 		OR = {
-			culture_group = Gensokyan_culture
+			th_is_touhou_culture_group = yes
 			religion_group = Touhou
 		}
 	}
@@ -329,9 +360,7 @@ th_estate_burghers_arctic_development = {
 	loyalty = 0.1
 	influence = 0.05
 	is_valid = {
-		th_has_unlocked_privilege = {
-			estate_privilege = th_estate_burghers_arctic_development
-		}
+		has_unlocked_estate_privilege = { estate_privilege = th_estate_burghers_arctic_development }
 	}
 	can_select = {
 	}
@@ -589,7 +618,7 @@ th_estate_burghers_mass_marine_conscription = {
 	influence = 0.05
 	loyalty = 0.05
 	is_valid = {
-		th_has_unlocked_privilege = { estate_privilege = th_estate_burghers_mass_marine_conscription }
+		has_unlocked_estate_privilege = { estate_privilege = th_estate_burghers_mass_marine_conscription }
 	}
 	can_select = {
 		custom_trigger_tooltip = {
@@ -621,6 +650,7 @@ th_estate_burghers_mass_marine_conscription = {
 				OR = {
 					has_dlc = "Rule Britannia"
 					has_dlc = "Golden Century"
+					has_dlc = "Lions of the North"
 				}
 			}
 			add_country_modifier = {
@@ -653,7 +683,7 @@ th_estate_burghers_elite_marines = {
 	influence = 0.05
 	loyalty = 0.05
 	is_valid = {
-		th_has_unlocked_privilege = { estate_privilege = th_estate_burghers_elite_marines }
+		has_unlocked_estate_privilege = { estate_privilege = th_estate_burghers_elite_marines }
 	}
 	can_select = {
 		custom_trigger_tooltip = {
@@ -685,6 +715,7 @@ th_estate_burghers_elite_marines = {
 				OR = {
 					has_dlc = "Rule Britannia"
 					has_dlc = "Golden Century"
+					has_dlc = "Lions of the North"
 				}
 			}
 			add_country_modifier = {
@@ -717,7 +748,7 @@ th_estate_burghers_naval_reinforcement = {
 	influence = 0.05
 	loyalty = 0.05
 	is_valid = {
-		th_has_unlocked_privilege = { estate_privilege = th_estate_burghers_naval_reinforcement }
+		has_unlocked_estate_privilege = { estate_privilege = th_estate_burghers_naval_reinforcement }
 	}
 	can_select = {
 		custom_trigger_tooltip = {
@@ -749,6 +780,7 @@ th_estate_burghers_naval_reinforcement = {
 				OR = {
 					has_dlc = "Rule Britannia"
 					has_dlc = "Golden Century"
+					has_dlc = "Lions of the North"
 				}
 			}
 			add_country_modifier = {
@@ -789,6 +821,7 @@ th_estate_burghers_swamp_developers = {
 				has_terrain = marsh
 				has_terrain = grasslands
 				has_terrain = farmlands
+				has_terrain = jungle
 			}
 		}
 	}
@@ -821,7 +854,16 @@ th_estate_burghers_swamp_developers = {
 					name = th_estate_burghers_swamp_developers_farmlands_modifier
 					duration = -1
 				}
-			}		
+			}
+			every_owned_province = {
+				limit = {
+					has_terrain = jungle
+				}
+				add_province_modifier = {
+					name = th_estate_burghers_swamp_developers_jungle_modifier
+					duration = -1
+				}
+			}
 		}
 	}
 	on_revoked = {
@@ -833,11 +875,13 @@ th_estate_burghers_swamp_developers = {
 						has_province_modifier = th_estate_burghers_swamp_developers_marsh_modifier
 						has_province_modifier = th_estate_burghers_swamp_developers_grassland_modifier
 						has_province_modifier = th_estate_burghers_swamp_developers_farmlands_modifier
+						has_province_modifier = th_estate_burghers_swamp_developers_jungle_modifier
 					}
 				}
 				remove_province_modifier = th_estate_burghers_swamp_developers_marsh_modifier
 				remove_province_modifier = th_estate_burghers_swamp_developers_grassland_modifier
 				remove_province_modifier = th_estate_burghers_swamp_developers_farmlands_modifier
+				remove_province_modifier = th_estate_burghers_swamp_developers_jungle_modifier
 			}
 		}
 	}
@@ -850,11 +894,13 @@ th_estate_burghers_swamp_developers = {
 						has_province_modifier = th_estate_burghers_swamp_developers_marsh_modifier
 						has_province_modifier = th_estate_burghers_swamp_developers_grassland_modifier
 						has_province_modifier = th_estate_burghers_swamp_developers_farmlands_modifier
+						has_province_modifier = th_estate_burghers_swamp_developers_jungle_modifier
 					}
 				}
 				remove_province_modifier = th_estate_burghers_swamp_developers_marsh_modifier
 				remove_province_modifier = th_estate_burghers_swamp_developers_grassland_modifier
 				remove_province_modifier = th_estate_burghers_swamp_developers_farmlands_modifier
+				remove_province_modifier = th_estate_burghers_swamp_developers_jungle_modifier
 			}
 		}
 	}
@@ -879,5 +925,47 @@ th_estate_burghers_swamp_developers = {
 			factor = 0
 			is_absolutism_active = yes
 		}
+	}
+}
+
+th_estate_nobles_royal_guards = {
+	icon = th_estate_nobles_royal_guards
+	max_absolutism = -5
+	loyalty = 0.1
+	influence = 0.1
+	is_valid = {
+		has_country_flag = lcu_toyohime_and_yorihime_army_reforms 
+	}
+	penalties = {
+		global_regiment_cost = 0.2  
+	}
+	benefits = {
+		infantry_power = 0.1
+		artillery_power = 0.1 
+		cavalry_power = 0.05 
+	}
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+
+th_estate_nobles_prestigious_army = {
+	icon = th_estate_nobles_prestigious_army
+	max_absolutism = 0
+	loyalty = 0.05
+	influence = 0.05
+	is_valid = {
+		has_country_flag = lcu_toyohime_and_yorihime_army_reforms
+	}
+	penalties = {
+
+	}
+	benefits = {
+		manpower_recovery_speed = 0.15
+		global_manpower_modifier = 0.15 
+	}
+	ai_will_do = {
+		factor = 1
 	}
 }
