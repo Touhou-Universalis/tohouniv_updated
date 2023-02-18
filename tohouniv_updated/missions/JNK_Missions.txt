@@ -12,23 +12,72 @@ jnk_missions_religion_slot = {
 		icon = mission_touhou_junko
 		required_missions = {  }
 		position = 1
-		trigger = {
 
+		trigger = {
+			OR = {
+				NOT = { current_age = age_of_discovery }
+				AND = {
+					any_owned_province = {
+						continent = moon_continent
+						has_missionary = yes
+					}
+					OR = {
+						employed_advisor = {
+							type = theologian
+						}
+						employed_advisor = {
+							type = inquisitor
+						}
+						has_estate_privilege = th_estate_church_spread_gensokyan_faith
+					}
+				}
+			}
 		}
 		effect = {
-			add_prestige = 10
+			country_event = {
+				id = flavor_jnk.1
+			}
 		}
 	}
 	
-	JNK_devine_spirit_in_moon = {
+	JNK_divine_spirit_in_moon = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_define_our_identity }
 		position = 2
-		trigger = {
 
+		provinces_to_highlight = {
+			continent = moon_continent
+			NOT = { religion = ROOT }
+		}
+		trigger = {
+			OR = {
+				religion = th_hakureishinto
+				religion = th_lunarian_religion
+			}
+			moon_continent = {
+				type = all
+				religion = ROOT
+			}
 		}
 		effect = {
-			add_prestige = 10
+			if = {
+				limit = {
+					religion = th_hakureishinto
+				}
+				add_country_modifier = {
+					name = jnk_hakurei_reward
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					religion = th_lunarian_religion
+				}
+				add_country_modifier = {
+					name = jnk_lunarism_reward
+					duration = -1
+				}
+			}
 		}
 	}
 }
@@ -47,11 +96,38 @@ jnk_missions_clownpiece_slot = {
 		icon = mission_touhou_junko
 		required_missions = {  }
 		position = 1
-		trigger = {
 
+		trigger = {
+			HEC = {
+				OR = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+					exists = no
+				}
+			}
+			CLP = {
+				OR = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+					exists = no
+				}
+			}
 		}
 		effect = {
-			add_prestige = 10
+			HEC = {
+				add_favors = {
+					who = ROOT
+					amount = 20
+				}
+			}
+			add_country_modifier = {
+				name = jnk_hell_fairies
+				duration = 3650
+			}
 		}
 	}
 }
@@ -70,11 +146,35 @@ jnk_missions_lunarian_slot = {
 		icon = mission_touhou_junko
 		required_missions = { }
 		position = 1
-		trigger = {
 
+		trigger = {
+			OR = {
+				num_of_generals = 1
+				employed_advisor = {
+					category = MIL
+				}
+			}
+			army_size_percentage = 1
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_prepare_of_war
+				duration = 5475
+			}
+			Western_moon_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Southern_moon_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -85,35 +185,106 @@ jnk_missions_lunarian_slot = {
 			JNK_rally_troop
 		}
 		position = 2
-		trigger = {
 
+		provinces_to_highlight = {
+			OR = {
+				area = Western_moon_state
+				area = Southern_moon_state
+			}
+			NOT = { owned_by = ROOT }
+		}
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					OR = {
+						area = Western_moon_state
+						area = Southern_moon_state
+					}
+					owned_by = ROOT
+				}
+				amount = 4
+			}
+			owns_core_province = 5315	#Sinner's Prison
 		}
 		effect = {
-			add_prestige = 10
+			add_adm_power = 100
+			country_event = {
+				id = flavor_jnk.2
+			}			
 		}
 	}
 	
-	JNK_eliminate_lunar_captital = {
+	JNK_eliminate_lunar_capital = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_chase_jyouga }
 		position = 3
-		trigger = {
 
+		provinces_to_highlight = {
+			owned_by = LCU
+		}
+		trigger = {
+			NOT = { exists = LCU }
+			owns_core_province = 5320	#Lunar Capital
 		}
 		effect = {
-			add_prestige = 10
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 50
+			}
+			Western_moon_state = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_fall_of_lunarian
+					duration = 3650
+				}
+			}
+			Southern_moon_state = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_fall_of_lunarian
+					duration = 3650
+				}
+			}
 		}
 	}
 	
 	JNK_stabilize_moon = {
 		icon = mission_touhou_junko
-		required_missions = { JNK_eliminate_lunar_captital }
+		required_missions = { JNK_eliminate_lunar_capital }
 		position = 4
-		trigger = {
 
+		provinces_to_highlight = {
+			continent = moon_continent
+			OR = {
+				devastation = 1
+				unrest = 1
+			}
+			owned_by = ROOT
+		}		
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					continent = moon_continent
+					devastation = 1
+					unrest = 1
+				}
+			}
 		}
 		effect = {
-			add_prestige = 10
+			add_years_of_income = 1
+			moon_continent = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_restore_of_moon
+					duration = 7300
+				}
+			}
 		}
 	}
 }
@@ -132,11 +303,29 @@ jnk_missions_eientei_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_chase_jyouga }
 		position = 3
-		trigger = {
 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4991	#Eientei
+				province_id = 5117	#Moonrabbit Refuge
+			}
+			NOT = {
+				owned_by = ROOT
+			}
+		}
+		trigger = {
+			NOT = { exists = EIT }
+			owns_core_province = 4991
+			owns_core_province = 5117
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_technology_of_lunar_sage
+				duration = 10950
+			}
+			country_event = {
+				id = flavor_jnk.3
+			}
 		}
 	}
 }
@@ -155,11 +344,34 @@ jnk_missions_hecatia_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_eliminate_lunar_captital }
 		position = 4
-		trigger = {
 
+		provinces_to_highlight = {
+			province_id = 5334	#Clownsville
+			NOT = {
+				owned_by = ROOT
+			}
+		}		
+		trigger = {
+			NOT = { exists = CLP }
+			owns_core_province = 5334
 		}
 		effect = {
-			add_prestige = 10
+			Uncolonized_moon_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			th_colonize_dev_province_for_root = {
+				province = 5336	#Lunar Bay
+			}
+			th_colonize_dev_province_for_root = {
+				province = 5337	#Langrenus Crater
+			}
+			th_colonize_dev_province_for_root = {
+				province = 5338	#Surreal Moon Isles
+			}
 		}
 	}
 	
@@ -167,11 +379,85 @@ jnk_missions_hecatia_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_integrate_clownpiecia }
 		position = 5
-		trigger = {
+		provinces_to_highlight = {
+			continent = moon_continent
+			OR = {
+				NOT = { owned_by = JNK }
+				NOT = { owned_by = HEC }
+			}
+		}
 
+		trigger = {
+			moon_region = {
+				type = all
+				owner = {
+					OR = {
+						tag = JNK
+						tag = HEC
+					}
+				}
+			}
+			OR = {
+				AND = {
+					alliance_with = HEC
+					if = {
+						limit = {
+							has_dlc = "The Cossacks"
+						}
+						HEC = {
+							trust = {
+								who = ROOT
+								value = 80
+							}
+						}
+					}
+					else = {
+						reverse_has_opinion = {
+							who = HEC
+							value = 150
+						}
+					}
+				}
+				is_rival = HEC
+				NOT = { exists = HEC }
+			}
 		}
 		effect = {
-			add_prestige = 10
+			if = {
+				limit = {
+					alliance_with = HEC
+				}
+				country_event = {
+					id = flavor_jnk.4
+				}
+			}
+			else_if = {
+				limit = {
+					is_rival = HEC
+				}
+				Hecetias_colony = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				add_casus_belli = {
+					target = HEC
+					type = cb_touhou_mission_personal_union_war
+					months = 900
+				}
+			}
+			else = {
+				Hecetias_colony = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				add_adm_power = 150
+			}
 		}
 	}
 	
@@ -179,11 +465,78 @@ jnk_missions_hecatia_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_union_dream_hell }
 		position = 6
-		trigger = {
 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 5326 #Hell of Moon
+					NOT = { development = 25 }
+					NOT = {
+						OR = {
+							has_building = cathedral
+							has_building = temple
+						}
+					}
+				}
+				AND = {
+					province_id = 5327 #Hell of Gensokyo
+					NOT = { development = 30 }
+					NOT = {
+						OR = {
+							has_building = cathedral
+							has_building = temple
+						}
+					}
+				}
+				AND = {
+					province_id = 5328 #Hell of Earth
+					NOT = { development = 25 }
+					NOT = {
+						OR = {
+							has_building = cathedral
+							has_building = temple
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			HEC = {
+				OR = {
+					is_subject_of = ROOT
+					exists = no
+				}
+			}
+			5326 = {
+				country_or_subject_holds = ROOT
+				development = 25
+				OR = {
+					has_building = cathedral
+					has_building = temple
+				}
+			}
+			5327 = {
+				country_or_subject_holds = ROOT
+				development = 30
+				OR = {
+					has_building = cathedral
+					has_building = temple
+				}
+			}
+			5328 = {
+				country_or_subject_holds = ROOT
+				development = 25
+				OR = {
+					has_building = cathedral
+					has_building = temple
+				}
+			}
 		}
 		effect = {
-			add_prestige = 10
+			country_event = {
+				id = flavor_jnk.5
+			}
 		}
 	}
 }
@@ -202,11 +555,63 @@ jnk_missions_china_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_chase_jyouga }
 		position = 3
-		trigger = {
+		provinces_to_highlight = {
+			OR = {
+				province_id = 730
+				province_id = 2108
+			}
+			NOT = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}
 
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					OR = {
+						region = manchuria_region
+					}
+					owned_by = ROOT
+				}
+				amount = 20
+			}
+			owns_core_province = 730	#Girin
+			owns_core_province = 2108	#Huncun
 		}
 		effect = {
-			add_prestige = 10
+			liaoning_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			hebei_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			south_hebei_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			shandong_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			country_event = {
+				#will add gain access to 'Conquer China' CB like 1.35 Japan
+				id = flavor_jnk.10
+			}
 		}
 	}
 	
@@ -215,10 +620,68 @@ jnk_missions_china_slot = {
 		required_missions = { JNK_entrance_of_china }
 		position = 4
 		trigger = {
-
+			if = {
+				limit = {
+					any_country = {
+						is_emperor_of_china = yes
+					}
+				}
+				is_in_war = {
+					casus_belli = cb_chinese_unification
+					attacker_leader = ROOT
+					war_score = 75
+				}
+				if = {
+					limit = {
+						any_country = {
+							is_emperor_of_china = yes
+							owns = 1816
+						}
+					}
+					controls = 1816
+				}
+				else = {
+					any_country = {
+						is_emperor_of_china = yes
+						capital_scope = {
+							controlled_by = ROOT
+						}
+					}
+				}
+			}
+			else = {
+				calc_true_if = {
+					all_province = {
+						region = north_china_region
+						owned_by = ROOT
+					}
+					amount = 10
+				}
+				owns_core_province = 1816
+			}
 		}
 		effect = {
-			add_prestige = 10
+			if = {
+				limit = {
+					is_in_war = {
+						casus_belli = cb_chinese_unification
+						attacker_leader = ROOT
+						war_score = 75
+					}
+				}
+				country_event = {
+					id = flavor_jnk.6
+				}
+			}
+			else = {
+				china_superregion = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
 		}
 	}
 	
@@ -227,10 +690,60 @@ jnk_missions_china_slot = {
 		required_missions = { JNK_domination_of_china }
 		position = 5
 		trigger = {
-
+			calc_true_if = {	#Need Tooltip
+				accepted_culture = manchu_new
+				accepted_culture = vietnamese_new
+				accepted_culture = korean_new
+				accepted_culture = tibetan_new
+				accepted_culture = altaic_new
+				accepted_culture = chihan
+				accepted_culture = miao
+				accepted_culture = cantonese
+				accepted_culture = jin
+				accepted_culture = wu
+				accepted_culture = chimin
+				accepted_culture = hakka
+				accepted_culture = gan
+				accepted_culture = xiang
+				accepted_culture = sichuanese
+				accepted_culture = jianghuai
+				accepted_culture = xibei
+				accepted_culture = hubei
+				accepted_culture = zhongyuan
+				accepted_culture = shandong_culture
+				amount = 2
+			}
+			OR = {	#Need Tooltip TOO
+				employed_advisor = { culture = manchu_new }
+				employed_advisor = { culture = vietnamese_new }
+				employed_advisor = { culture = korean_new }
+				employed_advisor = { culture = tibetan_new }
+				employed_advisor = { culture = altaic_new }
+				employed_advisor = { culture = chihan }
+				employed_advisor = { culture = miao }
+				employed_advisor = { culture = cantonese }
+				employed_advisor = { culture = jin }
+				employed_advisor = { culture = wu }
+				employed_advisor = { culture = chimin }
+				employed_advisor = { culture = hakka }
+				employed_advisor = { culture = gan }
+				employed_advisor = { culture = xiang }
+				employed_advisor = { culture = sichuanese }
+				employed_advisor = { culture = jianghuai }
+				employed_advisor = { culture = xibei }
+				employed_advisor = { culture = hubei }
+				employed_advisor = { culture = zhongyuan }
+				employed_advisor = { culture = shandong_culture }
+			}
 		}
 		effect = {
-			add_prestige = 10
+			add_dip_power = 100
+			hidden_effect = {	#Need to modding monument file
+				set_country_flag = th_can_upgrade_chinese_monument
+			}	
+			hidden_effect = {	#Need to modding privilage file
+				set_country_flag = th_can_select_mandate_privilage
+			}			
 		}
 	}
 	
@@ -239,10 +752,80 @@ jnk_missions_china_slot = {
 		required_missions = { JNK_adapt_to_china }
 		position = 6
 		trigger = {
-
+			OR = {
+				num_of_owned_provinces_with = {	#Need Tooltip
+					OR = {
+						area = liaoning_area
+						area = hebei_area
+						area = shanxi_area
+						area = shaanxi_area
+						area = gansu_area
+						area = west_gansu_area
+					}
+					value = 6
+					province_has_current_tech_fort_trigger = yes
+				}
+				has_great_project = {
+					type = the_great_wall_of_china
+					tier = 3
+				}				
+			}
 		}
-		effect = {
-			add_prestige = 10
+		effect = {	#Need Tooltip
+			liaoning_area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_protected_border
+					duration = 14600
+				}
+			}
+			hebei_area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_protected_border
+					duration = 14600
+				}
+			}
+			shanxi_area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_protected_border
+					duration = 14600
+				}
+			}
+			shaanxi_area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_protected_border
+					duration = 14600
+				}
+			}
+			gansu_area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_protected_border
+					duration = 14600
+				}
+			}
+			west_gansu_area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = jnk_protected_border
+					duration = 14600
+				}
+			}
 		}
 	}	
 	
@@ -250,11 +833,43 @@ jnk_missions_china_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_protect_china }
 		position = 7
-		trigger = {
+		provinces_to_highlight = {
+			OR = {
+				province_id = 1816
+				province_id = 1821
+				province_id = 667
+			}
+			NOT = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}
 
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 80
+				superregion = china_superregion
+			}
+			owns_core_province = 1816
+			owns_core_province = 1821
+			owns_core_province = 667			
 		}
 		effect = {
-			add_prestige = 10
+			if = {
+				limit = {
+					is_emperor_of_china = yes
+				}
+				add_country_modifier = {
+					name = jnk_master_of_continent_1
+					duration = 10950
+				}				
+			}
+			else = {
+				add_country_modifier = {
+					name = jnk_master_of_continent_2
+					duration = 10950
+				}					
+			}
 		}
 	}
 	
@@ -263,10 +878,49 @@ jnk_missions_china_slot = {
 		required_missions = { JNK_unify_china }
 		position = 8
 		trigger = {
-
+			has_any_disaster = no
+			NOT = {	
+				has_disaster_progress = {
+					disaster = th_gensokyan_celestial_trial
+					value = 1
+				}
+			}
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+					is_emperor_of_china = yes
+				}
+				empire_of_china_reform_level = 4	#Is need to change when 1.35 release
+				imperial_mandate = 80
+				meritocracy = 80
+			}
+			else = {
+				legitimacy = 95
+				stability = 3
+				NOT = {
+					any_owned_province = {
+						superregion = china_superregion
+						unrest = 1
+					}
+				}
+			}				
 		}
 		effect = {
-			add_prestige = 10
+			if = {
+				limit = {
+					is_emperor_of_china = yes
+				}
+				add_country_modifier = {
+					name = jnk_mother_of_continent_1
+					duration = -1
+				}				
+			}
+			else = {
+				add_country_modifier = {
+					name = jnk_mother_of_continent_2
+					duration = -1
+				}					
+			}	
 		}
 	}	
 }
@@ -286,10 +940,30 @@ jnk_missions_china_economy_slot = {
 		required_missions = { JNK_protect_china }
 		position = 7
 		trigger = {
-
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 40
+				superregion = china_superregion
+				devastation = 1
+			}			
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 25
+				superregion = china_superregion
+				OR = {
+					has_building = workshop
+					has_building = counting_house
+				}
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 10
+				superregion = china_superregion
+				has_manufactory_trigger = yes
+			}
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_recover_of_china
+				duration = 7300			
+			}
 		}
 	}
 	
@@ -298,10 +972,76 @@ jnk_missions_china_economy_slot = {
 		required_missions = { JNK_recover_china_economy }
 		position = 8
 		trigger = {
-
+			OR = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 10
+					superregion = china_superregion
+					has_center_of_trade_of_level = 2
+				}
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 25
+					superregion = china_superregion
+					OR = {
+						has_building = marketplace
+						has_building = trade_depot
+						has_building = stock_exchange
+					}
+				}
+			}
+			calc_true_if = {
+				4233 = {	#Beijing node
+					OR = {
+						is_strongest_trade_power = ROOT
+						trade_share = {
+							country = ROOT
+							share = 40
+						}
+					}
+				}
+				684 = {		#Hangzhou node
+					OR = {
+						is_strongest_trade_power = ROOT
+						trade_share = {
+							country = ROOT
+							share = 40
+						}
+					}
+				}
+				1371 = {	#Canton node
+					OR = {
+						is_strongest_trade_power = ROOT
+						trade_share = {
+							country = ROOT
+							share = 40
+						}
+					}
+				}
+				679 = {	#Chengdu node
+					OR = {
+						is_strongest_trade_power = ROOT
+						trade_share = {
+							country = ROOT
+							share = 40
+						}
+					}
+				}
+				700 = {	#Xian node
+					OR = {
+						is_strongest_trade_power = ROOT
+						trade_share = {
+							country = ROOT
+							share = 40
+						}
+					}
+				}
+				amount = 3
+			}
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_recover_of_silkroad
+				duration = -1			
+			}
 		}
 	}
 }
@@ -320,11 +1060,36 @@ jnk_missions_gensokyo_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_chase_jyouga }
 		position = 3
-		trigger = {
 
+		provinces_to_highlight = {
+			province_id = 5032
+			NOT = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}		
+		trigger = {
+			owns_or_non_sovereign_subject_of = 5032	#Dragon Palace
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_heaven_fleet	#WIP
+				duration = 7300		
+			}
+			Konngaras_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			World_of_fantasies = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -332,11 +1097,61 @@ jnk_missions_gensokyo_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_conquer_heaven }
 		position = 4
-		trigger = {
 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5167
+				province_id = 5033
+			}
+			NOT = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}			
+		trigger = {
+			owns_or_non_sovereign_subject_of = 5167	#Silent Temple
+			owns_or_non_sovereign_subject_of = 5033	#Reimaden
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_evil_spirit_of_earth
+				duration = 5475			
+			}
+			Old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Rika_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Kourindou_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Human_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -344,11 +1159,35 @@ jnk_missions_gensokyo_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_enter_the_gensokyo }
 		position = 5
-		trigger = {
 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5183
+				province_id = 5151
+				province_id = 5125
+			}
+			NOT = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}				
+		trigger = {
+			owns_or_non_sovereign_subject_of = 5183	#Old Hakurei Shrine
+			owns_or_non_sovereign_subject_of = 5151	#Another Sky
+			owns_or_non_sovereign_subject_of = 5125	#Dragon Statue
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_faith_of_human
+				duration = 9125	
+			}
+			makai_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -356,11 +1195,42 @@ jnk_missions_gensokyo_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_people_worship_goddess }
 		position = 6
+		provinces_to_highlight = {
+			province_id = 5214
+			NOT = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}				
 		trigger = {
-
+			owns_or_non_sovereign_subject_of = 5214	#Pandemonium
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_makaien_architecture
+				duration = 10950
+			}
+			Senkai_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_senkai = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Northern_senkai = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -368,11 +1238,28 @@ jnk_missions_gensokyo_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_search_pandemonium }
 		position = 7
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5025
+				province_id = 5171
+			}
+			NOT = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}				
 		trigger = {
-
+			owns_or_non_sovereign_subject_of = 5025	#Spirit Mausoleum
+			owns_or_non_sovereign_subject_of = 5171	#Laozi's Temple
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_taoist_displine_of_earth
+				duration = -1
+			}
+			country_event = {
+				id = flavor_jnk.6
+			}
 		}
 	}
 }
@@ -392,10 +1279,19 @@ jnk_missions_outworld_slot = {
 		required_missions = {  }
 		position = 1
 		trigger = {
-
+			treasury = 100
+			navy_size_percentage = 0.9
 		}
 		effect = {
-			add_prestige = 10
+			add_navy_tradition = 40
+			add_treasury = -100
+			create_admiral = {
+				tradition = 40
+			}
+			add_country_modifier = {
+				name = jnk_fleet_of_revenge
+				duration = 5475
+			}
 		}
 	}
 	
@@ -404,10 +1300,13 @@ jnk_missions_outworld_slot = {
 		required_missions = { JNK_rally_fleet }
 		position = 2
 		trigger = {
-
+			num_of_total_ports = 10
 		}
 		effect = {
-			add_prestige = 10
+			th_enable_exploration_without_explo_ideas = yes
+			create_explorer = {
+				tradition = 40
+			}
 		}
 	}
 	
@@ -418,11 +1317,64 @@ jnk_missions_outworld_slot = {
 			JNK_lunar_ports
 		}
 		position = 3
-		trigger = {
 
+		provinces_to_highlight = {
+			region = indo_china_region
+			NOT = {
+				has_discovered = ROOT
+			}
+		}
+		trigger = {
+			indo_china_region = {
+				has_discovered = ROOT
+			}
 		}
 		effect = {
-			add_prestige = 10
+			th_colonize_dev_province_for_root = {
+				province = 2693	#Lombok
+			}
+			banten_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			west_java_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			central_java_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}	
+			east_java_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			surabaya_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			631 = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}			
 		}
 	}
 	
@@ -430,11 +1382,69 @@ jnk_missions_outworld_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_discover_indonesia }
 		position = 4
-		trigger = {
+		provinces_to_highlight = {
+			OR = {
+				province_id = 631
+				area = banten_area
+				area = west_java_area
+				area = central_java_area
+				area = east_java_area
+				area = surabaya_area
+			}
+			NOT = {
+				owned_by = ROOT
+			}
+		}	
 
+		trigger = {
+			owns_core_province = 631
+			calc_true_if = {
+				all_province = {
+					OR = {
+						area = banten_area
+						area = west_java_area
+						area = central_java_area
+						area = east_java_area
+						area = surabaya_area
+					}
+					owned_by = ROOT
+				}
+				amount = 10
+			}
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_continuing_chase
+				duration = 9125
+			}
+			south_carnatic_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			tanjore_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			kongu_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}	
+			madura_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -442,11 +1452,45 @@ jnk_missions_outworld_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_search_indonesia }
 		position = 5
-		trigger = {
+		provinces_to_highlight = {
+			OR = {
+				area = south_carnatic_area
+				area = tanjore_area
+				area = kongu_area
+				area = madura_area
+			}
+			NOT = {
+				owned_by = ROOT
+			}
+		}	
 
+		trigger = {
+			owns_core_province = 2026	#Tanjore
+			calc_true_if = {
+				all_province = {
+					OR = {
+						area = south_carnatic_area
+						area = tanjore_area
+						area = kongu_area
+						area = madura_area
+					}
+					owned_by = ROOT
+				}
+				amount = 10
+			}
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_temples_of_gods
+				duration = 7300
+			}
+			egypt_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -454,11 +1498,87 @@ jnk_missions_outworld_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_search_india }
 		position = 6
-		trigger = {
+		provinces_to_highlight = {
+			OR = {
+				province_id = 361	#Cairo
+				province_id = 1231	#Aswan
+				province_id = 1233	#Kharga
+			}
+			NOT = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}
+				}				
+			}
+		}
 
+		trigger = {
+			361 = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}				
+				}
+			}
+			1231 = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}					
+				}
+			}
+			1233 = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}					
+				}
+			}
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_hatred_in_the_desert
+				duration = 7300
+			}
+			northern_greece_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			morea_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
 		}
 	}
 	
@@ -466,23 +1586,298 @@ jnk_missions_outworld_slot = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_search_egypt }
 		position = 7
-		trigger = {
+		provinces_to_highlight = {
+			OR = {
+				province_id = 146	#Athens
+			}
+			NOT = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}
+				}				
+			}
+		}
 
+		trigger = {
+			146 = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}				
+				}
+			}
+			if = {
+				limit = {
+					has_dlc = "Cradle of Civilization"
+				}
+				th_advisor_hecatia = 5
+			}
+			else = {
+				th_advisor_hecatia = 3
+			}			
 		}
 		effect = {
-			add_prestige = 10
+			country_event = {
+				id = flavor_jnk.7
+			}
 		}
 	}
-	
-	JNK_end_of_vengeance = {
+}
+
+jnk_missions_vengence_roma_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = JNK
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = jnk_jyouga_in_roma
+	}
+	has_country_shield = yes
+
+	JNK_end_of_vengeance_roma = {
 		icon = mission_touhou_junko
 		required_missions = { JNK_clue_to_chase }
 		position = 8
-		trigger = {
+		provinces_to_highlight = {
+			OR = {
+				province_id = 118	#Roma
+			}
+			NOT = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}
+				}				
+			}
+		}
 
+		trigger = {
+			118 = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}				
+				}
+			}
 		}
 		effect = {
-			add_prestige = 10
+			country_event = {
+				id = flavor_jnk.8
+			}
+		}
+	}
+}
+
+jnk_missions_vengence_beja_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = JNK
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = jnk_jyouga_in_beja
+	}
+	has_country_shield = yes
+
+	JNK_end_of_vengeance_beja = {
+		icon = mission_touhou_junko
+		required_missions = { JNK_clue_to_chase }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				province_id = 229	#Beja
+			}
+			NOT = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}
+				}				
+			}
+		}
+
+		trigger = {
+			229 = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}				
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_jnk.8
+			}
+		}
+	}
+}
+
+jnk_missions_vengence_gwynedd_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = JNK
+		NOT = { map_setup = map_setup_random }
+		has_country_flag = jnk_jyouga_in_gwynedd
+	}
+	has_country_shield = yes
+
+	JNK_end_of_vengeance_gwynedd = {
+		icon = mission_touhou_junko
+		required_missions = { JNK_clue_to_chase }
+		position = 8
+		provinces_to_highlight = {
+			OR = {
+				province_id = 242	#Gwynedd
+			}
+			NOT = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}
+				}				
+			}
+		}
+
+		trigger = {
+			242 = {
+				OR = {
+					owned_by = ROOT
+					AND = {
+						controlled_by = ROOT
+						OR = {
+							infantry_in_province = ROOT
+							cavalry_in_province = ROOT
+							artillery_in_province = ROOT
+						}
+					}				
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_jnk.8
+			}
+		}
+	}
+}
+
+jnk_missions_branching_slot = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = JNK
+		NOT = { map_setup = map_setup_random }
+		NOT = { has_country_flag = jnk_jyouga_in_roma }
+		NOT = { has_country_flag = jnk_jyouga_in_beja }
+		NOT = { has_country_flag = jnk_jyouga_in_gwynedd }
+	}
+	has_country_shield = yes
+
+	#[Root.GetSelectableMissionTitle]
+	#[Root.GetSelectableMissionDescription]
+	JNK_vengence_branch_mission = {
+		icon = mission_unknown_mission
+		required_missions = { JNK_clue_to_chase }
+		position = 8
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = selectable_mission_trigger_tt
+				always = no
+			}
+			OR = {
+				118 = {
+					OR = {
+						owned_by = ROOT
+						AND = {
+							controlled_by = ROOT
+							OR = {
+								infantry_in_province = ROOT
+								cavalry_in_province = ROOT
+								artillery_in_province = ROOT
+							}
+						}				
+					}
+				}				
+				229 = {
+					OR = {
+						owned_by = ROOT
+						AND = {
+							controlled_by = ROOT
+							OR = {
+								infantry_in_province = ROOT
+								cavalry_in_province = ROOT
+								artillery_in_province = ROOT
+							}
+						}				
+					}
+				}				
+				242 = {
+					OR = {
+						owned_by = ROOT
+						AND = {
+							controlled_by = ROOT
+							OR = {
+								infantry_in_province = ROOT
+								cavalry_in_province = ROOT
+								artillery_in_province = ROOT
+							}
+						}				
+					}
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_jnk.8
+			}
 		}
 	}
 }
@@ -502,10 +1897,17 @@ jnk_missions_empire_slot = {
 		required_missions = {  }
 		position = 5
 		trigger = {
-
+			OR = {
+				tag = GNK
+				government_rank = 3
+			}
+			total_development = 650
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_purifying_empire
+				duration = -1
+			}
 		}
 	}
 	
@@ -517,10 +1919,30 @@ jnk_missions_empire_slot = {
 		}
 		position = 6
 		trigger = {
-
+			OR = {
+				is_emperor_of_china = yes
+				AND = {
+					government_rank = 3
+					legitimacy = 95
+				}
+			}
+			development_in_provinces = {
+				value = 500
+				superregion = china_superregion
+			}
 		}
 		effect = {
-			add_prestige = 10
+			country_event = {
+				id = flavor_jnk.9
+			}			
+			if = { 
+				limit = { has_had_golden_age = yes }
+				reset_golden_age = yes 
+			}
+			else_if = { 	
+				limit = { in_golden_age = yes } 
+				extend_golden_age = 600
+			}
 		}
 	}
 	
@@ -529,10 +1951,34 @@ jnk_missions_empire_slot = {
 		required_missions = { JNK_empire_of_moon_and_china }
 		position = 7
 		trigger = {
-
+			OR = {
+				calc_true_if = {
+					all_subject_country = {
+						is_subject_of_type = vassal
+					}
+					amount = 5
+				}	
+				calc_true_if = {
+					all_subject_country = {
+						is_subject_of_type = tributary_state
+					}
+					amount = 10
+				}	
+			}
+			all_subject_country = {
+				has_opinion = {
+					who = ROOT
+					value = 125
+				}
+			}			
 		}
 		effect = {
-			add_prestige = 10
+			add_country_modifier = {
+				name = jnk_mother_governs_children
+				duration = -1
+			}
 		}
 	}
 }
+
+#Will update Emperor of China missions, after release 1.35
