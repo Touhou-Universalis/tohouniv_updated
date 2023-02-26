@@ -64,6 +64,10 @@ country_event = {
 		change_technology_group = tech_gensokyan
 		change_unit_type = tech_gensokyan
 
+		add_country_modifier = { 
+			name = th_back_to_hakurei
+			duration = 5475
+		}
 		add_adm_power = -100
 		add_mil_power = -100
 
@@ -85,6 +89,7 @@ country_event = {
 	option = {	
 		name = flavor_jnk.2.a
 
+		change_government_reform_progress = 80
 		#placeholder for enact JNK government reform
 
 		add_country_modifier = { 
@@ -175,7 +180,6 @@ country_event = {
 			}
 			add_core = MRU
 			remove_core = ROOT
-			change_religion = ROOT
 		}
 		Bamboo_forest_of_the_lost = {
 			limit = {
@@ -183,7 +187,6 @@ country_event = {
 			}
 			add_core = MRU
 			remove_core = ROOT
-			change_religion = ROOT
 		}		
 		release = MRU
 		create_subject = {
@@ -229,16 +232,14 @@ country_event = {
 				set_ruler_flag = touhou_character_ruler
 				set_ruler_flag = touhou_original_ruler
 				add_ruler_personality = immortal_personality
-				country_event = { id = TH_mission_events.3 }
 				set_capital = 5117
 				capital_scope = {
-						build_to_forcelimit = {
-							infantry = 0.6
-							cavalry = 0.2
-							light_ship = 0.4
-							transport = 0.5
-						}
-					}
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.2
+						light_ship = 0.4
+						transport = 0.5
+					}				
 				}
 			}
 		}	
@@ -248,19 +249,26 @@ country_event = {
 		}			
 	}
 
-	#option = {		#I want spawn EIT nationalist rebel, but option not work 
-	#	name = flavor_jnk.3.c	
-	#
-	#	5117 = {
-	#		add_base_tax = -1
-	#		add_base_production = -1
-	#		add_base_manpower = -1
-	#	}	
-	#
-	#	ai_chance = { 
-	#		factor = 100
-	#	}			
-	#}
+	option = {
+		name = flavor_jnk.3.c	
+	
+		5117 = {
+			add_base_tax = -2
+			add_base_production = -2
+			add_base_manpower = -2
+			spawn_rebels = {
+				size = 2
+				type = nationalist_rebels
+				friend = EIT
+				leader = "Rei'sen"
+				leader_dynasty = "Udonge"
+			}			
+		}	
+	
+		ai_chance = { 
+			factor = 100
+		}			
+	}
 }
 
 #PU Hecatia event
@@ -476,89 +484,499 @@ country_event = {
 }
 
 #Fate of Celestial Empire event
-#country_event = {
-#	id = flavor_jnk.7
-#	title = flavor_jnk.7.t
-#	desc = flavor_jnk.7.desc
-#	picture = JUNKO2_eventPicture
-#	
-#	trigger = {
-#
-#	}
-#
-#	
-#	option = {	
-#	
-#	}
-#}
-#
-#Goddess of Vengeance in Greek event
-#country_event = {
-#	id = flavor_jnk.8
-#	title = flavor_jnk.8.t
-#	desc = flavor_jnk.8.desc
-#	picture = JUNKO2_eventPicture
-#	
-#	trigger = {
-#
-#	}
-#
-#	
-#	option = {	
-#	
-#	}
-#}
-#
+country_event = {
+	id = flavor_jnk.7
+	title = flavor_jnk.7.t
+	desc = flavor_jnk.7.desc
+	picture = JUNKO2_eventPicture
+	
+	major = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			every_known_country = { 
+				limit = { 
+					OR = {
+						th_is_emperor_of_china = yes 
+						has_country_modifier = lost_mandate_of_heaven
+					}
+					is_in_war = {
+						attacker_leader = ROOT
+					}
+				}
+				country_event = { id = TH_mission_events.2 }
+			}
+		}
+	}
+
+	option = {
+		name = flavor_jnk.7.a #Take Mandate of Heaven
+		add_prestige = 50
+		set_emperor_of_china = ROOT 
+		country_event = { id = th_china_events.4 }
+
+		ai_chance = { 
+			factor = 25
+		}
+	}
+
+	option = {
+		name = flavor_jnk.7.b #Dismantle Mandate of Heaven
+		add_prestige = 50
+		dismantle_empire_of_china = yes
+		set_global_flag = empire_of_china_dismantled
+		#add_government_reform = Gensokyan_jnk_chinese_divine_state
+		#new government reform for JNK, as not have MoH
+		china_superregion = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+
+		ai_chance = { 
+			factor = 75
+		}
+	}	
+}
+
+#Fate of Celestial Empire event for haven't MoH DLC & MoH already dismantled
+country_event = {
+	id = flavor_jnk.71
+	title = flavor_jnk.71.t
+	desc = flavor_jnk.71.desc
+	picture = JUNKO2_eventPicture
+	
+	major = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			every_known_country = { 
+				limit = { 
+					OR = {
+						th_is_emperor_of_china = yes 
+						has_country_modifier = lost_mandate_of_heaven
+					}
+					is_in_war = {
+						attacker_leader = ROOT
+					}
+				}
+				country_event = { id = TH_mission_events.2 }
+			}
+		}
+	}
+
+	option = {
+		name = flavor_jnk.71.a
+		add_prestige = 50
+		dismantle_empire_of_china = yes
+		set_global_flag = empire_of_china_dismantled
+		#add_government_reform = Gensokyan_jnk_chinese_divine_state
+		#new government reform for JNK, as not have MoH
+		china_superregion = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+
+		ai_chance = { 
+			factor = 75
+		}
+	}	
+}
+
+#Three Goddess of Vengeance in Greek event
+country_event = {
+	id = flavor_jnk.8
+	title = flavor_jnk.8.t
+	desc = flavor_jnk.8.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {	#look for Tisiphone's oracle
+		name = flavor_jnk.8.a
+
+		custom_tooltip = flavor_jnk.8.a.tt
+		hidden_effect = {
+			random_list = {
+				33 = {
+					country_event = {
+						id = flavor_jnk.81
+						days = 10
+					}
+				}
+				33 = {
+					country_event = {
+						id = flavor_jnk.82
+						days = 10
+					}
+				}
+				33 = {
+					country_event = {
+						id = flavor_jnk.83
+						days = 10
+					}
+				}			
+			}
+		}
+
+		ai_chance = { 
+			factor = 33
+		}		
+	}
+
+	option = {	#look for Alecto's oracle
+		name = flavor_jnk.8.b
+
+		custom_tooltip = flavor_jnk.8.b.tt
+		hidden_effect = {
+			random_list = {
+				33 = {
+					country_event = {
+						id = flavor_jnk.81
+						days = 10
+					}
+				}
+				33 = {
+					country_event = {
+						id = flavor_jnk.82
+						days = 10
+					}
+				}
+				33 = {
+					country_event = {
+						id = flavor_jnk.83
+						days = 10
+					}
+				}			
+			}
+		}
+
+		ai_chance = { 
+			factor = 33
+		}			
+	}	
+
+	option = {	#look for Megaera's oracle
+		name = flavor_jnk.8.c
+
+		custom_tooltip = flavor_jnk.8.c.tt
+		hidden_effect = {
+			random_list = {
+				33 = {
+					country_event = {
+						id = flavor_jnk.81
+						days = 10
+					}
+				}
+				33 = {
+					country_event = {
+						id = flavor_jnk.82
+						days = 10
+					}
+				}
+				33 = {
+					country_event = {
+						id = flavor_jnk.83
+						days = 10
+					}
+				}			
+			}
+		}
+
+		ai_chance = { 
+			factor = 33
+		}			
+	}		
+}
+
+#Chang'e is in Roma
+country_event = {
+	id = flavor_jnk.81
+	title = flavor_jnk.81.t
+	desc = flavor_jnk.81.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_jnk.81.a
+
+		lazio_area = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		hidden_effect = {
+			set_country_flag = jnk_jyouga_in_roma
+			clr_country_flag = jnk_jyouga_in_beja
+			clr_country_flag = jnk_jyouga_in_gwynedd
+			swap_non_generic_missions = yes
+		}
+	}		
+}
+
+#Chang'e is in Beja
+country_event = {
+	id = flavor_jnk.82
+	title = flavor_jnk.82.t
+	desc = flavor_jnk.82.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_jnk.82.a
+
+		alentejo_area = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		hidden_effect = {
+			set_country_flag = jnk_jyouga_in_beja
+			clr_country_flag = jnk_jyouga_in_roma
+			clr_country_flag = jnk_jyouga_in_gwynedd
+			swap_non_generic_missions = yes			
+		}
+	}		
+}
+
+#Chang'e is in Gwynedd
+country_event = {
+	id = flavor_jnk.83
+	title = flavor_jnk.83.t
+	desc = flavor_jnk.83.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_jnk.83.a
+
+		alentejo_area = {
+			limit = {
+				NOT = { is_core = ROOT }
+				NOT = { is_permanent_claim = ROOT }
+			}
+			add_permanent_claim = ROOT
+		}
+		hidden_effect = {
+			set_country_flag = jnk_jyouga_in_gwynedd
+			clr_country_flag = jnk_jyouga_in_roma
+			clr_country_flag = jnk_jyouga_in_beja
+			swap_non_generic_missions = yes		
+		}
+	}		
+}
+
 #Chase Chang'e event
-#country_event = {
-#	id = flavor_jnk.9
-#	title = flavor_jnk.9.t
-#	desc = flavor_jnk.9.desc
-#	picture = JUNKO2_eventPicture
-#	
-#	trigger = {
-#
-#	}
-#
-#	
-#	option = {	
-#	
-#	}
-#}
-#
+country_event = {
+	id = flavor_jnk.9
+	title = flavor_jnk.9.t
+	desc = flavor_jnk.9.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {	
+		name = flavor_jnk.9.a
+
+		add_country_modifier = { #will include JNK's grudge mechanism's max effect
+			name = jnk_end_of_vengeance	
+			duration = -1
+		}
+
+		add_power_projection = {
+			type = jnk_end_of_vengeance
+			amount = 100
+		}
+		custom_tooltip = th_permanent_power_projection_tooltip
+	}
+}
+
 #Change country name event
-#country_event = {
-#	id = flavor_jnk.10
-#	title = flavor_jnk.10.t
-#	desc = flavor_jnk.10.desc
-#	picture = JUNKO2_eventPicture
-#	
-#	trigger = {
-#
-#	}
-#
-#	
-#	option = {	
-#	
-#	}
-#}
-#
+country_event = {
+	id = flavor_jnk.10
+	title = flavor_jnk.10.t
+	desc = flavor_jnk.10.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_jnk.10.a
+		override_country_name = XIA
+
+		if = {
+			limit = {
+				ROOT = { th_is_emperor_of_china = yes }
+			}
+			add_country_modifier = {
+				name = jnk_legacy_of_old_dynasty_celestial
+				duration = -1
+			}			
+		}
+		else = {
+			add_country_modifier = {
+				name = jnk_legacy_of_old_dynasty_divine
+				duration = -1
+			}			
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	option = {
+		name = flavor_jnk.10.b
+		override_country_name = DIVINESPIRITWORLD
+
+		add_country_modifier = {
+			name = jnk_modern_divine_spirit_world
+			duration = -1
+		}		
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	option = {
+		name = flavor_jnk.10.c
+		override_country_name = NAMELESSEMPIRE
+
+		add_country_modifier = {
+			name = jnk_nameless_empire
+			duration = -1
+		}		
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
 #Manchuria event
-#country_event = {
-#	id = flavor_jnk.11
-#	title = flavor_jnk.11.t
-#	desc = flavor_jnk.11.desc
-#	picture = JUNKO2_eventPicture
-#	
-#	trigger = {
-#
-#	}
-#
-#	
-#	option = {	
-#	
-#	}
-#}
+country_event = {
+	id = flavor_jnk.11
+	title = flavor_jnk.11.t
+	desc = flavor_jnk.11.desc
+	picture = JUNKO2_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = flavor_jnk.11.a
+
+		trigger = {
+			NOT = { exists = MCH }
+		}		
+		manchuria_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_core = MCH
+			remove_core = ROOT
+		}		
+		release = MCH
+		create_subject = {
+			subject_type = march
+			subject = MCH
+		}
+		MCH = {
+			change_government = tribal
+			add_government_reform = steppe_horde
+			adopt_reform_progress = ROOT
+			change_primary_culture = manchu_new
+			change_religion = ROOT
+			add_historical_friend = ROOT
+			add_adm_power = 200
+			add_dip_power = 200
+			add_mil_power = 200
+			add_manpower = 10
+			change_estate_land_share = {
+				estate = estate_nomadic_tribes
+				share = 50
+			}
+			define_ruler = {
+				name = "Nurhachi"
+				dynasty = "Aisin Gioro"
+				age = "20"
+				adm = 5
+				dip = 4
+				mil = 6
+				female = no
+				culture = manchu_new
+				religion = ROOT
+			}
+
+			add_country_modifier = {
+				name = jnk_authority_of_goddess_of_vengeance
+				duration = -1
+			}				
+	
+			hidden_effect = {
+				set_capital = 730
+				set_government_rank = 2
+				add_horde_unity = 75
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 0.6
+						cavalry = 0.3
+						light_ship = 0.4
+						transport = 0.5
+					}				
+				}
+			}
+		}	
+
+		ai_chance = { 
+			factor = 0
+		}			
+	}	
+
+	option = {	
+		name = flavor_jnk.11.b
+		define_general = {
+			name = "Nurhachi"
+			shock = 6
+			fire = 3
+			manuever = 5
+			siege = 2
+			female = no
+			trait = born_to_the_saddle_personality
+		}	
+		add_country_modifier = {
+			name = jnk_cavalry_of_manchu
+			duration = 9125
+		}	
+		manchuria_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			add_province_modifier = {
+				name = jnk_grace_of_goddess_of_vengeance
+				duration = 5475
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}							
+	}
+}
 
 #Hire Reisen
 country_event = {
