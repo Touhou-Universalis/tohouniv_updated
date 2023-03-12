@@ -5,26 +5,207 @@ hvr_slot1_branch = {
 	has_country_shield = yes
 	potential = { tag = HVR } 
 
-	HVR_lunar_throne = {
+	HVR_ties_with_moon = {
 		icon = mission_touhou_tenshi_stress
 		position = 3
 		required_missions = { HVR_deal_with_nobles }
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = { 
+			OR = {
+				AND = {
+					LCU = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+						trust = {
+							who = ROOT
+							value = 80
+						}
+					}
+					5320 = {
+						owned_by = LCU
+					}
+				}
+				has_spy_network_in = { 
+					who = LCU
+					value = 100 
+				}
+				NOT = { exists = LCU }		
+				
+			}
+		 } 
 
-		effect = {  } 
+		effect = {
+			custom_tooltip = hvr_ties_with_moon_tooltip_reward
+			if = {
+				limit = {				
+					LCU = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+						trust = {
+							who = ROOT
+							value = 80
+						}
+					}
+				}
+				LCU = {
+					country_event = {
+						id = flavor_hvr.6
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					has_spy_network_in = { 
+						who = LCU
+						value = 100 
+					}
+				}
+				add_casus_belli = {
+					type = cb_touhou_mission_personal_union_war
+					target = LCU
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = { exists = LCU }		
+				}
+				Western_moon_state = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Southern_moon_state  = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}	
+			}
+		 } 
+	}
+
+	HVR_lunarian_throne = {
+		icon = mission_touhou_tenshi_stress
+		position = 4
+		required_missions = { HVR_ties_with_moon  }
+		provinces_to_highlight = { 
+			OR = {
+				area = Western_moon_state
+				area = Southern_moon_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		 } 
+
+		trigger = { 
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Northern_moon_state
+					area = Uncolonized_moon_state
+                   }
+				value = 10
+			}
+		 } 
+
+		effect = { 
+			if = {
+				limit = {
+					exists = LCU
+					LCU = {
+						is_subject_of = HVR
+					}
+				}
+				Northern_moon_state = {
+					limit = {
+						NOT = { is_core = LCU }
+						NOT = { is_permanent_claim = LCU }
+					}
+					add_core = LCU
+				}
+				Uncolonized_moon_state = {
+					limit = {
+						NOT = { is_core = LCU }
+						NOT = { is_permanent_claim = LCU }
+					}
+					add_core = LCU
+				}
+				Hecetias_colony = {
+					limit = {
+						NOT = { is_core = LCU }
+						NOT = { is_permanent_claim = LCU }
+					}
+					add_permanent_claim = LCU
+				}
+			}
+			else = {
+				Northern_moon_state = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Uncolonized_moon_state = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+				Hecetias_colony = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		 } 
 	}
 
 	HVR_former_glory_of_lcu = {
 		icon = mission_touhou_tenshi_stress
 		position = 5
-		required_missions = { HVR_lunar_throne }
-		provinces_to_highlight = {  } 
+		required_missions = { HVR_lunarian_throne }
+		provinces_to_highlight = { 
+			OR = {
+				area = Northern_moon_state
+				area = Uncolonized_moon_state
+				area = Hecetias_colony
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		 } 
 
-		trigger = {  } 
+		trigger = { 
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				area = Northern_moon_state
+				value = 5
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				area = Hecetias_colony
+				value = 5
+			}
+			5334 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			5335 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
 
-		effect = {  } 
+		 } 
+
+		effect = { 
+			th_enable_touhou_advisor = {
+				advisor = th_advisor_yorihime
+			}
+		 } 
 	}
 
 	HVR_dragon_god = {
@@ -85,7 +266,7 @@ hvr_slot2_branch = {
 		provinces_to_highlight = {  } 
 
 		trigger = { 
-			has_estate_privilege = estate_heavenly_nobles_command_of_the_military
+			has_estate_privilege = th_estate_heavenly_nobles_command_of_the_military
 			army_size_percentage = 1
 			num_of_generals = 1
 		} 
@@ -420,9 +601,60 @@ hvr_slot2_branch = {
 		required_missions = {  }
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = { 
+			OR = {
+				has_spy_network_in = { 
+					who = HKR 
+					value = 60 
+				}	
+				NOT = { exists = HKR }	
+			}
+			
+		 } 
 
-		effect = {  } 
+		effect = { 
+			if = {
+				limit = { 
+					exists = HKR
+					HKR = {
+						Hakurei_western_coast = {
+							type = all
+							NOT = { owned_by = HKR }
+						}
+					}
+
+				}
+				Hakurei_western_coast = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			else_if = {
+				limit = {
+					Hakurei_western_coast = {
+						type = all
+						owned_by = HKR
+					}
+				}
+				add_casus_belli = {
+					type = cb_hvr_hkr_war
+					target = HKR
+					months = 300
+				}	
+			}
+			else = {
+				Hakurei_western_coast = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		 } 
 	}
 
 	HVR_favor_for_a_friend = {
@@ -431,9 +663,36 @@ hvr_slot2_branch = {
 		required_missions = { HVR_red_shrine_maiden }
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = { 
+			if = {
+				limit = {
+					exists = HKR
+					HKR = {
+						Hakurei_western_coast = {
+							type = all
+							owned_by = HKR
+						}
+					}
+				}
+				is_in_war = {
+					attacker_leader = ROOT
+					defender_leader = HKR
+					war_score = 80
+				}
+			}
+			else = {
+				Hakurei_western_coast = {
+					type = all
+					owned_by = ROOT
+				}
+			}
+		 } 
 
-		effect = {  } 
+		effect = { 
+			country_event = {
+			id = flavor_hvr.4
+			} 
+		} 
 	}
 
 	HVR_wrath_of_zeus = {
@@ -442,9 +701,56 @@ hvr_slot2_branch = {
 		required_missions = { HVR_gods_and_humans }
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = { 
+			if = {
+				limit = {
+					exists = TUR
+					TUR = {
+						northern_greece_area = {
+							type = all
+							owned_by = TUR
+						}
+						morea_area = {
+							type = all
+							owned_by = TUR
+						}
+						macedonia_area = {
+							type = all
+							owned_by = TUR
+						}
+						thrace_area = {
+							type = all
+							owned_by = TUR
+						}
 
-		effect = {  } 
+					}
+				}
+				is_in_war = {
+					attacker_leader = ROOT
+					defender_leader = TUR
+					war_score = 80
+				}
+			}
+			else = {
+				northern_greece_area = {
+					type = all
+					owned_by = ROOT
+				}
+				morea_area = {
+					type = all
+					owned_by = ROOT
+				}
+				1319 = {
+					owned_by = ROOT
+				}
+			}
+		 } 
+
+		effect = { 
+			country_event = {
+				id = flavor_hvr.5
+			}
+		 } 
 	}
 }
 hvr_slot3_branch = {
