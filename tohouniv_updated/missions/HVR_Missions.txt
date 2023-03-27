@@ -272,9 +272,7 @@ hvr_slot1_branch = {
 		position = 9
 		required_missions = { HVR_weather_control  }
 		provinces_to_highlight = { 
-			4998 = {
-				NOT = { owned_by = ROOT }
-			}
+
 		 } 
 
 		trigger = { 
@@ -325,30 +323,104 @@ hvr_slot1_branch = {
 		 }
 	}
 
-	HVR_real_heaven = {
+	HVR_gambling_halls_of_heaven = {
 		icon = mission_touhou_tenshi_stress
 		position = 11
 		required_missions = { }
 		provinces_to_highlight = { 
-				region = orbital_region
-				OR = {
-					NOT = { development = 30 }
+				5313 = {
+					NOT = { development = 15 }
+					NOT = { OR = {
+						has_building = marketplace
+						has_building = trade_depot
+						has_building = stock_exchange
+						} 
+					}
+				 	NOT = { has_building = counting_house } 
 					NOT = { owned_by = ROOT }
 				}
 		 } 
 
 		trigger = { 
-			all_owned_province = {
-				region = orbital_region
-				development = 30
+			treasury = 100
+			5313 = {
+				OR = {
+					has_building = marketplace
+					has_building = trade_depot
+					has_building = stock_exchange
+				}
+				has_building = counting_house
+				development = 15
 			}
-
 		 } 
 
 		effect = { 
-
+			add_treasury = -100	
+			5313 = {
+				change_province_name = "Gambling Halls of Heaven"
+				hidden_effect = {
+					rename_capital = "Gambling Halls of Heaven"
+				}
+				add_province_modifier ={
+					name = hvr_gambling_halls_of_heaven_modifier
+					duration = -1
+				}
+			}
 		 }
 	}
+
+
+	HVR_resort_paradise = {
+		icon = mission_touhou_tenshi_stress
+		position = 12
+		required_missions = { HVR_gambling_halls_of_heaven }
+		provinces_to_highlight = { 
+
+		} 
+
+		trigger = {
+			treasury = 1000	 
+			Dragon_islands = {
+				development = 30
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			Western_dragon_islands = {
+				development = 30
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+			Eastern_dragon_islands = {
+				development = 30
+				country_or_non_sovereign_subject_holds = ROOT
+				type = all
+			}
+
+		} 
+
+		effect = { 
+			add_treasury = -1000	
+			Dragon_islands = {
+				add_province_modifier = {
+					name = hvr_resort_paradise_modifier
+					duration = -1
+				}
+			}
+			Western_dragon_islands = {
+				add_province_modifier = {
+					name = hvr_resort_paradise_modifier
+					duration = -1
+				}
+			}
+			Eastern_dragon_islands = {
+				add_province_modifier = {
+					name = hvr_resort_paradise_modifier
+					duration = -1
+				}
+			}
+		}
+	}
+	
 }
 
 
@@ -884,22 +956,58 @@ hvr_slot3_branch = {
 		icon = mission_touhou_tenshi_stress
 		position = 3
 		required_missions = { HVR_deal_with_nobles }
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { 
+			    area = World_of_fantasies 
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }		
+		 } 
 
-		trigger = {  } 
+		trigger = { 
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				area = World_of_fantasies		
+				value = 4
+			}
+		 } 
 
-		effect = {  } 
+		effect = { 
+			add_country_modifier = {
+				name = hvr_getting_rid_of_ghost
+				duration = 7300
+			}
+			Rika_state = {
+				limit = {
+					NOT = { is_permanent_claim = ROOT	}
+					NOT = { is_core = ROOT	}
+				}
+				add_permanent_claim = ROOT
+			}
+		 } 
 	}
 
 	HVR_panzerholics = {
 		icon = mission_touhou_tenshi_stress
 		position = 4
 		required_missions = { HVR_ghost_of_the_past }
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { 
+				area = Rika_state
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		 } 
 
-		trigger = {  } 
+		trigger = { 
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				area = Rika_state		
+				value = 4
+			}
+			5148 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		 } 
 
-		effect = {  } 
+		effect = { 
+			country_event = {
+				id = flavor_hvr.13
+			}
+
+		} 
 	}
 
 	HVR_engineers_of_kappapolis = {
@@ -908,20 +1016,136 @@ hvr_slot3_branch = {
 		required_missions = { HVR_panzerholics }
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = { 
+			OR = {
+				AND = {
+					alliance_with = KPP
+					KPP = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+				KPP = {
+					has_opinion = {
+						who = ROOT
+						value = -75
+					}
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = scornfully_insulted
+					}
+				}
+				NOT = { exists = KPP }		
+			}
+		 } 
 
-		effect = {  } 
+		effect = { 
+			if = {
+				limit = {
+					AND = {
+						alliance_with = KPP
+						KPP = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+				}
+				KPP = {
+					country_event = {
+						id = flavor_hvr.14
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					KPP = {
+						has_opinion = {
+							who = ROOT
+							value = -75
+						}
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = scornfully_insulted
+						}
+					}
+				}
+				Kappa_delta = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+				Kappa_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			else = {
+				Kappa_delta = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+				Kappa_state = {
+					limit = {
+						NOT = { is_permanent_claim = ROOT	}
+						NOT = { is_core = ROOT	}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+		} 
 	}
 
 	HVR_overtune_of_cannons = {
 		icon = mission_touhou_tenshi_stress
 		position = 6
 		required_missions = { HVR_engineers_of_kappapolis }
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { 
+			OR = {
+				area = Kappa_delta
+				area = Kappa_state
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		 } 
 
-		trigger = {  } 
+		trigger = { 
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = hvr_deal_with_nitori_tooltip
+					has_country_flag = hvr_deal_with_nitori
+				}
+				AND = {
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						OR = {
+							area = Kappa_delta
+							area = Kappa_state
+						}
+						value = 4
+					}
+					4965 = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+			}
+		} 
 
-		effect = {  } 
+		effect = { 
+			add_country_modifier = {
+				name = hvr_overtune_of_cannons_modifier
+				duration = -1
+			}
+		} 
 	}
 
 	HVR_empire_of_heaven_and_hell = {
@@ -930,9 +1154,26 @@ hvr_slot3_branch = {
 		required_missions = {  }
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = { 
+			total_development = 650
+			AND = {
+				makai_region = {
+					country_or_non_sovereign_subject_holds = ROOT
+					type = all
+				}
+				orbital_region = {
+					owned_by = ROOT
+					type = all
+				}
+			}
+		 } 
 
-		effect = {  } 
+		effect = { 
+			add_country_modifier = {
+				name = hvr_empire_of_heaven_and_hell_modifier
+				duration = -1
+			}
+		 } 
 	}
 
 	HVR_mastery_over_the_country = {
@@ -941,9 +1182,36 @@ hvr_slot3_branch = {
 		required_missions = { HVR_empire_of_heaven_and_hell HVR_trust_of_nobles HVR_regained_trust_of_clergy }
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = { 
+			if = {
+				limit = {
+					OR = {
+						has_dlc = "Rights of Man"
+						has_dlc = "Emperor"
+					}
+				}
+				NOT = { great_power_rank = 8 }
+				is_great_power = yes
+			}
+			else = {
+				total_development = 1000
+			}
+		 } 
 
-		effect = {  } 
+		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			} 
+			add_splendor = 400
+			add_government_reform = Gensokyan_hvr_absolute_dictatorship
+			add_country_modifier = {
+				name = hvr_mastery_over_the_country_modifier
+				duration = -1
+			}
+		} 
 	}
 
 	HVR_trust_of_iku_nagae = {
