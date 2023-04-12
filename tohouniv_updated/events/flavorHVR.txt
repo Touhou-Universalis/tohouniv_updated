@@ -16,6 +16,7 @@ country_event = {   #Tenshi is back
 		name = flavor_hvr.1.a
 		hidden_effect = {
 			set_country_flag = hvr_tenshi_is_back
+			set_country_flag = hvr_shinigami_is_active
 		}
 		change_government = monarchy
 		add_government_reform = Gensokyan_hvr_dictatorship
@@ -619,12 +620,8 @@ country_event = {   #Counter-offer from Nitori
 		add_years_of_income = -1
 		add_trust = {
 			who = KPP
-			value = 25
+			value = 30
 			mutual = yes
-		}
-		add_opinion ={
-			who = KPP
-			value = 50
 		}
 		KPP = {
 			country_event = {
@@ -641,6 +638,7 @@ country_event = {   #Counter-offer from Nitori
 		add_casus_belli = {
 			type = cb_vassalize_mission
 			target = KPP
+			months = 300
 		}
 	}
 }
@@ -1507,14 +1505,16 @@ country_event = {   #Visit from Shinigami
 	title = flavor_hvr.32.t
 	picture = NITORI_GADGET_eventPicture
 	desc = flavor_hvr.32.desc
-	is_triggered_only = yes
-	fire_only_once = yes
+
+
 	trigger = {
-		has_country_flag = hvr_tenshi_is_back
+		has_country_flag = hvr_shinigami_is_active
 	}
+
 	mean_time_to_happen = {
 		months = 450
 	}
+
 	option = {	 
 	name = flavor_hvr.32.a
 		hidden_effect = {
@@ -1540,12 +1540,200 @@ country_event = {   #Deal with Shinigami
 
 	option = {	 ## War
 	name = flavor_hvr.33.a
-		
+		if = {
+			limit = {
+				exists = HIG
+			}
+			add_casus_belli = {
+				type = cb_trade_war
+				target = HIG
+				months = 600
+			}
+		}
 	}
 
 	option = {	 ## Bribe Eiki
 	name = flavor_hvr.33.b
-		
+		custom_tooltip = hvr_talks_with_eiki_tooltip
+		add_prestige = -10
+		HIG = {
+			add_opinion = {
+				who = ROOT
+				modifier = th_hvr_talks_with_eiki
+			}
+		}	
+	}
+}
+
+country_event = {   #Dealt with Eiki via bribe
+	id = flavor_hvr.34
+	title = flavor_hvr.34.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_hvr.34.desc
+	is_triggered_only = yes
+
+	option = {	 
+	name = flavor_hvr.34.a
+		hidden_effect = {
+			clr_country_flag = hvr_shinigami_is_active
+			set_country_flag = hvr_agent_aya_activated  ### WELLL WELL WELL. WHAT DO WE HAVE HERE? CORRUPT YAMA? THAT WILL MAKE A GREAT ARTICLE!
+		}
+		add_treasury = -500
+		HIG = {
+			country_event = {
+				id = flavor_hvr.37
+			}	
+		}
+
+	}
+}
+
+country_event = {   #Dealt with Eiki via war
+	id = flavor_hvr.35
+	title = flavor_hvr.35.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_hvr.35.desc
+	is_triggered_only = yes
+
+	option = {	 
+	name = flavor_hvr.35.a
+	hidden_effect = {
+		clr_country_flag = hvr_shinigami_is_active
+	}		
+		add_treasury = 500
+		add_prestige = 25 
+		add_mil_power = 100
+		add_dip_power = 100
+		HIG = {
+			country_event = {
+				id = flavor_hvr.38
+			}	
+		}
+	}
+}
+
+country_event = {   #Higan no longer exists for some reason
+	id = flavor_hvr.36
+	title = flavor_hvr.36.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_hvr.36.desc
+	is_triggered_only = yes
+
+	option = {	 
+	name = flavor_hvr.36.a
+		hidden_effect = {
+			clr_country_flag = hvr_shinigami_is_active
+		}
+		add_prestige = 10
+	}
+}
+
+country_event = {   # Higan receives money from Tenshi
+	id = flavor_hvr.37
+	title = flavor_hvr.37.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_hvr.37.desc
+	is_triggered_only = yes
+
+	option = {	 
+	name = flavor_hvr.37.a
+		add_corruption = 0.5
+		add_prestige = 10
+		add_treasury = 500
+	}
+}
+
+country_event = {   # Higan receives punch in the face from Tenshi
+	id = flavor_hvr.38
+	title = flavor_hvr.38.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_hvr.38.desc
+	is_triggered_only = yes
+
+	option = {	 
+	name = flavor_hvr.38.a
+		random_list = {
+			50 = {
+				add_prestige = 1
+			}
+			50 = {
+				kill_ruler = yes
+			}
+		}
+		add_prestige = -25
+		add_treasury = -500
+	}
+}
+
+country_event = {   #Aya wants to have interview
+	id = flavor_hvr.39
+	title = flavor_hvr.39.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_hvr.39.desc
+
+	fire_only_once = yes
+	trigger = {
+		has_country_flag = hvr_agent_aya_activated
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	option = {	 ##give interview to Aya
+	name = flavor_hvr.39.a
+		add_years_of_income = 0.2
+		TGU = {
+			add_splendor = 200
+		}
+		hidden_effect = {
+			HVR = {
+				country_event = {
+					id = flavor_hvr.40
+					days = 30
+				}
+			}
+			HIG = {
+				country_event = {
+					id = flavor_hvr.40
+					days = 30
+				}
+			}
+			TGU = {
+				country_event = {
+					id = flavor_hvr.40
+					days = 30
+				}
+			}
+		}
+	}
+	option = {	 ##refuse to give interview to Aya
+	name = flavor_hvr.39.b
+		add_prestige = 5
+	}
+}
+
+country_event = {   #Aya brings GREAT NEWS ABOUT HIGAN
+	id = flavor_hvr.40
+	title = flavor_hvr.40.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_hvr.40.desc
+	is_triggered_only = yes
+	major = yes
+
+
+	option = {	 
+	name = flavor_hvr.40.a
+		if = {
+			limit = {
+				NOT = {has_country_modifier = hvr_bad_news_for_higan}
+			}
+			HIG = {
+				add_country_modifier = {
+					name = hvr_bad_news_for_higan
+					duration = 3650
+				}
+			}
+
+		}
 	}
 }
 
