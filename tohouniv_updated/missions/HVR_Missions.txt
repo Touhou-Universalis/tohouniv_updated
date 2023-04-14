@@ -201,10 +201,13 @@ hvr_slot1_branch = {
 		 } 
 
 		effect = { 
-			th_enable_touhou_advisor = {
-				advisor = th_advisor_yorihime
+			custom_tooltip = hvr_unlock_yorihime_tooltip
+			hidden_effect = {
+				th_enable_touhou_advisor = {
+					advisor = th_advisor_yorihime
+				}
 			}
-		 } 
+		} 
 	}
 
 	HVR_dragon_god = {
@@ -269,8 +272,9 @@ hvr_slot1_branch = {
 		position = 9
 		required_missions = { HVR_weather_control  }
 		provinces_to_highlight = { 
-
-		 } 
+			province_id = 4998
+			NOT = {country_or_non_sovereign_subject_holds = ROOT}
+		} 
 
 		trigger = { 
 			OR = {
@@ -306,18 +310,22 @@ hvr_slot1_branch = {
 		required_missions = { HVR_learn_from_suwako }
 		provinces_to_highlight = {  } 
 
-		trigger = { 
-			check_variable = {
-				which = hvr_weather_action_counter
-				value = 30
-			}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = HVR_weather_control_tt_lvl_2
+				check_variable = {
+					which = hvr_weather_action_counter
+					value = 30
+				}
+			} 
+
 		 } 
 
 		effect = { 
 			country_event = {
 				id = flavor_hvr.12
 			}
-		 }
+		}
 	}
 
 	HVR_gambling_halls_of_heaven = {
@@ -325,16 +333,11 @@ hvr_slot1_branch = {
 		position = 11
 		required_missions = { }
 		provinces_to_highlight = { 
-				5313 = {
+				province_id = 5313
+				OR = {
 					NOT = { development = 15 }
-					NOT = { OR = {
-						has_building = marketplace
-						has_building = trade_depot
-						has_building = stock_exchange
-						} 
-					}
-				 	NOT = { has_building = counting_house } 
-					NOT = { owned_by = ROOT }
+					NOT = { has_trade_building_trigger = yes }		
+					NOT = { has_courthouse_building_trigger = yes }	
 				}
 		 } 
 
@@ -346,7 +349,7 @@ hvr_slot1_branch = {
 					has_building = trade_depot
 					has_building = stock_exchange
 				}
-				has_building = counting_house
+				has_building = courthouse
 				development = 15
 			}
 		 } 
@@ -372,11 +375,17 @@ hvr_slot1_branch = {
 		position = 13
 		required_missions = { HVR_gambling_halls_of_heaven }
 		provinces_to_highlight = { 
-
+			OR = {
+				area = Dragon_islands
+				area = Western_dragon_islands
+				area =Eastern_dragon_islands
+			}
+			
+			NOT = { development = 30}
 		} 
 
 		trigger = {
-			treasury = 1000	 
+			treasury = 10000	 
 			Dragon_islands = {
 				development = 30
 				country_or_non_sovereign_subject_holds = ROOT
@@ -396,7 +405,7 @@ hvr_slot1_branch = {
 		} 
 
 		effect = { 
-			add_treasury = -1000	
+			add_treasury = -10000	
 			Dragon_islands = {
 				add_province_modifier = {
 					name = hvr_resort_paradise_modifier
@@ -442,6 +451,7 @@ hvr_slot2_branch = {
 		} 
 
 		effect = { 
+			custom_tooltip = hvr_small_deal_with_nobles_tooltip
 			World_of_fantasies = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -463,8 +473,10 @@ hvr_slot2_branch = {
 				}
 				add_permanent_claim = ROOT
 			}
-			custom_tooltip = hvr_small_deal_with_nobles
 			hidden_effect = {
+				moon_region = {
+					discover_country = HVR
+				}
 				add_country_modifier = {
 					name = hvr_disloyal_nobles_level_2
 					duration = -1
@@ -757,7 +769,7 @@ hvr_slot2_branch = {
 		 } 
 
 		effect = {
-			custom_tooltip = HVR_loyal_nobles
+			custom_tooltip = HVR_loyal_nobles_tooltip
 			th_increase_ruler_adm_stat = {
 				adm = 1
 			} 
@@ -814,7 +826,7 @@ hvr_slot2_branch = {
 				add_casus_belli = {
 					type = cb_hvr_hkr_war
 					target = HKR
-					months = 300
+					months = 600
 				}	
 			}
 			else = {
@@ -912,7 +924,7 @@ hvr_slot2_branch = {
 					type = all
 					owned_by = ROOT
 				}
-				1319 = {
+				3003 = {
 					owned_by = ROOT
 				}
 			}
@@ -939,7 +951,7 @@ hvr_slot3_branch = {
 
 		trigger = { 
 			custom_trigger_tooltip = {
-				tooltip = HVR_tenshi_disaster_is_active
+				tooltip = HVR_tenshi_disaster_is_active_tooltip
 				has_country_flag = th_tenshi_rebelion_already_fired
 			}	
 		 } 
@@ -1040,69 +1052,73 @@ hvr_slot3_branch = {
 			}
 		 } 
 
-		effect = { 
-			if = {
-				limit = {
-					AND = {
-						alliance_with = KPP
-						KPP = {
-							has_opinion = {
-								who = ROOT
-								value = 100
+		effect = {
+			custom_tooltip = hvr_engineers_of_kappapolis_tooltip
+			hidden_effect = {
+				if = {
+					limit = {
+						AND = {
+							alliance_with = KPP
+							KPP = {
+								has_opinion = {
+									who = ROOT
+									value = 100
+								}
 							}
 						}
 					}
-				}
-				KPP = {
-					country_event = {
-						id = flavor_hvr.14
-					}
-				}
-			}
-			else_if = {
-				limit = {
 					KPP = {
-						has_opinion = {
-							who = ROOT
-							value = -75
-						}
-						has_opinion_modifier = {
-							who = ROOT
-							modifier = scornfully_insulted
+						country_event = {
+							id = flavor_hvr.14
 						}
 					}
 				}
-				Kappa_delta = {
+				else_if = {
 					limit = {
-						NOT = { is_permanent_claim = ROOT	}
-						NOT = { is_core = ROOT	}
+						KPP = {
+							has_opinion = {
+								who = ROOT
+								value = -75
+							}
+							has_opinion_modifier = {
+								who = ROOT
+								modifier = scornfully_insulted
+							}
+						}
 					}
-					add_permanent_claim = ROOT
-				}
-				Kappa_state = {
-					limit = {
-						NOT = { is_permanent_claim = ROOT	}
-						NOT = { is_core = ROOT	}
+					Kappa_delta = {
+						limit = {
+							NOT = { is_permanent_claim = ROOT	}
+							NOT = { is_core = ROOT	}
+						}
+						add_permanent_claim = ROOT
 					}
-					add_permanent_claim = ROOT
+					Kappa_state = {
+						limit = {
+							NOT = { is_permanent_claim = ROOT	}
+							NOT = { is_core = ROOT	}
+						}
+						add_permanent_claim = ROOT
+					}
 				}
+				else = {
+					Kappa_delta = {
+						limit = {
+							NOT = { is_permanent_claim = ROOT	}
+							NOT = { is_core = ROOT	}
+						}
+						add_permanent_claim = ROOT
+					}
+					Kappa_state = {
+						limit = {
+							NOT = { is_permanent_claim = ROOT	}
+							NOT = { is_core = ROOT	}
+						}
+						add_permanent_claim = ROOT
+					}
+				}	
 			}
-			else = {
-				Kappa_delta = {
-					limit = {
-						NOT = { is_permanent_claim = ROOT	}
-						NOT = { is_core = ROOT	}
-					}
-					add_permanent_claim = ROOT
-				}
-				Kappa_state = {
-					limit = {
-						NOT = { is_permanent_claim = ROOT	}
-						NOT = { is_core = ROOT	}
-					}
-					add_permanent_claim = ROOT
-				}
-			}
+
 		} 
 	}
 
@@ -1215,15 +1231,20 @@ hvr_slot3_branch = {
 		position = 9
 		required_missions = {  }
 		provinces_to_highlight = { 
-			5312 = {
+			province_id = 5312
+			OR = {
 				NOT = {owned_by = ROOT}
 				NOT = {development = 20}
-			}
+				NOT = {has_courthouse_building_trigger = yes}
+				NOT = {has_shipyard_building_trigger = yes}	
+			}	
 		} 
 
 		trigger = { 
 			treasury = 300
 			5312 = {
+				has_shipyard_building_trigger = yes
+				has_courthouse_building_trigger = yes
 				development = 20
 			}
 		} 
@@ -1258,14 +1279,15 @@ hvr_slot3_branch = {
 		position = 10
 		required_missions = { HVR_trust_of_iku_nagae }
 		provinces_to_highlight = { 
-
+			owned_by = ROOT
+			NOT = { has_manpower_building_trigger = yes }
 		} 
 
 		trigger = { 
 			num_of_heavy_ship = 30
-			OR = {
-				barracks = 10
-				training_fields = 10
+			num_of_owned_provinces_with = {
+				has_manpower_building_trigger = yes
+				value = 10
 			}
 		}
 
@@ -1273,14 +1295,14 @@ hvr_slot3_branch = {
 			custom_tooltip = hvr_recruit_iku_as_general_tooltip_reward
 			hidden_effect = {
 				set_country_flag = hvr_can_hire_general_iku
+				change_variable = {
+					which = hvr_iku_level
+					value = 1
+				}
 			}
 			add_country_modifier = {
 				name = hvr_heavenly_marines_are_ready_for_blood
 				duration = -1
-			}
-			change_variable = {
-				which = hvr_iku_level
-				value = 1
 			}
 		} 
 	}
@@ -1296,7 +1318,7 @@ hvr_slot3_branch = {
 				tooltip = hvr_won_iku_battles_tooltip
 				check_variable = {
 					which = hvr_won_iku_battles_counter
-					value = 15
+					value = 20
 				}
 			}
 			army_professionalism = 0.5
@@ -1304,16 +1326,19 @@ hvr_slot3_branch = {
 		} 
 
 		effect = {
+			custom_tooltip = hvr_iku_as_advisor_reward_tooltip
 			add_country_modifier = {
 				name = hvr_blood_angels
 				duration = -1
 			} 
-			th_enable_touhou_advisor = {
-				advisor = th_advisor_iku
-			}
-			change_variable = {
-				which = hvr_iku_level
-				value = 1
+			hidden_effect = {
+				th_enable_touhou_advisor = {
+					advisor = th_advisor_iku
+				}
+				change_variable = {
+					which = hvr_iku_level
+					value = 1
+				}
 			}
 		} 
 	}
@@ -1330,7 +1355,14 @@ hvr_slot3_branch = {
 			army_professionalism = 0.8	
 		} 
 
-		effect = { 
+		effect = {
+			custom_tooltip = hvr_iku_stats_improved_again_reward_tooltip
+			hidden_effect = {
+				change_variable = {
+					which = hvr_iku_level
+					value = 1
+				}
+			} 
 			add_country_modifier = {
 				name = hvr_ride_the_lightning
 				duration = -1
@@ -1513,24 +1545,30 @@ hvr_slot4_branch = {
 		icon = mission_touhou_tenshi_stress
 		position = 2
 		required_missions = { HVR_return_of_tenshi }
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { 
+			culture = Heavenish
+			5032 = {
+				NOT = { has_tax_building_trigger = yes }
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { has_tax_building_trigger = yes }
+			}
+		} 
 
 		trigger = {
 				5032 = {
-					has_building = temple
+					has_tax_building_trigger = yes
 				} 
 				num_of_owned_provinces_with = {
 					value = 3
-					OR = {
-						has_building = temple
-						has_building = cathedral 
-					}				
+					has_tax_building_trigger = yes
 				}
 				has_estate_privilege = estate_church_for_the_faith
 		} 
 
 		effect = { 
-			custom_tooltip = hvr_small_deal_with_clergy
+			custom_tooltip = hvr_small_deal_with_clergy_tooltip
 			hidden_effect = {
 				add_country_modifier = {
 					name = hvr_disloyal_clergy_level_2
@@ -1555,7 +1593,10 @@ hvr_slot4_branch = {
 		icon = mission_touhou_tenshi_stress
 		position = 3
 		required_missions = { HVR_deal_with_clergy }
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { 
+			province_id = 5025
+			NOT = { owned_by = ROOT }
+		} 
 
 		trigger = { 
 			OR = {
@@ -1588,7 +1629,7 @@ hvr_slot4_branch = {
 					}
 				}
 				add_casus_belli = {
-					type = cb_heretic
+					type = cb_touhou_religious_pledge_war
 					target = MYO
 					months = 600
 				}	
@@ -1660,7 +1701,10 @@ hvr_slot4_branch = {
 		icon = mission_touhou_tenshi_stress
 		position = 6
 		required_missions = { HVR_doing_a_favor_for_miko }
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { 
+			owned_by = ROOT
+			NOT = { religion = ROOT }
+		} 
 
 		trigger = { 
 			calc_true_if = {
@@ -1697,7 +1741,7 @@ hvr_slot4_branch = {
 		 } 
 
 		effect = { 
-			custom_tooltip = HVR_loyal_clergy
+			custom_tooltip = HVR_loyal_clergy_tooltip
 			th_increase_ruler_dip_stat = {
 				dip = 1
 			} 
@@ -1886,7 +1930,7 @@ hvr_slot5_branch = {
 		provinces_to_highlight = {  } 
 
 		trigger = { 
-			navy_size_percentage = 0.9
+			navy_size_percentage = 1
 			treasury = 50
 		} 
 
