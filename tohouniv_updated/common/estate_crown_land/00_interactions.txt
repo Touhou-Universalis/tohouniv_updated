@@ -11,8 +11,9 @@ interaction = {
     }
     effect = {
 		if = {
-			limit = {
-				NOT = { has_country_flag = tgu_buffed_crownland_interactions }
+			limit = { 
+				NOT = { has_government_attribute = no_crownland_money_loss_to_age } 
+				NOT = { has_country_flag = enable_full_ducat_gain_from_selling_crownland_flag }
 			}
 			if = {
 				limit = { current_age = age_of_discovery }
@@ -36,7 +37,8 @@ interaction = {
 		}
 		if = {
 			limit = {
-				NOT = { has_country_flag = tgu_enabled_more_targetted_crownland_actions }
+				NOT = { has_government_attribute = can_sell_crownland_to_single_estates }
+				NOT = { has_country_flag = can_sell_crownland_to_estates_targeted_flag }
 			}
 			custom_tooltip = ESTATES_SALE_OF_TITLES_DESC
 			give_estate_land_share_gigantic = { estate = all }
@@ -108,6 +110,12 @@ interaction = {
 				loyalty = 10
 				short = yes
 			}
+			if = {
+				limit = {
+					has_government_attribute = selling_titles_increases_pa
+				}
+				add_patriarch_authority = 0.05
+			}
 	
 			###TOUHOU###
 			hidden_effect = {
@@ -146,10 +154,9 @@ interaction = {
 		}
 		else = {
 			country_event = {
-				id = th_estates_crownland_events.1
+				id = estate_privileges_and_agendas_events.6
 			}
 		}
-
 		if = {
 			limit = {
 				has_country_flag = recent_land_distribution
@@ -292,7 +299,16 @@ interaction = {
     effect = {
         custom_tooltip = ESTATES_SUMMON_THE_DIET_DESC
         hidden_effect = {
-	        country_event = { id = estate_privileges_and_agendas_events.3 }               
+	        country_event = { id = estate_privileges_and_agendas_events.3 }
+			if = {
+				limit = {
+					ai = yes
+				}
+				random_list = {
+					1 = {}
+					9 = { set_country_flag = auto_complete_estate_agenda_all }
+				}
+			}
         }
         custom_tooltip = SEPERATOR_TOOLTIP
         
@@ -552,8 +568,13 @@ interaction = {
 		#	NOT = { has_estate_privilege = estate_great_tengu_statutory_rights }
 		#}
         is_at_war = no
+		if = {
+			limit = { has_government_attribute = can_not_seize_land }
+			NOT = { has_government_attribute_short_desc = can_not_seize_land }
+		}
     }
     effect = {
+		
 		if = {
 			limit = {
 				has_country_flag = recent_land_seizure
@@ -563,7 +584,8 @@ interaction = {
 		set_country_flag = recent_land_seizure
 		if = {
 			limit = {
-				NOT = { has_country_flag = tgu_enabled_more_targetted_crownland_actions }
+				NOT = { has_government_attribute = can_seize_crownland_of_single_estates }
+				NOT = { has_country_flag = can_seize_crownland_to_estates_targeted_flag }
 			}
 			custom_tooltip = ESTATES_SEIZE_LAND_DESC
 			take_estate_land_share_massive = { estate = all }
@@ -771,7 +793,10 @@ interaction = {
 			}	
 			custom_tooltip = ESTATES_SEIZE_LAND_EXCEPTION_DESC
 			re_add_loyalty_from_seized_land = yes
-			custom_tooltip = seize_land_rebels_tt
+			if = {
+				limit = { NOT = { has_government_attribute = seizing_land_no_rebels } }
+				custom_tooltip = seize_land_rebels_tt
+			}
 			if = {
 				limit = {
 					NOT = {
@@ -804,7 +829,7 @@ interaction = {
 		}
 		else = {
 			country_event = {
-				id = th_estates_crownland_events.2
+				id = estate_privileges_and_agendas_events.7
 			}
 		}
 		if = {
@@ -812,6 +837,10 @@ interaction = {
 				has_government_attribute = seizing_land_takes_karma
 			}
 			add_karma = -10
+		}
+		if = {
+			limit = { has_government_attribute = theocratic_monarchy_mechanic }
+			change_statists_vs_orangists = 0.05
 		}
 	}
 	ai_will_do = {
