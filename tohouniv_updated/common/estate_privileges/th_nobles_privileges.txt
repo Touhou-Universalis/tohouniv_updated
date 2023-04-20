@@ -1,0 +1,300 @@
+th_estate_nobles_third_eye = {
+	icon = th_privilege_third_eye
+	max_absolutism = -5
+	loyalty = 0.1
+	influence = 0.1
+	is_valid = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		num_of_subjects = 1
+		any_subject_country = {
+			NOT = { is_subject_of_type = tributary_state }
+		}
+		has_unlocked_estate_privilege = { estate_privilege = th_estate_nobles_third_eye }
+	}
+	can_select = {
+		legitimacy_equivalent = 75	#If Satori is not legitimate enough then why should any vassal obey her?
+	}
+	penalties = {
+		legitimacy = -2
+	}
+	benefits = {
+		vassal_upkeep = 1	#REALLY strong modifier
+		diplomatic_upkeep = 2
+	}
+	ai_will_do = {
+		factor = 1
+		modifier = { #will lose it via invalid sooner or later
+			factor = 10
+			has_estate_privilege = th_estate_nobles_third_eye
+		}
+	}
+}
+
+th_estate_nobles_unorganized_shinigami_authority = {
+	icon = privilege_grant_autonomy
+	land_share = 0
+	max_absolutism = -20
+	loyalty = 0.1
+	influence = -0.05
+	is_valid = {
+		NOT = { has_country_flag = hig_has_dealt_with_slacking_komachi }
+		NOT = { has_country_flag = hig_deactivated_unorganized_shinigami_authority }
+		tag = HIG
+	}
+	can_select = {
+		tag = HIG
+		if = {
+			limit = {
+				ai = yes
+				was_player = no
+			}
+			NOT = { is_year = 1460 }
+		}
+	}
+	can_revoke = {
+		estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 65
+		}
+	}
+	on_granted = {
+	}
+	on_revoked = {
+		add_stability = -1
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -20
+		}
+		hidden_effect = {
+			set_country_flag = hig_deactivated_unorganized_shinigami_authority
+		}
+	}
+	on_invalid = {
+		hidden_effect = {
+			set_country_flag = hig_deactivated_unorganized_shinigami_authority
+		}
+	}
+
+	modifier_by_land_ownership = {
+	}
+	penalties = {
+		development_cost = 0.025
+		trade_efficiency = -0.05
+		global_tax_modifier = -0.05
+		merc_maintenance_modifier = 0.1
+	}
+	benefits = {
+	}
+	mechanics = {
+	}
+
+	ai_will_do = {
+		factor = -1000
+	}
+}
+
+th_estate_nobles_lack_of_overseers = {
+	icon = privilege_recruit_minister
+	land_share = 0
+	max_absolutism = -20
+	loyalty = 0.1
+	influence = -0.05
+	is_valid = {
+		NOT = { has_country_flag = hig_has_dealt_with_slacking_komachi }
+		NOT = { has_country_flag = hig_deactivated_lack_of_overseers }
+		tag = HIG
+	}
+	can_select = {
+		tag = HIG
+		if = {
+			limit = {
+				ai = yes
+				was_player = no
+			}
+			NOT = { is_year = 1460 }
+		}
+	}
+	can_revoke = {
+		estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 65
+		}
+	}
+	on_granted = {
+		custom_tooltip = th_estate_nobles_lack_of_overseers_granted_tt
+	}
+	on_revoked = {
+		custom_tooltip = th_estate_nobles_lack_of_overseers_revoked_rt
+		add_stability = -1
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -20
+		}
+		hidden_effect = {
+			set_country_flag = hig_deactivated_lack_of_overseers
+		}
+	}
+	on_invalid = {
+		hidden_effect = {
+			set_country_flag = hig_deactivated_lack_of_overseers
+		}
+	}
+
+	on_granted_province = {
+		if = {
+			limit = {
+				OR = {
+					area = Land_of_the_dead
+					area = Eastern_higan
+					area = Higan_southern_coast
+				}
+			}
+			add_local_autonomy = 25
+			add_province_modifier = {
+				name = hig_slacking_shinigami
+				duration = -1
+			}
+		}
+	}
+	on_revoked_province = {
+		if = {
+			limit = {
+				has_province_modifier = hig_slacking_shinigami
+			}
+			remove_province_modifier = hig_slacking_shinigami
+			add_local_autonomy = -100
+		}
+	}
+	on_invalid_province = {
+		if = {
+			limit = {
+				has_province_modifier = hig_slacking_shinigami
+			}
+			remove_province_modifier = hig_slacking_shinigami
+			add_local_autonomy = -100
+		}
+	}
+
+	modifier_by_land_ownership = {
+	}
+	penalties = {
+	}
+	benefits = {
+	}
+	mechanics = {
+	}
+
+	ai_will_do = {
+		factor = -1000
+	}
+}
+
+th_estate_nobles_slacking_shinigami = {
+	icon = privilege_recruit_inouisitor
+	land_share = 15
+	max_absolutism = -60
+	loyalty = 0.15
+	influence = 0.4
+	is_valid = {
+		NOT = { has_country_flag = hig_has_dealt_with_slacking_komachi }
+		NOT = { has_country_flag = hig_deactivated_slacking_shinigami }
+		tag = HIG
+	}
+	can_select = {
+		tag = HIG
+		if = {
+			limit = {
+				ai = yes
+				was_player = no
+			}
+			NOT = { is_year = 1475 }
+		}
+	}
+	can_revoke = {
+		custom_trigger_tooltip = {
+			tooltip = th_estate_nobles_slacking_shinigami_tt
+			OR = {
+				has_country_flag = hig_has_dealt_with_slacking_komachi
+				AND = {
+					ai = yes
+					was_player = no
+					is_year = 1500
+				}
+			}
+		}
+	}
+	on_granted = {
+		th_disable_subject_annexations = yes
+	}
+	on_revoked = {
+		th_enable_subject_annexations = yes
+		hidden_effect = {
+			set_country_flag = hig_deactivated_slacking_shinigami
+		}
+	}
+	on_invalid = {
+		hidden_effect = {
+			set_country_flag = hig_deactivated_slacking_shinigami
+		}
+		th_enable_subject_annexations = yes
+	}
+
+	modifier_by_land_ownership = {
+	}
+	penalties = {
+		diplomats = -1
+		diplomatic_upkeep = -1
+	}
+	benefits = {
+	}
+	mechanics = {
+		exempt_from_seize_land
+	}
+
+	ai_will_do = {
+		factor = -1000
+	}
+}
+
+th_estate_nobles_royal_guards = {
+	icon = th_estate_nobles_royal_guards
+	max_absolutism = -5
+	loyalty = 0.1
+	influence = 0.1
+	is_valid = {
+		has_country_flag = lcu_toyohime_and_yorihime_army_reforms 
+	}
+	penalties = {
+		global_regiment_cost = 0.2  
+	}
+	benefits = {
+		infantry_power = 0.1
+		artillery_power = 0.1 
+		cavalry_power = 0.05 
+	}
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+th_estate_nobles_prestigious_army = {
+	icon = th_estate_nobles_prestigious_army
+	max_absolutism = 0
+	loyalty = 0.05
+	influence = 0.05
+	is_valid = {
+		has_country_flag = lcu_toyohime_and_yorihime_army_reforms
+	}
+	penalties = {
+
+	}
+	benefits = {
+		manpower_recovery_speed = 0.15
+		global_manpower_modifier = 0.15 
+	}
+	ai_will_do = {
+		factor = 1
+	}
+}
