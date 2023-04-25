@@ -20,11 +20,12 @@
 #Fairy War
 cb_touhou_fairy_war = {
 	valid_for_subject = no
-
-	prerequisites = {
+	prerequisites_self = {
 		is_free_or_tributary_trigger = yes
 		primary_culture = Fairy
-		
+	}
+
+	prerequisites = {		
 		FROM = {
 			NOT = { is_subject_of = ROOT }
 			primary_culture = Fairy
@@ -39,13 +40,15 @@ cb_touhou_fairy_war = {
 cb_touhou_eit_fuj_war = {
 	valid_for_subject = no
 	
-	prerequisites = {
+	prerequisites_self = {
 		is_free_or_tributary_trigger = yes
 		OR = {
 			tag = EIT
 			tag = FUJ
 		}
-		
+	}
+
+	prerequisites = {		
 		FROM = {
 			NOT = { is_subject_of = ROOT }
 			OR = {
@@ -72,8 +75,12 @@ cb_touhou_mission_eit_fuj_war = {
 cb_touhou_force_religious_tributary = {
 	valid_for_subject = no
 
-	prerequisites = {
+	prerequisites_self = {
 		has_country_flag = th_enable_religious_tributary_war
+		is_revolutionary = no
+	}
+
+	prerequisites = {
 		FROM = { 
 			is_subject = no 
 			is_revolutionary = no
@@ -81,7 +88,6 @@ cb_touhou_force_religious_tributary = {
 			is_emperor = no
 		}
 		has_matching_religion = FROM
-		is_revolutionary = no
 	}
 
 	war_goal = th_superiority_force_religious_tributary
@@ -92,8 +98,12 @@ cb_touhou_religious_superiority_war = {
 	valid_for_subject = no
 	holy_war = yes
 
-	prerequisites = {
+	prerequisites_self = {
 		has_country_flag = th_enable_domination_war
+		is_revolutionary = no
+	}
+
+	prerequisites = {
 		FROM = { 
 			is_subject = no 
 			is_revolutionary = no
@@ -102,7 +112,6 @@ cb_touhou_religious_superiority_war = {
 			NOT = { has_country_modifier = th_pledged_to_remain_religious }
 		}
 		has_matching_religion = FROM
-		is_revolutionary = no
 	}
 
 	attacker_disabled_po = {
@@ -123,11 +132,14 @@ cb_touhou_religious_superiority_war = {
 cb_touhou_gensokyan_yama_war = {
 	valid_for_subject = no
 	
-	prerequisites = {
+	prerequisites_self = {
 		is_free_or_tributary_trigger = yes
 		capital_scope = {
 			continent = gensokyo_continent
 		}
+	}
+
+	prerequisites = {
 		FROM = {
 			NOT = { alliance_with = ROOT }
 			NOT = { is_subject_of = ROOT }
@@ -272,6 +284,14 @@ cb_touhou_mission_dominance_war = {
 cb_magician_expansion = {
 	valid_for_subject = no
 
+	prerequisites_self = {
+		OR = {
+			has_government_attribute = enables_magician_expansion_cb
+			has_country_flag = th_enable_magician_expansion_cb
+		}
+		is_revolutionary = no
+	}
+
 	prerequisites = {
 		FROM = {
 			is_neighbor_of = ROOT
@@ -282,11 +302,6 @@ cb_magician_expansion = {
 				}
 			}
 		}
-		OR = {
-			has_government_attribute = enables_magician_expansion_cb
-			has_country_flag = th_enable_magician_expansion_cb
-		}
-		is_revolutionary = no
 	}
 
 	war_goal = th_magician_expansion_superiority
@@ -296,10 +311,13 @@ cb_magician_expansion = {
 cb_wandering_realm_expansion = {
 	valid_for_subject = no
 
-	prerequisites = {
-		is_neighbor_of = FROM
+	prerequisites_self = {
 		has_government_attribute = enables_development_transfer
 		is_revolutionary = no
+	}
+
+	prerequisites = {
+		is_neighbor_of = FROM
 	}
 
 	attacker_disabled_po = {
@@ -323,7 +341,7 @@ cb_wandering_realm_expansion = {
 cb_zun = {
 	valid_for_subject = no
 
-	prerequisites = {
+	prerequisites_self = {
 		th_is_or_was_tag = {
 			tag = ZUT
 		}
@@ -338,21 +356,24 @@ cb_mry_crusade = {
 	valid_for_subject = no
 	holy_war = yes
 
+	prerequisites_self = {
+		is_revolutionary = no
+		NOT = { has_government_attribute = has_upgraded_holy_wars }
+		OR = {
+			mry_uses_faith_power = yes
+			any_known_country = {
+				mry_uses_faith_power = yes
+				religion = ROOT
+			}
+		}
+	}
+
 	prerequisites = {
-		NOT = { has_reform = religious_permanent_revolution_reform }
 		is_neighbor_of = FROM
 		NOT = { religion = FROM }
 		NOT = {	has_matching_religion = FROM }
 		FROM = {
 			has_country_modifier = th_mry_crusade_target
-		}
-		is_revolutionary = no
-		OR = {
-			any_country = {
-				mry_uses_faith_power = yes
-				religion = ROOT
-			}
-			mry_uses_faith_power = yes
 		}
 	}
 
@@ -362,8 +383,11 @@ cb_mry_crusade = {
 # Return Hecatia War
 cb_return_hecatia_war = {
 	valid_for_subject = no
-	prerequisites = {
+	prerequisites_self = {
 		has_country_flag = hig_has_return_hecatia_war_cb_flag
+	}
+
+	prerequisites = {
 		OR = {
 			AND = {
 				NOT = { exists = HEC }
@@ -393,18 +417,20 @@ cb_return_hecatia_war = {
 cb_repentance_war = {
 	valid_for_subject = no
 
+	prerequisites_self = {
+		is_revolutionary = no
+		th_has_not_been_lectured = yes
+		capital_scope = {
+			continent = gensokyo_continent
+		}
+	}
+
 	prerequisites = {
 		FROM = {
 			th_has_been_lectured = yes
 			capital_scope = {
 				continent = gensokyo_continent
 			}
-		}
-		th_has_not_been_lectured = yes
-		capital_scope = {
-			continent = gensokyo_continent
-		}
-		FROM = {
 			is_neighbor_of = ROOT
 			any_owned_province = {
 				OR = {
@@ -416,7 +442,6 @@ cb_repentance_war = {
 				}
 			}
 		}
-		is_revolutionary = no
 	}
 
 	war_goal = th_repentance_war
@@ -426,15 +451,15 @@ cb_repentance_war = {
 cb_lift_of_lecture = {
 	valid_for_subject = no
 
+	prerequisites_self = {
+		th_has_been_lectured = yes
+		is_revolutionary = no
+	}
+
 	prerequisites = {
 		FROM = {
 			has_government_attribute = enables_yama_authority
 		}
-		th_has_been_lectured = yes
-		capital_scope = {
-			continent = gensokyo_continent
-		}
-		is_revolutionary = no
 	}
 
 	war_goal = th_war_of_unjustice
@@ -498,7 +523,7 @@ cb_former_hell_war = {
 cb_mimas_wrath_war = {
 	valid_for_subject = no
 
-	prerequisites = {
+	prerequisites_self = {
 		has_country_flag = mim_mima_has_returned
 		is_free_or_tributary_trigger = yes
 	}
@@ -518,9 +543,12 @@ cb_lunarian_extermination = {
 		po_transfer_vassals
 	}
 
-	prerequisites = {
+	prerequisites_self = {
 		has_country_flag = lcu_extermination_time
 		is_free_or_tributary_trigger = yes
+	}
+
+	prerequisites = {
 		NOT = { culture_group_claim = FROM }
 	}
 
@@ -548,19 +576,23 @@ cb_th_spread_republican_ideas = {
 cb_th_take_mandate = {
 	valid_for_subject = no
 
-	prerequisites = {
+	prerequisites_self = {
 		has_dlc = "Mandate of Heaven"
 		is_subject = no
-		is_neighbor_of = FROM
 		NOT = { has_reform = shogunate }
-		th_is_emperor_of_china = no
 		NOT = { has_reform = Gensokyan_hig_yama_government }
+		NOT = { has_government_attribute = th_prevent_take_mandate_cb }
+		is_revolutionary = no
+		th_is_emperor_of_china = no
+		religion_group = Touhou
 		capital_scope = {
 			NOT = { th_gensokyo_or_moon_continent = yes }
 		}
+	}
+
+	prerequisites = {
+		is_neighbor_of = FROM
 		FROM = { th_is_emperor_of_china = yes }
-		religion_group = Touhou
-		is_revolutionary = no
 	}
 
 	war_goal = take_capital_take_mandate
@@ -574,4 +606,44 @@ cb_th_unify_the_kappas = {
 	months = 300
 
 	war_goal = take_capital_take_mandate
+}
+
+
+#Tenshi deals with Reimu
+cb_hvr_hkr_war = {
+	valid_for_subject = no
+	is_triggered_only = yes
+
+	war_goal = th_superiority_war_against_reimu
+}
+
+#Pretend to be Pagan Gods to Europe
+cb_hvr_old_gods_wargoal = {
+	valid_for_subject = no
+	is_triggered_only = yes
+
+	war_goal = th_superiority_war_against_europe
+}
+
+cb_th_great_insult = {
+	is_triggered_only = yes
+	valid_for_subject = no
+	war_goal = th_great_insult_mutual 
+}
+
+# force tributary for junko
+cb_th_force_tributary = {
+
+	valid_for_subject = no
+
+	prerequisites_self = {
+		has_government_attribute = th_enforce_tributaries
+	}
+
+	prerequisites = {
+		FROM = { is_subject = no }
+		is_neighbor_of = FROM
+	}
+	
+	war_goal = take_capital_force_tributary
 }
