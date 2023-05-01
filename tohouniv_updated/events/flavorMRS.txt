@@ -69,6 +69,8 @@ country_event = {
 				add_government_reform = native_martial_tradition_reform
 				add_government_reform = native_settle_down_reform
 				change_primary_culture = ROOT
+				change_technology_group = tech_lunarian
+				change_unit_type = tech_lunarian
 				change_religion = shiite		#Allah's light is the only way to fix Leviathan
 				remove_country_modifier = conversion_zeal
 				define_ruler = {
@@ -195,8 +197,9 @@ country_event = {		#truth
 			}
 		hidden_effect = {
 		set_ruler_culture = Gyokuto
-		add_accepted_culture = Catawba
+		add_accepted_culture = catawba
 		933 = { remove_province_modifier = mrs_smoldering_spaceship}
+		933 = { remove_province_modifier = mrs_burning_spaceship }
 		933 = { change_culture = Gyokuto }
 		}
 	}
@@ -536,7 +539,6 @@ country_event = {		#Contacting the World.
 	desc = "flavor_mrs.10.desc"
 	picture = northamericagfx_PRAYING_eventPicture
 	
-	fire_only_once = yes
 	is_triggered_only = yes
 	
 	option = {		
@@ -589,8 +591,923 @@ country_event = {		#Peacemakerpath
 				modifier = th_path_of_peacemaker 
 				}
 			}
+			north_america_superregion = {
+				discover_country = CCM
+			}
+			north_america_superregion = {
+				discover_country = GAM
+			}
+			north_america_superregion = {
+				discover_country = MIS
+			}
 		}	
 	}
 }
 
+country_event = {		#Rabbitrulers 
+	id = flavor_mrs.12
+	title = "flavor_mrs.12.t"
+	desc = "flavor_mrs.12.desc"
+	picture = MOON_RABBITS2_eventPicture
+	
+	is_triggered_only = yes
+	trigger = { has_government_attribute = th_has_rabbit_rulers }
+	
+	option = {		
+		name = flavor_mrs.12.a
+		if = {
+				limit = {
+						has_ruler = "Reisen"
+						}
+						define_ruler_to_general = {
+							fire = 6
+							shock = 6
+							manuever = 6
+							siege = 6
+						}
+			}
+		if = {
+				limit = {
+						has_ruler = "Rei'sen"
+						}
+						define_ruler_to_general = {
+							fire = 6
+							shock = 6
+							manuever = 4
+							siege = 4
+						}
+			}
+		if = {
+				limit = {
+						has_ruler = "Ringo"
+						}
+						define_ruler_to_general = {
+							fire = 4
+							shock = 4
+							manuever = 6
+							siege = 4
+						}
+			}
+		if = {
+				limit = {
+						has_ruler = "Seiran"
+						}
+						define_ruler_to_general = {
+							fire = 4
+							shock = 4
+							manuever = 4
+							siege = 6
+						}
+			}
+		if = { 
+				limit = {
+						NOT = { has_ruler = "Reisen" }
+						NOT = { has_ruler = "Seiran" }
+						NOT = { has_ruler = "Rei'sen" }
+						NOT = { has_ruler = "Ringo" }
+						}
+			convert_ruler_to_general = 100 
+			}
+		hidden_effect = {
+			country_event = {
+				id = flavor_mrs.16
+				days = 3
+			}
+		}
+	}
+}	
 
+country_event = {		#Revolutionary path
+	id = flavor_mrs.13
+	title = "flavor_mrs.13.t"
+	desc = "flavor_mrs.13.desc"
+	picture = northamericagfx_COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		
+		name = flavor_mrs.13.a
+		change_government = republic
+		add_government_reform = Gensokyan_lra_Rabbit_republic
+			hidden_effect = {
+				933 = { remove_province_modifier = mrs_crashed_spaceship }
+				country_event = {
+					id = flavor_mrs.18
+				}
+			}
+		} 	
+}
+
+# Bunny Elections
+# Election!
+country_event = {
+	id = flavor_mrs.14
+	title = flavor_mrs.14.t
+	picture = RABBITS_eventPicture
+	
+	desc = {
+		trigger = {
+			has_regency = no
+			NOT = { has_ruler_flag = leader_has_been_pushed_out }
+		}
+		desc = flavor_mrs.14.desc.a
+	}
+	
+	desc = {
+		trigger = {
+			OR = {
+				has_regency = yes
+				has_ruler_flag = leader_has_been_pushed_out
+			}
+		}
+		desc = flavor_mrs.14.desc.b
+	}
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_bunny_elections
+	}
+
+	option = {
+		name = "EVTOPTA700"	# Current ruler stays				
+		trigger = {
+			ai = no
+			has_regency = no
+			NOT = { has_ruler_flag = leader_has_been_pushed_out }
+			NOT = { has_country_modifier = mrs_Reisen_administration }
+			OR = {
+				NOT = { has_government_attribute = th_has_limited_terms }
+				check_variable = {
+					which = max_election_term
+					which = election_term
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 60
+			modifier = {
+				factor = 0
+				NOT = { republican_tradition = 25 }
+			}	
+			modifier = {
+				factor = 0.5
+				NOT = { republican_tradition = 50 }
+			}				
+			modifier = {
+				factor = 0.5
+				NOT = { republican_tradition = 75 }
+			}	
+			modifier = {
+				factor = 2.0
+				republican_tradition = 90
+			}		
+		}
+		custom_tooltip = remains_ruler
+		add_scaled_republican_tradition = -5
+		random_list = {
+			10 = {
+				add_adm_power = 100
+			}
+			10 = {
+				add_dip_power = 100
+			}
+			10 = {
+				add_mil_power = 100
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_mrs.16
+				days = 3
+			}
+		}
+	}
+	option = {
+		name = flavor_mrs.14.a	#Get Seiran in the office
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Seiran"
+			adm = 6
+			dip = 4
+			mil = 4
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = mrs_Seiran_administration
+			duration = -1
+		}
+		hidden_effect = {
+			country_event = { id = flavor_mrs.12 }
+			add_ruler_personality = immortal_personality
+		}
+	}
+	option = {
+		name = flavor_mrs.14.b	#Get Ringo in the office
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Ringo"
+			adm = 4
+			dip = 6
+			mil = 4
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = mrs_Ringo_administration
+			duration = -1
+		}
+		hidden_effect = {
+			country_event = { id = flavor_mrs.12 }
+			add_ruler_personality = immortal_personality
+		}
+	}
+	option = {
+		name = flavor_mrs.14.c	#Get Rei'sen in the office
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Rei'sen"
+			adm = 4
+			dip = 4
+			mil = 6
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = mrs_Rei'sen_administration 
+			duration = -1
+		}
+		hidden_effect = {
+			country_event = { id = flavor_mrs.12 }
+			add_ruler_personality = immortal_personality
+		}
+	}
+	option = {
+		name = flavor_mrs.14.d	#Get Reisen in the office
+		custom_tooltip = flavor_mrs.14.d.tt
+		trigger = {
+			NOT = { has_country_modifier = mrs_Reisen_legacy }
+		}
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Reisen"
+			adm = 6
+			dip = 6
+			mil = 6
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = mrs_Reisen_administration 
+			duration = -1
+		}
+		hidden_effect = {
+			country_event = { id = flavor_mrs.12 }
+			add_ruler_personality = immortal_personality
+			add_country_modifier = { 
+				name = mrs_Reisen_legacy
+				duration = 18250	#50 years 
+			}
+		}
+	}
+
+	option = { # Nepotism choice, re-electing within dynasty
+		name = "EVTOPTE700"
+		trigger = {
+			has_government_attribute = enables_nepotism
+		}
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				has_country_flag = strengthened_signoria_flag
+			}
+			custom_tooltip = strengthened_signoria_election_tt
+			clr_country_flag = strengthened_signoria_flag
+		}
+		else = {
+			add_scaled_republican_tradition = -4
+		}
+		define_ruler = {
+			min_age = 20
+			max_age = 40
+			name = "lastname"
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 10
+			}				
+		}
+	}
+}
+
+# Election! - Death?
+country_event = {
+	id = flavor_mrs.15
+	title = flavor_mrs.15.t
+	picture = RABBITS_eventPicture
+	desc = flavor_mrs.15.desc
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_bunny_elections
+	}
+
+	option = {
+		name = flavor_mrs.15.a	#Get Seiran in the office
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Seiran"
+			adm = 6
+			dip = 4
+			mil = 4
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = mrs_Seiran_administration
+			duration = -1
+		}
+		hidden_effect = {
+			country_event = { id = flavor_mrs.12 }
+			add_ruler_personality = immortal_personality
+		}
+	}
+	option = {
+		name = flavor_mrs.15.b	#Get Ringo in the office
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Ringo"
+			adm = 4
+			dip = 6
+			mil = 4
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = mrs_Ringo_administration
+			duration = -1
+		}
+		hidden_effect = {
+			country_event = { id = flavor_mrs.12 }
+			add_ruler_personality = immortal_personality
+		}
+	}
+	option = {
+		name = flavor_mrs.15.c	#Get Rei'sen in the office
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Rei'sen"
+			adm = 4
+			dip = 4
+			mil = 6
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = mrs_Rei'sen_administration 
+			duration = -1
+		}
+		hidden_effect = {
+			country_event = { id = flavor_mrs.12 }
+			add_ruler_personality = immortal_personality
+		}
+	}
+	option = {
+		name = flavor_mrs.15.d	#Get Reisen in the office
+		custom_tooltip = flavor_mrs.15.d.tt
+		trigger = {
+			NOT = { has_country_modifier = mrs_Reisen_legacy }
+		}
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			name = "Reisen"
+			adm = 6
+			dip = 6
+			mil = 6
+			female = yes
+			age = 20
+		}
+		add_ruler_modifier = {
+			name = mrs_Reisen_administration 
+			duration = -1
+		}
+		hidden_effect = {
+			country_event = { id = flavor_mrs.12 }
+			add_ruler_personality = immortal_personality
+			add_country_modifier = { 
+				name = mrs_Reisen_legacy
+				duration = 18250	#50 years 
+			}
+		}
+	}
+
+	option = { # Nepotism choice, re-electing within dynasty
+		name = "EVTOPTE700"
+		trigger = {
+			has_government_attribute = enables_nepotism
+		}
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				has_country_flag = strengthened_signoria_flag
+			}
+			custom_tooltip = strengthened_signoria_election_tt
+			clr_country_flag = strengthened_signoria_flag
+		}
+		else = {
+			add_scaled_republican_tradition = -4
+		}
+		define_ruler = {
+			min_age = 20
+			max_age = 40
+			name = "lastname"
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 10
+			}				
+		}
+	}
+}
+
+country_event = {		#Rabbit Revolution 
+	id = flavor_mrs.16
+	title = "flavor_mrs.16.t"
+	desc = "flavor_mrs.16.desc"
+	picture = northamericagfx_LAND_MILITARY_eventPicture
+	
+	is_triggered_only = yes
+	trigger = { has_government_attribute = th_has_rabbit_revolution }
+	
+	immediate = {
+		hidden_effect = { 
+		remove_country_modifier = mrs_Rabbit_revolution_0
+		remove_country_modifier = mrs_Rabbit_revolution_I
+		remove_country_modifier = mrs_Rabbit_revolution_II
+		remove_country_modifier = mrs_Rabbit_revolution_III
+		remove_country_modifier = mrs_Rabbit_revolution_IV
+		remove_country_modifier = mrs_Rabbit_revolution_V
+		}
+	}
+	
+	option = {	
+		name = flavor_mrs.16.a
+		trigger = { has_country_flag = feudalrevolution
+					any_country = { coalition_target = ROOT	} 
+				}
+				
+		if = { #1-20
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 1
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 20
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_0
+				duration = -1
+			}
+		}
+		
+		if = {	#20-40
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 20
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 40
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_I
+				duration = -1
+			}
+		}
+		
+		if = {	#40-60
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 40
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 60
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_II
+				duration = -1
+			}
+		}
+		
+		if = {	#60-80
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 60
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 80
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_III
+				duration = -1
+			}
+		}
+		
+		if = {	#80-100
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 80
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 100
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_IV
+				duration = -1
+			}
+		}
+		
+		if = {	#100
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									coalition_target = ROOT
+								}
+						amount = 100
+					}
+				}
+			}
+			add_country_modifier = {
+					name = mrs_Rabbit_revolution_V
+					duration = -1
+				}
+		}	
+	}
+
+	option = {	
+		name = flavor_mrs.16.b
+		trigger = { has_country_flag = empirerevolution
+					any_country = { coalition_target = ROOT	} 
+				}
+				
+		if = { #0-1
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 0
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 1
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_0
+				duration = -1
+			}
+		}
+		if = { #1-2
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 1
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 2
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_I
+				duration = -1
+			}
+		}
+		if = { #2-3
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 2
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 3
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_II
+				duration = -1
+			}
+		}
+		if = { #3-4
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 3
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 4
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_III
+				duration = -1
+			}
+		}
+		if = { #4-5
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 4
+					}
+					NOT = { calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 5
+							}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_IV
+				duration = -1
+			}
+		}
+		if = { #5
+			limit = {
+				AND = {
+					calc_true_if = {
+								all_country = {
+									is_great_power = yes 
+									coalition_target = ROOT
+								}
+						amount = 5
+					}
+				}
+			}
+			add_country_modifier = {
+				name = mrs_Rabbit_revolution_V
+				duration = -1
+			}
+		}
+	}
+
+	option = {	
+		name = flavor_mrs.16.c
+	}
+}
+
+country_event = {		#Empire/Feudal 
+	id = flavor_mrs.17
+	title = "flavor_mrs.17.t"
+	desc = "flavor_mrs.17.desc"
+	picture = REVOLUTIONFIGHTER_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		#empire
+		name = flavor_mrs.17.a 
+		trigger = { has_country_flag = feudalrevolution }
+		hidden_effect = {
+		clr_country_flag = feudalrevolution
+		set_country_flag = empirerevolution
+		}
+	}
+	
+	option = {		#feudal
+		name = flavor_mrs.17.b
+		trigger = { has_country_flag = empirerevolution }
+		hidden_effect = {
+		clr_country_flag = empirerevolution
+		set_country_flag = feudalrevolution
+		}
+	}
+	option = {		#feudal but first
+		name = flavor_mrs.17.c
+		trigger = { 
+					AND = {
+					NOT = { has_country_flag = empirerevolution }
+					NOT = { has_country_flag = feudalrevolution }
+					}
+				}
+		hidden_effect = {
+		set_country_flag = feudalrevolution
+		}
+	}
+	option = {		#empire but first
+		name = flavor_mrs.17.d
+		trigger = { 
+					AND = {
+					NOT = { has_country_flag = empirerevolution }
+					NOT = { has_country_flag = feudalrevolution }
+					}
+				}
+		hidden_effect = {
+		set_country_flag = empirerevolution
+		}
+	}
+}
+
+country_event = {		#Revolution mechanics explanation
+	id = flavor_mrs.18
+	title = "flavor_mrs.18.t"
+	desc = "flavor_mrs.18.desc"
+	picture = northamericagfx_LAND_MILITARY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {		#feudal but first
+		name = flavor_mrs.18.a
+		trigger = { 
+					AND = {
+					NOT = { has_country_flag = empirerevolution }
+					NOT = { has_country_flag = feudalrevolution }
+					}
+				}
+		tooltip = { 
+			add_country_modifier = { name = mrs_Rabbit_revolution_I }
+			add_country_modifier = { name = mrs_Rabbit_revolution_V }
+			}
+		hidden_effect = {
+		set_country_flag = feudalrevolution
+		country_event = { id = flavor_mrs.19 days = 7 }
+		}
+	}
+	option = {		#empire but first
+		name = flavor_mrs.18.b
+		trigger = { 
+					AND = {
+					NOT = { has_country_flag = empirerevolution }
+					NOT = { has_country_flag = feudalrevolution }
+					}
+				}
+		tooltip = { 
+			add_country_modifier = { name = mrs_Rabbit_revolution_I }
+			add_country_modifier = { name = mrs_Rabbit_revolution_V }
+			}
+		hidden_effect = {
+		set_country_flag = empirerevolution
+		country_event = { id = flavor_mrs.19 days = 7 }
+		}
+	}
+	option = {		#okay
+		name = flavor_mrs.18.c
+		trigger = { 
+					OR = {
+					has_country_flag = empirerevolution 
+					has_country_flag = feudalrevolution 
+					}
+				}
+		tooltip = { 
+			add_country_modifier = { name = mrs_Rabbit_revolution_I }
+			add_country_modifier = { name = mrs_Rabbit_revolution_V }
+			}
+	}
+}
+
+country_event = {		#Religious question
+	id = flavor_mrs.19
+	title = "flavor_mrs.19.t"
+	desc = "flavor_mrs.19.desc"
+	picture = MOON_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {		
+		name = flavor_mrs.19.a
+		custom_tooltip = flavor_mrs.19.a.tt
+		add_country_modifier = {
+			name = mrs_totemist_path
+			duration = -1
+		}
+	}
+	
+	option = {		
+		name = flavor_mrs.19.b
+		custom_tooltip = flavor_mrs.19.b.tt
+		change_religion = th_lunarian_religion
+		every_owned_province = {
+			limit = { has_owner_culture = yes }
+				change_religion = th_lunarian_religion
+			}
+		add_country_modifier = {
+			name = mrs_Lunar_path
+			duration = -1
+		}
+	}
+	
+	option = {		
+		name = flavor_mrs.19.c
+		custom_tooltip = flavor_mrs.19.c.tt
+		change_religion = confucianism
+		add_harmonized_religion = totemism
+		add_country_modifier = {
+			name = mrs_confucian_path
+			duration = -1
+		}
+	}
+}
