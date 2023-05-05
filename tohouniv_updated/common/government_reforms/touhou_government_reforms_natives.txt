@@ -38,3 +38,50 @@ Gensokyan_mrs_rabbit_stranded_tribe = {
 		th_has_rabbit_rulers = yes
 	}
 }
+
+native_trading_with_foreigners_reform = {
+	icon = "native_trading_with_foreigners_reform"
+	trigger = {
+		if = {
+			limit = {
+				has_dlc = "Conquest of Paradise"
+			}
+			is_migratory_tribe = no
+			NOT = { tag = MRS }
+		}
+		custom_trigger_tooltip = {
+			tooltip = "NEEDS_NATIVE_SPONSOR"
+			native_sponsor_scope = {
+				exists = yes
+			}
+		}
+	}
+
+	modifiers = {
+		core_creation = -0.1
+	}
+
+	effect = {
+		every_tribal_land_province = {
+			limit = { NOT = { owner = { exists = yes } } }
+			settle_province = ROOT
+		}
+		if = {
+			limit = {
+				native_sponsor_scope = {
+					exists = yes
+				}
+			}
+			change_government = native_sponsor_scope
+			embrace_institutions_of = native_sponsor_scope
+			change_government_reform_progress = -350 # Doing it like this to avoid that migration code triggers
+		}
+		else = {
+			custom_tooltip = "GOVERNMENT_FROM_NATIVE_SPONSOR"
+		}
+	}
+
+	ai = {
+		factor = 1.0
+	}
+}
