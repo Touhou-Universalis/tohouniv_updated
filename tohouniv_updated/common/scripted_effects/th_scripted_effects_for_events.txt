@@ -1398,7 +1398,7 @@ th_buddhism_prepare_add_harmonized_religion_effect = {
 			th_taoist = { set_country_flag = th_was_th_taoist }
 			th_oldhakurei = { set_country_flag = th_was_th_oldhakurei }
 			th_shinkism = { set_country_flag = th_was_th_shinkism }
-			th_christian = { set_country_flag = th_was_th_christian }
+			th_scientistic = { set_country_flag = th_was_th_scientistic }
 			th_lunarian_religion = { set_country_flag = th_was_th_lunarian_religion }
 			catholic = { set_country_flag = th_was_catholic }
 			anglican = { set_country_flag = th_was_anglican }
@@ -1455,9 +1455,9 @@ th_buddhism_harmonize_previous_religion = {
 			add_harmonized_religion = th_shinkism
 			hidden_effect = { clr_country_flag = th_was_th_shinkism }
 		}
-		th_was_th_christian = {
-			add_harmonized_religion = th_christian
-			hidden_effect = { clr_country_flag = th_was_th_christian }
+		th_was_th_scientistic = {
+			add_harmonized_religion = th_scientistic
+			hidden_effect = { clr_country_flag = th_was_th_scientistic }
 		}
 		th_was_th_lunarian_religion = {
 			add_harmonized_religion = th_lunarian_religion
@@ -1585,7 +1585,7 @@ th_buddhism_clean_up_flags = {
 		clr_country_flag = th_was_th_taoist
 		clr_country_flag = th_was_th_oldhakurei
 		clr_country_flag = th_was_th_shinkism
-		clr_country_flag = th_was_th_christian
+		clr_country_flag = th_was_th_scientistic
 		clr_country_flag = th_was_th_lunarian_religion
 		clr_country_flag = th_was_christian
 		clr_country_flag = th_was_muslim
@@ -2664,4 +2664,350 @@ th_designate_provinces_for_purchase = {
 			}
 		}
 	]
+}
+
+###OCCULT MECHANIC###
+th_selected_rune = {
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = th_selected_rune_of_$type$ }
+			}
+			set_country_flag = th_selected_rune_of_$type$
+			if = {
+				limit = {
+					NOT = {
+						check_variable = {
+							which = th_occult_rune_cost
+							value = 3
+						}
+					}
+				}
+				change_variable = {
+					which = th_occult_rune_cost
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+th_remove_all_occult_runes = {
+	clr_country_flag = th_selected_rune_of_adm
+	clr_country_flag = th_selected_rune_of_dip
+	clr_country_flag = th_selected_rune_of_mil
+	remove_church_aspect = th_occult_esper_wisdom_aspect
+	remove_church_aspect = th_occult_telekinetic_construction_rune_aspect
+	remove_church_aspect = th_occult_appeasing_of_mind_rune_aspect
+	remove_church_aspect = th_occult_occult_curiosity_rune_aspect
+	remove_church_aspect = th_occult_ritualistic_fees_rune_aspect
+	remove_church_aspect = th_occult_supernatural_conviction_rune_aspect
+	
+	remove_church_aspect = th_occult_esper_knowledge_rune_aspect
+	remove_church_aspect = th_occult_soothing_minds_rune_aspect
+	remove_church_aspect = th_occult_mind_trick_rune_aspect
+	remove_church_aspect = th_occult_telepathy_rune_aspect
+	remove_church_aspect = th_occult_psionic_connection_rune_aspect
+	remove_church_aspect = th_occult_mind_control_rune_aspect
+
+	remove_church_aspect = th_occult_esper_resilience_rune_aspect
+	remove_church_aspect = th_occult_kryokinesis_ice_block_rune_aspect
+	remove_church_aspect = th_occult_hydrokinesis_tide_storm_rune_aspect
+	remove_church_aspect = th_occult_pyrokinesis_explosive_sign_rune_aspect
+	remove_church_aspect = th_occult_neurokinesis_motivation_rune_aspect
+	remove_church_aspect = th_occult_psychokinesis_doppleganger_rune_aspect
+}
+
+th_unleash_rune_effect_adm = {
+	if = {
+		limit = { has_church_aspect = th_occult_esper_wisdom_aspect }
+		custom_tooltip = th_occult_no_adm_penalty_tt
+		add_church_power = 25
+		if = {
+			limit = { has_estate = estate_church }
+			add_estate_loyalty = { estate = estate_church loyalty = 5 }
+		}
+		if = {
+			limit = { has_estate = estate_brahmins }
+			add_estate_loyalty = { estate = estate_brahmins loyalty = 5 }
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_telekinetic_construction_rune_aspect }
+		capital_scope = {
+			add_base_tax = 1
+			add_base_production = 1
+			add_base_manpower = 1
+		}
+		add_country_modifier = {
+			name = th_occult_telekinetic_construction_rune_aspect_mod
+			duration = 1825
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_appeasing_of_mind_rune_aspect }
+		add_stability = 1
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_occult_curiosity_rune_aspect }
+		add_adm_power = 25
+		custom_tooltip = th_occult_all_colonies_buff_tt
+		tooltip = {
+			add_country_modifier = {
+				name = th_occult_colony_buff
+				duration = 1825
+			}
+		}
+		hidden_effect = {
+			every_subject_country = {
+				limit = {
+					OR = {
+						is_subject_of_type = colony
+						is_subject_of_type = crown_colony
+						is_subject_of_type = self_governing_colony
+						is_subject_of_type = private_enterprise
+					}
+				}
+				add_country_modifier = {
+					name = th_occult_colony_buff
+					duration = 1825
+				}
+			}
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_ritualistic_fees_rune_aspect }
+		if = {
+			limit = {
+				NOT = { monthly_income = 416 }
+			}
+			add_years_of_income = 0.1
+		}
+		else = {
+			add_treasury = 500
+		}
+		custom_tooltip = th_occult_caps_at_500_tt
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_supernatural_conviction_rune_aspect }
+		add_country_modifier = {
+			name = th_occult_missionary_buff
+			duration = 1825
+		}
+	}
+}
+th_unleash_rune_effect_dip = {
+	if = {
+		limit = { has_church_aspect = th_occult_esper_knowledge_rune_aspect }
+		custom_tooltip = th_occult_no_dip_penalty_tt
+		add_church_power = 25
+		if = {
+			limit = { has_estate = estate_burghers }
+			add_estate_loyalty = { estate = estate_burghers loyalty = 5 }
+		}
+		if = {
+			limit = { has_estate = estate_jains }
+			add_estate_loyalty = { estate = estate_jains loyalty = 5 }
+		}
+		if = {
+			limit = { has_estate = estate_vaisyas }
+			add_estate_loyalty = { estate = estate_vaisyas loyalty = 5 }
+		}
+		if = {
+			limit = { has_estate = estate_crow_tengu }
+			add_estate_loyalty = { estate = estate_crow_tengu loyalty = 5 }
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_soothing_minds_rune_aspect }
+		custom_tooltip = th_occult_opinion_buff_to_every_country_tt
+		hidden_effect = {
+			every_known_country = {
+				add_opinion = {
+					who = ROOT
+					modifier = th_occult_soothed_mind
+				}
+			}
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_mind_trick_rune_aspect }
+		custom_tooltip = th_occult_gain_claims_tt
+		hidden_effect = {
+			every_neighbor_province = {
+				limit = {
+					owner = {
+						exists = yes
+						NOT = { defensive_pact_with = ROOT }
+						NOT = { is_subject_of = ROOT }
+						NOT = { religion = ROOT }
+					}
+					NOT = { is_claim = ROOT }
+					NOT = { is_core = ROOT }
+					has_discovered = ROOT
+				}
+				add_claim = ROOT
+			}
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_telepathy_rune_aspect }
+		add_dip_power = 25
+		add_country_modifier = {
+			name = th_occult_telepathy_rune_aspect_mod
+			duration = 1825
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_psionic_connection_rune_aspect }
+		add_estate_influence_modifier = {
+			estate = all
+			influence = -10
+			duration = 1825
+			desc = TH_OCCULT_PSIONIC_CONNECTION_INF
+			short = yes
+		}
+		if = {
+			limit = {
+				has_estate = estate_yama
+			}
+			add_estate_influence_modifier = {
+				estate = estate_yama
+				influence = 10
+				duration = 1825
+				desc = TH_OCCULT_CANNOT_BE_MANIPULATED
+			}
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_mind_control_rune_aspect }
+		custom_tooltip = th_occult_reduce_autonomy_tt
+		hidden_effect = {
+			every_owned_province = {
+				add_local_autonomy_no_authority_effect = -10
+			}
+		}
+		add_absolutism = 5
+	}
+}
+th_unleash_rune_effect_mil = {
+	if = {
+		limit = { has_church_aspect = th_occult_esper_resilience_rune_aspect }
+		custom_tooltip = th_occult_no_mil_penalty_tt
+		add_church_power = 25
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = { estate = estate_nobles loyalty = 5 }
+		}
+		if = {
+			limit = { has_estate = estate_rajput }
+			add_estate_loyalty = { estate = estate_rajput loyalty = 5 }
+		}
+		if = {
+			limit = { has_estate = estate_maratha }
+			add_estate_loyalty = { estate = estate_maratha loyalty = 5 }
+		}
+		if = {
+			limit = { has_estate = estate_great_tengu }
+			add_estate_loyalty = { estate = estate_great_tengu loyalty = 5 }
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_kryokinesis_ice_block_rune_aspect }
+		add_country_modifier = {
+			name = th_occult_defensiveness_buff
+			duration = 1825
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_hydrokinesis_tide_storm_rune_aspect }
+		create_admiral = {
+			tradition = 60
+		}
+		add_navy_tradition = 10
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_pyrokinesis_explosive_sign_rune_aspect }
+		add_mil_power = 25
+		add_country_modifier = {
+			name = th_occult_discipline_buff
+			duration = 1825
+		}
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_neurokinesis_motivation_rune_aspect }
+		create_general = {
+			tradition = 60
+		}
+		add_army_tradition = 10
+	}
+	if = {
+		limit = { has_church_aspect = th_occult_psychokinesis_doppleganger_rune_aspect }
+		add_manpower = 4
+		add_yearly_manpower = 1
+		add_yearly_sailors = 1
+	}
+}
+
+th_unleash_rune_effect = {
+	if = {
+		limit = { has_country_flag = th_selected_rune_of_adm }
+		th_unleash_rune_effect_adm = yes
+	}
+	if = {
+		limit = { has_country_flag = th_selected_rune_of_dip }
+		th_unleash_rune_effect_dip = yes
+	}
+	if = {
+		limit = { has_country_flag = th_selected_rune_of_mil }
+		th_unleash_rune_effect_mil = yes
+	}
+	if = {
+		limit = { has_country_flag = th_selected_rune_of_adm NOT = { has_church_aspect = th_occult_esper_wisdom_aspect } }
+		add_country_modifier = { name = th_occult_rune_power_drained_adm duration = 1825 }
+	}
+	if = {
+		limit = { has_country_flag = th_selected_rune_of_dip NOT = { has_church_aspect = th_occult_esper_knowledge_rune_aspect } }
+		add_country_modifier = { name = th_occult_rune_power_drained_dip duration = 1825 }
+	}
+	if = {
+		limit = { has_country_flag = th_selected_rune_of_mil NOT = { has_church_aspect = th_occult_esper_resilience_rune_aspect } }
+		add_country_modifier = { name = th_occult_rune_power_drained_mil duration = 1825 }
+	}
+}
+
+th_cast_spell = {
+	custom_tooltip = th_cast_spell_tt
+	if = {
+		limit = {
+			check_variable = {
+				which = th_occult_rune_cost
+				value = 3
+			}
+		}
+		add_church_power = -100
+	}
+	if = {
+		limit = {
+			check_variable = {
+				which = th_occult_rune_cost
+				value = 2
+			}
+			NOT = {
+				check_variable = {
+					which = th_occult_rune_cost
+					value = 3
+				}
+			}
+		}
+		add_church_power = -50
+	}
+	th_unleash_rune_effect = yes
+	hidden_effect = {
+		set_variable = {
+			which = th_occult_rune_cost
+			value = 0
+		}
+		th_remove_all_occult_runes = yes
+	}
 }
