@@ -929,6 +929,7 @@ on_battle_won_province = {
 #Unit Scope OnAction for Battle Won
 on_battle_won_unit = {
 	on_battle_won_unit_effect = yes
+	th_on_unit_battle_won_effect = yes
 	if = {
 		limit = {
 			unit_owner = { ai = no } #Scopes to Unit Owner from Unit Scope
@@ -1010,98 +1011,6 @@ on_battle_won_unit = {
 				value = 1
 			}
 		}
-	}
-	if = {
-		limit = {
-			unit_owner = {
-				th_is_or_was_tag = {
-					tag = NET
-				}
-			}
-		}
-		if = {
-			limit = {
-				general_with_name = "Youmu Konpaku"
-			}
-			unit_owner = {
-				change_variable = {
-					which = net_battle_counter 
-					value = 2
-				}
-			}
-		}
-		if = {
-			limit = {
-				NOT = { general_with_name = "Youmu Konpaku" }
-			}
-			unit_owner = {
-				change_variable = {
-					which = net_battle_counter 
-					value = 1
-				}
-			}
-		}
-	}
-	if = {
-		limit = {
-			unit_owner = {
-				th_is_or_was_tag = {
-					tag = HVR
-				}
-			}
-		}
-		if = {
-			limit = {
-				general_with_name = "Iku Nagae"
-			}
-			unit_owner = {
-				change_variable = {
-					which = hvr_won_iku_battles_counter
-					value = 1
-				}
-			}
-		}
-	}
-	if = {
-		limit = {
-			unit_owner = {
-				has_country_flag = fuj_has_leveling_mokou
-			}
-			is_ruler_commanding_unit = yes
-		}
-		unit_owner = {
-			change_variable = {
-				which = fuj_won_battles_counter
-				value = 1
-			}
-			change_variable = {
-				which = fuj_mokou_exp
-				value = 10
-			}
-		}
-	}
-	if = {
-		limit = {
-			unit_owner = {
-				NOT = { mission_completed = ONI_ruler_honor }
-			}
-			is_ruler_commanding_unit = yes
-		}
-		unit_owner = {
-			change_variable = {
-				which = oni_won_battles_counter
-				value = 1
-			}
-		}
-	}
-	if = {
-		limit = {
-			unit_owner = {
-				has_government_attribute = th_has_naval_professionalism
-			}
-			is_ruler_commanding_unit = yes
-		}
-		unit_owner = { add_naval_professionalism_effect = { value = 0.5 } }
 	}
 }
 
@@ -2832,7 +2741,7 @@ on_siberian_pulse = {
 on_monthly_pulse = {
 }
 on_yearly_pulse = {
-	th_add_yearly_naval_professionalism_effect = yes
+	add_naval_professionalism_buffs = yes
 	events = {
 		flavor_mos.3 #Yearly Tatar Yoke Tribute
 	}
@@ -5527,8 +5436,16 @@ on_admiral_recruited = {
 		}
 		add_navy_tradition = 1 
 	}
-	add_naval_professionalism_effect = {
-		value = 1
+	if = {
+		limit = {
+			has_government_mechanic = th_naval_professionalism_mechanic
+		}
+		add_government_power = {
+			mechanic_type = th_naval_professionalism_mechanic
+			power_type = th_naval_professionalism
+			value = 1
+		}
+		add_naval_professionalism_effect = yes
 	}
 }
 
@@ -5998,30 +5915,7 @@ on_dependency_gained = {
 			}
 		}
 	}
-	if = {
-		limit = {
-			FROM = {
-				OR = {
-					is_subject_of_type = th_yukari_daimyo
-					is_subject_of_type = th_yukari_puppet_state
-					is_subject_of_type = th_yukari_march
-					is_subject_of_type = th_special_march
-					is_subject_of_type = th_satori_vassal
-					is_subject_of_type = th_mokou_daimyo
-					is_subject_of_type = th_trade_union
-					is_subject_of_type = th_yuuka_gatekeeper
-					is_subject_of_type = th_pet_state
-					is_subject_of_type = th_sister_state
-					is_subject_of_type = th_yama_subject_to_law
-					is_subject_of_type = th_yama_executor
-					is_subject_of_type = th_shinigami_subject
-				}
-			}
-		}
-		FROM = {
-			set_country_flag = th_has_been_special_subject
-		}
-	}
+	th_on_dependency_gained_effect = yes
 }
 
 # ROOT = Overlord, FROM = Minor
