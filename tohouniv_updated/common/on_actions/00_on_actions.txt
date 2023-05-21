@@ -824,42 +824,7 @@ on_battle_won_country = {
 		max_value = 40
 		effect = "set_country_flag = rus_finished_kill_mission"
 	}
-	th_count_won_battles_and_reward_at_end = {
-		counting_flag = scr_battle_counter_ready
-		variable = scr_battle_counter
-		max_value = 30
-		country_event = flavor_scr.24	#SCR gets their government reform
-	}
-	th_count_won_battles_and_reward_at_end = {
-		counting_flag = crd_is_counting_battles
-		variable = crd_oni_battle_counter
-		max_value = 10
-		country_event = th_empty_event.1	#No event for CRD
-	}
-	th_count_won_battles_and_reward_at_end = {
-		counting_flag = lcu_counts_battles
-		variable = lcu_battle_counter
-		max_value = 15
-		country_event = th_empty_event.1	#No event for LCU
-	}
-	if = {
-		limit = {
-			has_country_modifier = oni_german_beer
-		}
-		th_add_battle_passion = {
-			value = 15
-		}
-	}
-	else = {
-		th_add_battle_passion = {
-			value = 10
-		}
-	}
-	if = {
-		limit = { has_government_attribute = th_gets_manpower_from_battles_and_sieges }
-		add_manpower = 1
-		add_yearly_manpower = 0.05
-	}
+	th_on_battle_won_country_effect = yes
 }
 
 # country
@@ -2302,50 +2267,7 @@ on_dismantle_revolution = {
 
 # province
 on_adm_development = {
-	on_adm_development_effect = yes
-	if = {
-		limit = { owner = { has_country_flag = enable_supplemental_development_flag } }
-		random_list = {
-			20 = { add_base_tax = 1 }
-			80 = { }
-		}
-	}
-	if = {
-		limit = { 
-			owner = { has_country_modifier = lit_increased_dev_modifier }
-		}
-		add_base_tax = 1 
-	}
-	if = { 
-		limit = { has_state_edict = chinese_industrialization } 
-		random_list = {
-			10 = { add_base_tax = 1 } 
-			10 = { add_prosperity = 1 } 
-			10 = { add_province_modifier = { name = qng_center_of_industrialization_modifier duration = 3650 } }
-			70 = {  } 
-		}
-	}
-	if = {
-		limit = { owner = { has_country_modifier = JAP_cadastral_surveys has_dlc = "Domination" } }
-		owner = {
-			change_estate_land_share = {
-				estate = all 
-				share = -0.2
-			}
-		}
-	}
-	
-	if = {
-		limit = { owner = { has_country_modifier = jap_20_years_devving_tax_yields_twice_bonus_1_burgher_loyalt_modifier } }
-		add_base_tax = 1 
-		owner = {
-			add_estate_loyalty = {
-				estate = estate_burghers 
-				loyalty = 1 
-			}
-		}
-	}
-	
+	on_adm_development_effect = yes	
 	if = { 
 		limit = { 
 			owner = { has_country_modifier = pru_victory_lower_saxony_modifier }
@@ -2358,100 +2280,8 @@ on_adm_development = {
 		add_local_autonomy = -5
 		add_prosperity = 1
 	}
-	if = {
-		limit = {
-			owner = {
-				OR = {
-					AND = {
-						has_government_attribute = th_can_overload_provinces
-						has_country_modifier = th_hellfairy_provinces_to_overload
-					}
-					AND = {
-						is_subject = yes
-						overlord = {
-							has_government_attribute = th_can_overload_provinces
-							has_country_modifier = th_hellfairy_provinces_to_overload
-						}
-					}
-				}
-			}
-		}
-		add_base_tax = -1
-		if = {
-			limit = {
-				NOT = { has_province_modifier = th_province_overloaded }
-			}
-			add_province_modifier = {
-				name = th_province_overload
-				duration = 1825
-			}
-			add_province_modifier = {
-				name = th_province_overloaded
-				duration = 5475
-			}
-		}
-	}
-	if = {
-		limit = {
-			has_province_modifier = th_province_to_mark
-		}
-		owner = {
-			clr_country_flag = th_activated_province_drain
-		}
-		every_province = {
-			limit = {
-				has_province_modifier = th_province_to_drain
-				owned_by = FROM
-			}
-			remove_province_modifier = th_province_to_drain
-		}
-		every_province = {
-			limit = {
-				has_province_modifier = th_province_to_mark
-				owned_by = FROM
-			}
-			remove_province_modifier = th_province_to_mark
-		}
-		add_base_tax = -1
-		area = {
-			limit = {
-				owned_by = FROM
-				is_territory = yes
-				development = 4
-			}
-			add_province_modifier = {
-				name = th_province_to_drain
-				duration = -1
-			}
-		}
-		owner = {
-			add_adm_power = 5
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				OR = {
-					has_country_modifier = th_hunt_for_the_impure
-					AND = {
-						is_subject = yes
-						overlord = {
-							has_country_modifier = th_hunt_for_the_impure
-						}
-					}
-				}
-			}
-		}
-		add_base_tax = -1
-		if = {
-			limit = { 
-				has_owner_culture = no 
-				nationalism = 1 
-				owner = { is_at_war = no }
-			}
-			add_nationalism = -5
-			create_revolt = 1
-		}
+	th_on_development_effect = {
+		type = adm
 	}
 	th_wandering_state_on_development = { base_type = base_tax }
 }
@@ -2459,7 +2289,6 @@ on_adm_development = {
 # province
 on_dip_development = {
 	on_dip_development_effect = yes
-
 	if = { 
 		limit = { 
 			owner = { has_country_modifier = pru_victory_lower_saxony_modifier }
@@ -2472,101 +2301,8 @@ on_dip_development = {
 		add_local_autonomy = -5
 		add_prosperity = 1
 	}
-
-	if = {
-		limit = {
-			owner = {
-				OR = {
-					AND = {
-						has_government_attribute = th_can_overload_provinces
-						has_country_modifier = th_hellfairy_provinces_to_overload
-					}
-					AND = {
-						is_subject = yes
-						overlord = {
-							has_government_attribute = th_can_overload_provinces
-							has_country_modifier = th_hellfairy_provinces_to_overload
-						}
-					}
-				}
-			}
-		}
-		add_base_production = -1
-		if = {
-			limit = {
-				NOT = { has_province_modifier = th_province_overloaded }
-			}
-			add_province_modifier = {
-				name = th_province_overload
-				duration = 1825
-			}
-			add_province_modifier = {
-				name = th_province_overloaded
-				duration = 5475
-			}
-		}
-	}
-	if = {
-		limit = {
-			has_province_modifier = th_province_to_mark
-		}
-		owner = {
-			clr_country_flag = th_activated_province_drain
-		}
-		every_province = {
-			limit = {
-				has_province_modifier = th_province_to_drain
-				owned_by = FROM
-			}
-			remove_province_modifier = th_province_to_drain
-		}
-		every_province = {
-			limit = {
-				has_province_modifier = th_province_to_mark
-				owned_by = FROM
-			}
-			remove_province_modifier = th_province_to_mark
-		}
-		add_base_production = -1
-		area = {
-			limit = {
-				owned_by = FROM
-				is_territory = yes
-				development = 4
-			}
-			add_province_modifier = {
-				name = th_province_to_drain
-				duration = -1
-			}
-		}
-		owner = {
-			add_dip_power = 5
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				OR = {
-					has_country_modifier = th_hunt_for_the_impure
-					AND = {
-						is_subject = yes
-						overlord = {
-							has_country_modifier = th_hunt_for_the_impure
-						}
-					}
-				}
-			}
-		}
-		add_base_production = -1
-		if = {
-			limit = { 
-				has_owner_culture = no 
-				nationalism = 1 
-				owner = { is_at_war = no }
-			}
-			add_nationalism = -5
-			create_revolt = 1
-		}
+	th_on_development_effect = {
+		type = dip
 	}
 	th_wandering_state_on_development = { base_type = base_production }
 }
@@ -2574,7 +2310,6 @@ on_dip_development = {
 # province
 on_mil_development = {
 	on_mil_development_effect = yes
-
 	if = { 
 		limit = { 
 			owner = { has_country_modifier = pru_victory_lower_saxony_modifier }
@@ -2587,101 +2322,8 @@ on_mil_development = {
 		add_local_autonomy = -5
 		add_prosperity = 1
 	}
-
-	if = {
-		limit = {
-			owner = {
-				OR = {
-					AND = {
-						has_government_attribute = th_can_overload_provinces
-						has_country_modifier = th_hellfairy_provinces_to_overload
-					}
-					AND = {
-						is_subject = yes
-						overlord = {
-							has_government_attribute = th_can_overload_provinces
-							has_country_modifier = th_hellfairy_provinces_to_overload
-						}
-					}
-				}
-			}
-		}
-		add_base_manpower = -1
-		if = {
-			limit = {
-				NOT = { has_province_modifier = th_province_overloaded }
-			}
-			add_province_modifier = {
-				name = th_province_overload
-				duration = 1825
-			}
-			add_province_modifier = {
-				name = th_province_overloaded
-				duration = 5475
-			}
-		}
-	}
-	if = {
-		limit = {
-			has_province_modifier = th_province_to_mark
-		}
-		owner = {
-			clr_country_flag = th_activated_province_drain
-		}
-		every_province = {
-			limit = {
-				has_province_modifier = th_province_to_drain
-				owned_by = FROM
-			}
-			remove_province_modifier = th_province_to_drain
-		}
-		every_province = {
-			limit = {
-				has_province_modifier = th_province_to_mark
-				owned_by = FROM
-			}
-			remove_province_modifier = th_province_to_mark
-		}
-		add_base_manpower = -1
-		area = {
-			limit = {
-				owned_by = FROM
-				is_territory = yes
-				development = 4
-			}
-			add_province_modifier = {
-				name = th_province_to_drain
-				duration = -1
-			}
-		}
-		owner = {
-			add_mil_power = 5
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				OR = {
-					has_country_modifier = th_hunt_for_the_impure
-					AND = {
-						is_subject = yes
-						overlord = {
-							has_country_modifier = th_hunt_for_the_impure
-						}
-					}
-				}
-			}
-		}
-		add_base_manpower = -1
-		if = {
-			limit = { 
-				has_owner_culture = no 
-				nationalism = 1 
-				owner = { is_at_war = no }
-			}
-			add_nationalism = -5
-			create_revolt = 1
-		}
+	th_on_development_effect = {
+		type = mil
 	}
 	th_wandering_state_on_development = { base_type = base_manpower }
 }

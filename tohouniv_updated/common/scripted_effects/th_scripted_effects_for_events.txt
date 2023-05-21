@@ -3159,3 +3159,205 @@ th_cast_spell = {
 		th_remove_all_occult_runes = yes
 	}
 }
+
+#On Actions
+th_remove_adm_dev = {
+	add_base_tax = -1
+}
+th_remove_dip_dev = {
+	add_base_production = -1
+}
+th_remove_mil_dev = {
+	add_base_manpower = -1
+}
+th_on_development_effect = {
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					AND = {
+						has_government_attribute = th_can_overload_provinces
+						has_country_modifier = th_hellfairy_provinces_to_overload
+					}
+					AND = {
+						is_subject = yes
+						overlord = {
+							has_government_attribute = th_can_overload_provinces
+							has_country_modifier = th_hellfairy_provinces_to_overload
+						}
+					}
+				}
+			}
+		}
+		th_remove_$type$_dev = yes
+		if = {
+			limit = {
+				NOT = { has_province_modifier = th_province_overloaded }
+			}
+			if = {
+				limit = {
+					NOT = { has_province_modifier = th_province_overload }
+				}
+				add_province_modifier = {
+					name = th_province_overload
+					duration = 1825
+				}
+				if = {
+					limit = { owner = { has_government_mechanic = th_lifeforce_overload_mechanic } }
+					export_to_variable = {
+						which = th_own_development
+						value = development
+					}
+					while = {
+						limit = {
+							check_variable = {
+								which = th_own_development
+								value = 1
+							}
+						}
+						subtract_variable = {
+							which = th_own_development
+							value = 1
+						}
+						owner = {
+							add_government_power = {
+								mechanic_type = th_lifeforce_overload_mechanic
+								power_type = th_lifeforce_overload
+								value = 1
+							}
+						}
+					}
+				}
+			}
+			add_province_modifier = {
+				name = th_province_overloaded
+				duration = 5475
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_province_modifier = th_province_to_mark
+		}
+		owner = {
+			clr_country_flag = th_activated_province_drain
+		}
+		every_province = {
+			limit = {
+				has_province_modifier = th_province_to_drain
+				owned_by = FROM
+			}
+			remove_province_modifier = th_province_to_drain
+		}
+		every_province = {
+			limit = {
+				has_province_modifier = th_province_to_mark
+				owned_by = FROM
+			}
+			remove_province_modifier = th_province_to_mark
+		}
+		th_remove_$type$_dev = yes
+		area = {
+			limit = {
+				owned_by = FROM
+				is_territory = yes
+				development = 4
+			}
+			add_province_modifier = {
+				name = th_province_to_drain
+				duration = -1
+			}
+		}
+		owner = {
+			add_mil_power = 5
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_country_modifier = th_hunt_for_the_impure
+					AND = {
+						is_subject = yes
+						overlord = {
+							has_country_modifier = th_hunt_for_the_impure
+						}
+					}
+				}
+			}
+		}
+		th_remove_$type$_dev = yes
+		if = {
+			limit = { 
+				has_owner_culture = no 
+				nationalism = 1 
+				owner = { is_at_war = no }
+			}
+			add_nationalism = -5
+			create_revolt = 1
+		}
+	}
+}
+
+th_on_battle_won_country_effect = {
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = scr_battle_counter_ready
+		variable = scr_battle_counter
+		max_value = 30
+		country_event = flavor_scr.24	#SCR gets their government reform
+	}
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = crd_is_counting_battles
+		variable = crd_oni_battle_counter
+		max_value = 10
+		country_event = th_empty_event.1	#No event for CRD
+	}
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = lcu_counts_battles
+		variable = lcu_battle_counter
+		max_value = 15
+		country_event = th_empty_event.1	#No event for LCU
+	}
+	if = {
+		limit = {
+			has_country_modifier = oni_german_beer
+		}
+		th_add_battle_passion = {
+			value = 15
+		}
+	}
+	else = {
+		th_add_battle_passion = {
+			value = 10
+		}
+	}
+	if = {
+		limit = { has_government_attribute = th_gets_manpower_from_battles_and_sieges }
+		while = {
+			limit = {
+				check_variable = {
+					which = land_units_killed
+					value = 1000
+				}
+			}
+			subtract_variable = {
+				which = land_units_killed
+				value = 1000
+			}
+			add_manpower = 1
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = land_units_lost
+					value = 2000
+				}
+			}
+			subtract_variable = {
+				which = land_units_lost
+				value = 2000
+			}
+			add_manpower = 1
+		}
+	}
+}
