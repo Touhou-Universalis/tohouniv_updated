@@ -469,55 +469,116 @@ th_sff_increment_sun_garden_counter = {
 }
 
 ###ONI VARIABLES###
-th_add_battle_passion = {
+th_change_battle_passion_from_battle = {
 	if = {
-		limit = {
-			has_government_attribute = th_has_battle_passion
-			has_country_flag = th_initialized_battle_passion
+		limit = { has_government_mechanic = th_battle_passion_mechanic }
+		set_variable = {
+			which = th_battle_passion_to_gain
+			which = $gain_variable$
 		}
-		change_variable = {
-			which = th_battle_passion
-			value = $value$
-		}
-		hidden_effect = {
-			if = {
-				limit = {
-					check_variable = {
-						which = th_battle_passion
-						value = 501
-					}
-				}
-				set_variable = {
-					which = th_battle_passion
-					value = 500
-				}
-			}
-		}
-	}
-}
-
-th_reduce_battle_passion = {
-	if = {
-		limit = {
-			has_government_attribute = th_has_battle_passion
-			has_country_flag = th_initialized_battle_passion
-		}
-		subtract_variable = {
-			which = th_battle_passion
-			value = $value$
+		set_variable = {
+			which = th_battle_passion_to_lose
+			which = $lose_variable$
 		}
 		if = {
 			limit = {
-				NOT = {
-					check_variable = {
-						which = th_battle_passion
-						value = 0
-					}
+				check_variable = {
+					which = th_battle_passion_to_lose
+					which = th_battle_passion_to_gain
 				}
 			}
-			set_variable = {
-				which = th_battle_passion
-				value = 0
+			set_country_flag = th_battle_passion_negative
+		}
+		change_variable = {
+			which = th_battle_passion_to_lose
+			value = 1	#Or otherwise we get a division by infinite
+		}
+		divide_variable = {
+			which = th_battle_passion_to_gain
+			which = th_battle_passion_to_lose
+		}
+		if = {
+			limit = {
+				has_country_flag = th_battle_passion_negative
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_battle_passion_to_gain
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_battle_passion_to_gain
+					value = 1
+				}
+				add_government_power = {
+					mechanic_type = th_battle_passion_mechanic
+					power_type = th_battle_passion
+					value = -1
+				}
+			}
+			multiply_variable = {
+				which = th_battle_passion_to_gain
+				value = 100
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_battle_passion_to_gain
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_battle_passion_to_gain
+					value = 1
+				}
+				add_government_power = {
+					mechanic_type = th_battle_passion_mechanic
+					power_type = th_battle_passion
+					value = -0.01
+				}
+			}
+			clr_country_flag = th_battle_passion_negative
+		}
+		else = {
+			while = {
+				limit = {
+					check_variable = {
+						which = th_battle_passion_to_gain
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_battle_passion_to_gain
+					value = 1
+				}
+				add_government_power = {
+					mechanic_type = th_battle_passion_mechanic
+					power_type = th_battle_passion
+					value = 1
+				}
+			}
+			multiply_variable = {
+				which = th_battle_passion_to_gain
+				value = 100
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_battle_passion_to_gain
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_battle_passion_to_gain
+					value = 1
+				}
+				add_government_power = {
+					mechanic_type = th_battle_passion_mechanic
+					power_type = th_battle_passion
+					value = 0.01
+				}
 			}
 		}
 	}
@@ -525,58 +586,107 @@ th_reduce_battle_passion = {
 
 th_add_monthly_battle_passion = {
 	hidden_effect = {
-		export_to_variable = {
-			which = battle_passion_per_regiment_variable
-			value = modifier:battle_passion_per_regiment
-		}
-		export_to_variable = {
-			which = monthly_battle_passion_variable
-			value = modifier:monthly_battle_passion
-		}
-		export_to_variable = {
-			which = battle_passion_amount_of_troops
-			value = trigger_value:army_size
-		}
-		multiply_variable = {
-			which = monthly_battle_passion_variable
-			value = 100
-		}
-		multiply_variable = {
-			which = battle_passion_amount_of_troops
-			which = battle_passion_per_regiment_variable
-		}
-		change_variable = {
-			which = th_battle_passion
-			which = monthly_battle_passion_variable
-		}
-		change_variable = {
-			which = th_battle_passion
-			which = battle_passion_amount_of_troops
-		}
 		if = {
 			limit = {
-				NOT = {
+				has_government_mechanic = th_battle_passion_mechanic
+			}
+			export_to_variable = {
+				which = battle_passion_per_regiment_variable
+				value = modifier:battle_passion_per_regiment
+			}
+			export_to_variable = {
+				which = battle_passion_amount_of_troops
+				value = trigger_value:army_size
+			}
+			multiply_variable = {
+				which = battle_passion_amount_of_troops
+				which = battle_passion_per_regiment_variable
+			}
+			if = {
+				limit = {
 					check_variable = {
-						which = th_battle_passion
-						value = 0
+						which = battle_passion_per_regiment_variable
+						value = 1
+					}
+				}
+				while = {
+					limit = {
+						check_variable = {
+							which = battle_passion_amount_of_troops
+							value = 1
+						}
+					}
+					subtract_variable = {
+						which = battle_passion_amount_of_troops
+						value = 1
+					}
+					add_government_power = {
+						mechanic_type = th_battle_passion_mechanic
+						power_type = th_battle_passion
+						value = 1
+					}
+				}
+				multiply_variable = {
+					which = battle_passion_amount_of_troops
+					value = 100
+				}
+				while = {
+					limit = {
+						check_variable = {
+							which = battle_passion_amount_of_troops
+							value = 1
+						}
+					}
+					subtract_variable = {
+						which = battle_passion_amount_of_troops
+						value = 1
+					}
+					add_government_power = {
+						mechanic_type = th_battle_passion_mechanic
+						power_type = th_battle_passion
+						value = 0.01
 					}
 				}
 			}
-			set_variable = {
-				which = th_battle_passion
-				value = 0
-			}
-		}
-		if = {
-			limit = {
-				check_variable = {
-					which = th_battle_passion
-					value = 500
+			else = {
+				while = {
+					limit = {
+						check_variable = {
+							which = battle_passion_amount_of_troops
+							value = 1
+						}
+					}
+					subtract_variable = {
+						which = battle_passion_amount_of_troops
+						value = 1
+					}
+					add_government_power = {
+						mechanic_type = th_battle_passion_mechanic
+						power_type = th_battle_passion
+						value = -1
+					}
 				}
-			}
-			set_variable = {
-				which = th_battle_passion
-				value = 500
+				multiply_variable = {
+					which = battle_passion_amount_of_troops
+					value = 100
+				}
+				while = {
+					limit = {
+						check_variable = {
+							which = battle_passion_amount_of_troops
+							value = 1
+						}
+					}
+					subtract_variable = {
+						which = battle_passion_amount_of_troops
+						value = 1
+					}
+					add_government_power = {
+						mechanic_type = th_battle_passion_mechanic
+						power_type = th_battle_passion
+						value = -0.01
+					}
+				}
 			}
 		}
 	}

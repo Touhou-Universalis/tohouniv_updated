@@ -3202,32 +3202,32 @@ th_on_development_effect = {
 					name = th_province_overload
 					duration = 1825
 				}
-				if = {
-					limit = { owner = { has_government_mechanic = th_lifeforce_overload_mechanic } }
-					export_to_variable = {
-						which = th_own_development
-						value = development
-					}
-					while = {
-						limit = {
-							check_variable = {
-								which = th_own_development
-								value = 1
-							}
-						}
-						subtract_variable = {
-							which = th_own_development
-							value = 1
-						}
-						owner = {
-							add_government_power = {
-								mechanic_type = th_lifeforce_overload_mechanic
-								power_type = th_lifeforce_overload
-								value = 1
-							}
-						}
-					}
-				}
+				#if = {
+				#	limit = { owner = { has_government_mechanic = th_lifeforce_overload_mechanic } }
+				#	export_to_variable = {
+				#		which = th_own_development
+				#		value = development
+				#	}
+				#	while = {
+				#		limit = {
+				#			check_variable = {
+				#				which = th_own_development
+				#				value = 1
+				#			}
+				#		}
+				#		subtract_variable = {
+				#			which = th_own_development
+				#			value = 1
+				#		}
+				#		owner = {
+				#			add_government_power = {
+				#				mechanic_type = th_lifeforce_overload_mechanic
+				#				power_type = th_lifeforce_overload
+				#				value = 1
+				#			}
+				#		}
+				#	}
+				#}
 			}
 			add_province_modifier = {
 				name = th_province_overloaded
@@ -3317,31 +3317,27 @@ th_on_battle_won_country_effect = {
 		variable = lcu_battle_counter
 		max_value = 15
 		country_event = th_empty_event.1	#No event for LCU
-	}
+	}	
+	###NECROMANCY CALCULATION###
 	if = {
-		limit = {
-			has_country_modifier = oni_german_beer
+		limit = { has_government_attribute = th_gets_manpower_from_battles }
+		set_variable = {
+			which = th_necromancy_land_units_killed
+			which = land_units_killed
 		}
-		th_add_battle_passion = {
-			value = 15
+		set_variable = {
+			which = th_necromancy_land_units_lost
+			which = land_units_lost
 		}
-	}
-	else = {
-		th_add_battle_passion = {
-			value = 10
-		}
-	}
-	if = {
-		limit = { has_government_attribute = th_gets_manpower_from_battles_and_sieges }
 		while = {
 			limit = {
 				check_variable = {
-					which = land_units_killed
+					which = th_necromancy_land_units_killed
 					value = 1000
 				}
 			}
 			subtract_variable = {
-				which = land_units_killed
+				which = th_necromancy_land_units_killed
 				value = 1000
 			}
 			add_manpower = 1
@@ -3349,15 +3345,66 @@ th_on_battle_won_country_effect = {
 		while = {
 			limit = {
 				check_variable = {
-					which = land_units_lost
-					value = 2000
+					which = th_necromancy_land_units_lost
+					value = 1000
 				}
 			}
 			subtract_variable = {
-				which = land_units_lost
-				value = 2000
+				which = th_necromancy_land_units_lost
+				value = 1000
 			}
-			add_manpower = 1
+			add_manpower = 0.5
 		}
+	}
+	###BATTLE PASSION CALCULATION###
+	th_change_battle_passion_from_battle = {
+		gain_variable = land_units_killed
+		lose_variable = land_units_lost
+	}
+}
+
+th_on_battle_lost_country_effect = {
+	#NECROMANCY CALCULATION
+	if = {
+		limit = { has_government_attribute = th_gets_manpower_from_battles }
+		set_variable = {
+			which = th_necromancy_land_units_killed
+			which = land_units_killed
+		}
+		set_variable = {
+			which = th_necromancy_land_units_lost
+			which = land_units_lost
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_necromancy_land_units_killed
+					value = 1000
+				}
+			}
+			subtract_variable = {
+				which = th_necromancy_land_units_killed
+				value = 1000
+			}
+			add_manpower = 0.3
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_necromancy_land_units_lost
+					value = 1000
+				}
+			}
+			subtract_variable = {
+				which = th_necromancy_land_units_lost
+				value = 1000
+			}
+			add_manpower = 0.3
+		}
+	}
+	###BATTLE PASSION CALCULATION###
+	th_change_battle_passion_from_battle = {
+		gain_variable = land_units_killed
+		lose_variable = land_units_lost
 	}
 }
