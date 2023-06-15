@@ -3408,3 +3408,98 @@ th_on_battle_lost_country_effect = {
 		lose_variable = land_units_lost
 	}
 }
+
+th_might_of_destruction_gain_effect = {
+	if = {
+		limit = {
+			ROOT = {
+				has_government_mechanic = th_might_of_destruction_mechanic
+				NOT = { owns = FROM }
+			}
+		}
+		ROOT = {
+			add_government_power = {
+				mechanic_type = th_might_of_destruction_mechanic
+				power_type = th_might_of_destruction
+				value = $value$
+			}
+		}
+	}
+}
+
+th_on_exploited_effect_adm = {
+	if = {
+		limit = { owner = { OR = { has_government_attribute = may_not_reduce_tax_on_exploitation has_government_attribute = th_50_chance_of_no_dev_loss_on_exploit } } }
+		random = {
+			chance = 50
+			add_base_tax = 1
+		}
+	}
+	if = {
+		limit = { owner = { has_government_attribute = may_not_reduce_tax_on_own_exploitation culture_group = ROOT } }
+		random = {
+			chance = 25
+			add_base_tax = 1
+		}
+	}
+	if = {
+		limit = { owner = { has_government_attribute = may_not_reduce_tax_on_foreign_exploitation NOT = { culture_group = ROOT } } }
+		random = {
+			chance = 50
+			add_base_tax = 1
+		}
+	}
+	if = {
+		limit = { owner = { has_government_attribute = th_extra_gain_from_exploiting } }
+		owner = { add_years_of_income = 0.02 }
+	}
+}
+
+th_on_exploited_effect_dip = {
+	if = {
+		limit = { owner = { has_government_attribute = th_50_chance_of_no_dev_loss_on_exploit } }
+		random = {
+			chance = 50
+			add_base_production = 1
+		}
+	}
+	if = {
+		limit = { owner = { has_government_attribute = th_extra_gain_from_exploiting } }
+		add_province_modifier = {
+			name = th_exploits_of_pestilence
+			duration = 1825
+		}
+	}
+}
+
+th_on_exploited_effect_mil = {
+	if = {
+		limit = { owner = { has_government_attribute = th_50_chance_of_no_dev_loss_on_exploit } }
+		random = {
+			chance = 50
+			add_base_manpower = 1
+		}
+	}
+	if = {
+		limit = { owner = { has_government_attribute = th_no_dev_reduction_from_manpower_exploit } }
+		add_base_manpower = 1
+	}
+	if = {
+		limit = { owner = { has_government_attribute = th_extra_gain_from_exploiting } }
+		owner = { add_army_tradition = 0.5 add_navy_tradition = 0.5 }
+	}
+}
+
+th_on_exploited_effect = {
+	th_on_exploited_effect_$type$ = yes
+	if = {
+		limit = { owner = { has_government_mechanic = th_might_of_destruction_mechanic } }
+		owner = {
+			add_government_power = {
+				mechanic_type = th_might_of_destruction_mechanic
+				power_type = th_might_of_destruction
+				value = 1
+			}
+		}
+	}
+}
