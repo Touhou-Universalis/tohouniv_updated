@@ -1,4 +1,4 @@
-#Generic prank for all fairy nations
+#Byakuren Diplomatic Actions
 th_invite_foreign_scholar = {
 	category = th_diplo_action
 	require_acceptance = yes
@@ -13,10 +13,19 @@ th_invite_foreign_scholar = {
 	is_allowed = {
 		if = {
 			limit = {
+				religion = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_FROM_RELIGION_TT
+				NOT = { religion = FROM }
+			}
+		}
+		if = {
+			limit = {
 				th_root_has_harmonized_from_religion = yes
 			}
 			custom_trigger_tooltip = {
-				tooltip = TH_DANMAKU_HAS_3_YEARS_COOLDOWN_TT
+				tooltip = TH_HAS_HARMONIZED_WITH_FROM_TT
 				NOT = { th_root_has_harmonized_from_religion = yes }
 			}
 		}
@@ -52,8 +61,15 @@ th_invite_foreign_scholar = {
 			}
 			save_event_target_as = th_scholar_province
 		}
+		if = {
+			limit = { has_dlc = "Mandate of Heaven" }
+			add_harmony = -10
+		}
 		event_target:th_scholar_province = {
 			change_religion = from
+		}
+		FROM = {
+			add_prestige = 10
 		}
 	}
 
@@ -236,6 +252,70 @@ th_invite_foreign_scholar = {
 			}
 		}
     }
+
+	ai_will_do = {
+		always = no
+	}
+}
+th_send_monk_ambassador = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		religious_school = {
+			group = Touhou
+			school = byakuren_teachings
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				religion = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_FROM_RELIGION_TT
+				NOT = { religion = FROM }
+			}
+		}
+		if = {
+			limit = {
+				has_dlc = "Mandate of Heaven"
+				NOT = { th_root_has_harmonized_from_religion = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_NOT_HARMONIZED_WITH_FROM_TT
+				th_root_has_harmonized_from_religion = yes
+			}
+		}
+	}
+
+	on_accept = {
+		if = {
+			limit = { has_dlc = "Mandate of Heaven" }
+			add_harmony = -10
+		}
+		else = {
+			add_legitimacy_equivalent = {
+				amount = -10
+				republican_tradition = -4
+			}
+		}
+		FROM = {
+			add_trust = {
+				who = ROOT
+				value = 5
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = th_scarlet_charisma_opinion
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = th_scarlet_charisma_opinion
+			}
+		}
+	}
 
 	ai_will_do = {
 		always = no
