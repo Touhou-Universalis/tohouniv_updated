@@ -443,11 +443,11 @@ country_decisions = {
 			has_dlc = "Cradle of Civilization"
 			religion = th_buddhist
 			has_religious_school = no
+			NOT = { has_country_flag = th_selected_primary_school_of_thought }
 		}
 		
 		allow = {
 			adm_power_cost = 100
-			NOT = { has_country_flag = th_selected_primary_school_of_thought }
 		}
 			
 		effect = {
@@ -589,6 +589,7 @@ country_decisions = {
 			factor = 0
 		}
 	}
+	#Buddhism Buddhist Mission
 	th_buddhism_buddhist_mission = {
 		potential = {
 			has_dlc = "Cradle of Civilization"
@@ -609,6 +610,7 @@ country_decisions = {
 			else = {
 				prestige = 10
 			}
+			NOT = { has_country_modifier = th_buddhism_buddhist_mission }
 		}
 			
 		effect = {
@@ -637,10 +639,74 @@ country_decisions = {
 			factor = 0
 		}
 	}
+	#Buddhism Initiate Religious Constructions
+	th_buddhism_initiate_religious_constructions = {
+		potential = {
+			has_dlc = "Cradle of Civilization"
+			religion = th_buddhist
+			religious_school = {
+				group = Touhou
+				school = myouren_teachings
+			}
+		}
+		
+		allow = {
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+				}
+				harmony = 30
+			}
+			else = {
+				years_of_income = 1
+			}
+		}
+			
+		effect = {
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+				}
+				add_harmony = -30
+			}
+			else = {
+				add_years_of_income = -1
+			}
+			add_country_modifier = {
+				name = th_buddhism_initiated_religious_constructions
+				duration = 3650
+			}
+			custom_tooltip = th_buddhism_initiate_religious_constructions_tt
+			tooltip = {
+				add_province_modifier = {
+					name = th_buddhism_initiated_religious_constructions_region
+					duration = 3650
+				}
+			}
+			hidden_effect = {
+				capital_scope = {
+					region = {
+						limit = {
+							owned_by = root
+						}
+						add_province_modifier = {
+							name = th_buddhism_initiated_religious_constructions_region
+							duration = 3650
+						}
+					}
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
 
 	#Taoism - Cycle Information
 	th_taoism_cycle_information = {
 		potential = {
+			ai = no
 			religion = th_taoist
 			uses_fervor = yes
 		}
@@ -651,7 +717,7 @@ country_decisions = {
 			
 		effect = {
 			country_event = { 
-				id = th_taoism_events.100
+				id = th_taoism_wuxing_events.0
 			}
 		}
 		
@@ -659,144 +725,40 @@ country_decisions = {
 			factor = 0
 		}
 	}
-	
-	#Taoism - Trigger next cycle
-	th_taoism_trigger_cycle = {
+
+	#Taoism - Manipulate the Cycle
+	th_taoism_manipulate_cycle = {
 		potential = {
 			religion = th_taoist
-			uses_fervor = yes
 			has_country_flag = th_taoism_started_the_circle
 			NOT = { has_country_flag = th_taoism_currently_triggering }
 		}
 		
 		allow = {
 			custom_trigger_tooltip = {
-				tooltip = th_taoism_triggering_cycle_off_cd
+				tooltip = th_taoism_manipulate_cycle_off_cd
 				OR = {
 					NOT = { has_country_flag = th_taoism_trigger_cycle_cd }
 					had_country_flag = {
 						flag = th_taoism_trigger_cycle_cd
-						days = 5475
+						days = 4380
 					}
 				}
 			}
-			fervor = 90
+			if = {
+				limit = {
+					uses_fervor = yes
+				}
+				fervor = 90
+			}
 		}
 			
 		effect = {
 			add_fervor = -100
 			country_event = {
-				id = th_taoism_events.17
+				id = th_taoism_wuxing_events.11
 			}
 			set_country_flag = th_taoism_currently_triggering
-		}
-		
-		ai_will_do = {
-			factor = 0
-		}
-	}
-	
-	#Taoism - Go one step back in the circle
-	th_taoism_revert_cycle = {
-		potential = {
-			religion = th_taoist
-			uses_fervor = yes
-			has_country_flag = th_taoism_started_the_circle
-			NOT = { has_country_flag = th_taoism_currently_reverting }
-		}
-		
-		allow = {
-			custom_trigger_tooltip = {
-				tooltip = th_taoism_revert_cycle_off_cd
-				OR = {
-					NOT = { has_country_flag = th_taoism_revert_cycle_cd }
-					had_country_flag = {
-						flag = th_taoism_revert_cycle_cd
-						days = 5475
-					}
-				}
-			}
-			fervor = 90
-		}
-			
-		effect = {
-			add_fervor = -100
-			country_event = {
-				id = th_taoism_events.14
-			}
-			set_country_flag = th_taoism_currently_reverting
-		}
-		
-		ai_will_do = {
-			factor = 0
-		}
-	}
-	
-	#Taoism - Control circle
-	th_taoism_control_cycle = {
-		potential = {
-			religion = th_taoist
-			uses_fervor = yes
-			has_country_flag = th_taoism_started_the_circle
-			NOT = { has_country_flag = th_taoism_currently_controlling }
-		}
-		
-		allow = {
-			custom_trigger_tooltip = {
-				tooltip = th_taoism_control_cycle_off_cd
-				OR = {
-					NOT = { has_country_flag = th_taoism_control_cycle_cd }
-					had_country_flag = {
-						flag = th_taoism_control_cycle_cd
-						days = 5475
-					}
-				}
-			}
-			fervor = 90
-		}
-			
-		effect = {
-			add_fervor = -100
-			country_event = {
-				id = th_taoism_events.15
-			}
-			set_country_flag = th_taoism_currently_controlling
-		}
-		
-		ai_will_do = {
-			factor = 0
-		}
-	}
-	
-	#Taoism - Destroy circle
-	th_taoism_destroy_cycle = {
-		potential = {
-			religion = th_taoist
-			uses_fervor = yes
-			has_country_flag = th_taoism_started_the_circle
-			NOT = { has_country_flag = th_taoism_currently_destroying }
-		}
-		
-		allow = {
-			custom_trigger_tooltip = {
-				tooltip = th_taoism_destroy_cycle_off_cd
-				OR = {
-					NOT = { has_country_flag = th_taoism_destroy_cycle_cd }
-					had_country_flag = {
-						flag = th_taoism_destroy_cycle_cd
-						days = 5475
-					}
-				}
-			}
-			fervor = 90
-		}
-			
-		effect = {
-			add_fervor = -100
-			country_event = {
-				id = th_taoism_events.16
-			}
-			set_country_flag = th_taoism_currently_destroying
 		}
 		
 		ai_will_do = {
