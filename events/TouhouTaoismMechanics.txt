@@ -1,3 +1,34 @@
+namespace = th_taoism_mechanics_events
+
+#Taoism Mechanics - Information event
+country_event = {
+	id = th_taoism_mechanics_events.0
+	title = th_taoism_mechanics_events.0.t
+	desc = th_taoism_mechanics_events.0.desc
+	picture = MIKO_eventPicture
+
+	is_triggered_only = yes
+
+	option = {	#More to Wuxing
+		name = th_taoism_mechanics_events.0.a
+		country_event = {
+			id = th_taoism_wuxing_events.0
+		}
+	}
+
+	option = {	#More to Feng Shui
+		name = th_taoism_mechanics_events.0.b
+		country_event = {
+			id = th_taoism_feng_shui_events.0
+		}
+	}
+
+	option = {	#Close event
+		name = th_taoism_mechanics_events.0.zzz
+	}
+}
+
+
 namespace = th_taoism_wuxing_events
 
 ###################
@@ -104,6 +135,10 @@ country_event = {
 		hidden_effect = {
 			set_country_flag = th_taoism_started_the_circle
 			set_country_flag = th_taoism_first_circle
+			country_event = {
+				id = th_taoism_feng_shui_events.1
+				days = 12
+			}
 		}
 	}
 	
@@ -548,7 +583,7 @@ country_event = {
 	
 	#Change to Wood
 	option = {
-		name = th_taoism_wuxing_events.11.a
+		name = th_taoism_wuxing_events.1.a
 		trigger = {
 			NOT = { th_current_wuxing_cycle = { type = wood } }
 			NOT = { th_previous_cycle_is_predecessor_of_current_cycle = { type = wood } }
@@ -560,7 +595,7 @@ country_event = {
 	
 	#Change to Fire
 	option = {
-		name = th_taoism_wuxing_events.11.b
+		name = th_taoism_wuxing_events.1.b
 		trigger = {
 			NOT = { th_current_wuxing_cycle = { type = fire } }
 			NOT = { th_previous_cycle_is_predecessor_of_current_cycle = { type = fire } }
@@ -572,7 +607,7 @@ country_event = {
 	
 	#Change to Earth
 	option = {
-		name = th_taoism_wuxing_events.11.c
+		name = th_taoism_wuxing_events.1.c
 		trigger = {
 			NOT = { th_current_wuxing_cycle = { type = earth } }
 			NOT = { th_previous_cycle_is_predecessor_of_current_cycle = { type = earth } }
@@ -584,7 +619,7 @@ country_event = {
 	
 	#Change to Metal
 	option = {
-		name = th_taoism_wuxing_events.11.d
+		name = th_taoism_wuxing_events.1.d
 		trigger = {
 			NOT = { th_current_wuxing_cycle = { type = metal } }
 			NOT = { th_previous_cycle_is_predecessor_of_current_cycle = { type = metal } }
@@ -596,7 +631,7 @@ country_event = {
 	
 	#Change to Waster
 	option = {
-		name = th_taoism_wuxing_events.11.e
+		name = th_taoism_wuxing_events.1.e
 		trigger = {
 			NOT = { th_current_wuxing_cycle = { type = water } }
 			NOT = { th_previous_cycle_is_predecessor_of_current_cycle = { type = water } }
@@ -604,5 +639,79 @@ country_event = {
 		clr_country_flag = th_taoism_currently_triggering
 		set_country_flag = th_taoism_trigger_cycle_cd
 		th_taoism_set_cycle = { type = water }
+	}
+}
+
+namespace = th_taoism_feng_shui_events
+
+######################
+# Feng Shui Mechanic #
+######################
+
+#Feng Shui - Information event
+country_event = {
+	id = th_taoism_feng_shui_events.0
+	title = th_taoism_feng_shui_events.0.t
+	desc = th_taoism_feng_shui_events.0.desc
+	picture = FUTO_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = th_taoism_feng_shui_events.0.a
+		tooltip = {
+			add_province_modifier = {
+				name = th_good_feng_shui
+				duration = 4380
+			}
+			add_province_modifier = {
+				name = th_bad_feng_shui
+				duration = 4380
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Feng Shui - Destribution
+country_event = {
+	id = th_taoism_feng_shui_events.1
+	title = th_taoism_feng_shui_events.1.t
+	desc = th_taoism_feng_shui_events.1.desc
+	picture = FUTO_eventPicture
+
+	is_triggered_only = yes	#Triggered by the Wuxing mechanic so both mechanics are synchron at the start
+	option = {
+		name = th_taoism_feng_shui_events.1.a
+		custom_tooltip = th_taoism_feng_shui_events.1.a.tt
+		hidden_effect = {
+			set_country_flag = th_taoism_started_feng_shui
+			th_taoism_set_up_provinces = yes
+			country_event = {
+				id = th_taoism_feng_shui_events.2
+				days = 4379
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Feng Shui - Trigger new Destribution
+country_event = {
+	id = th_taoism_feng_shui_events.2
+	hidden = yes
+	is_triggered_only = yes	#Triggered by the destribution event
+	option = {
+		country_event = {
+			id = th_taoism_feng_shui_events.1
+			days = 1
+		}
+		ai_chance = {
+			factor = 100
+		}
 	}
 }
