@@ -1,0 +1,591 @@
+###DANMAKU DUEL COUNTER###
+th_num_of_won_danmaku_duels = {
+	if = {
+		limit = { NOT = { has_country_flag = th_danmaku_counts_won_danmaku_fights } }
+		custom_trigger_tooltip = {
+			tooltip = th_num_of_won_danmaku_duels_tt
+			has_country_flag = th_danmaku_counts_won_danmaku_fights
+		}
+	}
+	else = {
+		check_variable = {
+			which = th_danmaku_won_danmaku_fights
+			value = $amount$
+		}
+	}
+}
+
+###IS JAPAENSE OR GENSOKYAN###
+th_is_gensokyan_or_japanese = {
+	OR = {
+		culture_group = japanese_g
+		th_is_touhou_culture_group = yes
+	}
+}
+
+th_province_is_or_accepts_culture = {
+	OR = {
+		has_owner_culture = yes
+		has_owner_accepted_culture = yes
+	}
+}
+
+
+
+###IS CHRISTIAN###
+th_is_christian = {
+	th_province_is_or_accepts_religion_group = {
+		religion_group = christian
+	}
+}
+
+###CAN USE DHARMIC###
+th_can_use_dharmic_monuments = {
+	OR = {
+		th_province_is_or_accepts_religion_group = {
+			religion_group = dharmic
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_can_use_dharmic_monuments_tt
+			owner = { has_country_flag = hig_can_use_dharmic_monuments }
+		}
+	}
+}
+
+###CAN USE CHINESE###
+th_can_use_chinese_monuments = {
+	OR = {
+		culture_group = east_asian
+		custom_trigger_tooltip = {
+			tooltip = th_can_use_chinese_monuments_tt
+			owner = { has_country_flag = th_can_use_chinese_monuments }
+		}
+	}
+}
+
+#Buddhism is its own can of worms due to the so many aspects of it
+#This was one of the few moments where it was almost worth considering putting Buddhism in its own religion group - almost
+th_province_is_buddhist_or_accepts_buddhism = {
+	OR = {
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_at
+			OR = {
+				AND = {
+					religion = buddhism
+					OR = {
+						has_owner_religion = yes
+						owner = { has_harmonized_with = buddhism }
+						secondary_religion = buddhism
+					}
+				}
+				AND = {
+					religion = vajrayana
+					OR = {
+						has_owner_religion = yes
+						owner = { has_harmonized_with = vajrayana }
+						secondary_religion = vajrayana
+					}
+				}
+				AND = {
+					religion = mahayana
+					OR = {
+						has_owner_religion = yes
+						owner = { has_harmonized_with = mahayana }
+						secondary_religion = mahayana
+					}
+				}
+				AND = {
+					religion = th_buddhist
+					OR = {
+						has_owner_religion = yes
+						owner = { has_harmonized_with = th_buddhist }
+						secondary_religion = th_buddhist
+					}
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_bt
+			owner = {
+				OR = {
+					has_harmonized_with = buddhism
+					has_harmonized_with = vajrayana
+					has_harmonized_with = mahayana
+					has_harmonized_with = th_buddhist
+				}
+			}
+			has_owner_religion = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_ct
+			owner = {
+				OR = {
+					secondary_religion = buddhism
+					secondary_religion = vajrayana
+					secondary_religion = mahayana
+					secondary_religion = th_buddhist
+				}
+			}
+			has_owner_religion = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_dt
+			religion = shinto
+			has_owner_religion = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_et
+			owner = { has_personal_deity = buddha }
+			has_owner_religion = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = province_is_buddhist_or_accepts_buddhism_ft
+			owner = { has_adopted_cult = buddhism_cult }
+			has_owner_religion = yes
+		}
+		#For the case the province has a religion which the player has already harmonized with and cannot convert
+		#It's a hidden trigger because the tooltip is already super flooded and it is incredibly niche
+		hidden_trigger = {
+			owner = {
+				OR = {
+					has_harmonized_with = buddhism
+					has_harmonized_with = vajrayana
+					has_harmonized_with = mahayana
+				}
+				has_harmonized_with = ROOT
+			}
+		}
+	}
+}
+
+###PRIVILEGES###
+#Supports the following privileges
+# th_estate_nobles_third_eye
+# th_estate_burghers_arctic_development
+# th_estate_burghers_mass_marine_conscription
+# th_estate_burghers_elite_marines
+# th_estate_burghers_naval_reinforcement
+#Use when you need a tooltip
+#th_has_unlocked_privilege = {
+#	custom_trigger_tooltip = {
+#		tooltip = th_has_unlocked_$estate_privilege$_tt
+#		has_country_flag = unlocked_privilege_$estate_privilege$_privilege
+#	}
+#}
+#Supports all reforms
+#th_has_unlocked_privilege_no_tooltip = {	#No longer really needed, use has_unlocked_estate_privilege instead
+#	has_country_flag = th_unlocked_$estate_privilege$_privilege
+#}
+
+
+
+###ROOT HAS WON A DANMAKU DUEL AGAINST THE SCOPE###
+th_has_lost_danmaku_duel_against_root = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_lost_danmaku_duel_against_root_tt
+		has_country_flag = th_danmaku_duel_lost_against_@ROOT
+	}
+}
+
+###IS OR WAS TAG###
+th_is_or_was_tag = {
+	OR = {
+		tag = $tag$
+		was_tag = $tag$
+	}
+}
+
+###MERC COMPANIES###
+th_is_allowed_to_recruit_mercenaries = {
+	custom_trigger_tooltip = {
+		tooltip = is_allowed_to_recruit_mercenaries_tt
+		NOT = { has_idea_group = LEM_ideas }
+		NOT = { has_idea_group = LCU_ideas }
+		NOT = { has_country_flag = th_disabled_mercenaries }
+		NOT = { has_country_flag = scr_professional_meiling_troops_only }
+		NOT = { has_country_modifier = dan_sca_refocus_on_personal_armies }
+	}
+}
+
+###Supports following merc companies
+# merc_th_level_titania
+# merc_th_goliath_doll
+# merc_th_level_leviathan
+# merc_th_yukaris_royal_guard
+# merc_th_law_enforcers_of_higan
+th_unlocked_mercenary_company = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_unlocked_$mercenary_company$_tt
+		has_country_flag = th_unlock_$mercenary_company$
+	}
+}
+
+###IS NOT AN OCCUPIED PROVINCE###
+th_province_is_not_occupied = {
+	NOT = {
+		any_country = {
+			controls = $province$
+			NOT = { owns = $province$ }
+		}
+	}
+}
+
+###RELIGIOUS WARS###
+th_has_won_the_religious_war = {
+	custom_trigger_tooltip = {
+		tooltip = obj_religious_league_war_on_winning_side_tooltip
+		has_country_flag = religious_league_war_on_winning_side
+	}
+}
+
+###WAS INFLUENCED###
+#Make sure you check if Rights of Man or Emperor is active because Great Powers is not base game
+#Changed to a new modifier so Right of Man is no longer needed
+th_has_been_influenced_by_root = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_been_influenced_by_root_tt
+		has_opinion_modifier = {
+			who = ROOT
+			modifier = th_great_power_influence
+		}
+	}
+}
+
+###RECEIVED GIFT###
+#Not used now. But I keep it for future use
+th_has_received_gift_from_root = {
+	custom_trigger_tooltip = {
+		tooltip = th_has_received_gift_from_root_tt
+		has_opinion_modifier = {
+			who = ROOT
+			modifier = sent_gift
+		}
+	}
+}
+
+th_can_convert_on_colonization_religion_check = {
+	religion = $religion$
+	has_country_flag = th_enabled_$religion$_converting_on_colonization
+}
+
+th_can_convert_on_colonization = {
+	OR = {
+		has_country_flag = th_enabled_converting_on_colonization
+		AND = {
+			NOT = { has_country_flag = th_enabled_converting_on_colonization }
+			OR = {
+				th_can_convert_on_colonization_religion_check = { religion = th_hakureishinto }
+				th_can_convert_on_colonization_religion_check = { religion = th_taoist }
+				th_can_convert_on_colonization_religion_check = { religion = th_buddhist }
+				th_can_convert_on_colonization_religion_check = { religion = th_moriyashinto }
+				th_can_convert_on_colonization_religion_check = { religion = th_oldhakurei }
+				th_can_convert_on_colonization_religion_check = { religion = th_shinkism }
+				th_can_convert_on_colonization_religion_check = { religion = th_scientistic }
+				th_can_convert_on_colonization_religion_check = { religion = th_occultism }
+				th_can_convert_on_colonization_religion_check = { religion = th_gensokirishitan }
+				th_can_convert_on_colonization_religion_check = { religion = th_scarlet_christians }
+				th_can_convert_on_colonization_religion_check = { religion = th_lunarian_religion }
+			}
+		}
+	}
+	OR = {
+		AND = {
+			has_country_flag = th_enabled_converting_on_colonizations_for_shrines
+			has_reform = Gensokyan_shrine_theocracy
+		}
+		NOT = { has_country_flag = th_enabled_converting_on_colonizations_for_shrines }
+	}
+}
+
+th_can_request_conversion_religion_check = {
+	religion = $religion$
+	has_country_flag = th_enabled_$religion$_ask_conversion
+}
+
+th_can_request_conversion = {
+	OR = {
+		has_country_flag = th_enabled_ask_conversion
+		AND = {
+			NOT = { has_country_flag = th_enabled_ask_conversion }
+			OR = {
+				th_can_request_conversion_religion_check = { religion = th_hakureishinto }
+				th_can_request_conversion_religion_check = { religion = th_taoist }
+				th_can_request_conversion_religion_check = { religion = th_buddhist }
+				th_can_request_conversion_religion_check = { religion = th_moriyashinto }
+				th_can_request_conversion_religion_check = { religion = th_oldhakurei }
+				th_can_request_conversion_religion_check = { religion = th_shinkism }
+				th_can_request_conversion_religion_check = { religion = th_scientistic }
+				th_can_request_conversion_religion_check = { religion = th_occultism }
+				th_can_request_conversion_religion_check = { religion = th_gensokirishitan }
+				th_can_request_conversion_religion_check = { religion = th_scarlet_christians }
+				th_can_request_conversion_religion_check = { religion = th_lunarian_religion }
+			}
+		}
+	}
+	OR = {
+		AND = {
+			has_country_flag = th_enabled_ask_conversion_for_shrines
+			has_reform = Gensokyan_shrine_theocracy
+		}
+		NOT = { has_country_flag = th_enabled_ask_conversion_for_shrines }
+	}
+}
+
+th_can_convert_claims_religion_check = {
+	religion = $religion$
+	has_country_flag = th_enabled_$religion$_converting_on_claim
+}
+
+th_can_convert_claims = {
+	OR = {
+		has_country_flag = th_enabled_converting_on_claim
+		AND = {
+			NOT = { has_country_flag = th_enabled_converting_on_claim }
+			OR = {
+				th_can_convert_claims_religion_check = { religion = th_hakureishinto }
+				th_can_convert_claims_religion_check = { religion = th_taoist }
+				th_can_convert_claims_religion_check = { religion = th_buddhist }
+				th_can_convert_claims_religion_check = { religion = th_moriyashinto }
+				th_can_convert_claims_religion_check = { religion = th_oldhakurei }
+				th_can_convert_claims_religion_check = { religion = th_shinkism }
+				th_can_convert_claims_religion_check = { religion = th_scientistic }
+				th_can_convert_claims_religion_check = { religion = th_occultism }
+				th_can_convert_claims_religion_check = { religion = th_gensokirishitan }
+				th_can_convert_claims_religion_check = { religion = th_scarlet_christians }
+				th_can_convert_claims_religion_check = { religion = th_lunarian_religion }
+			}
+		}
+	}
+	OR = {
+		AND = {
+			has_country_flag = th_enabled_converting_on_claims_for_shrines
+			has_reform = Gensokyan_shrine_theocracy
+		}
+		NOT = { has_country_flag = th_enabled_converting_on_claims_for_shrines }
+	}
+}
+
+th_can_force_religion_on_heathens_religion_check = {
+	religion = $religion$
+	has_country_flag = th_can_enforce_heathen_conversion_for_$religion$_flag
+}
+
+th_can_force_religion_on_heathens = {
+	OR = {
+		has_country_flag = th_can_enforce_heathen_conversion_flag
+		AND = {
+			NOT = { has_country_flag = th_can_enforce_heathen_conversion_flag }
+			OR = {
+				th_can_force_religion_on_heathens_religion_check = { religion = th_hakureishinto }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_taoist }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_buddhist }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_moriyashinto }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_oldhakurei }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_shinkism }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_scientistic }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_occultism }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_gensokirishitan }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_scarlet_christians }
+				th_can_force_religion_on_heathens_religion_check = { religion = th_lunarian_religion }
+			}
+		}
+	}
+	OR = {
+		AND = {
+			has_country_flag = th_can_enforce_heathen_conversion_flag_shrines
+			has_reform = Gensokyan_shrine_theocracy
+		}
+		NOT = { has_country_flag = th_can_enforce_heathen_conversion_flag_shrines }
+	}
+}
+
+th_is_outworld_trade_node = {
+	OR = {
+		province_id = 4064
+		province_id = 4097
+		province_id = 1191
+		province_id = 2868
+		province_id = 2935
+		province_id = 2499
+		province_id = 2021
+		province_id = 730
+		province_id = 1507
+		province_id = 2526
+		province_id = 1551
+		province_id = 677
+		province_id = 679
+		province_id = 1371
+		province_id = 1397
+		province_id = 1997
+		province_id = 1411
+		province_id = 1376
+		province_id = 684
+		province_id = 700
+		province_id = 4233
+		province_id = 1357
+		province_id = 1365
+		province_id = 1361
+		province_id = 1064
+		province_id = 707
+		province_id = 584
+		province_id = 1343
+		province_id = 524
+		province_id = 507
+		province_id = 1948
+		province_id = 1340
+		province_id = 504
+		province_id = 1149
+		province_id = 2772
+		province_id = 4346
+		province_id = 1334
+		province_id = 1448
+		province_id = 1460
+		province_id = 1335
+		province_id = 454
+		province_id = 4341
+		province_id = 377
+		province_id = 358
+		province_id = 464
+		province_id = 1322
+		province_id = 1320
+		province_id = 280
+		province_id = 1082
+		province_id = 33
+		province_id = 800
+		province_id = 1536
+		province_id = 809
+		province_id = 1531
+		province_id = 1132
+		province_id = 1466
+		province_id = 341
+		province_id = 137
+		province_id = 1110
+		province_id = 153
+		province_id = 262
+		province_id = 134
+		province_id = 61
+		province_id = 1926
+		province_id = 1876
+		province_id = 835
+		province_id = 1516
+		province_id = 1500
+		province_id = 1486
+		province_id = 1490
+		province_id = 1652
+		province_id = 1975
+		province_id = 45
+		province_id = 1276
+		province_id = 1293
+		province_id = 186
+		province_id = 1295
+		province_id = 1298
+		province_id = 1308
+		province_id = 1269
+	}
+}
+
+th_is_gensokyo_trade_node = {
+	OR = {
+		province_id = 5032
+		province_id = 4982
+		province_id = 5019
+		province_id = 4999
+		province_id = 4956
+		province_id = 5090
+		province_id = 4978
+	}
+}
+
+th_is_not_free_merc_company = {
+	ROOT = {
+		NOT = { mercenary_company = merc_hakkapeliita_cavalry }
+		NOT = { mercenary_company = merc_prussian_volunteer_army }
+		NOT = { mercenary_company = merc_knights_templar }
+		NOT = { mercenary_company = merc_swiss_guard }
+		NOT = { mercenary_company = merc_large_hakkapeliita_cavalry }
+		NOT = { mercenary_company = merc_guerilla_hakkapeliita_cavalry }
+		NOT = { mercenary_company = merc_elite_hakkapeliita_cavalry }
+		NOT = { mercenary_company = merc_mongol_banner }
+		NOT = { mercenary_company = merc_swiss_canton_mercenaries }
+		NOT = { mercenary_company = merc_japanese_volunteers }
+		NOT = { mercenary_company = merc_militant_order_of_saint_joan }
+		NOT = { mercenary_company = merc_th_yukaris_royal_guard }
+		NOT = { mercenary_company = merc_th_knights_templar }
+		NOT = { mercenary_company = merc_th_swiss_canton_mercenaries }
+		NOT = { mercenary_company = merc_th_doppelsoeldner }
+		NOT = { mercenary_company = merc_th_hessian_jaegerkorps }
+		NOT = { mercenary_company = merc_th_gorkhalis }
+		NOT = { mercenary_company = merc_th_dahomey_amazons }
+		NOT = { mercenary_company = merc_th_goliath_doll }
+		NOT = { mercenary_company = merc_th_level_titania }
+		NOT = { mercenary_company = merc_th_level_leviathan }
+		NOT = { mercenary_company = merc_th_law_enforcers_of_higan }
+		NOT = { mercenary_company = merc_th_oni_servants }
+		NOT = { mercenary_company = merc_th_hisoutensoku }
+	}
+}
+
+th_has_final_tier_reforms_trigger = {
+	custom_trigger_tooltip = {
+		tooltip = has_completed_all_reforms_trigger_tooltip
+		OR = {
+			has_reform = political_absolutism_reform
+			has_reform = legislative_houses_reform
+			has_reform = strengthen_executive_powers_reform
+			has_reform = reinforce_republican_values_reform
+			has_reform = enlightened_monarchy_reform
+			has_reform = emperor_of_the_revolution_reform
+			has_reform = government_for_people_reform
+			has_reform = president_for_life_reform
+			has_reform = all_under_tengri_reform
+			has_reform = proclaim_religious_head_reform
+			has_reform = priestly_autonomy_reform
+			has_reform = many_fingers_of_god_reform
+			has_reform = religious_permanent_revolution_reform
+			has_reform = religion_in_one_country_reform
+			has_reform = TH_expansion_into_the_outworld_reform
+			has_reform = TH_imperial_gensokyo_reform
+			has_reform = TH_republic_royal_democracy
+			has_reform = TH_republic_embrace_human_dictatorship
+			has_reform = TH_fairies_become_absolute_monarchy_reform
+			has_reform = TH_i_am_the_shrine
+		}
+	}
+}
+
+
+#These should all be in th_scripted_triggers_for_submods.txt, but are here temporarily until submods are updated.
+
+th_is_touhou_culture_group = {
+	OR = {
+		culture_group = Gensokyan_culture
+		culture_group = moon_culture
+	}
+}
+th_is_emperor_of_china = {
+	if = {
+		limit = { has_dlc = "Mandate of Heaven" }
+		is_emperor_of_china = yes
+	}
+	else = {
+		OR = {
+			has_reform = Gensokyan_celestial_empire
+			has_reform = celestial_empire
+		}
+	}
+}
+
+th_has_no_religion_specific_government_available = {
+	NOT = { religion_group = jewish_group }
+	NOT = { religion_group = zoroastrian_group }
+	NOT = { religion_group = dharmic }
+	NOT = { religion_group = muslim }
+	NOT = { religion_group = christian }
+	NOT = { religion_group = eastern }
+	NOT = { religion = tengri_pagan_reformed }
+	NOT = { religion = shamanism }
+	NOT = { religion = norse_pagan_reformed }
+	NOT = { religion_group = Touhou }
+	NOT = { religion_group = lunarian_religion_g }
+	NOT = { religion = th_taoist }
+}

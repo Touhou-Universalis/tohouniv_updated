@@ -620,6 +620,386 @@ th_change_national_focus = {
 	}
 }
 
+th_enable_charter_trade_post_diplo_action = {
+	custom_tooltip = th_enable_charter_trade_post_diplo_action_tt
+	hidden_effect = {
+		set_country_flag = th_unlocked_charter_trade_post_diplo_action
+	}
+}
+th_disable_charter_trade_post_diplo_action = {
+	custom_tooltip = th_disable_charter_trade_post_diplo_action_tt
+	hidden_effect = {
+		clr_country_flag = th_unlocked_charter_trade_post_diplo_action
+	}
+}
+
+upgrade_building = {
+	[[trade]
+		if = {
+			limit = { has_building = trade_depot }
+			add_building = stock_exchange
+		}
+		else_if = {
+			limit = { has_building = marketplace }
+			add_building = trade_depot
+		}
+	]
+	[[government]
+		if = {
+			limit = { has_building = courthouse }
+			add_building = town_hall
+		}
+	]
+	[[production]
+		if = {
+			limit = { has_building = workshop }
+			add_building = counting_house
+		}
+	]
+	[[tax]
+		if = {
+			limit = { has_building = temple }
+			add_building = cathedral
+		}
+	]
+	[[manpower]
+		if = {
+			limit = { has_building = barracks }
+			add_building = training_fields
+		}
+	]
+	[[sailors]
+		if = {
+			limit = { has_building = dock }
+			add_building = drydock
+		}
+	]
+	[[army_forcelimit]
+		if = {
+			limit = { has_building = regimental_camp }
+			add_building = conscription_center
+		}
+	]
+	[[navy_forcelimit]
+		if = {
+			limit = { has_building = shipyard }
+			add_building = grand_shipyard
+		}
+	]
+	[[coastal]
+		if = {
+			limit = { has_building = coastal_defence }
+			add_building = naval_battery
+		}
+	]
+	[[fort]
+		if = {
+			limit = { has_building = fort_17th }
+			add_building = fort_18th
+		}
+		else_if = {
+			limit = { has_building = fort_16th }
+			add_building = fort_17th
+		}
+		else_if = {
+			limit = { has_building = fort_15th }
+			add_building = fort_16th
+		}
+	]
+}
+
+th_enable_exploration_without_explo_ideas = {
+	#custom_tooltip = th_enable_exploration_without_explo_ideas_tt
+	#hidden_effect = {
+	#	set_country_flag = th_can_hire_explorers_without_ideas
+	#}
+	add_country_modifier = {
+		name = th_exploration_spirit
+		duration = -1
+	}
+}
+th_disable_exploration_without_explo_ideas = {
+	#custom_tooltip = th_disable_exploration_without_explo_ideas_tt
+	#hidden_effect = {
+	#	clr_country_flag = th_can_hire_explorers_without_ideas
+	#}
+	remove_country_modifier = th_exploration_spirit
+}
+
+th_enable_transfer_mp_to_sailors_decision = {
+	custom_tooltip = enable_transfer_manpower_sailor_decision_tt
+	hidden_effect = { set_country_flag = enabled_transfer_between_manpower_and_sailor }
+}
+
+th_export_root_variable_into_foreign = {
+	#This function counts your own variable, which is made for counting, down while increasing the counter variable of $who$
+	#Useful if you need to convert variables from a province scope into a country's variable
+	while = {
+		limit = {
+			check_variable = {
+				which = $root_variable$
+				value = 1
+			}
+		}
+		$who$ = {
+			change_variable = {
+				which = $foreign_variable$
+				value = 1
+			}
+		}
+		subtract_variable = {
+			which = $root_variable$
+			value = 1
+		}
+	}
+}
+
+th_import_foreign_variable_into_root = {
+	while = {
+		limit = {
+			$who$ = {
+				check_variable = {
+					which = $foreign_variable$
+					value = 1
+				}
+			}
+		}
+		$who$ = {
+			subtract_variable = {
+				which = $foreign_variable$
+				value = 1
+			}
+		}
+		change_variable = {
+			which = $root_variable$
+			value = 1
+		}
+	}
+}
+
+###MONARCH variable###
+# Originally, only fairies were able to maintain their stats when respawning
+# This changed, however, and now all Touhou rulers are able to respawn with increased stats
+# Fairies are the only rulers, who are limited in how much their stats can grow though
+th_set_ruler_max_stats = {
+	set_variable = {
+		which = th_ruler_max_adm_stat
+		value = $max_possible_adm$
+	}
+	set_variable = {
+		which = th_ruler_max_dip_stat
+		value = $max_possible_dip$
+	}
+	set_variable = {
+		which = th_ruler_max_mil_stat
+		value = $max_possible_mil$
+	}
+}
+
+th_increase_ruler_adm_stat = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_government_attribute = fairy_respawn_mechanic }
+				NOT = {
+					check_variable = {
+						which = th_ruler_adm_stat
+						which = th_ruler_max_adm_stat
+					}
+				}
+			}
+		}
+		change_adm = $adm$
+		custom_tooltip = th_stat_remains_after_respawn_ruler_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_ruler_adm_stat
+				value = $adm$
+			}
+			change_variable = {
+				which = th_ruler_total_power
+				value = $adm$
+			}
+		}
+	}
+	else = {
+		custom_tooltip = th_increase_ruler_adm_stat_tt
+		add_adm_power = 75
+	}
+}
+
+th_increase_ruler_dip_stat = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_government_attribute = fairy_respawn_mechanic }
+				NOT = {
+					check_variable = {
+						which = th_ruler_dip_stat
+						which = th_ruler_max_dip_stat
+					}
+				}
+			}
+		}
+		change_dip = $dip$
+		custom_tooltip = th_stat_remains_after_respawn_ruler_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_ruler_dip_stat
+				value = $dip$
+			}
+			change_variable = {
+				which = th_ruler_total_power
+				value = $dip$
+			}
+		}
+	}
+	else = {
+		custom_tooltip = th_increase_ruler_dip_stat_tt
+		add_dip_power = 75
+	}
+}
+
+th_increase_ruler_mil_stat = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_government_attribute = fairy_respawn_mechanic }
+				NOT = {
+					check_variable = {
+						which = th_ruler_mil_stat
+						which = th_ruler_max_mil_stat
+					}
+				}
+			}
+		}
+		change_mil = $mil$
+		custom_tooltip = th_stat_remains_after_respawn_ruler_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_ruler_mil_stat
+				value = $mil$
+			}
+			change_variable = {
+				which = th_ruler_total_power
+				value = $mil$
+			}
+		}
+	}
+	else = {
+		custom_tooltip = th_increase_ruler_mil_stat_tt
+		add_mil_power = 75
+	}
+}
+
+th_set_heir_max_stats = {
+	set_variable = {
+		which = th_heir_max_adm_stat
+		value = $max_possible_adm$
+	}
+	set_variable = {
+		which = th_heir_max_dip_stat
+		value = $max_possible_dip$
+	}
+	set_variable = {
+		which = th_heir_max_mil_stat
+		value = $max_possible_mil$
+	}
+}
+
+th_increase_heir_adm_stat = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_government_attribute = fairy_respawn_mechanic }
+				NOT = {
+					check_variable = {
+						which = th_heir_adm_stat
+						which = th_heir_max_adm_stat
+					}
+				}
+			}
+		}
+		change_heir_adm = $adm$
+		custom_tooltip = th_stat_remains_after_respawn_heir_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_heir_adm_stat
+				value = $adm$
+			}
+			change_variable = {
+				which = th_heir_total_power
+				value = $adm$
+			}
+		}
+	}
+	else = {
+		add_adm_power = 50
+	}
+}
+
+th_increase_heir_dip_stat = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_government_attribute = fairy_respawn_mechanic }
+				NOT = {
+					check_variable = {
+						which = th_heir_dip_stat
+						which = th_heir_max_dip_stat
+					}
+				}
+			}
+		}
+		change_heir_dip = $dip$
+		custom_tooltip = th_stat_remains_after_respawn_heir_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_heir_dip_stat
+				value = $dip$
+			}
+			change_variable = {
+				which = th_heir_total_power
+				value = $dip$
+			}
+		}
+	}
+	else = {
+		add_dip_power = 50
+	}
+}
+
+th_increase_heir_mil_stat = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_government_attribute = fairy_respawn_mechanic }
+				NOT = {
+					check_variable = {
+						which = th_heir_mil_stat
+						which = th_heir_max_mil_stat
+					}
+				}
+			}
+		}
+		change_heir_mil = $mil$
+		custom_tooltip = th_stat_remains_after_respawn_heir_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_heir_mil_stat
+				value = $mil$
+			}
+			change_variable = {
+				which = th_heir_total_power
+				value = $mil$
+			}
+		}
+	}
+	else = {
+		add_mil_power = 50
+	}
+}
+
 
 ##############################################################################################################################
 # Unused
@@ -767,4 +1147,165 @@ th_allow_insta_loot_on_merc_recruitment = {
 	hidden_effect = {
 		set_country_flag = th_enabled_instant_loot_on_merc_recruitment
 	}
+}
+
+th_enable_purchase_war_support_diplo_action = {
+	custom_tooltip = th_enable_purchase_war_support_diplo_action_tt
+	hidden_effect = {
+		set_country_flag = th_unlocked_purchase_war_support_diplo_action
+	}
+}
+th_disable_purchase_war_support_diplo_action = {
+	custom_tooltip = th_disable_purchase_war_support_diplo_action_tt
+	hidden_effect = {
+		clr_country_flag = th_unlocked_purchase_war_support_diplo_action
+	}
+}
+
+th_enable_purchase_truce_diplo_action = {
+	custom_tooltip = th_enable_purchase_truce_diplo_action_tt
+	hidden_effect = {
+		set_country_flag = th_unlocked_purchase_truce_diplo_action
+	}
+}
+th_disable_purchase_truce_diplo_action = {
+	custom_tooltip = th_disable_purchase_truce_diplo_action_tt
+	hidden_effect = {
+		clr_country_flag = th_unlocked_purchase_truce_diplo_action
+	}
+}
+
+
+##############################################################################################################################
+# Penalties
+##############################################################################################################################
+th_disable_all_mercs = {
+	custom_tooltip = th_disable_all_mercs_tt
+	hidden_effect = {
+		set_country_flag = th_disabled_mercenaries
+	}
+}
+th_enable_all_mercs = {
+	custom_tooltip = th_enable_all_mercs_tt
+	hidden_effect = {
+		clr_country_flag = th_disabled_mercenaries
+	}
+}
+
+th_balkanize_country = {
+	custom_tooltip = th_balkanize_country_tt
+	hidden_effect = {
+		while = {
+			limit = {
+				any_owned_province = {
+					NOT = { has_province_flag = th_province_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_province_to_release_from_@ROOT }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = no
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = th_province_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_province_to_release_from_@ROOT }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = no
+					}
+				}
+				set_province_flag = th_province_to_release_from_@ROOT
+			}
+		}
+		while = {
+			limit = {
+				any_owned_province = {
+					NOT = { has_province_flag = th_province_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_province_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = yes
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = th_province_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_province_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = yes
+					}
+				}
+				set_province_flag = th_province_to_give_back_from_@ROOT
+			}
+		}
+		every_owned_province = {
+			limit = { 
+				has_province_flag = th_province_to_release_from_@ROOT
+			}
+			random_core_country = {
+				limit = {
+					NOT = { tag = ROOT }
+				}
+				PREV = {
+					cede_province = PREV
+					remove_core = ROOT
+				}
+			}
+			clr_province_flag = th_province_to_release_from_@ROOT
+		}
+		every_owned_province = {
+			limit = { 
+				has_province_flag = th_province_to_give_back_from_@ROOT
+			}
+			random_core_country = {
+				limit = {
+					NOT = { tag = ROOT }
+					exists = yes
+				}
+				PREV = {
+					cede_province = PREV
+					remove_core = ROOT
+				}
+			}
+			clr_province_flag = th_province_to_give_back_from_@ROOT
+		}
+	}
+}
+
+th_disable_subject_annexations = {
+	custom_tooltip = th_disable_subject_annexations_tt
+	hidden_effect = {
+		set_country_flag = th_disables_subject_annexation_flag
+	}
+}
+th_enable_subject_annexations = {
+	custom_tooltip = th_enable_subject_annexations_tt
+	hidden_effect = {
+		clr_country_flag = th_disables_subject_annexation_flag
+	}
+}
+
+th_disable_respawn_ability_effect = {
+	#Custom tooltip: "Can not use the decisions '§YRecall our Ruler§!' for §Y years§!."
+	[[custom_tooltip]
+		custom_tooltip = $custom_tooltip$
+	]
+	hidden_effect = {
+		add_country_modifier = {
+			name = th_disable_respawn_ability
+			duration = $duration$
+		}
+	}
+}
+th_enable_respawn_ability = {
+	remove_country_modifier = th_disable_respawn_ability
 }
