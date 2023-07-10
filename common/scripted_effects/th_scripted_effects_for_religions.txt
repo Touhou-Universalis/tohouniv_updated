@@ -1054,50 +1054,50 @@ th_taoism_remove_all_five_ways = {
 	clr_country_flag = th_taoism_had_earth
 	clr_country_flag = th_taoism_had_metal
 	clr_country_flag = th_taoism_had_water
-	clr_country_flag = th_taosim_prev_cycle_water
-	clr_country_flag = th_taosim_prev_cycle_wood
-	clr_country_flag = th_taosim_prev_cycle_fire
-	clr_country_flag = th_taosim_prev_cycle_earth
-	clr_country_flag = th_taosim_prev_cycle_metal
+	clr_country_flag = th_taoism_prev_cycle_water
+	clr_country_flag = th_taoism_prev_cycle_wood
+	clr_country_flag = th_taoism_prev_cycle_fire
+	clr_country_flag = th_taoism_prev_cycle_earth
+	clr_country_flag = th_taoism_prev_cycle_metal
 }
 
 th_taoism_set_cycle_to_wood = {
+	set_country_flag = th_taoism_had_wood
+	set_country_flag = th_taoism_prev_cycle_water
+	add_country_modifier = {
+		name = th_taoism_wood_cycle
+		duration = -1
+	}
+}
+th_taoism_set_cycle_to_fire = {
 	set_country_flag = th_taoism_had_fire
-	set_country_flag = th_taosim_prev_cycle_water
+	set_country_flag = th_taoism_prev_cycle_wood
 	add_country_modifier = {
 		name = th_taoism_fire_cycle
 		duration = -1
 	}
 }
-th_taoism_set_cycle_to_fire = {
+th_taoism_set_cycle_to_earth = {
 	set_country_flag = th_taoism_had_earth
-	set_country_flag = th_taosim_prev_cycle_wood
+	set_country_flag = th_taoism_prev_cycle_fire
 	add_country_modifier = {
 		name = th_taoism_earth_cycle
 		duration = -1
 	}
 }
-th_taoism_set_cycle_to_earth = {
+th_taoism_set_cycle_to_metal = {
 	set_country_flag = th_taoism_had_metal
-	set_country_flag = th_taosim_prev_cycle_fire
+	set_country_flag = th_taoism_prev_cycle_earth
 	add_country_modifier = {
 		name = th_taoism_metal_cycle
 		duration = -1
 	}
 }
-th_taoism_set_cycle_to_metal = {
+th_taoism_set_cycle_to_water = {
 	set_country_flag = th_taoism_had_water
-	set_country_flag = th_taosim_prev_cycle_earth
+	set_country_flag = th_taoism_prev_cycle_metal
 	add_country_modifier = {
 		name = th_taoism_water_cycle
-		duration = -1
-	}
-}
-th_taoism_set_cycle_to_water = {
-	set_country_flag = th_taoism_had_wood
-	set_country_flag = th_taosim_prev_cycle_metal
-	add_country_modifier = {
-		name = th_taoism_wood_cycle
 		duration = -1
 	}
 }
@@ -1204,6 +1204,10 @@ th_taoism_destroy_cycle = {
 # Taoism Feng Shui Mechanic
 ##############################################################################################################################
 th_taoism_clear_feng_shui = {
+	set_variable = {
+		which = th_num_of_eligible_cities
+		value = 0
+	}
 	every_owned_province = {
 		limit = {
 			OR = {
@@ -1240,14 +1244,30 @@ th_taoism_set_up_provinces = {
 				duration = 4380
 			}
 		}
-		subtract_variable = {
-			which = th_num_of_eligible_cities
-			value = 1
-		}
 	}
-	divide_variable = {
+	export_to_variable = {
+		which = th_max_amount_of_cities
+		value = modifier:th_max_feng_shui_prov
+	}
+	export_to_variable = {
+		which = th_feng_shui_to_prov_ratio
+		value = modifier:th_feng_shui_to_prov_ratio
+	}
+	multiply_variable = {
 		which = th_num_of_eligible_cities
-		value = 4
+		which = th_feng_shui_to_prov_ratio
+	}
+	if = {
+		limit = {
+			check_variable = {
+				which = th_num_of_eligible_cities
+				which = th_max_amount_of_cities
+			}
+		}
+		set_variable = {
+			which = th_num_of_eligible_cities
+			which = th_max_amount_of_cities
+		}
 	}
 	while = {
 		limit = {
@@ -1266,12 +1286,17 @@ th_taoism_set_up_provinces = {
 				is_state = yes
 				NOT = { has_province_modifier = th_bad_feng_shui }
 				NOT = { has_province_modifier = th_good_feng_shui }
+				NOT = { has_province_flag = th_feng_shui_flag }
 			}
-			random_list = {
-				1 = { add_province_modifier = { name = th_good_feng_shui duration = 4380 } }
-				1 = { add_province_modifier = { name = th_bad_feng_shui duration = 4380 } }
-			}
+			set_province_flag = th_feng_shui_flag
 		}
+	}
+	every_owned_province = {
+		limit = { has_province_flag = th_feng_shui_flag }
+		province_event = {
+			id = th_taoism_feng_shui_events.3
+		}
+		clr_province_flag = th_feng_shui_flag
 	}
 }
 
