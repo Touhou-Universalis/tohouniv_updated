@@ -57,9 +57,37 @@ th_on_province_religion_converted_effect = {
 			}
 		}
 	}
+	if = {
+		limit = {
+			has_dlc = "The Cossacks"
+			owner = {
+				has_country_flag = th_syncretic_conversion
+				has_secondary_religion = yes
+			}
+		}
+		th_convert_province_to_secondary_religion = yes
+	}
+}
+
+th_on_province_religion_changed_effect = {
+	remove_province_modifier = th_scientistic_secondary_religion_prov
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = buffed_secondary_religion_provinces
+				has_secondary_religion = yes
+			}
+			has_owner_secondary_religion = yes
+		}
+		add_province_modifier = {
+			name = th_scientistic_secondary_religion_prov
+			duration = -1
+		}
+	}
 }
 
 th_on_province_owner_change_effect = {
+	remove_province_modifier = th_scientistic_secondary_religion_prov
 	if = {
 		limit = {
 			owner = {
@@ -208,6 +236,19 @@ th_on_province_owner_change_effect = {
 				name = th_impure_land
 				duration = -1
 			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = buffed_secondary_religion_provinces
+				has_secondary_religion = yes
+			}
+			has_owner_secondary_religion = yes
+		}
+		add_province_modifier = {
+			name = th_scientistic_secondary_religion_prov
+			duration = -1
 		}
 	}
 }
@@ -1281,5 +1322,34 @@ th_on_religion_change_effect = {
 	if = {
 		limit = { NOT = { religion = th_taoist } }
 		th_taoism_clear_feng_shui = yes
+	}
+}
+
+th_on_secondary_religion_change_effect = {
+	every_owned_province = {
+		limit = { has_province_modifier = th_scientistic_secondary_religion_prov }
+		remove_province_modifier = th_scientistic_secondary_religion_prov
+	}
+	if = {
+		limit = { has_government_attribute = no_penalties_from_secondary_religion_change }
+		add_prestige = 50
+	}
+	if = {
+		limit = { has_government_attribute = improve_all_estates_loyalty_on_secondary_religion_change }
+		th_change_all_estate_loyalty = {
+			loyalty = 20
+			range_loyalty = 80
+			type = add
+		}
+	}
+	if = {
+		limit = { has_government_attribute = buffed_secondary_religion_provinces }
+		every_owned_province = {
+			limit = { has_owner_secondary_religion = yes }
+			add_province_modifier = {
+				name = th_scientistic_secondary_religion_prov
+				duration = -1
+			}
+		}
 	}
 }

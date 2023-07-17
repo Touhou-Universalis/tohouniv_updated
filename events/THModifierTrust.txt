@@ -4,7 +4,7 @@ namespace = th_modifier_trust_events
 country_event = {
 	id = th_modifier_trust_events.1
 	title = "th_modifier_trust_events.1.t"
-	desc = "th_modifier_trust_events.1.desc"
+	desc = none
 	picture = SHRINE_eventPicture
 
 	trigger = {
@@ -16,6 +16,16 @@ country_event = {
 			NOT = {
 				has_global_modifier_value = {
 					which = yearly_trust_growth
+					value = 0
+				}
+			}
+			has_global_modifier_value = {
+				which = yearly_global_trust_growth
+				value = 0.01
+			}
+			NOT = {
+				has_global_modifier_value = {
+					which = yearly_global_trust_growth
 					value = 0
 				}
 			}
@@ -42,10 +52,14 @@ country_event = {
 			value = modifier:yearly_trust_growth
 			who = ROOT
 		}
+		export_to_variable = {
+			variable_name = th_additional_global_trust
+			value = modifier:yearly_global_trust_growth
+			who = ROOT
+		}
 	}
 
 	option = {
-		name = "th_modifier_trust_events.1.a"
 		set_country_flag = th_had_increased_trust_event
 		if = {
 			limit = {
@@ -115,6 +129,66 @@ country_event = {
 				}
 				change_variable = {
 					which = th_additional_trust
+					value = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_additional_global_trust
+					value = 0
+				}
+			}
+			subtract_variable = {
+				which = th_additional_global_trust
+				value = 1
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_additional_global_trust
+						value = 0
+					}
+				}
+				every_known_country = {
+					add_trust = {
+						who = PREV
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_additional_global_trust
+					value = 1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = th_additional_global_trust
+						value = 0
+					}
+				}
+			}
+			while = {
+				limit = {
+					NOT = {
+						check_variable = {
+							which = th_additional_global_trust
+							value = 0
+						}
+					}
+				}
+				every_known_country = {
+					add_trust = {
+						who = PREV
+						value = -1
+					}
+				}
+				change_variable = {
+					which = th_additional_global_trust
 					value = 1
 				}
 			}
