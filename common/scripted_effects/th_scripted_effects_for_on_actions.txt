@@ -1,0 +1,1367 @@
+th_on_province_religion_converted_effect = {
+	if = {
+		limit = {
+			religion = th_moriyashinto
+			has_owner_religion = yes
+		}
+		mry_add_scaled_province_conversion_faith_power = {
+			value = 1
+			development_factor = 0.25
+		}
+	}
+	if = {
+		limit = {
+			has_province_modifier = th_intolerance_to_mortals
+			has_owner_religion = yes
+		}
+		remove_province_modifier = th_intolerance_to_mortals
+	}
+	if = {
+		limit = {
+			has_dlc = "Mandate of Heaven"
+			owner = {
+				OR = {
+					religious_school = {
+						group = Touhou
+						school = soutou_teachings
+					}
+					has_government_attribute = th_reduced_penalty_from_conversion
+				}
+			}
+			has_owner_religion = yes
+		}
+		export_to_variable = {
+			which = th_province_dev
+			value = development
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_province_dev
+					value = 1
+				}
+			}
+			subtract_variable = {
+				which = th_province_dev
+				value = 1
+			}
+			owner = {
+				if = {
+					limit = { has_government_attribute = th_reduced_penalty_from_conversion }
+					add_harmony = 0.5
+				}
+				if = {
+					limit = { religious_school = { group = Touhou school = soutou_teachings } }
+					add_harmony = 1
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_dlc = "The Cossacks"
+			owner = {
+				has_country_flag = th_syncretic_conversion
+				has_secondary_religion = yes
+			}
+		}
+		th_convert_province_to_secondary_religion = yes
+	}
+}
+
+th_on_province_religion_changed_effect = {
+	remove_province_modifier = th_scientistic_secondary_religion_prov
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = buffed_secondary_religion_provinces
+				has_secondary_religion = yes
+			}
+			has_owner_secondary_religion = yes
+		}
+		add_province_modifier = {
+			name = th_scientistic_secondary_religion_prov
+			duration = -1
+		}
+	}
+}
+
+th_on_province_owner_change_effect = {
+	remove_province_modifier = th_scientistic_secondary_religion_prov
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_government_attribute = th_winter_adaptability
+					has_country_flag = th_winter_adaptability_flag
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_climate = arctic
+			}
+			add_province_modifier = {
+				name = mkn_arctic_immunity
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = glacier
+			}
+			add_province_modifier = {
+				name = mkn_glacial_immunity
+				duration = -1
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				OR = {
+					has_province_modifier = mkn_arctic_immunity
+					has_province_modifier = mkn_glacial_immunity
+				}
+			}
+			remove_province_modifier = mkn_arctic_immunity
+			remove_province_modifier = mkn_glacial_immunity
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_government_attribute = th_winter_afinity
+					has_country_flag = th_winter_afinity_flag
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_winter = severe_winter
+			}
+			add_province_modifier = {
+				name = mkn_severe_winter_affinity
+				duration = -1
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				has_province_modifier = mkn_severe_winter_affinity
+			}
+			remove_province_modifier = mkn_severe_winter_affinity
+		}
+	}
+	if = {
+		limit = {
+			owner = { NOT = { has_government_attribute = th_own_provinces_go_berserk } }
+			th_hellfairy_has_any_flag = yes
+		}
+		if = {
+			limit = { th_hellfairy_has_positive_berserk = yes }
+			hellfairy_add_negative_berserk = {
+				days = 1825
+			}
+		}
+		hellfairy_remove_all_berserk_stack = yes
+	}
+	if = {
+		limit = {
+			religion = th_hakureishinto
+			has_province_modifier = th_accepted_heretics
+			owner = { NOT = { has_country_flag = revolution_of_shintoism_flag } }
+		}
+		remove_province_modifier = th_accepted_heretics
+	}
+	if = {
+		limit = {
+			religion = th_hakureishinto
+			NOT = { has_province_modifier = th_accepted_heretics }
+			owner = { has_country_flag = revolution_of_shintoism_flag }
+		}
+		add_province_modifier = {
+			name = th_accepted_heretics
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			has_pasha = yes
+			owner = { has_government_attribute = pashas_purify_land }
+		}
+		add_province_modifier = {
+			name = th_purifying_pasha
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = uses_purified_land
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_owner_culture = yes
+					has_owner_accepted_culture = yes
+				}
+			}
+			add_province_modifier = {
+				name = th_pure_land
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				lcu_is_accepted_province_culture = yes
+			}
+			add_province_modifier = {
+				name = th_lunarian_accepted_culture
+				duration = -1
+			}
+			add_province_modifier = {
+				name = th_pure_land
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				lcu_is_not_accepted_province_culture = yes
+			}
+			add_province_modifier = {
+				name = th_impure_land
+				duration = -1
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = buffed_secondary_religion_provinces
+				has_secondary_religion = yes
+			}
+			has_owner_secondary_religion = yes
+		}
+		add_province_modifier = {
+			name = th_scientistic_secondary_religion_prov
+			duration = -1
+		}
+	}
+}
+
+th_on_province_culture_change_effect = {
+	remove_province_modifier = th_pure_land
+	remove_province_modifier = th_impure_land
+	remove_province_modifier = th_lunarian_accepted_culture
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = uses_purified_land
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_owner_culture = yes
+					has_owner_accepted_culture = yes
+				}
+			}
+			add_province_modifier = {
+				name = th_pure_land
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				lcu_is_accepted_province_culture = yes
+			}
+			add_province_modifier = {
+				name = th_lunarian_accepted_culture
+				duration = -1
+			}
+			add_province_modifier = {
+				name = th_pure_land
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				lcu_is_not_accepted_province_culture = yes
+			}
+			add_province_modifier = {
+				name = th_impure_land
+				duration = -1
+			}
+		}
+	}
+}
+
+th_on_province_owner_change_estate_privileges_effect = {
+	#Dev Cost Reductions
+	if = {
+		limit = {
+			owner = {
+				has_estate_privilege = th_estate_burghers_swamp_developers
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = marsh
+			}
+			add_province_modifier = {
+				name = th_estate_burghers_swamp_developers_marsh_modifier
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = grasslands
+			}
+			add_province_modifier = {
+				name = th_estate_burghers_swamp_developers_grassland_modifier
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = farmlands
+			}
+			add_province_modifier = {
+				name = th_estate_burghers_swamp_developers_farmlands_modifier
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = jungle
+			}
+			add_province_modifier = {
+				name = th_estate_burghers_swamp_developers_jungle_modifier
+				duration = -1
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_estate_privilege = estate_burghers_mountain_expansion
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = mountain
+			}
+			add_province_modifier = {
+				name = estate_crow_tengu_mountain_expansion_mountains
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = highlands
+			}
+			add_province_modifier = {
+				name = estate_crow_tengu_mountain_expansion_highlands
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_terrain = hills
+			}
+			add_province_modifier = {
+				name = estate_crow_tengu_mountain_expansion_hills
+				duration = -1
+			}
+		}
+	}
+	if = {
+		limit = {
+			OR = {
+				area = Land_of_the_dead
+				area = Eastern_higan
+				area = Higan_southern_coast
+			}
+			owner = { has_estate_privilege = th_estate_nobles_lack_of_overseers }
+		}
+		add_local_autonomy = 50
+		add_province_modifier = {
+			name = hig_slacking_shinigami
+			duration = -1
+		}
+	}
+	#Monopolies
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_crow_tengu_monopoly_of_textiles }
+			OR = {
+				trade_goods = cloth
+				trade_goods = silk
+			}
+		}
+		add_province_modifier = {
+			name = estate_crow_tengu_monopoly_of_textiles_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_crow_tengu_monopoly_of_dyes }
+			trade_goods = dyes
+		}
+		add_province_modifier = {
+			name = estate_crow_tengu_monopoly_of_dyes_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_crow_tengu_monopoly_of_glass }
+			trade_goods = glass
+		}
+		add_province_modifier = {
+			name = estate_crow_tengu_monopoly_of_glass_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_crow_tengu_monopoly_of_paper }
+			trade_goods = paper
+		}
+		add_province_modifier = {
+			name = estate_crow_tengu_monopoly_of_paper_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_great_tengu_monopoly_of_metals }
+			OR = {
+				trade_goods = copper
+				trade_goods = iron
+			}
+		}
+		add_province_modifier = {
+			name = estate_great_tengu_monopoly_of_metals_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_great_tengu_monopoly_of_livestock }
+			trade_goods = livestock
+		}
+		add_province_modifier = {
+			name = estate_great_tengu_monopoly_of_livestock_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_great_tengu_monopoly_of_gems }
+			trade_goods = gems
+		}
+		add_province_modifier = {
+			name = estate_great_tengu_monopoly_of_gems_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_wolf_tengu_monopoly_of_wood }
+			OR = {
+				trade_goods = tropical_wood
+				trade_goods = naval_supplies
+			}
+		}
+		add_province_modifier = {
+			name = estate_wolf_tengu_monopoly_of_wood_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_wolf_tengu_monopoly_of_cotton_and_sugar }
+			OR = {
+				trade_goods = cotton
+				trade_goods = sugar
+			}
+		}
+		add_province_modifier = {
+			name = estate_wolf_tengu_monopoly_of_cotton_and_sugar_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_wolf_tengu_monopoly_of_grain_and_fish }
+			OR = {
+				trade_goods = grain
+				trade_goods = fish
+			}
+		}
+		add_province_modifier = {
+			name = estate_wolf_tengu_monopoly_of_grain_and_fish_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = th_estate_lunar_rabbits_monopoly_of_wood }
+			OR = {
+				trade_goods = tropical_wood
+				trade_goods = naval_supplies
+			}
+		}
+		add_province_modifier = {
+			name = th_estate_lunar_rabbits_monopoly_of_wood_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = th_estate_lunar_rabbits_monopoly_of_cotton_and_sugar }
+			OR = {
+				trade_goods = cotton
+				trade_goods = sugar
+			}
+		}
+		add_province_modifier = {
+			name = th_estate_lunar_rabbits_monopoly_of_cotton_and_sugar_mod
+			duration = -1
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_estate_privilege = th_estate_lunar_rabbits_monopoly_of_grain_and_fish }
+			OR = {
+				trade_goods = grain
+				trade_goods = fish
+			}
+		}
+		add_province_modifier = {
+			name = th_estate_lunar_rabbits_monopoly_of_grain_and_fish_mod
+			duration = -1
+		}
+	}
+}
+
+th_yama_on_war_won_effect = {
+	if = { #Defenders win
+		limit = {
+			ROOT = { has_country_flag = th_hig_defender }
+			FROM = { has_country_flag = th_hig_attacker }
+			event_target:YamaOfGensokyo = { has_country_flag = th_hig_joined_enforced_peace_war }
+		}
+		FROM = {
+			event_target:YamaOfGensokyo = {
+				country_event = {
+					id = th_yama_authority_event.94
+				}
+				clr_country_flag = th_hig_joined_enforced_peace_war
+			}
+			clr_country_flag = th_hig_attacker
+		}
+		ROOT = { clr_country_flag = th_hig_attacker }
+	}
+	if = { #Attacker win
+		limit = {
+			FROM = { has_country_flag = th_hig_defender }
+			ROOT = { has_country_flag = th_hig_attacker }
+			event_target:YamaOfGensokyo = { has_country_flag = th_hig_joined_enforced_peace_war }
+		}
+		FROM = { clr_country_flag = th_hig_defender }
+		ROOT = { clr_country_flag = th_hig_attacker }
+		event_target:YamaOfGensokyo = {
+			country_event = {
+				id = th_yama_authority_event.93
+			}
+			clr_country_flag = th_hig_joined_enforced_peace_war
+		}
+	}
+	if = { #Yamaxanadu Seperate Peaced out
+		limit = {
+			FROM = { has_country_flag = th_hig_attacker }
+			ROOT = { has_country_flag = th_hig_joined_enforced_peace_war }
+		}
+		FROM = { clr_country_flag = th_hig_attacker }
+		event_target:YamaOfGensokyo = {
+			country_event = {
+				id = th_yama_authority_event.92
+			}
+			clr_country_flag = th_hig_joined_enforced_peace_war
+		}
+		random_country = {
+			limit = {
+				has_country_flag = th_hig_defender
+			}
+			clr_country_flag = th_hig_defender
+		}
+	}
+	if = { #Yamaxanadu gets Seperate Peaced out
+		limit = {
+			ROOT = { has_country_flag = th_hig_attacker }
+			FROM = { has_country_flag = th_hig_joined_enforced_peace_war }
+		}
+		ROOT = { clr_country_flag = th_hig_attacker }
+		event_target:YamaOfGensokyo = {
+			country_event = {
+				id = th_yama_authority_event.91
+			}
+			clr_country_flag = th_hig_joined_enforced_peace_war
+		}
+		random_country = {
+			limit = {
+				has_country_flag = th_hig_defender
+			}
+			clr_country_flag = th_hig_defender
+		}
+	}
+}
+
+th_on_unit_battle_won_effect = {
+	if = {
+		limit = {
+			unit_owner = {
+				th_is_or_was_tag = {
+					tag = NET
+				}
+			}
+		}
+		if = {
+			limit = {
+				general_with_name = "Youmu Konpaku"
+			}
+			unit_owner = {
+				change_variable = {
+					which = net_battle_counter 
+					value = 2
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { general_with_name = "Youmu Konpaku" }
+			}
+			unit_owner = {
+				change_variable = {
+					which = net_battle_counter 
+					value = 1
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				th_is_or_was_tag = {
+					tag = HVR
+				}
+			}
+		}
+		if = {
+			limit = {
+				general_with_name = "Iku Nagae"
+			}
+			unit_owner = {
+				change_variable = {
+					which = hvr_won_iku_battles_counter
+					value = 1
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				has_country_flag = fuj_has_leveling_mokou
+			}
+			is_ruler_commanding_unit = yes
+		}
+		unit_owner = {
+			change_variable = {
+				which = fuj_won_battles_counter
+				value = 1
+			}
+			change_variable = {
+				which = fuj_mokou_exp
+				value = 10
+			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				NOT = { mission_completed = ONI_ruler_honor }
+			}
+			is_ruler_commanding_unit = yes
+		}
+		unit_owner = {
+			change_variable = {
+				which = oni_won_battles_counter
+				value = 1
+			}
+		}
+	}
+	if = {
+		limit = {
+			unit_owner = {
+				has_government_mechanic = th_naval_professionalism_mechanic
+			}
+			is_ruler_commanding_unit = yes
+		}
+		unit_owner = {
+			add_government_power = {
+				mechanic_type = th_naval_professionalism_mechanic
+				power_type = th_naval_professionalism
+				value = 0.5
+			}
+			add_naval_professionalism_effect = yes
+		}
+	}
+}
+
+th_on_dependency_gained_effect = {
+	if = {
+		limit = {
+			FROM = {
+				OR = {
+					is_subject_of_type = th_yukari_daimyo
+					is_subject_of_type = th_yukari_puppet_state
+					is_subject_of_type = th_yukari_march
+					is_subject_of_type = th_special_march
+					is_subject_of_type = th_satori_vassal
+					is_subject_of_type = th_mokou_daimyo
+					is_subject_of_type = th_trade_union
+					is_subject_of_type = th_yuuka_gatekeeper
+					is_subject_of_type = th_pet_state
+					is_subject_of_type = th_sister_state
+					is_subject_of_type = th_yama_subject_to_law
+					is_subject_of_type = th_yama_executor
+					is_subject_of_type = th_shinigami_subject
+				}
+			}
+		}
+		FROM = {
+			set_country_flag = th_has_been_special_subject
+		}
+	}
+	if = {
+		limit = {
+			has_government_attribute = enables_yukaris_shogunate
+			num_of_subjects = 1 
+			OR = {
+				any_subject_country = { is_subject_of_type = vassal }
+				any_subject_country = { is_subject_of_type = daimyo_vassal }
+			}
+		}
+		every_subject_country = { 
+			limit = { 
+				OR = { 
+					is_subject_of_type = vassal 
+					is_subject_of_type = daimyo_vassal
+				}
+			} 
+			country_event = { id = th_yukari_daimyo_mechanic.4 }
+		}
+	}
+}
+
+th_remove_adm_dev = {
+	add_base_tax = -1
+}
+th_remove_dip_dev = {
+	add_base_production = -1
+}
+th_remove_mil_dev = {
+	add_base_manpower = -1
+}
+th_on_development_effect = {
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					AND = {
+						has_government_attribute = th_can_overload_provinces
+						has_country_modifier = th_hellfairy_provinces_to_overload
+					}
+					AND = {
+						is_subject = yes
+						overlord = {
+							has_government_attribute = th_can_overload_provinces
+							has_country_modifier = th_hellfairy_provinces_to_overload
+						}
+					}
+				}
+			}
+		}
+		th_remove_$type$_dev = yes
+		if = {
+			limit = { owner = { is_subject_of = root } }
+			owner = { add_liberty_desire = 5 }
+		}
+		if = {
+			limit = {
+				NOT = { has_province_modifier = th_province_overloaded }
+			}
+			if = {
+				limit = {
+					NOT = { has_province_modifier = th_province_overload }
+				}
+				add_province_modifier = {
+					name = th_province_overload
+					duration = 1825
+				}
+				#if = {
+				#	limit = { owner = { has_government_mechanic = th_lifeforce_overload_mechanic } }
+				#	export_to_variable = {
+				#		which = th_own_development
+				#		value = development
+				#	}
+				#	while = {
+				#		limit = {
+				#			check_variable = {
+				#				which = th_own_development
+				#				value = 1
+				#			}
+				#		}
+				#		subtract_variable = {
+				#			which = th_own_development
+				#			value = 1
+				#		}
+				#		owner = {
+				#			add_government_power = {
+				#				mechanic_type = th_lifeforce_overload_mechanic
+				#				power_type = th_lifeforce_overload
+				#				value = 1
+				#			}
+				#		}
+				#	}
+				#}
+			}
+			add_province_modifier = {
+				name = th_province_overloaded
+				duration = 5475
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_province_modifier = th_province_to_mark
+		}
+		owner = {
+			clr_country_flag = th_activated_province_drain
+		}
+		every_province = {
+			limit = {
+				has_province_modifier = th_province_to_drain
+				owned_by = FROM
+			}
+			remove_province_modifier = th_province_to_drain
+		}
+		every_province = {
+			limit = {
+				has_province_modifier = th_province_to_mark
+				owned_by = FROM
+			}
+			remove_province_modifier = th_province_to_mark
+		}
+		th_remove_$type$_dev = yes
+		if = {
+			limit = { owner = { is_subject_of = root } }
+			owner = { add_liberty_desire = 5 }
+		}
+		area = {
+			limit = {
+				owned_by = FROM
+				is_territory = yes
+				development = 4
+			}
+			add_province_modifier = {
+				name = th_province_to_drain
+				duration = -1
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_country_modifier = th_hunt_for_the_impure
+					AND = {
+						is_subject = yes
+						overlord = {
+							has_country_modifier = th_hunt_for_the_impure
+						}
+					}
+				}
+			}
+		}
+		th_remove_$type$_dev = yes
+		if = {
+			limit = { owner = { is_subject_of = root } }
+			owner = { add_liberty_desire = 5 }
+		}
+		if = {
+			limit = { 
+				has_owner_culture = no 
+				nationalism = 1 
+				owner = { is_at_war = no }
+			}
+			add_nationalism = -5
+			create_revolt = 1
+		}
+	}
+}
+
+#Use this scripted in the on_actions file, on_battle_won_country
+th_count_won_battles_and_reward_at_end = {
+	if = {
+		limit = {
+			ROOT = {
+				has_country_flag = $counting_flag$
+			}
+		}
+		ROOT = {
+			change_variable = {
+				which = $variable$
+				value = 1
+			}
+		}
+	}
+	if = {
+		limit = {
+			ROOT = {
+				has_country_flag = $counting_flag$
+				check_variable = {
+					which = $variable$
+					value = $max_value$
+				}
+			}
+		}
+		ROOT = {
+			clr_country_flag = $counting_flag$
+			country_event = {
+				id = $country_event$
+			}
+		}
+	}
+}
+
+th_on_battle_won_country_effect = {
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = scr_battle_counter_ready
+		variable = scr_battle_counter
+		max_value = 30
+		country_event = flavor_scr.24	#SCR gets their government reform
+	}
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = crd_is_counting_battles
+		variable = crd_oni_battle_counter
+		max_value = 10
+		country_event = th_empty_event.1	#No event for CRD
+	}
+	th_count_won_battles_and_reward_at_end = {
+		counting_flag = lcu_counts_battles
+		variable = lcu_battle_counter
+		max_value = 15
+		country_event = th_empty_event.1	#No event for LCU
+	}
+	###NECROMANCY CALCULATION###
+	if = {
+		limit = { has_government_attribute = th_gets_manpower_from_battles }
+		set_variable = {
+			which = th_necromancy_land_units_killed
+			which = land_units_killed
+		}
+		set_variable = {
+			which = th_necromancy_land_units_lost
+			which = land_units_lost
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_necromancy_land_units_killed
+					value = 1000
+				}
+			}
+			subtract_variable = {
+				which = th_necromancy_land_units_killed
+				value = 1000
+			}
+			add_manpower = 1
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_necromancy_land_units_lost
+					value = 1000
+				}
+			}
+			subtract_variable = {
+				which = th_necromancy_land_units_lost
+				value = 1000
+			}
+			add_manpower = 0.5
+		}
+	}
+	###MIGHT OF DESTRUCTION CALCULATION###
+	#if = {
+	#	limit = { has_government_mechanic = th_might_of_destruction_mechanic }
+	#	set_variable = {
+	#		which = th_destruction_land_units_killed
+	#		which = land_units_killed
+	#	}
+	#	export_to_variable = {
+	#		which = th_destruction_land_units_force_limit
+	#		value = land_forcelimit
+	#	}
+	#	multiply_variable = {
+	#		which = th_destruction_land_units_force_limit
+	#		value = 500
+	#	}
+	#	if = {
+	#		limit = {
+	#			check_variable = {
+	#				which = th_destruction_land_units_force_limit
+	#				value = 1
+	#			}
+	#		}
+	#		divide_variable = {
+	#			which = th_destruction_land_units_killed
+	#			which = th_destruction_land_units_force_limit
+	#		}
+	#	}
+	#	while = {
+	#		limit = {
+	#			check_variable = {
+	#				which = th_destruction_land_units_killed
+	#				value = 1
+	#			}
+	#		}
+	#		subtract_variable = {
+	#			which = th_destruction_land_units_killed
+	#			value = 1
+	#		}
+	#		add_government_power = {
+	#			mechanic_type = th_might_of_destruction_mechanic
+	#			power_type = th_might_of_destruction
+	#			value = 5
+	#		}
+	#	}
+	#}
+	###BUDDHISM CALCULATION###
+	if = {
+		limit = { religious_school = { group = Touhou school = rinzai_teachings } has_dlc = "Mandate of Heaven" }
+		set_variable = {
+			which = th_rinzai_teachings_land_units_killed
+			which = land_units_killed
+		}
+		set_variable = {
+			which = th_rinzai_teachings_land_units_lost
+			which = land_units_lost
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_rinzai_teachings_land_units_lost
+					value = 1
+				}
+			}
+			multiply_variable = {
+				which = th_rinzai_teachings_land_units_lost
+				value = 20
+			}
+			divide_variable = {
+				which = th_rinzai_teachings_land_units_killed
+				which = th_rinzai_teachings_land_units_lost
+			}
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_rinzai_teachings_land_units_killed
+					value = 5
+				}
+			}
+			set_variable = {
+				which = th_rinzai_teachings_land_units_killed
+				value = 5
+			}
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_rinzai_teachings_land_units_killed
+					value = 1
+				}
+			}
+			subtract_variable = {
+				which = th_rinzai_teachings_land_units_killed
+				value = 1
+			}
+			add_harmony = 1
+		}
+	}
+	###BATTLE PASSION CALCULATION###
+	th_change_battle_passion_from_battle = {
+		gain_variable = land_units_killed
+		lose_variable = land_units_lost
+	}
+}
+
+th_on_battle_lost_country_effect = {
+	#NECROMANCY CALCULATION
+	if = {
+		limit = { has_government_attribute = th_gets_manpower_from_battles }
+		set_variable = {
+			which = th_necromancy_land_units_killed
+			which = land_units_killed
+		}
+		set_variable = {
+			which = th_necromancy_land_units_lost
+			which = land_units_lost
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_necromancy_land_units_killed
+					value = 1000
+				}
+			}
+			subtract_variable = {
+				which = th_necromancy_land_units_killed
+				value = 1000
+			}
+			add_manpower = 0.3
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_necromancy_land_units_lost
+					value = 1000
+				}
+			}
+			subtract_variable = {
+				which = th_necromancy_land_units_lost
+				value = 1000
+			}
+			add_manpower = 0.3
+		}
+	}
+	###BATTLE PASSION CALCULATION###
+	th_change_battle_passion_from_battle = {
+		gain_variable = land_units_killed
+		lose_variable = land_units_lost
+	}
+}
+
+th_on_exploited_effect_adm = {
+	if = {
+		limit = { owner = { has_government_attribute = th_extra_gain_from_exploiting } }
+		owner = { add_years_of_income = 0.02 }
+	}
+}
+
+th_on_exploited_effect_dip = {
+	if = {
+		limit = { owner = { has_government_attribute = th_50_chance_of_no_dev_loss_on_exploit } }
+		random = {
+			chance = 50
+			add_base_production = 1
+		}
+	}
+	if = {
+		limit = { owner = { has_government_attribute = th_extra_gain_from_exploiting } }
+		add_province_modifier = {
+			name = th_exploits_of_pestilence
+			duration = 1825
+		}
+	}
+}
+
+th_on_exploited_effect_mil = {
+	if = {
+		limit = { owner = { has_government_attribute = th_50_chance_of_no_dev_loss_on_exploit } }
+		random = {
+			chance = 50
+			add_base_manpower = 1
+		}
+	}
+	if = {
+		limit = { owner = { has_government_attribute = th_no_dev_reduction_from_manpower_exploit } }
+		add_base_manpower = 1
+	}
+	if = {
+		limit = { owner = { has_government_attribute = th_extra_gain_from_exploiting } }
+		owner = { add_army_tradition = 0.5 add_navy_tradition = 0.5 }
+	}
+}
+
+th_on_exploited_effect = {
+	th_on_exploited_effect_$type$ = yes
+	if = {
+		limit = { owner = { has_government_mechanic = th_might_of_destruction_mechanic } }
+		owner = {
+			add_government_power = {
+				mechanic_type = th_might_of_destruction_mechanic
+				power_type = th_might_of_destruction
+				value = 5
+			}
+		}
+	}
+}
+
+th_on_force_conversion_effect = {
+	#if = {
+	#	limit = {
+	#		has_dlc = "Mandate of Heaven"
+	#		FROM = {
+	#			religious_school = {
+	#				group = Touhou
+	#				school = soutou_teachings
+	#			}
+	#		}
+	#	}
+	#	export_to_variable = {
+	#		which = th_root_total_dev
+	#		value = total_development
+	#	}
+	#	divide_variable = {
+	#		which = th_root_total_dev
+	#		value = 2
+	#	}
+	#	while = {
+	#		limit = {
+	#			check_variable = {
+	#				which = th_root_total_dev
+	#				value = 1
+	#			}
+	#		}
+	#		subtract_variable = {
+	#			which = th_root_total_dev
+	#			value = 1
+	#		}
+	#		FROM = { add_harmony = 1 }
+	#	}
+	#}
+}
+
+th_on_adm_advisor_hired_effect = {
+	#th_increase_estate_influence_due_soutou = { estate = estate_church }
+	#th_increase_estate_influence_due_soutou = { estate = estate_brahmins }
+	#th_increase_estate_influence_due_soutou = { estate = estate_vaisyas }
+}
+th_on_dip_advisor_hired_effect = {
+	#th_increase_estate_influence_due_soutou = { estate = estate_burghers }
+	#th_increase_estate_influence_due_soutou = { estate = estate_jains }
+	#th_increase_estate_influence_due_soutou = { estate = estate_crow_tengu }
+}
+th_on_mil_advisor_hired_effect = {
+	#th_increase_estate_influence_due_soutou = { estate = estate_nobles }
+	#th_increase_estate_influence_due_soutou = { estate = estate_nomadic_tribes }
+	#th_increase_estate_influence_due_soutou = { estate = estate_rajput }
+	#th_increase_estate_influence_due_soutou = { estate = estate_brahmins }
+	#th_increase_estate_influence_due_soutou = { estate = estate_great_tengu }
+}
+
+th_on_specific_advisor_hired_effect = {
+	th_on_$type$_advisor_hired_effect = yes
+}
+
+th_on_overextension_pulse_effect = {
+	if = {
+		limit = {
+			religious_school = {
+				group = Touhou
+				school = myouren_teachings
+			}
+		}
+		add_harmony = -10
+		add_corruption = 0.1
+	}
+}
+
+th_on_war_declaration_effect = {
+	if = {
+		limit = {
+			religious_school = {
+				group = Touhou
+				school = myouren_teachings
+			}
+		}
+		add_war_exhaustion = 1
+		add_harmony = -10
+	}
+}
+
+th_on_religion_change_effect = {
+	if = {
+		limit = {
+			has_government_attribute = th_divine_legitimacy_mechanic
+		}
+		if = {
+			limit = {
+				has_country_flag = th_is_excused_to_change_religion
+			}
+			clr_country_flag = th_is_excused_to_change_religion
+		}
+		else = {
+			country_event = {
+				id = th_divine_state.9
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_country_flag = th_pledged_religious_loyalty
+		}
+		random_known_country = {
+			limit = {
+				has_country_flag = th_has_gotten_pledged_to_religion_from_@ROOT
+			}
+			country_event = {
+				id = th_diplo_events.10
+			}
+            clr_country_flag = th_has_gotten_pledged_to_religion_from_@ROOT
+		}
+	}
+	if = {
+		limit = { NOT = { religion = th_taoist } }
+		th_taoism_clear_feng_shui = yes
+	}
+}
+
+th_on_secondary_religion_change_effect = {
+	every_owned_province = {
+		limit = { has_province_modifier = th_scientistic_secondary_religion_prov }
+		remove_province_modifier = th_scientistic_secondary_religion_prov
+	}
+	if = {
+		limit = { has_government_attribute = no_penalties_from_secondary_religion_change }
+		add_prestige = 50
+	}
+	if = {
+		limit = { has_government_attribute = improve_all_estates_loyalty_on_secondary_religion_change }
+		th_change_all_estate_loyalty = {
+			loyalty = 20
+			range_loyalty = 80
+			type = add
+		}
+	}
+	if = {
+		limit = { has_government_attribute = buffed_secondary_religion_provinces }
+		every_owned_province = {
+			limit = { has_owner_secondary_religion = yes }
+			add_province_modifier = {
+				name = th_scientistic_secondary_religion_prov
+				duration = -1
+			}
+		}
+	}
+}
