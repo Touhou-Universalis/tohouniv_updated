@@ -11,10 +11,10 @@ th_demand_war_support = {
 				target = SCR
 			}
 			has_country_flag = th_scarlet_charisma_enabled
+			has_government_mechanic = th_scarlet_charisma_mechanic
 		}
 		FROM = {
 			is_free_or_tributary_trigger = yes
-			alliance_with = ROOT
 		}
 	}
 
@@ -33,32 +33,61 @@ th_demand_war_support = {
 		}
 		if = {
 			limit = {
+				FROM = { NOT = { alliance_with = ROOT } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_OUR_ALLY
+				FROM = { alliance_with = ROOT }
+			}
+		}
+		if = {
+			limit = {
 				FROM = { is_at_war = yes }
 			}
 			custom_trigger_tooltip = {
-				tooltip = TH_IS_AT_WAR_TT
+				tooltip = TH_FROM_IS_AT_WAR_TT
 				FROM = { is_at_war = no }
 			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_we_are_not_at_war_with_from_allies_tt
-			NOT = {
-				any_country = {
-					war_with = ROOT
-					alliance_with = FROM
+		if = {
+			limit = {
+				FROM = {
+					any_ally = {
+						war_with = ROOT
+					}
 				}
 			}
-		}		
-		custom_trigger_tooltip = {
-			tooltip = th_from_has_at_least_70_trust_tt
-			FROM = {
-				trust = { who = ROOT value = 70 }
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_ALLIED_WITH_WAR_ENEMIES_TT
+				NOT = {
+					FROM = {
+						any_ally = {
+							war_with = ROOT
+						}
+					}
+				}
 			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_from_has_at_least_thousand_man
-			FROM = {
-				manpower = 1
+		if = {
+			limit = {
+				FROM = { NOT = { trust = { who = ROOT value = 70 } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_TRUST_LEVEL_70_TT
+				FROM = {
+					trust = { who = ROOT value = 70 }
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { NOT = { manpower = 1 } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_HAS_NOT_ENOUGH_MAN_1_TT
+				FROM = {
+					manpower = 1
+				}
 			}
 		}
 		if = {
@@ -328,23 +357,53 @@ th_convince_to_join_war = {
 				target = SCR
 			}
 			has_country_flag = th_scarlet_charisma_enabled
+			has_government_mechanic = th_scarlet_charisma_mechanic
 		}
 		FROM = {
 			is_free_or_tributary_trigger = yes
-			alliance_with = ROOT
 		}
 	}
 
 	is_allowed = {
-		is_at_war = yes
-		custom_trigger_tooltip = {
-			tooltip = th_convince_to_join_war_already_used_tt
-			FROM = {				
-				OR = {
-					NOT = { has_country_flag = th_was_has_already_joined_wars_of_@ROOT }
-					had_country_flag = {
-						flag = th_was_has_already_joined_wars_of_@ROOT
-						days = 5475
+		if = {
+			limit = {
+				FROM = { NOT = { alliance_with = ROOT } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_OUR_ALLY
+				FROM = { alliance_with = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				is_at_war = no
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_NOT_AT_WAR_TT
+				is_at_war = yes
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_was_has_already_joined_wars_of_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_was_has_already_joined_wars_of_@ROOT
+							days = 5475
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_convince_to_join_war_already_used_tt
+				FROM = {				
+					OR = {
+						NOT = { has_country_flag = th_was_has_already_joined_wars_of_@ROOT }
+						had_country_flag = {
+							flag = th_was_has_already_joined_wars_of_@ROOT
+							days = 5475
+						}
 					}
 				}
 			}
@@ -354,23 +413,38 @@ th_convince_to_join_war = {
 				FROM = { is_at_war = yes }
 			}
 			custom_trigger_tooltip = {
-				tooltip = TH_IS_AT_WAR_TT
+				tooltip = TH_FROM_IS_AT_WAR_TT
 				FROM = { is_at_war = no }
 			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_we_are_not_at_war_with_from_allies_tt
-			NOT = {
-				any_country = {
-					war_with = ROOT
-					alliance_with = FROM
+		if = {
+			limit = {
+				FROM = {
+					any_ally = {
+						war_with = ROOT
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_ALLIED_WITH_WAR_ENEMIES_TT
+				NOT = {
+					FROM = {
+						any_ally = {
+							war_with = ROOT
+						}
+					}
 				}
 			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_from_has_at_least_70_trust_tt
-			FROM = {
-				trust = { who = ROOT value = 70 }
+		if = {
+			limit = {
+				FROM = { NOT = { trust = { who = ROOT value = 70 } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_TRUST_LEVEL_70_TT
+				FROM = {
+					trust = { who = ROOT value = 70 }
+				}
 			}
 		}
 		if = {
@@ -606,7 +680,7 @@ th_convince_to_join_war = {
 }
 
 #SCR trade off prestige against trust with the target
-th_scarlet_charisma = {
+th_scarlet_charisma_dip_action = {
 	category = th_diplo_action
 
 	require_acceptance = no
@@ -617,23 +691,123 @@ th_scarlet_charisma = {
 				target = SCR
 			}
 			has_country_flag = th_scarlet_charisma_enabled
+			has_government_mechanic = th_scarlet_charisma_mechanic
 		}
 	}
 
 	is_allowed = {
 		if = {
 			limit = {
-				has_country_flag = th_scarlet_charisma_upgraded
+				NOT = { has_government_mechanic = th_scarlet_charisma_mechanic }
+				NOT = { has_country_flag = th_scarlet_charisma_upgraded }
+				NOT = { prestige = 40 }
 			}
-			prestige = 10
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_PRESTIGE_40_TT
+				OR = {
+					has_government_mechanic = th_scarlet_charisma_mechanic
+					has_country_flag = th_scarlet_charisma_upgraded
+					prestige = 40
+				}
+			}
 		}
-		else = {
-			prestige = 20
+		if = {
+			limit = {
+				NOT = { has_government_mechanic = th_scarlet_charisma_mechanic }
+				has_country_flag = th_scarlet_charisma_upgraded
+				NOT = { prestige = 20 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_PRESTIGE_20_TT
+				OR = {
+					has_government_mechanic = th_scarlet_charisma_mechanic
+					NOT = { has_country_flag = th_scarlet_charisma_upgraded }
+					prestige = 20
+				}
+			}
 		}
-		FROM = {
-			NOT = { is_rival = ROOT }
-			NOT = { is_enemy = ROOT }
-			NOT = { war_with = ROOT }
+		if = {
+			limit = {
+				has_government_mechanic = th_scarlet_charisma_mechanic
+				NOT = { has_country_flag = th_scarlet_charisma_upgraded }
+				NOT = {
+					has_government_power = { 
+						mechanic_type = th_scarlet_charisma_mechanic
+						power_type = th_scarlet_charisma
+						value = 30
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_SCARLET_CHARISMA_30_TT
+				OR = {
+					NOT = { has_government_mechanic = th_scarlet_charisma_mechanic }
+					has_country_flag = th_scarlet_charisma_upgraded
+					has_government_power = { 
+						mechanic_type = th_scarlet_charisma_mechanic
+						power_type = th_scarlet_charisma
+						value = 30
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_government_mechanic = th_scarlet_charisma_mechanic
+				has_country_flag = th_scarlet_charisma_upgraded
+				NOT = {
+					has_government_power = { 
+						mechanic_type = th_scarlet_charisma_mechanic
+						power_type = th_scarlet_charisma
+						value = 20
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_SCARLET_CHARISMA_20_TT
+				OR = {
+					NOT = { has_government_mechanic = th_scarlet_charisma_mechanic }
+					NOT = { has_country_flag = th_scarlet_charisma_upgraded }
+					has_government_power = { 
+						mechanic_type = th_scarlet_charisma_mechanic
+						power_type = th_scarlet_charisma
+						value = 20
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					is_rival = ROOT
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_RIVAL
+				NOT = { is_rival = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					is_enemy = ROOT
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_ENEMY
+				NOT = { is_enemy = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					war_with = ROOT
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_AT_WAR_WITH_FROM
+				NOT = { war_with = ROOT }
+			}
 		}
 		if = {
 			limit = {
@@ -659,17 +833,45 @@ th_scarlet_charisma = {
 		FROM = {
 			add_trust = {
 				who = ROOT
-				value = 5
+				value = 10
 			}
 		}
 		if = {
 			limit = {
-				has_country_flag = th_scarlet_charisma_upgraded
+				has_government_mechanic = th_scarlet_charisma_mechanic
 			}
-			add_prestige = -10
+			if = {
+				limit = {
+					has_country_flag = th_scarlet_charisma_upgraded
+				}
+				add_government_power = {
+					mechanic_type = th_scarlet_charisma_mechanic
+					power_type = th_scarlet_charisma
+					value = -20
+				}
+			}
+			else = {
+				add_government_power = {
+					mechanic_type = th_scarlet_charisma_mechanic
+					power_type = th_scarlet_charisma
+					value = -30
+				}
+			}
 		}
 		else = {
-			add_prestige = -20
+			if = {
+				limit = {
+					has_country_flag = th_scarlet_charisma_upgraded
+				}
+				add_prestige = -20
+			}
+			else = {
+				add_prestige = -40
+			}
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_scarlet_charisma_opinion
 		}
 	}
 	
