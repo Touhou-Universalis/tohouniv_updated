@@ -6,45 +6,119 @@ th_challenge_to_danmaku_duel = {
 
 	is_visible = {
 		th_has_touhou_technology = yes
-		is_free_or_tributary_trigger = yes
 		FROM = {
-			OR = {
-				is_free_or_tributary_trigger = yes
-				AND = {
-					is_subject_of = ROOT
-					is_subject_of_type = th_rebellious_subject
-				}
-			}
 			th_has_touhou_technology = yes
-			has_regency = no
 		}
 	}
 
 	is_allowed = {
-		mil_power = 25
-		custom_trigger_tooltip = {
-			tooltip = th_challenge_to_danmaku_duel_has_been_challenged_tt
-			FROM = {				
-				OR = {
-					NOT = { has_country_flag = th_was_already_danmaku_challenged_by_@ROOT }
-					had_country_flag = {
-						flag = th_was_already_danmaku_challenged_by_@ROOT
-						days = 7300
+		if = {
+			limit = {
+				NOT = { mil_power = 25 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_ROOT_REQUIRES_25_MIL_TT
+				mil_power = 25
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_government_attribute = th_decreased_danmaku_duel_refusal }
+				FROM = {
+					has_country_flag = th_was_already_danmaku_challenged_by_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_was_already_danmaku_challenged_by_@ROOT
+							days = 7300
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_DANMAKU_HAS_BEEN_CHALLENGED_IN_THE_LAST_20_YEARS_TT
+				FROM = {				
+					OR = {
+						has_government_attribute = th_decreased_danmaku_duel_refusal
+						NOT = { has_country_flag = th_was_already_danmaku_challenged_by_@ROOT }
+						had_country_flag = {
+							flag = th_was_already_danmaku_challenged_by_@ROOT
+							days = 7300
+						}
 					}
 				}
 			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_challenge_to_danmaku_duel_on_their_way
-			NOT = { has_country_modifier = th_was_in_danmaku_duel }
+		if = {
+			limit = {
+				has_government_attribute = th_decreased_danmaku_duel_refusal
+				FROM = {
+					has_country_flag = th_was_already_danmaku_challenged_by_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_was_already_danmaku_challenged_by_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_DANMAKU_HAS_BEEN_CHALLENGED_IN_THE_LAST_10_YEARS_TT
+				FROM = {				
+					OR = {
+						NOT = { has_government_attribute = th_decreased_danmaku_duel_refusal }
+						NOT = { has_country_flag = th_was_already_danmaku_challenged_by_@ROOT }
+						had_country_flag = {
+							flag = th_was_already_danmaku_challenged_by_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_challenge_to_danmaku_duel_not_with_allies
-			NOT = { alliance_with = FROM }
+		if = {
+			limit = {
+				has_country_modifier = th_was_in_danmaku_duel
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_DANMAKU_HAS_3_YEARS_COOLDOWN_TT
+				NOT = { has_country_modifier = th_was_in_danmaku_duel }
+			}
 		}
-		has_regency = no
-		FROM = {
-			NOT = { war_with = ROOT }
+		if = {
+			limit = {
+				alliance_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_OUR_ALLY
+				NOT = { alliance_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_AT_WAR_WITH_FROM
+				NOT = { war_with = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				has_regency = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_REGENCY
+				has_regency = no
+			}
+		}
+		if = {
+			limit = {
+				FROM = { has_regency = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_HAS_REGENCY
+				FROM = { has_regency = no }
+			}
 		}
 	}
 

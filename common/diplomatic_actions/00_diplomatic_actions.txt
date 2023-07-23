@@ -146,6 +146,7 @@ declarewar = {
 	}
 	effect = {
 		on_war_declaration_effect = yes
+		th_on_war_declaration_effect = yes
 		if = {
 			limit = { 
 				has_country_flag = nor_norwegian_independence_modifier
@@ -262,6 +263,40 @@ allianceaction = {
 		}
 	}
 	condition = {
+		tooltip = TH_BUDDHIST_DENIED_ALLIANCE
+		potential = {
+			religious_school = {
+				group = Touhou
+				school = obaku_teachings
+			}
+		}
+		allow = {
+			OR = {
+				NOT = { religious_school = { group = Touhou school = obaku_teachings } }
+				th_has_harmonized_religion_with_target = { target = FROM }
+				religion = FROM
+			}
+		}
+	}
+	condition = {
+		tooltip = TH_FROM_BUDDHIST_DENIED_ALLIANCE
+		potential = {
+			FROM = {
+				religious_school = {
+					group = Touhou
+					school = obaku_teachings
+				}
+			}
+		}
+		allow = {
+			OR = {
+				FROM = { th_has_harmonized_religion_with_target = { target = ROOT } }
+				religion = FROM
+				NOT = { FROM = { religious_school = { group = Touhou school = obaku_teachings } } }
+			}
+		}
+	}
+	condition = {
 		tooltip = CANNOT_MAKE_ALLIANCES
 		potential = {
 			has_government_attribute = cannot_form_alliances
@@ -311,6 +346,107 @@ royal_marriage = {
 		}
 		allow = {
 			NOT = { war_with = FROM }
+		}
+	}
+	#condition = {
+	#	tooltip = TH_RELIGIOUS_SCHOOL_DISALLOWS_TT
+	#	potential = {
+	#		religious_school = {
+	#			group = Touhou
+	#			school = rinzai_teachings
+	#		}
+	#	}
+	#	allow = {
+	#		NOT = {
+	#			religious_school = {
+	#				group = Touhou
+	#				school = rinzai_teachings
+	#			}
+	#		}
+	#	}
+	#}
+	#condition = {
+	#	tooltip = TH_FROM_RELIGIOUS_SCHOOL_DISALLOWS_TT
+	#	potential = {
+	#		FROM = {
+	#			religious_school = {
+	#				group = Touhou
+	#				school = rinzai_teachings
+	#			}
+	#		}
+	#	}
+	#	allow = {
+	#		FROM = {
+	#			NOT = {
+	#				religious_school = {
+	#					group = Touhou
+	#					school = rinzai_teachings
+	#				}
+	#			}
+	#		}
+	#	}
+	#}
+	effect = {
+		if = {
+			limit = {
+				ROOT = {
+					has_government_mechanic = th_scarlet_charisma_mechanic
+				}
+			}
+			ROOT = {
+				add_government_power = {
+					mechanic_type = th_scarlet_charisma_mechanic
+					power_type = th_scarlet_charisma
+					value = 5
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_government_mechanic = th_scarlet_charisma_mechanic
+				}
+			}
+			FROM = {
+				add_government_power = {
+					mechanic_type = th_scarlet_charisma_mechanic
+					power_type = th_scarlet_charisma
+					value = 5
+				}
+			}
+		}
+	}
+}
+
+break_marriage = {
+	effect = {
+		if = {
+			limit = {
+				ROOT = {
+					has_government_mechanic = th_scarlet_charisma_mechanic
+				}
+			}
+			ROOT = {
+				add_government_power = {
+					mechanic_type = th_scarlet_charisma_mechanic
+					power_type = th_scarlet_charisma
+					value = -10
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_government_mechanic = th_scarlet_charisma_mechanic
+				}
+			}
+			FROM = {
+				add_government_power = {
+					mechanic_type = th_scarlet_charisma_mechanic
+					power_type = th_scarlet_charisma
+					value = -10
+				}
+			}
 		}
 	}
 }
@@ -450,6 +586,23 @@ annexationaction = {
 			}
 		}
 	}
+	condition = {
+		tooltip = TH_RELIGIOUS_SCHOOL_DISALLOWS_ACTION_TT
+		potential = {
+			religious_school = {
+				group = Touhou
+				school = obaku_teachings
+			}
+		}
+		allow = {
+			NOT = {
+				religious_school = {
+					group = Touhou
+					school = obaku_teachings
+				}
+			}
+		}
+	}
 }
 
 integrationaction = {
@@ -482,6 +635,23 @@ integrationaction = {
 				OR = {
 					has_country_flag = th_disables_subject_annexation_flag
 					has_government_attribute = disables_subject_annexation
+				}
+			}
+		}
+	}
+	condition = {
+		tooltip = TH_RELIGIOUS_SCHOOL_DISALLOWS_ACTION_TT
+		potential = {
+			religious_school = {
+				group = Touhou
+				school = obaku_teachings
+			}
+		}
+		allow = {
+			NOT = {
+				religious_school = {
+					group = Touhou
+					school = obaku_teachings
 				}
 			}
 		}
@@ -667,6 +837,38 @@ fabricate_claim = {
 			custom_trigger_tooltip = {
 				tooltip = th_is_not_claim_immune_tt
 				FROM = { NOT = { has_government_attribute = enables_claim_immunity } }
+			}
+		}
+	}
+	effect = {
+		if = {
+			limit = {
+				religious_school = {
+					group = Touhou
+					school = obaku_teachings
+				}
+				NOT = { th_is_harmonized_religion_of_target = { target = FROM } }
+				FROM = { NOT = { religion = ROOT } }
+			}
+			if = {
+				limit = {
+					FROM = {
+						any_owned_province = {
+							is_claim = ROOT
+							NOT = { is_permanent_claim = ROOT }
+						}
+					}
+				}
+				FROM = {
+					every_owned_province = {
+						limit = {
+							is_claim = ROOT
+							NOT = { is_permanent_claim = ROOT }
+						}
+						remove_claim = ROOT
+						add_permanent_claim = ROOT
+					}
+				}
 			}
 		}
 	}
