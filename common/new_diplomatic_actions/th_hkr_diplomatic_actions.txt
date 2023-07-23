@@ -14,41 +14,117 @@ th_hunt_youkais = {
 	}
 
 	is_allowed = {
-		adm_power = 30
-		mil_power = 15
-		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_has_already_youkai_hunted
-			FROM = {				
-				OR = {
-					NOT = { has_country_flag = th_has_already_youkai_hunted }
-					had_country_flag = {
-						flag = th_has_already_youkai_hunted
-						days = 1826
+		if = {
+			limit = {
+				NOT = { adm_power = 30 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_ROOT_REQUIRES_30_ADM_TT
+				adm_power = 30
+			}
+		}
+		if = {
+			limit = {
+				NOT = { mil_power = 15 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_ROOT_REQUIRES_15_MIL_TT
+				mil_power = 15
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_has_already_youkai_hunted
+					NOT = {
+						had_country_flag = {
+							flag = th_has_already_youkai_hunted
+							days = 1826
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_HUNTEDED_YOUKAI_IN_FROM_TT
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_has_already_youkai_hunted }
+						had_country_flag = {
+							flag = th_has_already_youkai_hunted
+							days = 1826
+						}
 					}
 				}
 			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_youkai_hunt_has_one_charge
-			check_variable = {
-				which = th_youkai_hunt_charges
-				value = 1
+		if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = th_youkai_hunt_charges
+						value = 1
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_NO_YOUKAI_HUNT_CHARGES_LEFT_TT
+				check_variable = {
+					which = th_youkai_hunt_charges
+					value = 1
+				}
 			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_youkai_hunt_currently_on_their_way
-			NOT = { has_country_modifier = th_sent_youkai_hunter }
+		if = {
+			limit = {
+				has_country_modifier = th_sent_youkai_hunter
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_SENT_YOUKAI_HUNTER_TT
+				NOT = { has_country_modifier = th_sent_youkai_hunter }
+			}
 		}
-		custom_trigger_tooltip = {
-			tooltip = th_diplomacy_youkai_hunt_cant_hunt_for_enemies
-			NOT = { is_rival = FROM }
-			FROM = {
-				NOT = { is_rival = ROOT }
-				has_opinion = {
-					who = ROOT
+		if = {
+			limit = {
+				is_rival = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_RIVAL
+				NOT = { is_rival = FROM }
+			}
+		}
+		if = {
+			limit = {
+				is_enemy = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_ENEMY
+				NOT = { is_enemy = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_AT_WAR_WITH_FROM
+				NOT = { war_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					reverse_has_opinion = {
+						who = FROM
+						value = -25
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_HAS_AT_LEAST_NEGATIVE_25_OPINION_TT
+				reverse_has_opinion = {
+					who = FROM
 					value = -25
 				}
-				NOT = { war_with = ROOT }
 			}
 		}
 	}
