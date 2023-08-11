@@ -1,0 +1,900 @@
+########################################
+# Events for Ruler Education
+########################################
+
+namespace = th_education_events
+
+#Setting up the frequency variable
+country_event = {
+	id = th_education_events.1
+	title = th_education_events.1.t
+	desc = th_education_events.1.desc
+	picture = MAGICALLIBRARY_eventPicture
+	
+	trigger = {
+        OR = {                
+            has_country_flag = th_university_education_enabled
+            has_country_flag = th_fairy_university_education_enabled
+        }
+		NOT = { has_country_flag = th_education_setup }
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_variable = {
+				which = th_education_accelerator_variable
+				value = 0
+			}
+			set_country_flag = th_education_setup
+        }
+	}
+	
+	option = {
+		name = th_education_events.1.a
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#General Education
+country_event = {
+	id = th_education_events.2
+	title = th_education_events.2.t
+    desc = {
+       trigger = { NOT = { has_country_flag = th_fairy_university_education_enabled } }
+       desc = th_education_events.2.desc
+    }
+    desc = {
+       trigger = { has_country_flag = th_fairy_university_education_enabled }
+       desc = th_education_events.2.fairy.desc
+    }
+	desc = th_education_events.2.desc
+	picture = MAGICALLIBRARY_eventPicture
+	
+	trigger = {
+        OR = {
+            has_country_flag = th_university_education_enabled
+            has_country_flag = th_fairy_university_education_enabled
+        }
+        is_lesser_in_union = no
+        has_country_flag = th_education_setup
+	}
+	
+	mean_time_to_happen = {
+		months = 1200
+		
+		modifier = {
+			factor = 0.9
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 1
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 2
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 2
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 3
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 3
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 4
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.45
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 4
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 5
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.3
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 5
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 6
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.15
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 6
+				}
+			}
+		}
+	}
+	
+	option = {	#Focus on admin
+        name = th_education_events.2.a
+        if = {
+            limit = {
+                has_country_flag = th_fairy_university_education_enabled
+            }
+            th_increase_ruler_adm_stat = {
+                adm = 1
+            }
+        }
+        else = {
+            if = {
+                limit = {
+                    NOT = { adm = 6 }
+                }
+                change_adm = 1
+            }
+            else = {
+                add_adm_power = 75
+            }
+        }
+		add_years_of_income = -0.15
+	}
+	
+	option = {	#Focus on dip
+		name = th_education_events.2.b
+        if = {
+            limit = {
+                has_country_flag = th_fairy_university_education_enabled
+            }
+            th_increase_ruler_dip_stat = {
+                dip = 1
+            }
+        }
+        else = {
+            if = {
+                limit = {
+                    NOT = { dip = 6 }
+                }
+                change_dip = 1
+            }
+            else = {
+                add_dip_power = 75
+            }
+        }
+		add_prestige = -10
+		add_legitimacy = -10
+	}
+	
+	option = {	#Focus on mil
+		name = th_education_events.2.c
+        if = {
+            limit = {
+                has_country_flag = th_fairy_university_education_enabled
+            }
+            th_increase_ruler_mil_stat = {
+                mil = 1
+            }
+        }
+        else = {
+            if = {
+                limit = {
+                    NOT = { mil = 6 }
+                }
+                change_mil = 1
+            }
+            else = {
+                add_mil_power = 75
+            }
+        }
+		add_yearly_manpower = -0.1 
+	}
+	
+	option = {	#Let her rest
+		name = th_education_events.2.d
+		add_adm_power = 25
+		add_dip_power = 25
+		add_mil_power = 25
+	}
+}
+
+#Increase admin level
+country_event = {
+	id = th_education_events.3
+	title = th_education_events.3.t
+    desc = {
+       trigger = { NOT = { has_country_flag = th_fairy_university_education_enabled } }
+       desc = th_education_events.3.desc
+    }
+    desc = {
+       trigger = { has_country_flag = th_fairy_university_education_enabled }
+       desc = th_education_events.3.fairy.desc
+    }
+	picture = MAGICALLIBRARY_eventPicture
+	
+	trigger = {
+        OR = {
+            has_country_flag = th_university_education_enabled
+            has_country_flag = th_fairy_university_education_enabled
+        }
+        is_lesser_in_union = no
+        has_country_flag = th_education_setup
+	}
+	
+	mean_time_to_happen = {
+		months = 400
+		
+		modifier = {
+			factor = 0.9
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 1
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 2
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 2
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 3
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 3
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 4
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.45
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 4
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 5
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.3
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 5
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 6
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.15
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 6
+				}
+			}
+		}
+	}
+	
+	option = {	#Level adm up
+		name = th_education_events.3.a
+        if = {
+            limit = {
+                has_country_flag = th_fairy_university_education_enabled
+            }
+            th_increase_ruler_adm_stat = {
+                adm = 1
+            }
+        }
+        else = {
+            if = {
+                limit = {
+                    NOT = { adm = 6 }
+                }
+                change_adm = 1
+            }
+            else = {
+                add_adm_power = 75
+            }
+        }
+		add_years_of_income = -0.15
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Spare the money for something else
+		name = th_education_events.3.b		
+		add_years_of_income = 0.15
+	}
+}
+
+#Increase diplo level
+country_event = {
+	id = th_education_events.4
+	title = th_education_events.4.t
+    desc = {
+       trigger = { NOT = { has_country_flag = th_fairy_university_education_enabled } }
+       desc = th_education_events.4.desc
+    }
+    desc = {
+       trigger = { has_country_flag = th_fairy_university_education_enabled }
+       desc = th_education_events.4.fairy.desc
+    }
+	picture = MAGICALLIBRARY_eventPicture
+	
+	trigger = {
+        OR = {                
+            has_country_flag = th_university_education_enabled
+            has_country_flag = th_fairy_university_education_enabled
+        }
+		is_lesser_in_union = no
+        has_country_flag = th_education_setup
+		OR = {
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Cirno"
+					}
+					has_ruler_flag = th_fairy_repub_cirno
+				}
+				NOT = { dip = 5 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "of Cirnia"
+						has_ruler = "Daiyousei"
+					}
+					has_ruler_flag = th_fairy_repub_daiyousei
+				}
+				NOT = { dip = 4 }
+			}
+			AND = {
+				OR = {
+					AND = {
+						dynasty = "White"
+						has_ruler = "Lily"
+					}
+					has_ruler_flag = th_fairy_repub_lily
+				}
+				NOT = { dip = 6 }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 400
+		
+		modifier = {
+			factor = 0.9
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 1
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 2
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 2
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 3
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 3
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 4
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.45
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 4
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 5
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.3
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 5
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 6
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.15
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 6
+				}
+			}
+		}
+	}
+	
+	option = {	#Level dip up
+		name = th_education_events.4.a
+        if = {
+            limit = {
+                has_country_flag = th_fairy_university_education_enabled
+            }
+            th_increase_ruler_dip_stat = {
+                dip = 1
+            }
+        }
+        else = {
+            if = {
+                limit = {
+                    NOT = { dip = 6 }
+                }
+                change_dip = 1
+            }
+            else = {
+                add_dip_power = 75
+            }
+        }
+		add_legitimacy = -10
+		add_prestige = -10
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Spare the effort for something else
+		name = th_education_events.4.b
+		add_legitimacy = 10
+		add_prestige = 10
+	}
+}
+
+#Increase military level
+country_event = {
+	id = th_education_events.5
+	title = th_education_events.5.t
+    desc = {
+       trigger = { NOT = { has_country_flag = th_fairy_university_education_enabled } }
+       desc = th_education_events.5.desc
+    }
+    desc = {
+       trigger = { has_country_flag = th_fairy_university_education_enabled }
+       desc = th_education_events.5.fairy.desc
+    }
+	picture = MAGICALLIBRARY_eventPicture
+	
+	trigger = {
+        OR = {
+            has_country_flag = th_university_education_enabled
+            has_country_flag = th_fairy_university_education_enabled
+        }
+        is_lesser_in_union = no
+        has_country_flag = th_education_setup
+	}
+	
+	mean_time_to_happen = {
+		months = 400
+		
+		modifier = {
+			factor = 0.9
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 1
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 2
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.75
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 2
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 3
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 3
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 4
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.45
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 4
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 5
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.3
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 5
+				}
+				NOT = {
+					check_variable = {
+						which = th_education_accelerator_variable
+						value = 6
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.15
+			AND = {
+				check_variable = {
+					which = th_education_accelerator_variable
+					value = 6
+				}
+			}
+		}
+	}
+	
+	option = {	#Level mil up
+		name = th_education_events.5.a
+        if = {
+            limit = {
+                has_country_flag = th_fairy_university_education_enabled
+            }
+            th_increase_ruler_mil_stat = {
+                mil = 1
+            }
+        }
+        else = {
+            if = {
+                limit = {
+                    NOT = { mil = 6 }
+                }
+                change_mil = 1
+            }
+            else = {
+                add_mil_power = 75
+            }
+        }
+		add_yearly_manpower = -0.1 
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+	
+	option = {	#Spare the soldiers for something else
+		name = th_education_events.5.b
+		add_yearly_manpower = 0.1
+	}
+}
+
+#New graduates from fairy school
+country_event = {
+	id = th_education_events.6
+	title = th_education_events.6.t
+    desc = {
+       trigger = { NOT = { has_country_flag = th_fairy_university_education_enabled } }
+       desc = th_education_events.6.desc
+    }
+    desc = {
+       trigger = { has_country_flag = th_fairy_university_education_enabled }
+       desc = th_education_events.6.fairy.desc
+    }
+	picture = MAGICALLIBRARY_eventPicture
+	
+	trigger = {
+        OR = {
+            has_country_flag = th_university_education_enabled
+            has_country_flag = th_fairy_university_education_enabled
+        }
+        has_country_flag = th_education_setup
+	}
+	
+	mean_time_to_happen = {
+		months = 240
+	}
+	
+	option = {	#Welcome
+		name = th_education_events.6.a
+		custom_tooltip = th_education_events.6.a.tt
+		hidden_effect = {
+			random_list = {
+				1 = {
+					define_advisor = {
+						type = diplomat
+						discount = yes
+						female = yes
+						culture = Fairy
+						religion = ROOT
+					}
+				}
+				1 = {
+					define_advisor = {
+						type = statesman
+						discount = yes
+						female = yes
+						culture = Fairy
+						religion = ROOT
+					}
+				}
+			}
+			random_list = {
+				1 = {
+					define_advisor = {
+						type = commandant
+						discount = yes
+						female = yes
+						culture = Fairy
+						religion = ROOT
+					}
+				}
+				1 = {
+					define_advisor = {
+						type = army_reformer
+						discount = yes
+						female = yes
+						culture = Fairy
+						religion = ROOT
+					}
+				}
+			}	
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#New fairy governors leads government reform
+country_event = {
+	id = th_education_events.7
+	title = th_education_events.7.t
+    desc = {
+       trigger = { NOT = { has_country_flag = th_fairy_university_education_enabled } }
+       desc = th_education_events.7.desc
+    }
+    desc = {
+       trigger = { has_country_flag = th_fairy_university_education_enabled }
+       desc = th_education_events.7.fairy.desc
+    }
+	picture = MAGICALLIBRARY_eventPicture
+	
+	trigger = {
+        OR = {
+            has_country_flag = th_university_education_enabled
+            has_country_flag = th_fairy_university_education_enabled
+        }
+        has_country_flag = th_education_setup
+	}
+	
+	mean_time_to_happen = {
+		months = 240
+	}
+	
+	option = {	#Welcome
+		name = th_education_events.7.a
+		change_government_reform_progress = 50
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#New fairy scientists gain innovativeness
+country_event = {
+	id = th_education_events.8
+	title = th_education_events.8.t
+    desc = {
+       trigger = { NOT = { has_country_flag = th_fairy_university_education_enabled } }
+       desc = th_education_events.8.desc
+    }
+    desc = {
+       trigger = { has_country_flag = th_fairy_university_education_enabled }
+       desc = th_education_events.8.fairy.desc
+    }
+	picture = MAGICALLIBRARY_eventPicture
+	
+	trigger = {
+        OR = {
+            has_country_flag = th_university_education_enabled
+            has_country_flag = th_fairy_university_education_enabled
+        }
+        is_lesser_in_union = no
+        has_country_flag = th_education_setup
+	}
+	
+	mean_time_to_happen = {
+		months = 240
+	}
+	
+	option = {	#Welcome
+		name = th_education_events.8.a
+		change_innovativeness = 5
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Education information event
+country_event = {
+	id = th_education_events.100
+	title = th_education_events.100.t
+	desc = th_education_events.100.desc
+	picture = MAGICALLIBRARY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = th_education_events.100.a
+
+		ai_chance = {
+			factor = 100
+		}
+	}
+}

@@ -1,0 +1,811 @@
+########################################
+# Events for the Yukari daimyos
+########################################
+
+namespace = th_yukari_daimyo_mechanic
+
+#Mayohiga's Daimyos - break vassalization, if Mayohiga changes government reform
+country_event = {
+	id = th_yukari_daimyo_mechanic.1
+	title = th_yukari_daimyo_mechanic.1.t
+	desc = th_yukari_daimyo_mechanic.1.desc
+	picture = YUKARI_eventPicture
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_government_attribute = enables_yukaris_shogunate }
+		num_of_subjects = 1 
+		any_subject_country = { is_subject_of_type = th_yukari_daimyo }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			every_subject_country = { 
+				limit = { is_subject_of_type = th_yukari_daimyo } 
+				country_event = { id = th_yukari_daimyo_mechanic.2 }
+			}
+		}
+	}
+	
+	option = {	#Abuse what?
+		name = th_yukari_daimyo_mechanic.1.a
+	}
+	option = {	#Worth it.
+		name = th_yukari_daimyo_mechanic.1.b
+	}
+	option = {	#Welp, bye Daimyos.
+		name = th_yukari_daimyo_mechanic.1.c
+	}
+	option = {	#You start to getting annoying...
+		name = th_yukari_daimyo_mechanic.1.d
+	}
+	option = {	#Can I have my immersion back, please?
+		name = th_yukari_daimyo_mechanic.1.e
+	}
+}
+
+#Mayohiga's Daimyos get independent
+country_event = {
+	id = th_yukari_daimyo_mechanic.2
+	title = th_yukari_daimyo_mechanic.2.t
+	desc = th_yukari_daimyo_mechanic.2.desc
+	picture = LIBERUM_VETO_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		AND = {
+			is_subject = yes
+			is_subject_of_type = th_yukari_daimyo
+		}
+		overlord = {
+			NOT = { has_government_attribute = enables_yukaris_shogunate }
+		}
+	}
+	
+	option = {	#We are now masters of our own fate.
+		name = th_yukari_daimyo_mechanic.2.a
+		grant_independence = yes
+	}
+}
+
+#Mayohiga's vassals become daimyos
+#country_event = {
+#	id = th_yukari_daimyo_mechanic.3
+#	title = th_yukari_daimyo_mechanic.3.t
+#	desc = th_yukari_daimyo_mechanic.3.desc
+#	picture = YUKARI_eventPicture
+#	
+#	mean_time_to_happen = {
+#		days = 1
+#	}
+#
+#	hidden = yes
+#	
+#	trigger = {
+#		has_government_attribute = enables_yukaris_shogunate
+#		num_of_subjects = 1 
+#		OR = {
+#			any_subject_country = { is_subject_of_type = vassal }
+#			any_subject_country = { is_subject_of_type = daimyo_vassal }
+#		}
+#	}
+#	immediate = {
+#		hidden_effect = {
+#			every_subject_country = { 
+#				limit = { 
+#					OR = { 
+#						is_subject_of_type = vassal 
+#						is_subject_of_type = daimyo_vassal
+#					}
+#					NOT = { is_subject_of_type = th_yukari_daimyo }
+#				} 
+#				country_event = { id = th_yukari_daimyo_mechanic.4 }
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = th_yukari_daimyo_mechanic.3.a
+#
+#		ai_chance = { 
+#			factor = 100
+#		}
+#	}
+#}
+
+#Vassal becomes Daimyo
+country_event = {
+	id = th_yukari_daimyo_mechanic.4
+	title = th_yukari_daimyo_mechanic.4.t
+	desc = th_yukari_daimyo_mechanic.4.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+
+	hidden = yes
+	
+	option = {	#Long live Yukari
+		name = th_yukari_daimyo_mechanic.4.a
+		grant_independence = yes
+		FROM = {
+			create_subject = {
+				subject_type = th_yukari_daimyo
+				subject = ROOT
+			}
+		}
+		
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Daimyo becomes too powerful and wants more rights!
+country_event = {
+	id = th_yukari_daimyo_mechanic.5
+	title = th_yukari_daimyo_mechanic.5.t
+	desc = th_yukari_daimyo_mechanic.5.desc
+	picture = YUKARI_eventPicture
+
+	trigger = {
+		is_subject_of_type = th_yukari_daimyo
+		NOT = { has_ruler_flag = mhg_decided_to_remain_daimyo_flag }
+		total_development = 300
+		overlord = {
+			NOT = { truce_with = ROOT }
+		}
+		OR = {
+			NOT = { has_country_flag = mhg_had_independence_event }
+			had_country_flag = {
+				flag = mhg_had_independence_event
+				days = 3650
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = mhg_had_independence_event
+			set_country_flag = mhg_had_independence_event
+			overlord = {
+				save_event_target_as = mhg_overlord
+			}
+		}
+	}
+
+	option = {	#Request for a higher position
+		name = th_yukari_daimyo_mechanic.5.a
+		custom_tooltip = th_yukari_daimyo_mechanic.5.a.tt
+		event_target:mhg_overlord = {				
+			country_event = {
+				id = th_yukari_daimyo_mechanic.6
+			}
+		}
+
+		ai_chance = {
+			factor = 0.75
+			modifier = {
+				factor = 0.5
+				army_size = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 0.5
+				total_development = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 0.5
+				land_morale = event_target:mhg_overlord
+				mil_tech = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 0.25
+				OR = {
+					NOT = { liberty_desire = 25 }
+					has_opinion = {
+						who = event_target:mhg_overlord
+						value = 100
+					}
+				}
+			}
+		}
+	}
+
+	option = {	#We have grown too much as we could be Yukari's slave!
+		name = th_yukari_daimyo_mechanic.5.b
+		declare_war_with_cb = {
+			casus_belli = cb_independence_war
+			who = event_target:mhg_overlord
+		}
+
+		ai_chance = {
+			factor = 0.25
+			modifier = {
+				factor = 2
+				army_size = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 2
+				total_development = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 2
+				land_morale = event_target:mhg_overlord
+				mil_tech = event_target:mhg_overlord
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					NOT = { liberty_desire = 25 }
+					has_opinion = {
+						who = event_target:mhg_overlord
+						value = 100
+					}
+				}
+			}
+		}
+	}
+
+	option = {	#We should stick with Mayohiga
+		name = th_yukari_daimyo_mechanic.5.c
+		hidden_effect = {
+			set_ruler_flag = mhg_decided_to_remain_daimyo_flag
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Daimyo becomes too powerful! - It asks for Promotion
+country_event = {
+	id = th_yukari_daimyo_mechanic.6
+	title = th_yukari_daimyo_mechanic.6.t
+	desc = th_yukari_daimyo_mechanic.6.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_variable = {
+				which = mhg_num_of_marches
+				value = 0
+			}
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = th_yukari_march
+					NOT = { has_country_flag = mhg_is_special_case_march }
+				}
+				ROOT = {
+					change_variable = {
+						which = mhg_num_of_marches
+						value = 1
+					}
+				}
+			}
+			export_to_variable = {
+				which = mhg_allowed_marches
+				value = modifier:march_slots
+			}
+		}
+	}
+	
+	option = {	#I suppose one more march is fine
+		name = th_yukari_daimyo_mechanic.6.a
+		hidden_effect = {
+			FROM = { 
+				grant_independence = yes
+				country_event = {
+					id = th_yukari_daimyo_mechanic.7
+				}
+			}
+		}
+		create_subject = {
+			subject_type = th_yukari_march
+			subject = FROM
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = mhg_num_of_marches
+					which = mhg_allowed_marches
+				}
+			}
+			custom_tooltip = th_yukari_daimyo_mechanic.6.a.tt
+		}
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				check_variable = {
+					which = mhg_num_of_marches
+					which = mhg_allowed_marches
+				}
+			}
+		}
+	}
+	
+	option = {	#I demand you to give some land back!
+		name = th_yukari_daimyo_mechanic.6.b
+		trigger = {
+			FROM = { num_of_cities = 2 }	#Can't really split an OPM
+		}
+		FROM = {
+			country_event = {
+				id = th_yukari_daimyo_mechanic.8
+			}
+			tooltip = {
+				add_country_modifier = {
+					name = th_had_to_give_all_the_land
+					duration = 9125
+				}
+			}
+		}
+		custom_tooltip = th_yukari_daimyo_mechanic.6.b.tt
+		
+		ai_chance = { 
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = {
+					check_variable = {
+						which = mhg_num_of_marches
+						which = mhg_allowed_marches
+					}
+				}
+			}
+		}
+	}
+	
+	option = {	#They are not worth my time
+		name = th_yukari_daimyo_mechanic.6.c
+		FROM = {
+			grant_independence = yes
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = {
+					id = th_yukari_daimyo_mechanic.9
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 0
+		}
+	}
+}
+
+#Daimyo becomes too powerful! - We are a march now!
+country_event = {
+	id = th_yukari_daimyo_mechanic.7
+	title = th_yukari_daimyo_mechanic.7.t
+	desc = th_yukari_daimyo_mechanic.7.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Nice
+		name = th_yukari_daimyo_mechanic.7.a
+		tooltip = {
+			FROM = {
+				create_subject = {
+					subject_type = th_yukari_march
+					subject = ROOT
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Daimyo becomes too powerful! - MHG demands land!
+country_event = {
+	id = th_yukari_daimyo_mechanic.8
+	title = th_yukari_daimyo_mechanic.8.t
+	desc = th_yukari_daimyo_mechanic.8.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { is_capital = no }
+				save_event_target_as = mhg_province_to_give
+			}
+			random_owned_province = {
+				limit = { is_capital = no has_port = yes }
+				save_event_target_as = mhg_province_to_give
+			}
+			random_owned_province = {
+				limit = { is_capital = no any_neighbor_province = { is_core = ROOT owned_by = ROOT } }
+				save_event_target_as = mhg_province_to_give
+			}
+			random_owned_province = {
+				limit = { is_capital = no any_neighbor_province = { owner = { is_subject_of = FROM } } }
+				save_event_target_as = mhg_province_to_give
+			}
+			random_owned_province = {
+				limit = { is_capital = no any_neighbor_province = { owner = { tag = FROM } } }
+				save_event_target_as = mhg_province_to_give
+			}
+		}
+	}
+	
+	option = {	#Fiiine
+		name = th_yukari_daimyo_mechanic.8.a
+		goto = mhg_province_to_give
+		if = {
+			limit = { has_saved_event_target = mhg_province_to_give }
+			event_target:mhg_province_to_give = {
+				cede_province = FROM
+				add_core = FROM
+			}
+		}
+		while = {
+			limit = {
+				any_owned_province = {
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = yes
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = yes
+					}
+				}
+				set_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT
+			}
+		}
+		while = {
+			limit = {
+				any_owned_province = {
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = no
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT }
+					NOT = { has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT }
+					NOT = { province_id = event_target:mhg_province_to_give }
+					is_capital = no
+					any_core_country = {
+						NOT = { tag = ROOT }
+						exists = no
+					}
+				}
+				set_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT
+			}
+		}
+		every_owned_province = {	#Might wanna rethink it, can have a heavy hit on performance
+			limit = { 
+				has_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT
+			}
+			random_core_country = {
+				limit = {
+					NOT = { tag = ROOT }
+				}
+				PREV = {
+					cede_province = PREV
+					remove_core = ROOT
+				}
+				if = {
+					limit = { NOT = { has_country_flag = th_yukari_daimyo_new_daimyo_from_@ROOT } }
+					set_country_flag = th_yukari_daimyo_new_daimyo_from_@ROOT
+				}
+			}
+			clr_province_flag = th_yukari_daimyo_marked_to_release_from_@ROOT
+		}
+		every_owned_province = {	#Might wanna rethink it, can have a heavy hit on performance
+			limit = { 
+				has_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT
+			}
+			random_core_country = {
+				limit = {
+					NOT = { tag = ROOT }
+					exists = yes
+				}
+				PREV = {
+					cede_province = PREV
+					remove_core = ROOT
+				}
+			}
+			clr_province_flag = th_yukari_daimyo_marked_to_give_back_from_@ROOT
+		}
+		add_country_modifier = {
+			name = th_had_to_give_all_the_land
+			duration = 9125
+		}
+		every_country = {
+			limit = { has_country_flag = th_yukari_daimyo_new_daimyo_from_@ROOT }
+			FROM = {
+				create_subject = {
+					subject_type = th_yukari_daimyo
+					subject = PREV
+				}
+				clr_country_flag = th_yukari_daimyo_new_daimyo_from_@ROOT
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 0
+				liberty_desire = 50
+			}
+		}
+	}
+	
+	option = {	#I have a better suggestion: WAR!
+		name = th_yukari_daimyo_mechanic.8.b
+		declare_war_with_cb = {
+			casus_belli = cb_independence_war
+			who = FROM
+		}
+		
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { liberty_desire = 50 }
+			}
+		}
+	}
+}
+
+#Daimyo becomes too powerful! - Independence!
+country_event = {
+	id = th_yukari_daimyo_mechanic.9
+	title = th_yukari_daimyo_mechanic.9.t
+	desc = th_yukari_daimyo_mechanic.9.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Nice
+		name = th_yukari_daimyo_mechanic.9.a
+		tooltip = {
+			grant_independence = yes
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#TODO - Refactor for better performance
+#Monthly check for marches
+country_event = {
+	id = th_yukari_daimyo_mechanic.10
+	title = th_yukari_daimyo_mechanic.10.t
+	desc = th_yukari_daimyo_mechanic.10.desc
+	picture = MASTERSATORI_eventPicture
+	
+	trigger = {
+		has_government_attribute = enables_yukaris_shogunate
+		OR = {
+			NOT = { has_country_flag = mhg_had_march_check }
+			had_country_flag = {
+				flag = mhg_had_march_check
+				days = 29
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		every_subject_country = {
+			limit = { has_country_flag = mhg_one_march_too_much }
+			clr_country_flag = mhg_one_march_too_much
+		}
+	}
+	
+	option = {
+		clr_country_flag = mhg_had_march_check
+		set_country_flag = mhg_had_march_check
+		set_variable = {
+			which = mhg_num_of_marches
+			value = 0
+		}
+		export_to_variable = {
+			which = mhg_allowed_marches
+			value = modifier:march_slots
+		}
+		every_subject_country = {
+			limit = {
+				is_subject_of_type = th_yukari_march
+				NOT = { has_country_flag = mhg_is_special_case_march }
+			}
+			ROOT = {
+				change_variable = {
+					which = mhg_num_of_marches
+					value = 1
+				}
+			}
+			if = {
+				limit = {
+					ROOT = {
+						NOT = {
+							check_variable = {
+								which = mhg_allowed_marches
+								which = mhg_num_of_marches
+							}
+						}
+					}
+				}
+				set_country_flag = mhg_one_march_too_much
+			}
+		}
+
+		ai_chance = { 
+			factor = 100
+		}
+	}
+}
+
+#Too many marches!
+country_event = {
+	id = th_yukari_daimyo_mechanic.11
+	title = th_yukari_daimyo_mechanic.11.t
+	desc = th_yukari_daimyo_mechanic.11.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		NOT = { dip_power = -998 }
+		NOT = { monthly_dip = 0 }
+		any_subject_country = {
+			has_country_flag = mhg_one_march_too_much
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			every_subject_country = {
+				limit = { has_country_flag = mhg_one_march_too_much }
+				clr_country_flag = mhg_one_march_too_much
+			}
+		}
+	}
+	
+	option = {	#Oh no...
+		name = th_yukari_daimyo_mechanic.11.a
+		custom_tooltip = th_yukari_daimyo_mechanic.11.a.tt
+		hidden_effect = {
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = th_yukari_march
+					NOT = { has_country_flag = mhg_is_special_case_march }
+				}
+				country_event = {
+					id = th_yukari_daimyo_mechanic.12
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+#Too many marches! - March decides what to do!
+country_event = {
+	id = th_yukari_daimyo_mechanic.12
+	title = th_yukari_daimyo_mechanic.12.t
+	desc = th_yukari_daimyo_mechanic.12.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Return to Daimyo
+		name = th_yukari_daimyo_mechanic.12.a
+		trigger = {
+			NOT = { total_development = 300 }
+		}
+		custom_tooltip = th_yukari_daimyo_mechanic.12.a.tt
+		hidden_effect = {
+			grant_independence = yes
+			FROM = {
+				create_subject = {
+					subject_type = th_yukari_daimyo
+					subject = ROOT
+				}
+			}
+		}
+		
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 0.25
+				liberty_desire = 40
+			}
+			modifier = {
+				factor = 0.25
+				liberty_desire = 60
+			}
+			modifier = {
+				factor = 0.25
+				liberty_desire = 80
+			}
+			modifier = {
+				factor = 0
+				liberty_desire = 100
+			}
+		}
+	}
+	
+	option = {	#DoW FROM!
+		name = th_yukari_daimyo_mechanic.12.b
+		declare_war_with_cb = {
+			casus_belli = cb_independence_war
+			who = FROM
+		}
+		
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { liberty_desire = 40 }
+			}
+		}
+	}
+}
+
+#Explanation event
+country_event = {
+	id = th_yukari_daimyo_mechanic.100
+	title = th_yukari_daimyo_mechanic.100.t
+	desc = th_yukari_daimyo_mechanic.100.desc
+	picture = YUKARI_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = th_yukari_daimyo_mechanic.100.a
+		custom_tooltip = th_yukari_daimyo_mechanic.100.a.tt
+		
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}

@@ -1,0 +1,166 @@
+#MHG Provoke War
+th_set_target_as_aggressor = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_can_provoke_single_war
+		FROM = {
+			NOT = { has_country_flag = th_is_planned_aggressor_of_@ROOT }
+		}
+	}
+
+	is_allowed = {
+		has_spy_network_in = {
+			who = FROM
+			value = 80
+		}
+		FROM = {
+			is_free_or_tributary_trigger = yes
+			NOT = { had_recent_war = 5 }
+			has_any_disaster = no 
+			primitives = no
+			is_at_war = no
+			custom_trigger_tooltip = {
+				tooltip = th_set_target_as_aggressor_spcial_condition
+				OR = {
+					is_rival = ROOT
+					is_enemy = ROOT
+					total_development = 250
+					total_development = ROOT
+					great_power_rank = 1
+				}
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_already_a_planned_aggressor
+			NOT = { has_country_flag = th_has_already_a_planned_aggressor }
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		FROM = { set_country_flag = th_is_planned_aggressor_of_@ROOT }
+		set_country_flag = th_has_already_a_planned_aggressor
+		add_spy_network_in = {
+			who = FROM
+			value = -80			
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_remove_target_as_aggressor = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_has_already_a_planned_aggressor
+		FROM = {
+			has_country_flag = th_is_planned_aggressor_of_@ROOT
+		}
+	}
+
+	is_allowed = {
+		always = yes
+	}
+
+	on_accept = {
+		clr_country_flag = th_has_already_a_planned_aggressor
+		FROM = {
+			clr_country_flag = th_is_planned_aggressor_of_@ROOT
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_provoke_war_against_target = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		is_free_or_tributary_trigger = yes
+		has_country_flag = th_can_provoke_single_war
+		FROM = {
+			NOT = { has_country_flag = th_is_planned_aggressor_of_@ROOT }
+		}		
+	}
+
+	is_allowed = {
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_needs_a_planned_aggressor
+			has_country_flag = th_has_already_a_planned_aggressor
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_diplomacy_has_still_cooldown
+			NOT = { has_country_modifier = th_provoked_war }
+		}
+		has_spy_network_in = {
+			who = FROM
+			value = 20
+		}
+		FROM = {
+			is_free_or_tributary_trigger = yes
+			NOT = { had_recent_war = 5 }
+			has_any_disaster = no
+			custom_trigger_tooltip = {
+				tooltip = th_provoke_war_against_target_condition
+				OR = {
+					is_rival = ROOT
+					is_enemy = ROOT
+					total_development = 100
+					total_development = ROOT
+					great_power_rank = 1
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		country_event = {
+			id = th_diplo_events.1
+			days = 1
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -20
+		}
+		FROM = {
+			set_country_flag = th_target_for_planned_war
+		}
+		add_country_modifier = {
+			name = th_provoked_war
+			duration = 1825
+			hidden = yes	
+		}
+	}
+	ai_will_do = {
+		always = no
+	}
+}

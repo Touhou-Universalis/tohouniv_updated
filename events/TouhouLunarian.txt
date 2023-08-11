@@ -1,0 +1,709 @@
+########################################
+# Events for the Lunarian
+########################################
+
+namespace = TH_lunarian_events
+
+###OLD MAPS FROM GENSOKYO###
+country_event = {
+	id = TH_lunarian_events.1
+	title = "TH_lunarian_events.1.t"
+	desc = "TH_lunarian_events.1.desc"
+	picture = TOUHOUMAPS_eventPicture
+
+	trigger = {
+		capital_scope = { superregion = gensokyo_orbit_superregion }
+		NOT = { has_country_flag = TH_has_discovered_gensokyo }
+		OR = {
+			ai = no
+			is_year = 1550
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	option = {
+		name = "TH_lunarian_events.1.a" #Interesting.
+
+		set_country_flag = TH_has_discovered_gensokyo 
+		gensokyo_continent = {
+			discover_country = ROOT
+		}
+		hidden_effect = {
+			5054 = {
+				discover_country = ROOT
+			}
+			4943 = {
+				discover_country = ROOT
+			}
+			4950 = {
+				discover_country = ROOT
+			}
+			4949 = {
+				discover_country = ROOT
+			}
+			4952 = {
+				discover_country = ROOT
+			}
+			4951 = {
+				discover_country = ROOT
+			}
+			4953 = {
+				discover_country = ROOT
+			}
+			4994 = {
+				discover_country = ROOT
+			}
+			1439 = {
+				discover_country = ROOT
+			}
+			1440 = {
+				discover_country = ROOT
+			}
+			1669 = {
+				discover_country = ROOT
+			}
+		}
+	}
+}
+
+###EVENT TO MAKE AI LUNARIAN TO ISOLATIONISTS###
+
+country_event = {
+	id = TH_lunarian_events.2
+	title = "TH_lunarian_events.2.t"
+	desc = "TH_lunarian_events.2.desc"
+	picture = SHRINE_eventPicture
+
+	hidden = yes
+
+	trigger = {
+		capital_scope = { superregion = gensokyo_orbit_superregion }
+		ai = yes
+		NOT = { is_year = 1550 }
+		NOT = { has_country_modifier = th_isolationistic_lunarian_policy }
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	option = {
+		name = "TH_lunarian_events.2.a"
+
+		add_country_modifier = { 
+			name = th_isolationistic_lunarian_policy
+			duration = -1
+		}
+		if = {
+			limit = {
+				exists = HEC
+				OR = {
+					tag = JNK
+					tag = CLP
+				}
+			}
+			add_opinion = {
+				who = HEC
+				modifier = th_moon_allies
+			}
+			if = {
+				limit = {
+					HEC = { ai = yes }
+				}
+				reverse_add_opinion = {
+					who = HEC
+					modifier = th_moon_allies
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = CLP
+				tag = HEC
+			}
+			add_opinion = {
+				who = CLP
+				modifier = th_moon_allies
+			}
+			if = {
+				limit = {
+					CLP = { ai = yes }
+				}
+				reverse_add_opinion = {
+					who = CLP
+					modifier = th_moon_allies
+				}
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+###EVENT TO REMOVE MODIFIER###
+
+country_event = {
+	id = TH_lunarian_events.3
+	title = "TH_lunarian_events.3.t"
+	desc = "TH_lunarian_events.3.desc"
+	picture = SHRINE_eventPicture
+
+	hidden = yes
+
+	trigger = {
+		has_country_modifier = th_isolationistic_lunarian_policy
+		OR = {
+			ai = no
+			is_year = 1550
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	option = {
+		name = "TH_lunarian_events.3.a"
+		
+		remove_country_modifier = th_isolationistic_lunarian_policy
+		every_known_country = {
+			limit = {
+				reverse_has_opinion_modifier = {
+					who = ROOT
+					modifier = th_moon_allies
+				}
+			}
+			remove_opinion = {
+				who = ROOT
+				modifier = th_moon_allies
+			}
+			reverse_remove_opinion = {
+				who = ROOT
+				modifier = th_moon_allies
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+###REMOVE CLAIMS ON THE MOON###
+
+country_event = {
+	id = TH_lunarian_events.4
+	title = "TH_lunarian_events.4.t"
+	desc = "TH_lunarian_events.4.desc"
+	picture = SHRINE_eventPicture
+
+	hidden = yes
+
+	trigger = {
+		gensokyo_orbit_superregion = {
+			is_claim = ROOT
+			NOT = { is_permanent_claim = ROOT }
+		}
+		ai = yes
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	option = {
+		name = "TH_lunarian_events.4.a"
+		
+		gensokyo_orbit_superregion = {
+			limit = {
+				is_claim = ROOT
+				NOT = { is_permanent_claim = ROOT }
+			}
+			remove_claim = ROOT
+		}		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+###REMOVE CLAIMS FROM THE MOON###
+
+country_event = {
+	id = TH_lunarian_events.5
+	title = "TH_lunarian_events.5.t"
+	desc = "TH_lunarian_events.5.desc"
+	picture = SHRINE_eventPicture
+
+	hidden = yes
+
+	trigger = {
+		has_country_modifier = th_isolationistic_lunarian_policy
+		any_province = {
+			is_claim = ROOT
+			NOT = { is_permanent_claim = ROOT }
+			owner = {
+				ai = yes
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	option = {
+		name = "TH_lunarian_events.5.a"
+		
+		every_province = {
+			limit = {
+				is_claim = ROOT
+				NOT = { is_permanent_claim = ROOT }
+				owner = {
+					ai = yes
+				}
+			}
+			remove_claim = ROOT
+		}		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+###AE DEBUFF###
+
+country_event = {
+	id = TH_lunarian_events.8
+	title = "TH_lunarian_events.8.t"
+	desc = "TH_lunarian_events.8.desc"
+	picture = TOUHOUMOON_eventPicture
+
+	trigger = {
+		NOT = { is_year = 1445 }
+		NOT = { has_country_modifier = th_the_lunarian_threat }
+		capital_scope = {
+			superregion = gensokyo_orbit_superregion
+		}
+		ai = yes
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	option = {	#Good. They should fear us.
+		name = "TH_lunarian_events.8.a"
+		
+		add_country_modifier = { 
+			name = th_the_lunarian_threat
+			duration = 38325
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Information event about the defensive capability of LCU
+country_event = {
+	id = TH_lunarian_events.9
+	title = "TH_lunarian_events.9.t"
+	desc = "TH_lunarian_events.9.desc"
+	picture = TOUHOUMOON_eventPicture
+	
+	fire_only_once = yes
+	major = yes
+
+	trigger = {
+		NOT = { is_year = 1550 }
+		tag = EIT
+	}
+	
+	immediate = {
+		hidden_effect = {
+			every_country = {
+				limit = {
+					#capital_scope = { superregion = gensokyo_orbit_superregion }
+					OR = {
+						tag = LCU
+						tag = HEC
+						tag = CLP
+						tag = JNK
+					}
+					ai = yes
+				}
+				set_country_flag = TH_has_anti_earth_weapons
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {	#A war on Lunarian Sovereign Territory is indeed suicide
+		name = "TH_lunarian_events.9.a"
+		custom_tooltip = TH_lunarian_events.9.tt 
+		tooltip = {
+			add_permanent_province_modifier = {
+				name = th_unlandable_moon_province
+				duration = -1
+				desc = th_unlandable_moon_province_tt
+			}
+		}
+		hidden_effect = {
+			moon_continent = {
+				add_permanent_province_modifier = {
+					name = th_unlandable_moon_province
+					duration = -1
+					desc = th_unlandable_moon_province_tt
+				}
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Non-prepared Earthlings dare to attack
+country_event = {
+	id = TH_lunarian_events.10
+	title = "TH_lunarian_events.10.t"
+	desc = "TH_lunarian_events.10.desc"
+	picture = LUNARARMY_eventPicture
+	
+	major = yes
+
+	trigger = {
+		NOT = { is_year = 1550 }
+		has_country_flag = TH_has_anti_earth_weapons
+		NOT = { has_country_flag = th_activated_anti_earth_weapons }
+		is_in_war = {
+			defender_leader = ROOT
+			duration = 1
+		}
+		any_country = {
+			capital_scope = { 
+				NOT = { superregion = gensokyo_orbit_superregion }
+			}
+			is_in_war = {
+				attacker_leader = THIS
+				defender_leader = ROOT
+				duration = 1
+			}
+			OR = {
+				is_free_or_tributary_trigger = yes
+				overlord = {
+					capital_scope = { 
+						NOT = { superregion = gensokyo_orbit_superregion }
+					}
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = th_activated_anti_earth_weapons
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {	#They asked for war? Then they should get one!
+		name = "TH_lunarian_events.10.a"
+		if = {
+			limit = {
+				NOT = { treasury = 15152 }
+			}
+			add_years_of_income = 4
+		}
+		if = {
+			limit = {
+				NOT = { manpower_percentage = 1 }
+			}
+			add_yearly_manpower = 10
+		}
+		if = {
+			limit = {
+				NOT = { sailors_percentage = 1 }
+			}
+			add_yearly_sailors = 10
+		}
+		add_country_modifier = { 
+			name = th_anti_earth_weapons_modifier
+			duration = -1  
+			desc = th_anti_earth_weapons_modifier_duration
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					superregion = gensokyo_orbit_superregion
+				}
+				add_province_modifier = {
+					name = th_lunarian_cannons_provoince
+					duration = -1
+					desc = th_anti_earth_weapons_modifier_duration
+				}
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#War is over
+country_event = {
+	id = TH_lunarian_events.11
+	title = "TH_lunarian_events.11.t"
+	desc = "TH_lunarian_events.11.desc"
+	picture = LUNARWAR_eventPicture
+	
+	major = yes
+
+	trigger = {
+		OR = {
+			has_country_modifier = th_anti_earth_weapons_modifier
+			has_country_flag = th_activated_anti_earth_weapons
+		}
+		OR = {
+			is_at_war = no
+			NOT = {
+				any_country = {
+					capital_scope = {
+						NOT = { superregion = gensokyo_orbit_superregion }
+					}
+					offensive_war_with = ROOT
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = th_activated_anti_earth_weapons
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {	#Finally the Earthlings are gone
+		name = "TH_lunarian_events.11.a"
+		add_war_exhaustion = -2 
+		remove_country_modifier = th_anti_earth_weapons_modifier
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					has_province_modifier = th_lunarian_cannons_provoince
+					superregion = gensokyo_orbit_superregion
+				}
+				remove_province_modifier = th_lunarian_cannons_provoince
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Anti-Earth weapons become outdated
+country_event = {
+	id = TH_lunarian_events.12
+	title = "TH_lunarian_events.12.t"
+	desc = "TH_lunarian_events.12.desc"
+	picture = LUNARWAR_eventPicture
+	
+	major = yes
+	fire_only_once = yes
+
+	trigger = {
+		OR = {
+			has_country_modifier = th_anti_earth_weapons_modifier
+			has_country_flag = th_activated_anti_earth_weapons
+			has_country_flag = TH_has_anti_earth_weapons
+		}
+		OR = {
+			is_year = 1550
+			has_global_flag = th_lunarian_are_attackable_now_flag
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					NOT = { has_global_flag = th_lunarian_are_attackable_now_flag }
+				}
+				set_global_flag = th_lunarian_are_attackable_now_flag 
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {	#Not the best news...
+		name = "TH_lunarian_events.12.a"
+		custom_tooltip = TH_lunarian_events.12.tt
+		hidden_effect = {
+			every_country = {
+				limit = {
+					OR = {
+						has_country_modifier = th_anti_earth_weapons_modifier
+						has_country_flag = th_activated_anti_earth_weapons
+						has_country_flag = TH_has_anti_earth_weapons
+					}
+				}
+				remove_country_modifier = th_anti_earth_weapons_modifier
+				clr_country_flag = th_activated_anti_earth_weapons
+				clr_country_flag = TH_has_anti_earth_weapons
+			}
+			remove_country_modifier = th_anti_earth_weapons_modifier
+			clr_country_flag = th_activated_anti_earth_weapons
+			clr_country_flag = TH_has_anti_earth_weapons		
+			every_province = {
+				limit = {
+					has_province_modifier = th_unlandable_moon_province
+				}
+				remove_province_modifier = th_unlandable_moon_province
+			}
+
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Lunarian Tech gets modernized
+country_event = {
+	id = TH_lunarian_events.13
+	title = "TH_lunarian_events.13.t"
+	desc = "TH_lunarian_events.13.desc"
+	picture = LUNARWAR_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+
+	option = {
+		name = "TH_lunarian_events.13.a"
+		change_technology_group = tech_gensokyan_lunarian
+		change_unit_type = tech_gensokyan_lunarian
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Lunarians lost their home and flee to Kaguya
+country_event = {
+	id = TH_lunarian_events.14
+	title = "TH_lunarian_events.14.t"
+	desc = "TH_lunarian_events.14.desc"
+	picture = LUNARWAR_eventPicture
+	
+	trigger = {
+		owns = 5322
+		NOT = { th_is_or_was_tag = { tag = LCU } }
+		NOT = { th_is_or_was_tag = { tag = LEM } }
+		NOT = { th_is_or_was_tag = { tag = EIT } }
+		NOT = { th_is_or_was_tag = { tag = FUJ } }
+		NOT = { exists = LCU }
+		NOT = { exists = LEM }
+		EIT = {
+			exists = yes
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 7
+	}
+
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			set_global_flag = th_lunarian_left_the_moon
+		}
+	}
+
+	option = {
+		name = "TH_lunarian_events.14.a"
+		random_country = {
+			limit = {
+				th_is_or_was_tag = {
+					tag = EIT
+				}
+			}
+			country_event = {
+				id = TH_lunarian_events.15
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
+
+#Kaguya gets refugees from the moon
+country_event = {
+	id = TH_lunarian_events.15
+	title = "TH_lunarian_events.15.t"
+	desc = "TH_lunarian_events.15.desc"
+	picture = WATATSUKI_eventPicture
+	
+	is_triggered_only = yes
+	major = yes
+
+	option = {	#You have nerves to come here
+		name = "TH_lunarian_events.15.a"
+		add_country_modifier = {
+			name = th_lcu_refugees
+			duration = 9125
+		}
+		capital_scope = {
+			change_culture = Lunarian_culture
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 1
+		}
+		if = {
+			limit = {
+				NOT = { accepted_culture = Lunarian_culture }
+			}
+			add_accepted_culture = Lunarian_culture
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+
+	option = {	#*Kicks them out*
+		name = "TH_lunarian_events.15.b"
+		add_country_modifier = {
+			name = th_lcu_screw_you
+			duration = 9125
+		}
+		add_stability = 2
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+}

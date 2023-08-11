@@ -1,0 +1,1825 @@
+sff_slot1_branch = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = SFF
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	SFF_past_and_present = {
+		icon = mission_touhou_double_yuuka
+		required_missions = {  }
+		position = 1		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = sff_has_chosen_religious_path.tooltip
+				has_country_flag = sff_has_chosen_religious_path
+			}
+		}
+		effect = {
+			add_stability = 1
+		}
+	}
+
+	SFF_continuous_conflict = {
+		icon = mission_touhou_shrines
+		required_missions = { SFF_past_and_present }
+		position = 2		
+		trigger = {
+			religious_unity = 0.95
+			estate_loyalty = {
+ 			   estate = estate_church
+ 			   loyalty = 60
+			}
+		}
+		effect = {
+			change_government_reform_progress = 100
+		}
+	}
+	
+	SFF_rivalry_of_the_past = {
+		icon = mission_touhou_mima
+		required_missions = { SFF_conquer_dream_sisters }
+		position = 3
+		
+		provinces_to_highlight = {
+			area = World_of_fantasies
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		
+		trigger = {
+			owns_or_subject_of = 5033
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_power_of_undead
+				duration = 7300
+			}
+			Old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_old_hakurei_shrine_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	SFF_the_flower_tank = {
+		icon = mission_touhou_rika
+		required_missions = { SFF_rivalry_of_the_past }
+		position = 4
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5148
+				province_id = 5149
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		
+		trigger = {
+			owns_or_subject_of = 5148
+			owns_or_subject_of = 5149
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_flower_tank
+				duration = 7300
+			}
+			capital_scope = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+			}
+		}
+	}
+	
+	SFF_path_toward_makai = {
+		icon = mission_touhou_meira
+		required_missions = { SFF_the_flower_tank }
+		position = 5
+
+		provinces_to_highlight = {
+			OR = {
+				area = Old_hakurei_shrine_state
+				area = Eastern_old_hakurei_shrine_state
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			calc_true_if = {
+				amount = 6
+				all_province = {
+					OR = {
+						area = Old_hakurei_shrine_state
+						area = Eastern_old_hakurei_shrine_state
+					}
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		}
+		effect = {
+			Makai_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Makai_peninsula_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Western_makai_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Makai_coast_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	SFF_showdown_with_goddess = {
+		icon = mission_touhou_shinki
+		required_missions = { SFF_path_toward_makai }
+		position = 6
+		
+		provinces_to_highlight = {
+			OR = {
+				area = Makai_area
+				area = Makai_peninsula_state
+				area = Western_makai_state
+				area = Makai_coast_state
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		
+		trigger = {
+			calc_true_if = {
+				amount = 8
+				all_province = {
+					OR = {
+						area = Makai_area
+						area = Makai_peninsula_state
+						area = Western_makai_state
+						area = Makai_coast_state
+					}
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		}
+		effect = {
+			add_adm_power = 150
+			add_dip_power = 150
+			add_mil_power = 150
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 40
+			}
+			if = {
+				limit = {
+					NOT = { has_country_modifier = sff_defeat_the_goddess }
+				}
+				add_country_modifier = { 
+					name = sff_defeat_the_goddess
+					duration = 7300
+				}
+			}
+		}
+	}
+
+	SFF_judge_the_judge = {
+		icon = mission_touhou_judge_of_gensokyo
+		required_missions = {  }
+		position = 8
+		trigger = {
+			OR = {
+				AND = {
+					alliance_with = HIG
+					reverse_has_opinion = {
+						who = HIG
+						value = 125
+					}
+				}
+				calc_true_if = {
+					amount = 10
+					all_province = {
+						region = hell_region
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				AND = {
+					is_rival = HIG
+					has_spy_network_in = {
+						who = HIG
+						value = 75
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
+			owns_core_province = 5152
+		}
+		effect = {
+			capital_scope = {
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 4
+			}
+			#TODO
+			# Change number of found plant = 1 Need a variable to count found plants here. Sorry I'm too lazy to write it
+			custom_tooltip = th_sff_has_collected_higan_flower		#SFF's core area gain permanent provincial buff
+			hidden_effect = {
+				th_sff_increment_flower_counter = yes
+				set_country_flag = sff_has_collected_higan_flower
+			}
+			5152 = { add_province_triggered_modifier = sff_higan_flower_buff }
+		}
+	}
+	
+	SFF_the_land_where_sunrise = {
+		icon = mission_touhou_twilight
+		required_missions = { SFF_judge_the_judge }
+		position = 10
+
+		provinces_to_highlight = {
+			OR = {
+				owned_by = ASK
+				province_id = 1020
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			if = {
+				limit = {
+					exists = ASK
+				}
+				ASK = {
+					OR = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+						is_subject_of = ROOT
+					}
+				}
+			}
+			else = {
+				1020 = {
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+				}
+			}
+			prestige = 40
+			dip_power = 500
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
+			owns_core_province = 5152
+		}
+		effect = {
+			country_event = {
+				id = flavor_sff.109
+			}
+		}
+	}
+}
+
+sff_slot2_branch = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = SFF
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	SFF_prepare_war = {
+		icon = mission_assemble_an_army
+		required_missions = {  }
+		position = 1
+		trigger = {
+			num_of_generals = 1
+			army_size_percentage = 0.9
+		}
+		effect = {
+			Gengetsu_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = GNU
+				}
+				add_casus_belli = {
+					target = GNU
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+			add_country_modifier = {
+				name = sff_prepare_of_war
+				duration = 7300
+			}
+		}
+	}
+	
+	SFF_conquer_dream_sisters = {
+		icon = mission_touhou_mugen_sisters
+		required_missions = { SFF_prepare_war }
+		position = 2
+
+		provinces_to_highlight = {
+			area = Gengetsu_state
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			Gengetsu_state = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			OR = {
+				NOT = { exists = GNU }
+				GNU = {
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = SFF_conquer_dream_sisters_tt
+			if = {
+				limit = {
+					NOT = { exists = GNU }
+				}
+				define_general = {
+					shock = 6
+					fire = 3
+					manuever = 3
+					siege = 1
+					name = "Gengetsu of the Dream World"
+					female = yes
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = sff_cooperation_of_dream_sisters
+					duration = 7300
+				}
+			}
+			if = {
+				limit = {
+					exists = RAI
+				}
+				add_casus_belli = {
+					target = RAI
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+			if = {
+				limit = {
+					exists = SEK
+				}
+				add_casus_belli = {
+					target = SEK
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+			sunflower_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eientei_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Bamboo_forest_of_the_lost = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Fujiwara_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	SFF_suppress_neighborhood = {			
+		icon = mission_touhou_grasshoot_youkai
+		required_missions = { SFF_conquer_dream_sisters }
+		position = 3
+		
+		provinces_to_highlight = {
+			area = Raiko_Seki_state
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		
+		trigger = {
+			Raiko_Seki_state = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			AND = {
+				OR = {
+					NOT = { exists = RAI }
+					RAI = {
+						is_subject_of = ROOT
+					}
+				}
+				OR = {
+					NOT = { exists = SEK }
+					SEK = {
+						is_subject_of = ROOT
+					}	
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_rally_of_forces
+				duration = 7300
+			}
+			Human_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Kourindou_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	SFF_conflict_with_humans = {
+		icon = mission_touhou_human_capital
+		required_missions = { SFF_suppress_neighborhood }
+		position = 4
+
+		provinces_to_highlight = {
+			area = Human_state
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			calc_true_if = {
+				amount = 3
+				all_province = {
+					area = Human_state
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		}
+		effect = {
+			add_years_of_income = 2
+			Forest_of_magic = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Forest_edge_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Forest_coast_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					exists = FOM
+				}
+				add_casus_belli = {
+					target = FOM
+					type = cb_vassalize_mission
+					months = 900
+				}
+			}
+		}
+	}
+	
+	SFF_ultimate_magic = {
+		icon = mission_touhou_empress_alice
+		required_missions = { SFF_conflict_with_humans }
+		position = 5
+		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5089
+				province_id = 5090
+				province_id = 5093
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			owns_or_subject_of = 5089
+			owns_or_subject_of = 5090			
+			owns_or_subject_of = 5093
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_ultimate_magic
+				duration = 7300
+			}
+			Mayohiga_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Ran_state = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			Eastern_mountains = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	
+	SFF_a_mansion_of_the_lake = {   # change localization to defeat Yukari instead
+		icon = mission_touhou_ominous_yukari
+		required_missions = { SFF_ultimate_magic }
+		position = 6
+		
+		provinces_to_highlight = {
+			OR = {
+				area = Mayohiga_state
+				area = Ran_state
+				area = Eastern_mountains
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}		
+		trigger = {
+			if = {
+				limit = {
+					exists = NMG
+					NMG = {
+						was_tag = MHG
+						is_subject = NO
+						owns = 4989
+					}
+				}
+				is_in_war = {
+					attacker_leader = ROOT
+					defender_leader = NMG
+					war_score = 80
+				}
+				NMG = {
+					4989 = {
+						controlled_by = ROOT
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					exists = MHG
+					MHG = {
+						is_subject = NO
+						owns = 4989
+					}
+				}
+				is_in_war = {
+					attacker_leader = ROOT
+					defender_leader = MHG
+					war_score = 80
+				}
+				MHG = {
+					4989 = {
+						controlled_by = ROOT
+					}
+				}
+			}
+			else = {
+				calc_true_if = {
+					all_province = {
+						OR = {
+							area = Mayohiga_state
+							area = Ran_state
+							area = Eastern_mountains
+						}
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					amount = 5
+				}
+				owns_or_subject_of = 4989
+			}
+		}
+		effect = {
+			add_prestige = 25
+			add_adm_power = 150
+			add_dip_power = 150
+			add_mil_power = 150
+			if = {
+				limit = {
+					NMG = {
+						exists = yes
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+				country_event = {
+					id = flavor_sff.3
+				}
+			}
+			else_if = {
+				limit = {
+					MHG = {
+						exists = yes
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+				country_event = {
+					id = flavor_sff.3
+				}
+			}
+		}
+	}
+	
+	SFF_empire_of_the_sunflower = {
+		icon = mission_touhou_yuuka_ominous
+		required_missions = {  }
+		position = 7
+		trigger = {
+			total_development = 650
+			stability = 2
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
+			add_country_modifier = {
+				name = sff_empire_of_the_sunflower
+				duration = -1
+			}
+		}
+	}
+
+	SFF_forest_of_the_outside_1 = { #amazon
+		icon = mission_touhou_rainforest
+		required_missions = { SFF_empire_of_the_sunflower }
+		
+		provinces_to_highlight = {
+			province_id = 815
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		position = 8
+		trigger = {
+			815 = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
+			owns_core_province = 5152
+		}
+		effect = {
+			capital_scope = {
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 4
+			}
+			# Change number of found plant = 1 Need a variable to count found plants here. Sorry I'm too lazy to write it
+			custom_tooltip = th_sff_has_collected_amazon_flower		#SFF's core area gain permanent provincial buff
+			hidden_effect = {
+				th_sff_increment_flower_counter = yes
+				set_country_flag = sff_has_collected_amazon_flower
+			}
+			coastal_kongo = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			5152 = { add_province_triggered_modifier = sff_amazon_plants_buff }
+		}
+	}
+	
+	SFF_forest_of_the_outside_2 = { #congo forest
+		icon = mission_touhou_mangrove
+		required_missions = { SFF_forest_of_the_outside_1 }
+		
+		provinces_to_highlight = {
+			province_id = 4079
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		position = 9
+		trigger = {
+			OR = {
+				4079 = {
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
+						controlled_by = ROOT
+					}
+				}
+				AND = {
+					treasury = 400
+					4079 = {
+						range = ROOT
+						owner = {
+							has_opinion = { who = ROOT value = 100 }
+						}					
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
+			owns_core_province = 5152
+		}
+		effect = {
+			if = {
+				limit = {
+					4079 = {
+						NOT = {
+							OR = {
+								country_or_non_sovereign_subject_holds = ROOT
+								controlled_by = ROOT
+							}
+						}
+					}
+				}
+				add_treasury = -400
+				4079 = {
+					owner = {
+						add_treasury = 400
+					}
+				}
+			}
+			capital_scope = {
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 4
+			}
+			# Change number of found plant = 1 Need a variable to count found plants here. Sorry I'm too lazy to write it
+			custom_tooltip = th_sff_has_collected_congo_flower		#SFF's core area gain permanent provincial buff
+			hidden_effect = {
+				th_sff_increment_flower_counter = yes
+				set_country_flag = sff_has_collected_congo_flower
+			}
+			karelia_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			5152 = { add_province_triggered_modifier = sff_congo_rainforest_buff }
+		}
+	}
+	
+	SFF_forest_of_the_outside_3 = { #finnish
+		icon = mission_touhou_snow_tree
+		required_missions = { SFF_forest_of_the_outside_2 }
+		
+		provinces_to_highlight = {
+			province_id = 30
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		position = 10
+		trigger = {
+			OR = {
+				30 = {
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
+						controlled_by = ROOT
+					}
+				}
+				AND = {
+					treasury = 800
+					30 = {
+						range = ROOT
+						owner = {
+							has_opinion = { who = ROOT value = 125 }
+						}					
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
+			owns_core_province = 5152
+		}
+		effect = {
+			if = {
+				limit = {
+					30 = {
+						NOT = {
+							OR = {
+								country_or_non_sovereign_subject_holds = ROOT
+								controlled_by = ROOT
+							}
+						}
+					}
+				}
+				add_treasury = -800
+				30 = {
+					owner = {
+						add_treasury = 800
+					}
+				}
+			}
+			capital_scope = {
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 4
+			}
+			# Change number of found plant = 1 Need a variable to count found plants here. Sorry I'm too lazy to write it
+			custom_tooltip = th_sff_has_collected_finnish_flower		#SFF's core area gain permanent provincial buff
+			hidden_effect = {
+				th_sff_increment_flower_counter = yes
+				set_country_flag = sff_has_collected_finnish_flower
+			}
+			5152 = { add_province_triggered_modifier = sff_finnish_wood_buff }
+		}
+	}
+	
+	SFF_empire_of_the_sun = {
+		icon = mission_touhou_yuuka_empire
+		required_missions = {
+			SFF_the_land_where_sunrise
+			SFF_forest_of_the_outside_3
+			SFF_upgrade_sun_garden_lv5
+		}
+		position = 11
+		trigger = {
+			if = {
+				limit = { has_dlc = "Emperor" }
+				is_hegemon = yes
+			}
+			else = {
+				OR = {
+					monthly_income = 1000 
+					navy_size = 500
+					army_size = 1000
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_manifestation_of_nature
+				duration = -1
+			}
+		}
+	}
+}
+
+sff_slot3_branch = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = SFF
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	SFF_bamboo_forest_of_the_lost = {
+		icon = mission_touhou_medicine
+		required_missions = { SFF_conquer_dream_sisters }
+		position = 3
+		
+		provinces_to_highlight = {
+			province_id = 5115
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			owns_or_subject_of = 5115
+		}
+		effect = {
+			northern_polynesia_area = {
+				discover_country = ROOT
+			}
+			add_country_modifier = {
+				name = sff_kaguyas_diary
+				duration = 9125
+			}		
+		}
+	}
+	
+	SFF_upgrade_sun_garden_lv2 = {
+		icon = mission_touhou_yuuka_garden3
+		required_missions = {  }
+		position = 4		
+		provinces_to_highlight = {
+			province_id = 5152
+		}
+		
+		trigger = {
+			5152 = {
+				is_capital_of = ROOT
+				development = 30
+			}
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
+		}
+
+		effect = {
+			th_sff_increment_sun_garden_counter = yes
+			sff_increase_sun_power_effect = yes
+		}
+	}
+
+	SFF_upgrade_sun_garden_lv3 = {
+		icon = mission_touhou_yuuka_garden2
+		required_missions = { SFF_upgrade_sun_garden_lv2 }
+		position = 6
+		
+		provinces_to_highlight = {
+			province_id = 5152
+		}		
+		
+		trigger = {
+			5152 = {
+				is_capital_of = ROOT
+				development = 40
+			}
+			num_of_cities = 20
+			custom_trigger_tooltip = {
+				tooltip = SFF_had_the_garden_event
+				has_country_flag = sff_has_variables_set
+			}
+		}
+		effect = {
+			th_sff_increment_sun_garden_counter = yes
+			sff_increase_sun_power_effect = yes
+		}
+	}
+
+	SFF_upgrade_sun_garden_lv4 = {
+		icon = mission_touhou_yuuka_garden
+		required_missions = { 
+			SFF_upgrade_sun_garden_lv3 
+		}
+		position = 8
+		
+		provinces_to_highlight = {
+			province_id = 5152
+		}		
+		
+		trigger = {
+			5152 = {
+				is_capital_of = ROOT
+				development = 60
+			}
+			num_of_cities = 40
+			custom_trigger_tooltip = {
+				tooltip = SFF_upgrade_sun_garden_lv4_tt
+				th_sff_compare_flower_count = {
+					value = 2
+				}
+			}
+		}
+		effect = {
+			th_sff_increment_sun_garden_counter = yes
+			sff_increase_sun_power_effect = yes
+			sff_enable_drain_nature_action = yes
+			country_event = {
+				id = flavor_sff.112
+			}
+		}
+	}
+
+	SFF_upgrade_sun_garden_lv5 = {
+		icon = mission_touhou_yuuka_shrine
+		required_missions = { SFF_upgrade_sun_garden_lv4 }
+		position = 10
+		
+		provinces_to_highlight = {
+			province_id = 5152
+		}
+		
+		trigger = {
+			5152 = {
+				is_capital_of = ROOT
+				development = 80
+			}
+			num_of_cities = 80
+			has_country_modifier = sff_garden_of_the_nature
+			custom_trigger_tooltip = {
+				tooltip = SFF_upgrade_sun_garden_lv5_tt
+				th_sff_compare_flower_count = {
+					value = 4
+				}
+			}
+		}
+		effect = {
+			th_sff_increment_sun_garden_counter = yes
+			sff_increase_sun_power_effect = yes
+			country_event = {
+				id = flavor_sff.14
+			}
+		}
+	}
+}
+
+sff_slot4_branch = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = SFF
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	SFF_fence_of_the_garden = {
+		icon = mission_conquer_50_development
+		required_missions = { }
+		position = 1
+		trigger = {
+			num_of_owned_provinces_with = {
+				OR = {
+					area = Sunny_plains
+					area = Perfect_cut_coast
+				}
+				value = 2
+				province_has_current_tech_fort_trigger = yes
+			}
+		}
+		effect = {
+			Sunny_plains = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = sff_reinforcement_of_security_in_the_garden
+					duration = 7300
+				}
+			}
+			Perfect_cut_coast = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = sff_reinforcement_of_security_in_the_garden
+					duration = 7300
+				}
+			}
+		}
+	}
+
+	SFF_build_manufactories = {
+		icon = mission_have_manufactories
+		required_missions = { SFF_fence_of_the_garden }
+		position = 2
+		
+		provinces_to_highlight = {
+			OR = {
+				area = Sunny_plains
+				area = Perfect_cut_coast
+				area = Gengetsu_state
+				area = Raiko_Seki_state
+			}
+			country_or_non_sovereign_subject_holds = ROOT
+		}
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 10
+				OR = {
+					area = Sunny_plains
+					area = Perfect_cut_coast
+					area = Gengetsu_state
+					area = Raiko_Seki_state
+				}
+				has_manufactory_trigger = yes
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_high_quality_fertilizer
+				duration = 7300
+			}
+			capital_scope = {
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 2
+			}
+		}	
+	}
+
+	SFF_a_vast_ocean = {
+		icon = mission_touhou_hakurai_barrier
+		required_missions = {  }
+		position = 3
+		trigger = {
+			AND = {
+				north_east_pacific_region = { has_discovered = ROOT }
+				south_east_pacific_region = { has_discovered = ROOT }
+			}
+		}
+		effect = {
+			1240 = {
+				add_core = ROOT
+			}
+			4934 = {
+				add_core = ROOT
+			}
+			4935 = {
+				add_core = ROOT
+			}
+			4936 = {
+				add_core = ROOT
+			}
+		}
+	}
+
+	SFF_land_beyond_the_ocean = {
+		icon = mission_plus_ultra
+		required_missions = {
+			SFF_bamboo_forest_of_the_lost
+			SFF_a_vast_ocean
+		}
+		
+		provinces_to_highlight = {
+			OR = {
+				colonial_region = colonial_colombia
+				colonial_region = colonial_peru
+				colonial_region = colonial_la_plata
+				colonial_region = colonial_mexico
+				colonial_region = colonial_california
+				colonial_region = colonial_alaska
+			}
+			NOT = {
+				has_discovered = ROOT
+			}
+		}
+		position = 4
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = sff_discover_american_colonial_regions.tooltip
+				OR = {
+					colonial_colombia = { has_discovered = ROOT }
+					colonial_peru = { has_discovered = ROOT }
+					colonial_la_plata = { has_discovered = ROOT }
+					colonial_mexico = { has_discovered = ROOT }
+					colonial_california = { has_discovered = ROOT }
+					colonial_alaska = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			th_enable_exploration_without_explo_ideas = yes
+			define_conquistador = {
+				name = "Elly"
+				shock = 4
+				fire = 3
+				manuever = 3
+				siege = 1
+				female = yes
+			}
+		}
+	}
+
+	SFF_native_of_the_high_mountain = {
+		icon = mission_mayan_conquest
+		required_missions = { SFF_land_beyond_the_ocean }
+		position = 5
+		provinces_to_highlight = {
+			region = peru_region
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = SFF_native_of_the_high_mountain_tt
+				if = {
+					limit = {
+						any_country = {
+							religion = inti
+							capital_scope = {
+								region = peru_region
+							}
+						}
+					}
+					any_known_country = {
+						religion = inti
+						capital_scope = {
+							region = peru_region
+						}
+					}
+				}
+				else = {
+					any_known_country = {
+						capital_scope = {
+							region = peru_region
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			th_colonize_dev_province = {
+				province = 2002
+			}
+			peru_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_claim = ROOT
+			}
+			upper_peru_region = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_claim = ROOT
+			}
+			if = {
+				limit = {
+					any_country = {
+						religion = inti
+						capital_scope = {
+							region = peru_region
+						}
+					}
+				}
+				country_event = {
+					id = flavor_sff.8
+				}
+			}
+		}
+	}
+	
+	SFF_belly_button_of_the_world = {
+		icon = mission_touhou_youkai_mountain
+		required_missions = { SFF_native_of_the_high_mountain }
+		position = 6
+
+		provinces_to_highlight = {
+			OR = {
+				region = peru_region
+				region = upper_peru_region
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			OR = {
+				AND = {
+					NOT = { exists = CSU }
+					NOT = { exists = INC }
+				}
+				if = {
+					limit = { exists = INC }
+					INC = {
+						vassal_of = ROOT
+					}
+				}
+				else = {
+					CSU = {
+						vassal_of = ROOT
+					}
+				}
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					region = peru_region
+					region = upper_peru_region
+				}
+				value = 15
+			}
+			owns_or_non_sovereign_subject_of = 808
+		}
+		effect = {
+			if = {
+				limit = {
+					CSU = { vassal_of = ROOT }
+					NOT = { exists = INC }
+				}
+				country_event = {
+					id = flavor_sff.9
+				}
+			}
+			else_if = {
+				limit = {
+					INC = { vassal_of = ROOT }
+					NOT = { exists = CSU }
+				}
+				country_event = {
+					id = flavor_sff.10
+				}	
+			}
+			else = {
+				add_treasury = 800
+				add_country_modifier = {
+					name = sff_conqueror_of_high_mountain
+					duration = 7300
+				}
+			}
+		}
+	}
+
+	SFF_continent_of_the_nature = {
+		icon = mission_potosi_silver
+		required_missions = { SFF_belly_button_of_the_world }
+		position = 7
+		
+		provinces_to_highlight = {
+			superregion = andes_superregion
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 30
+				superregion = andes_superregion
+				is_city = yes
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_garden_of_the_nature
+				duration = -1
+			}
+		}
+	}
+
+	SFF_invader_from_the_west = {
+		icon = mission_iberian_conquistador
+		required_missions = {
+			SFF_continent_of_the_nature
+		}
+		position = 9
+		trigger = {
+			is_year = 1600
+			custom_trigger_tooltip = {
+				tooltip = SFF_invader_from_the_west.tt
+				peru_region = {
+					region_for_scope_province = {
+						type = all
+						NOT = {
+							owner = {
+								technology_group = western
+							}
+						}
+					}
+				}
+				upper_peru_region = {
+					region_for_scope_province = {
+						type = all
+						NOT = {
+							owner = {
+								technology_group = western
+							}
+						}
+					}
+				}
+			}	
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_exile_the_invader
+				duration = 9125
+			}		
+			alentejo_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			toledo_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			home_counties_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			ile_de_france_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}	
+		}
+	}
+
+	SFF_land_europe = {
+		icon = Burn_Wooden_Wall
+		required_missions = {
+			SFF_invader_from_the_west
+		}		
+
+		position = 10
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 3
+				superregion = europe_superregion
+				island = no
+			}
+		}
+		effect = {
+			country_event = {
+				id = flavor_sff.13
+			}
+			custom_tooltip = sff_gain_claim_on_europe
+			hidden_effect = {
+				iberia_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { area = macaronesia_area }
+						NOT = { area = baleares_area }
+					}
+					add_claim = ROOT
+				}
+				british_isles_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+						NOT = { area = munster_area }
+						NOT = { area = connacht_area }
+						NOT = { area = leinster_area }
+						NOT = { area = ulster_area }
+						NOT = { area = kingdom_of_the_isles_area }
+						NOT = { area = highlands_area }
+						NOT = { area = lowlands_area }
+					}
+					add_claim = ROOT
+				}
+				france_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+						NOT = { is_permanent_claim = ROOT }
+					}
+					add_claim = ROOT
+				}
+				low_countries_region = {
+					limit = {
+						NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+					}
+					add_claim = ROOT
+				}	
+			}
+		}
+	}
+
+	SFF_sunflower_invasion = {
+		icon = mission_touhou_yuuka_winning
+		required_missions = {
+			SFF_land_europe
+		}
+		position = 11
+		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 227
+				province_id = 219
+				province_id = 236
+				province_id = 183
+				province_id = 97
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 30
+				superregion = europe_superregion
+			}
+			calc_true_if = {
+				owns_core_province = 227
+				owns_core_province = 219
+				owns_core_province = 236
+				owns_core_province = 183
+				owns_core_province = 97
+				amount = 2
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_terror_of_europe
+				duration = 9125
+			}
+		}
+	}
+}
+
+sff_slot5_branch = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = SFF
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+
+	SFF_necessity_of_the_navy = {
+		icon = mission_rb_a_mighty_fleet
+		required_missions = {  }
+		position = 1
+		trigger = {
+			navy_size_percentage = 1
+			treasury = 100
+		}
+		effect = {
+			add_treasury = -75
+			add_country_modifier = {
+				name = sff_effort_for_fleet
+				duration = 7300
+			}
+			define_explorer = {
+				shock = 1
+				fire = 2
+				manuever = 5
+				siege = 0
+				name = "Kurumi"
+				female = yes
+			}
+		}
+	}
+
+	th_sff_gensokyo_break_the_barrier = {
+		icon = mission_establish_high_seas_navy
+		required_missions = { SFF_necessity_of_the_navy }
+		position = 2
+		provinces_to_highlight = {
+			OR = {
+				region = moluccas_region
+				region = australia_region
+				region = indo_china_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_break_the_barrier_tt
+				OR = {
+					moluccas_region = { has_discovered = ROOT }
+					australia_region = { has_discovered = ROOT }
+					indo_china_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_dip_power = 75
+			add_navy_tradition = 35
+		}
+	}
+	
+	th_sff_gensokyo_discover_europe = {
+		icon = mission_invade_england
+		required_missions = { th_sff_gensokyo_break_the_barrier }
+		position = 3
+		provinces_to_highlight = {
+			OR = {
+				region = iberia_region
+				region = france_region
+				region = low_countries_region
+				region = british_isles_region
+			}
+			NOT = { has_discovered = ROOT }
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = th_discovers_europe.tooltip
+				OR = {
+					iberia_region = { has_discovered = ROOT }
+					france_region = { has_discovered = ROOT }
+					low_countries_region = { has_discovered = ROOT }
+					british_isles_region = { has_discovered = ROOT }
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = "touhou_discovery_of_europe"
+				duration = 7300
+			}
+			country_event = { id = TH_mission_events.4 }			
+		}
+	}
+
+	SFF_training_ocean_navy = {
+		icon = mission_corsairs_of_the_north_sea
+		required_missions = { SFF_a_vast_ocean }
+		position = 4
+		trigger = {
+			num_of_total_ports = 20
+			OR = {
+				num_of_heavy_ship = 30
+				num_of_light_ship = 50
+			}
+			if = {
+				limit = {
+					has_dlc = "Golden Century"
+				}
+				has_flagship = yes
+			}
+			else = {
+				navy_tradition = 40
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_searching_plants
+				duration = 9125
+			}
+		}
+	}
+
+	SFF_focus_on_nature_fight = {
+		icon = touhou_assemble_army
+		required_missions = {  }
+		position = 5
+		trigger = {
+			reform_level = 6
+			monthly_mil = 13
+			th_has_mil_advisor_3 = yes
+			government = monarchy
+		}
+		effect = {
+			add_army_tradition = 20
+			add_government_reform = Gensokyan_sff_sword_of_nature
+			add_country_modifier = {
+				name = sff_elite_gardener
+				duration = -1
+			}
+		}
+	}
+	
+	SFF_gardener_corps = {
+		icon = mission_manchu_warrior
+		required_missions = { }
+		position = 6
+		trigger = {
+			estate_influence = {
+				estate = estate_nobles
+				influence = 60
+			}
+			estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 60
+			}
+			num_of_generals = 3
+			has_commanding_three_star = yes
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_loyalty_gardener
+				duration = -1
+			}
+		}
+	}
+	
+	SFF_establish_military_educational_institution = {
+		icon = Compulsory_Education
+		required_missions = { SFF_gardener_corps }
+		position = 8
+		trigger = {
+			army_tradition = 90
+			army_professionalism = 1
+			calc_true_if = {
+				amount = 10
+				all_owned_province = {
+					has_building = university
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_military_academy
+				duration = -1
+			}
+		}
+	}
+
+	SFF_quantity_and_quality = {
+		icon = mission_touhou_army
+		required_missions = { SFF_establish_military_educational_institution }
+		position = 10
+		trigger = {
+			army_size = 150
+			has_global_modifier_value = {
+				which = discipline
+				value = 0.25
+			}
+			artillery_fraction = 0.3
+		}
+		effect = {
+			add_country_modifier = {
+				name = sff_invincible_army
+				duration = -1
+			}
+		}
+	}
+}

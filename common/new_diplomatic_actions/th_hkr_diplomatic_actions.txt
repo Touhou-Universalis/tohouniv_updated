@@ -1,0 +1,166 @@
+#HKR youkai hunting
+th_hunt_youkais = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = HKR
+			}
+			has_country_flag = th_enable_youkai_hunt
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				NOT = { adm_power = 30 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_ROOT_REQUIRES_30_ADM_TT
+				adm_power = 30
+			}
+		}
+		if = {
+			limit = {
+				NOT = { mil_power = 15 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_ROOT_REQUIRES_15_MIL_TT
+				mil_power = 15
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_has_already_youkai_hunted
+					NOT = {
+						had_country_flag = {
+							flag = th_has_already_youkai_hunted
+							days = 1826
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_HUNTEDED_YOUKAI_IN_FROM_TT
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_has_already_youkai_hunted }
+						had_country_flag = {
+							flag = th_has_already_youkai_hunted
+							days = 1826
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = th_youkai_hunt_charges
+						value = 1
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_NO_YOUKAI_HUNT_CHARGES_LEFT_TT
+				check_variable = {
+					which = th_youkai_hunt_charges
+					value = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = th_sent_youkai_hunter
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_SENT_YOUKAI_HUNTER_TT
+				NOT = { has_country_modifier = th_sent_youkai_hunter }
+			}
+		}
+		if = {
+			limit = {
+				is_rival = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_RIVAL
+				NOT = { is_rival = FROM }
+			}
+		}
+		if = {
+			limit = {
+				is_enemy = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_ENEMY
+				NOT = { is_enemy = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_AT_WAR_WITH_FROM
+				NOT = { war_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					reverse_has_opinion = {
+						who = FROM
+						value = -25
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_HAS_AT_LEAST_NEGATIVE_25_OPINION_TT
+				reverse_has_opinion = {
+					who = FROM
+					value = -25
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		add_adm_power = -30
+		add_mil_power = -15
+		subtract_variable = {
+			which = th_youkai_hunt_charges
+			value = 1
+		}
+		add_country_modifier = {
+			name = th_sent_youkai_hunter
+			duration = 30
+			hidden = yes
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = th_youkai_hunt_refusal_counter_flag }
+			}
+			set_country_flag = th_youkai_hunt_refusal_counter_flag
+			set_variable = {
+				which = th_youkai_hunt_refusal_counter
+				value = 0
+			}
+		}
+		FROM = {
+			clr_country_flag = th_has_already_youkai_hunted
+			country_event = {
+				id = th_diplo_events.18
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}

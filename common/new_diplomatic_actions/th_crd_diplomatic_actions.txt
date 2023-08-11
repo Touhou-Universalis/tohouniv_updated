@@ -1,0 +1,1355 @@
+###CRD MIND READING ABILITIES###
+
+#CRD recollect memory -> copies a special diplomatic move or mechanic for a one time use of the target
+th_recollect_memory = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		always = no #On ice for now
+		has_government_attribute = enables_satori_advanced_subject_interactions
+		FROM = { is_free_or_tributary_trigger = yes }
+		th_target_is_interesting_to_copy_off = {
+			target = FROM
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				has_country_flag = th_upgraded_satori_abilities
+			}
+			has_spy_network_in = {
+				who = FROM
+				value = 25
+			}
+		}
+		else = {
+			has_spy_network_in = {
+				who = FROM
+				value = 50
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_copy_ability_from_target = {
+			target = FROM
+			duration = 1825
+		}
+		if = {
+			limit = {
+				has_country_flag = th_upgraded_satori_abilities
+			}
+			add_spy_network_in = {
+				who = FROM
+				value = -25
+			}
+		}
+		else = {
+			add_spy_network_in = {
+				who = FROM
+				value = -50
+			}
+		}
+		FROM = {
+            set_country_flag = th_recollected_memories_by_@ROOT
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD recollect memory -> copies a special diplomatic move or mechanic for a one time use of the target (Subjects don't need to be spied on for this)
+th_recollect_memory_subject = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		always = no #On ice for now
+		FROM = { th_is_subject_other_than_tributary_trigger = yes is_subject_of = ROOT }
+		has_government_attribute = enables_satori_advanced_subject_interactions
+		th_target_is_interesting_to_copy_off = {
+			target = FROM
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_copy_ability_from_target = {
+			target = FROM
+			duration = 1825
+		}
+		FROM = {
+            set_country_flag = th_recollected_memories_by_@ROOT
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+###CRD NORMAL SATORI VASSAL INTERACTIONS###
+#CRD create false memories to cleanse AE off subject
+th_create_false_memories = {
+	category = th_diplo_action	
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			AND = {
+				th_has_copied_from_target = {
+					target = CRD
+				}
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				has_government_attribute = enables_satori_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+	}
+	is_allowed = {
+		custom_trigger_tooltip = {
+			tooltip = th_create_false_memories_off_cd
+			NOT = { has_country_modifier = th_false_memory_cd }
+		}
+		FROM = {
+			has_opinion_modifier = {
+				who = ROOT
+				modifier = aggressive_expansion
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		variable_arithmetic_trigger = {
+			custom_tooltip = th_create_false_memories_tt
+			export_to_variable = {
+				which = th_our_dip_power
+				value = trigger_value:dip_power
+			}
+			export_to_variable = {
+				which = th_from_total_development
+				value = trigger_value:total_development
+				who = FROM
+			}
+			divide_variable = {
+				which = th_from_total_development
+				value = 2
+			}			
+			check_variable = { which = th_our_dip_power which = th_from_total_development }
+		}
+	}
+	on_accept = {
+		th_clear_copy_flag = yes
+		export_to_variable = {
+			which = th_dip_power_cost
+			value = trigger_value:total_development
+			who = FROM
+		}
+		divide_variable = {
+			which = th_dip_power_cost
+			value = 2
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_dip_power_cost
+					value = 1
+				}
+			}
+			add_dip_power = -1
+			subtract_variable = {
+				which = th_dip_power_cost
+				value = 1
+			}
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = th_false_memory_cd
+				duration = 3650
+				hidden = yes
+			}
+		}
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			remove_opinion = {
+				who = ROOT
+				modifier = aggressive_expansion
+			}
+		}
+	}
+
+	ai_will_do = {
+		FROM = {
+			NOT = {
+				has_opinion = {
+					who = ROOT
+					value = 0
+				}
+			}
+			has_opinion_modifier = {
+				who = ROOT
+				modifier = aggressive_expansion
+			}
+		}
+	}
+}
+
+#CRD will send 10k manpower to subject
+th_former_hell_reinforcement = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			AND = {
+				th_has_copied_from_target = {
+					target = CRD
+				}
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				has_government_attribute = enables_satori_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+	}
+
+	is_allowed = {
+		manpower = 10
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			add_manpower = 10
+			add_opinion = {
+				who = ROOT
+				modifier = th_reinforcement_arrives
+			}
+		}
+		add_manpower = -10
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD will get manpower from subject
+th_conscript_soldiers_from_vassal = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			AND = {
+				th_has_copied_from_target = {
+					target = CRD
+				}
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				has_government_attribute = enables_satori_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+	}
+
+	is_allowed = {
+		custom_trigger_tooltip = {
+			tooltip = th_from_is_loyal
+			FROM = {
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_disloyal
+					}
+				}
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rebellious
+					}
+				}
+			}
+		}
+		FROM = { manpower = 1 }
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		export_to_variable = {
+			which = th_manpower_to_conscript
+			value = manpower
+			who = FROM
+		}
+		divide_variable = {
+			which = th_manpower_to_conscript
+			value = 2	#50% of manpower gets to CRD
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_manpower_to_conscript
+					value = 0.5
+				}
+			}
+			add_manpower = 0.5
+			FROM = {
+				add_manpower = -0.5
+			}
+			subtract_variable = {
+				which = th_manpower_to_conscript
+				value = 0.5
+			}
+		}
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			add_liberty_desire = 25
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD unlocks full potential of humans
+th_unlock_magical_potential_of_human_subject = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			AND = {
+				th_has_copied_from_target = {
+					target = CRD
+				}
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				has_government_attribute = enables_satori_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+		FROM = {
+			NOT = { th_has_touhou_technology = yes }
+		}
+	}
+
+	is_allowed = {
+		always = yes
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			change_technology_group = tech_gensokyan
+			change_unit_type = tech_gensokyan
+			add_liberty_desire = -10
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD gives vassal admin mana
+th_send_administrative_support = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			AND = {
+				th_has_copied_from_target = {
+					target = CRD
+				}
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				has_government_attribute = enables_satori_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+	}
+
+	is_allowed = {
+		adm_power = 75
+		custom_trigger_tooltip = {
+			tooltip = th_send_administrative_support_tt
+			FROM = {
+				NOT = { has_country_modifier = th_admin_support }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		add_adm_power = -75
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			add_country_modifier = {
+				name = th_admin_support
+				duration = 3650
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD influences a vassal greatly
+th_influence_vassal = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			AND = {
+				th_has_copied_from_target = {
+					target = CRD
+				}
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				has_government_attribute = enables_satori_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+	}
+
+	is_allowed = {
+		variable_arithmetic_trigger = {
+			custom_tooltip = th_have_two_years_worth_of_income_of_from
+			export_to_variable = {
+				which = th_our_money_for_influence
+				value = treasury
+			}
+			export_to_variable = {
+				which = th_from_yearly_income
+				value = monthly_income
+				who = FROM
+			}
+			multiply_variable = { which = th_from_yearly_income value = 24 }			
+			check_variable = { which = th_our_money_for_influence which = th_from_yearly_income }
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_influence_vassal_tt
+			FROM = {
+				NOT = { has_country_modifier = th_influencing_vassal }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		export_to_variable = {
+			which = th_from_yearly_income
+			value = monthly_income
+			who = FROM
+		}
+		multiply_variable = { 
+			which = th_from_yearly_income 
+			value = 24 
+		}	
+		while = {
+			limit = {
+				check_variable = {
+					which = th_from_yearly_income
+					value = 1
+				}
+			}
+			add_treasury = -1
+			subtract_variable = {
+				which = th_from_yearly_income 
+				value = 1
+			}
+		}
+		#Don't forget the decimals
+		multiply_variable = { 
+			which = th_from_yearly_income 
+			value = 100
+		}	
+		while = {
+			limit = {
+				check_variable = {
+					which = th_from_yearly_income
+					value = 1
+				}
+			}
+			add_treasury = -0.01
+			subtract_variable = {
+				which = th_from_yearly_income 
+				value = 1
+			}
+		}
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			add_country_modifier = {
+				name = th_influencing_vassal
+				duration = 3650
+			}
+			add_opinion = {
+				modifier = th_influenced_vassal
+				who = ROOT
+			}
+			add_trust = {
+				who = ROOT
+				value = 5
+				mutual = yes
+			}
+			add_liberty_desire = -5
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD will get money from subject
+th_collect_extra_tax_from_vassal = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			AND = {
+				th_has_copied_from_target = {
+					target = CRD
+				}
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				has_government_attribute = enables_satori_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+	}
+
+	is_allowed = {
+		custom_trigger_tooltip = {
+			tooltip = th_from_is_loyal
+			FROM = {
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_disloyal
+					}
+				}
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rebellious
+					}
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		export_to_variable = {
+			which = th_from_money_to_tax
+			value = years_of_income
+			who = FROM
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_from_money_to_tax
+					value = 1
+				}
+			}
+			add_treasury = 1
+			subtract_variable = {
+				which = th_from_money_to_tax
+				value = 1
+			}
+		}
+		multiply_variable = {
+			which = th_from_money_to_tax
+			value = 100
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_from_money_to_tax
+					value = 1
+				}
+			}
+			add_treasury = 0.01
+			subtract_variable = {
+				which = th_from_money_to_tax
+				value = 1
+			}
+		}
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			add_liberty_desire = 10
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD gives vassal military bonus
+th_send_hellish_officers = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			AND = {
+				th_has_copied_from_target = {
+					target = CRD
+				}
+				FROM = {
+					is_subject_of = ROOT
+				}
+			}
+			AND = {
+				has_government_attribute = enables_satori_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+		FROM = {
+			NOT = { has_country_modifier = th_hellish_officers }
+		}
+	}
+
+	is_allowed = {
+		always = yes
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			set_country_flag = th_officers_had_first_free_month
+			add_country_modifier = {
+				name = th_hellish_officers
+				duration = -1
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD gives vassal take the military bonus
+th_return_hellish_officers = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		FROM = {
+			is_subject_of = ROOT
+			OR = {
+				is_subject_of_type = th_pet_state
+				is_subject_of_type = th_satori_vassal
+			}
+			has_country_modifier = th_hellish_officers
+		}
+	}
+
+	is_allowed = {
+		always = yes
+	}
+
+	on_accept = {
+		FROM = {
+			remove_country_modifier = th_hellish_officers
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+###CRD ADVANCED SATORI VASSAL INTERACTIONS###
+#CRD manipulates targets mind to become Satori vassal
+th_read_the_mind = {
+	category = th_diplo_action
+	require_acceptance = yes
+
+	is_visible = {
+		has_government_attribute = enables_satori_advanced_subject_interactions
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				OR = {
+					has_dlc = "Rights of Man"
+					has_dlc = "Emperor"
+				}
+			}
+			is_great_power = yes
+		}
+		else = {
+			total_development = 400
+		}
+		is_at_war = no
+		FROM = {
+			is_at_war = no
+		}
+		has_spy_network_in = {
+			who = FROM
+			value = 75
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_from_cant_be_rival_or_enemy_tt
+			FROM = {
+				NOT = { is_rival = ROOT }
+				NOT = { is_enemy = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_at_war = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_AT_WAR_TT
+				FROM = { is_at_war = no }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_is_not_the_emperor
+			FROM = {
+				is_emperor = no
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_is_not_the_emperor_china
+			FROM = {
+				th_is_emperor_of_china = no
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_is_not_the_pope
+			FROM = {
+				NOT = { tag = PAP }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_is_not_an_elector
+			FROM = {
+				is_elector = no
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_has_not_own_subjects
+			FROM = {
+				NOT = { num_of_subjects = 1 }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_has_not_100_dev_tt
+			FROM = {
+				NOT = { total_development = 100 }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_needs_at_least_25_opinion_tt
+			FROM = {
+				has_opinion = { who = ROOT value = 25 }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_is_not_in_coalition_against_us_tt
+			FROM = {
+				is_in_coalition = no 
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_is_not_outraged_about_us_tt
+			FROM = {
+				NOT = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		add_spy_network_in = {
+			who = FROM
+			value = -75
+		}
+		#No longer needed, might be useful for similar diplo actions in the future though
+		#FROM = {
+		#	set_variable = {
+		#		which = th_spy_progress
+		#		value = 0
+		#	}
+		#}
+		#while = {
+		#	limit = {
+		#		has_spy_network_in = {
+		#			who = FROM
+		#			value = 5
+		#		}
+		#	}
+		#	add_spy_network_in = {
+		#		who = FROM
+		#		value = -5
+		#	}
+		#	FROM = {
+		#		change_variable = {
+		#			which = th_spy_progress
+		#			value = 1
+		#		}
+		#	}
+		#}
+		FROM = {
+			country_event = {
+				id = th_diplo_events.41
+			}
+		}
+	}
+
+	on_decline = {
+	}
+	
+	#Script below is from Maid Universalis mod. All credits for that amazing AI scripting goes to them!
+	ai_acceptance = {
+		add_entry = { #Base
+            name = BASE
+            export_to_variable = {
+                variable_name = ai_value
+                value = -10
+            }
+        }
+		add_entry = { #friendly and threaten
+            name = ATTITUDE
+			limit = {
+				FROM = {
+					OR = {
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_friendly
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_threatened
+						}
+					}
+				}
+			}
+            export_to_variable = {
+                variable_name = ai_value
+                value = 10
+            }
+        }
+		add_entry = { #Neutral
+            name = ATTITUDE
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_neutral
+					}
+				}
+			}
+            export_to_variable = {
+                variable_name = ai_value
+                value = -25
+            }
+        }
+		add_entry = { #Hostile and outraged
+            name = ATTITUDE
+			limit = {
+				FROM = {
+					OR = {
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_hostile
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_outraged
+						}
+						ai_attitude = {
+							who = FROM
+							attitude = attitude_rivalry
+						}
+					}
+				}
+			}
+            export_to_variable = {
+                variable_name = ai_value
+                value = -50
+            }
+        }
+		add_entry = { #Army
+            name = ARMY
+            export_to_variable = {
+                variable_name = ai_value
+                value = army_size
+				who = ROOT
+				with = ROOT
+            }
+			export_to_variable = {
+                variable_name = from_army_size
+                value = army_size
+				who = FROM
+				with = ROOT
+            }
+			multiply_variable = {which = from_army_size value = 3 }
+			subtract_variable = {which = ai_value which = from_army_size }
+			divide_variable = {which = ai_value value = 2 }
+        }
+		add_entry = { #hre 1
+            name = IS_PART_OF_HRE
+			limit = {
+				FROM = {is_part_of_hre = yes }
+				is_part_of_hre = no 
+			}
+            export_to_variable = {
+                variable_name = ai_value
+                value = -75
+            }
+        }
+		add_entry = { #hre 2
+			name = IS_PART_OF_HRE
+			limit = {
+				FROM = {is_part_of_hre = yes }
+				is_part_of_hre = yes
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = -25
+			}
+		}
+		add_entry = { #Culture group
+            name = CULTURE
+			limit = {NOT = {culture_group = FROM }}
+            export_to_variable = {
+                variable_name = ai_value
+                value = -10
+            }
+        }
+		add_entry = { #Heretic
+            name = RELIGION
+			limit = {NOT = {has_matching_religion = FROM }}
+            export_to_variable = {
+                variable_name = ai_value
+                value = -10
+            }
+        }
+		add_entry = { #Heathen
+            name = RELIGION
+			limit = {NOT = {religion_group = FROM }}
+            export_to_variable = {
+                variable_name = ai_value
+                value = -10
+            }
+        }
+		add_entry = { #Diplo reputation
+            name = DIPLOMATIC_REPUTATION
+            export_to_variable = {
+                variable_name = ai_value
+                which = diplomatic_reputation
+                who = ROOT
+                with = ROOT
+            }
+			multiply_variable = {which = ai_value value = 3 }
+        }
+		add_entry = { #Border distance
+            name = BORDER_DISTANCE
+            export_to_variable = {
+                variable_name = ai_value
+                value = border_distance
+				who = FROM
+                with = ROOT
+            }
+			export_to_variable = {
+                variable_name = 2x_distance
+                value = border_distance
+				who = FROM
+                with = ROOT
+            }
+			multiply_variable = {which = 2x_distance value = 2 }
+			subtract_variable = {which = ai_value which = 2x_distance }
+			divide_variable = {which = ai_value value = 2 }
+        }
+		add_entry = { #Development
+            name = DEVELOPMENT
+            export_to_variable = {
+                variable_name = ai_value
+                value = total_development
+				who = ROOT
+				with = ROOT
+            }
+			export_to_variable = {
+				variable_name = from_development
+				value = total_development
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {which = from_development value = 3 }
+			subtract_variable = {which = ai_value which = from_development }
+			divide_variable = {which = ai_value value = 10 }
+        }
+        add_entry = { #Trust
+            name = TRUST
+            export_to_variable = {
+                variable_name = ai_value
+                value = trust
+                who = FROM
+                with = ROOT
+            }
+			subtract_variable = {which = ai_value value = 60 }
+        }
+		add_entry = { #Over 50 opinion
+			name = OPINION
+			limit = {FROM = {has_opinion = { who = FROM value = 50 }}}
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			subtract_variable = { which = ai_value value = 50 }
+			divide_variable = { which = ai_value value = 4 }
+		}
+		add_entry = { #Opinion from -100 to 50
+			name = OPINION
+			limit = {
+				FROM = {
+					NOT = {has_opinion = { who = FROM value = 50 }}
+					has_opinion = { who = FROM value = -100 }
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			subtract_variable = { which = ai_value value = 50 }
+		}
+		add_entry = { #Opinion below -100
+			name = OPINION
+			limit = {FROM = {NOT = {has_opinion = { who = FROM value = -100 }}}}
+			export_to_variable = {
+				variable_name = ai_value
+				value = -1000
+				with = ROOT
+			}
+		}
+    }
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#CRD suppresses free will -> usabale against subject, reduce their liberty desire for a short term at the cost of diplo power and the longterm lib desire
+th_suppress_free_will = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = CRD
+			}
+			AND = {
+				has_government_attribute = enables_satori_advanced_subject_interactions
+				FROM = {
+					is_subject_of = ROOT
+					OR = {
+						is_subject_of_type = th_pet_state
+						is_subject_of_type = th_satori_vassal
+					}
+				}
+			}
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = th_upgraded_satori_abilities }
+			}
+			dip_power = 75
+		}
+		#custom_trigger_tooltip = {
+		#	tooltip = th_suppress_free_will_cd_tt
+		#	FROM = {
+		#		OR = {
+		#			NOT = { has_country_flag = th_satoris_command_flag_by_@ROOT }
+		#			had_country_flag = {
+		#				flag = th_satoris_command_flag_by_@ROOT
+		#				days = 5475
+		#			}
+		#		}
+		#	}
+		#}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = th_upgraded_satori_abilities }
+			}
+			add_dip_power = -75
+		}
+		FROM = {
+			set_country_flag = th_satori_vassal_target_through_interaction_by_@ROOT
+			add_liberty_desire = -15
+			country_event = {
+				id = th_diplo_events.44
+				days = 1825
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+###CRD MISC INTERACTIONS###
+#Koishi related diplo actions
+th_find_koishi = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		th_is_or_was_tag = {
+			tag = CRD
+		}
+		FROM = {
+			th_is_or_was_tag = {
+				tag = KMJ
+			}
+		}
+		NOT = { has_global_flag = crd_found_koishi }
+	}
+
+	is_allowed = {
+		always = yes
+	}
+
+	on_accept = {
+		country_event = {
+			id = flavor_kmj.4
+		}
+		FROM = {
+			country_event = {
+				id = flavor_kmj.5
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = yes
+	}
+}
