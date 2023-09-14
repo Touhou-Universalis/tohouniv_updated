@@ -75,19 +75,24 @@ Meira_missions_first_slot = {
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
-	OKR_road_to_the_shrine = {
+	OKR_path_to_the_shrine = {
 		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 1
+		provinces_to_highlight = {
+			province_id = 5186
+			or = {
+				not = { owned_by = root }
+				not = { is_core = root }
+			}
+		}
 		trigger = {
 			treasury = 1500
 			if = {
 				limit = {
 					exists = HKR
-					NOT = {
-						tag = HKR
-					}
+					NOT = { tag = HKR }
 				}
 				total_development = HKR
 			}
@@ -97,83 +102,91 @@ Meira_missions_first_slot = {
 			owns_core_province = 5186
 		}
 		effect = {
-			add_treasury = -1500
-			#enables building of hakurei portal(not really named this though. Let's name it mysterious stone)
-			#add description here
+			custom_tooltip = enable_the_hakurei_portal_tt
 			hidden_effect = {
 				set_country_flag = okr_can_build_th_canal_hakurei_portal
 			}
-			4955 = {
-				add_core = ROOT
-			}
-			4956 = {
-				add_core = ROOT
-			}
+			4955 = { add_core = ROOT }
+			4956 = { add_core = ROOT }
 			Hakurei_state = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_claim = ROOT
 			}
 			Hakurei_peninsula_state = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_claim = ROOT
 			}
 			Hakurei_western_coast = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_claim = ROOT
 			}
-			#add a special cb for OKR to conquer HKR with cheap warscore and ae cost
+			if = {
+				limit = { exists = HKR }
+				add_casus_belli = {
+					type = cb_touhou_claim_the_hakurei_title
+					target = HKR
+					months = 300
+				}
+			}
 		}
 	}
 	OKR_challenge_reimu_again = {
 		icon = mission_placeholder
 		required_missions = {
-			OKR_road_to_the_shrine
+			OKR_path_to_the_shrine
 		}
 		position = 2
+		provinces_to_highlight = {
+			if = {
+				limit = { not = { root = { tag = HKR } } exists = HKR }
+				owned_by = HKR
+			}
+			else = {
+				province_id = 4955
+				not = { owned_by = root }
+			}
+		}
 		trigger = {
 			OR = {
 				war_with = HKR
 				tag = HKR
 				AND = {
-					NOT = {
-						exists = HKR
-					}
+					NOT = { exists = HKR }
 					owns = 4955
 				}
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_okr.2				#give temporary buff against HKR
+			add_army_tradition = 15
+			simple_dynamic_effect_without_alternative = {
+				first_custom_tooltip = OKR_challenge_reimu_again_at
+				first_limit = "war_with = HKR"
+				first_effect = "add_country_modifier = { name = okr_reborn_battle_passion duration = 3650 }"
+				second_limit = " OR = { tag = HKR AND = { NOT = { exists = HKR } owns = 4955 } } "
+				second_effect = "add_country_modifier = { name = okr_unified_shrines duration = 3650 } "
+			}
+			hidden_effect = {
+				if = {
+					limit = { war_with = HKR }
+					country_event = {
+						id = flavor_okr.2
+					}
+				}
 			}
 		}
 	}
 	OKR_claim_the_hakurei_miko = {
 		icon = mission_placeholder
-		required_missions = {
-			OKR_challenge_reimu_again
-		}
+		required_missions = { OKR_challenge_reimu_again }
 		position = 3
 		provinces_to_highlight = {
 			OR = {
@@ -181,16 +194,12 @@ Meira_missions_first_slot = {
 				area = Hakurei_western_coast
 				area = Hakurei_state
 			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			OR = {
 				tag = HKR
-				NOT = {
-					exists = HKR
-				}
+				NOT = { exists = HKR }
 			}
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				OR = {
@@ -214,18 +223,18 @@ Meira_missions_first_slot = {
 			}
 			gensokyo_region = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
-			country_event = {
-				id = flavor_okr.3				#marry reimu
-				id = flavor_okr.4               #change religion
+			country_event_with_insight = {
+				id = flavor_okr.3
+				insight_tooltip = OKR_claim_the_hakurei_miko_at	#Marry Reimu
+			}
+			country_event_with_insight = {
+				id = flavor_okr.4
+				insight_tooltip = OKR_claim_the_hakurei_miko_bt	#Change Religion
 			}
 		}
 	}
@@ -237,9 +246,7 @@ Meira_missions_first_slot = {
 		position = 4
 		provinces_to_highlight = {
 			region = gensokyo_region
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
@@ -251,8 +258,10 @@ Meira_missions_first_slot = {
 			th_add_stability_or_adm_power = {
 				amount = 1
 			}
-			add_prestige = 100
-			add_power_projection = {
+			add_prestige_or_monarch_power = {
+				amount = 100
+			}
+			add_permanent_power_projection = {
 				type = okr_proven_skill
 				amount = 50
 			}
