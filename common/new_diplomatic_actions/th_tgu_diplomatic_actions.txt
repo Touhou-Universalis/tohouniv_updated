@@ -1,0 +1,9005 @@
+###TGU NEWSPAPER ABILITIES###
+
+#Common Diplo Actions, Tengu states have ALWAYS access to these
+th_sell_newspaper = {
+	category = th_diplo_action
+	require_acceptance = yes
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				is_rival = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_RIVAL
+				NOT = { is_rival = FROM }
+			}
+		}
+		if = {
+			limit = {
+				is_enemy = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_ENEMY
+				NOT = { is_enemy = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_USE_AGAINST_WAR_ENEMIES_TT
+				NOT = { war_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_received_newspaper_from_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_received_newspaper_from_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CAN_SELL_ONLY_EVERY_10_YEARS_TT
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_received_newspaper_from_@ROOT }
+						had_country_flag = {
+							flag = th_received_newspaper_from_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_subject_other_than_tributary_trigger = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_DO_ACTION_TO_SUBJECTS_TT
+				FROM = { is_free_or_tributary_trigger = yes }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_owned_province = {
+						trade_goods = paper
+						NOT = { has_province_modifier = th_is_selling_exclusive_newspaper }
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_NEEDS_ONE_AVAILABLE_PAPER_PROVINCE_TT
+				any_owned_province = {
+					trade_goods = paper
+					NOT = { has_province_modifier = th_is_selling_exclusive_newspaper }
+				}
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		change_variable = {
+			which = tgu_newspaper_sold_counter
+			value = 1
+		}
+		FROM = {
+			clr_country_flag = th_received_newspaper_from_@ROOT
+			set_country_flag = th_received_newspaper_from_@ROOT
+			country_event = {
+				id = th_diplo_events.51
+			}
+		}
+		random_owned_province = {
+			limit = {
+				trade_goods = paper
+				NOT = { has_province_modifier = th_is_selling_exclusive_newspaper }
+			}
+			add_province_modifier = {
+				name = th_is_selling_exclusive_newspaper
+				duration = 3650
+			}
+		}
+	}
+
+    ai_acceptance = {
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = TH_DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -50
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -50
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 4
+			multiply_variable = {
+				which = ai_value
+				value = 4
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_FOR_FREE
+			limit = {
+				FROM = { NOT = { years_of_income = 0.1 } }
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_CHEAPER
+			limit = {
+				FROM = { 
+					years_of_income = 0.1
+					NOT = { years_of_income = 0.2 } 
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 80
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_CHEAPER
+			limit = {
+				FROM = { 
+					years_of_income = 0.2
+					NOT = { years_of_income = 0.3 } 
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 60
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_CHEAPER
+			limit = {
+				FROM = { 
+					years_of_income = 0.3
+					NOT = { years_of_income = 0.4 } 
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 40
+			}
+		}
+		add_entry = {
+			name = TH_WOULD_GET_IT_CHEAPER
+			limit = {
+				FROM = { 
+					years_of_income = 0.4
+					NOT = { years_of_income = 0.5 } 
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = TH_IS_BANKRUPT
+			limit = {
+				FROM = { 
+					is_bankrupt = yes
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+    }
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_buy_newspaper = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		FROM = {
+			OR = {
+				th_has_copied_from_target = {
+					target = TGU
+				}
+				has_government_attribute = enables_tengu_newspaper
+			}
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				is_rival = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_RIVAL
+				NOT = { is_rival = FROM }
+			}
+		}
+		if = {
+			limit = {
+				is_enemy = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_ENEMY
+				NOT = { is_enemy = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_USE_AGAINST_WAR_ENEMIES_TT
+				NOT = { war_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = th_tengu_news
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_BUY_NEW_NEWSPAPER_TT
+				NOT = { has_country_modifier = th_tengu_news }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_subject_other_than_tributary_trigger = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_DO_ACTION_TO_SUBJECTS_TT
+				FROM = { is_free_or_tributary_trigger = yes }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { years_of_income = 0.25 }
+			}
+			years_of_income = 0.25
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		add_country_modifier = {
+			name = th_tengu_news
+			duration = 3650
+		}
+		FROM = {
+			country_event = {
+				id = th_diplo_events.53
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_spread_good_image = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			has_government_attribute = enables_tengu_newspaper
+		}
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 30
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_30_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 30
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_received_good_image_of_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_received_good_image_of_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_spread_good_image_cd_tt
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_received_good_image_of_@ROOT }
+						had_country_flag = {
+							flag = th_received_good_image_of_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		change_variable = {
+			which = tgu_newspaper_action_counter
+			value = 1
+		}
+		if = {
+			limit = { NOT = { has_country_flag = tgu_spread_goods_image } }
+			set_country_flag = tgu_spread_goods_image
+		}
+		FROM = {
+			clr_country_flag = th_received_good_image_of_@ROOT
+			set_country_flag = th_received_good_image_of_@ROOT
+			if = {
+				limit = {
+					has_country_flag = th_was_spread_good_image_target_once
+				}
+				clr_country_flag = th_was_spread_good_image_target_once
+				set_country_flag = th_was_spread_good_image_target_twice
+			}
+			else = {
+				set_country_flag = th_was_spread_good_image_target_once
+			}
+			remove_opinion = {
+				who = ROOT
+				modifier = caught_spy
+			}
+			remove_opinion = {
+				who = ROOT
+				modifier = declared_war_on_neighbor
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = th_good_image
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -30
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Unlocked by Tengu Realm's mission tree (generic)
+th_spread_gossip = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_can_spread_gossip
+			}
+		}
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 40
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_40_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 40
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = tgu_has_gossip_event_open
+						has_country_modifier = th_gossip_about_rulership
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_spread_gossip_tt
+				FROM = {
+					NOT = { has_country_flag = tgu_has_gossip_event_open }
+					NOT = { has_country_modifier = th_gossip_about_rulership }
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		change_variable = {
+			which = tgu_newspaper_action_counter
+			value = 1
+		}
+		FROM = {
+			country_event = {
+				id = th_diplo_events.54
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -40
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_establish_puppet_state = {
+	category = th_diplo_action
+	require_acceptance = yes
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_can_have_puppet_states
+			}
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 50
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_50_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 50
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				is_rival = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_RIVAL
+				NOT = { is_rival = FROM }
+			}
+		}
+		if = {
+			limit = {
+				is_enemy = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_ENEMY
+				NOT = { is_enemy = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_USE_AGAINST_WAR_ENEMIES_TT
+				NOT = { war_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_subject_other_than_tributary_trigger = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_DO_ACTION_TO_SUBJECTS_TT
+				FROM = { is_free_or_tributary_trigger = yes }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_at_war = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_AT_WAR_TT
+				FROM = { is_at_war = no }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { has_country_flag = th_was_spread_good_image_target_once }
+					NOT = { has_country_flag = th_was_spread_good_image_target_twice } 
+				}
+				custom_trigger_tooltip = {
+					tooltip = th_establish_puppet_state_at
+					has_country_flag = th_was_spread_good_image_target_twice
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { 
+					has_country_flag = th_was_spread_good_image_target_once
+					NOT = { has_country_flag = th_was_spread_good_image_target_twice } 
+				}
+				custom_trigger_tooltip = {
+					tooltip = th_establish_puppet_state_bt
+					has_country_flag = th_was_spread_good_image_target_twice
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		change_variable = {
+			which = tgu_newspaper_action_counter
+			value = 1
+		}
+		create_subject = {
+			subject_type = th_tengu_puppet_state
+			subject = FROM
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -100
+		}
+	}
+
+
+    ai_acceptance = {
+		add_entry = {
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = -1
+			multiply_variable = {
+				which = ai_value
+				value = -1
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 1
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 2
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 1
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 2
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 3
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 3
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 4
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 3
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 4
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 5
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 4
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 5
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 6
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 5
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 6
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 7
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 6
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 7
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 8
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 7
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 8
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 9
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 8
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 9
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 10
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 9
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 10
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 11
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 10
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 11
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 12
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 11
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 12
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 13
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 12
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 13
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 14
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 13
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 14
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 15
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 14
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 15
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 16
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 15
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 16
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 17
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 16
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 17
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 18
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 17
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 18
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 19
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 18
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 19
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 20
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 19
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 20
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 21
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 21
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 22
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 21
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 22
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 23
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 22
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 23
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 24
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 23
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 24
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 25
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 24
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 25
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 26
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 25
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 26
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 27
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 26
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 27
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 28
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 27
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 28
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 29
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 28
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 29
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 30
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 29
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 30
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 31
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 30
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 31
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 32
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 31
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 32
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 33
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 32
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 33
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 34
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 33
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 34
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 35
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 34
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 35
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 36
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 35
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 36
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 37
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 36
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 37
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 38
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 37
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 38
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 39
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 38
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 39
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 40
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 39
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 40
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 41
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 40
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 41
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 42
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 41
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 42
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 43
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 42
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 43
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 44
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 43
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 44
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 45
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 44
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 45
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 46
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 45
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 46
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 47
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 46
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 47
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 48
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 47
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 48
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 49
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 48
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 49
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 50
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 49
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 50
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 51
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 50
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 51
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 52
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 51
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 52
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 53
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 52
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 53
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 54
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 53
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 54
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 55
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 54
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 55
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 56
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 55
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 56
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 57
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 56
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 57
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 58
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 57
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 58
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 59
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 58
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 59
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 60
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 59
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 60
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 61
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 60
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 61
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 62
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 61
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 62
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 63
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 62
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 63
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 64
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 63
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 64
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 65
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 64
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 65
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 66
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 65
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 66
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 67
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 66
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 67
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 68
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 67
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 68
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 69
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 68
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 69
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 70
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 69
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 70
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 71
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 70
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 71
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 72
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 71
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 72
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 73
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 72
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 73
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 74
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 73
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 74
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 75
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 74
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 75
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 76
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 75
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 76
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 77
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 76
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 77
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 78
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 77
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 78
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 79
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 78
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 79
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 80
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 79
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 80
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 81
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 80
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 81
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 82
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 81
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 82
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 83
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 82
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 83
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 84
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 83
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 84
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 85
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 84
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 85
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 86
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 85
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 86
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 87
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 86
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 87
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 88
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 87
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 88
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 89
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 88
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 89
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 90
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 89
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 90
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 91
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 90
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 91
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 92
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 91
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 92
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 93
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 92
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 93
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 94
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 93
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 94
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 95
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 94
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 95
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 96
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 95
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 96
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 97
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 96
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 97
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 98
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 97
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 98
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 99
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 98
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 99
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 100
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 99
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 100
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+    }
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_cancel_puppet_state_status = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		FROM = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_tengu_puppet_state
+		}
+	}
+
+	is_allowed = {}
+
+	on_accept = {
+		FROM = {
+			grant_independence = yes 
+		}
+		add_truce_with = FROM
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_released_puppet_state
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_call_puppet_state_to_arms = {
+	category = th_diplo_action
+	require_acceptance = yes
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_has_extended_puppet_state_actions
+			}
+		}
+		FROM = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_tengu_puppet_state
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 10
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_10_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 10
+				}
+			}
+		}
+		if = {
+			limit = {
+				is_at_war = no
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_MUST_BE_AT_WAR_TT
+				is_at_war = yes
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			join_all_defensive_wars_of = ROOT
+			join_all_offensive_wars_of = ROOT
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -100
+		}
+	}
+    ai_acceptance = {
+		add_entry = {
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = -0.5
+			multiply_variable = {
+				which = ai_value
+				value = -0.5
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 1
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 2
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 1
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 2
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 3
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 3
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 4
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 3
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 4
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 5
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 4
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 5
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 6
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 5
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 6
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 7
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 6
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 7
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 8
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 7
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 8
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 9
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 8
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 9
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 10
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 9
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 10
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 11
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 10
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 11
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 12
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 11
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 12
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 13
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 12
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 13
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 14
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 13
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 14
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 15
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 14
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 15
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 16
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 15
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 16
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 17
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 16
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 17
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 18
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 17
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 18
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 19
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 18
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 19
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 20
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 19
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 20
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 21
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 21
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 22
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 21
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 22
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 23
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 22
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 23
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 24
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 23
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 24
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 25
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 24
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 25
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 26
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 25
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 26
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 27
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 26
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 27
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 28
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 27
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 28
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 29
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 28
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 29
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 30
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 29
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 30
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 31
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 30
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 31
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 32
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 31
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 32
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 33
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 32
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 33
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 34
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 33
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 34
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 35
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 34
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 35
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 36
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 35
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 36
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 37
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 36
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 37
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 38
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 37
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 38
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 39
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 38
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 39
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 40
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 39
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 40
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 41
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 40
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 41
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 42
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 41
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 42
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 43
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 42
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 43
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 44
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 43
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 44
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 45
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 44
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 45
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 46
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 45
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 46
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 47
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 46
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 47
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 48
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 47
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 48
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 49
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 48
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 49
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 50
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 49
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 50
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 51
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 50
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 51
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 52
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 51
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 52
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 53
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 52
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 53
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 54
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 53
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 54
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 55
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 54
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 55
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 56
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 55
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 56
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 57
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 56
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 57
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 58
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 57
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 58
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 59
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 58
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 59
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 60
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 59
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 60
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 61
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 60
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 61
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 62
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 61
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 62
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 63
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 62
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 63
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 64
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 63
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 64
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 65
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 64
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 65
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 66
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 65
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 66
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 67
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 66
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 67
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 68
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 67
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 68
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 69
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 68
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 69
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 70
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 69
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 70
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 71
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 70
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 71
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 72
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 71
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 72
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 73
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 72
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 73
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 74
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 73
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 74
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 75
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 74
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 75
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 76
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 75
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 76
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 77
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 76
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 77
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 78
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 77
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 78
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 79
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 78
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 79
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 80
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 79
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 80
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 81
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 80
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 81
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 82
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 81
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 82
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 83
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 82
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 83
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 84
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 83
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 84
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 85
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 84
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 85
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 86
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 85
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 86
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 87
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 86
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 87
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 88
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 87
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 88
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 89
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 88
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 89
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 90
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 89
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 90
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 91
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 90
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 91
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 92
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 91
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 92
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 93
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 92
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 93
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 94
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 93
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 94
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 95
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 94
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 95
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 96
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 95
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 96
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 97
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 96
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 97
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 98
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 97
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 98
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 99
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 98
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 99
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 100
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 99
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 100
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+    }
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_promote_puppet_to_vassal = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_has_extended_puppet_state_actions
+			}
+		}
+		FROM = {
+			is_subject_of = ROOT
+			is_subject_of_type = th_tengu_puppet_state
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 80
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_80_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 80
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					NOT = {
+						trust = {
+							who = ROOT
+							value = 75
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_TRUST_LEVEL_75_TT
+				FROM = {
+					trust = {
+						who = ROOT
+						value = 75
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				is_at_war = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_NOT_AT_WAR_TT
+				is_at_war = no
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_at_war = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_NOT_AT_WAR_TT
+				FROM = { is_at_war = no }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { total_development = 200 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_TOTAL_DEV_NOT_200_TT
+				FROM = { NOT = { total_development = 200 } }
+			}
+		}
+	}
+
+	on_accept = {
+		add_spy_network_in = {
+			who = FROM
+			value = -80
+		}
+		FROM = { grant_independence = yes }
+		create_subject = {
+			subject_type = vassal
+			subject = FROM
+		}
+	}
+
+	ai_will_do = {
+		always = yes
+	}
+}
+
+th_write_propaganda = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_can_write_white_washing_news
+			}
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 50
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_50_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 50
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_read_propaganda_of_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_read_propaganda_of_@ROOT
+							days = 5475
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_write_propaganda_cd_tt
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_read_propaganda_of_@ROOT }
+						had_country_flag = {
+							flag = th_read_propaganda_of_@ROOT
+							days = 5475
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					NOT = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = aggressive_expansion
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_has_aggressive_expansion_modifier
+				FROM = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = aggressive_expansion
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { war_with = ROOT }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_USE_AGAINST_WAR_ENEMIES_TT
+				FROM = { NOT = { war_with = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			clr_country_flag = th_read_propaganda_of_@ROOT
+			set_country_flag = th_read_propaganda_of_@ROOT
+			add_aggressive_expansion = {
+				who = ROOT
+				value = -40
+				apply_calc = no
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -50
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_negotiate_truce = {
+	category = th_diplo_action
+	require_acceptance = yes
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_can_negotiate_truces
+			}
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 50
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_50_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 50
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_was_forced_to_have_truce_with_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_was_forced_to_have_truce_with_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_negotiate_truce_cd_tt
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_was_forced_to_have_truce_with_@ROOT }
+						had_country_flag = {
+							flag = th_was_forced_to_have_truce_with_@ROOT
+							days = 3650
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { war_with = ROOT }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CANNOT_USE_AGAINST_WAR_ENEMIES_TT
+				FROM = { NOT = { war_with = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { truce_with = ROOT }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_HAS_TRUCE_WITH_ROOT_TT
+				FROM = { NOT = { truce_with = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			clr_country_flag = th_was_forced_to_have_truce_with_@ROOT
+			set_country_flag = th_was_forced_to_have_truce_with_@ROOT
+			add_truce_with = ROOT
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -50
+		}
+	}
+	
+    ai_acceptance = {
+		add_entry = {
+			name = TH_DIPLO_TOTAL_DEVELOPMENT
+			export_to_variable = {
+				variable_name = ai_value
+				value = total_development
+				who = FROM
+			}
+			#1 dev = -0.1
+			multiply_variable = {
+				which = ai_value
+				value = -0.1
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_FRIENDLINESS
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -20
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 1
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 2
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 1
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 2
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 3
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 3
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 4
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 3
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 4
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 5
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 4
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 5
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 6
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 5
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 6
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 7
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 6
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 7
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 8
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 7
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 8
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 9
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 8
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 9
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 10
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 9
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 10
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 11
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 10
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 11
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 12
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 11
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 12
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 13
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 12
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 13
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 14
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 13
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 14
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 15
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 14
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 15
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 16
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 15
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 16
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 17
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 16
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 17
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 18
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 17
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 18
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 19
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 18
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 19
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 20
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 19
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 20
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 21
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 20
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 21
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 22
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 21
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 22
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 23
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 22
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 23
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 24
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 23
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 24
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 25
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 24
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 25
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 26
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 25
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 26
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 27
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 26
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 27
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 28
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 27
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 28
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 29
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 28
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 29
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 30
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 29
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 30
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 31
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 30
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 31
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 32
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 31
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 32
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 33
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 32
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 33
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 34
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 33
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 34
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 35
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 34
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 35
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 36
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 35
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 36
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 37
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 36
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 37
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 38
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 37
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 38
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 39
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 38
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 39
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 40
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 39
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 40
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 41
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 40
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 41
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 42
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 41
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 42
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 43
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 42
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 43
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 44
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 43
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 44
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 45
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 44
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 45
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 46
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 45
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 46
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 47
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 46
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 47
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 48
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 47
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 48
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 49
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 48
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 49
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 50
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 49
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 50
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 51
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 50
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 51
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 52
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 51
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 52
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 53
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 52
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 53
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 54
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 53
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 54
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 55
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 54
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 55
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 56
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 55
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 56
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 57
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 56
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 57
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 58
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 57
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 58
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 59
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 58
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 59
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 60
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 59
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 60
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 61
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 60
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 61
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 62
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 61
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 62
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 63
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 62
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 63
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 64
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 63
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 64
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 65
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 64
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 65
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 66
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 65
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 66
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 67
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 66
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 67
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 68
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 67
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 68
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 69
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 68
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 69
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 70
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 69
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 70
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 71
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 70
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 71
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 72
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 71
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 72
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 73
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 72
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 73
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 74
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 73
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 74
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 75
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 74
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 75
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 76
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 75
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 76
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 77
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 76
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 77
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 78
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 77
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 78
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 79
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 78
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 79
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 80
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 79
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 80
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 81
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 80
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 81
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 82
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 81
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 82
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 83
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 82
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 83
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 84
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 83
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 84
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 85
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 84
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 85
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 86
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 85
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 86
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 87
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 86
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 87
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 88
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 87
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 88
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 89
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 88
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 89
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 90
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 89
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 90
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 91
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 90
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 91
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 92
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 91
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 92
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 93
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 92
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 93
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 94
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 93
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 94
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 95
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 94
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 95
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 96
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 95
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 96
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 97
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 96
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 97
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 98
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 97
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 98
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 99
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 98
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 99
+				}
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 100
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 99
+			}
+		}
+		add_entry = {
+			name = TH_SPYNETWORK
+			limit = {
+				has_spy_network_in = {
+					who = FROM
+					value = 100
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+    }
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#Government related diplo actions
+
+th_denounce_allies = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_has_enabled_military_spy_actions
+			}
+		}
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 60
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_60_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 60
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_had_to_denounce_allies_by_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_had_to_denounce_allies_by_@ROOT
+							days = 1825
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_CAN_DENOUNCE_EVERY_5_YEARS_TT
+				FROM = {
+					OR = {
+						NOT = { has_country_flag = th_had_to_denounce_allies_by_@ROOT }
+						had_country_flag = {
+							flag = th_had_to_denounce_allies_by_@ROOT
+							days = 1825
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					NOT = { num_of_allies = 1 }
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_NEEDS_TO_HAVE_ALLIES
+				FROM = {
+					num_of_allies = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			clr_country_flag = th_had_to_denounce_allies_by_@ROOT
+			set_country_flag = th_had_to_denounce_allies_by_@ROOT
+			every_ally = {
+				reverse_add_opinion = {
+					who = FROM
+					modifier = th_ally_denouncement
+				}
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -60
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_demotivate_military = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_has_enabled_military_spy_actions
+			}
+		}
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 25
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_25_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 25
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { has_country_modifier = th_demotivated_forces }
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_demotivate_military_tt
+				FROM = { NOT = { has_country_modifier = th_demotivated_forces } }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			clr_country_flag = th_got_military_demotivated_by_@ROOT
+			set_country_flag = th_got_military_demotivated_by_@ROOT
+			add_country_modifier = {
+				name = th_demotivated_forces
+				duration = 1825
+			}
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -25
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_spread_republican_ideas_dip_action = {
+	category = th_diplo_action
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = TGU
+			}
+			AND = {
+				has_government_attribute = enables_tengu_newspaper
+				has_country_flag = tgu_has_enabled_fabricate_spread_republican_ideas_cb
+			}
+		}
+		FROM = { is_free_or_tributary_trigger = yes }
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { home_trade_node = { NOT = { trade_range = ROOT } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_TARGETS_HOME_TRADE_NODE_OUT_OF_REACH_tt
+				FROM = { home_trade_node = { trade_range = ROOT } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_spy_network_in = {
+						who = FROM
+						value = 20
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_REQUIRES_20_SPY_NETWORK_TT
+				has_spy_network_in = {
+					who = FROM
+					value = 20
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_casus_belli = {
+					type = cb_th_spread_republican_ideas
+					target = FROM
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_spread_republican_ideas_dip_action_tt
+				NOT = {
+					has_casus_belli = {
+						type = cb_th_spread_republican_ideas
+						target = FROM
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { government = republic }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_A_REPUBLIC_TT
+				FROM = {
+					NOT = { government = republic }
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { tag = PAP }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_THE_POPE_TT
+				FROM = { NOT = { tag = PAP } }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { 
+					th_is_emperor_of_china = yes
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_THE_CELESTIAL_EMPIRE_TT
+				FROM = { 
+					th_is_emperor_of_china = no
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					is_emperor = yes
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_HRE_EMPEROR_TT
+				FROM = { 
+					is_emperor = no
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { 
+					has_reform = Gensokyan_hig_yama_government
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_THE_YAMAXANADU_TT
+				FROM = { 
+					NOT = { has_reform = Gensokyan_hig_yama_government }
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+		if = {
+			limit = {
+				trade_embargoing = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_FROM
+				NOT = { trade_embargoing = FROM }
+			}
+		}
+		if = {
+			limit = {
+				trade_embargo_by = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_EMBARGOING_BY_FROM
+				NOT = { trade_embargo_by = FROM }
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			clr_country_flag = th_was_targeted_for_cb_by_@ROOT
+			set_country_flag = th_was_targeted_for_cb_by_@ROOT
+		}
+		add_casus_belli = {
+			target = FROM
+			type = cb_th_spread_republican_ideas
+			months = 60
+		}
+		add_spy_network_in = {
+			who = FROM
+			value = -20
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}

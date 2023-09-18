@@ -1,0 +1,1725 @@
+########################################
+# Flavor Events for Kappapolis
+########################################	
+
+namespace = flavor_kpp
+
+# Gadget Information
+country_event = {
+	id = flavor_kpp.0
+	title = flavor_kpp.0.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_kpp.0.desc
+	is_triggered_only = yes
+	option = {
+		name = flavor_kpp.0.a
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Election!
+country_event = {
+	id = flavor_kpp.1
+	title = flavor_kpp.1.t
+	picture = KAPPA_eventPicture
+	
+	desc = {
+		trigger = {
+			has_regency = no
+			NOT = { has_ruler_flag = leader_has_been_pushed_out }
+			OR = {
+				NOT = { has_government_attribute = th_has_limited_terms }
+				check_variable = {
+					which = max_election_term
+					which = election_term
+				}
+			}
+		}
+		desc = flavor_kpp.1.desc.a
+	}
+	
+	desc = {
+		trigger = {
+			OR = {
+				has_regency = yes
+				has_ruler_flag = leader_has_been_pushed_out
+				AND = {
+					has_government_attribute = th_has_limited_terms
+					NOT = {
+						check_variable = {
+							which = max_election_term
+							which = election_term
+						}
+					}
+				}
+			}
+		}
+		desc = flavor_kpp.1.desc.b
+	}
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_kappa_elections
+		NOT = { has_disaster = th_kappa_guild_wars_disaster }
+	}
+
+	option = {
+		name = "EVTOPTA700"	# Current ruler stays
+		trigger = {
+			ai = no
+			has_regency = no
+			NOT = { has_ruler_flag = leader_has_been_pushed_out }
+			OR = {
+				NOT = { has_government_attribute = th_has_limited_terms }
+				check_variable = {
+					which = max_election_term
+					which = election_term
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 60
+			modifier = {
+				factor = 0
+				NOT = { republican_tradition = 25 }
+			}	
+			modifier = {
+				factor = 0.5
+				NOT = { republican_tradition = 50 }
+			}				
+			modifier = {
+				factor = 0.5
+				NOT = { republican_tradition = 75 }
+			}	
+			modifier = {
+				factor = 2.0
+				republican_tradition = 90
+			}		
+		}
+		custom_tooltip = remains_ruler
+		if = {
+			limit = { has_government_attribute = th_has_limited_terms }
+			custom_tooltip = th_current_term_tt
+		}
+		if = {
+			limit = {
+				has_ruler_modifier = th_elected_kappa_tinker
+			}
+			add_scaled_republican_tradition = -5
+			random_list = {
+				10 = {
+					add_adm_power = 100
+				}
+				10 = {
+					add_dip_power = 100
+				}
+				10 = {
+					add_mil_power = 100
+				}
+			}
+		}
+		else = {
+			change_adm = 1
+			change_dip = 1
+			change_mil = 1
+			add_scaled_republican_tradition = -10
+			random_list = {
+				10 = {
+					add_adm_power = 50
+				}
+				10 = {
+					add_dip_power = 50
+				}
+				10 = {
+					add_mil_power = 50
+				}
+			}
+		}
+		add_karma = -5
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+		hidden_effect = {
+			change_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTB700"	# An administrator type
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			adm = 4
+			dip = 1
+			mil = 1
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_guilds 
+			}
+			add_faction_influence = {
+				faction = mr_guilds
+				influence = 20
+			}				
+		}
+		add_karma = 10
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTC700"	# A diplomat
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			adm = 1
+			dip = 4
+			mil = 1					
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_traders 
+			}
+			add_faction_influence = {
+				faction = mr_traders
+				influence = 20
+			}				
+		}
+		add_karma = 10		
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTD700"	# A military man
+		ai_chance = { factor = 20 }
+		define_ruler = {
+			adm = 1
+			dip = 1
+			mil = 4
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 20
+			}				
+		}
+		add_karma = 10
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+	}
+
+	option = { # Nepotism choice, re-electing within dynasty
+		name = "EVTOPTE700"
+		trigger = {
+			has_government_attribute = enables_nepotism
+		}
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				has_country_flag = strengthened_signoria_flag
+			}
+			custom_tooltip = strengthened_signoria_election_tt
+			clr_country_flag = strengthened_signoria_flag
+		}
+		else = {
+			add_scaled_republican_tradition = -4
+		}
+		define_ruler = {
+			min_age = 20
+			max_age = 40
+			name = "lastname"
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 10
+			}				
+		}
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+	}
+
+	option = { # Nitori choice
+		name = flavor_kpp.1.e
+		trigger = {
+			OR = {
+				ai = yes
+				AND = {
+					has_government_attribute = th_kpp_can_elect_nitori
+					th_has_not_original_ruler = yes
+				}
+			}
+		}
+		ai_chance = { factor = 100 }
+		define_ruler = {
+			name = "Nitori"
+			dynasty = "Kawashiro"
+			age = 20
+			adm = 6
+			dip = 5
+			mil = 3
+			female = yes
+		}
+		hidden_effect = {
+			add_ruler_modifier = {
+				name = th_elected_kappa_tinker
+				duration = -1
+			}
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+	}
+
+	after = {
+		if = {
+			limit = { has_government_attribute = th_has_kappa_rebels }
+			country_event = {
+				id = flavor_kpp.19
+			}
+		}
+	}
+}
+
+# Election! - Death
+country_event = {
+	id = flavor_kpp.2
+	title = flavor_kpp.2.t
+	picture = KAPPA_eventPicture
+	desc = "EVTDESC701"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_kappa_elections
+		NOT = { has_disaster = th_kappa_guild_wars_disaster }
+	}
+	
+	option = {
+		name = "EVTOPTB700"	# An administrator type
+		ai_chance = { factor = 40 }
+		define_ruler = {
+			mil = 1
+			adm = 4
+			dip = 1					
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_guilds 
+			}
+			add_faction_influence = {
+				faction = mr_guilds
+				influence = 20
+			}				
+		}
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+	}
+	option = {
+		name = "EVTOPTC700"	# A diplomat
+		ai_chance = { factor = 30 }
+		define_ruler = {
+			adm = 1
+			dip = 4
+			mil = 1		
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_traders 
+			}
+			add_faction_influence = {
+				faction = mr_traders
+				influence = 20
+			}				
+		}			
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+	}
+	option = {
+		name = "EVTOPTD700"	# A military man
+		ai_chance = { factor = 30 }
+		define_ruler = {
+			adm = 1
+			dip = 1
+			mil = 4
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 20
+			}				
+		}		
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+	}
+	option = { # Nepotism choice, re-electing within dynasty
+		name = "EVTOPTE700"
+		trigger = {
+			has_government_attribute = enables_nepotism
+		}
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				has_country_flag = strengthened_signoria_flag
+			}
+			custom_tooltip = strengthened_signoria_election_tt
+			clr_country_flag = strengthened_signoria_flag
+		}
+		else = {
+			add_scaled_republican_tradition = -4
+		}
+		define_ruler = {
+			min_age = 20
+			max_age = 40
+			name = "lastname"
+			random_gender = yes # Allows random gender for republics
+		}
+		if = {
+			limit = { 
+				has_faction = mr_aristocrats 
+			}
+			add_faction_influence = {
+				faction = mr_aristocrats
+				influence = 10
+			}				
+		}
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = th_innovativeness_from_elections
+					has_country_modifier = kpp_abolished_reckless_competitions
+				}
+			}
+			change_innovativeness = 1
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+		if = {
+			limit = { has_government_attribute = th_has_kappa_rebels }
+			country_event = {
+				id = flavor_kpp.19
+			}
+		}
+	}
+}
+
+# The Establishment of the Kappa Corps
+country_event = {
+	id = flavor_kpp.3
+	title = flavor_kpp.3.t
+	picture = NITORI_MARINE_eventPicture
+	desc = flavor_kpp.3.desc
+	is_triggered_only = yes
+
+	#Welcome to the Corps!
+	option = {
+		name = flavor_kpp.3.a
+		capital_scope = {
+			marine_infantry = ROOT
+			marine_infantry = ROOT
+			marine_infantry = ROOT
+			marine_infantry = ROOT
+		}
+		add_country_modifier = {
+			name = kpp_the_kappa_conscription
+			duration = -1
+		}
+		add_army_professionalism = 0.02
+		#Enable ability of freely switch between manpower and sailor
+		th_enable_transfer_mp_to_sailors_decision = yes
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Weaponized Australian Wildlife
+country_event = {
+	id = flavor_kpp.4
+	title = flavor_kpp.4.t
+	picture = AUSTRALIA_eventPicture
+	desc = flavor_kpp.4.desc
+	is_triggered_only = yes
+
+	#Mount the machine guns on the super spiders!
+	option = {
+		name = flavor_kpp.4.a
+		change_innovativeness = 1
+		kpp_unlock_gadget = {
+			gadget = australian_wildlife
+		}
+		kpp_apply_gadget = {
+			gadget = australian_wildlife
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Integration of Yumemi's technology
+country_event = {
+	id = flavor_kpp.5
+	title = flavor_kpp.5.t
+	picture = YUMEMI_eventPicture
+	desc = flavor_kpp.5.desc
+	is_triggered_only = yes
+
+	#Astounding!
+	option = {
+		name = flavor_kpp.5.a
+		change_innovativeness = 1
+		kpp_unlock_gadget = {
+			gadget = aerial_torpedo
+		}
+		kpp_apply_gadget = {
+			gadget = aerial_torpedo
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Integration of Rika's technology
+country_event = {
+	id = flavor_kpp.6
+	title = flavor_kpp.6.t
+	picture = RIKA_eventPicture
+	desc = flavor_kpp.6.desc
+	is_triggered_only = yes
+
+	#Astounding!
+	option = {
+		name = flavor_kpp.6.a
+		change_innovativeness = 1
+		kpp_unlock_gadget = {
+			gadget = kappa_tanks
+		}
+		kpp_apply_gadget = {
+			gadget = kappa_tanks
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# The technology of the future
+country_event = {
+	id = flavor_kpp.7
+	title = flavor_kpp.7.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_kpp.7.desc
+	is_triggered_only = yes
+
+	#Astounding!
+	option = {
+		name = flavor_kpp.7.a
+		change_innovativeness = 1
+		kpp_unlock_gadget = {
+			gadget = sanpei_battleship
+		}
+		kpp_apply_gadget = {
+			gadget = sanpei_battleship
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Creation of the Hisoutensoku
+country_event = {
+	id = flavor_kpp.8
+	title = flavor_kpp.8.t
+	picture = HISOUTENSOKU_eventPicture
+	desc = flavor_kpp.8.desc
+	is_triggered_only = yes
+
+	#You utter fool! Kappa science is the best in the world!
+	option = {
+		name = flavor_kpp.8.a
+		change_innovativeness = 2
+		
+		kpp_unlock_gadget = {
+			gadget = hisoutensoku
+		}
+		kpp_apply_gadget = {
+			gadget = hisoutensoku
+			duration = 7300
+		}
+		th_unlock_mercenary_company = {
+			mercenary_company = merc_th_hisoutensoku
+			free_merc = yes
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Tributary Status of the Kappas
+country_event = {
+	id = flavor_kpp.9
+	title = flavor_kpp.9.t
+	picture = SANAE_eventPicture
+	desc = flavor_kpp.9.desc
+	is_triggered_only = yes
+	#We shall serve the Moriya Clan with our services
+	option = {
+		name = flavor_kpp.9.a
+		trigger = {
+			exists = MRY
+			MRY = { religion = th_moriyashinto }
+			religion = th_moriyashinto
+		}
+		custom_tooltip = flavor_kpp.9.a.tt
+		hidden_effect = {
+			MRY = {
+				country_event = {
+					id = flavor_kpp.10
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				MRY = { ai = no }
+			}
+		}
+	}
+	option = {
+		name = flavor_kpp.9.b
+		trigger = {
+			exists = MRY
+			OR = {
+				MRY = { NOT = { religion = th_moriyashinto } }
+				NOT = { religion = th_moriyashinto }
+			}
+		}
+		custom_tooltip = flavor_kpp.9.b.tt
+		hidden_effect = {
+			MRY = {
+				country_event = {
+					id = flavor_kpp.10
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#All we need is an alliance with Moriya Clan
+	option = {
+		name = flavor_kpp.9.c
+		trigger = {
+			exists = MRY
+		}
+		custom_tooltip = flavor_kpp.9.c.tt
+		hidden_effect = {
+			MRY = {
+				country_event = {
+					id = flavor_kpp.11
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	#We are good on our own
+	option = {
+		name = flavor_kpp.9.d
+		add_dip_power = 100
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Kappapolis wants to become our tributary
+country_event = {
+	id = flavor_kpp.10
+	title = flavor_kpp.10.t
+	picture = NITORI_eventPicture
+	desc = {
+		desc = flavor_kpp.10.desc.a
+		trigger = {
+			FROM = { religion = th_moriyashinto }
+			religion = th_moriyashinto
+		}
+	}
+	desc = {
+		desc = flavor_kpp.10.desc.b
+		trigger = {
+			OR = {
+				NOT = { FROM = { religion = th_moriyashinto } }
+				NOT = { religion = th_moriyashinto }
+			}
+		}
+	}
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = KPP
+	}
+
+	#Accept their request
+	option = {
+		name = flavor_kpp.10.a
+		if = {
+			limit = {
+				religion = th_moriyashinto
+				FROM = { religion = th_moriyashinto }
+			}
+			create_subject = {
+				subject_type = th_religious_tributary
+				subject = FROM
+			}
+		}
+		else = {
+			set_country_flag = forced_tributary_state
+			create_subject = {
+				subject_type = tributary_state
+				subject = FROM
+			}
+			clr_country_flag = forced_tributary_state
+		}
+		add_trust = {
+			who = FROM
+			value = 25
+			mutual = yes
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#No lol
+	option = {
+		name = flavor_kpp.10.b
+		reverse_add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 60
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_kpp_refused_alliance
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+# Kappapolis wants to become our ally (Moriya)
+country_event = {
+	id = flavor_kpp.11
+	title = flavor_kpp.11.t
+	picture = NITORI_eventPicture
+	desc = flavor_kpp.11.desc
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = KPP
+	}
+
+	#Accept their request
+	option = {
+		name = flavor_kpp.11.a
+		if = {
+			limit = {
+				OR = {
+					is_rival = FROM
+					is_enemy = FROM
+				}
+			}
+			add_trust = {
+				who = FROM
+				value = 25
+				mutual = yes
+			}
+		}
+		if = {
+			limit = { is_rival = FROM }
+			remove_rival = FROM
+		}
+		if = {
+			limit = { is_enemy = FROM }
+			FROM = { remove_rival = ROOT }
+		}
+		create_alliance = FROM
+		if = {
+			limit = {
+				ai = yes
+			}
+			set_ai_attitude = {
+				attitude = attitude_allied
+				who = FROM
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#No lol
+	option = {
+		name = flavor_kpp.11.b
+		reverse_add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 60
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_kpp_refused_alliance
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { is_rival = FROM }
+				NOT = { is_enemy = FROM }
+			}
+		}
+	}
+}
+
+# Kappa-Tengu Diplomacy
+country_event = {
+	id = flavor_kpp.12
+	title = flavor_kpp.12.t
+	picture = CROW_TENGU_GOOD_eventPicture
+	desc = flavor_kpp.12.desc
+	is_triggered_only = yes
+	#We need a Kappa-Tengu alliance
+	option = {
+		name = flavor_kpp.12.a
+		trigger = {
+			exists = TGU
+		}
+		custom_tooltip = flavor_kpp.12.a.tt
+		hidden_effect = {
+			TGU = {
+				country_event = {
+					id = flavor_kpp.13
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#We are good on our own
+	option = {
+		name = flavor_kpp.12.b
+		add_dip_power = 100
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Kappapolis wants to become our ally (Tengu)
+country_event = {
+	id = flavor_kpp.13
+	title = flavor_kpp.13.t
+	picture = NITORI_eventPicture
+	desc = flavor_kpp.13.desc
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = KPP
+	}
+
+	#Accept their request
+	option = {
+		name = flavor_kpp.13.a
+		if = {
+			limit = {
+				OR = {
+					is_rival = FROM
+					is_enemy = FROM
+				}
+			}
+			add_trust = {
+				who = FROM
+				value = 25
+				mutual = yes
+			}
+		}
+		if = {
+			limit = { is_rival = FROM }
+			remove_rival = FROM
+		}
+		if = {
+			limit = { is_enemy = FROM }
+			FROM = { remove_rival = ROOT }
+		}
+		create_alliance = FROM
+		if = {
+			limit = {
+				ai = yes
+			}
+			set_ai_attitude = {
+				attitude = attitude_allied
+				who = FROM
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	#No lol
+	option = {
+		name = flavor_kpp.13.b
+		reverse_add_casus_belli = {
+			type = cb_insult
+			target = FROM
+			months = 60
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_kpp_refused_alliance
+		}
+
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { is_rival = FROM }
+				NOT = { is_enemy = FROM }
+			}
+		}
+	}
+}
+
+# Kappa Shredder
+country_event = {
+	id = flavor_kpp.14
+	title = flavor_kpp.14.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_kpp.14.desc
+	is_triggered_only = yes
+
+	#Astounding
+	option = {
+		name = flavor_kpp.14.a
+		change_innovativeness = 1
+		kpp_unlock_gadget = {
+			gadget = kappa_shredder
+		}
+		kpp_apply_gadget = {
+			gadget = kappa_shredder
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Random Innovativeness events
+
+# Nitori gadget
+country_event = {
+	id = flavor_kpp.15
+	title = flavor_kpp.15.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_kpp.15.desc
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "Rule Britannia"
+		has_government_attribute = th_passive_innovativeness
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	#
+	option = {
+		name = flavor_kpp.15.a
+		change_innovativeness = 1
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Takane gadget
+country_event = {
+	id = flavor_kpp.16
+	title = flavor_kpp.16.t
+	picture = TAKANE_eventPicture
+	desc = flavor_kpp.16.desc
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "Rule Britannia"
+		has_government_attribute = th_passive_innovativeness
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	#
+	option = {
+		name = flavor_kpp.16.a
+		change_innovativeness = 1
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Yumemi's scientific breakthrough
+country_event = {
+	id = flavor_kpp.17
+	title = flavor_kpp.17.t
+	picture = YUMEMI_eventPicture
+	desc = flavor_kpp.17.desc
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "Rule Britannia"
+		has_government_attribute = th_passive_innovativeness
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	#
+	option = {
+		name = flavor_kpp.17.a
+		change_innovativeness = 1
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Rika tank development
+country_event = {
+	id = flavor_kpp.18
+	title = flavor_kpp.18.t
+	picture = RIKA_eventPicture
+	desc = flavor_kpp.18.desc
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "Rule Britannia"
+		has_government_attribute = th_passive_innovativeness
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	#
+	option = {
+		name = flavor_kpp.18.a
+		change_innovativeness = 1
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Kappa Rebellions on elections / new rulers
+# Kappa Rebellion
+country_event = {
+	id = flavor_kpp.19
+	title = flavor_kpp.19.t
+	picture = TAKANE_SNIPER_eventPicture
+	desc = flavor_kpp.19.desc
+	is_triggered_only = yes
+	trigger = {
+		has_government_attribute = th_has_kappa_rebels
+		NOT = { has_ruler_modifier = th_elected_kappa_tinker }
+		NOT = { has_country_modifier = kpp_overcame_counter_movement_disaster }
+		ai = no	#Too dificult for the AI too handle probably
+	}
+	goto = th_kappa_rebellion_province
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_overseas = no
+					same_continent = ROOT
+				}
+				save_event_target_as = th_kappa_rebellion_province
+			}
+		}
+	}
+
+	#Cursed
+	option = {
+		name = flavor_kpp.19.a
+		event_target:th_kappa_rebellion_province = {
+			tooltip = {
+				spawn_rebels = {
+					size = 1
+					type = th_kappa_rebels
+				}
+			}
+			hidden_effect = {
+				random_list = {
+					1 = {
+						spawn_rebels = {
+							size = 1
+							type = th_kappa_rebels
+						}
+					}
+					1 = {
+						spawn_rebels = {
+							size = 1
+							type = th_kappa_rebels
+							female = yes
+						}
+					}
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Spice Fuel Engine
+country_event = {
+	id = flavor_kpp.20
+	title = flavor_kpp.20.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_kpp.20.desc
+	is_triggered_only = yes
+
+	#Astounding!
+	option = {
+		name = flavor_kpp.20.a
+		change_innovativeness = 1
+		kpp_unlock_gadget = {
+			gadget = spice_fuel_engine
+		}
+		kpp_apply_gadget = {
+			gadget = spice_fuel_engine
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Super Scope 3D
+country_event = {
+	id = flavor_kpp.21
+	title = flavor_kpp.21.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_kpp.21.desc
+	is_triggered_only = yes
+
+	#Astounding!
+	option = {
+		name = flavor_kpp.21.a
+		change_innovativeness = 1
+		kpp_unlock_gadget = {
+			gadget = super_scope_3D
+		}
+		kpp_apply_gadget = {
+			gadget = super_scope_3D
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Bookkeep-Inator
+country_event = {
+	id = flavor_kpp.22
+	title = flavor_kpp.22.t
+	picture = NITORI_GADGET_eventPicture
+	desc = flavor_kpp.22.desc
+	is_triggered_only = yes
+
+	#Astounding
+	option = {
+		name = flavor_kpp.22.a
+		change_innovativeness = 1
+		kpp_unlock_gadget = {
+			gadget = bookkeep_inator
+		}
+		kpp_apply_gadget = {
+			gadget = bookkeep_inator
+			duration = 7300
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Kappa Anti-Centralization events
+
+# Start of the Reforms
+country_event = {
+	id = flavor_kpp.23
+	title = flavor_kpp.23.t
+	picture = NITORI_eventPicture
+	desc = flavor_kpp.23.desc
+	is_triggered_only = yes
+
+	#The reforms need to be done. Better be it quick and painful than too slow.
+	option = {
+		name = flavor_kpp.23.a
+		custom_tooltip = flavor_kpp.23.a.tt
+		set_country_flag = kpp_unlock_kappa_counter_movement_disaster_decision
+		change_government_reform_progress = 100
+		
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#Special Election - Elect Nitori into office
+country_event = {
+	id = flavor_kpp.24
+	title = flavor_kpp.24.t
+	desc = flavor_kpp.24.desc
+	picture = NITORI_eventPicture
+	trigger = {
+	}	
+	is_triggered_only = yes
+	mean_time_to_happen = {
+		days = 1
+	}	
+	option = {
+		name = flavor_kpp.24.a
+		if = {
+			limit = {
+				has_country_flag = kpp_had_guild_wars_disaster
+			}
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 4
+				female = yes
+			}
+		}
+		else = {
+			define_ruler = {
+				name = "Nitori"
+				dynasty = "Kawashiro"
+				age = 20
+				adm = 6
+				dip = 5
+				mil = 3
+				female = yes
+			}
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+		add_ruler_modifier = {
+			name = th_elected_kappa_tinker
+			duration = -1
+		}
+		ai_chance = { factor = 10 }
+	}
+}
+
+# First Major Reform
+country_event = {
+	id = flavor_kpp.25
+	title = flavor_kpp.25.t
+	picture = NITORI_eventPicture
+	desc = flavor_kpp.25.desc
+	is_triggered_only = yes
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = flavor_kpp.25.a
+		add_country_modifier = {
+			name = kpp_first_major_reform
+			duration = -1
+		}
+		hidden_effect = {
+			change_variable = {
+				which = max_election_term
+				value = 1
+			}
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Second Major Reform
+country_event = {
+	id = flavor_kpp.26
+	title = flavor_kpp.26.t
+	picture = NITORI_eventPicture
+	desc = flavor_kpp.26.desc
+	is_triggered_only = yes
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = flavor_kpp.26.a
+		custom_tooltip = flavor_kpp.26.a.tt
+		custom_tooltip = flavor_kpp.26.a.bt
+		add_country_modifier = {
+			name = kpp_second_major_reform
+			duration = -1
+		}
+		add_country_modifier = {
+			name = kpp_abolished_reckless_competitions
+			duration = -1
+		}
+		custom_tooltip = flavor_kpp.26.a.ct
+		hidden_effect = {
+			remove_country_modifier = kpp_first_major_reform
+			set_country_flag = kpp_unlock_kappa_guild_wars_disaster_decision
+			change_variable = {
+				which = max_election_term
+				value = 1
+			}
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Third Major Reform
+country_event = {
+	id = flavor_kpp.27
+	title = flavor_kpp.27.t
+	picture = NITORI_eventPicture
+	desc = flavor_kpp.27.desc
+	is_triggered_only = yes
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = flavor_kpp.27.a
+		custom_tooltip = flavor_kpp.27.a.bt
+		add_country_modifier = {
+			name = kpp_third_major_reform
+			duration = -1
+		}
+		hidden_effect = {
+			remove_country_modifier = kpp_second_major_reform
+			change_variable = {
+				which = max_election_term
+				value = 1
+			}
+		}
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Absolute Tinker Republic events
+# Establishment of the United Tinker Republic
+country_event = {
+	id = flavor_kpp.28
+	title = flavor_kpp.28.t
+	picture = NITORI_eventPicture
+	desc = flavor_kpp.28.desc
+	is_triggered_only = yes
+
+	#If you are not for the reforms then you are an enemy of the state!
+	option = {
+		name = flavor_kpp.28.a
+		remove_country_modifier = th_elected_kappa_tinker
+		add_government_reform = Gensokyan_kpp_united_kappa_republic
+		add_republican_tradition = 100
+		
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+# Tinker Contest!
+country_event = {
+	id = flavor_kpp.29
+	title = flavor_kpp.29.t
+	picture = KAPPA_eventPicture
+	desc = flavor_kpp.29.desc
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_tinker_contests
+	}
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = th_administrative_tinker
+			remove_country_modifier = th_diplomatic_tinker
+			remove_country_modifier = th_military_tinker
+			remove_country_modifier = th_allrounder_tinker
+		}
+	}
+
+	option = {	#Choose the administrative tinker
+		name = flavor_kpp.29.a
+		add_ruler_modifier = {
+			name = th_administrative_tinker
+			duration = -1
+		}
+		add_scaled_republican_tradition = -10
+		add_adm_power = 60
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Choose the diplomatic tinker
+		name = flavor_kpp.29.b
+		add_ruler_modifier = {
+			name = th_diplomatic_tinker
+			duration = -1
+		}
+		add_scaled_republican_tradition = -10
+		add_dip_power = 60
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Choose the military tinker
+		name = flavor_kpp.29.c
+		add_ruler_modifier = {
+			name = th_military_tinker
+			duration = -1
+		}
+		add_scaled_republican_tradition = -10
+		add_mil_power = 60
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Choose the allrounder tinker
+		name = flavor_kpp.29.d
+		add_ruler_modifier = {
+			name = th_allrounder_tinker
+			duration = -1
+		}
+		add_scaled_republican_tradition = -10
+		add_adm_power = 20
+		add_dip_power = 20
+		add_mil_power = 20
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Let the public decide
+		name = flavor_kpp.29.e
+		random_list = {
+			1 = {
+				add_ruler_modifier = {
+					name = th_administrative_tinker
+					duration = -1
+				}
+				add_adm_power = 60
+			}
+			1 = {
+				add_ruler_modifier = {
+					name = th_diplomatic_tinker
+					duration = -1
+				}
+				add_dip_power = 60
+			}
+			1 = {
+				add_ruler_modifier = {
+					name = th_military_tinker
+					duration = -1
+				}
+				add_mil_power = 60
+			}
+			1 = {
+				add_ruler_modifier = {
+					name = th_allrounder_tinker
+					duration = -1
+				}
+				add_adm_power = 20
+				add_dip_power = 20
+				add_mil_power = 20
+			}
+		}
+		change_innovativeness = 1
+		ai_chance = { 
+			factor = 1
+		}
+	}
+
+	option = {	#Participate yourself in it
+		name = flavor_kpp.29.f
+		add_scaled_republican_tradition = 5
+		add_adm_power = 33
+		add_dip_power = 33
+		add_mil_power = 33
+		change_innovativeness = 5
+		ai_chance = { 
+			factor = 1
+		}
+	}
+}
+
+# Election! - Death
+country_event = {
+	id = flavor_kpp.30
+	title = flavor_kpp.30.t
+	desc = flavor_kpp.30.desc
+	picture = KAPPA_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_government_attribute = th_has_tinker_elections_on_ruler_death
+	}
+	
+	#Elect Nitori
+	option = {
+		name = flavor_kpp.30.a
+		ai_chance = { factor = 40 }
+		define_ruler = {
+			name = "Nitori"
+			dynasty = "Kawashiro"
+			age = 20
+			adm = 6
+			dip = 5
+			mil = 4
+			female = yes
+		}
+		hidden_effect = {
+			add_ruler_personality = immortal_personality
+			set_ruler_flag = touhou_character_ruler
+			set_ruler_flag = touhou_original_ruler
+			set_variable = {
+				which = election_term
+				value = 1
+			}
+		}
+	}
+}
+
+# Concentrate Innovativeness
+country_event = {
+	id = flavor_kpp.31
+	title = flavor_kpp.31.t
+	desc = flavor_kpp.31.desc
+	picture = NITORI_GADGET_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = flavor_kpp.31.a
+		if = {
+			limit = {
+				NOT = { adm_tech = 32 }
+			}
+			add_adm_tech = 1
+		}
+		else = {
+			add_adm_power = 150
+		}
+	}
+	option = {
+		name = flavor_kpp.31.b
+		if = {
+			limit = {
+				NOT = { dip_tech = 32 }
+			}
+			add_dip_tech = 1
+		}
+		else = {
+			add_dip_power = 150
+		}
+	}
+	option = {
+		name = flavor_kpp.31.c
+		if = {
+			limit = {
+				NOT = { mil_tech = 32 }
+			}
+			add_mil_tech = 1
+		}
+		else = {
+			add_mil_power = 150
+		}
+	}
+}

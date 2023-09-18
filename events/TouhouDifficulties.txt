@@ -1,0 +1,691 @@
+########################################
+# Events for the Touhou Difficulties
+########################################
+
+namespace = th_difficulty_event
+
+#With the beginning of each age, every AI country gets a boost...
+country_event = {
+	id = th_difficulty_event.1
+	title = th_difficulty_event.1.t
+	desc = th_difficulty_event.1.desc
+	picture = SHRINE_eventPicture
+	
+	trigger = {
+		ai = yes
+		was_player = no
+		NOT = {
+			any_ally = {
+				OR = {
+					ai = no
+					was_player = yes
+				}
+			}
+		}
+		OR = {
+			is_subject = no
+			overlord = {
+				ai = yes
+				was_player = no
+			}
+		}
+		OR = {
+			AND = {
+				current_age = age_of_reformation
+				NOT = { has_country_flag = th_ai_boost_for_reformation }
+			}
+			AND = {
+				current_age = age_of_absolutism
+				NOT = { has_country_flag = th_ai_boost_for_absolutism }
+			}
+			AND = {
+				current_age = age_of_revolutions
+				NOT = { has_country_flag = th_ai_boost_for_revolutions }
+			}
+		}
+		OR = {
+			has_global_flag = th_global_heroic_mode
+			has_global_flag = th_global_mythic_mode
+			has_global_flag = th_global_lunatic_mode
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+	
+	option = {
+		name = th_difficulty_event.1.a
+		#Generic boosts depending on difficulty
+		if = {
+			limit = {
+				has_global_flag = th_global_heroic_mode
+			}
+			add_stability = 1
+			add_corruption = -2
+			add_years_of_income = 3
+			add_inflation = -3
+			add_yearly_manpower = 3
+			add_yearly_sailors = 3
+			create_general = {
+				tradition = 35
+			}
+			create_admiral = {
+				tradition = 35
+			}
+			add_legitimacy = 33
+			add_horde_unity = 33
+			add_republican_tradition = 33
+			add_devotion = 33
+			add_meritocracy = 33
+			add_adm_power = 200
+			add_dip_power = 200
+			add_mil_power = 200
+		}
+		else_if = {
+			limit = {
+				has_global_flag = th_global_mythic_mode
+			}
+			add_stability = 2
+			add_corruption = -4
+			add_years_of_income = 6
+			add_inflation = -6
+			add_yearly_manpower = 6
+			add_yearly_sailors = 6
+			create_general = {
+				tradition = 70
+			}
+			create_admiral = {
+				tradition = 70
+			}
+			add_legitimacy = 66
+			add_horde_unity = 66
+			add_republican_tradition = 66
+			add_devotion = 66
+			add_meritocracy = 66
+			add_adm_power = 400
+			add_dip_power = 400
+			add_mil_power = 400
+		}
+		else_if = {
+			limit = {
+				has_global_flag = th_global_lunatic_mode
+			}
+			add_stability = 3
+			add_corruption = -6
+			add_years_of_income = 9
+			add_inflation = -9
+			add_yearly_manpower = 9
+			add_yearly_sailors = 9
+			create_general = {
+				tradition = 100
+			}
+			create_admiral = {
+				tradition = 100
+			}
+			add_legitimacy = 100
+			add_horde_unity = 100
+			add_republican_tradition = 100
+			add_devotion = 100
+			add_meritocracy = 100
+			add_adm_power = 600
+			add_dip_power = 600
+			add_mil_power = 600
+		}
+		#Special boosts depending on the new age
+		if = {
+			limit = {
+				current_age = age_of_reformation
+			}
+			set_country_flag = th_ai_boost_for_reformation
+			if = {
+				limit = {
+					uses_papacy = yes
+				}
+				add_papal_influence = 200
+			}
+			if = {
+				limit = {
+					uses_church_aspects = yes
+				}
+				add_church_power = 100
+			}
+			if = {
+				limit = {
+					uses_fervor = yes
+				}
+				add_fervor = 100
+			}
+			if = {
+				limit = {
+					uses_patriarch_authority = yes
+				}
+				add_patriarch_authority = 100
+			}
+			if = {
+				limit = {
+					uses_doom = yes
+				}
+				add_doom = -100
+			}
+			if = {
+				limit = {
+					uses_karma = yes
+				}
+				set_karma = 0
+			}
+			if = {
+				limit = {
+					uses_authority = yes
+				}
+				add_authority = 100
+			}
+			if = {
+				limit = {
+					harmonization_progress = 0
+				}
+				add_harmonization_progress = 100
+			}
+			else_if = {
+				limit = {
+					OR = {
+						religion = confucianism
+						religion = th_buddhist
+					}
+				}
+				add_harmony = 100
+			}
+		}
+		else_if = {
+			limit = {
+				current_age = age_of_absolutism
+			}
+			set_country_flag = th_ai_boost_for_absolutism
+			add_absolutism = 25
+			if = {
+				limit = {
+					is_emperor = yes
+				}
+				add_imperial_influence = 100
+			}
+			if = {
+				limit = {
+					th_is_emperor_of_china = yes
+				}
+				add_mandate = 100
+			}
+		}
+		else_if = {
+			limit = {
+				current_age = age_of_revolutions
+			}
+			set_country_flag = th_ai_boost_for_revolutions
+			add_army_tradition = 50
+			add_army_professionalism = 0.5
+			add_navy_tradition = 50
+			add_prestige = 50
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#... and the player a notification
+country_event = {
+	id = th_difficulty_event.2
+	title = th_difficulty_event.2.t
+	desc = th_difficulty_event.2.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		ai = no
+		OR = {
+			AND = {
+				current_age = age_of_reformation
+				NOT = { has_country_flag = th_ai_boost_for_reformation_info }
+			}
+			AND = {
+				current_age = age_of_absolutism
+				NOT = { has_country_flag = th_ai_boost_for_absolutism_info }
+			}
+			AND = {
+				current_age = age_of_revolutions
+				NOT = { has_country_flag = th_ai_boost_for_revolutions_info }
+			}
+		}
+		OR = {
+			has_global_flag = th_global_heroic_mode
+			has_global_flag = th_global_mythic_mode
+			has_global_flag = th_global_lunatic_mode
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					current_age = age_of_reformation
+				}
+				set_country_flag = th_ai_boost_for_reformation_info
+			}
+			else_if = {
+				limit = {
+					current_age = age_of_absolutism
+				}
+				set_country_flag = th_ai_boost_for_absolutism_info
+			}
+			else_if = {
+				limit = {
+					current_age = age_of_revolutions
+				}
+				set_country_flag = th_ai_boost_for_revolutions_info
+			}
+		}
+	}
+	
+	option = {
+		name = th_difficulty_event.2.a
+		#Generic boosts depending on difficulty
+		custom_tooltip = th_difficulty_event.2.a.tt
+		if = {
+			limit = {
+				has_global_flag = th_global_heroic_mode
+			}
+			tooltip = {
+				add_stability = 1
+				add_corruption = -2
+				add_years_of_income = 3
+				add_inflation = -3
+				add_yearly_manpower = 3
+				add_yearly_sailors = 3
+				create_general = {
+					tradition = 35
+				}
+				create_admiral = {
+					tradition = 35
+				}
+				add_legitimacy = 33
+				add_horde_unity = 33
+				add_republican_tradition = 33
+				add_devotion = 33
+				add_meritocracy = 33
+				add_adm_power = 200
+				add_dip_power = 200
+				add_mil_power = 200
+			}
+		}
+		else_if = {
+			limit = {
+				has_global_flag = th_global_mythic_mode
+			}
+			tooltip = {
+				add_stability = 2
+				add_corruption = -4
+				add_years_of_income = 6
+				add_inflation = -6
+				add_yearly_manpower = 6
+				add_yearly_sailors = 6
+				create_general = {
+					tradition = 70
+				}
+				create_admiral = {
+					tradition = 70
+				}
+				add_legitimacy = 66
+				add_horde_unity = 66
+				add_republican_tradition = 66
+				add_devotion = 66
+				add_meritocracy = 66
+				add_adm_power = 400
+				add_dip_power = 400
+				add_mil_power = 400
+			}
+		}
+		else_if = {
+			limit = {
+				has_global_flag = th_global_lunatic_mode
+			}
+			tooltip = {
+				add_stability = 3
+				add_corruption = -6
+				add_years_of_income = 9
+				add_inflation = -9
+				add_yearly_manpower = 9
+				add_yearly_sailors = 9
+				create_general = {
+					tradition = 100
+				}
+				create_admiral = {
+					tradition = 100
+				}
+				add_legitimacy = 100
+				add_horde_unity = 100
+				add_republican_tradition = 100
+				add_devotion = 100
+				add_meritocracy = 100
+				add_adm_power = 600
+				add_dip_power = 600
+				add_mil_power = 600
+			}
+		}
+		#Special boosts depending on the new age
+		if = {
+			limit = {
+				current_age = age_of_reformation
+			}
+			custom_tooltip = th_difficulty_event.2.a.att
+		}
+		else_if = {
+			limit = {
+				current_age = age_of_absolutism
+			}
+			custom_tooltip = th_difficulty_event.2.a.btt
+		}
+		else_if = {
+			limit = {
+				current_age = age_of_revolutions
+			}
+			custom_tooltip = th_difficulty_event.2.a.ctt
+		}
+	}
+}
+
+#Player get their penalty debuff
+country_event = {
+	id = th_difficulty_event.3
+	title = th_difficulty_event.3.t
+	desc = th_difficulty_event.3.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		ai = no
+		OR = {
+			has_global_flag = th_global_heroic_mode
+			has_global_flag = th_global_mythic_mode
+			has_global_flag = th_global_lunatic_mode
+		}
+		NOT = { has_country_modifier = th_heroic_mode_player }
+		NOT = { has_country_modifier = th_mythic_mode_player }
+		NOT = { has_country_modifier = th_lunatic_mode_player }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = th_difficulty_event.3.a
+		if = {
+			limit = {
+				has_global_flag = th_global_heroic_mode
+			}
+			add_country_modifier = {
+				name = th_heroic_mode_player
+				duration = -1
+				desc = th_heroic_mode_player_tt
+			}
+		}
+		else_if = {
+			limit = {
+				has_global_flag = th_global_mythic_mode
+			}
+			add_country_modifier = {
+				name = th_mythic_mode_player
+				duration = -1
+				desc = th_mythic_mode_player_tt
+			}
+		}
+		else_if = {
+			limit = {
+				has_global_flag = th_global_lunatic_mode
+			}
+			add_country_modifier = {
+				name = th_lunatic_mode_player
+				duration = -1
+				desc = th_lunatic_mode_player_tt
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#AI dislikes human players on higher difficulties
+country_event = {
+	id = th_difficulty_event.4
+	title = th_difficulty_event.4.t
+	desc = th_difficulty_event.4.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		ai = no
+		OR = {
+			has_global_flag = th_global_heroic_mode
+			has_global_flag = th_global_mythic_mode
+			has_global_flag = th_global_lunatic_mode
+		}
+		any_known_country = {
+			ai = yes
+			was_player = no
+			NOT = { is_subject_of = ROOT }
+			NOT = { alliance_with = ROOT }
+			NOT = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_heroic_opinion_penalty
+				}
+			}
+			NOT = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_mythic_opinion_penalty
+				}
+			}
+			NOT = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_lunatic_opinion_penalty
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = th_difficulty_event.4.a
+		every_known_country = {
+			limit = {
+				ai = yes
+				was_player = no
+				NOT = { alliance_with = ROOT }
+				NOT = { is_subject_of = ROOT }
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_heroic_opinion_penalty
+					}
+				}
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_mythic_opinion_penalty
+					}
+				}
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_lunatic_opinion_penalty
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_global_flag = th_global_heroic_mode
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = th_heroic_opinion_penalty
+				}
+			}
+			else_if = {
+				limit = {
+					has_global_flag = th_global_mythic_mode
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = th_mythic_opinion_penalty
+				}
+			}
+			else_if = {
+				limit = {
+					has_global_flag = th_global_lunatic_mode
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = th_lunatic_opinion_penalty
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#AI is friendlier towards allies / overlords
+country_event = {
+	id = th_difficulty_event.5
+	title = th_difficulty_event.5.t
+	desc = th_difficulty_event.5.desc
+	picture = YUKARI_eventPicture
+	
+	trigger = {
+		ai = no
+		any_known_country = {
+			OR = {
+				AND = {
+					ai = yes
+					was_player = no
+					OR = {
+						is_subject_of = ROOT
+						alliance_with = ROOT
+					}
+				}
+				ai = no
+				was_player = yes
+			}
+			OR = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_heroic_opinion_penalty
+				}
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_mythic_opinion_penalty
+				}
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = th_lunatic_opinion_penalty
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+	
+	hidden = yes
+	
+	option = {
+		name = th_difficulty_event.5.a
+		every_known_country = {
+			limit = {
+				OR = {
+					AND = {
+						ai = yes
+						was_player = no
+						OR = {
+							is_subject_of = ROOT
+							alliance_with = ROOT
+						}
+					}
+					ai = no
+					was_player = yes
+				}
+				OR = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_heroic_opinion_penalty
+					}
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_mythic_opinion_penalty
+					}
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_lunatic_opinion_penalty
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_heroic_opinion_penalty
+					}
+				}
+				remove_opinion = {
+					who = ROOT
+					modifier = th_heroic_opinion_penalty
+				}
+			}
+			else_if = {
+				limit = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_mythic_opinion_penalty
+					}
+				}
+				remove_opinion = {
+					who = ROOT
+					modifier = th_mythic_opinion_penalty
+				}
+			}
+			else_if = {
+				limit = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = th_lunatic_opinion_penalty
+					}
+				}
+				remove_opinion = {
+					who = ROOT
+					modifier = th_lunatic_opinion_penalty
+				}
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}

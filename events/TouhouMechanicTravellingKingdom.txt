@@ -1,0 +1,698 @@
+########################################
+# Events for the travelling kingdom mechanic
+########################################
+# IMPORTANT: The events and the effects are more or less hardcoded to deal with only ONE Wandering State at any given time
+# With more than KMJ - the only country which is supposed to have this mechanic - the events and effects break apart
+#TODO - Fix with 1.35
+
+namespace = th_travelling_kingdom_mechanic
+
+#Give provinces back which are not capital
+country_event = {
+	id = th_travelling_kingdom_mechanic.1
+	title = th_travelling_kingdom_mechanic.1.t
+	desc = th_travelling_kingdom_mechanic.1.desc
+	picture = KOISHI_eventPicture
+
+	trigger = {
+		has_government_attribute = disables_settled_property
+		any_owned_province = {
+			NOT = { is_capital_of = ROOT }
+			NOT = { has_province_flag = th_target_for_migration }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		if = {
+			limit = {
+				has_government_attribute = enables_development_transfer
+				NOT = { has_country_flag = th_dev_transfer_variables_set }
+			}
+			th_initialize_dev_transfer_mechanic = yes
+		}
+		every_owned_province = {
+			limit = {
+				NOT = { is_capital_of = ROOT }
+				NOT = { has_province_flag = th_target_for_migration }
+			}
+			if = {
+				limit = {
+					owner = {
+						has_government_attribute = enables_development_transfer
+					}
+				}
+				th_save_conquered_province_dev = yes
+			}
+			remove_core = ROOT
+		}
+	}
+
+	option = {
+		name = th_travelling_kingdom_mechanic.1.a
+		release_all_subjects = yes	#Release all possible countries
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	after = {
+		every_owned_province = {
+			limit = {
+				NOT = { is_capital_of = ROOT }
+				NOT = { has_province_flag = th_target_for_migration }
+			}
+			if = {	#Province goes to the country with its core on it
+				limit = {
+					any_core_country = {
+						exists = yes
+					}
+				}
+				random_core_country = {
+					limit = {
+						exists = yes
+					}
+					PREV = {
+						cede_province = PREV	#Looks worse than it is. It basically means that the province will target a random country and transfer itself to the selected country
+					}
+				}
+			}
+			else_if = {	#Province goes to the country with its core on it
+				limit = {
+					any_core_country = {
+						exists = no
+					}
+				}
+				random_core_country = {
+					limit = {
+						exists = no
+					}
+					PREV = {
+						cede_province = PREV	#Looks worse than it is. It basically means that the province will target a random country and transfer itself to the selected country
+					}
+				}
+			}
+			else_if = {	#Provinces goes to the next best who has a claim on it
+				limit = {
+					any_country = {
+						is_claim = PREV
+					}
+				}
+				random_country = {
+					limit = {
+						is_claim = PREV
+					}
+					PREV = {
+						cede_province = PREV
+					}
+				}
+			}
+			else_if = {	#If province still is in KMJ's possession then give it to the next best country
+				limit = {
+					any_country = {
+						NOT = {
+							border_distance = {
+								who = ROOT
+								distance = 300
+							}
+						}
+					}
+				}
+				random_country = {
+					limit = {
+						NOT = {
+							border_distance = {
+								who = ROOT
+								distance = 300
+							}
+						}
+					}
+					PREV = {
+						cede_province = PREV
+					}
+				}
+			}
+		}
+	}
+}
+
+#Release all subjects immediately
+country_event = {
+	id = th_travelling_kingdom_mechanic.2
+	title = th_travelling_kingdom_mechanic.2.t
+	desc = th_travelling_kingdom_mechanic.2.desc
+	picture = KOISHI_eventPicture
+
+	trigger = {
+		has_government_attribute = disables_settled_property
+		num_of_subjects = 1
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	option = {
+		name = th_travelling_kingdom_mechanic.2.a
+		every_subject_country = {
+			ROOT = {
+				release = PREV
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Claim immunity
+#No longer needed, AI won't be able to fabricate claims anymore
+#Also, this event is a performance killer
+#country_event = {
+#	id = th_travelling_kingdom_mechanic.3
+#	title = "th_travelling_kingdom_mechanic.3.t"
+#	desc = "th_travelling_kingdom_mechanic.3.desc"
+#	picture = KOISHI_eventPicture
+#
+#	hidden = yes
+#
+#	trigger = {
+#		any_province = {
+#			NOT = { owned_by = ROOT }
+#			is_capital = yes
+#			OR = {
+#				is_core = ROOT
+#				is_claim = ROOT
+#			}
+#			NOT = { is_permanent_claim = ROOT }
+#			owner = {
+#				has_government_attribute = enables_claim_immunity
+#			}
+#		}
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 1
+#	}
+#
+#	option = {
+#		name = "th_travelling_kingdom_mechanic.3.a"
+#		random_province = {
+#			limit = {
+#				NOT = { owned_by = ROOT }
+#				is_capital = yes
+#				OR = {
+#					is_core = ROOT
+#					is_claim = ROOT
+#				}
+#				NOT = { is_permanent_claim = ROOT }
+#				owner = {
+#					has_government_attribute = enables_claim_immunity
+#				}
+#			}
+#			if = {
+#				limit = {
+#					is_core = ROOT
+#				}
+#				remove_core = ROOT
+#			}
+#			if = {
+#				limit = {
+#					is_claim = ROOT
+#				}
+#				remove_claim = ROOT
+#			}
+#		}
+#
+#		ai_chance = {
+#			factor = 100
+#		}
+#	}
+#}
+
+#Wandering mechanics - make sure that the event_target for capital is up-to-date
+country_event = {
+	id = th_travelling_kingdom_mechanic.4
+	title = "th_travelling_kingdom_mechanic.4.t"
+	desc = "th_travelling_kingdom_mechanic.4.desc"
+	picture = KOISHI_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_migration_through_countries
+		# TEST #
+		#any_province = {
+		#	has_province_flag = kmj_capital_flag
+		#	NOT = { is_capital_of = ROOT }
+		#}
+		event_target:kmj_capital = {
+			NOT = { is_capital_of = ROOT }
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		if = {
+			limit = {
+				any_province = {
+					has_province_flag = th_has_migrated_dev
+					NOT = { owned_by = ROOT }
+				}
+			}
+			random_province = {
+				limit = {
+					has_province_flag = th_has_migrated_dev
+					NOT = { owned_by = ROOT }
+				}
+				save_event_target_as = kmj_previous_capital
+			}
+		}
+	}
+
+	option = {
+		name = th_travelling_kingdom_mechanic.4.a
+		if = {
+			limit = {
+				any_province = {
+					has_province_flag = th_has_migrated_dev
+					NOT = { owned_by = ROOT }
+				}
+			}
+			event_target:kmj_previous_capital = {
+				th_reset_province = yes
+			}
+			event_target:kmj_previous_owner = {
+				event_target:kmj_previous_capital = {
+					add_core = PREV
+					cede_province = PREV
+					remove_core = ROOT
+				}
+			}
+		}
+		capital_scope = {
+			save_global_event_target_as = kmj_capital
+			# TEST #
+			#set_province_flag = kmj_capital_flag
+			if = {
+				limit = {
+					NOT = { has_province_flag = th_has_migrated_dev }
+				}
+				th_update_new_kmj_capital = yes
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Wandering mechanics - claiming capitals is illegal
+country_event = {
+	id = th_travelling_kingdom_mechanic.5
+	title = "th_travelling_kingdom_mechanic.5.t"
+	desc = "th_travelling_kingdom_mechanic.5.desc"
+	picture = KOISHI_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_migration_through_countries
+		capital_scope = {
+			any_neighbor_province = {
+				is_claim = ROOT
+				is_capital = yes
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		capital_scope = {
+			random_neighbor_province = {
+				limit = {
+					is_claim = ROOT
+					is_capital = yes
+				}
+				remove_claim = ROOT
+			}
+		}
+	}
+
+	hidden = yes
+
+	option = {
+		name = th_travelling_kingdom_mechanic.5.a
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Wandering mechanics - move to claimed province
+country_event = {
+	id = th_travelling_kingdom_mechanic.6
+	title = "th_travelling_kingdom_mechanic.6.t"
+	desc = "th_travelling_kingdom_mechanic.6.desc"
+	picture = KOISHI_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_migration_through_countries
+		is_at_war = no
+		capital_scope = {
+			any_neighbor_province = {
+				is_claim = ROOT
+				is_capital = no
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		capital_scope = {
+			random_neighbor_province = {
+				limit = {
+					is_claim = ROOT
+					is_capital = no
+				}
+				owner = {
+					save_event_target_as = kmj_temp_next_previous_owner
+				}
+				save_event_target_as = kmj_next_province
+				set_province_flag = th_target_for_migration
+			}
+			save_event_target_as = kmj_previous_capital
+		}
+		event_target:kmj_next_province = {
+			cede_province = ROOT
+			add_core = ROOT
+			th_save_province_as_new_kmj_capital = yes
+		}
+		set_capital = event_target:kmj_capital
+		# TEST #
+		#random_province = {
+		#	limit = {
+		#		has_province_flag = kmj_capital_flag
+		#	}
+		#	ROOT = {
+		#		set_capital = PREV
+		#	}
+		#}
+	}
+
+	hidden = yes
+
+	option = {
+		name = th_travelling_kingdom_mechanic.6.a
+		event_target:kmj_previous_capital = {
+			th_reset_province = yes
+		}
+		event_target:kmj_previous_owner = {
+			event_target:kmj_previous_capital = {
+				add_core = PREV
+				cede_province = PREV
+				remove_core = ROOT
+				remove_claim = ROOT
+			}
+		}
+
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	after = {
+		# TEST #
+		#random_province = {
+		#	limit = {
+		#		has_province_flag = kmj_capital_flag
+		#	}
+		#	th_save_development_of_province = yes
+		#	th_update_new_kmj_capital = yes
+		#}
+		event_target:kmj_capital = {
+			th_save_development_of_province = yes
+			th_update_new_kmj_capital = yes
+			remove_claim = ROOT
+		}
+		event_target:kmj_temp_next_previous_owner = {
+			save_global_event_target_as = kmj_previous_owner
+		}
+	}
+}
+
+#Wandering mechanics - claiming during war is illegal
+country_event = {
+	id = th_travelling_kingdom_mechanic.7
+	title = "th_travelling_kingdom_mechanic.7.t"
+	desc = "th_travelling_kingdom_mechanic.7.desc"
+	picture = KOISHI_eventPicture
+
+	trigger = {
+		has_government_attribute = enables_migration_through_countries
+		capital_scope = {
+			any_neighbor_province = {
+				is_claim = ROOT
+			}
+		}
+		is_at_war = yes
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		capital_scope = {
+			random_neighbor_province = {
+				limit = {
+					is_claim = ROOT
+				}
+				remove_claim = ROOT
+			}
+		}
+	}
+
+	hidden = yes
+
+	option = {
+		name = th_travelling_kingdom_mechanic.7.a
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Wandering mechanics - reset province if Wandering Realm is dead
+country_event = {
+	id = th_travelling_kingdom_mechanic.8
+	title = "th_travelling_kingdom_mechanic.8.t"
+	desc = "th_travelling_kingdom_mechanic.8.desc"
+	picture = KOISHI_eventPicture
+
+	trigger = {
+		NOT = { has_government_attribute = enables_migration_through_countries }
+		all_country = {
+			NOT = {
+				has_government_attribute = enables_migration_through_countries
+			}
+		}
+		has_global_flag = th_kmj_koishi_is_free
+		NOT = { has_global_flag = th_kmj_cleared }
+		any_owned_province = {
+			province_id = event_target:kmj_capital
+			# TEST #
+			#has_province_flag = kmj_capital_flag
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	immediate = {
+		event_target:kmj_capital = {
+			th_reset_province = yes
+		}
+		# TEST #
+		#random_province = {
+		#	limit = {
+		#		has_province_flag = kmj_capital_flag
+		#	}
+		#	th_reset_province = yes
+		#}
+		th_clear_all_koishi_marks = yes
+	}
+
+	hidden = yes
+
+	option = {
+		name = th_travelling_kingdom_mechanic.8.a
+		# TEST #
+		#every_province = {
+		#	limit = {
+		#		has_province_flag = kmj_capital_flag
+		#	}
+		#	clr_province_flag = kmj_capital_flag
+		#}
+		clear_global_event_target = kmj_capital
+		set_global_flag = th_kmj_cleared
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Wandering mechanics - AI moves around on its own
+country_event = {
+	id = th_travelling_kingdom_mechanic.9
+	title = "th_travelling_kingdom_mechanic.9.t"
+	desc = "th_travelling_kingdom_mechanic.9.desc"
+	picture = KOISHI_eventPicture
+	hidden = yes
+
+	trigger = {
+		has_government_attribute = enables_migration_through_countries
+		ai = yes
+		capital_scope = {
+			any_neighbor_province = {
+				OR = {
+					NOT = { has_province_flag = th_was_visited_by_wandering_state }
+					had_province_flag = {
+						flag = th_was_visited_by_wandering_state
+						days = 10950
+					}
+				}
+			}
+		}
+		OR = {
+			NOT = { has_country_flag = th_already_moved }
+			had_country_flag = {
+				flag = th_already_moved
+				days = 3650
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+
+	option = {
+		clr_country_flag = th_already_moved
+		set_country_flag = th_already_moved
+		capital_scope = {
+			random_neighbor_province = {
+				limit = {
+					NOT = { has_province_flag = th_was_visited_by_wandering_state }
+					had_province_flag = {
+						flag = th_was_visited_by_wandering_state
+						days = 10950
+					}
+				}
+				add_claim = ROOT
+				set_province_flag = th_was_visited_by_wandering_state
+			}
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Wandering mechanics - info
+country_event = {
+	id = th_travelling_kingdom_mechanic.100
+	title = "th_travelling_kingdom_mechanic.100.t"
+	desc = "th_travelling_kingdom_mechanic.100.desc"
+	picture = KOISHI_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = th_travelling_kingdom_mechanic.100.a
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	option = {	#Ask how much dev
+		name = th_travelling_kingdom_mechanic.100.b
+		country_event = {
+			id = th_travelling_kingdom_mechanic.101
+		}
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Wandering mechanics - show how much dev will be moved
+country_event = {
+	id = th_travelling_kingdom_mechanic.101
+	title = "th_travelling_kingdom_mechanic.101.t"
+	desc = "th_travelling_kingdom_mechanic.101.desc"
+	picture = KOISHI_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = th_travelling_kingdom_mechanic.101.a
+
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+#Wandering mechanics - initilialize everything
+country_event = {
+	id = th_travelling_kingdom_mechanic.1000
+	title = none
+	desc = none
+	picture = KOISHI_eventPicture
+	hidden = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	trigger = {
+		has_government_attribute = enables_development_transfer
+		NOT = { has_country_flag = th_dev_transfer_variables_set }
+	}
+
+	option = {
+		th_initialize_dev_transfer_mechanic = yes
+		country_event = {
+			id = th_travelling_kingdom_mechanic.100
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}

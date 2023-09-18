@@ -1,0 +1,881 @@
+#SCR demand war support from another country
+th_demand_war_support = {
+	category = th_diplo_action
+	alert_index = 30
+	alert_tooltip = th_request_conversion_tooltip
+	require_acceptance = yes
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = SCR
+			}
+			has_country_flag = th_scarlet_charisma_enabled
+			has_government_mechanic = th_scarlet_charisma_mechanic
+		}
+		FROM = {
+			is_free_or_tributary_trigger = yes
+		}
+	}
+
+	is_allowed = {
+		custom_trigger_tooltip = {
+			tooltip = th_demand_war_support_has_been_requested_tt
+			FROM = {				
+				OR = {
+					NOT = { has_country_flag = th_was_already_requested_for_soldiers_@ROOT }
+					had_country_flag = {
+						flag = th_was_already_requested_for_soldiers_@ROOT
+						days = 1825
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { NOT = { alliance_with = ROOT } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_OUR_ALLY
+				FROM = { alliance_with = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_at_war = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_AT_WAR_TT
+				FROM = { is_at_war = no }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					any_ally = {
+						war_with = ROOT
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_ALLIED_WITH_WAR_ENEMIES_TT
+				NOT = {
+					FROM = {
+						any_ally = {
+							war_with = ROOT
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { NOT = { trust = { who = ROOT value = 70 } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_TRUST_LEVEL_70_TT
+				FROM = {
+					trust = { who = ROOT value = 70 }
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { NOT = { manpower = 1 } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_HAS_NOT_ENOUGH_MAN_1_TT
+				FROM = {
+					manpower = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		export_to_variable = {
+			which = th_manpower_to_conscript
+			value = manpower
+			who = FROM
+		}
+		divide_variable = {
+			which = th_manpower_to_conscript
+			value = 10	#10% of manpower gets transferred to SCR
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = th_manpower_to_conscript
+					value = 0.1
+				}
+			}
+			add_manpower = 0.1
+			FROM = {
+				add_manpower = -0.1
+			}
+			subtract_variable = {
+				which = th_manpower_to_conscript
+				value = 0.1
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = th_scarlet_charisma_upgraded
+			}
+			FROM = {
+				add_trust = {
+					who = ROOT
+					value = -5
+				}
+			}
+		}
+		else = {
+			FROM = {
+				add_trust = {
+					who = ROOT
+					value = -10
+				}
+			}
+		}
+		FROM = {
+			clr_country_flag = th_was_already_requested_for_soldiers_@ROOT
+			set_country_flag = th_was_already_requested_for_soldiers_@ROOT
+			set_country_flag = scr_has_been_target_of_scarlet_charimsa
+		}
+	}
+
+	on_decline = {
+	}
+
+    ai_acceptance = {
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = TH_DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 2
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = TH_BASE_DISOBEDIENCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -25
+			}
+		}
+		add_entry = {
+			name = TH_NEGATIVE_PRESTIGE
+			
+			limit = {
+				NOT = { prestige = 0 }
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = prestige
+				who = ROOT
+			}
+			#-1 trust = -2 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.2
+			}
+		}
+    }
+	ai_will_do = {
+		always = no
+	}
+}
+
+#SCR convince target country to join the war
+th_convince_to_join_war = {
+	category = th_diplo_action
+
+	require_acceptance = yes
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = SCR
+			}
+			has_country_flag = th_scarlet_charisma_enabled
+			has_government_mechanic = th_scarlet_charisma_mechanic
+		}
+		FROM = {
+			is_free_or_tributary_trigger = yes
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				FROM = { NOT = { alliance_with = ROOT } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_OUR_ALLY
+				FROM = { alliance_with = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				is_at_war = no
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_IS_NOT_AT_WAR_TT
+				is_at_war = yes
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_country_flag = th_was_has_already_joined_wars_of_@ROOT
+					NOT = {
+						had_country_flag = {
+							flag = th_was_has_already_joined_wars_of_@ROOT
+							days = 5475
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_convince_to_join_war_already_used_tt
+				FROM = {				
+					OR = {
+						NOT = { has_country_flag = th_was_has_already_joined_wars_of_@ROOT }
+						had_country_flag = {
+							flag = th_was_has_already_joined_wars_of_@ROOT
+							days = 5475
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { is_at_war = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_AT_WAR_TT
+				FROM = { is_at_war = no }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					any_ally = {
+						war_with = ROOT
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_ALLIED_WITH_WAR_ENEMIES_TT
+				NOT = {
+					FROM = {
+						any_ally = {
+							war_with = ROOT
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = { NOT = { trust = { who = ROOT value = 70 } } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_TRUST_LEVEL_70_TT
+				FROM = {
+					trust = { who = ROOT value = 70 }
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			join_all_offensive_wars_of = ROOT
+			join_all_defensive_wars_of = ROOT
+		}
+		if = {
+			limit = {
+				has_country_flag = th_scarlet_charisma_upgraded
+			}
+			FROM = {
+				add_trust = {
+					who = ROOT
+					value = -10
+				}
+			}
+		}
+		else = {
+			FROM = {
+				add_trust = {
+					who = ROOT
+					value = -20
+				}
+			}
+		}
+		FROM = {
+			clr_country_flag = th_was_has_already_joined_wars_of_@ROOT
+			set_country_flag = th_was_has_already_joined_wars_of_@ROOT
+			set_country_flag = scr_has_been_target_of_scarlet_charimsa
+		}
+	}
+
+    ai_acceptance = {
+        add_entry = {
+            name = TH_DIPLO_OPPINION
+			export_to_variable = {
+				variable_name = ai_value
+				value = opinion
+				who = FROM
+				with = ROOT
+			}
+			multiply_variable = {
+				which = ai_value 
+				value = 0.2
+			}
+        }
+		add_entry = {
+			name = TH_DIPLO_TRUST_WITH
+			export_to_variable = {
+				variable_name = ai_value
+				value = trust
+				who = FROM
+				with = ROOT
+			}			
+			subtract_variable = { 
+				which = ai_value
+				value = 50
+			}
+			#1 trust = +4 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.4
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -1000
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = DIPLO_DIPLOMATIC_REPUTATION
+			limit = { }
+			export_to_variable = {
+				variable_name = ai_value
+				value = trigger_value:diplomatic_reputation
+			}
+			#1 rep = 2
+			multiply_variable = {
+				which = ai_value
+				value = 2
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -100
+			}
+		}
+		add_entry = {
+			name = TH_BASE_DISOBEDIENCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = -25
+			}
+		}
+		add_entry = {
+			name = TH_NEGATIVE_PRESTIGE
+			
+			limit = {
+				NOT = { prestige = 0 }
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = prestige
+				who = ROOT
+			}
+			#-1 trust = -2 ai points
+			multiply_variable = {
+				which = ai_value
+				value = 0.2
+			}
+		}
+    }
+	
+	ai_will_do = {
+		always = no
+	}
+}
+
+#SCR trade off prestige against trust with the target
+th_scarlet_charisma_dip_action = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		OR = {
+			th_has_copied_from_target = {
+				target = SCR
+			}
+			has_country_flag = th_scarlet_charisma_enabled
+			has_government_mechanic = th_scarlet_charisma_mechanic
+		}
+	}
+
+	is_allowed = {
+		if = {
+			limit = {
+				NOT = { has_government_mechanic = th_scarlet_charisma_mechanic }
+				NOT = { has_country_flag = th_scarlet_charisma_upgraded }
+				NOT = { prestige = 40 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_PRESTIGE_40_TT
+				OR = {
+					has_government_mechanic = th_scarlet_charisma_mechanic
+					has_country_flag = th_scarlet_charisma_upgraded
+					prestige = 40
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_government_mechanic = th_scarlet_charisma_mechanic }
+				has_country_flag = th_scarlet_charisma_upgraded
+				NOT = { prestige = 20 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_PRESTIGE_20_TT
+				OR = {
+					has_government_mechanic = th_scarlet_charisma_mechanic
+					NOT = { has_country_flag = th_scarlet_charisma_upgraded }
+					prestige = 20
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_government_mechanic = th_scarlet_charisma_mechanic
+				NOT = { has_country_flag = th_scarlet_charisma_upgraded }
+				NOT = {
+					has_government_power = { 
+						mechanic_type = th_scarlet_charisma_mechanic
+						power_type = th_scarlet_charisma
+						value = 30
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_SCARLET_CHARISMA_30_TT
+				OR = {
+					NOT = { has_government_mechanic = th_scarlet_charisma_mechanic }
+					has_country_flag = th_scarlet_charisma_upgraded
+					has_government_power = { 
+						mechanic_type = th_scarlet_charisma_mechanic
+						power_type = th_scarlet_charisma
+						value = 30
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_government_mechanic = th_scarlet_charisma_mechanic
+				has_country_flag = th_scarlet_charisma_upgraded
+				NOT = {
+					has_government_power = { 
+						mechanic_type = th_scarlet_charisma_mechanic
+						power_type = th_scarlet_charisma
+						value = 20
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_SCARLET_CHARISMA_20_TT
+				OR = {
+					NOT = { has_government_mechanic = th_scarlet_charisma_mechanic }
+					NOT = { has_country_flag = th_scarlet_charisma_upgraded }
+					has_government_power = { 
+						mechanic_type = th_scarlet_charisma_mechanic
+						power_type = th_scarlet_charisma
+						value = 20
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					is_rival = ROOT
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_RIVAL
+				NOT = { is_rival = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					is_enemy = ROOT
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_ENEMY
+				NOT = { is_enemy = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					war_with = ROOT
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_AT_WAR_WITH_FROM
+				NOT = { war_with = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_country_flag = th_immunity_to_diplomatic_actions
+						has_government_attribute = enables_yama_authority
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = th_from_is_not_immune_to_diplomatic_actions_tt
+				FROM = {
+					NOT = { has_country_flag = th_immunity_to_diplomatic_actions }
+					NOT = { has_government_attribute = enables_yama_authority }
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		th_clear_copy_flag = yes
+		FROM = {
+			add_trust = {
+				who = ROOT
+				value = 10
+			}
+		}
+		if = {
+			limit = {
+				has_government_mechanic = th_scarlet_charisma_mechanic
+			}
+			if = {
+				limit = {
+					has_country_flag = th_scarlet_charisma_upgraded
+				}
+				add_government_power = {
+					mechanic_type = th_scarlet_charisma_mechanic
+					power_type = th_scarlet_charisma
+					value = -20
+				}
+			}
+			else = {
+				add_government_power = {
+					mechanic_type = th_scarlet_charisma_mechanic
+					power_type = th_scarlet_charisma
+					value = -30
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					has_country_flag = th_scarlet_charisma_upgraded
+				}
+				add_prestige = -20
+			}
+			else = {
+				add_prestige = -40
+			}
+		}
+		reverse_add_opinion = {
+			who = FROM
+			modifier = th_scarlet_charisma_opinion
+		}
+	}
+	
+	ai_will_do = {
+		always = no
+	}
+}

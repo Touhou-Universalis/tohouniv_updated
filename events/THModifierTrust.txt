@@ -1,0 +1,201 @@
+namespace = th_modifier_trust_events
+
+#Set bonus
+country_event = {
+	id = th_modifier_trust_events.1
+	title = "th_modifier_trust_events.1.t"
+	desc = none
+	picture = SHRINE_eventPicture
+
+	trigger = {
+		OR = {
+			has_global_modifier_value = {
+				which = yearly_trust_growth
+				value = 0.01
+			}
+			NOT = {
+				has_global_modifier_value = {
+					which = yearly_trust_growth
+					value = 0
+				}
+			}
+			has_global_modifier_value = {
+				which = yearly_global_trust_growth
+				value = 0.01
+			}
+			NOT = {
+				has_global_modifier_value = {
+					which = yearly_global_trust_growth
+					value = 0
+				}
+			}
+		}
+		OR = {
+			NOT = { has_country_flag = th_had_increased_trust_event }
+			had_country_flag = {
+				flag = th_had_increased_trust_event
+				days = 364
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	hidden = yes
+
+	immediate = {
+		clr_country_flag = th_had_increased_trust_event
+		export_to_variable = {
+			variable_name = th_additional_trust
+			value = modifier:yearly_trust_growth
+			who = ROOT
+		}
+		export_to_variable = {
+			variable_name = th_additional_global_trust
+			value = modifier:yearly_global_trust_growth
+			who = ROOT
+		}
+	}
+
+	option = {
+		set_country_flag = th_had_increased_trust_event
+		if = {
+			limit = {
+				check_variable = {
+					which = th_additional_trust
+					value = 0
+				}
+			}
+			subtract_variable = {
+				which = th_additional_trust
+				value = 1
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_additional_trust
+						value = 0
+					}
+				}
+				every_ally = {
+					add_trust = {
+						who = PREV
+						value = 1
+					}
+				}
+				every_subject_country = {
+					add_trust = {
+						who = PREV
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_additional_trust
+					value = 1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = th_additional_trust
+						value = 0
+					}
+				}
+			}
+			while = {
+				limit = {
+					NOT = {
+						check_variable = {
+							which = th_additional_trust
+							value = 0
+						}
+					}
+				}
+				every_ally = {
+					add_trust = {
+						who = PREV
+						value = -1
+					}
+				}
+				every_subject_country = {
+					add_trust = {
+						who = PREV
+						value = -1
+					}
+				}
+				change_variable = {
+					which = th_additional_trust
+					value = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_additional_global_trust
+					value = 0
+				}
+			}
+			subtract_variable = {
+				which = th_additional_global_trust
+				value = 1
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_additional_global_trust
+						value = 0
+					}
+				}
+				every_known_country = {
+					add_trust = {
+						who = PREV
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_additional_global_trust
+					value = 1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = th_additional_global_trust
+						value = 0
+					}
+				}
+			}
+			while = {
+				limit = {
+					NOT = {
+						check_variable = {
+							which = th_additional_global_trust
+							value = 0
+						}
+					}
+				}
+				every_known_country = {
+					add_trust = {
+						who = PREV
+						value = -1
+					}
+				}
+				change_variable = {
+					which = th_additional_global_trust
+					value = 1
+				}
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+		}
+	}
+}
