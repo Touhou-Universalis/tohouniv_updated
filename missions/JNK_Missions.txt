@@ -216,81 +216,127 @@ jnk_missions_lunarian_slot = {
 		}
 	}
 
-	JNK_eliminate_lunar_capital = {
-		icon = mission_touhou_lunarian_throne
+	JNK_entrance_of_china = {
+		icon = mission_chinese_general_riding
 		position = 3
 		required_missions = { JNK_chase_jyouga } 
-		provinces_to_highlight = { owned_by = LCU } 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 730
+				province_id = 2108
+			}
+			NOT = {
+				owned_by = ROOT
+				is_core = ROOT
+			}
+		}
 
 		trigger = {
-			NOT = { exists = LCU } 
-			owns_core_province = 5320
+			calc_true_if = {
+				all_province = {
+					OR = { region = manchuria_region } 
+					owned_by = ROOT
+				}
+				amount = 20
+			}
+			owns_core_province = 730
+			owns_core_province = 2108
 		}
 
 		effect = {
-			add_power_projection = {
-				type = mission_rewards_power_projection
-				amount = 50
-			}
-			Western_moon_state = {
-				limit = { owned_by = ROOT } 
-				add_province_modifier = {
-					name = "jnk_fall_of_lunarian"
-					duration = 3650
-				}
-			}
-			Southern_moon_state = {
-				limit = { owned_by = ROOT } 
-				add_province_modifier = {
-					name = "jnk_fall_of_lunarian"
-					duration = 3650
-				}
-			}
-			if = {
+			custom_tooltip = jap_conquest_of_china_cb_tt
+			set_country_flag = th_access_conquest_of_china_cb_flag
+			liaoning_area = {
 				limit = {
-					has_government_mechanic = th_junko_grudge_mechanic
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
 				}
-				add_government_power = {
-					mechanic_type = th_junko_grudge_mechanic
-					power_type = th_junko_grudge
-					value = -50
-				}	
+				add_permanent_claim = ROOT
 			}
+			hebei_area = {
+				limit = {
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
+				}
+				add_permanent_claim = ROOT
+			}
+			south_hebei_area = {
+				limit = {
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
+				}
+				add_permanent_claim = ROOT
+			}
+			shandong_area = {
+				limit = {
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
+				}
+				add_permanent_claim = ROOT
+			}
+			country_event = { id = flavor_jnk.11 } 
 		}
 	}
 
-	JNK_stabilize_moon = {
-		icon = mission_touhou_junko_moon2
+	JNK_domination_of_china = {
+		icon = mission_touhou_mandate_of_heaven
 		position = 4
-		required_missions = { JNK_eliminate_lunar_capital } 
-		provinces_to_highlight = {
-			continent = moon_continent
-			OR = {
-				devastation = 1
-				unrest = 1
-			}
-			owned_by = ROOT
-		}
+		required_missions = { JNK_entrance_of_china } 
+		provinces_to_highlight = {  } 
 
 		trigger = {
-			NOT = {
-				any_owned_province = {
-					continent = moon_continent
-					devastation = 1
-					unrest = 1
+			if = {
+				limit = { any_country = { th_is_emperor_of_china = yes }  } 
+				is_in_war = {
+					casus_belli = th_conquer_china_cb
+					attacker_leader = ROOT
+					war_score = 75
 				}
+				if = {
+					limit = {
+						any_country = {
+							th_is_emperor_of_china = yes
+							owns = 1816
+						}
+					}
+					controls = 1816
+				}
+				else = {
+					any_country = {
+						th_is_emperor_of_china = yes
+						capital_scope = { controlled_by = ROOT } 
+					}
+				}
+			}
+			else = {
+				calc_true_if = {
+					all_province = {
+						region = north_china_region
+						owned_by = ROOT
+					}
+					amount = 10
+				}
+				owns_core_province = 1816
 			}
 		}
 
 		effect = {
-			add_years_of_income = 1
-			moon_continent = {
-				limit = { owned_by = ROOT } 
-				add_province_modifier = {
-					name = "jnk_restore_of_moon"
-					duration = 7300
-				}
+			hidden_effect = {
+				clr_country_flag = th_access_conquest_of_china_cb_flag
 			}
+			if = {
+				limit = {
+					has_dlc = "Mandate of Heaven"
+					any_country = { th_is_emperor_of_china = yes } 
+					is_in_war = {
+						casus_belli = th_conquer_china_cb
+						attacker_leader = ROOT
+						war_score = 75
+					}
+				}
+				country_event = { id = flavor_jnk.7 } 
+			}
+			else = { country_event = { id = flavor_jnk.71 }  } 
 		}
 	}
 }
@@ -554,127 +600,81 @@ jnk_missions_china_slot = {
 		NOT = { map_setup = map_setup_random } 
 	}
 
-	JNK_entrance_of_china = {
-		icon = mission_chinese_general_riding
+	JNK_eliminate_lunar_capital = {
+		icon = mission_touhou_lunarian_throne
 		position = 3
 		required_missions = { JNK_chase_jyouga } 
-		provinces_to_highlight = {
-			OR = {
-				province_id = 730
-				province_id = 2108
-			}
-			NOT = {
-				owned_by = ROOT
-				is_core = ROOT
-			}
-		}
+		provinces_to_highlight = { owned_by = LCU } 
 
 		trigger = {
-			calc_true_if = {
-				all_province = {
-					OR = { region = manchuria_region } 
-					owned_by = ROOT
-				}
-				amount = 20
-			}
-			owns_core_province = 730
-			owns_core_province = 2108
+			NOT = { exists = LCU } 
+			owns_core_province = 5320
 		}
 
 		effect = {
-			custom_tooltip = jap_conquest_of_china_cb_tt
-			set_country_flag = th_access_conquest_of_china_cb_flag
-			liaoning_area = {
-				limit = {
-					NOT = { is_core = ROOT } 
-					NOT = { is_permanent_claim = ROOT } 
-				}
-				add_permanent_claim = ROOT
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 50
 			}
-			hebei_area = {
-				limit = {
-					NOT = { is_core = ROOT } 
-					NOT = { is_permanent_claim = ROOT } 
+			Western_moon_state = {
+				limit = { owned_by = ROOT } 
+				add_province_modifier = {
+					name = "jnk_fall_of_lunarian"
+					duration = 3650
 				}
-				add_permanent_claim = ROOT
 			}
-			south_hebei_area = {
-				limit = {
-					NOT = { is_core = ROOT } 
-					NOT = { is_permanent_claim = ROOT } 
+			Southern_moon_state = {
+				limit = { owned_by = ROOT } 
+				add_province_modifier = {
+					name = "jnk_fall_of_lunarian"
+					duration = 3650
 				}
-				add_permanent_claim = ROOT
 			}
-			shandong_area = {
+			if = {
 				limit = {
-					NOT = { is_core = ROOT } 
-					NOT = { is_permanent_claim = ROOT } 
+					has_government_mechanic = th_junko_grudge_mechanic
 				}
-				add_permanent_claim = ROOT
+				add_government_power = {
+					mechanic_type = th_junko_grudge_mechanic
+					power_type = th_junko_grudge
+					value = -50
+				}	
 			}
-			country_event = { id = flavor_jnk.11 } 
 		}
 	}
 
-	JNK_domination_of_china = {
-		icon = mission_touhou_mandate_of_heaven
+	JNK_stabilize_moon = {
+		icon = mission_touhou_junko_moon2
 		position = 4
-		required_missions = { JNK_entrance_of_china } 
-		provinces_to_highlight = {  } 
+		required_missions = { JNK_eliminate_lunar_capital } 
+		provinces_to_highlight = {
+			continent = moon_continent
+			OR = {
+				devastation = 1
+				unrest = 1
+			}
+			owned_by = ROOT
+		}
 
 		trigger = {
-			if = {
-				limit = { any_country = { th_is_emperor_of_china = yes }  } 
-				is_in_war = {
-					casus_belli = th_conquer_china_cb
-					attacker_leader = ROOT
-					war_score = 75
+			NOT = {
+				any_owned_province = {
+					continent = moon_continent
+					devastation = 1
+					unrest = 1
 				}
-				if = {
-					limit = {
-						any_country = {
-							th_is_emperor_of_china = yes
-							owns = 1816
-						}
-					}
-					controls = 1816
-				}
-				else = {
-					any_country = {
-						th_is_emperor_of_china = yes
-						capital_scope = { controlled_by = ROOT } 
-					}
-				}
-			}
-			else = {
-				calc_true_if = {
-					all_province = {
-						region = north_china_region
-						owned_by = ROOT
-					}
-					amount = 10
-				}
-				owns_core_province = 1816
 			}
 		}
 
 		effect = {
-			hidden_effect = {
-				clr_country_flag = th_access_conquest_of_china_cb_flag
-			}
-			if = {
-				limit = {
-					has_dlc = "Mandate of Heaven"
-					any_country = { th_is_emperor_of_china = yes } 
-					is_in_war = {
-						casus_belli = th_conquer_china_cb
-						attacker_leader = ROOT
-						war_score = 75
-					}
+			add_years_of_income = 1
+			moon_continent = {
+				limit = { owned_by = ROOT } 
+				add_province_modifier = {
+					name = "jnk_restore_of_moon"
+					duration = 7300
 				}
-				country_event = { id = flavor_jnk.7 } 
 			}
-			else = { country_event = { id = flavor_jnk.71 }  } 
 		}
 	}
 
