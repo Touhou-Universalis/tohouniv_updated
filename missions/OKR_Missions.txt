@@ -9,7 +9,7 @@
 #	has_country_shield = yes
 #	
 #	OKR_dancing_samurai = {
-#		icon = mission_touhou_marisa
+#		icon = mission_placeholder
 #		required_missions = {  }
 #		position = 4
 #		trigger = {
@@ -75,19 +75,24 @@ Meira_missions_first_slot = {
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
-	OKR_road_to_the_shrine = {
-		icon = mission_touhou_marisa
+	OKR_path_to_the_shrine = {
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 1
+		provinces_to_highlight = {
+			province_id = 5186
+			or = {
+				not = { owned_by = root }
+				not = { is_core = root }
+			}
+		}
 		trigger = {
 			treasury = 1500
 			if = {
 				limit = {
 					exists = HKR
-					NOT = {
-						tag = HKR
-					}
+					NOT = { tag = HKR }
 				}
 				total_development = HKR
 			}
@@ -97,83 +102,91 @@ Meira_missions_first_slot = {
 			owns_core_province = 5186
 		}
 		effect = {
-			add_treasury = -1500
-			#enables building of hakurei portal(not really named this though. Let's name it mysterious stone)
-			#add description here
+			custom_tooltip = enable_the_hakurei_portal_tt
 			hidden_effect = {
 				set_country_flag = okr_can_build_th_canal_hakurei_portal
 			}
-			4955 = {
-				add_core = ROOT
-			}
-			4956 = {
-				add_core = ROOT
-			}
+			4955 = { add_core = ROOT }
+			4956 = { add_core = ROOT }
 			Hakurei_state = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_claim = ROOT
 			}
 			Hakurei_peninsula_state = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_claim = ROOT
 			}
 			Hakurei_western_coast = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_claim = ROOT
 			}
-			#add a special cb for OKR to conquer HKR with cheap warscore and ae cost
+			if = {
+				limit = { exists = HKR }
+				add_casus_belli = {
+					type = cb_touhou_claim_the_hakurei_title
+					target = HKR
+					months = 300
+				}
+			}
 		}
 	}
 	OKR_challenge_reimu_again = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
-			OKR_road_to_the_shrine
+			OKR_path_to_the_shrine
 		}
 		position = 2
+		provinces_to_highlight = {
+			if = {
+				limit = { not = { root = { tag = HKR } } exists = HKR }
+				owned_by = HKR
+			}
+			else = {
+				province_id = 4955
+				not = { owned_by = root }
+			}
+		}
 		trigger = {
 			OR = {
 				war_with = HKR
 				tag = HKR
 				AND = {
-					NOT = {
-						exists = HKR
-					}
+					NOT = { exists = HKR }
 					owns = 4955
 				}
 			}
 		}
 		effect = {
-			country_event = {
-				id = flavor_okr.2				#give temporary buff against HKR
+			add_army_tradition = 15
+			simple_dynamic_effect_without_alternative = {
+				first_custom_tooltip = OKR_challenge_reimu_again_at
+				first_limit = "war_with = HKR"
+				first_effect = "add_country_modifier = { name = okr_reborn_battle_passion duration = 3650 }"
+				second_limit = " OR = { tag = HKR AND = { NOT = { exists = HKR } owns = 4955 } } "
+				second_effect = "add_country_modifier = { name = okr_unified_shrines duration = 3650 } "
+			}
+			hidden_effect = {
+				if = {
+					limit = { war_with = HKR }
+					country_event = {
+						id = flavor_okr.2
+					}
+				}
 			}
 		}
 	}
 	OKR_claim_the_hakurei_miko = {
-		icon = mission_touhou_marisa
-		required_missions = {
-			OKR_challenge_reimu_again
-		}
+		icon = mission_placeholder
+		required_missions = { OKR_challenge_reimu_again }
 		position = 3
 		provinces_to_highlight = {
 			OR = {
@@ -181,16 +194,12 @@ Meira_missions_first_slot = {
 				area = Hakurei_western_coast
 				area = Hakurei_state
 			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			OR = {
 				tag = HKR
-				NOT = {
-					exists = HKR
-				}
+				NOT = { exists = HKR }
 			}
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				OR = {
@@ -214,32 +223,30 @@ Meira_missions_first_slot = {
 			}
 			gensokyo_region = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
-			country_event = {
-				id = flavor_okr.3				#marry reimu
-				id = flavor_okr.4               #change religion
+			country_event_with_insight = {
+				id = flavor_okr.3
+				insight_tooltip = OKR_claim_the_hakurei_miko_at	#Marry Reimu
+			}
+			country_event_with_insight = {
+				id = flavor_okr.4
+				insight_tooltip = OKR_claim_the_hakurei_miko_bt	#Change Religion
 			}
 		}
 	}
 	OKR_prove_your_skill = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_claim_the_hakurei_miko
 		}
 		position = 4
 		provinces_to_highlight = {
 			region = gensokyo_region
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
@@ -251,22 +258,30 @@ Meira_missions_first_slot = {
 			th_add_stability_or_adm_power = {
 				amount = 1
 			}
-			add_prestige = 100
-			add_power_projection = {
+			add_prestige_or_monarch_power = {
+				amount = 100
+			}
+			add_permanent_power_projection = {
 				type = okr_proven_skill
 				amount = 50
 			}
 		}
 	}
 	OKR_build_dojos = {
-		icon = mission_touhou_marisa
-		required_missions = {
+		icon = mission_placeholder
+		required_missions = {}
+		provinces_to_highlight = {
+			owned_by = root
+			not = { has_building = th_meiras_dojo }
 		}
 		position = 5
 		trigger = {
-			num_of_owned_provinces_with = {
-				has_building = th_meiras_dojo
-				value = 5
+			or = {
+				not = { has_government_attribute = th_can_build_dojos }
+				num_of_owned_provinces_with = {
+					has_building = th_meiras_dojo
+					value = 5
+				}
 			}
 		}
 		effect = {
@@ -275,11 +290,19 @@ Meira_missions_first_slot = {
 		}
 	}
 	OKR_smith_a_new_katana = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_build_dojos
 		}
 		position = 6
+		provinces_to_highlight = {
+			province_id = 5129
+			owner = {
+				not = { tag = root }
+				not = { is_subject_of = root }
+				not = { has_opinion = { who = root value = 100 } }
+			}
+		}
 		trigger = {
 			5129 = {
 				owner = {
@@ -287,7 +310,7 @@ Meira_missions_first_slot = {
 						tag = ROOT
 						is_subject_of = ROOT
 						has_opinion = {
-							who = FROM
+							who = root
 							value = 100
 						}
 					}
@@ -305,29 +328,22 @@ Meira_missions_first_slot = {
 			}
 			japan_region = {
 				limit = {
-					NOT = {
-						is_core = ROOT
-					}
-					NOT = {
-						is_permanent_claim = ROOT
-					}
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
 				}
 				add_permanent_claim = ROOT
 			}
 		}
 	}
 	OKR_journal_to_japan = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_smith_a_new_katana
 		}
 		position = 7
 		provinces_to_highlight = {
 			region = japan_region
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			is_empty = no
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
@@ -343,7 +359,7 @@ Meira_missions_first_slot = {
 		}
 	}
 	OKR_defeat_konngara = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 8
@@ -372,36 +388,27 @@ Meira_missions_second_slot = {
 			}
 		}
 		NOT = { map_setup = map_setup_random }
-		always = no
 	}
 	has_country_shield = yes
 	OKR_defeat_yumemi = {
-		icon = mission_touhou_marisa
-		required_missions = {
-			OKR_train_army
-		}
+		icon = mission_placeholder
+		required_missions = { OKR_train_army }
 		position = 2
 		provinces_to_highlight = {
 			OR = {
 				province_id = 5184
 				province_id = 5301
 			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		trigger = {
-			owns_core_province = 5184
-			5301 = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
+			owns_or_non_sovereign_subject_of = 5184
+			owns_or_non_sovereign_subject_of = 5301
 		}
 		effect = {
 			if = {
-				limit = {
-					has_dlc = "Rule Britannia"
-				}
-				change_innovativeness = 10
+				limit = { has_dlc = "Rule Britannia" }
+				change_innovativeness = 5
 			}
 			else = {
 				add_adm_power = 50
@@ -415,7 +422,7 @@ Meira_missions_second_slot = {
 		}
 	}
 	OKR_potion_of_senkai = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_question_of_immortality
 		}
@@ -445,7 +452,7 @@ Meira_missions_second_slot = {
 		}
 	}
 	OKR_solve_one_incident = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 5
@@ -468,7 +475,7 @@ Meira_missions_second_slot = {
 		}
 	}
 	OKR_solve_two_incidents = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_solve_one_incident
 		}
@@ -492,7 +499,7 @@ Meira_missions_second_slot = {
 		}
 	}
 	OKR_kanas_request = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_gain_the_popular_support
 		}
@@ -507,7 +514,7 @@ Meira_missions_second_slot = {
 		}
 	}
 	OKR_defeat_shinki = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 8
@@ -536,11 +543,10 @@ Meira_missions_third_slot = {
 			}
 		}
 		NOT = { map_setup = map_setup_random }
-		always = no
 	}
 	has_country_shield = yes
 	OKR_train_army = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 1
@@ -642,7 +648,7 @@ Meira_missions_third_slot = {
 		}
 	}
 	OKR_conquer_the_demon_world = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_train_army
 		}
@@ -674,7 +680,7 @@ Meira_missions_third_slot = {
 		}
 	}
 	OKR_question_of_immortality = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 3
@@ -810,7 +816,7 @@ Meira_missions_third_slot = {
 	}
 
 	OKR_scroll_of_myouren = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_question_of_immortality
 		}
@@ -841,7 +847,7 @@ Meira_missions_third_slot = {
 	}	
 
 	OKR_rebirth_of_meira = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_potion_of_senkai
 			OKR_scroll_of_myouren
@@ -858,7 +864,7 @@ Meira_missions_third_slot = {
 	}	
 
 	OKR_gain_the_popular_support = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 6
@@ -894,7 +900,7 @@ Meira_missions_third_slot = {
 		}
 	}
 	OKR_ellens_request = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_gain_the_popular_support
 		}
@@ -907,7 +913,7 @@ Meira_missions_third_slot = {
 		}
 	}
 	OKR_defeat_youmu = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 8
@@ -922,7 +928,7 @@ Meira_missions_third_slot = {
 		}
 	}
 	OKR_a_raising_samurai = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 9
@@ -943,7 +949,7 @@ Meira_missions_third_slot = {
 		}
 	}
 	OKR_a_new_born_hakurei_shrine = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_a_raising_samurai
 		}
@@ -972,11 +978,10 @@ Meira_missions_forth_slot = {
 			}
 		}
 		NOT = { map_setup = map_setup_random }
-		always = no
 	}
 	has_country_shield = yes
 	OKR_another_oni_samurai = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_train_army
 		}
@@ -998,7 +1003,7 @@ Meira_missions_forth_slot = {
 	}
 
 	OKR_peach_from_heaven = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_question_of_immortality
 		}
@@ -1029,7 +1034,7 @@ Meira_missions_forth_slot = {
 	}	
 
 	OKR_rikako_request = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_gain_the_popular_support
 		}
@@ -1049,7 +1054,7 @@ Meira_missions_forth_slot = {
 	}
 
 	OKR_defeat_reimu = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 8
@@ -1078,11 +1083,10 @@ Meira_missions_fifth_slot = {
 			}
 		}
 		NOT = { map_setup = map_setup_random }
-		always = no
 	}
 	has_country_shield = yes
 	OKR_crush_the_chariot = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_train_army
 		}
@@ -1124,7 +1128,7 @@ Meira_missions_fifth_slot = {
 		}
 	}
 	OKR_claim_human_protecter = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_crush_the_chariot
 		}
@@ -1153,7 +1157,7 @@ Meira_missions_fifth_slot = {
 		}
 	}
 	OKR_elixir_of_houraian = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 			OKR_question_of_immortality
 		}
@@ -1182,7 +1186,7 @@ Meira_missions_fifth_slot = {
 		}
 	}
 	OKR_build_navy = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 5
@@ -1255,7 +1259,7 @@ Meira_missions_fifth_slot = {
 		}
 	}
 	OKR_defeat_yukari = {
-		icon = mission_touhou_marisa
+		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 8

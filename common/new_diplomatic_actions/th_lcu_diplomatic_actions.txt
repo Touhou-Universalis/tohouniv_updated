@@ -62,11 +62,17 @@ th_lcu_demand_war_support = {
 				FROM = { is_at_war = yes }
 			}
 			custom_trigger_tooltip = {
-				tooltip = TH_FROM_IS_AT_WAR_TT
+				tooltip = FROM_IS_AT_WAR_TT
 				FROM = { is_at_war = no }
 			}
 		}
-		FROM = { manpower = 2 }
+		
+		custom_trigger_tooltip = {
+			tooltip = th_from_has_at_least_thousand_man
+			FROM = {
+				manpower = 2
+			}
+		}
 		if = {
 			limit = {
 				FROM = {
@@ -177,7 +183,7 @@ th_lcu_lend_lunarian_weapons = {
 				FROM = { is_at_war = yes }
 			}
 			custom_trigger_tooltip = {
-				tooltip = TH_FROM_IS_AT_WAR_TT
+				tooltip = FROM_IS_AT_WAR_TT
 				FROM = { is_at_war = no }
 			}
 		}
@@ -316,3 +322,75 @@ th_lcu_lend_lunarian_weapons = {
 		always = no
 	}
 }
+
+th_lcu_enforce_our_culture = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_lcu_replace_them_with_lunarians
+		FROM = {
+			NOT = {tag = MRU}
+			is_subject_of = ROOT
+			is_subject_of_type = th_lunar_satellite
+		}	
+	}
+
+	is_allowed = {
+		FROM = {
+			NOT = {tag = MRU}
+			is_subject_of = ROOT
+			is_subject_of_type = th_lunar_satellite
+		}
+		NOT = { FROM = { has_country_modifier = lcu_enforced_culture_change } }		
+	}
+
+	on_accept = {
+		FROM = {
+			country_event = {   ### Enforce our culture and religion in random area of country
+				id = th_lcu_enforce_our_culture.151
+			}
+		}
+		add_dip_power = -200
+	}
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_lcu_honorable_lunarians = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		has_country_flag = th_lcu_replace_them_with_lunarians
+		FROM = {
+			NOT = {tag = MRU}
+			is_subject_of = ROOT
+			is_subject_of_type = th_lunar_satellite
+	    }	
+	}
+
+	is_allowed = {
+		FROM = { 
+			NOT = { liberty_desire = 50 }
+			religion = th_lunarian_religion
+			primary_culture = Lunarian_culture
+		}	
+	}
+
+	on_accept = {
+        create_subject = {
+            subject_type = th_lunar_guards_march
+            subject = FROM
+        }
+	
+	}
+	ai_will_do = {
+		always = no
+	}
+}
+
+
