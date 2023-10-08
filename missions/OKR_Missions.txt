@@ -1,65 +1,3 @@
-#meira_missions_samurai_slot = {
-#	slot = 1
-#	generic = no
-#	ai = yes
-#	potential = {
-#		tag = OKR
-#		NOT = { map_setup = map_setup_random }
-#	}
-#	has_country_shield = yes
-#	
-#	OKR_dancing_samurai = {
-#		icon = mission_placeholder
-#		required_missions = {  }
-#		position = 4
-#		trigger = {
-#			OR = {
-#				AND = {
-#					alliance_with = FOM
-#					reverse_has_opinion = {
-#						who = FOM
-#						value = 125
-#					}
-#				}
-#				is_rival = FOM
-#				NOT = { exists = FOM }
-#			}
-#			is_year = 1445
-#		}
-#		effect = {
-#			Forest_of_magic = {
-#				limit = {
-#					NOT = { is_core = ROOT }
-#					NOT = { is_permanent_claim = ROOT }
-#				}
-#				add_permanent_claim = ROOT
-#			}
-#			Forest_edge_state = {
-#				limit = {
-#					NOT = { is_core = ROOT }
-#					NOT = { is_permanent_claim = ROOT }
-#				}
-#				add_permanent_claim = ROOT
-#			}
-#			Forest_coast_state = {
-#				limit = {
-#					NOT = { is_core = ROOT }
-#					NOT = { is_permanent_claim = ROOT }
-#				}
-#				add_permanent_claim = ROOT
-#			}
-#			define_general = {
-#				shock = 4
-#				fire = 3
-#				manuever = 3
-#				siege = 0
-#				name = "Red-White Witch"
-#				female = yes
-#				trait = glory_seeker_personality
-#			}
-#		}
-#	}
-#}
 Meira_missions_first_slot = {
 	slot = 1
 	generic = no
@@ -358,21 +296,6 @@ Meira_missions_first_slot = {
 			}
 		}
 	}
-	OKR_defeat_konngara = {
-		icon = mission_placeholder
-		required_missions = {
-		}
-		position = 8
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = okr_has_defeated_konngara_tt
-				has_country_flag = okr_has_defeated_konngara
-			}
-		}
-		effect = {
-			#Not decided yet
-		}
-	}
 }
 
 Meira_missions_second_slot = {
@@ -421,12 +344,34 @@ Meira_missions_second_slot = {
 			}
 		}
 	}
+
+	OKR_kanas_request = {
+		icon = mission_placeholder
+		required_missions = {
+			OKR_gain_the_popular_support
+		}
+		position = 4
+		provinces_to_highlight = {
+			province_id = 4974
+			not = { country_or_non_sovereign_subject_holds = root }
+		}
+		trigger = {
+			owns_or_non_sovereign_subject_of = 4974
+			accepted_culture = Poltergeist_culture
+		}
+		effect = {
+			th_enable_touhou_advisor = {
+				advisor = th_advisor_kana
+			}
+		}
+	}
+
 	OKR_potion_of_senkai = {
 		icon = mission_placeholder
 		required_missions = {
 			OKR_question_of_immortality
 		}
-		position = 4
+		position = 7
 		provinces_to_highlight = {
 			OR = {
 				area = Senkai_state
@@ -448,14 +393,19 @@ Meira_missions_second_slot = {
 			}
 		}
 		effect = {
-			#Not decided
+			add_country_modifier = {
+				name = okr_the_hermit_potion
+				duration = -1
+				desc = until_upgraded_by_missions_tt
+			}
 		}
 	}
+
 	OKR_solve_one_incident = {
 		icon = mission_placeholder
 		required_missions = {
 		}
-		position = 5
+		position = 8
 		trigger = {
 			OR = {
 				custom_trigger_tooltip = {
@@ -471,7 +421,12 @@ Meira_missions_second_slot = {
 			}
 		}
 		effect = {
-			#A perma buff
+			add_treasury = 400
+			add_stability_or_adm_power_per_stab = {
+				amount = 1
+			}
+			add_devotion = 15
+			add_legitimacy = 15
 		}
 	}
 	OKR_solve_two_incidents = {
@@ -479,7 +434,7 @@ Meira_missions_second_slot = {
 		required_missions = {
 			OKR_solve_one_incident
 		}
-		position = 6
+		position = 9
 		trigger = {
 			OR = {
 				custom_trigger_tooltip = {
@@ -495,37 +450,12 @@ Meira_missions_second_slot = {
 			}
 		}
 		effect = {
-			#Upgrate the perma buff of 1 incident
-		}
-	}
-	OKR_kanas_request = {
-		icon = mission_placeholder
-		required_missions = {
-			OKR_gain_the_popular_support
-		}
-		position = 7
-		trigger = {
-			4974 = {
-				country_or_non_sovereign_subject_holds = ROOT
+			add_treasury = 400
+			add_stability_or_adm_power_per_stab = {
+				amount = 2
 			}
-		}
-		effect = {
-			#not decided yet
-		}
-	}
-	OKR_defeat_shinki = {
-		icon = mission_placeholder
-		required_missions = {
-		}
-		position = 8
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = okr_has_defeated_shinki_tt
-				has_country_flag = okr_has_defeated_shinki
-			}
-		}
-		effect = {
-			#Not decided yet
+			add_devotion = 30
+			add_legitimacy = 30
 		}
 	}
 }
@@ -551,7 +481,7 @@ Meira_missions_third_slot = {
 		}
 		position = 1
 		trigger = {
-			army_size_percentage = 1
+			army_size_percentage = 0.8
 			num_of_generals = 1
 		}
 		effect = {
@@ -676,14 +606,112 @@ Meira_missions_third_slot = {
 			}
 		}
 		effect = {
-			#Not decided
+			
 		}
 	}
+
+	OKR_gain_the_popular_support = {
+		icon = mission_placeholder
+		required_missions = { OKR_challenge_reimu_again }
+		position = 3
+		trigger = {
+			if = {
+				limit = { has_dlc = "Leviathan" }
+				5183 = {
+					has_great_project = {
+						type = th_monument_old_hakurei_shrine
+						tier = 2
+					}
+				}
+			}
+			else = {
+				5214 = {
+					development = 35
+					has_tax_building_trigger = yes
+					has_production_building_trigger = yes
+					has_trade_building_trigger = yes
+					th_has_up_to_date_fort_building = {
+						tag = ROOT
+					}
+				}
+			}
+			5183 = {
+				grown_by_development = 5
+				owned_by = ROOT
+				if = {
+					limit = { has_dlc = "Mandate of Heaven" }
+					is_prosperous = yes
+				}
+			}
+		}
+		effect = {
+			Scarlett_domain = {
+				limit = {
+					not = { is_core = root }
+					not = { is_permanent_claim = root }
+				}
+				add_permanent_claim = root
+			}
+			Scarlet_mountain = {
+				limit = {
+					not = { is_core = root }
+					not = { is_permanent_claim = root }
+				}
+				add_permanent_claim = root
+			}
+			Fairy_land = {
+				limit = {
+					not = { is_core = root }
+					not = { is_permanent_claim = root }
+				}
+				add_permanent_claim = root
+			}
+			Northern_fairy_land = {
+				limit = {
+					not = { is_core = root }
+					not = { is_permanent_claim = root }
+				}
+				add_permanent_claim = root
+			}
+		}
+	}
+	OKR_ellens_request = {
+		icon = mission_placeholder
+		required_missions = {
+			OKR_gain_the_popular_support
+		}
+		position = 4
+		trigger = {
+			#has enough trade power in Gensokyo's trade nodes
+		}
+		effect = {
+			#not decided yet
+		}
+	}
+	OKR_defeat_reimu = {
+		icon = mission_placeholder
+		required_missions = {
+			OKR_kanas_request
+			OKR_ellens_request
+			OKR_rikako_request
+		}
+		position = 5
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = okr_has_defeated_reimu_tt
+				has_country_flag = okr_has_defeated_reimu
+			}
+		}
+		effect = {
+			#Not decided yet
+		}
+	}
+
 	OKR_question_of_immortality = {
 		icon = mission_placeholder
 		required_missions = {
 		}
-		position = 3
+		position = 6
 		trigger = {
 			custom_trigger_tooltip = {
 				tooltip = okr_meira_is_over_40_tt
@@ -814,13 +842,12 @@ Meira_missions_third_slot = {
 			}
 		}
 	}
-
 	OKR_scroll_of_myouren = {
 		icon = mission_placeholder
 		required_missions = {
 			OKR_question_of_immortality
 		}
-		position = 4
+		position = 7
 		provinces_to_highlight = {
 			OR = {
 				area = Eastern_myouren_state
@@ -844,8 +871,7 @@ Meira_missions_third_slot = {
 		effect = {
 			#Not decided
 		}
-	}	
-
+	}
 	OKR_rebirth_of_meira = {
 		icon = mission_placeholder
 		required_missions = {
@@ -854,113 +880,12 @@ Meira_missions_third_slot = {
 			OKR_peach_from_heaven
 			OKR_elixir_of_houraian
 		}
-		position = 5
+		position = 8
 		trigger = {
 			#Not decided
 		}
 		effect = {
 			#Grant immortality to Meira. Remember to enable respawn decision too
-		}
-	}	
-
-	OKR_gain_the_popular_support = {
-		icon = mission_placeholder
-		required_missions = {
-		}
-		position = 6
-		trigger = {
-			if = {
-				limit = { has_dlc = "Leviathan" }
-				5183 = {
-					has_great_project = {
-						type = th_monument_old_hakurei_shrine
-						tier = 2
-					}
-				}
-			}
-			else = {
-				5214 = {
-					development = 35
-					has_tax_building_trigger = yes
-					has_production_building_trigger = yes
-					has_trade_building_trigger = yes
-					th_has_up_to_date_fort_building = {
-						tag = ROOT
-					}
-				}
-			}
-			5183 = {
-				grown_by_development = 5
-				owned_by = ROOT
-				is_prosperous = yes
-			}
-		}
-		effect = {
-			#temporary buff and one time reward
-		}
-	}
-	OKR_ellens_request = {
-		icon = mission_placeholder
-		required_missions = {
-			OKR_gain_the_popular_support
-		}
-		position = 7
-		trigger = {
-			#has enough trade power in Gensokyo's trade nodes
-		}
-		effect = {
-			#not decided yet
-		}
-	}
-	OKR_defeat_youmu = {
-		icon = mission_placeholder
-		required_missions = {
-		}
-		position = 8
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = okr_has_defeated_youmu_tt
-				has_country_flag = okr_has_defeated_youmu
-			}
-		}
-		effect = {
-			#Not decided yet
-		}
-	}
-	OKR_a_raising_samurai = {
-		icon = mission_placeholder
-		required_missions = {
-		}
-		position = 9
-		trigger = {
-			OR = {
-				tag = GNK
-				government_rank = 3
-			}
-			total_development = 650
-			owns_core_province = 4955
-			owns_core_province = 5183
-		}
-		effect = {
-			add_country_modifier = {
-				name = okr_a_raising_samurai_modifier
-				duration = -1
-			}
-		}
-	}
-	OKR_a_new_born_hakurei_shrine = {
-		icon = mission_placeholder
-		required_missions = {
-			OKR_a_raising_samurai
-		}
-		position = 10
-		trigger = {
-			mission_completed = OKR_journal_to_japan
-			mission_completed = OKR_prove_your_skill
-			mission_completed = OKR_solve_two_incidents
-		}
-		effect = {
-			#upgrade okr_a_raising_samurai to a stronger buff
 		}
 	}
 }
@@ -980,25 +905,53 @@ Meira_missions_forth_slot = {
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
-	OKR_another_oni_samurai = {
+	OKR_defeat_konngara = {
 		icon = mission_placeholder
-		required_missions = {
-			OKR_train_army
-		}
+		required_missions = { OKR_train_army }
 		position = 2
 		provinces_to_highlight = {
-			province_id = 5167
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
+			or = {
+				area = Konngaras_state
+				owned_by = KNN
 			}
+			not = { country_or_non_sovereign_subject_holds = root }
 		}
 		trigger = {
-			5167 = {
-				country_or_non_sovereign_subject_holds = ROOT
+			Konngaras_state = {
+				country_or_non_sovereign_subject_holds = root
+				type = all
+			}
+			KNN = {
+				or = {
+					exists = no
+					is_subject_of = root
+				}
 			}
 		}
 		effect = {
-			#Not decided
+			th_enable_touhou_advisor = {
+				advisor = th_advisor_konngara
+			}
+		}
+	}
+
+	OKR_rikako_request = {
+		icon = mission_placeholder
+		required_missions = {
+			OKR_gain_the_popular_support
+		}
+		position = 4
+		trigger = {
+			5301 = {
+				owned_by = ROOT
+				is_core = ROOT
+				has_building = university
+			}
+		}
+		effect = {
+			add_adm_tech = 1
+			add_dip_tech = 1
+			add_mil_tech = 1
 		}
 	}
 
@@ -1007,7 +960,7 @@ Meira_missions_forth_slot = {
 		required_missions = {
 			OKR_question_of_immortality
 		}
-		position = 4
+		position = 7
 		provinces_to_highlight = {
 			OR = {
 				area = Dragon_islands
@@ -1031,41 +984,42 @@ Meira_missions_forth_slot = {
 		effect = {
 			#Not decided
 		}
-	}	
-
-	OKR_rikako_request = {
-		icon = mission_placeholder
-		required_missions = {
-			OKR_gain_the_popular_support
-		}
-		position = 7
-		trigger = {
-			5301 = {
-				owned_by = ROOT
-				is_core = ROOT
-				has_building = university
-			}
-		}
-		effect = {
-			add_adm_tech = 1
-			add_dip_tech = 1
-			add_mil_tech = 1
-		}
 	}
-
-	OKR_defeat_reimu = {
+	
+	OKR_a_raising_samurai = {
 		icon = mission_placeholder
 		required_missions = {
 		}
 		position = 8
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = okr_has_defeated_reimu_tt
-				has_country_flag = okr_has_defeated_reimu
+			OR = {
+				tag = GNK
+				government_rank = 3
 			}
+			total_development = 650
+			owns_core_province = 4955
+			owns_core_province = 5183
 		}
 		effect = {
-			#Not decided yet
+			add_country_modifier = {
+				name = okr_a_raising_samurai_modifier
+				duration = -1
+			}
+		}
+	}
+	OKR_a_new_born_hakurei_shrine = {
+		icon = mission_placeholder
+		required_missions = {
+			OKR_a_raising_samurai
+		}
+		position = 9
+		trigger = {
+			mission_completed = OKR_journal_to_japan
+			mission_completed = OKR_prove_your_skill
+			mission_completed = OKR_solve_two_incidents
+		}
+		effect = {
+			#upgrade okr_a_raising_samurai to a stronger buff
 		}
 	}
 }
@@ -1085,6 +1039,21 @@ Meira_missions_fifth_slot = {
 		NOT = { map_setup = map_setup_random }
 	}
 	has_country_shield = yes
+	OKR_defeat_youmu = {
+		icon = mission_placeholder
+		required_missions = {
+		}
+		position = 1
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = okr_has_defeated_youmu_tt
+				has_country_flag = okr_has_defeated_youmu
+			}
+		}
+		effect = {
+			#Not decided yet
+		}
+	}
 	OKR_crush_the_chariot = {
 		icon = mission_placeholder
 		required_missions = {
@@ -1156,40 +1125,11 @@ Meira_missions_fifth_slot = {
 			#Not decided yet
 		}
 	}
-	OKR_elixir_of_houraian = {
-		icon = mission_placeholder
-		required_missions = {
-			OKR_question_of_immortality
-		}
-		position = 4
-		provinces_to_highlight = {
-			OR = {
-				area = Bamboo_forest_of_the_lost
-				area = Eientei_state
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		trigger = {
-			owns_or_non_sovereign_subject_of = 4991
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				OR = {
-					area = Bamboo_forest_of_the_lost
-					area = Eientei_state
-				}
-				value = 6
-			}
-		}
-		effect = {
-			#Not decided yet
-		}
-	}
 	OKR_build_navy = {
 		icon = mission_placeholder
 		required_missions = {
 		}
-		position = 5
+		position = 4
 		trigger = {
 			num_of_ports = 5
 			navy_size = 20
@@ -1202,7 +1142,7 @@ Meira_missions_fifth_slot = {
 	OKR_break_the_barrier = {
 		icon = mission_establish_high_seas_navy
 		required_missions = { OKR_build_navy }
-		position = 6
+		position = 5
 		provinces_to_highlight = {
 			OR = {
 				region = moluccas_region
@@ -1229,7 +1169,7 @@ Meira_missions_fifth_slot = {
 	OKR_discover_europe = {
 		icon = mission_invade_england
 		required_missions = { OKR_break_the_barrier }
-		position = 7
+		position = 6
 		provinces_to_highlight = {
 			OR = {
 				region = iberia_region
@@ -1258,15 +1198,29 @@ Meira_missions_fifth_slot = {
 			country_event = { id = TH_mission_events.4 }			
 		}
 	}
-	OKR_defeat_yukari = {
+	OKR_elixir_of_houraian = {
 		icon = mission_placeholder
 		required_missions = {
+			OKR_question_of_immortality
 		}
-		position = 8
+		position = 7
+		provinces_to_highlight = {
+			OR = {
+				area = Bamboo_forest_of_the_lost
+				area = Eientei_state
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = okr_has_defeated_yukari_tt
-				has_country_flag = okr_has_defeated_yukari
+			owns_or_non_sovereign_subject_of = 4991
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				OR = {
+					area = Bamboo_forest_of_the_lost
+					area = Eientei_state
+				}
+				value = 6
 			}
 		}
 		effect = {
