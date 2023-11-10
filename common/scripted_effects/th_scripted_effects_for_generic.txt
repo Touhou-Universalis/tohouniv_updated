@@ -178,9 +178,6 @@ th_colonize_dev_province = {
 			add_base_tax = 1
 			add_base_production = 1
 			add_base_manpower = 1
-			[[trade_goods]
-				change_trade_goods = $trade_goods$
-			]
 		}
 		else_if = {
 			limit = {
@@ -206,21 +203,9 @@ th_colonize_dev_province = {
 				}
 				change_culture = PREV
 			}
-			[[trade_goods]
-				change_trade_goods = $trade_goods$
-			]
 		}
 		else = {
 			add_permanent_claim = PREV
-		}
-	}
-}
-
-th_colonize_dev_province_for_root = { #Deprecated
-	ROOT = {
-		th_colonize_dev_province = {
-			province = $province$
-			trade_goods = $trade_goods$
 		}
 	}
 }
@@ -734,46 +719,38 @@ th_enable_transfer_mp_to_sailors_decision = {
 th_export_root_variable_into_foreign = {
 	#This function counts your own variable, which is made for counting, down while increasing the counter variable of $who$
 	#Useful if you need to convert variables from a province scope into a country's variable
-	while = {
-		limit = {
-			check_variable = {
-				which = $root_variable$
-				value = 1
-			}
+	set_variable = {
+		which = $foreign_variable$_transfer
+		which = $root_variable$
+	}
+	$who$ = {
+		set_variable = {
+			which = $foreign_variable$_transfer
+			which = PREV
 		}
-		$who$ = {
-			change_variable = {
-				which = $foreign_variable$
-				value = 1
-			}
-		}
-		subtract_variable = {
-			which = $root_variable$
-			value = 1
+		set_variable = {
+			which = $foreign_variable$
+			which = $foreign_variable$_transfer
 		}
 	}
 }
 
 th_import_foreign_variable_into_root = {
-	while = {
-		limit = {
-			$who$ = {
-				check_variable = {
-					which = $foreign_variable$
-					value = 1
-				}
+	$who$ = {
+		set_variable = {
+			which = $root_variable$_transfer
+			which = $foreign_variable$
+		}
+		PREV = {
+			set_variable = {
+				which = $root_variable$_transfer
+				which = PREV
 			}
 		}
-		$who$ = {
-			subtract_variable = {
-				which = $foreign_variable$
-				value = 1
-			}
-		}
-		change_variable = {
-			which = $root_variable$
-			value = 1
-		}
+	}
+	set_variable = {
+		which = $root_variable$
+		which = $root_variable$_transfer
 	}
 }
 
