@@ -6,8 +6,8 @@ int main()
 {
     int _numOfProvinces = 0;
     char _separatorChar = ';';
-    int _startOfNewProvinces = 5361;
-    std::string _owner = "HKR";
+    int _startOfNewProvinces = 5525;
+    std::string _owner = "FOM";
     std::string _religion = "th_hakureishinto";
     std::string _culture = "Gensokyo_human";
     std::string _tradeGoods = "fish";
