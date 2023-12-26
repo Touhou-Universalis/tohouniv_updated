@@ -9,7 +9,7 @@ int main()
     int _startOfNewProvinces = 5525;
     std::string _owner = "FOM";
     std::string _religion = "th_hakureishinto";
-    std::string _culture = "Gensokyo_human";
+    std::string _culture = "Gensokyojin";
     std::string _tradeGoods = "fish";
 
     std::string _outputDiscoveredBy = "discovered_by = chinese\ndiscovered_by = tech_gensokyan\n";
