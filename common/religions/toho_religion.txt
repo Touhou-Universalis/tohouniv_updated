@@ -1326,6 +1326,14 @@ eastern = {
 }
 
 christian = {
+	catholic = {
+		allowed_conversion = {
+			th_koiflanism
+			reformed
+			protestant
+		}
+	}
+
 	th_gensokirishitan = {	#Gensokyan Christians
 		color = { 240 240 209 }
 		heretic = { th_heretic_lunar th_heretic_anime th_heretic_manga_elitists }
@@ -1587,6 +1595,397 @@ christian = {
 		
 		harmonized_modifier = th_harmonized_th_scientistics
 	}
+
+	th_koiflanism = {	#Koiflanism
+		color = { 74  212  100 }
+		heretic = { th_heretic_lunar th_heretic_anime th_heretic_manga_elitists }
+		icon = 39
+		allow_female_defenders_of_the_faith = yes
+		
+		country = {
+			land_morale_constant = 0.2
+			morale_damage_received = -0.1
+			fire_damage_received = -0.1
+		}
+		
+		province = {
+			local_missionary_strength = -0.01
+			trade_goods_size_modifier = 0.2
+			province_trade_power_modifier = 0.1
+		}
+
+		country_as_secondary = {
+			tolerance_heretic = 2
+			tolerance_heathen = 2
+		}
+		
+		allowed_center_conversion = {
+			catholic
+			th_hakureishinto
+			th_taoist
+			th_buddhist
+			th_oldhakurei
+			th_shinkism
+			th_scientistic
+		}
+
+		will_get_center = { #Refered to even for initial CoR Spawn
+			NOT = { tag = KMJ }
+			any_owned_province = {
+				OR = {
+					province_id = 90
+					is_capital_of = FLR
+					AND = {
+						has_province_modifier = th_mark_of_koishi
+						continent = europe
+						NOT = { province_id = 118 }
+						is_in_capital_area = yes
+						is_reformation_center = no
+						is_island = no
+						expelling_minorities = no
+						development = 10
+						NOT = {
+							any_neighbor_province = {
+								is_reformation_center = yes
+							}
+						}
+						NOT = {
+							any_province = {
+								area = PREV
+								is_reformation_center = yes
+								religion = th_koiflanism
+							}
+						}
+						NOT = { has_climate = arctic }
+						NOT = { has_climate = arid }
+						NOT = { has_terrain = coastline }
+						NOT = { has_terrain = coastal_desert }
+						NOT = { has_terrain = steppe }
+						NOT = { has_terrain = desert }
+						NOT = { has_terrain = glacier }
+						NOT = { has_climate = tropical }
+					}
+				}
+			}
+		}
+		on_convert = {
+			change_religion = th_koiflanism
+			add_prestige = -100
+			remove_country_modifier = counter_reformation
+			remove_country_modifier = the_statue_in_restraint_of_appeals
+			remove_country_modifier = revocation_of_restraint_of_appeals
+			remove_country_modifier = bavarian_jesuits
+			remove_country_modifier = the_societas_jesu
+			remove_country_modifier = the_declaration_of_indulgence
+			remove_country_modifier = de_heretico_comburendo
+			remove_country_modifier = the_conventicle_act
+	
+			if = {
+				limit = {
+					NOT = {
+						calc_true_if = {
+							all_province = {
+								religion = th_koiflanism
+								is_reformation_center = yes
+							}
+							amount = 3
+						}
+					}
+				}
+				hidden_effect = {
+					random_owned_province = {
+						limit = {
+							owner = { NOT = { tag = KMJ } } # because of movement mechanics
+							OR = {
+								province_id = 90
+								is_capital_of = FLR
+								AND = {
+									has_province_modifier = th_mark_of_koishi
+									continent = europe
+									NOT = { province_id = 118 }
+									is_in_capital_area = yes
+									is_reformation_center = no
+									is_island = no
+									expelling_minorities = no
+									development = 10
+									NOT = {
+										any_neighbor_province = {
+											is_reformation_center = yes
+										}
+									}
+									NOT = {
+										any_province = {
+											area = PREV
+											is_reformation_center = yes
+											religion = th_koiflanism
+										}
+									}
+									NOT = { has_climate = arctic }
+									NOT = { has_climate = arid }
+									NOT = { has_terrain = coastline }
+									NOT = { has_terrain = coastal_desert }
+									NOT = { has_terrain = steppe }
+									NOT = { has_terrain = desert }
+									NOT = { has_terrain = glacier }
+									NOT = { has_climate = tropical }
+								}
+							}
+						}
+						change_religion = th_koiflanism
+						add_reform_center = th_koiflanism
+					}
+				}
+				custom_tooltip = CENTER_OF_REFORMATION_POSSIBLE
+			}
+			
+			add_country_modifier = {
+				name = "conversion_zeal"
+				duration = 3650
+			}			
+			every_known_country = {
+				limit = {
+					reverse_has_opinion_modifier = {
+						who = ROOT
+						modifier = opinion_demote_pope
+					}
+				}
+				reverse_remove_opinion = {
+					who = ROOT
+					modifier = opinion_demote_pope
+				}
+			}
+		}
+		
+		#holy_sites = { 5180 1029 385 379 118 }
+			
+		papacy = {
+			papal_tag = KMJ
+			election_cost = 5
+			seat_of_papacy = 90 # Flanders
+			
+			# Papal Actions below!		
+			papacy_flandre_clone = {
+				curia_treasury_cost = 500
+				potential = { 
+					th_is_or_was_tag = { tag = FLR } 
+				}
+				allow = {
+					th_is_or_was_tag = { tag = FLR } 
+					NOT = { has_leader = "General Flandre" }
+				}
+				effect = {
+					define_general = { #TODO change based on army professionalism and whatnot
+						name = "Flandre Clone"
+						female = yes
+						shock = 5
+						fire = 6
+						manuever = 4
+						siege = 4
+					}
+				}
+			}	
+			papacy_flandre_clone_kmj = {
+				curia_treasury_cost = 500
+				potential = {
+					has_dlc = "Emperor"
+					tag = KMJ
+				}
+				allow = {
+					tag = KMJ
+					NOT = { has_leader = "General Flandre" }
+				}
+				effect = {
+					define_general = { #TODO change based on army professionalism and whatnot
+						name = "Flandre Clone"
+						female = yes
+						shock = 5
+						fire = 6
+						manuever = 4
+						siege = 4
+					}
+				}
+				ai_will_do = {
+					factor = 0
+				}
+			}
+			papacy_flandrish_support = {
+				cost = 100
+				potential = { 
+					NOT = { th_is_or_was_tag = { tag = FLR } }
+					NOT = {	th_is_or_was_tag = { tag = KMJ } }
+				}
+				allow = {
+					NOT = { th_is_or_was_tag = { tag = FLR } }
+					NOT = {	th_is_or_was_tag = { tag = KMJ } }
+					NOT = { war_with = KMJ }
+					NOT = { war_with = FLR }
+					NOT = { has_country_modifier = flandrish_suport }
+				}
+				effect = {
+					add_country_modifier = {
+						name = "flandrish_suport"
+						duration = 7300
+					}
+				}
+			}
+			bless_monarch = {
+				cost = 50
+				potential = {
+					NOT = { tag = KMJ }
+				}
+				allow = {
+					NOT = { war_with = KMJ }
+					NOT = { war_with = FLR }
+					NOT = { has_country_modifier = papal_blessing }
+				}
+				effect = {
+					add_country_modifier = {
+						name = "papal_blessing"
+						duration = 7300
+					}
+				}
+				ai_will_do = {
+					factor = 1
+				}
+			}
+			indulgence_for_sins = {
+				cost = 50
+				potential = {
+					NOT = { tag = KMJ }
+				}
+				allow = {
+					NOT = { war_with = KMJ }
+					NOT = { war_with = FLR }
+					NOT = { has_country_modifier = papal_indulgence }
+				}
+				effect = {
+					add_country_modifier = {
+						name = "papal_indulgence"
+						duration = 7300
+					}
+				}
+				ai_will_do = {
+					factor = 1
+				}
+			}	
+			local_saint = {
+				cost = 100
+				potential = {
+					NOT = { tag = KMJ }
+				}
+				allow = {
+					NOT = { war_with = KMJ }
+					NOT = { war_with = FLR }
+					NOT = { stability = 3 }
+				}
+				effect = {
+					add_stability = 1
+				}
+				ai_will_do = {
+					factor = 1
+					modifier = {
+						factor = 2
+						NOT = { stability = 0 }
+					}
+				}
+			}
+			forgiveness_for_usury = {
+				cost = 50
+				potential = {
+					NOT = { tag = KMJ }
+				}
+				allow = {
+					NOT = { war_with = KMJ }
+					NOT = { war_with = FLR }
+					NOT = { has_country_modifier = usury_forgiven }
+				}
+				effect = {
+					add_country_modifier = {
+						name = "usury_forgiven"
+						duration = 7300
+					}
+				}
+				ai_will_do = {
+					factor = 1
+					modifier = {
+						factor = 0
+						NOT = { num_of_loans = 1 }
+					}
+				}
+			}			
+			proclaim_holy_war = {
+				cost = 50
+				potential = {
+					NOT = { tag = KMJ }
+				}
+				allow = {
+					is_at_war = yes
+					NOT = { war_with = KMJ }
+					NOT = { war_with = FLR }
+					NOT = { has_country_modifier = papal_sanction_for_holy_war }
+				}
+				effect = {
+					add_country_modifier = {
+						name = "papal_sanction_for_holy_war"
+						duration = 7300
+					}
+				}
+				ai_will_do = {
+					factor = 1
+					modifier = {
+						factor = 0
+						manpower_percentage = 0.5
+					}
+				}
+			}
+			send_papal_legate = {
+				cost = 50
+				potential = {
+					NOT = { tag = KMJ }
+					is_papal_controller = no
+				}
+				allow = {
+					NOT = { war_with = KMJ }
+					NOT = { war_with = FLR }
+					NOT = { has_country_modifier = papal_legate }
+				}
+				effect = {
+					add_country_modifier = {
+						name = "papal_legate"
+						duration = 7300
+					}
+				}
+				ai_will_do = {
+					factor = 1
+				}
+			}	
+			sanction_commercial_monopoly = {
+				cost = 50
+				potential = {
+					NOT = { tag = KMJ }
+				}
+				allow = {
+					NOT = { war_with = KMJ }
+					NOT = { war_with = FLR }
+					NOT = { mercantilism = 100 }
+				}
+				effect = {
+					add_mercantilism = 1
+				}
+				ai_will_do = {
+					factor = 1
+					modifier = {
+						factor = 0
+						NOT = { has_idea_group = trade_ideas }
+					}
+				}
+			}
+		}
+		
+		date = 1528.07.03
+		harmonized_modifier = th_harmonized_th_scientistics
+	}
+
 	crusade_name = CRUSADE
 }
 

@@ -325,6 +325,136 @@ on_siege_won_country = {
 	}
 }
 
+# province
+# root = location, from = losing country
+on_siege_won_province = {
+	if = {
+		limit = {
+			NOT = { exists = FLR }
+			controller = {
+				has_country_flag = kmj_flanders_for_flan
+				flanders_area = {
+					type = all
+					OR = {
+						controlled_by = PREV
+						owner = {
+							NOT = { war_with = KMJ } #TODO change KMJ to somehow reference controller instead of tag
+						}
+					}
+				}
+			}
+		}
+		controller = {
+			flanders_area = {
+				limit = {
+					controlled_by = PREV
+				}
+				set_province_flag = kmj_flanders_prov_for_flan
+			}
+			every_known_country = {
+				limit = {
+					is_in_war = {
+						attacker_leader = PREV
+					}
+				}
+				white_peace = PREV
+			}
+			flanders_area = {
+				limit = {
+					has_province_flag = kmj_flanders_prov_for_flan
+				}
+				cede_province = FLR
+			}
+			flanders_area = {
+				add_core = FLR
+			}
+			FLR = {
+				change_government = monarchy
+				add_government_reform = Gensokyan_flr_realm_of_bloodline
+				adopt_reform_progress = PREV
+				change_primary_culture = Scarlett
+				change_religion = PREV
+				remove_country_modifier = conversion_zeal
+				define_ruler = {
+					name = "Flandre"
+					dynasty = "Scarlet"
+					age = "15"
+					adm = 5
+					dip = 3
+					mil = 6
+					female = yes
+					culture = Scarlett
+					religion = PREV
+				}
+				set_ruler_flag = touhou_character_ruler
+				set_ruler_flag = touhou_original_ruler
+				set_ruler_flag = th_original_flan
+				add_ruler_personality = immortal_personality
+				add_accepted_culture = flemish
+				add_accepted_culture = dutch
+				add_accepted_culture = wallonian
+				add_accepted_culture = english
+				add_accepted_culture = cosmopolitan_french
+				add_adm_power = 112
+				add_dip_power = 84
+				add_mil_power = 126
+				add_manpower = 5
+				add_sailors = 100
+				add_prestige = 87
+				set_capital = 90
+				change_estate_land_share = {
+					estate = estate_church
+					share = 20
+				}
+				change_estate_land_share = {
+					estate = estate_burghers
+					share = 20
+				}
+				change_estate_land_share = {
+					estate = estate_nobles
+					share = 29
+				}
+				90 = {
+					add_base_tax = 2
+					add_base_manpower = 2
+					add_base_production = 2
+					change_culture = Scarlett
+				}
+				
+				add_country_modifier = {
+					name = th_flr_lvl1_flan
+					duration = -1
+				}
+			}
+
+			low_countries_region = {
+				add_permanent_claim = FLR
+			}
+
+			create_alliance = FLR
+			add_trust = {
+				who = FLR
+				value = 50
+				mutual = yes
+			}
+			if = {
+				limit = {
+					NOT = { historical_friends_with = FLR }
+				}
+				add_historical_friend = FLR
+			}
+			if = {
+				limit = {
+					FLR { NOT = { historical_friends_with = PREV } }
+				}
+				FLR = { add_historical_friend = PREV }
+			}
+			remove_county_flag = kmj_flanders_for_flan
+		}
+	}
+	
+}
+
 # OBS: Consider that the following on_actions can be called for Personal Union juniors as well.
 # country
 on_new_monarch = {

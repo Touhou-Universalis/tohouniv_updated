@@ -1,0 +1,641 @@
+kmj_missions_outerworld_protection = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = KMJ
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	KMJ_religion_in_the_outerworld = {
+		icon = mission_touhou_build_connections
+		required_missions = {  }
+		position = 1
+		
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					ROOT = {
+						capital_scope = {
+							continent = europe
+						}
+					}
+					is_part_of_hre = yes
+				}
+				AND = {
+					ROOT = {
+						capital_scope = {
+							continent = asia
+						}
+					}
+					owner = {
+						is_emperor_of_china = yes
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				is_part_of_hre = yes
+				any_neighbor_country = {
+					is_emperor_of_china = yes
+				}
+				capital_scope = {
+					NOT = { continent = europe }
+					NOT = { continent = asia }
+				}
+				is_year = 1460
+			}
+		}
+		effect = {
+			#TODO
+			country_event = { 
+				id = flavor_kmj.9
+			}
+		}
+	}
+}
+kmj_missions_outerworld_protection = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = KMJ
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	KMJ_banish_the_gensokyans = {
+		icon = mission_touhou_build_connections
+		required_missions = { KMJ_religion_in_the_outerworld KMJ_spread_of_koiflanism }
+		position = 3
+		
+		provinces_to_highlight = {
+			continent = europe
+			owner = {
+				capital_scope = {
+					th_gensokyo_or_moon_continent = yes
+				}
+			}
+		}
+
+		trigger = {
+			is_year = 1550
+			NOT = {
+				calc_true_if = {
+					europe = {
+						owner = {
+							capital_scope = {
+								th_gensokyo_or_moon_continent = yes
+							}
+						}
+					}
+					amount = 1
+				}
+			}
+			is_defender_of_faith = yes
+		}
+		effect = {
+			capital_scope = {
+				add_base_tax = 30
+				add_base_production = 30
+				add_base_manpower = 40
+			}
+		}
+	}
+	KMJ_protector_of_europe = {
+		icon = mission_touhou_build_connections
+		required_missions = { KMJ_banish_the_gensokyans }
+		position = 4
+		
+		provinces_to_highlight = {
+			continent = europe
+			th_is_touhou_religion = yes
+			NOT = { religion = th_koiflanism }
+		}
+
+		trigger = {
+			NOT = {
+				calc_true_if = {
+					europe = {
+						th_is_touhou_religion = yes
+						NOT = { religion = th_koiflanism }
+					}
+					amount = 1
+				}
+			}
+			OR = {
+				is_defender_of_faith_of_tier = 4
+				calc_true_if = {
+					europe = {
+						religion = th_koiflanism
+						type = all
+					}
+					amount = 200
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						has_dlc = "Emperor"
+						has_dlc = "Rights of Man"
+					}
+				}
+				NOT = { great_power_rank = 4 }
+			}
+			else = {
+				total_own_and_non_tributary_subject_development = 1500
+				government_rank = 3
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = kmj_defender_of_europe
+				duration = -1
+			}
+		}
+	}
+	#TODO coalition against the gensokyans
+}
+kmj_missions_koiflanism = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = { #TODO branching path
+		tag = KMJ
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	KMJ_koiflanism = {
+		icon = mission_touhou_build_connections
+		required_missions = {  }
+		position = 1
+		trigger = {
+			trust = { who = FLR value = 80 }
+			OR = {
+				is_year = 1500
+				NOT = { current_age = age_of_discovery }
+			}
+		}
+		effect = {
+			country_event = { 
+				id = th_koiflanism_events.1
+			}
+		}
+	}
+	KMJ_spread_of_koiflanism = {
+		icon = mission_touhou_build_connections
+		required_missions = { KMJ_koiflanism }
+		position = 2
+		trigger = {
+			calc_true_if = {
+				all_province = {
+					religion = th_koiflanism
+				}
+				amount = 20
+			}
+		}
+		effect = {
+			#TODO gain a wargoal against all gensokyan nations in europe + north africa + arabia, bar that owned by outworld nations
+			#but for now, just claims
+			europe = {
+				limit = {
+					owner = {
+						capital_scope = {
+							th_gensokyo_or_moon_continent = yes
+						}
+					}
+				}
+				add_permanent_claim = PREV
+			}
+		}
+	}
+	KMJ_visitations_afar = {
+		icon = mission_touhou_build_connections
+		required_missions = { KMJ_spread_of_koiflanism }
+		position = 3
+		provinces_to_highlight = {
+			OR {
+				AND = {
+					region = france_region
+					NOT = { france_region = { religion = th_koiflanism } }
+				}
+				AND = {
+					region = iberia_region
+					NOT = { iberia_region = { religion = th_koiflanism } }
+				}
+				AND = {
+					region = italy_region
+					NOT = { italy_region = { religion = th_koiflanism } }
+				}
+				AND = {
+					region = south_german_region
+					NOT = { south_german_region = { religion = th_koiflanism } }
+				}
+				AND = {
+					region = north_german_region
+					NOT = { north_german_region = { religion = th_koiflanism } }
+				}
+				AND = {
+					region = low_countries_region
+					NOT = { low_countries_region = { religion = th_koiflanism } }
+				}
+				AND = {
+					region = eastern_europe_superregion
+					NOT = { eastern_europe_superregion = { religion = th_koiflanism } }
+				}
+			}
+		}
+		trigger = {
+			france_region = {
+				religion = th_koiflanism
+			}
+			iberia_region = {
+				religion = th_koiflanism
+			}
+			italy_region = {
+				religion = th_koiflanism
+			}
+			south_german_region = {
+				religion = th_koiflanism
+			}
+			north_german_region = {
+				religion = th_koiflanism
+			}
+			low_countries_region = {
+				religion = th_koiflanism
+			}
+			eastern_europe_superregion = {
+				religion = th_koiflanism
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						NOT = { hre_size = 1 }
+						hre_religion_locked = yes
+					}
+				}
+				#TODO
+				add_legitimacy = 10
+				change_government_reform_progress = 100
+				add_years_of_owned_provinces_manpower = {
+					years = 2.5
+				}
+				if = {
+					limit = { is_part_of_hre = yes }
+					set_in_empire = no
+				}
+				if = {
+					limit = { FLR = { is_part_of_hre = yes } }
+					FLR = { set_in_empire = no }
+				}
+				set_government_rank = 3
+				FLR = { set_government_rank = 3 }
+			}
+			else_if = {
+				limit = {
+					hre_religion_treaty = no
+				}
+				hidden_effect = {
+					if = {
+						limit = {
+							hre_leagues_enabled = yes
+						}
+						enable_hre_leagues = no
+					}
+				}
+				set_hre_heretic_religion = th_koiflanism
+				enable_hre_leagues = yes
+				set_allow_female_emperor = yes
+			}
+			else = {
+				set_allow_female_emperor = yes
+			}
+		}
+	}
+}
+kmj_missions_visit_friends = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = KMJ
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	KMJ_visit_friends = {
+		icon = mission_touhou_build_connections
+		required_missions = {  }
+		position = 1
+		trigger = {
+			always = no
+			calc_true_if = {
+				has_country_flag = kmj_visited
+				value = 3
+			}
+		}
+		effect = {
+		}
+	}
+	KMJ_party_of_versailles = {
+		icon = mission_touhou_build_connections
+		required_missions = { KMJ_visit_friends }
+		position = 2
+		trigger = {
+			OR = {
+				183 = { owner = { has_country_flag = kmj_visited } }
+				183 = { owned_by = PREV }
+				any_neighbor_province = {
+					province_id = 183
+				}
+			}
+		}
+		effect = {
+		}
+	}
+}
+kmj_missions_koiflan_union = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = KMJ
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	KMJ_koiflan_union = {
+		icon = mission_touhou_build_connections
+		required_missions = { KMJ_spread_of_koiflanism KMJ_flanfriend }
+		position = 3
+		trigger = {
+			FLR = {
+				mission_completed = flr_restore_our_sovereignty
+				trust = { who = PREV value = 80 }
+				
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 15
+					region = low_countries_region
+				}
+			}
+			BUR = {
+				NOT = {
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						value = 1
+						OR = {
+							region = low_countries_region
+							region = south_german_region
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					FLR = { NOT = { mission_completed = flr_build_the_scarlet_force } }
+				}
+				FLR = {
+					complete_mission = flr_build_the_scarlet_force
+					custom_tooltip = flr_build_the_scarlet_force_tt
+					hidden_effect = {
+						remove_country_modifier = th_flr_lvl1_flan
+						add_country_modifier = {
+							name = flr_lvl2_flan
+							duration = -1
+						}
+					}
+					add_country_modifier = {
+						name = flr_scarlet_army
+						duration = 7300
+					}
+				}
+			}
+			FLR = {
+				every_subject_country = {
+					limit = {
+						ai = yes
+						capital_scope = {
+							OR = {
+								region = france_region 
+								culture_group = french
+								culture = dutch
+								culture = flemish
+								is_part_of_hre = yes
+							}
+						}
+					}
+					FLR = { inherit = PREV }
+				}
+			}
+			create_subject = {
+				subject_type = th_personal_union
+				subject = FLR
+			}
+			FLR = { th_wandering_state_transfer_nation_development = { who = PREV } }
+			define_consort = {
+				name = "Flandre Scarlet"
+				original_dynasty = "Scarlet"
+				country_of_origin = FLR
+				adm = 5
+				dip = 3
+				mil = 6
+				religion = ROOT
+				culture = Scarlett
+				female = yes
+			}
+			set_consort_flag = touhou_character_ruler
+			set_consort_flag = touhou_original_ruler
+			set_consort_flag = th_original_flan
+			add_consort_personality = immortal_personality
+		}
+	}
+}
+
+KMJ_branching_germany = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = KMJ
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	KMJ_branching_germany = {
+		icon = mission_locked_mission
+		required_missions = { KMJ_visitations_afar KMJ_koiflan_union }
+		position = 4
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = selectable_mission_trigger_tt
+				always = no
+			}
+		}
+		effect = {
+		}
+	}
+}
+
+kmj_missions_koiflan = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = KMJ
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+	
+	KMJ_meeting_flan = {
+		icon = mission_touhou_build_connections
+		required_missions = {  }
+		position = 1
+		trigger = {
+			OR = {
+				FLR = { is_subject = no }
+				FLR = { is_subject_of = KMJ }
+			}
+			OR = {
+				is_neighbor_of = FLR
+				capital_scope = {
+					NOT = { area = flanders_area }
+					any_neighbor_province = {
+						area = flanders_area
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { exists = FLR }
+				}
+				custom_tooltip = kmj_control_flanders
+				set_country_flag = kmj_flanders_for_flan
+				90 = {
+					owner = {
+						ROOT = { declare_war = PREV } #TODO proper CB
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FLR = {
+						is_subject = yes
+						NOT = { is_subject_of = PREV }
+					}
+				}
+				FLR = {
+					overlord = {
+						FLR = {
+							declare_war_with_cb = {
+								casus_belli = cb_independence_war
+								who = PREV
+							}
+						}
+					}
+				}
+				join_all_offensive_wars_of = FLR
+
+				create_alliance = FLR
+				reverse_remove_opinion = {
+					who = FLR
+					modifier = aggressive_expansion
+				}
+				add_trust = {
+					who = FLR
+					value = 50
+					mutual = yes
+				}
+			}
+			else_if = {
+				limit = { FLR = { is_subject = yes } }
+				reverse_remove_opinion = {
+					who = FLR
+					modifier = aggressive_expansion
+				}
+				add_trust = {
+					who = FLR
+					value = 50
+					mutual = yes
+				}
+			}
+			else = {
+				create_alliance = FLR
+				reverse_remove_opinion = {
+					who = FLR
+					modifier = aggressive_expansion
+				}
+				add_trust = {
+					who = FLR
+					value = 50
+					mutual = yes
+				}
+			}
+			if = {
+				limit = {
+					exists = FLR
+					NOT = { historical_friends_with = FLR }
+				}
+				add_historical_friend = FLR
+			}
+			if = {
+				limit = {
+					exists = FLR
+					FLR { NOT = { historical_friends_with = PREV } }
+				}
+				FLR = { add_historical_friend = PREV }
+			}
+		}
+	}
+	KMJ_flanfriend = {
+		icon = mission_touhou_build_connections
+		required_missions = { KMJ_meeting_flan }
+		position = 2
+		trigger = {
+			#is_year = 1490
+			reform_level = 3
+			OR = {
+				alliance_with = FLR
+				FLR = { is_subject_of = PREV }
+				#TODO handle KMJ being subject of Flan
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					reform_level = 4
+				}
+				change_government_reform_progress = 50
+				add_government_reform = TH_koiflan_proclamation
+			}
+			else = {
+				change_government_reform_progress = -50
+				add_government_reform = TH_koiflan_proclamation
+			}
+			FLR = { 
+				add_government_reform = TH_koiflan_proclamation 
+				if = {
+					limit = { reform_level = 4 }
+					change_government_reform_progress = 50
+				}
+			}
+		}
+	}
+}
+
+kmj_aaaaa = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = KMJ
+		NOT = { map_setup = map_setup_random }
+	}
+	has_country_shield = yes
+}

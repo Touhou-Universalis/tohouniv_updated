@@ -2150,6 +2150,121 @@ TH_do_it_yourself_bureaucracy_reform = {
 	}
 }
 
+#State and Religion Touhou
+
+TH_koiflan_proclamation = { #TODO koiflanism
+	icon = "general_eastern_administrative"
+	lock_level_when_selected = yes
+
+	rulers_can_be_generals = no
+	queen = yes
+	royal_marriage = yes
+
+	potential = {
+		OR = {
+			have_had_reform = TH_koiflan_proclamation
+			mission_completed = KMJ_flanfriend
+			AND = {
+				th_is_or_was_tag = { tag = FLR }
+				exists = KMJ
+			}
+			AND = {
+				th_is_or_was_tag = { tag = KMJ }
+				exists = FLR
+			}
+		}
+	}
+	allow = {
+		OR = {
+			have_had_reform = TH_koiflan_proclamation
+			mission_completed = KMJ_flanfriend
+		}
+	}
+
+	conditional = {
+		allow = {
+			has_dlc = "Common Sense"
+		}
+		has_parliament = yes
+		custom_attributes = {
+			koiflan_parliament = yes
+		}
+	}
+
+	modifiers = {
+		appoint_cardinal_cost = -0.1
+		papal_influence_from_cardinals = 0.5
+		curia_treasury_contribution = 0.5
+		curia_powers_cost = -0.1
+		church_influence_modifier = 0.1
+		church_loyalty_modifier = 0.05
+		reasons_to_elect = 20
+	}
+	effect = {
+		hidden_effect = {
+			if = {
+				limit = { is_defender_of_faith = yes }
+				add_country_modifier = {
+					name = gov_improved_defender_of_faith_mod
+					duration = -1
+				}
+			}
+		}
+	}
+	post_removed_effect = {
+		remove_country_modifier = gov_improved_defender_of_faith_mod
+	}
+	custom_attributes = {
+		improved_defender_of_faith = yes	#Being Defender of Faith increases Dip Rep, Tolerance and Morale
+	}
+	ai = {
+		factor = 1000
+		modifier = {
+			factor = 0
+			NOT = { 
+				OR = {
+					FLR = { is_subject_of = PREV }
+					KMJ = { is_subject_of = PREV }
+				}
+			}
+		}
+	}
+}
+
+
+TH_rumia_militarization = {
+	icon = "prussian_monarchy"
+	potential = {
+		NOT = { tag = PRU }
+		th_is_or_was_tag = { tag = ROD }
+	}
+	trigger = {
+		OR = {
+			religion = protestant
+			religion = reformed
+			religion = hussite
+			religion = anglican
+			religion = th_koiflanism
+		}
+	}
+
+	modifiers = {
+		war_exhaustion = -0.02
+		global_autonomy = -0.075
+		max_absolutism = 10
+		monarch_military_power = 3
+		nobles_loyalty_modifier = 0.1
+		governing_capacity_modifier = -0.25
+	}
+
+	conditional = {
+		allow = { has_dlc = "Rights of Man" }
+		government_abilities = {
+			militarization_mechanic
+		}
+	}
+}
+
 #Growth of Administration Touhou
 
 TH_generals_in_administration_reform = {

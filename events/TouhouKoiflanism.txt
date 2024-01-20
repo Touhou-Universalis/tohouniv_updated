@@ -1,0 +1,139 @@
+########################################
+# Flavor Events for Shinkism
+########################################
+
+namespace = th_koiflanism_events
+
+# Koiflanism conversion event
+country_event = {
+	id = th_koiflanism_events.1
+	title = th_koiflanism_events.1.t
+	desc = th_koiflanism_events.1.desc
+	picture = SHINKISM_eventPicture	
+	major = yes
+	is_triggered_only = yes
+	
+	#trigger = {
+	#	NOR = { has_country_flag = had_th_koiflanism_question }
+	#	OR = {
+	#		is_subject = no
+	#		overlord = {
+	#			OR = {
+	#				th_is_or_was_tag = { tag = FLR }
+	#				th_is_or_was_tag = { tag = KMJ }
+	#			}
+	#		}
+	#	}
+	#	is_year = 1500
+	#	OR = {
+	#		th_is_or_was_tag = { tag = FLR }
+	#		th_is_or_was_tag = { tag = KMJ }
+	#	}
+	#}
+
+	#mean_time_to_happen = {
+	#	months = 1200
+	#	modifier = {
+	#		factor = 0.01
+	#		has_reform = TH_koiflan_proclamation
+	#	}
+	#}
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = had_th_koiflanism_question
+		}
+	}
+
+	after = {
+		clr_country_flag = had_th_koiflanism_question
+	}
+		
+	option = { # just convert
+		name = th_koiflanism_events.1.a
+		ai_chance = {
+			factor = 100
+		}
+		th_ds_excuse_religion_swapping = yes
+		if = {
+			limit = {
+				NOT = { is_religion_enabled = th_koiflanism }
+			}
+			enable_religion = th_koiflanism
+		}
+		#add_reform_center = th_koiflanism
+		every_neighbor_country = {
+			limit = {
+				OR = {
+					religion_group = Touhou
+					religion_group = christian
+				}
+				NOT = { religion = th_koiflanism }
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = renounced_as_heretics
+			}
+		}
+		change_religion = th_koiflanism
+		add_country_modifier = {
+			name = "conversion_zeal"
+			duration = 3650
+		}
+		if = {
+			limit = { tag = KMJ }
+			FLR = {
+				change_religion = th_koiflanism
+				add_country_modifier = {
+					name = "conversion_zeal"
+					duration = 3650
+				}
+			}
+		}
+		else {
+			KMJ = {
+				change_religion = th_koiflanism
+				add_country_modifier = {
+					name = "conversion_zeal"
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = {
+				90 = {
+					OR = {
+						owned_by = FLR
+						owned_by = KMJ
+					}
+				}
+			}
+			90 = {
+				change_religion = th_koiflanism
+				add_cardinal = yes
+				add_reform_center = th_koiflanism
+			}
+		}
+		if = {
+			limit = {
+				tag = KMJ
+			}
+			capital_scope = {
+				change_religion = th_koiflanism
+			}
+		}
+		else_if = {
+			limit = {
+				exists = KMJ
+			}
+			KMJ = {
+				capital_scope = {
+					change_religion = th_koiflanism
+				}
+			}
+		}
+	}
+	option = {
+
+	}
+}
