@@ -1,4 +1,4 @@
-version="3.8.2"
+version="3.9.0"
 tags={
 	"Alternative History"
 	"Map"
@@ -7,5 +7,5 @@ tags={
 	"Expansion"
 }
 name="Touhou Universalis Updated"
-supported_version="1.36.*"
+supported_version="1.37.*"
 remote_file_id="1537902566"
