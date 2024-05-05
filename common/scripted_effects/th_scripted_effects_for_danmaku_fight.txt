@@ -15,9 +15,18 @@ th_global_setup_danmaku_duels_data = {
 	}
 }
 
-th_assign_country_to_danmaku_duel_instance = {
+th_prepare_country_for_danmaku_duel = {
 	set_country_flag = th_is_in_a_danmaku_duel
 	set_ruler_flag = th_ruler_is_in_a_danmaku_duel
+	set_variable = {
+		which = th_danmaku_action_points
+		which = th_danmaku_max_action_points
+	}
+	th_update_danmaku_action_point_bar = yes
+}
+
+th_assign_country_to_danmaku_duel_instance = {
+	th_prepare_country_for_danmaku_duel = yes
 	set_ruler_flag = th_is_in_danmaku_duel_instance_$instance$
 	set_ruler_flag = th_is_country_$country_id$_in_danmaku_duel_of_$instance$
 	save_global_event_target_as = th_danmaku_duelist_of_id_$country_id$_of_instance_$instance$
@@ -179,6 +188,90 @@ th_assign_countries_to_danmaku_duel_instance = {
 	}
 }
 
+th_roll_initiative = {
+	set_variable = {
+		which = th_danmaku_rolled_initiative
+		value = 0
+	}
+	random_list = {
+		1 = { change_variable = { which = th_danmaku_rolled_initiative value = 1 } }
+		1 = { change_variable = { which = th_danmaku_rolled_initiative value = 2 } }
+		1 = { change_variable = { which = th_danmaku_rolled_initiative value = 3 } }
+		1 = { change_variable = { which = th_danmaku_rolled_initiative value = 4 } }
+	}
+	change_variable = {
+		which = th_danmaku_rolled_initiative
+		which = th_danmaku_ini_bonus
+	}
+}
+th_alternative_roll_initiative = {	#I LOOOOOOOOVE EU4's inability to have random numbers
+	export_to_variable = {
+		which = th_danmaku_randomizer
+		value = max_manpower
+	}
+	export_to_variable = {
+		which = $variable$
+		value = manpower
+	}
+	change_variable = {
+		which = th_danmaku_randomizer
+		which = $variable$
+	}
+	divide_variable = {
+		which = th_danmaku_randomizer
+		value = 2
+	}
+	set_variable = {
+		which = $variable$
+		which = th_danmaku_randomizer
+	}
+	random = {
+		chance = 0.25
+		change_variable = {
+			which = th_danmaku_randomizer
+			value = 1
+		}
+	}
+	random = {
+		chance = 0.25
+		change_variable = {
+			which = th_danmaku_randomizer
+			value = 2
+		}
+	}
+	random = {
+		chance = 0.25
+		change_variable = {
+			which = th_danmaku_randomizer
+			value = 3
+		}
+	}
+	divide_variable = {
+		which = th_danmaku_randomizer
+		value = 4
+	}
+	round_variable = {
+		which = th_danmaku_randomizer
+		value = -1
+	}
+	multiply_variable = {
+		which = th_danmaku_randomizer
+		value = 4
+	}
+	subtract_variable = {
+		which = $variable$
+		which = th_danmaku_randomizer
+	}
+	round_variable = {
+		which = $variable$
+		value = 0
+	}
+	change_variable = {
+		which = $variable$
+		which = $bonus$
+	}
+}
+
 th_roll_initiative_for_current_instance = {
 	if = {
 		limit = { tag = $country_1$ }
@@ -192,9 +285,48 @@ th_roll_initiative_for_current_instance = {
 		custom_tooltip = th_roll_initiative_for_current_instance_tt
 	}
 	hidden_effect = {
-		random_list = {
-			1 = { $country_1$ = { set_ruler_flag = th_danmaku_has_turn_ownership } }
-			1 = { $country_2$ = { set_ruler_flag = th_danmaku_has_turn_ownership } }
+		$country_1$ = { th_roll_initiative = yes }
+		$country_2$ = {
+			th_alternative_roll_initiative = {
+				variable = th_danmaku_rolled_initiative
+				bonus = th_danmaku_ini_bonus
+			}
+			set_variable = {
+				which = th_danmaku_rolled_initiative_transfer
+				which = th_danmaku_rolled_initiative
+			}
+			while = {
+				limit = {
+					NOT = {
+						is_variable_equal = {
+							which = th_danmaku_rolled_initiative_transfer
+							value = 0
+						}
+					}
+				}
+				if = {
+					limit = { check_variable = { which = th_danmaku_rolled_initiative_transfer value = 1 } }
+					change_variable = { which = th_danmaku_rolled_initiative_transfer value = -1 }
+				}
+				else = {
+					change_variable = { which = th_danmaku_rolled_initiative_transfer value = 1 }
+				}
+				$country_1$ = { change_variable = { which = th_danmaku_rolled_initiative_comperator value = 1 } }
+			}
+		}
+		$country_1$ = {
+			if = {
+				limit = {
+					check_variable = {
+						which = th_danmaku_rolled_initiative
+						which = th_danmaku_rolled_initiative_comperator
+					}
+				}
+				set_ruler_flag = th_danmaku_has_turn_ownership
+			}
+			else = {
+				$country_2$ = { set_ruler_flag = th_danmaku_has_turn_ownership }
+			}
 		}
 	}
 }
@@ -279,8 +411,8 @@ th_create_danmaku_duel_against_country = {
 th_create_danmaku_duel_against_unlanded_character = {
 	custom_tooltip = th_create_danmaku_duel_against_unlanded_character_$target$_tt
 	hidden_effect = {
+		th_prepare_country_for_danmaku_duel = yes
 		set_ruler_flag = th_is_duelling_an_unlanded_character
-		set_ruler_flag = th_ruler_is_in_a_danmaku_duel
 		set_ruler_flag = th_is_duelling_character_$target$
 		th_roll_initiative_for_solo_fight = yes
 	}
@@ -289,6 +421,22 @@ th_create_danmaku_duel_against_unlanded_character = {
 th_roll_initiative_for_solo_fight = {
 	custom_tooltip = th_roll_initiative_for_solo_fight_tt
 	hidden_effect = {
-		set_ruler_flag = th_danmaku_has_turn_ownership
+		th_roll_initiative = yes
+		th_alternative_roll_initiative = {
+			variable = th_danmaku_unlanded_character_rolled_initiative
+			bonus = th_danmaku_unlanded_character_ini_bonus
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_rolled_initiative
+					which = th_danmaku_unlanded_character_rolled_initiative
+				}
+			}
+			set_ruler_flag = th_danmaku_has_turn_ownership
+		}
+		else = {
+			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+		}
 	}
 }
