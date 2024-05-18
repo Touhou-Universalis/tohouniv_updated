@@ -760,6 +760,28 @@ th_monthly_danaku_duel_duration_reduction = {
 	}
 }
 
+th_gui_get_enemy_resource_bar = {
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_source_transfer_$type$
+				which = th_danmaku_$type$_var
+			}
+			PREV = {
+				set_variable = {
+					which = th_danmaku_source_transfer_$type$
+					which = PREV
+				}
+				set_variable = { 
+					which = th_danmaku_enemy_$type$_var 
+					which = th_danmaku_source_transfer_$type$ 
+				}
+			}
+		}
+	}
+}
+
 th_gui_update_enemy_resource_bar = {
 	set_variable = {
 		which = th_danmaku_source_transfer_$type$
@@ -847,8 +869,342 @@ th_on_new_own_turn = {
 
 th_on_new_enemy_turn = {}
 
+th_on_win = {}
+th_on_defeat = {}
+
 th_perform_attack = {
 	if = {
-		limit = {  }
+		limit = { has_saved_event_target = enemy_duelist }
+		set_variable = {
+			which = th_danmaku_attack_roll
+			value = 0
+		}
+		random_list = {
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 1 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 2 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 3 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 4 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 5 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 6 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 7 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 8 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 9 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 10 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 11 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 12 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 13 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 14 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 15 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 16 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 17 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 18 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 19 } }
+			1 = { set_variable = { which = th_danmaku_attack_roll value = 20 } }
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_attack_roll
+					which = th_danmaku_crit_roll_needed
+				}
+			}
+			set_ruler_flag = th_danmaku_rolled_critical_hit
+		}
+		change_variable = {
+			which = th_danmaku_attack_roll
+			which = th_danmaku_hit_bonus
+		}
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_enemy_armor_class_transfer
+				value = th_danmaku_armor_class
+			}
+		}
+		set_variable = {
+			which = th_danmaku_enemy_armor_class_transfer
+			value = PREV
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_attack_roll
+					which = th_danmaku_enemy_armor_class_transfer
+				}
+			}
+			set_ruler_flag = th_danmaku_duel_hit_attack
+			if = {
+				limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+				th_play_ability_critical_hit_sound = { ability = $ability$ }
+				set_variable = {
+					which = th_danmaku_crit_multiplier
+					which = th_danmaku_crit_roll_damage_multiplier
+				}
+				th_log_for_current_instance = { type = is_critical input = yes }
+			}
+			else = {
+				th_play_ability_hit_sound = { ability = $ability$ }
+				set_variable = {
+					which = th_danmaku_crit_multiplier
+					which = 0
+				}
+			}
+			th_deal_damage = yes
+		}
+		else = {
+			set_ruler_flag = th_danmaku_duel_missed_attack
+			clr_ruler_flag = th_danmaku_rolled_critical_hit
+			th_play_ability_miss_sound = yes
+			th_log_for_current_instance = { type = is_miss input = yes }
+		}
+	}
+}
+
+th_roll_die = {
+	if = {
+		limit = {
+			check_variable = { which = $die_type$ value = 2 }
+			check_variable = { which = $die_amount$ value = 1 }
+		}
+		set_variable = {
+			which = th_roll_amount
+			value = $die_amount$
+		}
+		while = {
+			limit = { check_variable = { which = th_roll_amount value = 1 } }
+			set_variable = { which = th_roll value = 0 }
+			random_list = {
+				1 = { trigger = { check_variable = { which = $die_type$ value = 2 } } set_variable = { which = th_roll value = 1 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 2 } } set_variable = { which = th_roll value = 2 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 3 } } set_variable = { which = th_roll value = 3 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 4 } } set_variable = { which = th_roll value = 4 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 5 } } set_variable = { which = th_roll value = 5 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 6 } } set_variable = { which = th_roll value = 6 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 7 } } set_variable = { which = th_roll value = 7 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 8 } } set_variable = { which = th_roll value = 8 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 9 } } set_variable = { which = th_roll value = 9 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 10 } } set_variable = { which = th_roll value = 10 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 11 } } set_variable = { which = th_roll value = 11 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 12 } } set_variable = { which = th_roll value = 12 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 13 } } set_variable = { which = th_roll value = 13 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 14 } } set_variable = { which = th_roll value = 14 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 15 } } set_variable = { which = th_roll value = 15 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 16 } } set_variable = { which = th_roll value = 16 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 17 } } set_variable = { which = th_roll value = 17 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 18 } } set_variable = { which = th_roll value = 18 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 19 } } set_variable = { which = th_roll value = 19 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 20 } } set_variable = { which = th_roll value = 20 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 21 } } set_variable = { which = th_roll value = 21 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 22 } } set_variable = { which = th_roll value = 22 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 23 } } set_variable = { which = th_roll value = 23 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 24 } } set_variable = { which = th_roll value = 24 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 25 } } set_variable = { which = th_roll value = 25 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 26 } } set_variable = { which = th_roll value = 26 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 27 } } set_variable = { which = th_roll value = 27 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 28 } } set_variable = { which = th_roll value = 28 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 29 } } set_variable = { which = th_roll value = 29 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 30 } } set_variable = { which = th_roll value = 30 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 31 } } set_variable = { which = th_roll value = 31 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 32 } } set_variable = { which = th_roll value = 32 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 33 } } set_variable = { which = th_roll value = 33 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 34 } } set_variable = { which = th_roll value = 34 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 35 } } set_variable = { which = th_roll value = 35 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 36 } } set_variable = { which = th_roll value = 36 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 37 } } set_variable = { which = th_roll value = 37 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 38 } } set_variable = { which = th_roll value = 38 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 39 } } set_variable = { which = th_roll value = 39 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 40 } } set_variable = { which = th_roll value = 40 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 41 } } set_variable = { which = th_roll value = 41 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 42 } } set_variable = { which = th_roll value = 42 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 43 } } set_variable = { which = th_roll value = 43 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 44 } } set_variable = { which = th_roll value = 44 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 45 } } set_variable = { which = th_roll value = 45 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 46 } } set_variable = { which = th_roll value = 46 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 47 } } set_variable = { which = th_roll value = 47 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 48 } } set_variable = { which = th_roll value = 48 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 49 } } set_variable = { which = th_roll value = 49 } }
+				1 = { trigger = { check_variable = { which = $die_type$ value = 50 } } set_variable = { which = th_roll value = 50 } }
+			}
+			change_variable = { which = $roll_result$ which = th_roll }
+			[[bonus_per_roll]change_variable = { which = $roll_result$ which = $bonus_per_roll$ }]
+			subtract_variable = { which = th_roll_amount value = 1 }
+		}
+	}
+	else = {
+		log = "Cannot roll due to few dies or too small dies."
+	}
+}
+
+th_deal_damage = {
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		#What type of die?
+		set_variable = {
+			which = th_danmaku_damage_die
+			which = th_danmaku_attack_die
+		}
+		change_variable = {
+			which = th_danmaku_damage_die
+			which = th_danmaku_ability_damage_die_bonus
+		}
+		#How many dies?
+		set_variable = {
+			which = th_danmaku_damage_die_amount
+			value = 1
+		}
+		change_variable = {
+			which = th_danmaku_damage_die_amount
+			which = th_danmaku_ability_damage_die_amount_bonus
+		}
+		#Rolled damage end result
+		set_variable = {
+			which = th_danmaku_damage_roll
+			value = 0
+		}
+		th_roll_die = {
+			die_type = th_danmaku_damage_die
+			die_amount = th_danmaku_damage_die_amount
+			roll_result = th_danmaku_damage_roll
+			bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
+		}
+		set_variable = {
+			which = th_danmaku_damage_roll
+			value = 35
+		}
+		change_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_ability_damage_flat_bonus
+		}
+		change_variable = {
+			which = th_danmaku_crit_multiplier
+			value = 1
+		}
+		multiply_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_crit_multiplier
+		}
+		set_variable = {
+			which = th_danmaku_damage_roll_raw
+			which = th_danmaku_damage_roll
+		}
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_resistance_transfer
+				which = th_danmaku_resistance
+			}
+		}
+		set_variable = {
+			which = th_danmaku_resistance_transfer
+			which = PREV
+		}
+		divide_variable = {
+			which = th_danmaku_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_resistance_transfer
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_damage_roll value = 0 } } }
+			set_variable = { which = th_danmaku_damage_roll value = 0 }
+		}
+		th_danmaku_set_feedback_variable_for_current_instance = { input = th_danmaku_damage_roll }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_damage_roll
+				which = PREV
+			}
+			subtract_variable = {
+				which = th_danmaku_health
+				which = th_danmaku_damage_roll
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_health value = 0 } } }
+				set_variable = {
+					which = th_danmaku_health
+					value = 0
+				}
+			}
+			th_gui_update_danmaku_bar = { type = health }
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_health value = 0 } } }
+				th_on_defeat = yes
+				PREV = { th_on_win = yes }
+			}
+		}
+		th_gui_get_enemy_resource_bar = { type = health }
+	}
+}
+
+th_play_ability_launch_sound = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_sound_effects value = 1 } } }
+		play_sound = th_danmaku_duel_ability_$ability$_launch
+		if = {
+			limit = { has_saved_event_target = enemy_duelist event_target:enemy_duelist = { has_country_flag = th_opened_danmaku_battle_window } }
+			event_target:enemy_duelist = { play_sound = th_danmaku_duel_ability_$ability$_launch }
+		}
+	}
+}
+
+th_play_ability_hit_sound = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_sound_effects value = 1 } } }
+		play_sound = th_danmaku_duel_ability_$ability$_hit
+		if = {
+			limit = { has_saved_event_target = enemy_duelist event_target:enemy_duelist = { has_country_flag = th_opened_danmaku_battle_window } }
+			event_target:enemy_duelist = { play_sound = th_danmaku_duel_ability_$ability$_hit }
+		}
+	}
+}
+
+th_play_ability_critical_hit_sound = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_sound_effects value = 1 } } }
+		play_sound = th_danmaku_duel_ability_$ability$_critical_hit
+		if = {
+			limit = { has_saved_event_target = enemy_duelist event_target:enemy_duelist = { has_country_flag = th_opened_danmaku_battle_window } }
+			event_target:enemy_duelist = { play_sound = th_danmaku_duel_ability_$ability$_critical_hit }
+		}
+	}
+}
+
+th_play_ability_miss_sound = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_sound_effects value = 1 } } }
+		play_sound = th_danmaku_duel_miss
+		if = {
+			limit = { has_saved_event_target = enemy_duelist event_target:enemy_duelist = { has_country_flag = th_opened_danmaku_battle_window } }
+			event_target:enemy_duelist = { play_sound = th_danmaku_duel_miss }
+		}
+	}
+}
+
+th_use_ability = {
+	hidden_effect = {
+		th_create_event_target_enemy_duelist = yes
+		th_play_ability_launch_sound = { ability = $ability$ }
+		#Hit bonuses
+		set_variable = { which = th_danmaku_ability_hit_flat_bonus value = 0 }
+		[[hit_flat_bonus]change_variable = { which = th_danmaku_ability_hit_flat_bonus value = $hit_flat_bonus$ }]
+		set_variable = { which = th_danmaku_ability_hit_die_bonus value = 0 }
+		[[hit_die_bonus]change_variable = { which = th_danmaku_ability_hit_die_bonus value = $hit_die_bonus$ }]
+
+		#Damage bonuses
+		set_variable = { which = th_danmaku_ability_damage_flat_bonus value = 0 }
+		[[damage_flat_bonus]change_variable = { which = th_danmaku_ability_damage_flat_bonus value = $damage_flat_bonus$ }]
+		set_variable = { which = th_danmaku_ability_damage_die_bonus value = 0 }
+		[[damage_die_bonus]change_variable = { which = th_danmaku_ability_damage_die_bonus value = $damage_die_bonus$ }]
+		set_variable = { which = th_danmaku_ability_damage_die_amount_bonus value = 0 }
+		[[damage_die_amount_bonus]change_variable = { which = th_danmaku_ability_damage_die_amount_bonus value = $damage_die_amount_bonus$ }]
+		set_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = 0 }
+		[[damage_flat_bonus_per_die]change_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = $damage_flat_bonus_per_die$ }]
+
+
+		th_use_ability_$ability$ = yes
 	}
 }
