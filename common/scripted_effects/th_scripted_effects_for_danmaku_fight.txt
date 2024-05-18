@@ -5,7 +5,7 @@ th_prepare_country_for_danmaku_duel = {
 		which = th_danmaku_action_points
 		which = th_danmaku_max_action_points
 	}
-	th_update_danmaku_action_point_bar = yes
+	th_gui_update_danmaku_bar = { type = action_points }
 }
 
 th_assign_country_to_danmaku_duel_instance = {
@@ -33,6 +33,39 @@ th_setup_danmaku_duel_instance = {
 		value = 0
 	}
 	set_province_flag = th_danmaku_duel_instance_$instance$_online
+}
+
+th_gui_set_enemy_bar = {
+	$country_1$ = {
+		set_variable = {
+			which = th_danmaku_source_transfer_$type$
+			which = th_danmaku_$type$_var
+		}
+		$country_2$ = {
+			set_variable = {
+				which = th_danmaku_source_transfer_$type$
+				which = PREV
+			}
+			set_variable = { 
+				which = th_danmaku_enemy_$type$_var 
+				which = th_danmaku_source_transfer_$type$ 
+			}
+			set_variable = {
+				which = th_danmaku_target_transfer_$type$
+				which = th_danmaku_$type$_var
+			}
+			$country_1$ = {
+				set_variable = {
+					which = th_danmaku_target_transfer_$type$
+					which = PREV
+				}
+				set_variable = { 
+					which = th_danmaku_enemy_$type$_var 
+					which = th_danmaku_target_transfer_$type$ 
+				}
+			}
+		}
+	}
 }
 
 th_create_danmaku_duel_instance = {
@@ -352,14 +385,17 @@ th_roll_initiative_for_current_instance = {
 					}
 				}
 				set_ruler_flag = th_danmaku_has_turn_ownership
+				th_on_new_own_turn = yes
 				$country_2$ = {
 					set_ruler_flag = th_danmaku_has_not_turn_ownership
+					th_on_new_enemy_turn = yes
 				}
 			}
 			else = {
 				set_ruler_flag = th_danmaku_has_not_turn_ownership
 				$country_2$ = {
 					set_ruler_flag = th_danmaku_has_turn_ownership
+					th_on_new_own_turn = yes
 				}
 			}
 		}
@@ -405,14 +441,18 @@ th_roll_initiative_for_root_scope = {
 					}
 				}
 				set_ruler_flag = th_danmaku_has_turn_ownership
+				th_on_new_own_turn = yes
 				prev = {
 					set_ruler_flag = th_danmaku_has_not_turn_ownership
+					th_on_new_enemy_turn = yes
 				}
 			}
 			else = {
 				set_ruler_flag = th_danmaku_has_not_turn_ownership
+				th_on_new_enemy_turn = yes
 				prev = {
 					set_ruler_flag = th_danmaku_has_turn_ownership
+					th_on_new_own_turn = yes
 				}
 			}
 		}
@@ -480,6 +520,8 @@ th_create_danmaku_duel_against_country = {
 					log = "Too many Danmaku Duel instances were called..."
 				}
 			}
+			th_gui_set_enemy_bar = { country_1 = $country_1$ country_2 = $country_2$ type = health }
+			th_gui_set_enemy_bar = { country_1 = $country_1$ country_2 = $country_2$ type = mana }
 		}
 	}
 }
@@ -520,20 +562,24 @@ th_change_danmaku_specific_instance_round = {
 				custom_tooltip = th_end_turn_for_this_ruler_tt
 				clr_ruler_flag = th_danmaku_has_turn_ownership
 				set_ruler_flag = th_danmaku_has_not_turn_ownership
+				th_on_new_enemy_turn = yes
 			}
 			custom_tooltip = th_start_turn_for_this_ruler_tt
 			set_ruler_flag = th_danmaku_has_turn_ownership
 			clr_ruler_flag = th_danmaku_has_not_turn_ownership
+			th_on_new_own_turn = yes
 		}
 		else = {
 			$opponent$ = {
 				custom_tooltip = th_start_turn_for_this_ruler_tt
 				set_ruler_flag = th_danmaku_has_turn_ownership
 				clr_ruler_flag = th_danmaku_has_not_turn_ownership
+				th_on_new_own_turn = yes
 			}
 			custom_tooltip = th_end_turn_for_this_ruler_tt
 			clr_ruler_flag = th_danmaku_has_turn_ownership
 			set_ruler_flag = th_danmaku_has_not_turn_ownership
+			th_on_new_enemy_turn = yes
 		}
 	}
 }
@@ -603,10 +649,12 @@ th_roll_initiative_for_solo_fight = {
 			}
 			set_ruler_flag = th_danmaku_has_turn_ownership
 			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
+			th_on_new_own_turn = yes
 		}
 		else = {
 			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
 			set_ruler_flag = th_danmaku_has_not_turn_ownership
+			th_on_new_enemy_turn = yes
 		}
 	}
 }
@@ -633,9 +681,11 @@ th_end_turn_against_unlanded_character = {
 			clr_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
 			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
 			set_ruler_flag = th_danmaku_has_not_turn_ownership
+			th_on_new_enemy_turn = yes
 		}
 		else = {
 			set_ruler_flag = th_danmaku_has_turn_ownership
+			th_on_new_own_turn = yes
 			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
 			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
 			clr_ruler_flag = th_danmaku_has_not_turn_ownership
@@ -710,125 +760,95 @@ th_monthly_danaku_duel_duration_reduction = {
 	}
 }
 
-th_log_ability_for_current_actor_against_nobody = {
-	if = {
-		limit = { th_is_country_id_danmaku_duel = { country_id = 1 } }
-		th_log_ability_for_current_instance = {
-			actor = 1
-			verb = $verb$
-			article = $article$
-			ability = $ability$
-			ability_effect = $ability_effect$
-			number_impact = $number_impact$
-			is_damage = $is_damage$
-			is_health = $is_health$
-			is_mana = $is_mana$
-			is_action_points = $is_action_points$
-			is_critical = $is_critical$
-		}
+th_gui_update_enemy_resource_bar = {
+	set_variable = {
+		which = th_danmaku_source_transfer_$type$
+		which = th_danmaku_$type$_var
 	}
-	else = {
-		th_log_ability_for_current_instance = {
-			actor = 2
-			verb = $verb$
-			article = $article$
-			ability = $ability$
-			ability_effect = $ability_effect$
-			number_impact = $number_impact$
-			is_damage = $is_damage$
-			is_health = $is_health$
-			is_mana = $is_mana$
-			is_action_points = $is_action_points$
-			is_critical = $is_critical$
+	th_create_event_target_enemy_duelist = yes
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_source_transfer_$type$
+				which = PREV
+			}
+			set_variable = { 
+				which = th_danmaku_enemy_$type$_var 
+				which = th_danmaku_source_transfer_$type$ 
+			}
 		}
 	}
 }
-th_log_ability_for_current_actor_against_self = {
+
+th_change_combat_resource = {
+	change_variable = {
+		which = th_danmaku_$type$
+		value = $value$
+	}
 	if = {
-		limit = { th_is_country_id_danmaku_duel = { country_id = 1 } }
-		th_log_ability_for_current_instance = {
-			actor = 1
-			verb = $verb$
-			article = $article$
-			ability = $ability$
-			preposition = $preposition$
-			recipient = 1
-			ability_effect = $ability_effect$
-			number_impact = $number_impact$
-			is_damage = $is_damage$
-			is_health = $is_health$
-			is_mana = $is_mana$
-			is_action_points = $is_action_points$
-			is_critical = $is_critical$
+		limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
+		set_variable = {
+			which = th_danmaku_$type$
+			value = 0
 		}
 	}
-	else = {
-		th_log_ability_for_current_instance = {
-			actor = 2
-			verb = $verb$
-			article = $article$
-			ability = $ability$
-			preposition = $preposition$
-			recipient = 2
-			ability_effect = $ability_effect$
-			number_impact = $number_impact$
-			is_damage = $is_damage$
-			is_health = $is_health$
-			is_mana = $is_mana$
-			is_action_points = $is_action_points$
-			is_critical = $is_critical$
-		}
-	}
-}
-th_log_ability_for_current_actor_against_current_recipient = {
 	if = {
-		limit = { th_is_country_id_danmaku_duel = { country_id = 1 } }
-		th_log_ability_for_current_instance = {
-			actor = 1
-			verb = $verb$
-			article = $article$
-			ability = $ability$
-			preposition = $preposition$
-			recipient = 2
-			ability_effect = $ability_effect$
-			number_impact = $number_impact$
-			is_damage = $is_damage$
-			is_health = $is_health$
-			is_mana = $is_mana$
-			is_action_points = $is_action_points$
-			is_critical = $is_critical$
+		limit = { check_variable = { which = th_danmaku_$type$ which = th_danmaku_max_$type$ } }
+		set_variable = {
+			which = th_danmaku_$type$
+			which = th_danmaku_max_$type$
 		}
 	}
-	else = {
-		th_log_ability_for_current_instance = {
-			actor = 2
-			verb = $verb$
-			article = $article$
-			ability = $ability$
-			preposition = $preposition$
-			recipient = 1
-			ability_effect = $ability_effect$
-			number_impact = $number_impact$
-			is_damage = $is_damage$
-			is_health = $is_health$
-			is_mana = $is_mana$
-			is_action_points = $is_action_points$
-			is_critical = $is_critical$
-		}
-	}
+	th_gui_update_danmaku_bar = { type = $type$ }
+	th_gui_update_enemy_resource_bar = { type = $type$ }
 }
-th_create_ability_combat_log = {
-	th_log_ability_for_current_actor_against_$type$ = {
-		verb = $verb$
-		article = $article$
-		ability = $ability$
-		preposition = $preposition$
-		ability_effect = $ability_effect$
-		number_impact = $number_impact$
-		is_damage = $is_damage$
-		is_health = $is_health$
-		is_mana = $is_mana$
-		is_action_points = $is_action_points$
-		is_critical = $is_critical$
+th_set_combat_resource = {
+	set_variable = {
+		which = th_danmaku_$type$
+		value = $value$
+	}
+	if = {
+		limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
+		set_variable = {
+			which = th_danmaku_$type$
+			value = 0
+		}
+	}
+	if = {
+		limit = { check_variable = { which = th_danmaku_$type$ which = th_danmaku_max_$type$ } }
+		set_variable = {
+			which = th_danmaku_$type$
+			which = th_danmaku_max_$type$
+		}
+	}
+	th_gui_update_danmaku_bar = { type = $type$ }
+	th_gui_update_enemy_resource_bar = { type = $type$ }
+}
+th_reset_combat_resource = {
+	set_variable = {
+		which = th_danmaku_$type$
+		which = th_danmaku_max_$type$
+	}
+	if = {
+		limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
+		set_variable = {
+			which = th_danmaku_$type$
+			value = 0
+		}
+	}
+	th_gui_update_danmaku_bar = { type = $type$ }
+	th_gui_update_enemy_resource_bar = { type = $type$ }
+}
+
+th_on_new_own_turn = {
+	th_reset_combat_resource = { type = action_points }
+}
+
+th_on_new_enemy_turn = {}
+
+th_perform_attack = {
+	if = {
+		limit = {  }
 	}
 }
