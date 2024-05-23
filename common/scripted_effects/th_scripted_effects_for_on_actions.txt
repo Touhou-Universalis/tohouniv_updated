@@ -1462,3 +1462,168 @@ th_on_mercenary_recruited_effect = {
 		THIS = { remove_loot = { who = FROM amount = 250 } }
 	}
 }
+
+th_triggered_on_province_culture_change_effect = {
+	if = {
+		limit = { has_province_flag = th_trigger_specific_on_action }
+		clr_province_flag = th_trigger_specific_on_action
+		change_culture = th_original_culture
+		if = {
+			limit = { has_saved_global_event_target = rng_generator }
+			random_variable = {
+				which = th_roll
+				which = th_roll_die_type
+			}
+			change_variable = {
+				which = th_roll
+				value = 1
+			}
+			round_variable = {
+				which = th_roll
+				value = -1
+			}
+			set_variable = {
+				which = th_roll_DEBUG_ROLL
+				which = th_roll
+			}
+			event_target:rng_generator = {
+				set_variable = {
+					which = th_roll
+					value = 0
+				}
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_roll
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_roll
+					value = 1
+				}
+				event_target:rng_generator = {
+					change_variable = {
+						which = th_roll
+						value = 1
+					}
+				}
+			}
+			set_province_flag = DEBUG_PROVINCE
+			event_target:rng_generator = {
+				trigger_switch = {
+					on_trigger = has_country_flag
+					th_used_die_for_damage = {
+						change_variable = { which = th_danmaku_damage_roll which = th_roll }
+						change_variable = { which = th_roll which = th_bonus_per_roll }
+						th_utilize_random_number = { type = damage }
+					}
+					th_used_die_for_healing = {}
+				}
+				country_event = {
+					id = th_danmaku_test_event.11
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			NOT = { has_province_flag = th_forced_on_action }
+		}
+		th_on_province_culture_change_effect = yes
+	}
+}
+
+th_trigger_on_culture_changed_on_action = {
+	set_province_flag = th_forced_on_action
+	export_to_variable  = {
+		which = th_original_culture
+		value = culture
+	}
+	set_province_flag = th_trigger_specific_on_action
+	change_culture = atlantean
+	clr_province_flag = th_forced_on_action
+}
+
+th_triggered_on_monarch_death_effect = {
+	if = {
+		limit = { has_country_flag = th_trigger_specific_on_action_monarch_death }
+		clr_country_flag = th_trigger_specific_on_action_monarch_death
+		if = {
+			limit = { has_saved_global_event_target = rng_generator }
+			random_list = {
+				1 = { set_variable = { which = th_roll value = 1 } }
+				1 = { set_variable = { which = th_roll value = 2 } }
+				1 = { set_variable = { which = th_roll value = 3 } }
+				1 = { set_variable = { which = th_roll value = 4 } }
+				1 = { set_variable = { which = th_roll value = 5 } }
+				1 = { set_variable = { which = th_roll value = 6 } }
+				1 = { set_variable = { which = th_roll value = 7 } }
+				1 = { set_variable = { which = th_roll value = 8 } }
+				1 = { set_variable = { which = th_roll value = 9 } }
+				1 = { set_variable = { which = th_roll value = 10 } }
+			}
+			#random_variable = {
+			#	which = th_roll
+			#	which = th_roll_die_type
+			#}
+			#change_variable = {
+			#	which = th_roll
+			#	value = 1
+			#}
+			#round_variable = {
+			#	which = th_roll
+			#	value = -1
+			#}
+			set_variable = {
+				which = th_roll_DEBUG_ROLL
+				which = th_roll
+			}
+			event_target:rng_generator = {
+				set_variable = {
+					which = th_roll
+					value = 0
+				}
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = th_roll
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = th_roll
+					value = 1
+				}
+				event_target:rng_generator = {
+					change_variable = {
+						which = th_roll
+						value = 1
+					}
+				}
+			}
+			set_country_flag = DEBUG_COUNTRY
+			event_target:rng_generator = {
+				trigger_switch = {
+					on_trigger = has_country_flag
+					th_used_die_for_damage = {
+						change_variable = { which = th_danmaku_damage_roll which = th_roll }
+						change_variable = { which = th_roll which = th_bonus_per_roll }
+						th_utilize_random_number = { type = damage }
+					}
+					th_used_die_for_healing = {}
+				}
+			}
+		}
+	}
+}
+
+th_trigger_on_monarch_death_on_action = {
+	set_country_flag = th_forced_on_action
+	set_country_flag = th_trigger_specific_on_action_monarch_death
+	kill_ruler = yes
+	clr_country_flag = th_forced_on_action
+	clear_global_event_target = rng_maker
+}
