@@ -912,6 +912,18 @@ th_perform_attack = {
 			which = th_danmaku_attack_roll
 			value = 0
 		}
+		set_variable = {
+			which = th_danmaku_attack_roll_amount
+			value = 1
+		}
+		set_variable = {
+			which = th_danmaku_attack_roll_die_type
+			value = 20
+		}
+		set_variable = {
+			which = th_danmaku_hit_bonus_per_roll
+			value = 0
+		}
 		random_list = {
 			1 = { set_variable = { which = th_danmaku_attack_roll value = 1 } }
 			1 = { set_variable = { which = th_danmaku_attack_roll value = 2 } }
@@ -952,10 +964,12 @@ th_perform_attack = {
 				which = th_danmaku_enemy_armor_class_transfer
 				value = th_danmaku_armor_class
 			}
-		}
-		set_variable = {
-			which = th_danmaku_enemy_armor_class_transfer
-			value = PREV
+			PREV = {
+				set_variable = {
+					which = th_danmaku_enemy_armor_class_transfer
+					value = PREV
+				}
+			}
 		}
 		if = {
 			limit = {
@@ -988,6 +1002,98 @@ th_perform_attack = {
 			clr_ruler_flag = th_danmaku_rolled_critical_hit
 			th_play_sound = { sound = th_danmaku_duel_miss }
 			th_log_for_current_instance = { type = is_miss input = yes }
+		}
+		th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
+		th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
+		th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
+		th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
+		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
+		th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
+	}
+}
+
+th_generate_random_number = {
+	1 = {
+		[[input_variable]
+			change_variable = {
+				which = rng_used_custom_input
+				value = 1
+			}
+			change_variable = {
+				which = rng_used_custom_input_2
+				which = rng_used_custom_input
+			}
+			multiply_variable = {
+				which = rng_used_custom_input
+				which = rng_used_custom_input_2
+			}
+			if = {
+				limit = { check_variable = { which = rng_used_custom_input value = 1400 } }
+				subtract_variable = { which = rng_used_custom_input value = 1100 }
+			}
+			PREV = {
+				set_variable = { which = rng_transfer_input_variable which = $input_variable$ }
+				if = {
+					limit = { NOT = { check_variable = { which = rng_transfer_input_variable value = 0 } } }
+					multiply_variable = { which = rng_transfer_input_variable value = -1 }
+				}
+				1 = { set_variable = { which = rng_transfer_input_variable which = PREV } }
+			}
+			multiply_variable = {
+				which = rng_transfer_input_variable
+				which = rng_used_custom_input
+			}
+			modulo_variable = { which = rng_transfer_input_variable value = 1401 }
+			set_variable = { which = rnroller which = rnroller }
+		]
+		# any value above 1460 will go over the variable size limit of eu4 i'm cutting it at 1400 for safety
+		if = {
+			limit = { check_variable = { which = rnroller value = 1400 } }
+			#200 is a good starting value anything lower than 100 will start being too predictable 
+			subtract_variable = { which = rnroller value = 1200 }
+		}
+		set_variable = { 		which = rnroller2	 which = rnroller }
+		multiply_variable = { 	which = rnroller2	 which = rnroller }
+		change_variable = { 	which = rnroller2	 value = 11 }
+		change_variable = { 	which = rnroller2	 which = rnroller }
+		divide_variable = { 	which = rnroller2	 value = 83 }
+		set_variable = { 		which = rnroller3	 which = rnroller }
+		multiply_variable = { 	which = rnroller3	 which = rnroller }
+		divide_variable = { 	which = rnroller3	 value = 6 }
+		change_variable = { 	which = rnroller3	 value = 29 }
+		modulo_variable = { 	which = rnroller3	 value = 89 }
+		multiply_variable = { 	which = rnroller2	 which = rnroller3 }
+		modulo_variable = { 	which = rnroller2	 value = 100 }
+		random_variable = { 	which = rnroller3	 value = 100 }
+		change_variable = { 	which = rnroller3	 value = 1 }
+		round_variable = { 		which = rnroller3	 value = 0 }
+		change_variable = { 	which = rnroller	 which = rnroller3 }
+		#User Input section
+		set_variable = { which = rng_modulo value = 0 }
+		[[modulo]
+		PREV = {
+			set_variable = { which = rng_modulo which = $modulo$ }
+			1 = { set_variable = { which = rng_modulo which = PREV } }
+		}
+		]
+		[[modulo_number]set_variable = { which = rng_modulo value = $modulo_number$ }]
+		if = {
+			limit = { check_variable = { which = rng_modulo value = 2 } }
+			modulo_variable = { which = rnroller3 which = rng_modulo }
+			change_variable = { which = rnroller3 value = 1 }
+		}
+		#Transfer number to PREV scope
+		PREV = {
+			add_stability = 1
+			change_variable = {
+				which = $rng_variable$
+				value = 0
+			}
+		}
+		while = {
+			limit = { check_variable = { which = rnroller3 value = 1 } }
+			PREV = { change_variable = { which = $rng_variable$ value = 1 } }
+			subtract_variable = { which = rnroller3 value = 1 }
 		}
 	}
 }
@@ -1143,7 +1249,75 @@ th_deal_damage = {
 			die_amount = th_danmaku_damage_die_amount
 			bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
 			purpose = damage
+		change_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_ability_damage_flat_bonus
 		}
+		th_log_memorize_value = { type = attack_die variable = th_danmaku_damage_die }
+		th_log_memorize_value = { type = attack_die_amount variable = th_danmaku_damage_die_amount }
+		th_log_memorize_value = { type = attack_die_result variable = th_danmaku_damage_roll }
+		th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
+		th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
+		change_variable = {
+			which = th_danmaku_crit_multiplier
+			value = 1
+		}
+		multiply_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_crit_multiplier
+		}
+		set_variable = {
+			which = th_danmaku_damage_roll_raw
+			which = th_danmaku_damage_roll
+		}
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_resistance_transfer
+				which = th_danmaku_resistance
+			}
+		}
+		set_variable = {
+			which = th_danmaku_resistance_transfer
+			which = PREV
+		}
+		divide_variable = {
+			which = th_danmaku_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_resistance_transfer
+		}
+		th_log_memorize_value = { type = resistance_reduction variable = th_danmaku_resistance_transfer }
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_damage_roll value = 0 } } }
+			set_variable = { which = th_danmaku_damage_roll value = 0 }
+		}
+		th_log_memorize_value = { type = total_value variable = th_danmaku_damage_roll }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_damage_roll
+				which = PREV
+			}
+			subtract_variable = {
+				which = th_danmaku_health
+				which = th_danmaku_damage_roll
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_health value = 0 } } }
+				set_variable = {
+					which = th_danmaku_health
+					value = 0
+				}
+			}
+			th_gui_update_danmaku_bar = { type = health }
+			th_check_if_kill = yes
+		}
+		th_gui_get_enemy_resource_bar = { type = health }
 	}
 }
 
@@ -1191,7 +1365,7 @@ th_utilize_random_number_damage = {
 		limit = { NOT = { check_variable = { which = th_danmaku_damage_roll value = 0 } } }
 		set_variable = { which = th_danmaku_damage_roll value = 0 }
 	}
-	th_log_memorize_value = { variable = th_danmaku_damage_roll }
+	th_log_memorize_value = { type = total_value variable = th_danmaku_damage_roll }
 	event_target:enemy_duelist = {
 		set_variable = {
 			which = th_danmaku_damage_roll
