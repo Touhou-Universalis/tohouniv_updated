@@ -1,6 +1,199 @@
 #Challenge to Danmaku Duel
 th_challenge_to_danmaku_duel = {
 	category = th_diplo_action
+	alert_index = 5
+	alert_tooltip = th_challenge_to_danmaku_duel_alert_tooltip
+	require_acceptance = yes
+	is_visible = { th_has_danmaku_duels_unlocked = yes }
+	is_allowed = {
+		if = {
+			limit = { NOT = { has_global_flag = th_initialized_danmaku_database } }
+			custom_trigger_tooltip = {
+				tooltip = TH_DANMAKU_DUEL_DUELS_HAVE_NOT_BEEN_INITIATED_YET_TT
+				has_global_flag = th_initialized_danmaku_database
+			}
+		}
+		if = {
+			limit = { th_is_in_a_danmaku_duel = yes }
+			custom_trigger_tooltip = {
+				tooltip = TH_DANMAKU_DUEL_ROOT_IS_ALREADY_IN_A_DUEL_TT
+				th_is_not_in_a_danmaku_duel = yes
+			}
+		}
+		if = {
+			limit = { FROM = { th_is_in_a_danmaku_duel = yes } }
+			custom_trigger_tooltip = {
+				tooltip = TH_DANMAKU_DUEL_FROM_IS_ALREADY_IN_A_DUEL_TT
+				th_is_not_in_a_danmaku_duel = yes
+			}
+		}
+		if = {
+			limit = { FROM = { th_has_not_danmaku_duels_unlocked = yes } }
+			custom_trigger_tooltip = {
+				tooltip = TH_DANMAKU_DUEL_FROM_IS_NOT_VALID_FOR_DUEL_TT
+				th_has_danmaku_duels_unlocked = yes
+			}
+		}
+		if = {
+			limit = {
+				alliance_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_IS_OUR_ALLY
+				NOT = { alliance_with = FROM }
+			}
+		}
+		if = {
+			limit = {
+				war_with = FROM
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_AT_WAR_WITH_FROM
+				NOT = { war_with = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				has_regency = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_HAS_REGENCY
+				has_regency = no
+			}
+		}
+		if = {
+			limit = {
+				FROM = { has_regency = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = TH_FROM_HAS_REGENCY
+				FROM = { has_regency = no }
+			}
+		}
+	}
+	on_accept = {
+		th_create_danmaku_duel_against_country = {
+			country_1 = ROOT
+			country_2 = FROM
+		}
+	}
+    ai_acceptance = {
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_hostile
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 50
+			}
+		}
+		add_entry = {
+			name = DIPLO_WANT_WAR
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_outraged
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 50
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_RIVAL
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_rivalry
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			multiply_variable = {
+				which = ai_value
+				value = 100
+			}
+		}
+		add_entry = {
+			name = DIPLO_IS_THREAT
+			limit = {
+				FROM = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_threatened
+					}
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 25
+			}
+		}
+		add_entry = {
+			name = DIPLO_HISTORICAL_RIVAL
+			limit = {
+				OR = { 
+					historical_rival_with = FROM
+					FROM = { historical_rival_with = ROOT }
+				}
+			}
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}
+			
+			multiply_variable = {
+				which = ai_value
+				value = 1000
+			}
+		}
+		add_entry = {
+			name = TH_BASE_OBEDIENCE
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1
+			}			
+			multiply_variable = {
+				which = ai_value
+				value = 25
+			}
+		}
+    }
+	ai_will_do = {
+		always = no
+	}
+}
+
+th_challenge_to_danmaku_duel_old = {
+	category = th_diplo_action
 
 	require_acceptance = no
 
