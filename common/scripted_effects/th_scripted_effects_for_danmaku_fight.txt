@@ -459,6 +459,41 @@ th_roll_initiative_for_root_scope = {
 	}
 }
 
+th_create_event_target_enemy_duelist = {
+	save_event_target_as = root_duelist
+	if = {
+		limit = { th_is_not_duelling_an_unlanded_character = yes }
+		th_select_enemy_event_target_and_do_effect = {
+			effect = "save_event_target_as = enemy_duelist"
+		}
+		if = {
+			limit = { NOT = { has_saved_event_target = enemy_duelist } }
+			log = "Could not create enemy_duelist event_target. Maybe the enemy country does not exist?"
+		}
+	}
+}
+
+th_clear_invalid_combat_instance = {
+	if = {
+		limit = { tag = event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ }
+		event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ = {
+			th_force_clear_combat_for_instance = { instance = $instance$ }
+			country_event = {
+				id = th_danmaku_duel_event.6
+			}
+		}
+	}
+	if = {
+		limit = { tag = event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ }
+		event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = {
+			th_force_clear_combat_for_instance = { instance = $instance$ }
+			country_event = {
+				id = th_danmaku_duel_event.6
+			}
+		}
+	}
+}
+
 
 th_create_danmaku_duel_against_country = {
 	if = {
@@ -962,15 +997,21 @@ th_perform_attack = {
 		event_target:enemy_duelist = {
 			set_variable = {
 				which = th_danmaku_enemy_armor_class_transfer
-				value = th_danmaku_armor_class
+				which = th_danmaku_armor_class
 			}
 			PREV = {
 				set_variable = {
 					which = th_danmaku_enemy_armor_class_transfer
-					value = PREV
+					which = PREV
 				}
 			}
 		}
+		th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
+		th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
+		th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
+		th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
+		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
+		th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
 		if = {
 			limit = {
 				check_variable = {
@@ -1003,12 +1044,6 @@ th_perform_attack = {
 			th_play_sound = { sound = th_danmaku_duel_miss }
 			th_log_for_current_instance = { type = is_miss input = yes }
 		}
-		th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
-		th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
-		th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
-		th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
-		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
-		th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
 	}
 }
 
@@ -1113,105 +1148,71 @@ th_roll_die = {
 			which = th_bonus_per_roll
 			which = $bonus_per_roll$
 		}
-		set_country_flag = th_used_die_for_$purpose$
+		#set_country_flag = th_used_die_for_$purpose$
 		set_variable = { which = th_roll_die_type which = $die_type$ }
-		th_select_country_for_monarch_kill_on_action = yes
-		event_target:rng_maker = {
-			set_variable = { which = th_bonus_per_roll which = PREV }
-			set_variable = { which = th_roll_amount which = PREV }
-			set_variable = { which = th_roll_die_type which = PREV }
-			th_trigger_on_monarch_death_on_action = yes
+
+		#Generate country specific random number
+		export_to_variable = {
+			which = rng_input
+			value = manpower
 		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 2 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
+		export_to_variable = {
+			which = rng_input_treasury
+			value = treasury
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_treasury
+		}
+		export_to_variable = {
+			which = rng_input_max_manpower
+			value = max_manpower
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_max_manpower
+		}
+		#Total result
+		set_variable = {
+			which = rng_result
+			value = 0
+		}
+		#Generating the numbers
+		while = {
+			limit = { check_variable = { which = th_roll_amount value = 1 } }
+			th_generate_random_number = {
+				input_variable = rng_input
+				modulo = th_roll_die_type
+				rng_variable = rng_result
 			}
-		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 3 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
+			change_variable = {
+				which = rng_result
+				which = th_bonus_per_roll
 			}
+			subtract_variable = { which = th_roll_amount value = 1 }
 		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 4 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
-			}
+		change_variable = {
+			which = $result$
+			which = rng_result
 		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 5 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
-			}
-		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 6 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
-			}
-		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 7 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
-			}
-		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 8 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
-			}
-		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 9 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
-			}
-		}
-		if = { limit = { check_variable = { which = th_roll_amount value = 10 } }
-			set_variable = { which = th_roll_die_type which = $die_type$ }
-			th_select_country_for_monarch_kill_on_action = yes
-			event_target:rng_maker = {
-				set_variable = { which = th_bonus_per_roll which = PREV }
-				set_variable = { which = th_roll_amount which = PREV }
-				set_variable = { which = th_roll_die_type which = PREV }
-				th_trigger_on_monarch_death_on_action = yes
-			}
-		}
+		# The "kill-random-guy" RNG approach
+		# th_select_country_for_monarch_kill_on_action = yes
+		# event_target:rng_maker = {
+		# 	set_variable = { which = th_bonus_per_roll which = PREV }
+		# 	set_variable = { which = th_roll_amount which = PREV }
+		# 	set_variable = { which = th_roll_die_type which = PREV }
+		# 	th_trigger_on_monarch_death_on_action = yes
+		# }
+		# if = { limit = { check_variable = { which = th_roll_amount value = 2 } }
+		# 	set_variable = { which = th_roll_die_type which = $die_type$ }
+		# 	th_select_country_for_monarch_kill_on_action = yes
+		# 	event_target:rng_maker = {
+		# 		set_variable = { which = th_bonus_per_roll which = PREV }
+		# 		set_variable = { which = th_roll_amount which = PREV }
+		# 		set_variable = { which = th_roll_die_type which = PREV }
+		# 		th_trigger_on_monarch_death_on_action = yes
+		# 	}
+		# }
 	}
 	else = {
 		log = "Cannot roll due to few dies or too small dies."
@@ -1244,31 +1245,31 @@ th_deal_damage = {
 			which = th_danmaku_damage_roll
 			value = 0
 		}
+		th_log_memorize_value = { type = attack_die variable = th_danmaku_damage_die }
+		th_log_memorize_value = { type = attack_die_amount variable = th_danmaku_damage_die_amount }
+		th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
+		th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
 		th_roll_die = {
 			die_type = th_danmaku_damage_die
 			die_amount = th_danmaku_damage_die_amount
 			bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
-			purpose = damage
+			result = th_danmaku_damage_roll
+		}
 		change_variable = {
 			which = th_danmaku_damage_roll
 			which = th_danmaku_ability_damage_flat_bonus
 		}
-		th_log_memorize_value = { type = attack_die variable = th_danmaku_damage_die }
-		th_log_memorize_value = { type = attack_die_amount variable = th_danmaku_damage_die_amount }
 		th_log_memorize_value = { type = attack_die_result variable = th_danmaku_damage_roll }
-		th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
-		th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
-		change_variable = {
-			which = th_danmaku_crit_multiplier
-			value = 1
-		}
-		multiply_variable = {
-			which = th_danmaku_damage_roll
-			which = th_danmaku_crit_multiplier
-		}
-		set_variable = {
-			which = th_danmaku_damage_roll_raw
-			which = th_danmaku_damage_roll
+		if = {
+			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+			change_variable = {
+				which = th_danmaku_crit_multiplier
+				value = 1
+			}
+			multiply_variable = {
+				which = th_danmaku_damage_roll
+				which = th_danmaku_crit_multiplier
+			}
 		}
 		event_target:enemy_duelist = {
 			set_variable = {
@@ -1334,10 +1335,6 @@ th_utilize_random_number_damage = {
 	multiply_variable = {
 		which = th_danmaku_damage_roll
 		which = th_danmaku_crit_multiplier
-	}
-	set_variable = {
-		which = th_danmaku_damage_roll_raw
-		which = th_danmaku_damage_roll
 	}
 	event_target:enemy_duelist = {
 		set_variable = {
