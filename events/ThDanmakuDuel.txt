@@ -195,6 +195,9 @@ country_event = {
 			target = sakuya
 		}
 	}
+	option = {
+		
+	}
 }
 
 province_event = {
@@ -374,13 +377,36 @@ province_event = {
 	is_triggered_only = yes
 	trigger = {
 		province_id = 1
-		th_combat_log_check_flags = { instance = 1 action = 1 }
-		th_combat_log_check_flags = { instance = 2 action = 1 }
-		th_combat_log_check_flags = { instance = 3 action = 1 }
-		th_combat_log_check_flags = { instance = 4 action = 1 }
-		th_combat_log_check_flags = { instance = 5 action = 1 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_value	 					value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die	 					value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die_amount	 			value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die_result	 			value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_enemy_ac	 					value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die_flat_bonus	 		value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die_bonus_per_roll	 	value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die	 				value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die_amount	 		value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die_result	 		value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die_bonus_per_roll	value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die_flat_bonus	 	value = 0.01 }
+		check_variable = { which = th_danmaku_duel_of_instance_1_action_2_resistance_reduction	 		value = 0.01 }
 	}
 	option = {
+		1 = {
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_value 						value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die						value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die_amount				value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die_result				value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_enemy_ac					value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die_flat_bonus			value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_hit_die_bonus_per_roll		value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die					value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die_amount			value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die_result			value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die_bonus_per_roll	value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_attack_die_flat_bonus		value = 3 }
+			set_variable = { which = th_danmaku_duel_of_instance_1_action_2_resistance_reduction		value = 3 }
+		}
 		ai_chance = {
 			factor = 1
 		}
@@ -496,24 +522,77 @@ province_event = {
 country_event = {
 	id = th_danmaku_test_event.11
 	title = none
-	desc = none
+	desc = th_danmaku_test_event.11.desc
 	picture = TANYA_eventPicture
 	is_triggered_only = yes
-	goto = capital
 	immediate = {
-		random_country = {
-			limit = { has_country_flag = DEBUG_COUNTRY }
-			save_event_target_as = DEBUG_COUNTRY
-			capital_scope = {
-				save_event_target_as = capital
+		if = {
+			limit = { NOT = { has_country_flag = set_variables } }
+			set_variable = {
+				which = die_type
+				value = 10
+			}
+			set_variable = {
+				which = die_amount
+				value = 3
+			}
+			set_variable = {
+				which = die_amount_2
+				value = 1
+			}
+			set_variable = {
+				which = bonus_per_roll
+				value = 2
+			}
+			set_variable = {
+				which = final_result
+				value = 0
+			}
+			set_variable = {
+				which = total_results
+				value = 0
+			}
+			set_country_flag = set_variables
+		}
+		else = {
+			change_variable = {
+				which = total_results
+				which = final_result
 			}
 		}
 	}
 	option = {
-		event_target:DEBUG_COUNTRY = {
-			custom_tooltip = "th_roll_DEBUG_ROLL: [This.th_roll_DEBUG_ROLL.GetValue]"
-			custom_tooltip = "th_roll_die_type: [This.th_roll_die_type.GetValue]"
-			custom_tooltip = "th_roll: [This.th_roll.GetValue]"
+		set_variable = {
+			which = final_result
+			value = 0
+		}
+		th_roll_die = {
+			die_type = die_type
+			die_amount = die_amount
+			bonus_per_roll = bonus_per_roll
+			result = final_result
+		}
+	}
+	option = {
+		set_variable = {
+			which = final_result
+			value = 0
+		}
+		th_roll_die = {
+			die_type = die_type
+			die_amount = die_amount_2
+			bonus_per_roll = bonus_per_roll
+			result = final_result
+		}
+	}
+	option = {
+		set_variable = {
+			which = final_result
+			value = 0
+		}
+		th_generate_random_number = {
+			rng_variable = final_result
+			modulo = die_type
 		}
 	}
 }
