@@ -940,113 +940,6 @@ th_on_draw = {
 	}
 }
 
-th_perform_attack = {
-	if = {
-		limit = { has_saved_event_target = enemy_duelist }
-		set_variable = {
-			which = th_danmaku_attack_roll
-			value = 0
-		}
-		set_variable = {
-			which = th_danmaku_attack_roll_amount
-			value = 1
-		}
-		set_variable = {
-			which = th_danmaku_attack_roll_die_type
-			value = 20
-		}
-		set_variable = {
-			which = th_danmaku_hit_bonus_per_roll
-			value = 0
-		}
-		random_list = {
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 1 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 2 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 3 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 4 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 5 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 6 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 7 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 8 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 9 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 10 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 11 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 12 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 13 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 14 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 15 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 16 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 17 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 18 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 19 } }
-			1 = { set_variable = { which = th_danmaku_attack_roll value = 20 } }
-		}
-		if = {
-			limit = {
-				check_variable = {
-					which = th_danmaku_attack_roll
-					which = th_danmaku_crit_roll_needed
-				}
-			}
-			set_ruler_flag = th_danmaku_rolled_critical_hit
-		}
-		change_variable = {
-			which = th_danmaku_attack_roll
-			which = th_danmaku_hit_bonus
-		}
-		event_target:enemy_duelist = {
-			set_variable = {
-				which = th_danmaku_enemy_armor_class_transfer
-				which = th_danmaku_armor_class
-			}
-			PREV = {
-				set_variable = {
-					which = th_danmaku_enemy_armor_class_transfer
-					which = PREV
-				}
-			}
-		}
-		th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
-		th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
-		th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
-		th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
-		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
-		th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
-		if = {
-			limit = {
-				check_variable = {
-					which = th_danmaku_attack_roll
-					which = th_danmaku_enemy_armor_class_transfer
-				}
-			}
-			set_ruler_flag = th_danmaku_duel_hit_attack
-			if = {
-				limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
-				th_play_sound = { sound = th_danmaku_duel_ability_$ability$_critical_hit }
-				set_variable = {
-					which = th_danmaku_crit_multiplier
-					which = th_danmaku_crit_roll_damage_multiplier
-				}
-				th_log_for_current_instance = { type = is_critical input = yes }
-			}
-			else = {
-				th_play_sound = { sound = th_danmaku_duel_ability_$ability$_hit }
-				set_variable = {
-					which = th_danmaku_crit_multiplier
-					which = 0
-				}
-			}
-			th_deal_damage = yes
-		}
-		else = {
-			set_ruler_flag = th_danmaku_duel_missed_attack
-			clr_ruler_flag = th_danmaku_rolled_critical_hit
-			th_play_sound = { sound = th_danmaku_duel_miss }
-			th_log_for_current_instance = { type = is_miss input = yes }
-		}
-	}
-}
-
 th_generate_random_number = {
 	1 = {
 		[[input_variable]
@@ -1114,8 +1007,8 @@ th_generate_random_number = {
 		[[modulo_number]set_variable = { which = rng_modulo value = $modulo_number$ }]
 		if = {
 			limit = { check_variable = { which = rng_modulo value = 2 } }
-			modulo_variable = { which = rnroller3 which = rng_modulo }
-			change_variable = { which = rnroller3 value = 1 }
+			modulo_variable = { which = rnroller2 which = rng_modulo }
+			change_variable = { which = rnroller2 value = 1 }
 		}
 		#Transfer number to PREV scope
 		PREV = {
@@ -1126,9 +1019,9 @@ th_generate_random_number = {
 			}
 		}
 		while = {
-			limit = { check_variable = { which = rnroller3 value = 1 } }
+			limit = { check_variable = { which = rnroller2 value = 1 } }
 			PREV = { change_variable = { which = $rng_variable$ value = 1 } }
-			subtract_variable = { which = rnroller3 value = 1 }
+			subtract_variable = { which = rnroller2 value = 1 }
 		}
 	}
 }
@@ -1216,6 +1109,109 @@ th_roll_die = {
 	}
 	else = {
 		log = "Cannot roll due to few dies or too small dies."
+	}
+}
+
+th_perform_attack = {
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		set_variable = {
+			which = th_danmaku_attack_roll
+			value = 0
+		}
+		set_variable = {
+			which = th_danmaku_attack_roll_amount
+			value = 1
+		}
+		set_variable = {
+			which = th_danmaku_attack_roll_die_type
+			value = 20
+		}
+		set_variable = {
+			which = th_danmaku_hit_bonus_per_roll
+			value = 0
+		}
+		th_roll_die = {
+			die_type = th_danmaku_attack_roll_die_type
+			die_amount = th_danmaku_attack_roll_amount
+			bonus_per_roll = th_danmaku_hit_bonus_per_roll
+			result = th_danmaku_attack_roll
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_attack_roll
+					which = th_danmaku_crit_roll_needed
+				}
+			}
+			set_ruler_flag = th_danmaku_rolled_critical_hit
+		}
+		change_variable = {
+			which = th_danmaku_attack_roll
+			which = th_danmaku_hit_bonus
+		}
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_enemy_armor_class_transfer
+				which = th_danmaku_armor_class
+			}
+			PREV = {
+				set_variable = {
+					which = th_danmaku_enemy_armor_class_transfer
+					which = PREV
+				}
+			}
+		}
+		th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
+		th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
+		th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
+		th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
+		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
+		th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_attack_roll
+					which = th_danmaku_enemy_armor_class_transfer
+				}
+			}
+			set_ruler_flag = th_danmaku_duel_hit_attack
+			clr_ruler_flag = th_danmaku_duel_missed_attack
+			if = {
+				limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+				th_play_sound = { sound = th_danmaku_duel_ability_$ability$_critical_hit }
+				set_variable = {
+					which = th_danmaku_crit_multiplier
+					which = th_danmaku_crit_roll_damage_multiplier
+				}
+				th_log_for_current_instance = { method = log type = is_critical input = yes }
+				th_log_for_current_instance = { method = clear type = is_critical input = NULL }
+			}
+			else = {
+				th_play_sound = { sound = th_danmaku_duel_ability_$ability$_hit }
+				set_variable = {
+					which = th_danmaku_crit_multiplier
+					which = 0
+				}
+			}
+			th_deal_damage = yes
+		}
+		else = {
+			clr_ruler_flag = th_danmaku_duel_hit_attack
+			set_ruler_flag = th_danmaku_duel_missed_attack
+			clr_ruler_flag = th_danmaku_rolled_critical_hit
+			th_play_sound = { sound = th_danmaku_duel_miss }
+			th_log_for_current_instance = { method = clear type = ability_roll input = yes }
+			th_log_for_current_instance = { method = log type = ability_roll input = NULL }
+			th_log_for_current_instance = { method = log type = is_critical input = NULL }
+			th_log_for_current_instance = { method = clear type = is_critical input = yes }
+			th_log_for_current_instance = { method = log type = is_miss input = yes }
+			th_log_for_current_instance = { method = clear type = is_miss input = yes }
+			th_log_for_current_instance = { method = log type = is_damage input = NULL }
+			th_log_for_current_instance = { method = clear type = is_damage input = yes }
+			th_log_for_current_instance = { method = clear type = number_impact input = yes }
+			th_log_for_current_instance = { method = log type = number_impact input = NULL }
+		}
 	}
 }
 
