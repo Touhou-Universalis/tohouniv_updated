@@ -121,6 +121,23 @@ th_has_not_turn_ownership = {
 	}
 }
 
+th_gui_can_press_danmaku_buttons = {
+	if = {
+		limit = { th_has_not_turn_ownership = yes }
+		custom_trigger_tooltip = {
+			tooltip = TH_HAS_CURRENTLY_NOT_THE_TURN_TT
+			th_has_turn_ownership = yes
+		}
+	}
+	if = {
+		limit = { has_country_flag = th_danmaku_locked_actions }
+		custom_trigger_tooltip = {
+			tooltip = TH_COMBAT_WINDOW_IS_FROZEN_TT
+			NOT = { has_country_flag = th_danmaku_locked_actions }
+		}
+	}
+}
+
 th_enemy_is_touhou_character = {
 	th_is_in_a_danmaku_duel = yes
 	OR = {
@@ -583,12 +600,20 @@ th_is_alive = {
 }
 
 th_danmaku_duel_is_active = {
-	custom_trigger_tooltip = {
-		tooltip = th_danmaku_duel_is_active_tt
-		OR = {
-			NOT = { has_ruler_flag = th_danmaku_duel_over }
+	if = {
+		limit = {
+			has_ruler_flag = th_danmaku_duel_over
 			th_select_enemy_event_target_and_check_trigger = {
-				trigger = "NOT = { has_ruler_flag = th_danmaku_duel_over }"
+				trigger = "has_ruler_flag = th_danmaku_duel_over"
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = th_danmaku_duel_is_active_tt
+			OR = {
+				NOT = { has_ruler_flag = th_danmaku_duel_over }
+				th_select_enemy_event_target_and_check_trigger = {
+					trigger = "NOT = { has_ruler_flag = th_danmaku_duel_over }"
+				}
 			}
 		}
 	}
