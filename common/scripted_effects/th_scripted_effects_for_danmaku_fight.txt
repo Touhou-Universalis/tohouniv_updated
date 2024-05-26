@@ -1046,20 +1046,23 @@ th_roll_die = {
 
 		#Generate country specific random number
 		export_to_variable = {
-			which = rng_input
+			variable_name = rng_input
 			value = manpower
+			who = ROOT
 		}
 		export_to_variable = {
-			which = rng_input_treasury
+			variable_name = rng_input_treasury
 			value = treasury
+			who = ROOT
 		}
 		change_variable = {
 			which = rng_input
 			which = rng_input_treasury
 		}
 		export_to_variable = {
-			which = rng_input_max_manpower
+			variable_name = rng_input_max_manpower
 			value = max_manpower
+			who = ROOT
 		}
 		change_variable = {
 			which = rng_input
@@ -1106,6 +1109,68 @@ th_roll_die = {
 		# 		th_trigger_on_monarch_death_on_action = yes
 		# 	}
 		# }
+	}
+	else = {
+		log = "Cannot roll due to few dies or too small dies."
+	}
+}
+
+th_roll_die_no_variable = {
+	set_variable = { which = th_roll_die_type value = $die_type$ }
+	set_variable = { which = th_roll_amount value = $die_amount$ }
+	if = {
+		limit = {
+			check_variable = { which = th_roll_die_type value = 2 }
+			check_variable = { which = th_roll_amount value = 1 }
+		}
+		set_variable = {
+			which = th_bonus_per_roll
+			value = $bonus_per_roll$
+		}
+		#Generate country specific random number
+		export_to_variable = {
+			which = rng_input
+			value = manpower
+		}
+		export_to_variable = {
+			which = rng_input_treasury
+			value = treasury
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_treasury
+		}
+		export_to_variable = {
+			which = rng_input_max_manpower
+			value = max_manpower
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_max_manpower
+		}
+		#Total result
+		set_variable = {
+			which = rng_result
+			value = 0
+		}
+		#Generating the numbers
+		while = {
+			limit = { check_variable = { which = th_roll_amount value = 1 } }
+			th_generate_random_number = {
+				input_variable = rng_input
+				modulo = th_roll_die_type
+				rng_variable = rng_result
+			}
+			change_variable = {
+				which = rng_result
+				which = th_bonus_per_roll
+			}
+			subtract_variable = { which = th_roll_amount value = 1 }
+		}
+		change_variable = {
+			which = $result$
+			which = rng_result
+		}
 	}
 	else = {
 		log = "Cannot roll due to few dies or too small dies."

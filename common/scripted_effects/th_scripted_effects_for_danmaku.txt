@@ -38,6 +38,11 @@ th_initialize_danmaku_definitions = {
 																									#1 = ADM power, 2 = DIP power, 3 = MIL power, 4 = ALL of them
 			set_variable = { which = th_danmaku_default_power_reward_base 			value = 40 }	#How much monarch power you get on a base level
 			set_variable = { which = th_danmaku_default_power_reward_scale 			value = 20 }	#How much monarch power you get additionally per enemy level
+
+			set_variable = { which = th_danmaku_default_exp_reward_base 			value = 20 }	#How much exp you always get
+			set_variable = { which = th_danmaku_default_exp_reward_win	 			value = 10 }	#How much exp you get from a win
+			set_variable = { which = th_danmaku_default_exp_scale					value = 30 }	#How much exp you get per enemy hero level
+			set_variable = { which = th_danmaku_default_exp_win_modifier			value = 1.5 }	#Multiplies th_danmaku_default_exp_scale when you win
 	
 			#Additional setting:
 			set_variable = { which = th_danmaku_default_setting_ruler_death 		value = 0 }		#Rulers can actualy die when their live drops below 0, set to 0 to deactivate
@@ -54,8 +59,8 @@ th_initialize_danmaku_definitions = {
 			set_variable = { which = th_danmaku_default_max_health					value = 100 }
 			set_variable = { which = th_danmaku_default_max_mana					value = 20 }
 			# Regen
-			set_variable = { which = th_danmaku_default_hpm							value = 2 }	#Health points per year
-			set_variable = { which = th_danmaku_default_mpm							value = 1 }		#Mana points per year
+			set_variable = { which = th_danmaku_default_hpm							value = 2 }		#Health points per month
+			set_variable = { which = th_danmaku_default_mpm							value = 1 }		#Mana points per month
 			# Initiative + Hit
 			set_variable = { which = th_danmaku_default_ini_bonus					value = 0 }
 			set_variable = { which = th_danmaku_default_hit_bonus					value = 0 }
@@ -74,7 +79,7 @@ th_initialize_danmaku_definitions = {
 			set_variable = { which = th_danmaku_default_max_level					value = 20 }
 			set_variable = { which = th_danmaku_default_start_level					value = 1 }
 			set_variable = { which = th_danmaku_default_start_exp					value = 0 }
-			set_variable = { which = th_danmaku_default_exp_increase				value = 50 }
+			set_variable = { which = th_danmaku_default_exp_increase				value = 100 }
 			set_variable = { which = th_danmaku_default_level_1_exp 				value = 100 }
 			# Skill Points
 			set_variable = { which = th_danmaku_default_starting_skill_points		value = 0 }
@@ -105,7 +110,6 @@ th_initialize_danmaku_definitions = {
 
 #health
 #mana
-#exp
 #action_points
 th_gui_update_danmaku_bar = {
 	set_variable = { which = th_danmaku_$type$_var which = th_danmaku_$type$ }
@@ -118,6 +122,18 @@ th_gui_update_danmaku_bar = {
 	}
 	multiply_variable = { which = th_danmaku_$type$_var value = 100 }
 }
+th_gui_update_exp_bar = {
+	set_variable = { which = th_danmaku_exp_var which = th_danmaku_current_exp }
+	if = {
+		limit = { check_variable = { which = th_danmaku_exp_threshold value = 0.001 } }
+		divide_variable = {
+			which = th_danmaku_exp_var
+			which = th_danmaku_exp_threshold
+		}
+	}
+	multiply_variable = { which = th_danmaku_exp_var value = 100 }
+}
+
 #gold
 #power
 th_update_gain_modifier = {
@@ -198,6 +214,7 @@ th_set_default_danmaku_stats = {
 			set_variable = { which = th_danmaku_exp_threshold				which = th_danmaku_default_level_1_exp_transfer }
 			set_variable = { which = th_danmaku_current_exp					which = th_danmaku_default_start_exp_transfer }
 			set_variable = { which = th_danmaku_available_skill_points		which = th_danmaku_default_start_skills_transfer }
+			set_variable = { which = th_danmaku_default_max_level			which = PREV }	#Utilizes same variable name
 		}
 	}
 	#Set all the show variables
@@ -1128,6 +1145,114 @@ th_set_dynamically_danmaku_heir = {
 	set_heir_flag = th_danmaku_ruler_$who$
 }
 
+th_add_experience_variable = {
+	if = {
+		limit = { NOT = { check_variable = { which = th_ruler_danmaku_level which = th_danmaku_default_max_level } } }
+		custom_tooltip = th_add_experience_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_danmaku_current_exp
+				which = $input$
+			}
+			th_gui_update_exp_bar = yes
+			while = {
+				limit = { check_variable = { which = th_danmaku_current_exp which = th_danmaku_exp_threshold } }
+				th_level_up = yes
+			}
+		}
+	}
+}
+
+th_add_experience_value = {
+	if = {
+		limit = { NOT = { check_variable = { which = th_ruler_danmaku_level which = th_danmaku_default_max_level } } }
+		custom_tooltip = th_add_experience_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_danmaku_current_exp
+				value = $input$
+			}
+			th_gui_update_exp_bar = yes
+			while = {
+				limit = { check_variable = { which = th_danmaku_current_exp which = th_danmaku_exp_threshold } }
+				th_level_up = yes
+			}
+		}
+	}
+}
+
+th_add_experience = {
+	th_add_experience_$type$ = { input = $value$ }
+}
+
+th_level_up = {
+	if = {
+		limit = { NOT = { check_variable = { which = th_ruler_danmaku_level which = th_danmaku_default_max_level } } }
+		custom_tooltip = th_level_up_tt
+		hidden_effect = {
+			change_variable = {
+				which = th_ruler_danmaku_level
+				value = 1
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = th_ruler_danmaku_level which = th_danmaku_default_max_level } } }
+				subtract_variable = {
+					which = th_danmaku_current_exp
+					which = th_danmaku_exp_threshold
+				}
+				1 = {
+					set_variable = {
+						which = th_danmaku_default_skill_points_per_level_transfer
+						which = th_danmaku_default_skill_points_per_level
+					}
+					set_variable = {
+						which = th_danmaku_default_exp_increase_transfer
+						which = th_danmaku_default_exp_increase
+					}
+					PREV = {
+						set_variable = {
+							which = th_danmaku_default_skill_points_per_level_transfer
+							which = PREV
+						}
+						set_variable = {
+							which = th_danmaku_default_exp_increase_transfer
+							which = PREV
+						}
+					}
+				}
+				change_variable = {
+					which = th_danmaku_available_skill_points
+					which = th_danmaku_default_skill_points_per_level_transfer
+				}
+				set_variable = {
+					which = th_danmaku_exp_threshold_old
+					which = th_danmaku_exp_threshold
+				}
+				change_variable = {
+					which = th_danmaku_exp_threshold
+					which = th_danmaku_default_exp_increase_transfer
+				}
+				change_variable = {
+					which = th_danmaku_exp_threshold
+					which = th_danmaku_exp_threshold_old
+				}
+			}
+			else = {
+				set_variable = {
+					which = th_danmaku_current_exp
+					value = 1
+				}
+				set_variable = {
+					which = th_danmaku_exp_threshold
+					value = 1
+				}
+				set_ruler_flag = th_reached_max_level
+			}
+			th_gui_update_exp_bar = yes
+		}
+	}
+}
+
 
 th_monthly_country_danaku_duel_update = {
 	#Health regeneration
@@ -1155,11 +1280,372 @@ th_monthly_country_danaku_duel_update = {
 }
 
 
+th_define_exp_reward_base = {
+	1 = {
+		set_variable = {
+			which = th_danmaku_default_exp_reward_base_transfer
+			which = th_danmaku_default_exp_reward_base
+		}
+		set_variable = {
+			which = th_danmaku_default_exp_scale_transfer
+			which = th_danmaku_default_exp_scale
+		}
+		PREV = {
+			set_variable = {
+				which = th_danmaku_default_exp_reward_base_transfer
+				which = PREV
+			}
+			set_variable = {
+				which = th_danmaku_default_exp_scale_transfer
+				which = PREV
+			}
+		}
+	}
+	set_variable = {
+		which = th_total_exp_gain
+		which = th_danmaku_default_exp_reward_base_transfer
+	}
+	event_target:enemy_duelist = {
+		set_variable = {
+			which = th_ruler_danmaku_level_transfer
+			which = th_ruler_danmaku_level
+		}
+		PREV = {
+			set_variable = {
+				which = th_ruler_danmaku_level_transfer
+				which = PREV
+			}
+		}
+	}
+	multiply_variable = {
+		which = th_danmaku_default_exp_scale_transfer
+		which = th_ruler_danmaku_level_transfer
+	}
+	change_variable = {
+		which = th_total_exp_gain
+		which = th_danmaku_default_exp_scale_transfer
+	}
+}
+th_define_exp_reward_win = {
+	th_define_exp_reward_base = yes
+	1 = {
+		set_variable = {
+			which = th_danmaku_default_exp_reward_win_transfer
+			which = th_danmaku_default_exp_reward_win
+		}
+		set_variable = {
+			which = th_danmaku_default_exp_win_modifier_transfer
+			which = th_danmaku_default_exp_win_modifier
+		}
+		PREV = {
+			set_variable = {
+				which = th_danmaku_default_exp_reward_win_transfer
+				which = PREV
+			}
+			set_variable = {
+				which = th_danmaku_default_exp_win_modifier_transfer
+				which = PREV
+			}
+		}
+	}
+	change_variable = {
+		which = th_total_exp_gain
+		which = th_danmaku_default_exp_reward_win
+	}
+	multiply_variable = {
+		which = th_danmaku_default_exp_reward_win_transfer
+		which = th_ruler_danmaku_level_transfer
+	}
+	change_variable = {
+		which = th_total_exp_gain
+		which = th_danmaku_default_exp_reward_win_transfer
+	}
+}
+th_define_exp_reward = {
+	if = {
+		limit = { NOT = { check_variable = { which = th_ruler_danmaku_level which = th_danmaku_default_max_level } } }
+		th_define_exp_reward_$type$ = yes
+	}
+}
 
+th_define_danmaku_gold_reward = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_default_gold_gain_activated value = 1 } } }
+		1 = {
+			set_variable = {
+				which = th_danmaku_base_gold_reward_transfer
+				which = th_danmaku_default_gold_reward_base
+			}
+			if = {
+				limit = { check_variable = { which = th_danmaku_default_gold_reward_scale_active value = 1 } }
+				set_variable = {
+					which = th_danmaku_scale_gold_reward_transfer
+					which = th_danmaku_default_gold_reward_scale
+				}
+			}
+			else = {
+				set_variable = {
+					which = th_danmaku_scale_gold_reward_transfer
+					value = 0
+				}
+			}
+			PREV = {
+				set_variable = {
+					which = th_danmaku_base_gold_reward_transfer
+					which = PREV
+				}
+				set_variable = {
+					which = th_danmaku_scale_gold_reward_transfer
+					which = PREV
+				}
+			}
+		}
+		set_variable = {
+			which = th_total_gold_gain
+			which = th_danmaku_base_gold_reward_transfer
+		}
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_ruler_danmaku_level_transfer
+				which = th_ruler_danmaku_level
+			}
+			PREV = {
+				set_variable = {
+					which = th_ruler_danmaku_level_transfer
+					which = PREV
+				}
+			}
+		}
+		multiply_variable = {
+			which = th_danmaku_scale_gold_reward_transfer
+			which = th_ruler_danmaku_level_transfer
+		}
+		change_variable = {
+			which = th_total_gold_gain
+			which = th_danmaku_scale_gold_reward_transfer
+		}
+		set_variable = {
+			which = th_gold_gain_modifier
+			which = th_danmaku_gold_gain
+		}
+		change_variable = {
+			which = th_gold_gain_modifier
+			value = 1
+		}
+		multiply_variable = {
+			which = th_total_gold_gain
+			which = th_gold_gain_modifier
+		}
+	}
+}
 
+th_define_danmaku_power_reward = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_default_power_gain_activated value = 1 } } }
+		1 = {
+			set_variable = {
+				which = th_danmaku_base_power_reward_transfer
+				which = th_danmaku_default_power_reward_base
+			}
+			if = {
+				limit = { check_variable = { which = th_danmaku_default_power_reward_scale_active value = 1 } }
+				set_variable = {
+					which = th_danmaku_scale_power_reward_transfer
+					which = th_danmaku_default_power_reward_scale
+				}
+			}
+			else = {
+				set_variable = {
+					which = th_danmaku_scale_power_reward_transfer
+					value = 0
+				}
+			}
+			PREV = {
+				set_variable = {
+					which = th_danmaku_base_power_reward_transfer
+					which = PREV
+				}
+				set_variable = {
+					which = th_danmaku_scale_power_reward_transfer
+					which = PREV
+				}
+			}
+		}
+		set_variable = {
+			which = th_total_power_gain
+			which = th_danmaku_base_power_reward_transfer
+		}
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_ruler_danmaku_level_transfer
+				which = th_ruler_danmaku_level
+			}
+			PREV = {
+				set_variable = {
+					which = th_ruler_danmaku_level_transfer
+					which = PREV
+				}
+			}
+		}
+		multiply_variable = {
+			which = th_danmaku_scale_power_reward_transfer
+			which = th_ruler_danmaku_level_transfer
+		}
+		change_variable = {
+			which = th_total_power_gain
+			which = th_danmaku_scale_power_reward_transfer
+		}
+		set_variable = {
+			which = th_power_gain_modifier
+			which = th_danmaku_power_gain
+		}
+		change_variable = {
+			which = th_power_gain_modifier
+			value = 1
+		}
+		multiply_variable = {
+			which = th_total_power_gain
+			which = th_power_gain_modifier
+		}
+		if = {
+			limit = { 1 = { is_variable_equal = { which = th_danmaku_default_power_type value = 4 } } }
+			set_country_flag = th_danmaku_power_reward_all
+		}
+		else_if = {
+			limit = { 1 = { is_variable_equal = { which = th_danmaku_default_power_type value = 3 } } }
+			set_country_flag = th_danmaku_power_reward_mil
+		}
+		else_if = {
+			limit = { 1 = { is_variable_equal = { which = th_danmaku_default_power_type value = 2 } } }
+			set_country_flag = th_danmaku_power_reward_dip
+		}
+		else_if = {
+			limit = { 1 = { is_variable_equal = { which = th_danmaku_default_power_type value = 1 } } }
+			set_country_flag = th_danmaku_power_reward_adm
+		}
+		else = {
+			set_country_flag = th_danmaku_power_reward_random
+			set_variable = {
+				which = th_rng_roll
+				value = 0
+			}
+			th_roll_die_no_variable = {
+				die_type = 3
+				die_amount = 1
+				bonus_per_roll = 0
+				result = th_rng_roll
+			}
+			if = {
+				limit = { is_variable_equal = { which = th_rng_roll value = 1 } }
+				set_country_flag = th_rng_rolled_adm
+			}
+			else_if = {
+				limit = { is_variable_equal = { which = th_rng_roll value = 2 } }
+				set_country_flag = th_rng_rolled_dip
+			}
+			else = {
+				set_country_flag = th_rng_rolled_mil
+			}
+		}
+	}
+}
 
+# gold
+# power
+# exp
+th_reward_multiplier = {
+	multiply_variable = {
+		which = th_total_$type$_gain
+		value = $factor$
+	}
+}
 
+#Suppoorts:
+# victory
+# draw
+th_add_danmaku_exp_reward = {
+	if = {
+		limit = { NOT = { check_variable = { which = th_ruler_danmaku_level which = th_danmaku_default_max_level } } }
+		custom_tooltip = th_add_danmaku_exp_reward_$type$_tt
+		hidden_effect = {
+			th_add_experience = { type = variable value = th_total_exp_gain }
+		}
+	}
+}
+th_add_danmaku_gold_reward = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_default_gold_gain_activated value = 1 } } }
+		custom_tooltip = th_add_danmaku_gold_reward_$type$_tt
+		hidden_effect = {
+			while = {
+				limit = { check_variable = { which = th_total_gold_gain value = 1 } }
+				add_treasury = 1
+				subtract_variable = { which = th_total_gold_gain value = 1 }
+			}
+			multiply_variable = { which = th_total_gold_gain value = 100 }
+			while = {
+				limit = { check_variable = { which = th_total_gold_gain value = 1 } }
+				add_treasury = 0.01
+				subtract_variable = { which = th_total_gold_gain value = 1 }
+			}
+		}
+	}
+}
+th_add_danmaku_power_reward = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_default_power_gain_activated value = 1 } } }
+		if = { limit = { has_country_flag = th_danmaku_power_reward_all } custom_tooltip = th_add_danmaku_all_power_reward_$type$_tt }
+		if = { limit = { OR = { has_country_flag = th_danmaku_power_reward_adm has_country_flag = th_rng_rolled_adm } } custom_tooltip = th_add_danmaku_adm_power_reward_$type$_tt }
+		if = { limit = { OR = { has_country_flag = th_danmaku_power_reward_dip has_country_flag = th_rng_rolled_dip } } custom_tooltip = th_add_danmaku_dip_power_reward_$type$_tt }
+		if = { limit = { OR = { has_country_flag = th_danmaku_power_reward_mil has_country_flag = th_rng_rolled_mil } } custom_tooltip = th_add_danmaku_mil_power_reward_$type$_tt }
+		hidden_effect = {
+			while = {
+				limit = { check_variable = { which = th_total_power_gain value = 1 } }
+				trigger_switch = {
+					on_trigger = has_country_flag
+					th_danmaku_power_reward_all = {
+						add_adm_power = 1 add_dip_power = 1 add_mil_power = 1
+					}
+					th_danmaku_power_reward_adm = { add_adm_power = 1 }
+					th_danmaku_power_reward_dip = { add_dip_power = 1 }
+					th_danmaku_power_reward_mil = { add_mil_power = 1 }
+					th_danmaku_power_reward_random = {
+						trigger_switch = {
+							on_trigger = has_country_flag
+							th_rng_rolled_adm = { add_adm_power = 1 }
+							th_rng_rolled_dip = { add_dip_power = 1 }
+							th_rng_rolled_mil = { add_mil_power = 1 }
+						}
+					}
+				}
+				subtract_variable = { which = th_total_power_gain value = 1 }
+			}
+			clr_country_flag = th_danmaku_power_reward_all
+			clr_country_flag = th_danmaku_power_reward_mil
+			clr_country_flag = th_danmaku_power_reward_dip
+			clr_country_flag = th_danmaku_power_reward_adm
+			clr_country_flag = th_danmaku_power_reward_random
+			clr_country_flag = th_rng_rolled_adm
+			clr_country_flag = th_rng_rolled_dip
+			clr_country_flag = th_rng_rolled_mil
+		}
+	}
+}
 
+th_danmaku_lose_effect = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_default_setting_ruler_death value = 1 } } }
+		kill_ruler = yes
+	}
+	else = {
+		add_ruler_modifier = {
+			name = th_danmaku_incapacitated
+			duration = 730
+		}
+		custom_tooltip = th_danmaku_incapacitated_tt
+		th_add_danmaku_exp_reward = { type = defeat }
+	}
+}
 
 ################################################################################
 
