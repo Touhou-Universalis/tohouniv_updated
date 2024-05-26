@@ -619,139 +619,6 @@ th_change_danmaku_specific_instance_round = {
 	}
 }
 
-#Solo Experience
-#Following Touhou characters are supported:
-# reimu, marisa, mima, konngara, sariel, rika, meira, kana, kotohime, ellen, rikako, chiyuri, yumemi, kurumi, elly, 
-# gengetsu, mugetsu, yuuka, alice, yuki, mai, yumeko, shinki, rumia, cirno, daiyousei, meiling, koakuma, patchouli, 
-# sakuya, remilia, flandre, satsuki, letty, chen, lily, prismriver, lunasa, merlin, lyrica, layla, youmu, youki, 
-# yuyuko, ran, yukari, suika, wriggle, mystia, keine, tewi, reisen, eirin, kaguya, mokou, aya, medicine, komachi, 
-# eiki, shizuha, minoriko, hina, nitori, momiji, sanae, kanako, suwako, iku, tenshi, kisume, yamame, parsee, yuugi, 
-# satori, orin, okuu, koishi, nazrin, kogasa, ichirin, minamitsu, shou, byakuren, nue, hatate, kyouko, yoshika, 
-# seiga, tojiko, futo, miko, mamizou, kokoro, wakasagihime, sekibanki, kagerou, benben, yatsuhashi, seija, shinmyoumaru, 
-# raiko, sumireko, renko, maribel, seiran, ringo, doremy, sagune, clownpiece, junko, hecatia, toyohime, yorihime, 
-# change, reisen_moon, joon, shion, sunny, star, luna, kasen, larva, nemuno, aunn, narumi, teireida, satonono, okina, 
-# eika, urumi, kutaka, mayumi, keiki, yachie, saki, yuuma, mike, takane, sannyo, misumaru, tsukasa, megumu, chimata, 
-# momoyo, son, enoko, chiyari, hisami, zanmu, rinnosuke, tokiko, miyoi, mizuchi, zun
-th_create_danmaku_duel_against_unlanded_character = {
-	custom_tooltip = th_create_danmaku_duel_against_unlanded_character_$target$_tt
-	hidden_effect = {
-		th_prepare_country_for_danmaku_duel = yes
-		set_ruler_flag = th_is_duelling_an_unlanded_character
-		set_ruler_flag = th_is_duelling_character_$target$
-		th_roll_initiative_for_solo_fight = yes
-		set_variable = {
-			which = th_danmaku_unlanded_duel_round_counter
-			value = 1
-		}
-		set_variable = {
-			which = th_danmaku_unlanded_duel_opponent_turn
-			value = 0
-		}
-		set_variable = {
-			which = th_danmaku_unlanded_turn_duration
-			value = 18
-		}
-		1 = {
-			set_variable = {
-				which = th_danmaku_default_turn_duration_transfer
-				which = th_dnamaku_default_turn_duration
-			}
-			PREV = {
-				set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
-				set_variable = {
-					which = th_danmaku_unlanded_turn_duration
-					which = th_danmaku_default_turn_duration_transfer
-				}
-			}
-		}
-	}
-}
-
-th_roll_initiative_for_solo_fight = {
-	custom_tooltip = th_roll_initiative_for_solo_fight_tt
-	hidden_effect = {
-		th_roll_initiative = yes
-		th_alternative_roll_initiative = {
-			variable = th_danmaku_unlanded_character_rolled_initiative
-			bonus = th_danmaku_unlanded_character_ini_bonus
-		}
-		if = {
-			limit = {
-				check_variable = {
-					which = th_danmaku_rolled_initiative
-					which = th_danmaku_unlanded_character_rolled_initiative
-				}
-			}
-			set_ruler_flag = th_danmaku_has_turn_ownership
-			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
-			th_on_new_own_turn = yes
-		}
-		else = {
-			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
-			set_ruler_flag = th_danmaku_has_not_turn_ownership
-			th_on_new_enemy_turn = yes
-		}
-	}
-}
-
-th_end_turn_against_unlanded_character = {
-	if = {
-		limit = {
-			NOT = {
-				check_variable = {
-					which = th_danmaku_unlanded_duel_opponent_turn
-					value = 1
-				}
-			}
-		}
-		set_variable = {
-			which = th_danmaku_unlanded_duel_opponent_turn
-			value = 1
-		}
-		if = {
-			limit = {
-				has_ruler_flag = th_danmaku_has_turn_ownership
-			}
-			clr_ruler_flag = th_danmaku_has_turn_ownership
-			clr_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
-			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
-			set_ruler_flag = th_danmaku_has_not_turn_ownership
-			th_on_new_enemy_turn = yes
-		}
-		else = {
-			set_ruler_flag = th_danmaku_has_turn_ownership
-			th_on_new_own_turn = yes
-			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
-			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
-			clr_ruler_flag = th_danmaku_has_not_turn_ownership
-		}
-	}
-	else = {
-		set_variable = {
-			which = th_danmaku_unlanded_duel_opponent_turn
-			value = 0
-		}
-		change_variable = {
-			which = th_danmaku_unlanded_duel_round_counter
-			value = 1
-		}
-		th_roll_initiative_for_solo_fight = yes
-	}
-	1 = {
-		set_variable = {
-			which = th_danmaku_default_turn_duration_transfer
-			which = th_dnamaku_default_turn_duration
-		}
-		PREV = {
-			set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
-			set_variable = {
-				which = th_danmaku_unlanded_turn_duration
-				which = th_danmaku_default_turn_duration_transfer
-			}
-		}
-	}
-}
-
 #General Interaction mechanics
 th_end_turn = {
 	hidden_effect = {
@@ -1489,5 +1356,820 @@ th_use_ability = {
 
 
 		th_use_ability_$ability$ = yes
+	}
+}
+
+
+
+#Solo Experience
+#Following Touhou characters are supported:
+# reimu, marisa, mima, konngara, sariel, rika, meira, kana, kotohime, ellen, rikako, chiyuri, yumemi, kurumi, elly, 
+# gengetsu, mugetsu, yuuka, alice, yuki, mai, yumeko, shinki, rumia, cirno, daiyousei, meiling, koakuma, patchouli, 
+# sakuya, remilia, flandre, satsuki, letty, chen, lily, prismriver, lunasa, merlin, lyrica, layla, youmu, youki, 
+# yuyuko, ran, yukari, suika, wriggle, mystia, keine, tewi, reisen, eirin, kaguya, mokou, aya, medicine, komachi, 
+# eiki, shizuha, minoriko, hina, nitori, momiji, sanae, kanako, suwako, iku, tenshi, kisume, yamame, parsee, yuugi, 
+# satori, orin, okuu, koishi, nazrin, kogasa, ichirin, minamitsu, shou, byakuren, nue, hatate, kyouko, yoshika, 
+# seiga, tojiko, futo, miko, mamizou, kokoro, wakasagihime, sekibanki, kagerou, benben, yatsuhashi, seija, shinmyoumaru, 
+# raiko, sumireko, renko, maribel, seiran, ringo, doremy, sagune, clownpiece, junko, hecatia, toyohime, yorihime, 
+# change, reisen_moon, joon, shion, sunny, star, luna, kasen, larva, nemuno, aunn, narumi, teireida, satonono, okina, 
+# eika, urumi, kutaka, mayumi, keiki, yachie, saki, yuuma, mike, takane, sannyo, misumaru, tsukasa, megumu, chimata, 
+# momoyo, son, enoko, chiyari, hisami, zanmu, rinnosuke, tokiko, miyoi, mizuchi, zun
+th_set_enemy_character_danmaku_creature_type_human = {}
+th_set_enemy_character_danmaku_creature_type_fairy = {}
+th_set_enemy_character_danmaku_creature_type_vampire = {}
+th_set_enemy_character_danmaku_creature_type_god = {}
+th_set_enemy_character_danmaku_creature_type_demigod = {}
+th_set_enemy_character_danmaku_creature_type_immortal = {}
+th_set_enemy_character_danmaku_creature_type_undead = {}
+th_set_enemy_character_danmaku_creature_type_half_phantom = {}
+th_set_enemy_character_danmaku_creature_type_half_youkai = {}
+th_set_enemy_character_danmaku_creature_type_youkai = {}
+th_set_enemy_character_danmaku_creature_type_yama = {}
+th_set_enemy_character_danmaku_creature_type_hermit = {}
+th_set_enemy_character_danmaku_creature_type_lunarian = {}
+th_set_enemy_character_danmaku_creature_type_oni = {}
+th_set_enemy_character_danmaku_creature_type_demon = {}
+th_set_enemy_character_danmaku_creature_type_devil = {}
+th_set_enemy_character_danmaku_creature_type_tengu = {}
+th_set_enemy_character_danmaku_creature_type_kappa = {}
+th_set_enemy_character_danmaku_creature_type_tsukumogami = {}
+th_set_enemy_character_danmaku_creature_type_yamanba = {}
+th_set_enemy_character_danmaku_creature_type_nue = {}
+th_set_enemy_character_danmaku_creature_type_satori = {}
+th_set_enemy_character_danmaku_creature_type_angel = {}
+th_set_enemy_character_danmaku_creature_type_shinigami = {}
+th_set_enemy_character_danmaku_creature_type_inchling = {}
+th_set_enemy_character_danmaku_creature_type_doll = {}
+th_set_enemy_character_danmaku_creature_type_robot = {}
+th_set_enemy_character_danmaku_creature_type_celestial = {}
+th_set_enemy_character_danmaku_creature_type = {
+	hidden_effect = {
+		set_ruler_flag = th_danmaku_enemy_danmaku_character_creature_type_$type$
+	}
+	th_set_enemy_character_danmaku_creature_type_$type$ = yes
+}
+th_set_enemy_character_danmaku_class_barbarian = {}
+th_set_enemy_character_danmaku_class_warrior = {}
+th_set_enemy_character_danmaku_class_rogue = {}
+th_set_enemy_character_danmaku_class_ranger = {}
+th_set_enemy_character_danmaku_class_bard = {}
+th_set_enemy_character_danmaku_class_monk = {}
+th_set_enemy_character_danmaku_class_paladin = {}
+th_set_enemy_character_danmaku_class_cleric = {}
+th_set_enemy_character_danmaku_class_priest = {}
+th_set_enemy_character_danmaku_class_druid = {}
+th_set_enemy_character_danmaku_class_sorcerer = {}
+th_set_enemy_character_danmaku_class_warlock = {}
+th_set_enemy_character_danmaku_class_mage = {}
+th_set_enemy_character_danmaku_class_artificer = {}
+th_set_enemy_character_danmaku_class_commoner = {}
+th_set_enemy_character_danmaku_class = {
+	hidden_effect = {
+		set_ruler_flag = th_danmaku_enemy_danmaku_character_class_$class$
+	}
+	th_set_danmaku_class_$class$ = yes
+}
+
+th_define_enemy_danmaku_character_reimu = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = priest }
+}
+th_define_enemy_danmaku_character_marisa = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = mage }
+}
+th_define_enemy_danmaku_character_mima = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_konngara = {
+	th_set_enemy_character_danmaku_creature_type = { type = oni }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_sariel = {
+	th_set_enemy_character_danmaku_creature_type = { type = angel }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_rika = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = artificer }
+}
+th_define_enemy_danmaku_character_meira = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_kana = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = mage }
+}
+th_define_enemy_danmaku_character_kotohime = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_ellen = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = mage }
+}
+th_define_enemy_danmaku_character_rikako = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = artificer }
+}
+th_define_enemy_danmaku_character_chiyuri = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = artificer }
+}
+th_define_enemy_danmaku_character_yumemi = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = artificer }
+}
+th_define_enemy_danmaku_character_kurumi = {
+	th_set_enemy_character_danmaku_creature_type = { type = vampire }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_elly = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_gengetsu = {
+	th_set_enemy_character_danmaku_creature_type = { type = demon }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_mugetsu = {
+	th_set_enemy_character_danmaku_creature_type = { type = demon }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_yuuka = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = druid }
+}
+th_define_enemy_danmaku_character_alice = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = mage }
+}
+th_define_enemy_danmaku_character_yuki = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = mage }
+}
+th_define_enemy_danmaku_character_mai = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = mage }
+}
+th_define_enemy_danmaku_character_yumeko = {
+	th_set_enemy_character_danmaku_creature_type = { type = demon }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_shinki = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_rumia = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_cirno = {
+	th_set_enemy_character_danmaku_creature_type = { type = fairy }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_daiyousei = {
+	th_set_enemy_character_danmaku_creature_type = { type = fairy }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_meiling = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = monk }
+}
+th_define_enemy_danmaku_character_koakuma = {
+	th_set_enemy_character_danmaku_creature_type = { type = devil }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_patchouli = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = mage }
+}
+th_define_enemy_danmaku_character_sakuya = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_remilia = {
+	th_set_enemy_character_danmaku_creature_type = { type = vampire }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_flandre = {
+	th_set_enemy_character_danmaku_creature_type = { type = vampire }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_satsuki = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = priest }
+}
+th_define_enemy_danmaku_character_letty = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_chen = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_lily = {
+	th_set_enemy_character_danmaku_creature_type = { type = fairy }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_prismriver = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_lunasa = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_merlin = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_lyrica = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_layla = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_youmu = {
+	th_set_enemy_character_danmaku_creature_type = { type = half_phantom }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_youki = {
+	th_set_enemy_character_danmaku_creature_type = { type = half_phantom }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_yuyuko = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_ran = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_yukari = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_suika = {
+	th_set_enemy_character_danmaku_creature_type = { type = oni }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_wriggle = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_mystia = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_keine = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_tewi = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_reisen = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_eirin = {
+	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_kaguya = {
+	th_set_enemy_character_danmaku_creature_type = { type = immortal }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_mokou = {
+	th_set_enemy_character_danmaku_creature_type = { type = immortal }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_aya = {
+	th_set_enemy_character_danmaku_creature_type = { type = tengu }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_medicine = {
+	th_set_enemy_character_danmaku_creature_type = { type = doll }
+	th_set_enemy_character_danmaku_class = { class = druid }
+}
+th_define_enemy_danmaku_character_komachi = {
+	th_set_enemy_character_danmaku_creature_type = { type = shinigami }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_eiki = {
+	th_set_enemy_character_danmaku_creature_type = { type = yama }
+	th_set_enemy_character_danmaku_class = { class = paladin }
+}
+th_define_enemy_danmaku_character_shizuha = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = druid }
+}
+th_define_enemy_danmaku_character_minoriko = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = druid }
+}
+th_define_enemy_danmaku_character_hina = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_nitori = {
+	th_set_enemy_character_danmaku_creature_type = { type = kappa }
+	th_set_enemy_character_danmaku_class = { class = artificer }
+}
+th_define_enemy_danmaku_character_momiji = {
+	th_set_enemy_character_danmaku_creature_type = { type = tengu }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_sanae = {
+	th_set_enemy_character_danmaku_creature_type = { type = demigod }
+	th_set_enemy_character_danmaku_class = { class = priest }
+}
+th_define_enemy_danmaku_character_kanako = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_suwako = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_iku = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = druid }
+}
+th_define_enemy_danmaku_character_tenshi = {
+	th_set_enemy_character_danmaku_creature_type = { type = celestial }
+	th_set_enemy_character_danmaku_class = { class = paladin }
+}
+th_define_enemy_danmaku_character_kisume = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_yamame = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_parsee = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_yuugi = {
+	th_set_enemy_character_danmaku_creature_type = { type = oni }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_satori = {
+	th_set_enemy_character_danmaku_creature_type = { type = satori }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_orin = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_okuu = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_koishi = {
+	th_set_enemy_character_danmaku_creature_type = { type = satori }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_nazrin = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_kogasa = {
+	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_ichirin = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_minamitsu = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_shou = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_byakuren = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = monk }
+}
+th_define_enemy_danmaku_character_nue = {
+	th_set_enemy_character_danmaku_creature_type = { type = nue }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_hatate = {
+	th_set_enemy_character_danmaku_creature_type = { type = tengu }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_kyouko = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_yoshika = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_seiga = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_tojiko = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_futo = {
+	th_set_enemy_character_danmaku_creature_type = { type = hermit }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_miko = {
+	th_set_enemy_character_danmaku_creature_type = { type = hermit }
+	th_set_enemy_character_danmaku_class = { class = paladin }
+}
+th_define_enemy_danmaku_character_mamizou = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_kokoro = {
+	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_wakasagihime = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_sekibanki = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_kagerou = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_benben = {
+	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_yatsuhashi = {
+	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_seija = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_shinmyoumaru = {
+	th_set_enemy_character_danmaku_creature_type = { type = inchling }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_raiko = {
+	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_sumireko = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_renko = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = artificer }
+}
+th_define_enemy_danmaku_character_maribel = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_seiran = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_ringo = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_doremy = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_sagune = {
+	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_clownpiece = {
+	th_set_enemy_character_danmaku_creature_type = { type = fairy }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_junko = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_hecatia = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_toyohime = {
+	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_yorihime = {
+	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_change = {
+	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_reisen_moon = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_joon = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_shion = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_sunny = {
+	th_set_enemy_character_danmaku_creature_type = { type = fairy }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_star = {
+	th_set_enemy_character_danmaku_creature_type = { type = fairy }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_luna = {
+	th_set_enemy_character_danmaku_creature_type = { type = fairy }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_kasen = {
+	th_set_enemy_character_danmaku_creature_type = { type = oni }
+	th_set_enemy_character_danmaku_class = { class = monk }
+}
+th_define_enemy_danmaku_character_larva = {
+	th_set_enemy_character_danmaku_creature_type = { type = fairy }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_nemuno = {
+	th_set_enemy_character_danmaku_creature_type = { type = yamanba }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_aunn = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_narumi = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = mage }
+}
+th_define_enemy_danmaku_character_teireida = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_satonono = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_okina = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_eika = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_urumi = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = druid }
+}
+th_define_enemy_danmaku_character_kutaka = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = druid }
+}
+th_define_enemy_danmaku_character_mayumi = {
+	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_keiki = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = cleric }
+}
+th_define_enemy_danmaku_character_yachie = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_saki = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_yuuma = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_mike = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_takane = {
+	th_set_enemy_character_danmaku_creature_type = { type = kappa }
+	th_set_enemy_character_danmaku_class = { class = artificer }
+}
+th_define_enemy_danmaku_character_sannyo = {
+	th_set_enemy_character_danmaku_creature_type = { type = yamanba }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_misumaru = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = sorcerer }
+}
+th_define_enemy_danmaku_character_tsukasa = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_megumu = {
+	th_set_enemy_character_danmaku_creature_type = { type = tengu }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_chimata = {
+	th_set_enemy_character_danmaku_creature_type = { type = god }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_momoyo = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_son = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = monk }
+}
+th_define_enemy_danmaku_character_enoko = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = ranger }
+}
+th_define_enemy_danmaku_character_chiyari = {
+	th_set_enemy_character_danmaku_creature_type = { type = demon }
+	th_set_enemy_character_danmaku_class = { class = rogue }
+}
+th_define_enemy_danmaku_character_hisami = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_zanmu = {
+	th_set_enemy_character_danmaku_creature_type = { type = oni }
+	th_set_enemy_character_danmaku_class = { class = barbarian }
+}
+th_define_enemy_danmaku_character_rinnosuke = {
+	th_set_enemy_character_danmaku_creature_type = { type = half_youkai }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_tokiko = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = warrior }
+}
+th_define_enemy_danmaku_character_miyoi = {
+	th_set_enemy_character_danmaku_creature_type = { type = youkai }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character_mizuchi = {
+	th_set_enemy_character_danmaku_creature_type = { type = undead }
+	th_set_enemy_character_danmaku_class = { class = warlock }
+}
+th_define_enemy_danmaku_character_zun = {
+	th_set_enemy_character_danmaku_creature_type = { type = human }
+	th_set_enemy_character_danmaku_class = { class = bard }
+}
+th_define_enemy_danmaku_character = {
+
+}
+
+th_create_danmaku_duel_against_unlanded_character = {
+	custom_tooltip = th_create_danmaku_duel_against_unlanded_character_$target$_tt
+	hidden_effect = {
+		th_prepare_country_for_danmaku_duel = yes
+		set_ruler_flag = th_is_duelling_an_unlanded_character
+		set_ruler_flag = th_is_duelling_character_$target$
+		th_roll_initiative_for_solo_fight = yes
+		set_variable = {
+			which = th_danmaku_unlanded_duel_round_counter
+			value = 1
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_duel_opponent_turn
+			value = 0
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_turn_duration
+			value = 18
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_turn_duration_alert
+			value = 6
+		}
+		1 = {
+			set_variable = {
+				which = th_danmaku_default_turn_duration_transfer
+				which = th_dnamaku_default_turn_duration
+			}
+			PREV = {
+				set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
+				set_variable = {
+					which = th_danmaku_unlanded_turn_duration
+					which = th_danmaku_default_turn_duration_transfer
+				}
+			}
+		}
+	}
+}
+
+th_roll_initiative_for_solo_fight = {
+	custom_tooltip = th_roll_initiative_for_solo_fight_tt
+	hidden_effect = {
+		th_roll_initiative = yes
+		th_alternative_roll_initiative = {
+			variable = th_danmaku_unlanded_character_rolled_initiative
+			bonus = th_danmaku_unlanded_character_ini_bonus
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_rolled_initiative
+					which = th_danmaku_unlanded_character_rolled_initiative
+				}
+			}
+			set_ruler_flag = th_danmaku_has_turn_ownership
+			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
+			th_on_new_own_turn = yes
+		}
+		else = {
+			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			set_ruler_flag = th_danmaku_has_not_turn_ownership
+			th_on_new_enemy_turn = yes
+		}
+	}
+}
+
+th_end_turn_against_unlanded_character = {
+	if = {
+		limit = {
+			NOT = {
+				check_variable = {
+					which = th_danmaku_unlanded_duel_opponent_turn
+					value = 1
+				}
+			}
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_duel_opponent_turn
+			value = 1
+		}
+		if = {
+			limit = {
+				has_ruler_flag = th_danmaku_has_turn_ownership
+			}
+			clr_ruler_flag = th_danmaku_has_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
+			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			set_ruler_flag = th_danmaku_has_not_turn_ownership
+			th_on_new_enemy_turn = yes
+		}
+		else = {
+			set_ruler_flag = th_danmaku_has_turn_ownership
+			th_on_new_own_turn = yes
+			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			clr_ruler_flag = th_danmaku_has_not_turn_ownership
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_unlanded_duel_opponent_turn
+			value = 0
+		}
+		change_variable = {
+			which = th_danmaku_unlanded_duel_round_counter
+			value = 1
+		}
+		th_roll_initiative_for_solo_fight = yes
+	}
+	1 = {
+		set_variable = {
+			which = th_danmaku_default_turn_duration_transfer
+			which = th_dnamaku_default_turn_duration
+		}
+		PREV = {
+			set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
+			set_variable = {
+				which = th_danmaku_unlanded_turn_duration
+				which = th_danmaku_default_turn_duration_transfer
+			}
+		}
 	}
 }
