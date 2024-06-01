@@ -43,6 +43,8 @@ private:
 
 	//Localization
 	void CreateLocalizationCombatLogForInstance(std::string& outputLine, int i, int a);
+	//void CreateLocalizationGetActor(std::string& outputLine, int i, int a);
+	//void CreateLocalizationGetRecipient(std::string& outputLine, int i, int a);
 	void CreateLocalizationGetVariableValue(std::string& outputLine, int i, int a);
 	void CreateLocalizationGetVariableHitDie(std::string& outputLine, int i, int a);
 	void CreateLocalizationGetVariableHitDieAmount(std::string& outputLine, int i, int a);
@@ -63,6 +65,31 @@ private:
 	void CreateLocalizationGetAbilityBonusPerDice(std::string& outputLine, int i, int a);
 	void CreateLocalizationGetAbilityFlatBonus(std::string& outputLine, int i, int a);
 	void CreateLocalizationGetCriticalBonus(std::string& outputLine, int i, int a);
+
+	//Unlanded Character duels loc
+	void CreateLocalizationCombatLogForUnlandedCharacter(std::string& outputLine, int a);
+	void CreateLocalizationGetActor(std::string& outputLine, int a);
+	void CreateLocalizationGetRecipient(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableValue(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableHitDie(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableHitDieAmount(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableHitDieResult(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableEnemyAC(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableHitDieFlatBonus(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableHitDieBonusPerRoll(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableAttackDie(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableAttackDieAmount(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableAttackDieResult(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableAttackDieBonusPerRoll(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableAttackDieFlatbonus(std::string& outputLine, int a);
+	void CreateLocalizationGetVariableResistanceReduction(std::string& outputLine, int a);
+	void CreateLocalizationGetHitRollText(std::string& outputLine, int a);
+	void CreateLocalizationGetAbilityRollText(std::string& outputLine, int a);
+	void CreateLocalizationGetHitBonusPerDice(std::string& outputLine, int a);
+	void CreateLocalizationGetHitFlatBonus(std::string& outputLine, int a);
+	void CreateLocalizationGetAbilityBonusPerDice(std::string& outputLine, int a);
+	void CreateLocalizationGetAbilityFlatBonus(std::string& outputLine, int a);
+	void CreateLocalizationGetCriticalBonus(std::string& outputLine, int a);
 
 	//Custom Loc Commands
 	void CreateLocCommandGetRootCountryName(std::string& outputLine);
@@ -89,5 +116,29 @@ private:
 	void CreateLocCommandGetAbilityBonusPerDice(std::string& outputLine, int i, int a);
 	void CreateLocCommandGetAbilityFlatBonus(std::string& outputLine, int i, int a);
 	void CreateLocCommandGetCriticalBonus(std::string& outputLine, int i, int a);
+
+	//Unlanded Character duels loc commands
+	void CreateLocCommandGetActor(std::string& outputLine, int a);
+	void CreateLocCommandGetEffectVerb(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilityArticle(std::string& outputLine, int a);
+	void CreateLocCommandGetAbility(std::string& outputLine, int a);
+	void CreateLocCommandGetPrePosition(std::string& outputLine, int a);
+	void CreateLocCommandGetRecipient(std::string& outputLine, int a);
+	void CreateLocCommandGetHitRoll(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilityEffect(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilityEffectNumber(std::string& outputLine, int a);
+	void CreateLocCommandGetCritical(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilityRoll(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilitySpecialEffect(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilityEffectEnd(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilitySecondEffect(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilitySecondEffectAbility(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilitySecondEffectEnd(std::string& outputLine, int a);
+	void CreateLocCommandGetEndSentence(std::string& outputLine, int a);
+	void CreateLocCommandGetHitBonusPerDice(std::string& outputLine, int a);
+	void CreateLocCommandGetHitFlatBonus(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilityBonusPerDice(std::string& outputLine, int a);
+	void CreateLocCommandGetAbilityFlatBonus(std::string& outputLine, int a);
+	void CreateLocCommandGetCriticalBonus(std::string& outputLine, int a);
 };
 
