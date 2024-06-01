@@ -413,28 +413,65 @@ th_level_up = {
 
 
 th_monthly_country_danaku_duel_update = {
-	#Health regeneration
-	change_variable = { which = th_danmaku_health which = th_danmaku_hpm }
 	if = {
-		limit = { check_variable = { which = th_danmaku_health which = th_danmaku_max_health } }
-		set_variable = { which = th_danmaku_health which = th_danmaku_max_health }
+		limit = {
+			th_is_not_in_a_danmaku_duel = yes
+		}
+		#Health regeneration
+		change_variable = { which = th_danmaku_health which = th_danmaku_hpm }
+		if = {
+			limit = { check_variable = { which = th_danmaku_health which = th_danmaku_max_health } }
+			set_variable = { which = th_danmaku_health which = th_danmaku_max_health }
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_health value = 0 } } }
+			set_variable = { which = th_danmaku_health value = 0 }
+		}
+		th_gui_update_danmaku_bar = { type = health }
+		#Mana regeneration
+		change_variable = { which = th_danmaku_mana which = th_danmaku_mpm }
+		if = {
+			limit = { check_variable = { which = th_danmaku_mana which = th_danmaku_max_mana } }
+			set_variable = { which = th_danmaku_mana which = th_danmaku_max_mana }
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_mana value = 0 } } }
+			set_variable = { which = th_danmaku_mana value = 0 }
+		}
+		th_gui_update_danmaku_bar = { type = mana }
 	}
-	if = {
-		limit = { NOT = { check_variable = { which = th_danmaku_health value = 0 } } }
-		set_variable = { which = th_danmaku_health value = 0 }
-	}
-	th_gui_update_danmaku_bar = { type = health }
-	#Mana regeneration
-	change_variable = { which = th_danmaku_mana which = th_danmaku_mpm }
-	if = {
-		limit = { check_variable = { which = th_danmaku_mana which = th_danmaku_max_mana } }
-		set_variable = { which = th_danmaku_mana which = th_danmaku_max_mana }
-	}
-	if = {
-		limit = { NOT = { check_variable = { which = th_danmaku_mana value = 0 } } }
-		set_variable = { which = th_danmaku_mana value = 0 }
-	}
-	th_gui_update_danmaku_bar = { type = mana }
+	#if = {
+	#	limit = {
+	#		th_is_duelling_an_unlanded_character = yes
+	#	}
+	#	subtract_variable = {
+	#		which = th_danmaku_unlanded_turn_duration
+	#		value = 1
+	#	}
+	#	if = {
+	#		limit = { 1 = { check_variable = { which = th_danmaku_duel_instance_$instance$_turn_duration_counter value = 0 } } }
+	#		1 = {
+	#			subtract_variable = {
+	#				which = th_danmaku_duel_instance_$instance$_turn_duration_counter
+	#				value = 1
+	#			}
+	#		}
+	#		if = {
+	#			limit = {
+	#				1 = { NOT = { check_variable = { which = th_danmaku_duel_instance_$instance$_turn_duration_counter value = 1 } } }
+	#				has_saved_global_event_target = th_danmaku_duelist_of_id_1_of_instance_$instance$
+	#				has_saved_global_event_target = th_danmaku_duelist_of_id_2_of_instance_$instance$
+	#			}
+	#			if = {
+	#				limit = { event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = { th_has_turn_ownership = yes } }
+	#				event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = { th_change_danmaku_instance_round = { opponent = event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ } }
+	#			}
+	#			else = {
+	#				event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ = { th_change_danmaku_instance_round = { opponent = event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ } }
+	#			}
+	#		}
+	#	}
+	#}
 }
 
 
@@ -463,15 +500,24 @@ th_define_exp_reward_base = {
 		which = th_total_exp_gain
 		which = th_danmaku_default_exp_reward_base_transfer
 	}
-	event_target:enemy_duelist = {
+	if = {
+		limit = { th_is_duelling_an_unlanded_character = yes }
 		set_variable = {
 			which = th_ruler_danmaku_level_transfer
-			which = th_ruler_danmaku_level
+			which = th_enemy_character_level
 		}
-		PREV = {
+	}
+	else = {
+		event_target:enemy_duelist = {
 			set_variable = {
 				which = th_ruler_danmaku_level_transfer
-				which = PREV
+				which = th_ruler_danmaku_level
+			}
+			PREV = {
+				set_variable = {
+					which = th_ruler_danmaku_level_transfer
+					which = PREV
+				}
 			}
 		}
 	}
@@ -562,15 +608,24 @@ th_define_danmaku_gold_reward = {
 			which = th_total_gold_gain
 			which = th_danmaku_base_gold_reward_transfer
 		}
-		event_target:enemy_duelist = {
+		if = {
+			limit = { th_is_duelling_an_unlanded_character = yes }
 			set_variable = {
 				which = th_ruler_danmaku_level_transfer
-				which = th_ruler_danmaku_level
+				which = th_enemy_character_level
 			}
-			PREV = {
+		}
+		else = {
+			event_target:enemy_duelist = {
 				set_variable = {
 					which = th_ruler_danmaku_level_transfer
-					which = PREV
+					which = th_ruler_danmaku_level
+				}
+				PREV = {
+					set_variable = {
+						which = th_ruler_danmaku_level_transfer
+						which = PREV
+					}
 				}
 			}
 		}
@@ -633,15 +688,24 @@ th_define_danmaku_power_reward = {
 			which = th_total_power_gain
 			which = th_danmaku_base_power_reward_transfer
 		}
-		event_target:enemy_duelist = {
+		if = {
+			limit = { th_is_duelling_an_unlanded_character = yes }
 			set_variable = {
 				which = th_ruler_danmaku_level_transfer
-				which = th_ruler_danmaku_level
+				which = th_enemy_character_level
 			}
-			PREV = {
+		}
+		else = {
+			event_target:enemy_duelist = {
 				set_variable = {
 					which = th_ruler_danmaku_level_transfer
-					which = PREV
+					which = th_ruler_danmaku_level
+				}
+				PREV = {
+					set_variable = {
+						which = th_ruler_danmaku_level_transfer
+						which = PREV
+					}
 				}
 			}
 		}

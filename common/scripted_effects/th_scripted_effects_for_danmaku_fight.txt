@@ -636,6 +636,10 @@ th_end_turn = {
 	}
 }
 
+th_trigger_ai_turn = {
+	
+}
+
 th_monthly_danaku_duel_duration_reduction = {
 	if = {
 		limit = { 1 = { check_variable = { which = th_danmaku_duel_instance_$instance$_turn_duration_counter value = 0 } } }
@@ -767,6 +771,7 @@ th_reset_combat_resource = {
 
 th_on_new_own_turn = {
 	th_reset_combat_resource = { type = action_points }
+	th_trigger_ai_turn = yes
 }
 
 th_on_new_enemy_turn = {}
@@ -788,6 +793,20 @@ th_check_if_kill = {
 	}
 }
 
+th_check_if_kill_solo = {
+	if = {
+		limit = { NOT = { th_is_alive_solo = yes } }
+		set_ruler_flag = th_danmaku_duel_over
+		if = {
+			limit = { th_is_alive = yes }
+			th_on_win = yes
+		}
+		else = {
+			th_on_draw = yes
+		}
+	}
+}
+
 th_on_win = {
 	add_stability = 3		#TODO
 	country_event = {
@@ -797,7 +816,6 @@ th_on_win = {
 th_on_defeat = {
 	th_play_sound = { sound = th_danmaku_death }
 	add_stability = -3
-	country_event = {
 		id = th_danmaku_duel_event.2
 	}
 }
@@ -879,7 +897,6 @@ th_generate_random_number = {
 		}
 		#Transfer number to PREV scope
 		PREV = {
-			add_stability = 1
 			change_variable = {
 				which = $rng_variable$
 				value = 0
@@ -1336,7 +1353,10 @@ th_play_sound = {
 
 th_use_ability = {
 	hidden_effect = {
-		th_create_event_target_enemy_duelist = yes
+		if = {
+			limit = { th_is_not_duelling_an_unlanded_character = yes }
+			th_create_event_target_enemy_duelist = yes
+		}
 		th_play_sound = { sound = th_danmaku_duel_ability_$ability$_launch }
 		#Hit bonuses
 		set_variable = { which = th_danmaku_ability_hit_flat_bonus value = 0 }
@@ -1423,63 +1443,76 @@ th_create_danmaku_duel_against_unlanded_character = {
 		}
 		[[value_override_max_hp]set_variable = { which = th_enemy_character_max_health								value = $value_override_max_hp$ }]
 		[[value_change_max_hp]change_variable = { which = th_enemy_character_max_health								value = $value_change_max_hp$ }]
-		[[variable_override_max_hp]set_variable = { which = th_enemy_character_max_health							which = $variable_override_max_hp$ }]
-		[[variable_change_max_hp]change_variable = { which = th_enemy_character_max_health							which = $variable_change_max_hp$ }]
+		[[override_max_hp]set_variable = { which = th_enemy_character_max_health									which = $override_max_hp$ }]
+		[[change_max_hp]change_variable = { which = th_enemy_character_max_health									which = $change_max_hp$ }]
 		[[value_override_max_mp]set_variable = { which = th_enemy_character_max_mana								value = $value_override_max_mp$ }]
 		[[value_change_max_mp]change_variable = { which = th_enemy_character_max_mmana								value = $value_change_max_mp$ }]
 		[[variable_override_max_mp]set_variable = { which = th_enemy_character_max_mana								which = $variable_override_max_mp$ }]
 		[[variable_change_max_mp]change_variable = { which = th_enemy_character_max_mana							which = $variable_change_max_mp$ }]
+		[[override_max_mp]set_variable = { which = th_enemy_character_max_mana										which = $override_max_mp$ }]
+		[[change_max_mp]change_variable = { which = th_enemy_character_max_mana										which = $change_max_mp$ }]
 		[[value_override_max_ap]set_variable = { which = th_enemy_character_max_ap									value = $value_override_max_ap$ }]
 		[[value_change_max_ap]change_variable = { which = th_enemy_character_max_ap									value = $value_change_max_ap$ }]
 		[[variable_override_max_ap]set_variable = { which = th_enemy_character_max_ap								which = $variable_override_max_ap$ }]
-		[[variable_change_max_ap]change_variable = { which = th_enemy_character_max_ap								which = $variable_change_max_ap$ }]
+		[[override_max_ap]set_variable = { which = th_enemy_character_max_ap										which = $override_max_ap$ }]
+		[[change_max_ap]change_variable = { which = th_enemy_character_max_ap										which = $change_max_ap$ }]
 		[[value_override_initiative_bonus]set_variable = { which = th_enemy_character_initiative_bonus				value = $value_override_initiative_bonus$ }]
 		[[value_change_initiative_bonus]change_variable = { which = th_enemy_character_initiative_bonus				value = $value_change_initiative_bonus$ }]
 		[[variable_override_initiative_bonus]set_variable = { which = th_enemy_character_initiative_bonus			which = $variable_override_initiative_bonus$ }]
 		[[variable_change_initiative_bonus]change_variable = { which = th_enemy_character_initiative_bonus			which = $variable_change_initiative_bonus$ }]
+		[[change_initiative_bonus]change_variable = { which = th_enemy_character_initiative_bonus					which = $change_initiative_bonus$ }]
 		[[value_override_hit_bonus]set_variable = { which = th_enemy_character_hit_bonus							value = $value_override_hit_bonus$ }]
 		[[value_change_hit_bonus]change_variable = { which = th_enemy_character_hit_bonus							value = $value_change_hit_bonus$ }]
 		[[variable_override_hit_bonus]set_variable = { which = th_enemy_character_hit_bonus							which = $variable_override_hit_bonus$ }]
 		[[variable_change_hit_bonus]change_variable = { which = th_enemy_character_hit_bonus						which = $variable_change_hit_bonus$ }]
+		[[change_hit_bonus]change_variable = { which = th_enemy_character_hit_bonus									which = $change_hit_bonus$ }]
 		[[value_override_attack_bonus]set_variable = { which = th_enemy_character_attack_bonus						value = $value_override_attack_bonus$ }]
 		[[value_change_attack_bonus]change_variable = { which = th_enemy_character_attack_bonus						value = $value_change_attack_bonus$ }]
 		[[variable_override_attack_bonus]set_variable = { which = th_enemy_character_attack_bonus					which = $variable_override_attack_bonus$ }]
 		[[variable_change_attack_bonus]change_variable = { which = th_enemy_character_attack_bonus					which = $variable_change_attack_bonus$ }]
+		[[change_attack_bonus]change_variable = { which = th_enemy_character_attack_bonus							which = $change_attack_bonus$ }]
 		[[value_override_attack_die]set_variable = { which = th_enemy_character_attack_die							value = $value_override_attack_die$ }]
 		[[value_change_attack_die]change_variable = { which = th_enemy_character_attack_die							value = $value_change_attack_die$ }]
 		[[variable_override_attack_die]set_variable = { which = th_enemy_character_attack_die						which = $variable_override_attack_die$ }]
 		[[variable_change_attack_die]change_variable = { which = th_enemy_character_attack_die						which = $variable_change_attack_die$ }]
+		[[change_attack_die]change_variable = { which = th_enemy_character_attack_die								which = $change_attack_die$ }]
 		[[value_override_attack_die_num]set_variable = { which = th_enemy_character_attack_die_num					value = $value_override_attack_die_num$ }]
 		[[value_change_attack_die_num]change_variable = { which = th_enemy_character_attack_die_num					value = $value_change_attack_die_num$ }]
 		[[variable_override_attack_die_num]set_variable = { which = th_enemy_character_attack_die_num				which = $variable_override_attack_die_num$ }]
 		[[variable_change_attack_die_num]change_variable = { which = th_enemy_character_attack_die_num				which = $variable_change_attack_die_num$ }]
+		[[change_attack_die_num]change_variable = { which = th_enemy_character_attack_die_num						which = $change_attack_die_num$ }]
 		[[value_override_crit_roll_needed]set_variable = { which = th_enemy_character_crit_roll_needed				value = $value_override_crit_roll_needed$ }]
 		[[value_change_crit_roll_needed]change_variable = { which = th_enemy_character_crit_roll_needed				value = $value_change_crit_roll_needed$ }]
 		[[variable_override_crit_roll_needed]set_variable = { which = th_enemy_character_crit_roll_needed			which = $variable_override_crit_roll_needed$ }]
 		[[variable_change_crit_roll_needed]change_variable = { which = th_enemy_character_crit_roll_needed			which = $variable_change_crit_roll_needed$ }]
+		[[change_crit_roll_needed]change_variable = { which = th_enemy_character_crit_roll_needed					which = $change_crit_roll_needed$ }]
 		[[value_override_crit_roll_multiplier]set_variable = { which = th_enemy_character_crit_roll_multiplier		value = $value_override_crit_roll_multiplier$ }]
 		[[value_change_crit_roll_multiplier]change_variable = { which = th_enemy_character_crit_roll_multiplier		value = $value_change_crit_roll_multiplier$ }]
 		[[variable_override_crit_roll_multiplier]set_variable = { which = th_enemy_character_crit_roll_multiplier	which = $variable_override_crit_roll_multiplier$ }]
 		[[variable_change_crit_roll_multiplier]change_variable = { which = th_enemy_character_crit_roll_multiplier	which = $variable_change_crit_roll_multiplier$ }]
+		[[change_crit_roll_multiplier]change_variable = { which = th_enemy_character_crit_roll_multiplier			which = $change_crit_roll_multiplier$ }]
 		[[value_override_armor_class]set_variable = { which = th_enemy_character_armor_class						value = $value_override_armor_class$ }]
 		[[value_change_armor_class]change_variable = { which = th_enemy_character_armor_class						value = $value_change_armor_class$ }]
 		[[variable_override_armor_class]set_variable = { which = th_enemy_character_armor_class						which = $variable_override_armor_class$ }]
 		[[variable_change_armor_class]change_variable = { which = th_enemy_character_armor_class					which = $variable_change_armor_class$ }]
+		[[change_armor_class]change_variable = { which = th_enemy_character_armor_class								which = $change_armor_class$ }]
 		[[value_override_resistance]set_variable = { which = th_enemy_character_resistance							value = $value_override_resistance$ }]
 		[[value_change_resistance]change_variable = { which = th_enemy_character_resistance							value = $value_change_resistance$ }]
 		[[variable_override_resistance]set_variable = { which = th_enemy_character_resistance						which = $variable_override_resistance$ }]
 		[[variable_change_resistance]change_variable = { which = th_enemy_character_resistance						which = $variable_change_resistance$ }]
+		[[change_resistance]change_variable = { which = th_enemy_character_resistance								which = $change_resistance$ }]
 		[[value_override_level]set_variable = { which = th_enemy_character_level									value = $value_override_level$ }]
 		[[value_change_level]change_variable = { which = th_enemy_character_level									value = $value_change_level$ }]
 		[[variable_override_level]set_variable = { which = th_enemy_character_level									which = $variable_override_level$ }]
 		[[variable_change_level]change_variable = { which = th_enemy_character_level								which = $variable_change_level$ }]
+		[[change_level]change_variable = { which = th_enemy_character_level											which = $change_level$ }]
 		set_variable = {
 			which = th_enemy_character_current_health
 			which = th_enemy_character_max_health
 		}
 		set_variable = {
 			which = th_enemy_character_current_mana
-			which = th_enemy_character_max_mmana
+			which = th_enemy_character_max_mana
 		}
 		set_variable = {
 			which = th_enemy_character_current_ap
@@ -1488,6 +1521,7 @@ th_create_danmaku_duel_against_unlanded_character = {
 		th_gui_update_danmaku_bar_enemy_character = { type = health }
 		th_gui_update_danmaku_bar_enemy_character = { type = mana }
 		[[class]th_clear_enemy_character_class = yes th_set_enemy_character_danmaku_class = { class = $class$ }]
+		[[home]set_country_flag = th_unlanded_character_home_$home$]
 	}
 }
 
