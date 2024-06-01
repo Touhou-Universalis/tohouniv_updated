@@ -1182,58 +1182,58 @@ th_perform_attack = {
 }
 
 th_deal_damage = {
+	#What type of die?
+	set_variable = {
+		which = th_danmaku_damage_die
+		which = th_danmaku_attack_die
+	}
+	change_variable = {
+		which = th_danmaku_damage_die
+		which = th_danmaku_ability_damage_die_bonus
+	}
+	#How many dies?
+	set_variable = {
+		which = th_danmaku_damage_die_amount
+		value = 1
+	}
+	change_variable = {
+		which = th_danmaku_damage_die_amount
+		which = th_danmaku_ability_damage_die_amount_bonus
+	}
+	#Rolled damage end result
+	set_variable = {
+		which = th_danmaku_damage_roll
+		value = 0
+	}
+	th_log_memorize_value = { type = attack_die variable = th_danmaku_damage_die }
+	th_log_memorize_value = { type = attack_die_amount variable = th_danmaku_damage_die_amount }
+	th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
+	th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
+	th_roll_die = {
+		die_type = th_danmaku_damage_die
+		die_amount = th_danmaku_damage_die_amount
+		bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
+		result = th_danmaku_damage_roll
+	}
+	change_variable = {
+		which = th_danmaku_damage_roll
+		which = th_danmaku_ability_damage_flat_bonus
+	}
+	th_log_memorize_value = { type = attack_die_result variable = th_danmaku_damage_roll }
 	if = {
-		limit = { has_saved_event_target = enemy_duelist }
-		#What type of die?
-		set_variable = {
-			which = th_danmaku_damage_die
-			which = th_danmaku_attack_die
-		}
+		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
 		change_variable = {
-			which = th_danmaku_damage_die
-			which = th_danmaku_ability_damage_die_bonus
-		}
-		#How many dies?
-		set_variable = {
-			which = th_danmaku_damage_die_amount
+			which = th_danmaku_crit_multiplier
 			value = 1
 		}
-		change_variable = {
-			which = th_danmaku_damage_die_amount
-			which = th_danmaku_ability_damage_die_amount_bonus
-		}
-		#Rolled damage end result
-		set_variable = {
+		multiply_variable = {
 			which = th_danmaku_damage_roll
-			value = 0
+			which = th_danmaku_crit_multiplier
 		}
-		th_log_memorize_value = { type = attack_die variable = th_danmaku_damage_die }
-		th_log_memorize_value = { type = attack_die_amount variable = th_danmaku_damage_die_amount }
-		th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
-		th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
-		th_roll_die = {
-			die_type = th_danmaku_damage_die
-			die_amount = th_danmaku_damage_die_amount
-			bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
-			result = th_danmaku_damage_roll
-		}
-		change_variable = {
-			which = th_danmaku_damage_roll
-			which = th_danmaku_ability_damage_flat_bonus
-		}
-		th_log_memorize_value = { type = attack_die_result variable = th_danmaku_damage_roll }
-		if = {
-			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
-			change_variable = {
-				which = th_danmaku_crit_multiplier
-				value = 1
-			}
-			multiply_variable = {
-				which = th_danmaku_damage_roll
-				which = th_danmaku_crit_multiplier
-			}
-			th_log_memorize_value = { type = critical_damage_bonus variable = th_danmaku_crit_multiplier }
-		}
+		th_log_memorize_value = { type = critical_damage_bonus variable = th_danmaku_crit_multiplier }
+	}
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
 		event_target:enemy_duelist = {
 			set_variable = {
 				which = th_danmaku_resistance_transfer
@@ -1282,6 +1282,44 @@ th_deal_damage = {
 			th_check_if_kill = yes
 		}
 		th_gui_get_enemy_resource_bar = { type = health }
+	}
+	if = {
+		limit = { th_is_duelling_an_unlanded_character = yes }
+		set_variable = {
+			which = th_danmaku_resistance_transfer
+			which = th_enemy_character_resistance
+		}
+		divide_variable = {
+			which = th_danmaku_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_resistance_transfer
+		}
+		th_log_memorize_value = { type = resistance_reduction variable = th_danmaku_resistance_transfer }
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_damage_roll value = 0 } } }
+			set_variable = { which = th_danmaku_damage_roll value = 0 }
+		}
+		th_log_memorize_value = { type = total_value variable = th_danmaku_damage_roll }
+		subtract_variable = {
+			which = th_enemy_character_current_health
+			which = th_danmaku_damage_roll
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_enemy_character_current_health value = 0 } } }
+			set_variable = {
+				which = th_enemy_character_current_health
+				value = 0
+			}
+		}
+		th_gui_update_danmaku_bar_enemy_character = { type = health }
+		th_check_if_kill_solo = yes
 	}
 }
 
