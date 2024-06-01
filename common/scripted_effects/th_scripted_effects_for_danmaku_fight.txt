@@ -26,7 +26,7 @@ th_setup_danmaku_duel_instance = {
 	}
 	set_variable = {
 		which = th_danmaku_duel_instance_$instance$_turn_duration_counter
-		which = th_dnamaku_default_turn_duration
+		which = th_danmaku_default_turn_duration
 	}
 	set_variable = {
 		which = th_danmaku_duel_logged_actions_for_instance_$instance$
@@ -561,7 +561,6 @@ th_create_danmaku_duel_against_country = {
 	}
 }
 
-
 th_change_danmaku_specific_instance_round = {
 	hidden_effect = {
 		1 = {
@@ -577,7 +576,7 @@ th_change_danmaku_specific_instance_round = {
 			}
 			set_variable = {
 				which = th_danmaku_duel_instance_$instance$_turn_duration_counter
-				which = th_dnamaku_default_turn_duration
+				which = th_danmaku_default_turn_duration
 			}
 		}
 	}
@@ -640,7 +639,7 @@ th_trigger_ai_turn = {
 	
 }
 
-th_monthly_danaku_duel_duration_reduction = {
+th_monthly_danmaku_duel_duration_reduction = {
 	if = {
 		limit = { 1 = { check_variable = { which = th_danmaku_duel_instance_$instance$_turn_duration_counter value = 0 } } }
 		1 = {
@@ -662,6 +661,87 @@ th_monthly_danaku_duel_duration_reduction = {
 			else = {
 				event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ = { th_change_danmaku_instance_round = { opponent = event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ } }
 			}
+		}
+	}
+}
+
+th_change_danmaku_round = {
+	hidden_effect = {
+		if = {
+			limit = { th_has_turn_ownership = yes }
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_unlanded_duel_opponent_turn value = 1 } } }
+				set_variable = { which = th_danmaku_unlanded_duel_opponent_turn value = 1 }
+			}
+			else = {
+				set_variable = { which = th_danmaku_unlanded_duel_opponent_turn value = 0 }
+				change_variable = { which = th_danmaku_unlanded_duel_round_counter value = 1 }
+			}
+		}
+		else = {
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_unlanded_duel_own_turn value = 1 } } }
+				set_variable = { which = th_danmaku_unlanded_duel_own_turn value = 1 }
+			}
+			else = {
+				set_variable = { which = th_danmaku_unlanded_duel_own_turn value = 0 }
+				change_variable = { which = th_danmaku_unlanded_duel_round_counter value = 1 }
+			}
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_turn_duration
+			which = 18
+		}
+		1 = {
+			set_variable = {
+				which = th_danmaku_default_turn_duration_transfer
+				which = th_danmaku_default_turn_duration
+			}
+			PREV = {
+				set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
+				set_variable = {
+					which = th_danmaku_unlanded_turn_duration
+					which = th_danmaku_default_turn_duration_transfer
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = th_danmaku_unlanded_duel_round_counter value = 0 } }
+			1 = { check_variable = { which = th_danmaku_default_setting_reroll_initiative value = 1 } }
+		}
+		th_roll_initiative_for_solo_fight = yes
+	}
+	else = {
+		if = {
+			limit = { has_ruler_flag = th_danmaku_unlanded_character_turn_ownership }
+			set_ruler_flag = th_danmaku_has_turn_ownership
+			clr_ruler_flag = th_danmaku_has_not_turn_ownership
+			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			th_on_new_own_turn = yes
+		}
+		else = {
+			clr_ruler_flag = th_danmaku_has_turn_ownership
+			set_ruler_flag = th_danmaku_has_not_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
+			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			th_on_new_enemy_turn = yes
+		}
+	}
+}
+
+th_monthly_danmaku_duel_unlanded_duration_reduction = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_unlanded_turn_duration value = 0 } }
+		subtract_variable = {
+			which = th_danmaku_unlanded_turn_duration
+			value = 1
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_unlanded_turn_duration value = 1 } } }
+			th_change_danmaku_round = yes
 		}
 	}
 }
@@ -1474,6 +1554,14 @@ th_create_danmaku_duel_against_unlanded_character = {
 			value = 0
 		}
 		set_variable = {
+			which = th_danmaku_unlanded_duel_own_turn
+			value = 0
+		}
+		set_variable = {
+			which = th_danmaku_duel_logged_actions
+			value = 0
+		}
+		set_variable = {
 			which = th_danmaku_unlanded_turn_duration
 			value = 18
 		}
@@ -1484,7 +1572,7 @@ th_create_danmaku_duel_against_unlanded_character = {
 		1 = {
 			set_variable = {
 				which = th_danmaku_default_turn_duration_transfer
-				which = th_dnamaku_default_turn_duration
+				which = th_danmaku_default_turn_duration
 			}
 			PREV = {
 				set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
@@ -1599,12 +1687,16 @@ th_roll_initiative_for_solo_fight = {
 				}
 			}
 			set_ruler_flag = th_danmaku_has_turn_ownership
+			clr_ruler_flag = th_danmaku_has_not_turn_ownership
 			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
 			th_on_new_own_turn = yes
 		}
 		else = {
-			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			clr_ruler_flag = th_danmaku_has_turn_ownership
 			set_ruler_flag = th_danmaku_has_not_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
+			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
 			th_on_new_enemy_turn = yes
 		}
 	}
@@ -1656,7 +1748,7 @@ th_end_turn_against_unlanded_character = {
 	1 = {
 		set_variable = {
 			which = th_danmaku_default_turn_duration_transfer
-			which = th_dnamaku_default_turn_duration
+			which = th_danmaku_default_turn_duration
 		}
 		PREV = {
 			set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
