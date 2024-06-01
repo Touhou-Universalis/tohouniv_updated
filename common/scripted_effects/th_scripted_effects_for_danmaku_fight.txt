@@ -626,6 +626,7 @@ th_end_turn = {
 			th_select_enemy_event_target_and_do_effect = {
 				effect = "
 					th_change_danmaku_instance_round = { opponent = root }
+					th_trigger_ai_turn = yes
 				"
 			}
 		}
@@ -636,7 +637,25 @@ th_end_turn = {
 }
 
 th_trigger_ai_turn = {
-	
+	if = {
+		limit = {
+			OR = {
+				AND = {
+					th_is_duelling_an_unlanded_character = yes
+					th_unlanded_character_has_turn_ownership = yes
+				}
+				AND = {
+					th_is_not_duelling_an_unlanded_character = yes
+					ai = yes
+					th_has_turn_ownership = yes
+				}
+			}
+		}
+		add_stability = 1
+		country_event = {
+			id = th_danmaku_duel_ai.1
+		}
+	}
 }
 
 th_monthly_danmaku_duel_duration_reduction = {
@@ -851,10 +870,10 @@ th_reset_combat_resource = {
 
 th_on_new_own_turn = {
 	th_reset_combat_resource = { type = action_points }
-	th_trigger_ai_turn = yes
 }
 
-th_on_new_enemy_turn = {}
+th_on_new_enemy_turn = {
+}
 
 th_check_if_kill = {
 	if = {
@@ -1728,10 +1747,10 @@ th_end_turn_against_unlanded_character = {
 		}
 		else = {
 			set_ruler_flag = th_danmaku_has_turn_ownership
-			th_on_new_own_turn = yes
 			set_ruler_flag = th_danmaku_unlanded_character_not_turn_ownership
 			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
 			clr_ruler_flag = th_danmaku_has_not_turn_ownership
+			th_on_new_own_turn = yes
 		}
 	}
 	else = {
@@ -1758,4 +1777,5 @@ th_end_turn_against_unlanded_character = {
 			}
 		}
 	}
+	th_trigger_ai_turn = yes
 }
