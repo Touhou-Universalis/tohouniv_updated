@@ -1079,93 +1079,105 @@ th_roll_die_no_variable = {
 }
 
 th_perform_attack = {
+	set_variable = {
+		which = th_danmaku_attack_roll
+		value = 0
+	}
+	set_variable = {
+		which = th_danmaku_attack_roll_amount
+		value = 1
+	}
+	set_variable = {
+		which = th_danmaku_attack_roll_die_type
+		value = 20
+	}
+	set_variable = {
+		which = th_danmaku_hit_bonus_per_roll
+		value = 0
+	}
+	th_roll_die = {
+		die_type = th_danmaku_attack_roll_die_type
+		die_amount = th_danmaku_attack_roll_amount
+		bonus_per_roll = th_danmaku_hit_bonus_per_roll
+		result = th_danmaku_attack_roll
+	}
 	if = {
-		limit = { has_saved_event_target = enemy_duelist }
+		limit = {
+			check_variable = {
+				which = th_danmaku_attack_roll
+				which = th_danmaku_crit_roll_needed
+			}
+		}
+		set_ruler_flag = th_danmaku_rolled_critical_hit
+	}
+	change_variable = {
+		which = th_danmaku_attack_roll
+		which = th_danmaku_hit_bonus
+	}
+	th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
+	th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
+	th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
+	th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
+	th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
+	if = {
+		limit = { th_is_duelling_an_unlanded_character = yes }
 		set_variable = {
-			which = th_danmaku_attack_roll
-			value = 0
+			which = th_danmaku_enemy_armor_class_transfer
+			which = th_enemy_character_armor_class
 		}
-		set_variable = {
-			which = th_danmaku_attack_roll_amount
-			value = 1
-		}
-		set_variable = {
-			which = th_danmaku_attack_roll_die_type
-			value = 20
-		}
-		set_variable = {
-			which = th_danmaku_hit_bonus_per_roll
-			value = 0
-		}
-		th_roll_die = {
-			die_type = th_danmaku_attack_roll_die_type
-			die_amount = th_danmaku_attack_roll_amount
-			bonus_per_roll = th_danmaku_hit_bonus_per_roll
-			result = th_danmaku_attack_roll
-		}
+	}
+	else = {
 		if = {
-			limit = {
-				check_variable = {
-					which = th_danmaku_attack_roll
-					which = th_danmaku_crit_roll_needed
-				}
-			}
-			set_ruler_flag = th_danmaku_rolled_critical_hit
-		}
-		change_variable = {
-			which = th_danmaku_attack_roll
-			which = th_danmaku_hit_bonus
-		}
-		event_target:enemy_duelist = {
-			set_variable = {
-				which = th_danmaku_enemy_armor_class_transfer
-				which = th_danmaku_armor_class
-			}
-			PREV = {
+			limit = { has_saved_event_target = enemy_duelist }
+			event_target:enemy_duelist = {
 				set_variable = {
 					which = th_danmaku_enemy_armor_class_transfer
-					which = PREV
+					which = th_danmaku_armor_class
+				}
+				PREV = {
+					set_variable = {
+						which = th_danmaku_enemy_armor_class_transfer
+						which = PREV
+					}
 				}
 			}
-		}
-		th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
-		th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
-		th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
-		th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
-		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
-		th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
-		if = {
-			limit = {
-				check_variable = {
-					which = th_danmaku_attack_roll
-					which = th_danmaku_enemy_armor_class_transfer
-				}
-			}
-			set_ruler_flag = th_danmaku_duel_hit_attack
-			clr_ruler_flag = th_danmaku_duel_missed_attack
-			if = {
-				limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
-				th_play_sound = { sound = th_danmaku_duel_ability_$ability$_critical_hit }
-				set_variable = {
-					which = th_danmaku_crit_multiplier
-					which = th_danmaku_crit_roll_damage_multiplier
-				}
-			}
-			else = {
-				th_play_sound = { sound = th_danmaku_duel_ability_$ability$_hit }
-				set_variable = {
-					which = th_danmaku_crit_multiplier
-					which = 0
-				}
-			}
-			th_deal_damage = yes
 		}
 		else = {
-			clr_ruler_flag = th_danmaku_duel_hit_attack
-			set_ruler_flag = th_danmaku_duel_missed_attack
-			clr_ruler_flag = th_danmaku_rolled_critical_hit
-			th_play_sound = { sound = th_danmaku_duel_miss }
+			log = "No enemy party available to attack!"
 		}
+	}
+	th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
+	if = {
+		limit = {
+			check_variable = {
+				which = th_danmaku_attack_roll
+				which = th_danmaku_enemy_armor_class_transfer
+			}
+		}
+		set_ruler_flag = th_danmaku_duel_hit_attack
+		clr_ruler_flag = th_danmaku_duel_missed_attack
+		if = {
+			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+			th_play_sound = { sound = th_danmaku_duel_ability_$ability$_critical_hit }
+			set_variable = {
+				which = th_danmaku_crit_multiplier
+				which = th_danmaku_crit_roll_damage_multiplier
+			}
+		}
+		else = {
+			th_play_sound = { sound = th_danmaku_duel_ability_$ability$_hit }
+			set_variable = {
+				which = th_danmaku_crit_multiplier
+				which = 0
+			}
+		}
+		th_deal_damage = yes
+	}
+	else = {
+		clr_ruler_flag = th_danmaku_duel_hit_attack
+		set_ruler_flag = th_danmaku_duel_missed_attack
+		clr_ruler_flag = th_danmaku_rolled_critical_hit
+		th_play_sound = { sound = th_danmaku_duel_miss }
 	}
 }
 
