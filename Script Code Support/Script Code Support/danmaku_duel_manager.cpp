@@ -330,6 +330,248 @@ void CDanmakuDuelManager::CreateLocCommandGetCriticalBonus(std::string& outputLi
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
+
+// Unlanded Characters
+void CDanmakuDuelManager::CreateLocCommandGetActor(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetActor";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ACTOR_COUNTRY_1 trigger = { th_combat_log_unlanded_get_actor_id = { action = " + std::to_string(a) + " actor = 1 } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ACTOR_COUNTRY_2 trigger = { th_combat_log_unlanded_get_actor_id = { action = " + std::to_string(a) + " actor = 2 } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetEffectVerb(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetEffectVerb";
+	outputLine += "\n\trandom = no";
+	for (std::string v : _combatVerbs)
+	{
+		std::string uppercase_v = v;
+		for (auto& x : uppercase_v)
+		{
+			x = toupper(x);
+		}
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_VERB_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_ability_verb = { action = " + std::to_string(a) + " verb = " + v + " } } }";
+	}
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilityArticle(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityArticle";
+	outputLine += "\n\trandom = no";
+	for (std::string v : _combatArticles)
+	{
+		std::string uppercase_v = v;
+		for (auto& x : uppercase_v)
+		{
+			x = toupper(x);
+		}
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_ARTICLE_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_ability_article = { action = " + std::to_string(a) + " article = " + v + " } } }";
+	}
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbility(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbility";
+	outputLine += "\n\trandom = no";
+	for (std::string v : _combatAbilities)
+	{
+		outputLine += "\n\ttext = { localisation_key = th_ability_" + v + " trigger = { th_combat_log_unlanded_get_ability_id = { action = " + std::to_string(a) + " ability = " + v + " } } }";
+	}
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetPrePosition(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetPrePosition";
+	outputLine += "\n\trandom = no";
+	for (std::string v : _combatPrepositions)
+	{
+		std::string uppercase_v = v;
+		for (auto& x : uppercase_v)
+		{
+			x = toupper(x);
+		}
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_PREPOSITION_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_preposition = { action = " + std::to_string(a) + " preposition = " + v + " } } }";
+	}
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetRecipient(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetRecipient";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RECIPIENT_COUNTRY_1 trigger = { th_combat_log_unlanded_get_recipient_id = { action = " + std::to_string(a) + " recipient = 1 } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RECIPIENT_COUNTRY_2 trigger = { th_combat_log_unlanded_get_recipient_id = { action = " + std::to_string(a) + " recipient = 2 } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetHitRoll(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRoll";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_HIT_ROLL_TEXT trigger = { has_country_flag = th_danmaku_has_advanced_combat_log th_combat_log_unlanded_get_hit_roll = { action = " + std::to_string(a) + " hit_roll = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilityEffect(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityEffect";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_MISS trigger = { 	OR = { th_combat_log_unlanded_get_ability_is_miss = { action = " + std::to_string(a) + " is_miss = yes } th_combat_log_unlanded_get_ability_effect = { action = " + std::to_string(a) + " ability_effect = miss } } } }";
+	for (std::string v : _combatAbilityEffect)
+	{
+		std::string uppercase_v = v;
+		for (auto& x : uppercase_v)
+		{
+			x = toupper(x);
+		}
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_ability_effect = { action = " + std::to_string(a) + " ability_effect = " + v + " } } }";
+	}
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilityEffectNumber(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityEffectNumber";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_NUMBER trigger = { th_combat_log_unlanded_get_ability_impact_value = { action = " + std::to_string(a) + " number_impact = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetCritical(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetCritical";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_IS_CRITICAL trigger = { th_combat_log_unlanded_get_ability_is_critical = { action = " + std::to_string(a) + " is_critical = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilityRoll(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRoll";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_EFFECT_ROLL_TEXT trigger = { has_country_flag = th_danmaku_has_advanced_combat_log th_combat_log_unlanded_get_ability_roll = { action = " + std::to_string(a) + " ability_roll = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilitySpecialEffect(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilitySpecialEffect";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilityEffectEnd(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityEffectEnd";
+	outputLine += "\n\trandom = no";
+	for (std::string v : _combatAbilityEndeffect)
+	{
+		std::string uppercase_v = v;
+		for (auto& x : uppercase_v)
+		{
+			x = toupper(x);
+		}
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_END_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_ability_is_" + v + " = { action = " + std::to_string(a) + " is_" + v + " = yes } } }";
+	}
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilitySecondEffect(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilitySecondEffect";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilitySecondEffectAbility(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilitySecondEffectAbility";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilitySecondEffectEnd(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilitySecondEffectEnd";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetEndSentence(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetEndSentence";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_END_SENTENCE_END trigger = { th_check_actions = { action = " + std::to_string(a) + " } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetHitBonusPerDice(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRollBonusPerDie";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_HIT_BONUS_PER_ROLL trigger = { th_combat_log_unlanded_check_variable = { action = " + std::to_string(a) + " type = hit_die_flat_bonus } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetHitFlatBonus(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRollFlatBonus";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_FLAT_HIT_BONUS trigger = { th_combat_log_unlanded_check_variable = { action = " + std::to_string(a) + " type = hit_die_bonus_per_roll } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilityBonusPerDice(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRollBonusPerDie";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_ABILITY_BONUS_PER_ROLL trigger = { th_combat_log_unlanded_check_variable = { action = " + std::to_string(a) + " type = attack_die_bonus_per_roll } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetAbilityFlatBonus(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRollFlatBonus";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_FLAT_ABILITY_BONUS trigger = { th_combat_log_unlanded_check_variable = { action = " + std::to_string(a) + " type = attack_die_flat_bonus } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
+void CDanmakuDuelManager::CreateLocCommandGetCriticalBonus(std::string& outputLine, int a)
+{
+	outputLine += "\ndefined_text = {";
+	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetCriticalBonus";
+	outputLine += "\n\trandom = no";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_CRITICAL_BONUS trigger = { th_combat_log_unlanded_get_ability_is_critical = { action = " + std::to_string(a) + " is_critical = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
+	outputLine += "\n}";
+}
 void CDanmakuDuelManager::GenerateCustomLocalizationFile()
 {
 	std::string outputLine;
@@ -364,6 +606,31 @@ void CDanmakuDuelManager::GenerateCustomLocalizationFile()
 			CreateLocCommandGetAbilityFlatBonus(outputLine, i, a);
 			CreateLocCommandGetCriticalBonus(outputLine, i, a);
 		}
+	}
+	for (int a = 1; a <= _actions; a++)
+	{
+		CreateLocCommandGetActor(outputLine, a);
+		CreateLocCommandGetEffectVerb(outputLine, a);
+		CreateLocCommandGetAbilityArticle(outputLine, a);
+		CreateLocCommandGetAbility(outputLine, a);
+		CreateLocCommandGetPrePosition(outputLine, a);
+		CreateLocCommandGetRecipient(outputLine, a);
+		CreateLocCommandGetHitRoll(outputLine, a);
+		CreateLocCommandGetAbilityEffect(outputLine, a);
+		CreateLocCommandGetAbilityEffectNumber(outputLine, a);
+		CreateLocCommandGetCritical(outputLine, a);
+		CreateLocCommandGetAbilityRoll(outputLine, a);
+		CreateLocCommandGetAbilitySpecialEffect(outputLine, a);
+		CreateLocCommandGetAbilityEffectEnd(outputLine, a);
+		CreateLocCommandGetAbilitySecondEffect(outputLine, a);
+		CreateLocCommandGetAbilitySecondEffectAbility(outputLine, a);
+		CreateLocCommandGetAbilitySecondEffectEnd(outputLine, a);
+		CreateLocCommandGetEndSentence(outputLine, a);
+		CreateLocCommandGetHitBonusPerDice(outputLine, a);
+		CreateLocCommandGetHitFlatBonus(outputLine, a);
+		CreateLocCommandGetAbilityBonusPerDice(outputLine, a);
+		CreateLocCommandGetAbilityFlatBonus(outputLine, a);
+		CreateLocCommandGetCriticalBonus(outputLine, a);
 	}
 	std::ofstream outfile(_customLocalizationOutputFolder + "\\" + _customLocalizationFile);
 	outfile << outputLine;
@@ -413,6 +680,7 @@ void CDanmakuDuelManager::CreateLocalizationCombatLogForInstance(std::string& ou
 	outputLine += "[Root.ShowDanmakuCombatLogForInstance" + std::to_string(i) + "Action" + std::to_string(a) + "GetEndSentence]";
 	outputLine += "\"";
 }
+
 
 void CDanmakuDuelManager::CreateLocalizationGetVariableValue(std::string& outputLine, int i, int a)
 {
@@ -466,7 +734,6 @@ void CDanmakuDuelManager::CreateLocalizationGetVariableResistanceReduction(std::
 {
 	outputLine += "\n TH_DANMAKU_COMBAT_LOG_FOR_INSTANCE_" + std::to_string(i) + "_ACTION_" + std::to_string(a) + "_RESISTANCE_REDUCTION: \"§Y[1.th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_resistance_reduction.GetValue]§!\"";
 }
-
 void CDanmakuDuelManager::CreateLocalizationGetHitRollText(std::string& outputLine, int i, int a)
 {
 	outputLine += "\n TH_DANMAKU_COMBAT_LOG_FOR_INSTANCE_" + std::to_string(i) + "_ACTION_" + std::to_string(a) + "_GET_HIT_ROLL_TEXT: \" ";
@@ -510,6 +777,142 @@ void CDanmakuDuelManager::CreateLocalizationGetCriticalBonus(std::string& output
 }
 
 
+
+void CDanmakuDuelManager::CreateLocalizationCombatLogForUnlandedCharacter(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_UNLANDED_CHARACTER_ACTION_" + std::to_string(a) + ": \"";
+	outputLine += "§Y[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetActor]§!";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetEffectVerb]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityArticle]";
+	outputLine += "§Y[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbility]§!";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetPrePosition]";
+	outputLine += "§Y[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetRecipient]§!";
+	outputLine += "§g[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRoll]§!";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityEffect]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityEffectNumber]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetCritical]";
+	outputLine += "§g[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRoll]§!";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilitySpecialEffect]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityEffectEnd]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilitySecondEffect]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilitySecondEffectAbility]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilitySecondEffectEnd]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetEndSentence]";
+	outputLine += "\"";
+}
+
+void CDanmakuDuelManager::CreateLocalizationGetActor(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ACTOR_COUNTRY_1: \"";
+	outputLine += "[Root.Monarch.GetName]";
+	outputLine += "\"";
+	outputLine += "\n TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ACTOR_COUNTRY_2: \"";
+	outputLine += "[Root.GetDanmakuDuelEnemyRulerName]";
+	outputLine += "\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetRecipient(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RECIPIENT_COUNTRY_1: \"";
+	outputLine += "[Root.Monarch.GetName]";
+	outputLine += "\"";
+	outputLine += "\n TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RECIPIENT_COUNTRY_2: \"";
+	outputLine += "[Root.GetDanmakuDuelEnemyRulerName]";
+	outputLine += "\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableValue(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_NUMBER: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_value.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableHitDie(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_HIT_DIE: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableHitDieAmount(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_HIT_DIE_AMOUNT: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die_amount.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableHitDieResult(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_HIT_DIE_RESULT: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die_result.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableEnemyAC(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ENEMY_AC: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_enemy_ac.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableHitDieFlatBonus(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_HIT_DIE_FLAT_BONUS: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die_flat_bonus.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableHitDieBonusPerRoll(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_HIT_DIE_BONUS_PER_ROLL: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die_bonus_per_roll.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableAttackDie(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ATTACK_DIE: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableAttackDieAmount(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ATTACK_DIE_AMOUNT: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die_amount.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableAttackDieResult(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ATTACK_DIE_RESULT: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die_result.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableAttackDieBonusPerRoll(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ATTACK_DIE_BONUS_PER_ROLL: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die_bonus_per_roll.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableAttackDieFlatbonus(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ATTACK_DIE_FLAT_BONUS: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die_flat_bonus.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetVariableResistanceReduction(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RESISTANCE_REDUCTION: \"§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_resistance_reduction.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetHitRollText(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_HIT_ROLL_TEXT: \" ";
+	outputLine += "(rolled §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die_result.GetValue]§! ";
+	outputLine += "(needed at least §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_enemy_ac.GetValue]§! to hit) ";
+	outputLine += "with §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die_amount.GetValue]";
+	outputLine += "d[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die.GetValue]§!";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRollBonusPerDie]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRollFlatBonus])\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetAbilityRollText(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_EFFECT_ROLL_TEXT: \" ";
+	outputLine += "(rolled §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die_result.GetValue]§! ";
+	outputLine += "with §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die_amount.GetValue]";
+	outputLine += "d[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die.GetValue]§!";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRollBonusPerDie]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRollFlatBonus]";
+	outputLine += "[Root.ShowDanmakuCombatLogAction" + std::to_string(a) + "GetCriticalBonus]; ";
+	outputLine += "§Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_resistance_reduction.GetValue]§! damage resisted)\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetHitBonusPerDice(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_HIT_BONUS_PER_ROLL: \" + additional §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die_flat_bonus.GetValue]§! per dice\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetHitFlatBonus(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_FLAT_HIT_BONUS: \" + flat bonus of §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_hit_die_bonus_per_roll.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetAbilityBonusPerDice(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_ABILITY_BONUS_PER_ROLL: \" + additional §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die_bonus_per_roll.GetValue]§! per dice\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetAbilityFlatBonus(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_FLAT_ABILITY_BONUS: \" + flat bonus of §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_attack_die_flat_bonus.GetValue]§!\"";
+}
+void CDanmakuDuelManager::CreateLocalizationGetCriticalBonus(std::string& outputLine, int a)
+{
+	outputLine += "\n TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_CRITICAL_BONUS: \" * Critical Damage multiplicator of §Y[Root.th_danmaku_duel_action_" + std::to_string(a) + "_critical_damage_bonus.GetValue]§!\"";
+}
+
 void CDanmakuDuelManager::GenerateLocalizationFile()
 {
 	std::string outputLine;
@@ -550,6 +953,32 @@ void CDanmakuDuelManager::GenerateLocalizationFile()
 			CreateLocalizationGetAbilityFlatBonus(outputLine, i, a);
 			CreateLocalizationGetCriticalBonus(outputLine, i, a);
 		}
+		outputLine += "\n";
+	}
+	for (int a = 1; a <= _actions; a++)
+	{
+		CreateLocalizationCombatLogForUnlandedCharacter(outputLine, a);
+		CreateLocalizationGetActor(outputLine, a);
+		CreateLocalizationGetRecipient(outputLine, a);
+		CreateLocalizationGetVariableValue(outputLine, a);
+		CreateLocalizationGetVariableHitDie(outputLine, a);
+		CreateLocalizationGetVariableHitDieAmount(outputLine, a);
+		CreateLocalizationGetVariableHitDieResult(outputLine, a);
+		CreateLocalizationGetVariableEnemyAC(outputLine, a);
+		CreateLocalizationGetVariableHitDieFlatBonus(outputLine, a);
+		CreateLocalizationGetVariableHitDieBonusPerRoll(outputLine, a);
+		CreateLocalizationGetVariableAttackDie(outputLine, a);
+		CreateLocalizationGetVariableAttackDieAmount(outputLine, a);
+		CreateLocalizationGetVariableAttackDieResult(outputLine, a);
+		CreateLocalizationGetVariableAttackDieBonusPerRoll(outputLine, a);
+		CreateLocalizationGetVariableAttackDieFlatbonus(outputLine, a);
+		CreateLocalizationGetHitRollText(outputLine, a);
+		CreateLocalizationGetAbilityRollText(outputLine, a);
+		CreateLocalizationGetHitBonusPerDice(outputLine, a);
+		CreateLocalizationGetHitFlatBonus(outputLine, a);
+		CreateLocalizationGetAbilityBonusPerDice(outputLine, a);
+		CreateLocalizationGetAbilityFlatBonus(outputLine, a);
+		CreateLocalizationGetCriticalBonus(outputLine, a);
 		outputLine += "\n";
 	}
 	std::ofstream outfile(_localizationOutputFolder + "\\" + _localizationFile);
