@@ -340,70 +340,41 @@ country_event = {
 
 
 namespace = th_danmaku_duel_ai
-#Initial mtth event
+#Initial mtth event which creates the AI behavior
 country_event = {
 	id = th_danmaku_duel_ai.1
 	title = none
 	desc = none
 	picture = TANYA_eventPicture
 	trigger = {
-		has_country_flag = th_danmaku_trigger_ai_event_flag
+		th_is_in_a_danmaku_duel = yes
+		NOT = { has_country_flag = th_danmaku_ai_started_turn }
+		OR = {
+			AND = {
+				th_has_turn_ownership = yes
+				ai = yes
+			}
+			AND = {
+				th_is_duelling_an_unlanded_character = yes
+				th_unlanded_character_has_turn_ownership = yes
+			}
+		}
 	}
+	#hidden = yes
+	major = yes
 	mean_time_to_happen = {
 		days = 1
 	}
 	immediate = {
-		clr_country_flag = th_danmaku_trigger_ai_event_flag
+		set_country_flag = th_danmaku_ai_started_turn
 	}
-	#hidden = yes
-	#Attack option
 	option = {
-		trigger = {
-			OR = {
-				AND = {
-					th_is_duelling_an_unlanded_character = yes
-					th_unlanded_character_has_turn_ownership = yes
-					th_is_alive_solo = yes
-					th_ai_can_use_ability = { ability = attack }
-				}
-				AND = {
-					th_is_not_duelling_an_unlanded_character = yes
-					th_has_turn_ownership = yes
-					th_is_alive = yes
-					th_can_use_ability = { ability = attack }
-				}
-			}
-		}
-		th_use_ability = {
-			ability = attack
-			damage_flat_bonus = 10
-			damage_die_bonus = 2
-			damage_die_amount_bonus = 2
-			damage_flat_bonus_per_die = 2
-		}
 		country_event = {
 			id = th_danmaku_duel_ai.2
 			days = 1
 		}
 		ai_chance = {
 			factor = 100
-		}
-	}
-	#The "Nah, I'd skip" option
-	option = {
-		if = {
-			limit = {
-				th_is_in_a_danmaku_duel = yes
-				NOT = { has_ruler_flag = th_danmaku_duel_over }
-			}
-			th_end_turn = yes
-		}
-		ai_chance = {
-			factor = 1
-			modifier = {
-				factor = 0
-				th_ai_can_use_any_ability = yes
-			}
 		}
 	}
 }
@@ -431,14 +402,11 @@ country_event = {
 	desc = none
 	picture = TANYA_eventPicture
 	is_triggered_only = yes
-	immediate = {
-		clr_country_flag = th_danmaku_trigger_ai_event_flag
-	}
 	#hidden = yes
+	major = yes
 	#Attack option
 	option = {
 		trigger = {
-			NOT = {  }
 			OR = {
 				AND = {
 					th_is_duelling_an_unlanded_character = yes
@@ -478,6 +446,7 @@ country_event = {
 			}
 			th_end_turn = yes
 		}
+		clr_country_flag = th_danmaku_ai_started_turn
 		ai_chance = {
 			factor = 1
 			modifier = {
