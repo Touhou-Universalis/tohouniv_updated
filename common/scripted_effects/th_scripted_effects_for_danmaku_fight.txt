@@ -602,6 +602,7 @@ th_change_danmaku_specific_instance_round = {
 			set_ruler_flag = th_danmaku_has_turn_ownership
 			clr_ruler_flag = th_danmaku_has_not_turn_ownership
 			th_on_new_own_turn = yes
+			th_trigger_ai_turn = yes
 		}
 		else = {
 			$opponent$ = {
@@ -609,6 +610,7 @@ th_change_danmaku_specific_instance_round = {
 				set_ruler_flag = th_danmaku_has_turn_ownership
 				clr_ruler_flag = th_danmaku_has_not_turn_ownership
 				th_on_new_own_turn = yes
+				th_trigger_ai_turn = yes
 			}
 			custom_tooltip = th_end_turn_for_this_ruler_tt
 			clr_ruler_flag = th_danmaku_has_turn_ownership
@@ -623,11 +625,9 @@ th_end_turn = {
 	hidden_effect = {
 		if = {
 			limit = { th_is_not_duelling_an_unlanded_character = yes }
-			th_select_enemy_event_target_and_do_effect = {
-				effect = "
-					th_change_danmaku_instance_round = { opponent = root }
-					th_trigger_ai_turn = yes
-				"
+			th_create_event_target_enemy_duelist = yes
+			event_target:enemy_duelist = {
+				th_change_danmaku_instance_round = { opponent = root }
 			}
 		}
 		else = {
@@ -651,10 +651,7 @@ th_trigger_ai_turn = {
 				}
 			}
 		}
-		add_stability = 1
-		country_event = {
-			id = th_danmaku_duel_ai.1
-		}
+		set_country_flag = th_danmaku_trigger_ai_event_flag	#Yes, I have to use a flag here because the game refuses to fire the event from here. It also makes sense that the AI would not react immediately anyway.
 	}
 }
 
@@ -809,26 +806,50 @@ th_gui_update_enemy_resource_bar = {
 }
 
 th_change_combat_resource = {
-	change_variable = {
-		which = th_danmaku_$type$
-		value = $value$
-	}
 	if = {
-		limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
-		set_variable = {
-			which = th_danmaku_$type$
-			value = 0
+		limit = { th_unlanded_character_has_turn_ownership = yes }
+		change_variable = {
+			which = th_enemy_character_current_$type$
+			value = $value$
 		}
-	}
-	if = {
-		limit = { check_variable = { which = th_danmaku_$type$ which = th_danmaku_max_$type$ } }
-		set_variable = {
-			which = th_danmaku_$type$
-			which = th_danmaku_max_$type$
+		if = {
+			limit = { NOT = { check_variable = { which = th_enemy_character_current_$type$ value = 0 } } }
+			set_variable = {
+				which = th_enemy_character_current_$type$
+				value = 0
+			}
 		}
+		if = {
+			limit = { check_variable = { which = th_enemy_character_current_$type$ which = th_enemy_character_max_$type$ } }
+			set_variable = {
+				which = th_enemy_character_current_$type$
+				which = th_enemy_character_max_$type$
+			}
+		}
+		th_gui_update_danmaku_bar_enemy_character = { type = $type$ }
 	}
-	th_gui_update_danmaku_bar = { type = $type$ }
-	th_gui_update_enemy_resource_bar = { type = $type$ }
+	else = {
+		change_variable = {
+			which = th_danmaku_$type$
+			value = $value$
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
+			set_variable = {
+				which = th_danmaku_$type$
+				value = 0
+			}
+		}
+		if = {
+			limit = { check_variable = { which = th_danmaku_$type$ which = th_danmaku_max_$type$ } }
+			set_variable = {
+				which = th_danmaku_$type$
+				which = th_danmaku_max_$type$
+			}
+		}
+		th_gui_update_danmaku_bar = { type = $type$ }
+		th_gui_update_enemy_resource_bar = { type = $type$ }
+	}
 }
 th_set_combat_resource = {
 	set_variable = {
@@ -899,6 +920,20 @@ th_check_if_kill_solo = {
 		if = {
 			limit = { th_is_alive = yes }
 			th_on_win_solo = yes
+		}
+		else = {
+			th_on_draw_solo = yes
+		}
+	}
+}
+
+th_check_if_dead_solo = {
+	if = {
+		limit = { NOT = { th_is_alive = yes } }
+		set_ruler_flag = th_danmaku_duel_over
+		if = {
+			limit = { th_is_alive_solo = yes }
+			th_on_defeat_solo = yes
 		}
 		else = {
 			th_on_draw_solo = yes
@@ -1201,28 +1236,56 @@ th_perform_attack = {
 		result = th_danmaku_attack_roll
 	}
 	if = {
-		limit = {
-			check_variable = {
-				which = th_danmaku_attack_roll
-				which = th_danmaku_crit_roll_needed
-			}
+		limit = { th_unlanded_character_has_turn_ownership = yes }
+		change_variable = {
+			which = th_danmaku_attack_roll
+			which = th_enemy_character_hit_bonus
 		}
-		set_ruler_flag = th_danmaku_rolled_critical_hit
+		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_enemy_character_hit_bonus }
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_attack_roll
+					which = th_enemy_character_crit_roll_needed
+				}
+			}
+			set_ruler_flag = th_danmaku_rolled_critical_hit
+		}
 	}
-	change_variable = {
-		which = th_danmaku_attack_roll
-		which = th_danmaku_hit_bonus
+	else = {
+		change_variable = {
+			which = th_danmaku_attack_roll
+			which = th_danmaku_hit_bonus
+		}
+		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_attack_roll
+					which = th_danmaku_crit_roll_needed
+				}
+			}
+			set_ruler_flag = th_danmaku_rolled_critical_hit
+		}
 	}
 	th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
 	th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
 	th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
-	th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
 	th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
 	if = {
 		limit = { th_is_duelling_an_unlanded_character = yes }
-		set_variable = {
-			which = th_danmaku_enemy_armor_class_transfer
-			which = th_enemy_character_armor_class
+		if = {
+			limit = { th_unlanded_character_has_turn_ownership = yes }
+			set_variable = {
+				which = th_danmaku_enemy_armor_class_transfer
+				which = th_danmaku_armor_class
+			}
+		}
+		else = {
+			set_variable = {
+				which = th_danmaku_enemy_armor_class_transfer
+				which = th_enemy_character_armor_class
+			}
 		}
 	}
 	else = {
@@ -1258,9 +1321,18 @@ th_perform_attack = {
 		if = {
 			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
 			th_play_sound = { sound = th_danmaku_duel_ability_$ability$_critical_hit }
-			set_variable = {
-				which = th_danmaku_crit_multiplier
-				which = th_danmaku_crit_roll_damage_multiplier
+			if = {
+				limit = { th_unlanded_character_has_turn_ownership = yes }
+				set_variable = {
+					which = th_danmaku_crit_multiplier
+					which = th_enemy_character_crit_roll_multiplier
+				}
+			}
+			else = {
+				set_variable = {
+					which = th_danmaku_crit_multiplier
+					which = th_danmaku_crit_roll_damage_multiplier
+				}
 			}
 		}
 		else = {
@@ -1281,23 +1353,40 @@ th_perform_attack = {
 }
 
 th_deal_damage = {
-	#What type of die?
-	set_variable = {
-		which = th_danmaku_damage_die
-		which = th_danmaku_attack_die
-	}
-	change_variable = {
-		which = th_danmaku_damage_die
-		which = th_danmaku_ability_damage_die_bonus
-	}
 	#How many dies?
 	set_variable = {
 		which = th_danmaku_damage_die_amount
 		value = 1
 	}
-	change_variable = {
-		which = th_danmaku_damage_die_amount
-		which = th_danmaku_ability_damage_die_amount_bonus
+	#What type of die?
+	if = {
+		limit = { th_unlanded_character_has_turn_ownership = yes }
+		set_variable = {
+			which = th_danmaku_damage_die
+			which = th_enemy_character_attack_die
+		}
+		change_variable = {
+			which = th_danmaku_damage_die
+			which = th_enemy_character_attack_bonus
+		}
+		change_variable = {
+			which = th_danmaku_damage_die_amount
+			which = th_enemy_character_attack_die_num
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_damage_die
+			which = th_danmaku_attack_die
+		}
+		change_variable = {
+			which = th_danmaku_damage_die
+			which = th_danmaku_ability_damage_die_bonus
+		}
+		change_variable = {
+			which = th_danmaku_damage_die_amount
+			which = th_danmaku_ability_damage_die_amount_bonus
+		}
 	}
 	#Rolled damage end result
 	set_variable = {
@@ -1307,16 +1396,30 @@ th_deal_damage = {
 	th_log_memorize_value = { type = attack_die variable = th_danmaku_damage_die }
 	th_log_memorize_value = { type = attack_die_amount variable = th_danmaku_damage_die_amount }
 	th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
-	th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
 	th_roll_die = {
 		die_type = th_danmaku_damage_die
 		die_amount = th_danmaku_damage_die_amount
 		bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
 		result = th_danmaku_damage_roll
 	}
-	change_variable = {
-		which = th_danmaku_damage_roll
-		which = th_danmaku_ability_damage_flat_bonus
+	if = {
+		limit = { th_unlanded_character_has_turn_ownership = yes }
+		set_variable = {
+			which = th_enemy_character_attack_flat_bonus
+			value = 0
+		}
+		change_variable = {
+			which = th_danmaku_damage_roll
+			which = th_enemy_character_attack_flat_bonus
+		}
+		th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
+	}
+	else = {
+		change_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_ability_damage_flat_bonus
+		}
+		th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
 	}
 	th_log_memorize_value = { type = attack_die_result variable = th_danmaku_damage_roll }
 	if = {
@@ -1384,9 +1487,18 @@ th_deal_damage = {
 	}
 	if = {
 		limit = { th_is_duelling_an_unlanded_character = yes }
-		set_variable = {
-			which = th_danmaku_resistance_transfer
-			which = th_enemy_character_resistance
+		if = {
+			limit = { th_unlanded_character_has_turn_ownership = yes }
+			set_variable = {
+				which = th_danmaku_resistance_transfer
+				which = th_danmaku_resistance
+			}
+		}
+		else = {
+			set_variable = {
+				which = th_danmaku_resistance_transfer
+				which = th_enemy_character_resistance
+			}
 		}
 		divide_variable = {
 			which = th_danmaku_resistance_transfer
@@ -1406,19 +1518,37 @@ th_deal_damage = {
 			set_variable = { which = th_danmaku_damage_roll value = 0 }
 		}
 		th_log_memorize_value = { type = total_value variable = th_danmaku_damage_roll }
-		subtract_variable = {
-			which = th_enemy_character_current_health
-			which = th_danmaku_damage_roll
-		}
 		if = {
-			limit = { NOT = { check_variable = { which = th_enemy_character_current_health value = 0 } } }
-			set_variable = {
-				which = th_enemy_character_current_health
-				value = 0
+			limit = { th_unlanded_character_has_turn_ownership = yes }
+			subtract_variable = {
+				which = th_danmaku_health
+				which = th_danmaku_damage_roll
 			}
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_health value = 0 } } }
+				set_variable = {
+					which = th_danmaku_health
+					value = 0
+				}
+			}
+			th_gui_update_danmaku_bar = { type = health }
+			th_check_if_dead_solo = yes
 		}
-		th_gui_update_danmaku_bar_enemy_character = { type = health }
-		th_check_if_kill_solo = yes
+		else = {
+			subtract_variable = {
+				which = th_enemy_character_current_health
+				which = th_danmaku_damage_roll
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = th_enemy_character_current_health value = 0 } } }
+				set_variable = {
+					which = th_enemy_character_current_health
+					value = 0
+				}
+			}
+			th_gui_update_danmaku_bar_enemy_character = { type = health }
+			th_check_if_kill_solo = yes
+		}
 	}
 }
 
@@ -1526,21 +1656,39 @@ th_use_ability = {
 		th_play_sound = { sound = th_danmaku_duel_ability_$ability$_launch }
 		#Hit bonuses
 		set_variable = { which = th_danmaku_ability_hit_flat_bonus value = 0 }
-		[[hit_flat_bonus]change_variable = { which = th_danmaku_ability_hit_flat_bonus value = $hit_flat_bonus$ }]
 		set_variable = { which = th_danmaku_ability_hit_die_bonus value = 0 }
-		[[hit_die_bonus]change_variable = { which = th_danmaku_ability_hit_die_bonus value = $hit_die_bonus$ }]
-
-		#Damage bonuses
 		set_variable = { which = th_danmaku_ability_damage_flat_bonus value = 0 }
-		[[damage_flat_bonus]change_variable = { which = th_danmaku_ability_damage_flat_bonus value = $damage_flat_bonus$ }]
 		set_variable = { which = th_danmaku_ability_damage_die_bonus value = 0 }
-		[[damage_die_bonus]change_variable = { which = th_danmaku_ability_damage_die_bonus value = $damage_die_bonus$ }]
 		set_variable = { which = th_danmaku_ability_damage_die_amount_bonus value = 0 }
-		[[damage_die_amount_bonus]change_variable = { which = th_danmaku_ability_damage_die_amount_bonus value = $damage_die_amount_bonus$ }]
 		set_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = 0 }
-		[[damage_flat_bonus_per_die]change_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = $damage_flat_bonus_per_die$ }]
+	}
 
+	[[hit_flat_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_hit_flat_bonus value = $hit_flat_bonus$ } }
+		custom_tooltip = th_ability_bonus_hit_flat_bonus_$hit_flat_bonus$_tt
+	]
+	[[hit_die_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_hit_die_bonus value = $hit_die_bonus$ } }
+		custom_tooltip = th_ability_bonus_hit_die_bonus_$hit_die_bonus$_tt
+	]
+	[[damage_flat_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_damage_flat_bonus value = $damage_flat_bonus$ } }
+		custom_tooltip = th_ability_bonus_damage_flat_bonus_$damage_flat_bonus$_tt
+	]
+	[[damage_die_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_damage_die_bonus value = $damage_die_bonus$ } }
+		custom_tooltip = th_ability_bonus_damage_die_bonus_$damage_die_bonus$_tt
+	]
+	[[damage_die_amount_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_damage_die_amount_bonus value = $damage_die_amount_bonus$ } }
+		custom_tooltip = th_ability_bonus_damage_die_amount_bonus_$damage_die_amount_bonus$_tt
+	]
+	[[damage_flat_bonus_per_die]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = $damage_flat_bonus_per_die$ } }
+		custom_tooltip = th_ability_bonus_damage_flat_bonus_per_die_$damage_flat_bonus_per_die$_tt
+	]
 
+	hidden_effect = {
 		th_use_ability_$ability$ = yes
 	}
 }
@@ -1604,7 +1752,7 @@ th_create_danmaku_duel_against_unlanded_character = {
 		th_transfer_default_stats_to_target_vars = {
 			max_hp_var = th_enemy_character_max_health
 			max_mp_var = th_enemy_character_max_mana
-			max_ap_var = th_enemy_character_max_ap
+			max_ap_var = th_enemy_character_max_action_points
 			initiative_bonus_var = th_enemy_character_initiative_bonus
 			hit_bonus_var = th_enemy_character_hit_bonus
 			attack_bonus_var = th_enemy_character_attack_bonus
@@ -1624,10 +1772,10 @@ th_create_danmaku_duel_against_unlanded_character = {
 		[[value_change_max_mp]change_variable = { which = th_enemy_character_max_mana								value = $value_change_max_mp$ }]
 		[[override_max_mp]set_variable = { which = th_enemy_character_max_mana										which = $override_max_mp$ }]
 		[[change_max_mp]change_variable = { which = th_enemy_character_max_mana										which = $change_max_mp$ }]
-		[[value_override_max_ap]set_variable = { which = th_enemy_character_max_ap									value = $value_override_max_ap$ }]
-		[[value_change_max_ap]change_variable = { which = th_enemy_character_max_ap									value = $value_change_max_ap$ }]
-		[[override_max_ap]set_variable = { which = th_enemy_character_max_ap										which = $override_max_ap$ }]
-		[[change_max_ap]change_variable = { which = th_enemy_character_max_ap										which = $change_max_ap$ }]
+		[[value_override_max_ap]set_variable = { which = th_enemy_character_max_action_points						value = $value_override_max_ap$ }]
+		[[value_change_max_ap]change_variable = { which = th_enemy_character_max_action_points						value = $value_change_max_ap$ }]
+		[[override_max_ap]set_variable = { which = th_enemy_character_max_action_points								which = $override_max_ap$ }]
+		[[change_max_ap]change_variable = { which = th_enemy_character_max_action_points							which = $change_max_ap$ }]
 		[[value_override_initiative_bonus]set_variable = { which = th_enemy_character_initiative_bonus				value = $value_override_initiative_bonus$ }]
 		[[value_change_initiative_bonus]change_variable = { which = th_enemy_character_initiative_bonus				value = $value_change_initiative_bonus$ }]
 		[[override_initiative_bonus]set_variable = { which = th_enemy_character_initiative_bonus					which = $override_initiative_bonus$ }]
@@ -1677,8 +1825,8 @@ th_create_danmaku_duel_against_unlanded_character = {
 			which = th_enemy_character_max_mana
 		}
 		set_variable = {
-			which = th_enemy_character_current_ap
-			which = th_enemy_character_max_ap
+			which = th_enemy_character_current_action_points
+			which = th_enemy_character_max_action_points
 		}
 		th_gui_update_danmaku_bar_enemy_character = { type = health }
 		th_gui_update_danmaku_bar_enemy_character = { type = mana }
@@ -1744,6 +1892,7 @@ th_end_turn_against_unlanded_character = {
 			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
 			set_ruler_flag = th_danmaku_has_not_turn_ownership
 			th_on_new_enemy_turn = yes
+			th_trigger_ai_turn = yes
 		}
 		else = {
 			set_ruler_flag = th_danmaku_has_turn_ownership
@@ -1777,5 +1926,4 @@ th_end_turn_against_unlanded_character = {
 			}
 		}
 	}
-	th_trigger_ai_turn = yes
 }
