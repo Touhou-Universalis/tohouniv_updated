@@ -1,16 +1,26 @@
 interaction = {
-    key = sale_of_titles
-    random_seed = crown_land_share
+	key = sale_of_titles
+	random_seed = crown_land_share
 	cooldown_months = 60
 
-    trigger = {
-        crown_land_share = 10
-        NOT = { num_of_rebel_armies = 1 }
+	trigger = {
+		crown_land_share = 10
+		NOT = { num_of_rebel_armies = 1 }
 		NOT = { num_of_rebel_controlled_provinces = 1 }
 		hidden_trigger = { has_any_estates = yes }
-    }
-    effect = {
+	}
+	effect = {
 		if = {
+			limit = {
+				religion = inti
+				check_variable = {
+					which = inca_amount_of_mummies
+					value = 1
+				}
+			}
+			INC_sell_crownland_modified_by_mummies = yes
+		}
+		else_if = {
 			limit = { 
 				NOT = { has_government_attribute = no_crownland_money_loss_to_age } 
 				NOT = { has_country_flag = enable_full_ducat_gain_from_selling_crownland_flag }
@@ -67,7 +77,7 @@ interaction = {
 		}
 		set_country_flag = recent_land_distribution
 		on_sale_of_titles_effect = yes
-    }
+	}
 	ai_will_do = {
 		factor = 25
 		modifier = {
@@ -171,12 +181,12 @@ interaction = {
 }
 
 interaction = {
-    key = summon_the_diet
-    random_seed = random
+	key = summon_the_diet
+	random_seed = random
 	cooldown_months = 60
 
-    trigger = {
-        NOT = { has_any_active_estate_agenda = yes }
+	trigger = {
+		NOT = { has_any_active_estate_agenda = yes }
 		hidden_trigger = { has_any_estates = yes }
 		NOT = { has_government_attribute = blocked_call_diet }
 		if = {
@@ -197,12 +207,12 @@ interaction = {
 				NOT = { has_disaster = th_tengu_caste_civil_war_disaster }
 			}
 		}
-    }
+	}
 
-    effect = {
-        custom_tooltip = ESTATES_SUMMON_THE_DIET_DESC
-        hidden_effect = {
-	        country_event = { id = estate_privileges_and_agendas_events.3 }
+	effect = {
+		custom_tooltip = ESTATES_SUMMON_THE_DIET_DESC
+		hidden_effect = {
+			country_event = { id = estate_privileges_and_agendas_events.3 }
 			if = {
 				limit = {
 					ai = yes
@@ -212,9 +222,9 @@ interaction = {
 					9 = { set_country_flag = auto_complete_estate_agenda_all }
 				}
 			}
-        }
-        custom_tooltip = SEPERATOR_TOOLTIP
-        
+		}
+		custom_tooltip = SEPERATOR_TOOLTIP
+		
 		if = {
 			limit = {
 				has_country_flag = recent_estate_agenda
@@ -234,11 +244,11 @@ interaction = {
 			}
 		}
 
-        th_change_all_estate_loyalty = {
-            loyalty = 5
+		th_change_all_estate_loyalty = {
+			loyalty = 5
 			range_loyalty = 95
 			type = add
-        }
+		}
 		if = {
 			limit = {
 				has_government_attribute = republican_tradition_from_diets
@@ -246,7 +256,7 @@ interaction = {
 			add_scaled_republican_tradition = 2
 		}
 		on_summon_the_diet_effect = yes
-    }
+	}
 	ai_will_do = {
 		# Only use if it will bring loyalty above 50 for all estates
 		# AI will most likely fail to complete the task
@@ -280,14 +290,14 @@ interaction = {
 }
 
 interaction = {
-    key = seize_land
-    random_seed = random
+	key = seize_land
+	random_seed = random
 	cooldown_months = 60
 
-    trigger = {
+	trigger = {
 		hidden_trigger = { has_any_estates = yes }
-        NOT = { crown_land_share = 100 }
-        NOT = { num_of_rebel_armies = 1 }
+		NOT = { crown_land_share = 100 }
+		NOT = { num_of_rebel_armies = 1 }
 		NOT = { num_of_rebel_controlled_provinces = 1 }
 		#The following if/else_if-statements match those in estate_privileges_and_agendas_events.2.a. If those change, these should too.
 		if = {
@@ -351,13 +361,13 @@ interaction = {
 		#	}
 		#	NOT = { has_estate_privilege = estate_great_tengu_statutory_rights }
 		#}
-        is_at_war = no
+		is_at_war = no
 		if = {
 			limit = { has_government_attribute = can_not_seize_land }
 			NOT = { has_government_attribute_short_desc = can_not_seize_land }
 		}
-    }
-    effect = {
+	}
+	effect = {
 		
 		if = {
 			limit = {
@@ -368,6 +378,16 @@ interaction = {
 		set_country_flag = recent_land_seizure
 		if = {
 			limit = {
+				religion = inti
+				check_variable = {
+					which = inca_amount_of_mummies
+					value = 1
+				}
+			}
+			INC_seize_crownland_modified_by_mummies = yes
+		}
+		else_if = {
+			limit = {
 				NOT = { has_government_attribute = can_seize_crownland_of_single_estates }
 				NOT = { has_country_flag = can_seize_crownland_to_estates_targeted_flag }
 			}
@@ -376,8 +396,13 @@ interaction = {
 			custom_tooltip = SEPERATOR_TOOLTIP
 			if = {
 				limit = {
-					has_government_attribute = seizing_land_loyalty
-					has_country_flag = tgu_buffed_crownland_interactions
+					OR = {
+						AND = {
+							has_government_attribute = seizing_land_loyalty
+							has_country_flag = tgu_buffed_crownland_interactions
+						}
+						has_country_flag = ned_lands_generality_flag
+					}
 				}
 				th_change_all_estate_loyalty = {
 					loyalty = 10
