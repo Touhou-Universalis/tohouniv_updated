@@ -160,6 +160,20 @@ declarewar = {
 		th_on_war_declaration_effect = yes
 		if = {
 			limit = { 
+				mission_completed = hun_the_anatolian_threat
+				NOT = {
+					has_country_flag = hun_declared_first_war_against_tur
+				}
+				FROM = { tag = TUR }
+			}
+			add_country_modifier = {
+				name = hun_avenge_varna
+				duration = -1
+			}
+			set_country_flag = hun_declared_first_war_against_tur
+		}
+		if = {
+			limit = { 
 				has_country_flag = nor_norwegian_independence_modifier
 				FROM = { tag = DAN }
 			}
@@ -179,6 +193,44 @@ declarewar = {
 			country_event = {
 				id = flavor_teu.33
 				days = 10
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = ned_no_stab_loss_on_independence_flag
+				war_with = BUR
+				has_casus_belli = {
+					type = cb_independence_war
+					target = FROM
+				}
+			}
+			clr_country_flag = ned_no_stab_loss_on_independence_flag
+			add_stability = 1
+		}
+		if = {
+			limit = {
+				NOT = { has_global_flag = flavor_ita_7_fired }
+				FROM = {
+					is_emperor = yes
+				}
+				is_in_war = {
+					attacker_leader = ROOT
+					defender_leader = FROM
+					casus_belli = cb_ita_dismantle_hre
+				}
+			}
+			set_global_flag = flavor_ita_7_fired
+			every_elector = {
+				limit = {
+					NOT = { 
+						OR = {
+							alliance_with = ROOT
+							is_subject_of = ROOT
+						}
+					}
+					NOT = { is_emperor = yes }
+				}
+				country_event = { id = flavor_ita.7 }
 			}
 		}
 	}
@@ -461,6 +513,21 @@ threaten_war = {
 insultaction = {
 	effect = {
 		change_asha_vahishta = { value = -5 }
+		if = {
+			limit = {
+				ROOT = {
+					is_rival = FROM
+					has_government_mechanic = th_junko_grudge_mechanic
+				}
+			}
+			ROOT = {
+				add_government_power = {
+					mechanic_type = th_junko_grudge_mechanic
+					power_type = th_junko_grudge
+					value = -5
+				}
+			}
+		}
 	}
 }
 giftaction = {
@@ -468,7 +535,6 @@ giftaction = {
 		change_asha_vahishta = { value = 1 }
 	}
 }
-
 fabricate_claim = {
 	effect = {
 		change_asha_vahishta = { value = -1 }
@@ -504,6 +570,20 @@ break_marriage = {
 				}
 			}
 		}
+		if = {
+			limit = {
+				has_country_flag = received_burgundian_marriage
+				FROM = { tag = BUR }
+			}
+			clr_country_flag = received_burgundian_marriage
+		}
+		if = {
+			limit = {
+				tag = BUR
+				FROM = { has_country_flag = received_burgundian_marriage }
+			}
+			FROM = { clr_country_flag = received_burgundian_marriage }
+		}
 		change_asha_vahishta = { value = -1 }
 	}
 }
@@ -515,11 +595,31 @@ takeondebt = {
 influence_nation = {
 	effect = {
 		change_asha_vahishta = { value = 2 }
+		
+		if = {
+			limit = {
+				has_country_flag = GER_buff_influence_nation_flag
+			}
+			add_favors = {
+			   who = FROM
+			   amount = 5
+			}
+		}
 	}
 }
 intervene_in_war = {
 	effect = {
 		change_asha_vahishta = { value = 50 }
+		
+		if = {
+			limit = {
+				has_country_flag = GER_buff_great_power_interactions_flag
+			}
+			add_power_projection = {
+				type = GER_intervene_in_war_pp
+				amount = 15
+			}
+		}
 	}
 }
 
@@ -689,7 +789,8 @@ annexationaction = {
 				religious_school = {
 					group = Touhou
 					school = obaku_teachings
-				}
+				}		
+			}
 		}
 	}
 	effect = {
@@ -709,7 +810,13 @@ integrationaction = {
 	condition = {
 		tooltip = INTEGRATETOOLOWDESC
 		potential = {
-			senior_union_with = FROM
+			OR = {
+				senior_union_with = FROM
+				FROM = {
+					is_subject_of = ROOT
+					is_subject_of_type = mongol_brother_realm
+				}
+			}
 		}
 		allow = {
 			FROM = {
@@ -798,22 +905,6 @@ vassalaction = {
 	}
 }
 
-insultaction = {
-	effect = {
-		if = {
-			limit = {
-				is_rival = FROM
-				has_government_mechanic = th_junko_grudge_mechanic
-			}
-			add_government_power = {
-				mechanic_type = th_junko_grudge_mechanic
-				power_type = th_junko_grudge
-				value = -10
-			}	
-		}
-	}
-}
-
 abandon_union = {
 	condition = {
 		potential = {
@@ -879,11 +970,16 @@ invite_to_trade_league = {
 		potential = {
 		}
 		allow = {
-			from = {
-				home_trade_node = {
-					trade_share = {
-						country = root
-						share = 1
+			if = {
+				limit = {
+					NOT = { has_country_flag = ven_easier_to_invite_trade_league_members_yes_flag }
+				}
+				from = {
+					home_trade_node = {
+						trade_share = {
+							country = root
+							share = 1
+						}
 					}
 				}
 			}

@@ -205,10 +205,7 @@ th_on_province_owner_change_effect = {
 		}
 		if = {
 			limit = {
-				OR = {
-					has_owner_culture = yes
-					has_owner_accepted_culture = yes
-				}
+				th_province_is_or_accepts_culture = yes
 			}
 			add_province_modifier = {
 				name = th_pure_land
@@ -265,10 +262,7 @@ th_on_province_culture_change_effect = {
 		}
 		if = {
 			limit = {
-				OR = {
-					has_owner_culture = yes
-					has_owner_accepted_culture = yes
-				}
+				th_province_is_or_accepts_culture = yes
 			}
 			add_province_modifier = {
 				name = th_pure_land
@@ -1322,6 +1316,37 @@ th_on_war_declaration_effect = {
 		add_war_exhaustion = 1
 		add_harmony = -10
 	}
+	if = {
+		limit = {
+			FROM = { total_development = 150 }
+			ROOT = {
+				NOT = { is_rival = FROM }
+				has_government_mechanic = th_junko_grudge_mechanic
+			}
+		}
+		ROOT = {
+			add_government_power = {
+				mechanic_type = th_junko_grudge_mechanic
+				power_type = th_junko_grudge
+				value = -5
+			}
+		}
+	}
+	if = {
+		limit = {
+			ROOT = {
+				is_rival = FROM
+				has_government_mechanic = th_junko_grudge_mechanic
+			}
+		}
+		ROOT = {
+			add_government_power = {
+				mechanic_type = th_junko_grudge_mechanic
+				power_type = th_junko_grudge
+				value = -15
+			}
+		}
+	}
 }
 
 th_on_religion_change_effect = {
@@ -1352,7 +1377,7 @@ th_on_religion_change_effect = {
 			country_event = {
 				id = th_diplo_events.10
 			}
-            clr_country_flag = th_has_gotten_pledged_to_religion_from_@ROOT
+			clr_country_flag = th_has_gotten_pledged_to_religion_from_@ROOT
 		}
 	}
 	if = {
@@ -1398,4 +1423,81 @@ th_on_culture_demoted_effect = {
 		}
 		remove_country_modifier = jnk_eientei_culture_slot
 	}
+}
+
+th_on_mercenary_recruited_effect = {
+	if = {
+		limit = {
+			FROM = { has_not_free_mercs_trait = yes }
+			th_is_not_free_merc_company = yes
+			OR = {
+				FROM = { NOT = { has_country_flag = oyo_cavalry_do_not_consume_ap } }
+				ROOT = { NOT = { mercenary_company = merc_oyo_cavalry } }
+			}
+		}
+		if = {
+			limit = { FROM = { has_country_flag = th_pay_mil_instead_of_prof } }
+			FROM = { add_mil_power = -150 }
+		}
+		else_if = {
+			limit = { FROM = { OR = { has_country_flag = fifty_percent_merc_army_professionalism_cost  has_country_modifier = pol_cheap_ap_mercs_modifier } } }
+			FROM = { add_army_professionalism = -0.025 }
+		}
+		else_if = {
+			limit = { FROM = { has_country_flag = th_merc_eighty_percent_professionalism_cost } }
+			FROM = { add_army_professionalism = -0.04 }
+		}
+		else = { FROM = { add_army_professionalism = -0.05 } }
+	}
+	
+	if = {
+		limit = { FROM = { has_country_flag = th_merc_suppress_revolt } }
+		THIS = { add_province_modifier = { name = th_suppresed_revolters duration = 1825 } }
+	}
+	if = {
+		limit = {
+			FROM = { has_country_flag = th_enabled_instant_loot_on_merc_recruitment }
+			THIS = { controlled_by = FROM NOT = { owned_by = FROM } }
+		}
+		THIS = { remove_loot = { who = FROM amount = 250 } }
+	}
+}
+
+th_triggered_on_monarch_death_effect = {
+	#Makes sure that rolls become truly random... somewhat
+	set_variable = { which = th_rng_maker value = 0 }
+	random_list = {
+		1 = {
+			th_roll_die_no_variable = {
+				die_type = 8
+				die_amount = 2
+				bonus_per_roll = 0
+				result = th_rng_maker
+			}
+		}
+		1 = {
+			th_roll_die_no_variable = {
+				die_type = 8
+				die_amount = 4
+				bonus_per_roll = 0
+				result = th_rng_maker
+			}
+		}
+		1 = {
+			th_roll_die_no_variable = {
+				die_type = 8
+				die_amount = 6
+				bonus_per_roll = 0
+				result = th_rng_maker
+			}
+		}
+	}
+}
+
+th_trigger_on_monarch_death_on_action = {
+	set_country_flag = th_forced_on_action
+	set_country_flag = th_trigger_specific_on_action_monarch_death
+	kill_ruler = yes
+	clr_country_flag = th_forced_on_action
+	clear_global_event_target = rng_maker
 }
