@@ -7,6 +7,10 @@
 int main()
 {
 	const std::string modPath = "C:\\Users\\<user name>\\Documents\\Paradox Interactive\\Europa Universalis IV\\mod\\touhou_universalis";
+	/*
+	Set the if statement of whatever function you need to "true". Also make sure to have the mod path correctly set.
+	Might make a proper application one day so you don't have to change parameters within the code itself.
+	*/
 	if (false)
 	{
 		std::string effectOutputFolder = modPath + "\\output\\danmaku";
