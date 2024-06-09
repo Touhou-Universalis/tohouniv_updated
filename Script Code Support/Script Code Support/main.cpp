@@ -2,6 +2,7 @@
 #include <string>
 #include "danmaku_duel_manager.h"
 #include "province_manager.h"
+#include "localization_manager.h"
 
 int main()
 {
@@ -38,6 +39,14 @@ int main()
 		danmakuDuelManager.GenerateCustomLocalizationFile();
 		danmakuDuelManager.GenerateEffectFile();
 		danmakuDuelManager.GenerateLocalizationFile();
+	}
+	if (true)
+	{
+		std::string localizationInputFolder = modPath + "\\localisation";
+		std::string localizationOutputFolder = modPath + "\\output\\localisation";
+
+		CLocalizationManager localizationManager(localizationInputFolder, localizationOutputFolder);
+		localizationManager.CreateLocalizedFiles();
 	}
 	if (false)
 	{
