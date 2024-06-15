@@ -1031,3 +1031,40 @@ th_combat_turn_is_about_to_run_out = {
 		th_combat_turn_is_running_out_for_current_instance = yes
 	}
 }
+
+th_danmaku_has_damage_modifier_not_zero = {
+	OR = {
+		check_variable = {
+			which = th_danmaku_$type$_damage_modifier
+			value = 0.01
+		}
+		NOT = {
+			check_variable = {
+				which = th_danmaku_$type$_damage_modifier
+				value = -0.01
+			}
+		}
+	}
+}
+th_danmaku_unlanded_character_has_damage_modifier_not_zero = {
+	th_is_duelling_an_unlanded_character = yes
+	OR = {
+		check_variable = {
+			which = th_enemy_character_$type$_damage_modifier
+			value = 0.01
+		}
+		NOT = {
+			check_variable = {
+				which = th_enemy_character_$type$_damage_modifier
+				value = -0.01
+			}
+		}
+	}
+}
+
+th_enemy_has_damage_modifier_not_zero = {
+	OR = {
+		th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $type$ }
+		th_select_enemy_event_target_and_check_trigger = { trigger = "th_danmaku_has_damage_modifier_not_zero = { type = $type$ }" }
+	}
+}
