@@ -650,6 +650,8 @@ th_monthly_danmaku_duel_duration_reduction = {
 				1 = { NOT = { check_variable = { which = th_danmaku_duel_instance_$instance$_turn_duration_counter value = 1 } } }
 				has_saved_global_event_target = th_danmaku_duelist_of_id_1_of_instance_$instance$
 				has_saved_global_event_target = th_danmaku_duelist_of_id_2_of_instance_$instance$
+				event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = { exists = yes }
+				event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ = { exists = yes }
 			}
 			if = {
 				limit = { event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = { th_has_turn_ownership = yes } }
@@ -1244,7 +1246,7 @@ th_perform_attack = {
 			limit = {
 				check_variable = {
 					which = th_danmaku_attack_roll
-					which = th_enemy_character_crit_roll_needed
+					which = th_enemy_character_$type$_crit_roll_needed
 				}
 			}
 			set_ruler_flag = th_danmaku_rolled_critical_hit
@@ -1260,7 +1262,7 @@ th_perform_attack = {
 			limit = {
 				check_variable = {
 					which = th_danmaku_attack_roll
-					which = th_danmaku_crit_roll_needed
+					which = th_danmaku_$type$_crit_roll_needed
 				}
 			}
 			set_ruler_flag = th_danmaku_rolled_critical_hit
@@ -1323,13 +1325,13 @@ th_perform_attack = {
 				limit = { th_unlanded_character_has_turn_ownership = yes }
 				set_variable = {
 					which = th_danmaku_crit_multiplier
-					which = th_enemy_character_crit_roll_multiplier
+					which = th_enemy_character_$type$_crit_roll_multiplier
 				}
 			}
 			else = {
 				set_variable = {
 					which = th_danmaku_crit_multiplier
-					which = th_danmaku_crit_roll_damage_multiplier
+					which = th_danmaku_$type$_crit_roll_damage_multiplier
 				}
 			}
 		}
@@ -1340,7 +1342,7 @@ th_perform_attack = {
 				which = 0
 			}
 		}
-		th_deal_damage = yes
+		th_deal_damage = { type = $type$ school = $school$ }
 	}
 	else = {
 		clr_ruler_flag = th_danmaku_duel_hit_attack
@@ -1375,25 +1377,61 @@ th_deal_damage = {
 		value = 1
 	}
 	#What type of die?
+	set_variable = {
+		which = th_danmaku_damage_type_multiplicator
+		value = 1
+	}
+	set_variable = {
+		which = th_danmaku_damage_school_multiplicator
+		value = 1
+	}
 	if = {
 		limit = { th_unlanded_character_has_turn_ownership = yes }
 		set_variable = {
 			which = th_danmaku_damage_die
-			which = th_enemy_character_attack_die
+			which = th_enemy_character_$type$_attack_die
 		}
 		change_variable = {
 			which = th_danmaku_damage_die
-			which = th_enemy_character_attack_bonus
+			which = th_enemy_character_$type$_attack_bonus
 		}
 		change_variable = {
 			which = th_danmaku_damage_die_amount
-			which = th_enemy_character_attack_die_num
+			which = th_enemy_character_$type$_attack_die_num
+		}
+		if = {
+			limit = { th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $type$ } }
+			change_variable = {
+				which = th_danmaku_damage_type_multiplicator
+				which = th_enemy_character_$type$_damage_modifier
+			}
+		}
+		if = {
+			limit = { th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $school$ } }
+			change_variable = {
+				which = th_danmaku_damage_school_multiplicator
+				which = th_enemy_character_$school$_damage_modifier
+			}
 		}
 	}
 	else = {
 		set_variable = {
 			which = th_danmaku_damage_die
-			which = th_danmaku_attack_die
+			which = th_danmaku_$type$_attack_die
+		}
+		if = {
+			limit = { th_danmaku_has_damage_modifier_not_zero = { type = $type$ } }
+			change_variable = {
+				which = th_danmaku_damage_type_multiplicator
+				which = th_enemy_character_$type$_damage_modifier
+			}
+		}
+		if = {
+			limit = { th_danmaku_has_damage_modifier_not_zero = { type = $school$ } }
+			change_variable = {
+				which = th_danmaku_damage_school_multiplicator
+				which = th_enemy_character_$school$_damage_modifier
+			}
 		}
 	}
 	change_variable = {
@@ -1404,6 +1442,12 @@ th_deal_damage = {
 		which = th_danmaku_damage_die_amount
 		which = th_danmaku_ability_damage_die_amount_bonus
 	}
+	[[override_damage_die]set_variable = { which = th_danmaku_damage_die value = $override_damage_die$ }]
+	[[override_damage_die_amount]set_variable = { which = th_danmaku_damage_die_amount value = $override_damage_die_amount$ }]
+	[[override_damage_flat_bonus]set_variable = { which = th_danmaku_ability_damage_flat_bonus value = $override_damage_flat_bonus$ }]
+	[[override_damage_bonus_per_die]set_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = $override_damage_bonus_per_die$ }]
+	[[override_damage_type_modifier]set_variable = { which = th_danmaku_damage_type_multiplicator value = $override_damage_type_modifier$ }]
+	[[override_damage_school_modifier]set_variable = { which = th_danmaku_damage_school_multiplicator value = $override_damage_school_modifier$ }]
 	#Rolled damage end result
 	set_variable = {
 		which = th_danmaku_damage_roll
@@ -1412,17 +1456,39 @@ th_deal_damage = {
 	th_log_memorize_value = { type = attack_die variable = th_danmaku_damage_die }
 	th_log_memorize_value = { type = attack_die_amount variable = th_danmaku_damage_die_amount }
 	th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
-	th_roll_die = {
-		die_type = th_danmaku_damage_die
-		die_amount = th_danmaku_damage_die_amount
-		bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
-		result = th_danmaku_damage_roll
+	th_log_memorize_value = { type = damage_type_multiplicator variable = th_danmaku_damage_type_multiplicator }
+	th_log_memorize_value = { type = damage_school_multiplicator variable = th_danmaku_damage_school_multiplicator }
+	#th_log_memorize_type = { type = damage_type_$type$ }
+	#th_log_memorize_type = { type = damage_school_$school$ }
+	if = {
+		limit = {
+			check_variable = { which = th_danmaku_damage_die value = 2 }
+			check_variable = { which = th_danmaku_damage_die_amount value = 1 }
+		}
+		th_roll_die = {
+			die_type = th_danmaku_damage_die
+			die_amount = th_danmaku_damage_die_amount
+			bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
+			result = th_danmaku_damage_roll
+		}
 	}
 	change_variable = {
 		which = th_danmaku_damage_roll
 		which = th_danmaku_ability_damage_flat_bonus
 	}
 	th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
+	change_variable = {
+		which = th_danmaku_damage_type_multiplicator
+		which = th_danmaku_damage_school_multiplicator
+	}
+	multiply_variable = {
+		which = th_danmaku_damage_roll
+		which = th_danmaku_damage_type_multiplicator
+	}
+	round_variable = {
+		which = th_danmaku_damage_roll
+		value = 0
+	}
 	th_log_memorize_value = { type = attack_die_result variable = th_danmaku_damage_roll }
 	if = {
 		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
@@ -1443,11 +1509,28 @@ th_deal_damage = {
 				which = th_danmaku_resistance_transfer
 				which = th_danmaku_resistance
 			}
+			set_variable = {
+				which = th_danmaku_type_resistance_transfer
+				which = th_danmaku_$type$_resistance
+			}
+			set_variable = {
+				which = th_danmaku_school_resistance_transfer
+				which = th_danmaku_$school$_resistance
+			}
 		}
 		set_variable = {
 			which = th_danmaku_resistance_transfer
 			which = PREV
 		}
+		set_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = PREV
+		}
+		set_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = PREV
+		}
+		#General resistance
 		divide_variable = {
 			which = th_danmaku_resistance_transfer
 			value = 100
@@ -1456,11 +1539,44 @@ th_deal_damage = {
 			which = th_danmaku_resistance_transfer
 			which = th_danmaku_damage_roll
 		}
+		#Type resistance
+		divide_variable = {
+			which = th_danmaku_type_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#School resistance
+		divide_variable = {
+			which = th_danmaku_school_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#Subtraction
 		subtract_variable = {
 			which = th_danmaku_damage_roll
 			which = th_danmaku_resistance_transfer
 		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_type_resistance_transfer
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_school_resistance_transfer
+		}
+		round_variable = {
+			which = th_danmaku_damage_roll
+			value = 0
+		}
 		th_log_memorize_value = { type = resistance_reduction variable = th_danmaku_resistance_transfer }
+		th_log_memorize_value = { type = type_resistance_reduction variable = th_danmaku_type_resistance_transfer }
+		th_log_memorize_value = { type = school_resistance_reduction variable = th_danmaku_school_resistance_transfer }
 		if = {
 			limit = { NOT = { check_variable = { which = th_danmaku_damage_roll value = 0 } } }
 			set_variable = { which = th_danmaku_damage_roll value = 0 }
@@ -1495,13 +1611,30 @@ th_deal_damage = {
 				which = th_danmaku_resistance_transfer
 				which = th_danmaku_resistance
 			}
+			set_variable = {
+				which = th_danmaku_type_resistance_transfer
+				which = th_danmaku_$type$_resistance
+			}
+			set_variable = {
+				which = th_danmaku_school_resistance_transfer
+				which = th_danmaku_$schhol$_resistance
+			}
 		}
 		else = {
 			set_variable = {
 				which = th_danmaku_resistance_transfer
 				which = th_enemy_character_resistance
 			}
+			set_variable = {
+				which = th_danmaku_type_resistance_transfer
+				which = th_enemy_character_$type$_resistance
+			}
+			set_variable = {
+				which = th_danmaku_school_resistance_transfer
+				which = th_enemy_character_$school$_resistance
+			}
 		}
+		#General resistance
 		divide_variable = {
 			which = th_danmaku_resistance_transfer
 			value = 100
@@ -1510,11 +1643,44 @@ th_deal_damage = {
 			which = th_danmaku_resistance_transfer
 			which = th_danmaku_damage_roll
 		}
+		#Type resistance
+		divide_variable = {
+			which = th_danmaku_type_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#School resistance
+		divide_variable = {
+			which = th_danmaku_school_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#Subtraction
 		subtract_variable = {
 			which = th_danmaku_damage_roll
 			which = th_danmaku_resistance_transfer
 		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_type_resistance_transfer
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_school_resistance_transfer
+		}
+		round_variable = {
+			which = th_danmaku_damage_roll
+			value = 0
+		}
 		th_log_memorize_value = { type = resistance_reduction variable = th_danmaku_resistance_transfer }
+		th_log_memorize_value = { type = type_resistance_reduction variable = th_danmaku_type_resistance_transfer }
+		th_log_memorize_value = { type = school_resistance_reduction variable = th_danmaku_school_resistance_transfer }
 		if = {
 			limit = { NOT = { check_variable = { which = th_danmaku_damage_roll value = 0 } } }
 			set_variable = { which = th_danmaku_damage_roll value = 0 }
@@ -1575,6 +1741,86 @@ th_deal_damage = {
 			}
 		}
 	}
+}
+
+
+th_heal_damage = {
+	#How many dies?
+	set_variable = {
+		which = th_danmaku_heal_die_amount
+		value = 1
+	}
+	#What type of die?
+	if = {
+		limit = { }
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_damage_die
+			which = th_danmaku_physical_attack_die
+		}
+	}
+}
+
+th_restore_mana = {
+
+}
+
+th_burn_mana = {
+
+}
+
+th_restore_action_points = {
+
+}
+
+th_burn_action_points = {
+
+}
+
+th_apply_danmaku_modifier_buff = {
+
+}
+th_apply_danmaku_modifier_debuff = {
+
+}
+th_apply_danmaku_modifier = {
+
+}
+
+th_remove_danmaku_modifier_buff = {
+
+}
+th_remove_danmaku_modifier_debuff = {
+
+}
+th_remove_danmaku_modifier = {
+
+}
+
+th_apply_environment_modifier = {
+
+}
+th_remove_environment_modifier = {
+
+}
+
+#Status effects are the following:
+# stun -> next turn is automatically skipped
+# immune -> attack and abilities cannot damage the target
+# freeze -> cannot use any *physical* abilities
+# paralyzed -> half the AP the character starts at their turn
+# silenced -> cannot use any *magical* abilities
+# invisible -> cannot be targetted
+# unstoppable -> is immune towards all negative status effects
+# banished -> the target cannot take nor deal physical damage. Magical damage received increased by +200%
+# anti_magic -> the target cannot take nor deal magical damage. Physical damage received increased by +200%
+# invicible -> the HP of the target can never fall below 0
+th_apply_status_effect = {
+
+}
+th_remove_status_effect = {
+
 }
 
 
@@ -1668,7 +1914,6 @@ th_create_danmaku_duel_against_unlanded_character = {
 		th_clear_enemy_character_danmaku_flags = yes
 		th_prepare_country_for_danmaku_duel = yes
 		set_ruler_flag = th_is_duelling_an_unlanded_character
-		th_define_enemy_danmaku_character = { target = $target$ }
 		th_roll_initiative_for_solo_fight = yes
 		set_variable = {
 			which = th_danmaku_unlanded_duel_round_counter
@@ -1713,15 +1958,66 @@ th_create_danmaku_duel_against_unlanded_character = {
 			max_ap_var = th_enemy_character_max_action_points
 			initiative_bonus_var = th_enemy_character_initiative_bonus
 			hit_bonus_var = th_enemy_character_hit_bonus
-			attack_bonus_var = th_enemy_character_attack_bonus
-			attack_die_var = th_enemy_character_attack_die
-			attack_die_num_var = th_enemy_character_attack_die_num
-			crit_roll_needed_var = th_enemy_character_crit_roll_needed
-			crit_roll_multiplier_var = th_enemy_character_crit_roll_multiplier
+			physical_attack_bonus_var = th_enemy_character_physical_attack_bonus
+			physical_attack_die_var = th_enemy_character_physical_attack_die
+			physical_attack_die_num_var = th_enemy_character_physical_attack_die_num
+			physical_crit_roll_needed_var = th_enemy_character_physical_crit_roll_needed
+			physical_crit_roll_multiplier_var = th_enemy_character_physical_crit_roll_multiplier
+			magical_attack_bonus_var = th_enemy_character_magical_attack_bonus
+			magical_attack_die_var = th_enemy_character_magical_attack_die
+			magical_attack_die_num_var = th_enemy_character_magical_attack_die_num
+			magical_crit_roll_needed_var = th_enemy_character_magical_crit_roll_needed
+			magical_crit_roll_multiplier_var = th_enemy_character_magical_crit_roll_multiplier
+			psionic_attack_bonus_var = th_enemy_character_psionic_attack_bonus
+			psionic_attack_die_var = th_enemy_character_psionic_attack_die
+			psionic_attack_die_num_var = th_enemy_character_psionic_attack_die_num
+			psionic_crit_roll_needed_var = th_enemy_character_psionic_crit_roll_needed
+			psionic_crit_roll_multiplier_var = th_enemy_character_psionic_crit_roll_multiplier
+			physical_damage_modifier_var = th_enemy_character_physical_damage_modifier
+			magical_damage_modifier_var = th_enemy_character_magical_damage_modifier
+			psionic_damage_modifier_var = th_enemy_character_psionic_damage_modifier
+			bludgeoning_damage_modifier_var = th_enemy_character_bludgeoning_damage_modifier
+			piercing_damage_modifier_var = th_enemy_character_piercing_damage_modifier
+			slashing_damage_modifier_var = th_enemy_character_slashing_damage_modifier
+			fire_damage_modifier_var = th_enemy_character_fire_damage_modifier
+			frost_damage_modifier_var = th_enemy_character_frost_damage_modifier
+			earth_damage_modifier_var = th_enemy_character_earth_damage_modifier
+			lightning_damage_modifier_var = th_enemy_character_lightning_damage_modifier
+			nature_damage_modifier_var = th_enemy_character_nature_damage_modifier
+			holy_damage_modifier_var = th_enemy_character_holy_damage_modifier
+			shadow_damage_modifier_var = th_enemy_character_shadow_damage_modifier
+			necrotic_damage_modifier_var = th_enemy_character_necrotic_damage_modifier
+			arcane_damage_modifier_var = th_enemy_character_arcane_damage_modifier
+			infernal_damage_modifier_var = th_enemy_character_infernal_damage_modifier
+			physical_resistance_var = th_enemy_character_physical_resistance
+			magical_resistance_var = th_enemy_character_magical_resistance
+			psionic_resistance_var = th_enemy_character_psionic_resistance
+			bludgeoning_resistance_var = th_enemy_character_bludgeoning_resistance
+			piercing_resistance_var = th_enemy_character_piercing_resistance
+			slashing_resistance_var = th_enemy_character_slashing_resistance
+			fire_resistance_var = th_enemy_character_fire_resistance
+			frost_resistance_var = th_enemy_character_frost_resistance
+			earth_resistance_var = th_enemy_character_earth_resistance
+			lightning_resistance_var = th_enemy_character_lightning_resistance
+			nature_resistance_var = th_enemy_character_nature_resistance
+			holy_resistance_var = th_enemy_character_holy_resistance
+			shadow_resistance_var = th_enemy_character_shadow_resistance
+			necrotic_resistance_var = th_enemy_character_necrotic_resistance
+			arcane_resistance_var = th_enemy_character_arcane_resistance
+			infernal_resistance_var = th_enemy_character_infernal_resistance
+			healing_die_var = th_enemy_character_healing_die
+			healing_die_num_var = th_enemy_character_healing_die_num
+			healing_crit_roll_needed_var = th_enemy_character_healing_crit_roll_needed
+			healing_received_bonus_var = th_enemy_character_healing_received_bonus
+			healing_received_modifier_var = th_enemy_character_healing_received_modifier
+			saving_throw_die_var = th_enemy_character_saving_throw_die
 			armor_class_var = th_enemy_character_armor_class
 			resistance_var = th_enemy_character_resistance
 			level_var = th_enemy_character_level
 		}
+		th_define_enemy_danmaku_character = { target = $target$ }
+		[[class]th_clear_enemy_character_class = yes th_set_enemy_character_danmaku_class = { class = $class$ }]
+
 		[[value_override_max_hp]set_variable = { which = th_enemy_character_max_health								value = $value_override_max_hp$ }]
 		[[value_change_max_hp]change_variable = { which = th_enemy_character_max_health								value = $value_change_max_hp$ }]
 		[[override_max_hp]set_variable = { which = th_enemy_character_max_health									which = $override_max_hp$ }]
@@ -1742,26 +2038,220 @@ th_create_danmaku_duel_against_unlanded_character = {
 		[[value_change_hit_bonus]change_variable = { which = th_enemy_character_hit_bonus							value = $value_change_hit_bonus$ }]
 		[[override_hit_bonus]set_variable = { which = th_enemy_character_hit_bonus									which = $override_hit_bonus$ }]
 		[[change_hit_bonus]change_variable = { which = th_enemy_character_hit_bonus									which = $change_hit_bonus$ }]
-		[[value_override_attack_bonus]set_variable = { which = th_enemy_character_attack_bonus						value = $value_override_attack_bonus$ }]
-		[[value_change_attack_bonus]change_variable = { which = th_enemy_character_attack_bonus						value = $value_change_attack_bonus$ }]
-		[[override_attack_bonus]set_variable = { which = th_enemy_character_attack_bonus							which = $override_attack_bonus$ }]
-		[[change_attack_bonus]change_variable = { which = th_enemy_character_attack_bonus							which = $change_attack_bonus$ }]
-		[[value_override_attack_die]set_variable = { which = th_enemy_character_attack_die							value = $value_override_attack_die$ }]
-		[[value_change_attack_die]change_variable = { which = th_enemy_character_attack_die							value = $value_change_attack_die$ }]
-		[[override_attack_die]set_variable = { which = th_enemy_character_attack_die								which = $override_attack_die$ }]
-		[[change_attack_die]change_variable = { which = th_enemy_character_attack_die								which = $change_attack_die$ }]
-		[[value_override_attack_die_num]set_variable = { which = th_enemy_character_attack_die_num					value = $value_override_attack_die_num$ }]
-		[[value_change_attack_die_num]change_variable = { which = th_enemy_character_attack_die_num					value = $value_change_attack_die_num$ }]
-		[[override_attack_die_num]set_variable = { which = th_enemy_character_attack_die_num						which = $override_attack_die_num$ }]
-		[[change_attack_die_num]change_variable = { which = th_enemy_character_attack_die_num						which = $change_attack_die_num$ }]
-		[[value_override_crit_roll_needed]set_variable = { which = th_enemy_character_crit_roll_needed				value = $value_override_crit_roll_needed$ }]
-		[[value_change_crit_roll_needed]change_variable = { which = th_enemy_character_crit_roll_needed				value = $value_change_crit_roll_needed$ }]
-		[[override_crit_roll_needed]set_variable = { which = th_enemy_character_crit_roll_needed					which = $override_crit_roll_needed$ }]
-		[[change_crit_roll_needed]change_variable = { which = th_enemy_character_crit_roll_needed					which = $change_crit_roll_needed$ }]
-		[[value_override_crit_roll_multiplier]set_variable = { which = th_enemy_character_crit_roll_multiplier		value = $value_override_crit_roll_multiplier$ }]
-		[[value_change_crit_roll_multiplier]change_variable = { which = th_enemy_character_crit_roll_multiplier		value = $value_change_crit_roll_multiplier$ }]
-		[[override_crit_roll_multiplier]set_variable = { which = th_enemy_character_crit_roll_multiplier			which = $override_crit_roll_multiplier$ }]
-		[[change_crit_roll_multiplier]change_variable = { which = th_enemy_character_crit_roll_multiplier			which = $change_crit_roll_multiplier$ }]
+		
+		[[value_override_physical_attack_bonus]set_variable = { which = th_enemy_character_physical_attack_bonus					value = $value_override_physical_attack_bonus$ }]
+		[[value_change_physical_attack_bonus]change_variable = { which = th_enemy_character_physical_attack_bonus					value = $value_change_physical_attack_bonus$ }]
+		[[override_physical_attack_bonus]set_variable = { which = th_enemy_character_physical_attack_bonus							which = $override_physical_attack_bonus$ }]
+		[[change_physical_attack_bonus]change_variable = { which = th_enemy_character_physical_attack_bonus							which = $change_physical_attack_bonus$ }]
+		[[value_override_physical_attack_die]set_variable = { which = th_enemy_character_physical_attack_die						value = $value_override_physical_attack_die$ }]
+		[[value_change_physical_attack_die]change_variable = { which = th_enemy_character_physical_attack_die						value = $value_change_physical_attack_die$ }]
+		[[override_physical_attack_die]set_variable = { which = th_enemy_character_physical_attack_die								which = $override_physical_attack_die$ }]
+		[[change_physical_attack_die]change_variable = { which = th_enemy_character_physical_attack_die								which = $change_physical_attack_die$ }]
+		[[value_override_physical_attack_die_num]set_variable = { which = th_enemy_character_physical_attack_die_num				value = $value_override_physical_attack_die_num$ }]
+		[[value_change_physical_attack_die_num]change_variable = { which = th_enemy_character_physical_attack_die_num				value = $value_change_physical_attack_die_num$ }]
+		[[override_physical_attack_die_num]set_variable = { which = th_enemy_character_physical_attack_die_num						which = $override_physical_attack_die_num$ }]
+		[[change_physical_attack_die_num]change_variable = { which = th_enemy_character_physical_attack_die_num						which = $change_physical_attack_die_num$ }]
+		[[value_override_physical_crit_roll_needed]set_variable = { which = th_enemy_character_physical_crit_roll_needed			value = $value_override_physical_crit_roll_needed$ }]
+		[[value_change_physical_crit_roll_needed]change_variable = { which = th_enemy_character_physical_crit_roll_needed			value = $value_change_physical_crit_roll_needed$ }]
+		[[override_physical_crit_roll_needed]set_variable = { which = th_enemy_character_physical_crit_roll_needed					which = $override_physical_crit_roll_needed$ }]
+		[[change_physical_crit_roll_needed]change_variable = { which = th_enemy_character_physical_crit_roll_needed					which = $change_physical_crit_roll_needed$ }]
+		[[value_override_physical_crit_roll_multiplier]set_variable = { which = th_enemy_character_physical_crit_roll_multiplier	value = $value_override_physical_crit_roll_multiplier$ }]
+		[[value_change_physical_crit_roll_multiplier]change_variable = { which = th_enemy_character_physical_crit_roll_multiplier	value = $value_change_physical_crit_roll_multiplier$ }]
+		[[override_physical_crit_roll_multiplier]set_variable = { which = th_enemy_character_physical_crit_roll_multiplier			which = $override_physical_crit_roll_multiplier$ }]
+		[[change_physical_crit_roll_multiplier]change_variable = { which = th_enemy_character_physical_crit_roll_multiplier			which = $change_physical_crit_roll_multiplier$ }]
+		[[value_override_magical_attack_bonus]set_variable = { which = th_enemy_character_magical_attack_bonus						value = $value_override_magical_attack_bonus$ }]
+		[[value_change_magical_attack_bonus]change_variable = { which = th_enemy_character_magical_attack_bonus						value = $value_change_magical_attack_bonus$ }]
+		[[override_magical_attack_bonus]set_variable = { which = th_enemy_character_magical_attack_bonus							which = $override_magical_attack_bonus$ }]
+		[[change_magical_attack_bonus]change_variable = { which = th_enemy_character_magical_attack_bonus							which = $change_magical_attack_bonus$ }]
+		[[value_override_magical_attack_die]set_variable = { which = th_enemy_character_magical_attack_die							value = $value_override_magical_attack_die$ }]
+		[[value_change_magical_attack_die]change_variable = { which = th_enemy_character_magical_attack_die							value = $value_change_magical_attack_die$ }]
+		[[override_magical_attack_die]set_variable = { which = th_enemy_character_magical_attack_die								which = $override_magical_attack_die$ }]
+		[[change_magical_attack_die]change_variable = { which = th_enemy_character_magical_attack_die								which = $change_magical_attack_die$ }]
+		[[value_override_magical_attack_die_num]set_variable = { which = th_enemy_character_magical_attack_die_num					value = $value_override_magical_attack_die_num$ }]
+		[[value_change_magical_attack_die_num]change_variable = { which = th_enemy_character_magical_attack_die_num					value = $value_change_magical_attack_die_num$ }]
+		[[override_magical_attack_die_num]set_variable = { which = th_enemy_character_magical_attack_die_num						which = $override_magical_attack_die_num$ }]
+		[[change_magical_attack_die_num]change_variable = { which = th_enemy_character_magical_attack_die_num						which = $change_magical_attack_die_num$ }]
+		[[value_override_magical_crit_roll_needed]set_variable = { which = th_enemy_character_magical_crit_roll_needed				value = $value_override_magical_crit_roll_needed$ }]
+		[[value_change_magical_crit_roll_needed]change_variable = { which = th_enemy_character_magical_crit_roll_needed				value = $value_change_magical_crit_roll_needed$ }]
+		[[override_magical_crit_roll_needed]set_variable = { which = th_enemy_character_magical_crit_roll_needed					which = $override_magical_crit_roll_needed$ }]
+		[[change_magical_crit_roll_needed]change_variable = { which = th_enemy_character_magical_crit_roll_needed					which = $change_magical_crit_roll_needed$ }]
+		[[value_override_magical_crit_roll_multiplier]set_variable = { which = th_enemy_character_magical_crit_roll_multiplier		value = $value_override_magical_crit_roll_multiplier$ }]
+		[[value_change_magical_crit_roll_multiplier]change_variable = { which = th_enemy_character_magical_crit_roll_multiplier		value = $value_change_magical_crit_roll_multiplier$ }]
+		[[override_magical_crit_roll_multiplier]set_variable = { which = th_enemy_character_magical_crit_roll_multiplier			which = $override_magical_crit_roll_multiplier$ }]
+		[[change_magical_crit_roll_multiplier]change_variable = { which = th_enemy_character_magical_crit_roll_multiplier			which = $change_magical_crit_roll_multiplier$ }]
+		[[value_override_psionic_attack_bonus]set_variable = { which = th_enemy_character_psionic_attack_bonus						value = $value_override_psionic_attack_bonus$ }]
+		[[value_change_psionic_attack_bonus]change_variable = { which = th_enemy_character_psionic_attack_bonus						value = $value_change_psionic_attack_bonus$ }]
+		[[override_psionic_attack_bonus]set_variable = { which = th_enemy_character_psionic_attack_bonus							which = $override_psionic_attack_bonus$ }]
+		[[change_psionic_attack_bonus]change_variable = { which = th_enemy_character_psionic_attack_bonus							which = $change_psionic_attack_bonus$ }]
+		[[value_override_psionic_attack_die]set_variable = { which = th_enemy_character_psionic_attack_die							value = $value_override_psionic_attack_die$ }]
+		[[value_change_psionic_attack_die]change_variable = { which = th_enemy_character_psionic_attack_die							value = $value_change_psionic_attack_die$ }]
+		[[override_psionic_attack_die]set_variable = { which = th_enemy_character_psionic_attack_die								which = $override_psionic_attack_die$ }]
+		[[change_psionic_attack_die]change_variable = { which = th_enemy_character_psionic_attack_die								which = $change_psionic_attack_die$ }]
+		[[value_override_psionic_attack_die_num]set_variable = { which = th_enemy_character_psionic_attack_die_num					value = $value_override_psionic_attack_die_num$ }]
+		[[value_change_psionic_attack_die_num]change_variable = { which = th_enemy_character_psionic_attack_die_num					value = $value_change_psionic_attack_die_num$ }]
+		[[override_psionic_attack_die_num]set_variable = { which = th_enemy_character_psionic_attack_die_num						which = $override_psionic_attack_die_num$ }]
+		[[change_psionic_attack_die_num]change_variable = { which = th_enemy_character_psionic_attack_die_num						which = $change_psionic_attack_die_num$ }]
+		[[value_override_psionic_crit_roll_needed]set_variable = { which = th_enemy_character_psionic_crit_roll_needed				value = $value_override_psionic_crit_roll_needed$ }]
+		[[value_change_psionic_crit_roll_needed]change_variable = { which = th_enemy_character_psionic_crit_roll_needed				value = $value_change_psionic_crit_roll_needed$ }]
+		[[override_psionic_crit_roll_needed]set_variable = { which = th_enemy_character_psionic_crit_roll_needed					which = $override_psionic_crit_roll_needed$ }]
+		[[change_psionic_crit_roll_needed]change_variable = { which = th_enemy_character_psionic_crit_roll_needed					which = $change_psionic_crit_roll_needed$ }]
+		[[value_override_psionic_crit_roll_multiplier]set_variable = { which = th_enemy_character_psionic_crit_roll_multiplier		value = $value_override_psionic_crit_roll_multiplier$ }]
+		[[value_change_psionic_crit_roll_multiplier]change_variable = { which = th_enemy_character_psionic_crit_roll_multiplier		value = $value_change_psionic_crit_roll_multiplier$ }]
+		[[override_psionic_crit_roll_multiplier]set_variable = { which = th_enemy_character_psionic_crit_roll_multiplier			which = $override_psionic_crit_roll_multiplier$ }]
+		[[change_psionic_crit_roll_multiplier]change_variable = { which = th_enemy_character_psionic_crit_roll_multiplier			which = $change_psionic_crit_roll_multiplier$ }]
+		[[value_override_physical_damage_modifier]set_variable = { which = th_enemy_character_physical_damage_modifier				value = $value_override_physical_damage_modifier$ }]
+		[[value_change_physical_damage_modifier]change_variable = { which = th_enemy_character_physical_damage_modifier				value = $value_change_physical_damage_modifier$ }]
+		[[override_physical_damage_modifier]set_variable = { which = th_enemy_character_physical_damage_modifier					which = $override_physical_damage_modifier$ }]
+		[[change_physical_damage_modifier]change_variable = { which = th_enemy_character_physical_damage_modifier					which = $change_physical_damage_modifier$ }]
+		[[value_override_magical_damage_modifier]set_variable = { which = th_enemy_character_magical_damage_modifier				value = $value_override_magical_damage_modifier$ }]
+		[[value_change_magical_damage_modifier]change_variable = { which = th_enemy_character_magical_damage_modifier				value = $value_change_magical_damage_modifier$ }]
+		[[override_magical_damage_modifier]set_variable = { which = th_enemy_character_magical_damage_modifier						which = $override_magical_damage_modifier$ }]
+		[[change_magical_damage_modifier]change_variable = { which = th_enemy_character_magical_damage_modifier						which = $change_magical_damage_modifier$ }]
+		[[value_override_psionic_damage_modifier]set_variable = { which = th_enemy_character_psionic_damage_modifier				value = $value_override_psionic_damage_modifier$ }]
+		[[value_change_psionic_damage_modifier]change_variable = { which = th_enemy_character_psionic_damage_modifier				value = $value_change_psionic_damage_modifier$ }]
+		[[override_psionic_damage_modifier]set_variable = { which = th_enemy_character_psionic_damage_modifier						which = $override_psionic_damage_modifier$ }]
+		[[change_psionic_damage_modifier]change_variable = { which = th_enemy_character_psionic_damage_modifier						which = $change_psionic_damage_modifier$ }]
+		[[value_override_bludgeoning_damage_modifier]set_variable = { which = th_enemy_character_bludgeoning_damage_modifier		value = $value_override_bludgeoning_damage_modifier$ }]
+		[[value_change_bludgeoning_damage_modifier]change_variable = { which = th_enemy_character_bludgeoning_damage_modifier		value = $value_change_bludgeoning_damage_modifier$ }]
+		[[override_bludgeoning_damage_modifier]set_variable = { which = th_enemy_character_bludgeoning_damage_modifier				which = $override_bludgeoning_damage_modifier$ }]
+		[[change_bludgeoning_damage_modifier]change_variable = { which = th_enemy_character_bludgeoning_damage_modifier				which = $change_bludgeoning_damage_modifier$ }]
+		[[value_override_piercing_damage_modifier]set_variable = { which = th_enemy_character_piercing_damage_modifier				value = $value_override_piercing_damage_modifier$ }]
+		[[value_change_piercing_damage_modifier]change_variable = { which = th_enemy_character_piercing_damage_modifier				value = $value_change_piercing_damage_modifier$ }]
+		[[override_piercing_damage_modifier]set_variable = { which = th_enemy_character_piercing_damage_modifier					which = $override_piercing_damage_modifier$ }]
+		[[change_piercing_damage_modifier]change_variable = { which = th_enemy_character_piercing_damage_modifier					which = $change_piercing_damage_modifier$ }]
+		[[value_override_slashing_damage_modifier]set_variable = { which = th_enemy_character_slashing_damage_modifier				value = $value_override_slashing_damage_modifier$ }]
+		[[value_change_slashing_damage_modifier]change_variable = { which = th_enemy_character_slashing_damage_modifier				value = $value_change_slashing_damage_modifier$ }]
+		[[override_slashing_damage_modifier]set_variable = { which = th_enemy_character_slashing_damage_modifier					which = $override_slashing_damage_modifier$ }]
+		[[change_slashing_damage_modifier]change_variable = { which = th_enemy_character_slashing_damage_modifier					which = $change_slashing_damage_modifier$ }]
+		[[value_override_fire_damage_modifier]set_variable = { which = th_enemy_character_fire_damage_modifier						value = $value_override_fire_damage_modifier$ }]
+		[[value_change_fire_damage_modifier]change_variable = { which = th_enemy_character_fire_damage_modifier						value = $value_change_fire_damage_modifier$ }]
+		[[override_fire_damage_modifier]set_variable = { which = th_enemy_character_fire_damage_modifier							which = $override_fire_damage_modifier$ }]
+		[[change_fire_damage_modifier]change_variable = { which = th_enemy_character_fire_damage_modifier							which = $change_fire_damage_modifier$ }]
+		[[value_override_frost_damage_modifier]set_variable = { which = th_enemy_character_frost_damage_modifier					value = $value_override_frost_damage_modifier$ }]
+		[[value_change_frost_damage_modifier]change_variable = { which = th_enemy_character_frost_damage_modifier					value = $value_change_frost_damage_modifier$ }]
+		[[override_frost_damage_modifier]set_variable = { which = th_enemy_character_frost_damage_modifier							which = $override_frost_damage_modifier$ }]
+		[[change_frost_damage_modifier]change_variable = { which = th_enemy_character_frost_damage_modifier							which = $change_frost_damage_modifier$ }]
+		[[value_override_earth_damage_modifier]set_variable = { which = th_enemy_character_earth_damage_modifier					value = $value_override_earth_damage_modifier$ }]
+		[[value_change_earth_damage_modifier]change_variable = { which = th_enemy_character_earth_damage_modifier					value = $value_change_earth_damage_modifier$ }]
+		[[override_earth_damage_modifier]set_variable = { which = th_enemy_character_earth_damage_modifier							which = $override_earth_damage_modifier$ }]
+		[[change_earth_damage_modifier]change_variable = { which = th_enemy_character_earth_damage_modifier							which = $change_earth_damage_modifier$ }]
+		[[value_override_lightning_damage_modifier]set_variable = { which = th_enemy_character_lightning_damage_modifier			value = $value_override_lightning_damage_modifier$ }]
+		[[value_change_lightning_damage_modifier]change_variable = { which = th_enemy_character_lightning_damage_modifier			value = $value_change_lightning_damage_modifier$ }]
+		[[override_lightning_damage_modifier]set_variable = { which = th_enemy_character_lightning_damage_modifier					which = $override_lightning_damage_modifier$ }]
+		[[change_lightning_damage_modifier]change_variable = { which = th_enemy_character_lightning_damage_modifier					which = $change_lightning_damage_modifier$ }]
+		[[value_override_nature_damage_modifier]set_variable = { which = th_enemy_character_nature_damage_modifier					value = $value_override_nature_damage_modifier$ }]
+		[[value_change_nature_damage_modifier]change_variable = { which = th_enemy_character_nature_damage_modifier					value = $value_change_nature_damage_modifier$ }]
+		[[override_nature_damage_modifier]set_variable = { which = th_enemy_character_nature_damage_modifier						which = $override_nature_damage_modifier$ }]
+		[[change_nature_damage_modifier]change_variable = { which = th_enemy_character_nature_damage_modifier						which = $change_nature_damage_modifier$ }]
+		[[value_override_holy_damage_modifier]set_variable = { which = th_enemy_character_holy_damage_modifier						value = $value_override_holy_damage_modifier$ }]
+		[[value_change_holy_damage_modifier]change_variable = { which = th_enemy_character_holy_damage_modifier						value = $value_change_holy_damage_modifier$ }]
+		[[override_holy_damage_modifier]set_variable = { which = th_enemy_character_holy_damage_modifier							which = $override_holy_damage_modifier$ }]
+		[[change_holy_damage_modifier]change_variable = { which = th_enemy_character_holy_damage_modifier							which = $change_holy_damage_modifier$ }]
+		[[value_override_shadow_damage_modifier]set_variable = { which = th_enemy_character_shadow_damage_modifier					value = $value_override_shadow_damage_modifier$ }]
+		[[value_change_shadow_damage_modifier]change_variable = { which = th_enemy_character_shadow_damage_modifier					value = $value_change_shadow_damage_modifier$ }]
+		[[override_shadow_damage_modifier]set_variable = { which = th_enemy_character_shadow_damage_modifier						which = $override_shadow_damage_modifier$ }]
+		[[change_shadow_damage_modifier]change_variable = { which = th_enemy_character_shadow_damage_modifier						which = $change_shadow_damage_modifier$ }]
+		[[value_override_necrotic_damage_modifier]set_variable = { which = th_enemy_character_necrotic_damage_modifier				value = $value_override_necrotic_damage_modifier$ }]
+		[[value_change_necrotic_damage_modifier]change_variable = { which = th_enemy_character_necrotic_damage_modifier				value = $value_change_necrotic_damage_modifier$ }]
+		[[override_necrotic_damage_modifier]set_variable = { which = th_enemy_character_necrotic_damage_modifier					which = $override_necrotic_damage_modifier$ }]
+		[[change_necrotic_damage_modifier]change_variable = { which = th_enemy_character_necrotic_damage_modifier					which = $change_necrotic_damage_modifier$ }]
+		[[value_override_arcane_damage_modifier]set_variable = { which = th_enemy_character_arcane_damage_modifier					value = $value_override_arcane_damage_modifier$ }]
+		[[value_change_arcane_damage_modifier]change_variable = { which = th_enemy_character_arcane_damage_modifier					value = $value_change_arcane_damage_modifier$ }]
+		[[override_arcane_damage_modifier]set_variable = { which = th_enemy_character_arcane_damage_modifier						which = $override_arcane_damage_modifier$ }]
+		[[change_arcane_damage_modifier]change_variable = { which = th_enemy_character_arcane_damage_modifier						which = $change_arcane_damage_modifier$ }]
+		[[value_override_infernal_damage_modifier]set_variable = { which = th_enemy_character_infernal_damage_modifier				value = $value_override_infernal_damage_modifier$ }]
+		[[value_change_infernal_damage_modifier]change_variable = { which = th_enemy_character_infernal_damage_modifier				value = $value_change_infernal_damage_modifier$ }]
+		[[override_infernal_damage_modifier]set_variable = { which = th_enemy_character_infernal_damage_modifier					which = $override_infernal_damage_modifier$ }]
+		[[change_infernal_damage_modifier]change_variable = { which = th_enemy_character_infernal_damage_modifier					which = $change_infernal_damage_modifier$ }]
+		[[value_override_physical_resistance]set_variable = { which = th_enemy_character_physical_resistance						value = $value_override_physical_resistance$ }]
+		[[value_change_physical_resistance]change_variable = { which = th_enemy_character_physical_resistance						value = $value_change_physical_resistance$ }]
+		[[override_physical_resistance]set_variable = { which = th_enemy_character_physical_resistance								which = $override_physical_resistance$ }]
+		[[change_physical_resistance]change_variable = { which = th_enemy_character_physical_resistance								which = $change_physical_resistance$ }]
+		[[value_override_magical_resistance]set_variable = { which = th_enemy_character_magical_resistance							value = $value_override_magical_resistance$ }]
+		[[value_change_magical_resistance]change_variable = { which = th_enemy_character_magical_resistance							value = $value_change_magical_resistance$ }]
+		[[override_magical_resistance]set_variable = { which = th_enemy_character_magical_resistance								which = $override_magical_resistance$ }]
+		[[change_magical_resistance]change_variable = { which = th_enemy_character_magical_resistance								which = $change_magical_resistance$ }]
+		[[value_override_psionic_resistance]set_variable = { which = th_enemy_character_psionic_resistance							value = $value_override_psionic_resistance$ }]
+		[[value_change_psionic_resistance]change_variable = { which = th_enemy_character_psionic_resistance							value = $value_change_psionic_resistance$ }]
+		[[override_psionic_resistance]set_variable = { which = th_enemy_character_psionic_resistance								which = $override_psionic_resistance$ }]
+		[[change_psionic_resistance]change_variable = { which = th_enemy_character_psionic_resistance								which = $change_psionic_resistance$ }]
+		[[value_override_bludgeoning_resistance]set_variable = { which = th_enemy_character_bludgeoning_resistance					value = $value_override_bludgeoning_resistance$ }]
+		[[value_change_bludgeoning_resistance]change_variable = { which = th_enemy_character_bludgeoning_resistance					value = $value_change_bludgeoning_resistance$ }]
+		[[override_bludgeoning_resistance]set_variable = { which = th_enemy_character_bludgeoning_resistance						which = $override_bludgeoning_resistance$ }]
+		[[change_bludgeoning_resistance]change_variable = { which = th_enemy_character_bludgeoning_resistance						which = $change_bludgeoning_resistance$ }]
+		[[value_override_piercing_resistance]set_variable = { which = th_enemy_character_piercing_resistance						value = $value_override_piercing_resistance$ }]
+		[[value_change_piercing_resistance]change_variable = { which = th_enemy_character_piercing_resistance						value = $value_change_piercing_resistance$ }]
+		[[override_piercing_resistance]set_variable = { which = th_enemy_character_piercing_resistance								which = $override_piercing_resistance$ }]
+		[[change_piercing_resistance]change_variable = { which = th_enemy_character_piercing_resistance								which = $change_piercing_resistance$ }]
+		[[value_override_slashing_resistance]set_variable = { which = th_enemy_character_slashing_resistance						value = $value_override_slashing_resistance$ }]
+		[[value_change_slashing_resistance]change_variable = { which = th_enemy_character_slashing_resistance						value = $value_change_slashing_resistance$ }]
+		[[override_slashing_resistance]set_variable = { which = th_enemy_character_slashing_resistance								which = $override_slashing_resistance$ }]
+		[[change_slashing_resistance]change_variable = { which = th_enemy_character_slashing_resistance								which = $change_slashing_resistance$ }]
+		[[value_override_fire_resistance]set_variable = { which = th_enemy_character_fire_resistance								value = $value_override_fire_resistance$ }]
+		[[value_change_fire_resistance]change_variable = { which = th_enemy_character_fire_resistance								value = $value_change_fire_resistance$ }]
+		[[override_fire_resistance]set_variable = { which = th_enemy_character_fire_resistance										which = $override_fire_resistance$ }]
+		[[change_fire_resistance]change_variable = { which = th_enemy_character_fire_resistance										which = $change_fire_resistance$ }]
+		[[value_override_frost_resistance]set_variable = { which = th_enemy_character_frost_resistance								value = $value_override_frost_resistance$ }]
+		[[value_change_frost_resistance]change_variable = { which = th_enemy_character_frost_resistance								value = $value_change_frost_resistance$ }]
+		[[override_frost_resistance]set_variable = { which = th_enemy_character_frost_resistance									which = $override_frost_resistance$ }]
+		[[change_frost_resistance]change_variable = { which = th_enemy_character_frost_resistance									which = $change_frost_resistance$ }]
+		[[value_override_earth_resistance]set_variable = { which = th_enemy_character_earth_resistance								value = $value_override_earth_resistance$ }]
+		[[value_change_earth_resistance]change_variable = { which = th_enemy_character_earth_resistance								value = $value_change_earth_resistance$ }]
+		[[override_earth_resistance]set_variable = { which = th_enemy_character_earth_resistance									which = $override_earth_resistance$ }]
+		[[change_earth_resistance]change_variable = { which = th_enemy_character_earth_resistance									which = $change_earth_resistance$ }]
+		[[value_override_lightning_resistance]set_variable = { which = th_enemy_character_lightning_resistance						value = $value_override_lightning_resistance$ }]
+		[[value_change_lightning_resistance]change_variable = { which = th_enemy_character_lightning_resistance						value = $value_change_lightning_resistance$ }]
+		[[override_lightning_resistance]set_variable = { which = th_enemy_character_lightning_resistance							which = $override_lightning_resistance$ }]
+		[[change_lightning_resistance]change_variable = { which = th_enemy_character_lightning_resistance							which = $change_lightning_resistance$ }]
+		[[value_override_nature_resistance]set_variable = { which = th_enemy_character_nature_resistance							value = $value_override_nature_resistance$ }]
+		[[value_change_nature_resistance]change_variable = { which = th_enemy_character_nature_resistance							value = $value_change_nature_resistance$ }]
+		[[override_nature_resistance]set_variable = { which = th_enemy_character_nature_resistance									which = $override_nature_resistance$ }]
+		[[change_nature_resistance]change_variable = { which = th_enemy_character_nature_resistance									which = $change_nature_resistance$ }]
+		[[value_override_holy_resistance]set_variable = { which = th_enemy_character_holy_resistance								value = $value_override_holy_resistance$ }]
+		[[value_change_holy_resistance]change_variable = { which = th_enemy_character_holy_resistance								value = $value_change_holy_resistance$ }]
+		[[override_holy_resistance]set_variable = { which = th_enemy_character_holy_resistance										which = $override_holy_resistance$ }]
+		[[change_holy_resistance]change_variable = { which = th_enemy_character_holy_resistance										which = $change_holy_resistance$ }]
+		[[value_override_shadow_resistance]set_variable = { which = th_enemy_character_shadow_resistance							value = $value_override_shadow_resistance$ }]
+		[[value_change_shadow_resistance]change_variable = { which = th_enemy_character_shadow_resistance							value = $value_change_shadow_resistance$ }]
+		[[override_shadow_resistance]set_variable = { which = th_enemy_character_shadow_resistance									which = $override_shadow_resistance$ }]
+		[[change_shadow_resistance]change_variable = { which = th_enemy_character_shadow_resistance									which = $change_shadow_resistance$ }]
+		[[value_override_necrotic_resistance]set_variable = { which = th_enemy_character_necrotic_resistance						value = $value_override_necrotic_resistance$ }]
+		[[value_change_necrotic_resistance]change_variable = { which = th_enemy_character_necrotic_resistance						value = $value_change_necrotic_resistance$ }]
+		[[override_necrotic_resistance]set_variable = { which = th_enemy_character_necrotic_resistance								which = $override_necrotic_resistance$ }]
+		[[change_necrotic_resistance]change_variable = { which = th_enemy_character_necrotic_resistance								which = $change_necrotic_resistance$ }]
+		[[value_override_arcane_resistance]set_variable = { which = th_enemy_character_arcane_resistance							value = $value_override_arcane_resistance$ }]
+		[[value_change_arcane_resistance]change_variable = { which = th_enemy_character_arcane_resistance							value = $value_change_arcane_resistance$ }]
+		[[override_arcane_resistance]set_variable = { which = th_enemy_character_arcane_resistance									which = $override_arcane_resistance$ }]
+		[[change_arcane_resistance]change_variable = { which = th_enemy_character_arcane_resistance									which = $change_arcane_resistance$ }]
+		[[value_override_infernal_resistance]set_variable = { which = th_enemy_character_infernal_resistance						value = $value_override_infernal_resistance$ }]
+		[[value_change_infernal_resistance]change_variable = { which = th_enemy_character_infernal_resistance						value = $value_change_infernal_resistance$ }]
+		[[override_infernal_resistance]set_variable = { which = th_enemy_character_infernal_resistance								which = $override_infernal_resistance$ }]
+		[[change_infernal_resistance]change_variable = { which = th_enemy_character_infernal_resistance								which = $change_infernal_resistance$ }]
+		[[value_override_healing_die]set_variable = { which = th_enemy_character_healing_die									value = $value_override_healing_die$ }]
+		[[value_change_healing_die]change_variable = { which = th_enemy_character_healing_die									value = $value_change_healing_die$ }]
+		[[override_healing_die]set_variable = { which = th_enemy_character_healing_die											which = $override_healing_die$ }]
+		[[change_healing_die]change_variable = { which = th_enemy_character_healing_die											which = $change_healing_die$ }]
+		[[value_override_healing_die_num]set_variable = { which = th_enemy_character_healing_die_num							value = $value_override_healing_die_num$ }]
+		[[value_change_healing_die_num]change_variable = { which = th_enemy_character_healing_die_num							value = $value_change_healing_die_num$ }]
+		[[override_healing_die_num]set_variable = { which = th_enemy_character_healing_die_num									which = $override_healing_die_num$ }]
+		[[change_healing_die_num]change_variable = { which = th_enemy_character_healing_die_num									which = $change_healing_die_num$ }]
+		[[value_override_healing_crit_roll_needed]set_variable = { which = th_enemy_character_healing_crit_roll_needed			value = $value_override_healing_crit_roll_needed$ }]
+		[[value_change_healing_crit_roll_needed]change_variable = { which = th_enemy_character_healing_crit_roll_needed			value = $value_change_healing_crit_roll_needed$ }]
+		[[override_healing_crit_roll_needed]set_variable = { which = th_enemy_character_healing_crit_roll_needed				which = $override_healing_crit_roll_needed$ }]
+		[[change_healing_crit_roll_needed]change_variable = { which = th_enemy_character_healing_crit_roll_needed				which = $change_healing_crit_roll_needed$ }]
+		[[value_override_healing_received_bonus]set_variable = { which = th_enemy_character_healing_received_bonus				value = $value_override_healing_received_bonus$ }]
+		[[value_change_healing_received_bonus]change_variable = { which = th_enemy_character_healing_received_bonus				value = $value_change_healing_received_bonus$ }]
+		[[override_healing_received_bonus]set_variable = { which = th_enemy_character_healing_received_bonus					which = $override_healing_received_bonus$ }]
+		[[change_healing_received_bonus]change_variable = { which = th_enemy_character_healing_received_bonus					which = $change_healing_received_bonus$ }]
+		[[value_override_healing_received_modifier]set_variable = { which = th_enemy_character_healing_received_modifier		value = $value_override_healing_received_modifier$ }]
+		[[value_change_healing_received_modifier]change_variable = { which = th_enemy_character_healing_received_modifier		value = $value_change_healing_received_modifier$ }]
+		[[override_healing_received_modifier]set_variable = { which = th_enemy_character_healing_received_modifier				which = $override_healing_received_modifier$ }]
+		[[change_healing_received_modifier]change_variable = { which = th_enemy_character_healing_received_modifier				which = $change_healing_received_modifier$ }]
+		[[value_override_saving_throw_die]set_variable = { which = th_enemy_character_saving_throw_die								value = $value_override_saving_throw_die$ }]
+		[[value_change_saving_throw_die]change_variable = { which = th_enemy_character_saving_throw_die								value = $value_change_saving_throw_die$ }]
+		[[override_saving_throw_die]set_variable = { which = th_enemy_character_saving_throw_die									which = $override_saving_throw_die$ }]
+		[[change_saving_throw_die]change_variable = { which = th_enemy_character_saving_throw_die									which = $change_saving_throw_die$ }]
+
 		[[value_override_armor_class]set_variable = { which = th_enemy_character_armor_class						value = $value_override_armor_class$ }]
 		[[value_change_armor_class]change_variable = { which = th_enemy_character_armor_class						value = $value_change_armor_class$ }]
 		[[override_armor_class]set_variable = { which = th_enemy_character_armor_class								which = $override_armor_class$ }]
@@ -1788,7 +2278,6 @@ th_create_danmaku_duel_against_unlanded_character = {
 		}
 		th_gui_update_danmaku_bar_enemy_character = { type = health }
 		th_gui_update_danmaku_bar_enemy_character = { type = mana }
-		[[class]th_clear_enemy_character_class = yes th_set_enemy_character_danmaku_class = { class = $class$ }]
 		[[home]set_country_flag = th_unlanded_character_home_$home$]
 		[[spell_card]set_country_flag = th_unlanded_character_spell_card_$spell_card$]
 		[[trinket]set_country_flag = th_unlanded_character_trinket_$trinket$]
