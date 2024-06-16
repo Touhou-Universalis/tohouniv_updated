@@ -66,7 +66,11 @@ void CDanmakuDuelManager::GenerateEffectFile()
 			outputLine += "\nset_variable = { which = th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_attack_die_bonus_per_roll value = 0 }";
 			outputLine += "\nset_variable = { which = th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_attack_die_flat_bonus value = 0 }";
 			outputLine += "\nset_variable = { which = th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_resistance_reduction value = 0 }";
+			outputLine += "\nset_variable = { which = th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_type_resistance_reduction value = 0 }";
+			outputLine += "\nset_variable = { which = th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_school_resistance_reduction value = 0 }";
 			outputLine += "\nset_variable = { which = th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_critical_damage_bonus value = 0 }";
+			outputLine += "\nset_variable = { which = th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_damage_type_multiplicator value = 0 }";
+			outputLine += "\nset_variable = { which = th_danmaku_duel_of_instance_" + std::to_string(i) + "_action_" + std::to_string(a) + "_damage_school_multiplicator value = 0 }";
 		}
 	}
 	std::ofstream outfile(_effectOutputFolder + "\\" + _effectFile);
