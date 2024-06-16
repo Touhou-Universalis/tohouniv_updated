@@ -15,7 +15,7 @@ int main()
 	{
 		std::string effectOutputFolder = modPath + "\\output\\danmaku";
 		std::string triggerOutputFolder = modPath + "\\output\\danmaku";
-		std::string customLocalizationOutputFolder = modPath + "\\output";
+		std::string customLocalizationOutputFolder = modPath + "\\output\\danmaku";
 		std::string localizationOutputFolder = modPath + "\\output\\danmaku";
 		std::vector<std::string> combatVerbs = { "uses", "performs", "casts", "enchants", "curses", "strikes", "shoots", "attacks" };
 		std::vector<std::string> combatArticles = { "undefined", "defined" };
