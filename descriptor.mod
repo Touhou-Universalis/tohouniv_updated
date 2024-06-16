@@ -7,5 +7,5 @@ tags={
 	"Expansion"
 }
 name="Touhou Universalis Updated"
-supported_version="1.37.*"
+supported_version="v1.37.*"
 remote_file_id="1537902566"
