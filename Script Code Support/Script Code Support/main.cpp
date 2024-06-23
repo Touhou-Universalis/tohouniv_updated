@@ -11,7 +11,7 @@ int main()
 	Set the if statement of whatever function you need to "true". Also make sure to have the mod path correctly set.
 	Might make a proper application one day so you don't have to change parameters within the code itself.
 	*/
-	if (false)
+	if (true)
 	{
 		std::string effectOutputFolder = modPath + "\\output\\danmaku";
 		std::string triggerOutputFolder = modPath + "\\output\\danmaku";
@@ -25,8 +25,8 @@ int main()
 		std::vector<std::string> combatAbilityEndeffect = { "damage", "health", "mana", "action_points" };
 
 		CDanmakuDuelManager danmakuDuelManager;
-		danmakuDuelManager.SetupInstances(30);
-		danmakuDuelManager.SetupActions(15);
+		danmakuDuelManager.SetupInstances(15);
+		danmakuDuelManager.SetupActions(10);
 
 		danmakuDuelManager.SetupCombatVerbs(combatVerbs);
 		danmakuDuelManager.SetupCombatArticles(combatArticles);
@@ -44,7 +44,7 @@ int main()
 		danmakuDuelManager.GenerateEffectFile();
 		danmakuDuelManager.GenerateLocalizationFile();
 	}
-	if (true)
+	if (false)
 	{
 		std::string localizationInputFolder = modPath + "\\localisation";
 		std::string localizationOutputFolder = modPath + "\\output\\localisation";
