@@ -1,3 +1,36 @@
+#Database-Variable interpreter
+# Because EU4 has apparently a limit of max 32k flags and the Danmaku system managed to completely crack this limit,
+# the combat system is no longer based on flags but on variables which are set on 2 of the participants (referred via global_event_targets).
+# As such, information is now saved via variables and their value instead of flags.
+# All globally relevant variables (such as item and abiltiy IDs) are saved on 1 (Stockholm province).
+# Variables which represnet an action are saved in the scope of the one who does it in the following format:
+#    event_target:th_danmaku_duelist_of_id_$actor$_of_instance_$instance$ = { set_variable = { name = th_danmaku_duel_action_1 value = $ability$ } }
+# Example case:
+#	actor = SCR, instance = 2 (it is the 2nd logged combat encounter), action = 1 is always the case because with every action an actor does, 
+#   all previous actions get moved to the next action which then get completely overriden if they reach 15; ability = 1 (translated as "attack" here)
+# This section has no other purpose but to interpret these integers in what they are supposed to represent so it is easier to maintain.
+# Ability IDs:
+#	1 = attack
+# Item IDs
+#	1 = iron_sword
+# Item Rarities:
+#	0 = Trash
+#	1 = Common
+#	2 = Uncommon
+#	3 = Rare
+#	4 = Epic
+#	5 = Legendary
+#Hardcoded attributes for different objects as those are no longer saved via variables:
+# Abilities:
+#	Attack (1)
+#		AP cost: -30
+#
+# Items:
+#	Weapons:
+#		Iron Sword (1)
+#			Gold Cost: 100
+#			Rarity: Common (1)
+#			<insert other stuff>
 th_initialize_danmaku_definitions = {
 	if = {
 		limit = { NOT = { has_global_flag = th_initialized_danmaku_database } }
@@ -44,9 +77,6 @@ th_initialize_danmaku_definitions = {
 			set_variable = { which = th_danmaku_sound_effects 						value = 1 }		#Enable or disable sound effects. 1 = enabed, 0 = disabled
 	
 			#Setup related stuff:
-			# Default class
-			th_set_default_danmaku_class = { class = warrior }
-			th_set_default_danmaku_type = { type = human }
 			# Basic Stats
 			set_variable = { which = th_danmaku_default_max_health					value = 100 }
 			set_variable = { which = th_danmaku_default_max_mana					value = 20 }
@@ -149,7 +179,7 @@ th_initialize_danmaku_definitions = {
 			set_variable = { which = th_danmaku_default_pawning_multiplier		value = 0.3 }	#How much of the original price will you receive when you sell the weapon
 		}
 		th_initialize_ability_data_base = yes
-		th_initialize_spellcard_data_base = yes
+		th_initialize_weapon_data_base = yes
 	}
 	if = {
 		limit = {
@@ -179,17 +209,34 @@ th_initialize_ability_data_base = {
 	}
 }
 
+th_set_weapon_to_damage_type_physical = { set_variable = { which = th_weapon_$weapon$_damage_type value = 0 } }
+th_set_weapon_to_damage_type_magical = { set_variable = { which = th_weapon_$weapon$_damage_type value = 1 } }
+th_set_weapon_to_damage_type_psionic = { set_variable = { which = th_weapon_$weapon$_damage_type value = 2 } }
+th_set_weapon_to_damage_type = {
+	th_set_weapon_to_damage_type_$type$ = { weapon = $weapon$ }
+}
+
+th_set_weapon_to_damage_school_bludgeoning = {	set_variable = { which = th_weapon_$weapon$_damage_school value = 0 }	}
+th_set_weapon_to_damage_school_piercing = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 1 }	}
+th_set_weapon_to_damage_school_slashing = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 2 }	}
+th_set_weapon_to_damage_school_fire = {			set_variable = { which = th_weapon_$weapon$_damage_school value = 3 }	}
+th_set_weapon_to_damage_school_frost = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 4 }	}
+th_set_weapon_to_damage_school_earth = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 5 }	}
+th_set_weapon_to_damage_school_lightning = {	set_variable = { which = th_weapon_$weapon$_damage_school value = 6 }	}
+th_set_weapon_to_damage_school_nature = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 7 }	}
+th_set_weapon_to_damage_school_holy = {			set_variable = { which = th_weapon_$weapon$_damage_school value = 8 }	}
+th_set_weapon_to_damage_school_shadow = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 9 }	}
+th_set_weapon_to_damage_school_necrotic = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 10 }	}
+th_set_weapon_to_damage_school_arcane = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 11 }	}
+th_set_weapon_to_damage_school_infernal = {		set_variable = { which = th_weapon_$weapon$_damage_school value = 12 }	}
+th_set_weapon_to_damage_school = {
+	th_set_weapon_to_damage_school_$school$ = { weapon = $weapon$ }
+}
+
 #Spellcard Data Base
 th_initialize_spellcard_data_base = {
 	hidden_effect = {
 		1 = {
-			#Iron Sword
-			set_variable = { which = th_weapon_iron_sword_gold_cost 		value = 100 }
-			set_variable = { which = th_weapon_iron_sword_gold_sale 		which = th_weapon_iron_sword_gold_cost }
-			multiply_variable = { which = th_weapon_iron_sword_gold_sale 	which = th_danmaku_default_pawning_multiplier }
-			set_province_flag = th_weapon_iron_sword_damage_type_physical
-			set_province_flag = th_weapon_iron_sword_damage_school_slashing
-			set_variable = { which = th_weapon_iron_sword_default_rarity 	value = 1 }
 		}
 	}
 }
@@ -207,7 +254,13 @@ th_initialize_trinket_data_base = {
 th_initialize_weapon_data_base = {
 	hidden_effect = {
 		1 = {
-
+			#Iron Sword
+			set_variable = { which = th_weapon_iron_sword_gold_cost 		value = 100 }
+			set_variable = { which = th_weapon_iron_sword_gold_sale 		which = th_weapon_iron_sword_gold_cost }
+			multiply_variable = { which = th_weapon_iron_sword_gold_sale 	which = th_danmaku_default_pawning_multiplier }
+			th_set_weapon_to_damage_type = { weapon = iron_sword 			type = physical }
+			th_set_weapon_to_damage_school = { weapon = iron_sword 			school = slashing }
+			set_variable = { which = th_weapon_iron_sword_default_rarity 	value = 1 }
 		}
 	}
 }
@@ -217,108 +270,74 @@ th_initialize_weapon_data_base = {
 #human, fairy, vampire, god, demigod, immortal, undead, half_phantom, half_youkai, 
 #youkai, yama, hermit, lunarian, oni, demon, devil, tengu, kappa, tsukumogami, 
 #yamanba, nue, satori, angel, shinigami, inchling, doll, robot, celestial
-th_set_danmaku_creature_type_human = {}
-th_set_danmaku_creature_type_fairy = {}
-th_set_danmaku_creature_type_vampire = {}
-th_set_danmaku_creature_type_god = {}
-th_set_danmaku_creature_type_demigod = {}
-th_set_danmaku_creature_type_immortal = {}
-th_set_danmaku_creature_type_undead = {}
-th_set_danmaku_creature_type_half_phantom = {}
-th_set_danmaku_creature_type_half_youkai = {}
-th_set_danmaku_creature_type_youkai = {}
-th_set_danmaku_creature_type_yama = {}
-th_set_danmaku_creature_type_hermit = {}
-th_set_danmaku_creature_type_lunarian = {}
-th_set_danmaku_creature_type_oni = {}
-th_set_danmaku_creature_type_demon = {}
-th_set_danmaku_creature_type_devil = {}
-th_set_danmaku_creature_type_tengu = {}
-th_set_danmaku_creature_type_kappa = {}
-th_set_danmaku_creature_type_tsukumogami = {}
-th_set_danmaku_creature_type_yamanba = {}
-th_set_danmaku_creature_type_nue = {}
-th_set_danmaku_creature_type_satori = {}
-th_set_danmaku_creature_type_angel = {}
-th_set_danmaku_creature_type_shinigami = {}
-th_set_danmaku_creature_type_inchling = {}
-th_set_danmaku_creature_type_doll = {}
-th_set_danmaku_creature_type_robot = {}
-th_set_danmaku_creature_type_celestial = {}
+th_set_danmaku_creature_type_human = {			set_variable = { which = th_danmaku_creature_type value = 1 } }
+th_set_danmaku_creature_type_fairy = {			set_variable = { which = th_danmaku_creature_type value = 2 } }
+th_set_danmaku_creature_type_vampire = {		set_variable = { which = th_danmaku_creature_type value = 3 } }
+th_set_danmaku_creature_type_god = {			set_variable = { which = th_danmaku_creature_type value = 4 } }
+th_set_danmaku_creature_type_demigod = {		set_variable = { which = th_danmaku_creature_type value = 5 } }
+th_set_danmaku_creature_type_immortal = {		set_variable = { which = th_danmaku_creature_type value = 6 } }
+th_set_danmaku_creature_type_undead = {			set_variable = { which = th_danmaku_creature_type value = 7 } }
+th_set_danmaku_creature_type_half_phantom = {	set_variable = { which = th_danmaku_creature_type value = 8 } }
+th_set_danmaku_creature_type_half_youkai = {	set_variable = { which = th_danmaku_creature_type value = 9 } }
+th_set_danmaku_creature_type_youkai = {			set_variable = { which = th_danmaku_creature_type value = 10 } }
+th_set_danmaku_creature_type_yama = {			set_variable = { which = th_danmaku_creature_type value = 11 } }
+th_set_danmaku_creature_type_hermit = {			set_variable = { which = th_danmaku_creature_type value = 12 } }
+th_set_danmaku_creature_type_lunarian = {		set_variable = { which = th_danmaku_creature_type value = 13 } }
+th_set_danmaku_creature_type_oni = {			set_variable = { which = th_danmaku_creature_type value = 14 } }
+th_set_danmaku_creature_type_demon = {			set_variable = { which = th_danmaku_creature_type value = 15 } }
+th_set_danmaku_creature_type_devil = {			set_variable = { which = th_danmaku_creature_type value = 16 } }
+th_set_danmaku_creature_type_tengu = {			set_variable = { which = th_danmaku_creature_type value = 17 } }
+th_set_danmaku_creature_type_kappa = {			set_variable = { which = th_danmaku_creature_type value = 18 } }
+th_set_danmaku_creature_type_tsukumogami = {	set_variable = { which = th_danmaku_creature_type value = 19 } }
+th_set_danmaku_creature_type_yamanba = {		set_variable = { which = th_danmaku_creature_type value = 20 } }
+th_set_danmaku_creature_type_nue = {			set_variable = { which = th_danmaku_creature_type value = 21 } }
+th_set_danmaku_creature_type_satori = {			set_variable = { which = th_danmaku_creature_type value = 22 } }
+th_set_danmaku_creature_type_angel = {			set_variable = { which = th_danmaku_creature_type value = 23 } }
+th_set_danmaku_creature_type_shinigami = {		set_variable = { which = th_danmaku_creature_type value = 24 } }
+th_set_danmaku_creature_type_inchling = {		set_variable = { which = th_danmaku_creature_type value = 25 } }
+th_set_danmaku_creature_type_doll = {			set_variable = { which = th_danmaku_creature_type value = 26 } }
+th_set_danmaku_creature_type_robot = {			set_variable = { which = th_danmaku_creature_type value = 27 } }
+th_set_danmaku_creature_type_celestial = {		set_variable = { which = th_danmaku_creature_type value = 28 } }
 th_set_danmaku_creature_type = {
 	hidden_effect = {
-		set_ruler_flag = th_danmaku_creature_type_$type$
+		th_set_danmaku_creature_type_$type$ = yes
 	}
-	th_set_danmaku_creature_type_$type$ = yes
 }
 
 th_set_default_danmaku_creature_type = {
-	trigger_switch = {
-		on_trigger = has_global_flag
-		th_danmaku_creature_type_default_human = { 			th_set_danmaku_creature_type = { type = human } }
-		th_danmaku_creature_type_default_fairy = { 			th_set_danmaku_creature_type = { type = fairy } }
-		th_danmaku_creature_type_default_vampire = { 		th_set_danmaku_creature_type = { type = vampire } }
-		th_danmaku_creature_type_default_god = { 			th_set_danmaku_creature_type = { type = god } }
-		th_danmaku_creature_type_default_demigod = { 		th_set_danmaku_creature_type = { type = demigod } }
-		th_danmaku_creature_type_default_immortal = { 		th_set_danmaku_creature_type = { type = immortal } }
-		th_danmaku_creature_type_default_undead = { 		th_set_danmaku_creature_type = { type = undead } }
-		th_danmaku_creature_type_default_half_phantom = { 	th_set_danmaku_creature_type = { type = half_phantom } }
-		th_danmaku_creature_type_default_half_youkai = { 	th_set_danmaku_creature_type = { type = half_youkai } }
-		th_danmaku_creature_type_default_youkai = { 		th_set_danmaku_creature_type = { type = youkai } }
-		th_danmaku_creature_type_default_yama = { 			th_set_danmaku_creature_type = { type = yama } }
-		th_danmaku_creature_type_default_hermit = { 		th_set_danmaku_creature_type = { type = hermit } }
-		th_danmaku_creature_type_default_lunarian = { 		th_set_danmaku_creature_type = { type = lunarian } }
-		th_danmaku_creature_type_default_oni = { 			th_set_danmaku_creature_type = { type = oni } }
-		th_danmaku_creature_type_default_demon = { 			th_set_danmaku_creature_type = { type = demon } }
-		th_danmaku_creature_type_default_devil = { 			th_set_danmaku_creature_type = { type = devil } }
-		th_danmaku_creature_type_default_tengu = { 			th_set_danmaku_creature_type = { type = tengu } }
-		th_danmaku_creature_type_default_kappa = { 			th_set_danmaku_creature_type = { type = kappa } }
-		th_danmaku_creature_type_default_tsukumogami = { 	th_set_danmaku_creature_type = { type = tsukumogami } }
-		th_danmaku_creature_type_default_yamanba = { 		th_set_danmaku_creature_type = { type = yamanba } }
-		th_danmaku_creature_type_default_nue = { 			th_set_danmaku_creature_type = { type = nue } }
-		th_danmaku_creature_type_default_satori = { 		th_set_danmaku_creature_type = { type = satori } }
-		th_danmaku_creature_type_default_angel = { 			th_set_danmaku_creature_type = { type = angel } }
-		th_danmaku_creature_type_default_shinigami = { 		th_set_danmaku_creature_type = { type = shinigami } }
-		th_danmaku_creature_type_default_inchling = { 		th_set_danmaku_creature_type = { type = inchling } }
-		th_danmaku_creature_type_default_doll = { 			th_set_danmaku_creature_type = { type = doll } }
-		th_danmaku_creature_type_default_robot = { 			th_set_danmaku_creature_type = { type = robot } }
-		th_danmaku_creature_type_default_celestial = { 		th_set_danmaku_creature_type = { type = celestial } }
-	}
+	th_set_danmaku_creature_type = { type = human }
 }
 
 
-th_set_enemy_character_danmaku_creature_type_human = {}
-th_set_enemy_character_danmaku_creature_type_fairy = {}
-th_set_enemy_character_danmaku_creature_type_vampire = {}
-th_set_enemy_character_danmaku_creature_type_god = {}
-th_set_enemy_character_danmaku_creature_type_demigod = {}
-th_set_enemy_character_danmaku_creature_type_immortal = {}
-th_set_enemy_character_danmaku_creature_type_undead = {}
-th_set_enemy_character_danmaku_creature_type_half_phantom = {}
-th_set_enemy_character_danmaku_creature_type_half_youkai = {}
-th_set_enemy_character_danmaku_creature_type_youkai = {}
-th_set_enemy_character_danmaku_creature_type_yama = {}
-th_set_enemy_character_danmaku_creature_type_hermit = {}
-th_set_enemy_character_danmaku_creature_type_lunarian = {}
-th_set_enemy_character_danmaku_creature_type_oni = {}
-th_set_enemy_character_danmaku_creature_type_demon = {}
-th_set_enemy_character_danmaku_creature_type_devil = {}
-th_set_enemy_character_danmaku_creature_type_tengu = {}
-th_set_enemy_character_danmaku_creature_type_kappa = {}
-th_set_enemy_character_danmaku_creature_type_tsukumogami = {}
-th_set_enemy_character_danmaku_creature_type_yamanba = {}
-th_set_enemy_character_danmaku_creature_type_nue = {}
-th_set_enemy_character_danmaku_creature_type_satori = {}
-th_set_enemy_character_danmaku_creature_type_angel = {}
-th_set_enemy_character_danmaku_creature_type_shinigami = {}
-th_set_enemy_character_danmaku_creature_type_inchling = {}
-th_set_enemy_character_danmaku_creature_type_doll = {}
-th_set_enemy_character_danmaku_creature_type_robot = {}
-th_set_enemy_character_danmaku_creature_type_celestial = {}
+th_set_enemy_character_danmaku_creature_type_human = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 1 }	}
+th_set_enemy_character_danmaku_creature_type_fairy = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 2 }	}
+th_set_enemy_character_danmaku_creature_type_vampire = {		set_variable = { which = th_danmaku_enemy_character_creature_type value = 3 }	}
+th_set_enemy_character_danmaku_creature_type_god = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 4 }	}
+th_set_enemy_character_danmaku_creature_type_demigod = {		set_variable = { which = th_danmaku_enemy_character_creature_type value = 5 }	}
+th_set_enemy_character_danmaku_creature_type_immortal = {		set_variable = { which = th_danmaku_enemy_character_creature_type value = 6 }	}
+th_set_enemy_character_danmaku_creature_type_undead = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 7 }	}
+th_set_enemy_character_danmaku_creature_type_half_phantom = {	set_variable = { which = th_danmaku_enemy_character_creature_type value = 8 }	}
+th_set_enemy_character_danmaku_creature_type_half_youkai = {	set_variable = { which = th_danmaku_enemy_character_creature_type value = 9 }	}
+th_set_enemy_character_danmaku_creature_type_youkai = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 10 }	}
+th_set_enemy_character_danmaku_creature_type_yama = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 11 }	}
+th_set_enemy_character_danmaku_creature_type_hermit = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 12 }	}
+th_set_enemy_character_danmaku_creature_type_lunarian = {		set_variable = { which = th_danmaku_enemy_character_creature_type value = 13 }	}
+th_set_enemy_character_danmaku_creature_type_oni = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 14 }	}
+th_set_enemy_character_danmaku_creature_type_demon = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 15 }	}
+th_set_enemy_character_danmaku_creature_type_devil = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 16 }	}
+th_set_enemy_character_danmaku_creature_type_tengu = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 17 }	}
+th_set_enemy_character_danmaku_creature_type_kappa = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 18 }	}
+th_set_enemy_character_danmaku_creature_type_tsukumogami = {	set_variable = { which = th_danmaku_enemy_character_creature_type value = 19 }	}
+th_set_enemy_character_danmaku_creature_type_yamanba = {		set_variable = { which = th_danmaku_enemy_character_creature_type value = 20 }	}
+th_set_enemy_character_danmaku_creature_type_nue = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 21 }	}
+th_set_enemy_character_danmaku_creature_type_satori = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 22 }	}
+th_set_enemy_character_danmaku_creature_type_angel = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 23 }	}
+th_set_enemy_character_danmaku_creature_type_shinigami = {		set_variable = { which = th_danmaku_enemy_character_creature_type value = 24 }	}
+th_set_enemy_character_danmaku_creature_type_inchling = {		set_variable = { which = th_danmaku_enemy_character_creature_type value = 25 }	}
+th_set_enemy_character_danmaku_creature_type_doll = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 26 }	}
+th_set_enemy_character_danmaku_creature_type_robot = {			set_variable = { which = th_danmaku_enemy_character_creature_type value = 27 }	}
+th_set_enemy_character_danmaku_creature_type_celestial = {		set_variable = { which = th_danmaku_enemy_character_creature_type value = 28 }	}
 th_set_enemy_character_danmaku_creature_type = {
-	hidden_effect = {
-		set_country_flag = th_danmaku_enemy_danmaku_character_creature_type_$type$
-	}
 	th_set_enemy_character_danmaku_creature_type_$type$ = yes
 }
 
@@ -329,49 +348,47 @@ th_set_enemy_character_danmaku_creature_type = {
 #Class Specific
 #barbarian, warrior, rogue, ranger, bard, monk, paladin, 
 #cleric, priest, druid, sorcerer, warlock, mage, artificer
-th_set_danmaku_class_barbarian = {}
-th_set_danmaku_class_warrior = {}
-th_set_danmaku_class_rogue = {}
-th_set_danmaku_class_ranger = {}
-th_set_danmaku_class_bard = {}
-th_set_danmaku_class_monk = {}
-th_set_danmaku_class_paladin = {}
-th_set_danmaku_class_cleric = {}
-th_set_danmaku_class_priest = {}
-th_set_danmaku_class_druid = {}
-th_set_danmaku_class_sorcerer = {}
-th_set_danmaku_class_warlock = {}
-th_set_danmaku_class_mage = {}
-th_set_danmaku_class_artificer = {}
-th_set_danmaku_class_commoner = {}
+th_set_danmaku_class_barbarian = {	set_variable = { which = th_danmaku_class value = 1 }		}
+th_set_danmaku_class_warrior = {	set_variable = { which = th_danmaku_class value = 2 }		}
+th_set_danmaku_class_rogue = {		set_variable = { which = th_danmaku_class value = 3 }		}
+th_set_danmaku_class_ranger = {		set_variable = { which = th_danmaku_class value = 4 }		}
+th_set_danmaku_class_bard = {		set_variable = { which = th_danmaku_class value = 5 }		}
+th_set_danmaku_class_monk = {		set_variable = { which = th_danmaku_class value = 6 }		}
+th_set_danmaku_class_paladin = {	set_variable = { which = th_danmaku_class value = 7 }		}
+th_set_danmaku_class_cleric = {		set_variable = { which = th_danmaku_class value = 8 }		}
+th_set_danmaku_class_priest = {		set_variable = { which = th_danmaku_class value = 9 }		}
+th_set_danmaku_class_druid = {		set_variable = { which = th_danmaku_class value = 10 }		}
+th_set_danmaku_class_sorcerer = {	set_variable = { which = th_danmaku_class value = 11 }		}
+th_set_danmaku_class_warlock = {	set_variable = { which = th_danmaku_class value = 12 }		}
+th_set_danmaku_class_mage = {		set_variable = { which = th_danmaku_class value = 13 }		}
+th_set_danmaku_class_artificer = {	set_variable = { which = th_danmaku_class value = 14 }		}
+th_set_danmaku_class_commoner = {	set_variable = { which = th_danmaku_class value = 0 }		}
 th_set_danmaku_class = {
 	custom_tooltip = th_set_danmaku_class_$class$_tt
 	hidden_effect = {
-		set_ruler_flag = th_danmaku_class_$class$
+		th_set_danmaku_class_$class$ = yes
 	}
-	th_set_danmaku_class_$class$ = yes
 }
 
-th_set_enemy_character_danmaku_class_barbarian = {}
-th_set_enemy_character_danmaku_class_warrior = {}
-th_set_enemy_character_danmaku_class_rogue = {}
-th_set_enemy_character_danmaku_class_ranger = {}
-th_set_enemy_character_danmaku_class_bard = {}
-th_set_enemy_character_danmaku_class_monk = {}
-th_set_enemy_character_danmaku_class_paladin = {}
-th_set_enemy_character_danmaku_class_cleric = {}
-th_set_enemy_character_danmaku_class_priest = {}
-th_set_enemy_character_danmaku_class_druid = {}
-th_set_enemy_character_danmaku_class_sorcerer = {}
-th_set_enemy_character_danmaku_class_warlock = {}
-th_set_enemy_character_danmaku_class_mage = {}
-th_set_enemy_character_danmaku_class_artificer = {}
-th_set_enemy_character_danmaku_class_commoner = {}
+th_set_enemy_character_danmaku_class_barbarian = {	set_variable = { which = th_danmaku_enemy_character_class value = 1 }	}
+th_set_enemy_character_danmaku_class_warrior = {	set_variable = { which = th_danmaku_enemy_character_class value = 2 }	}
+th_set_enemy_character_danmaku_class_rogue = {		set_variable = { which = th_danmaku_enemy_character_class value = 3 }	}
+th_set_enemy_character_danmaku_class_ranger = {		set_variable = { which = th_danmaku_enemy_character_class value = 4 }	}
+th_set_enemy_character_danmaku_class_bard = {		set_variable = { which = th_danmaku_enemy_character_class value = 5 }	}
+th_set_enemy_character_danmaku_class_monk = {		set_variable = { which = th_danmaku_enemy_character_class value = 6 }	}
+th_set_enemy_character_danmaku_class_paladin = {	set_variable = { which = th_danmaku_enemy_character_class value = 7 }	}
+th_set_enemy_character_danmaku_class_cleric = {		set_variable = { which = th_danmaku_enemy_character_class value = 8 }	}
+th_set_enemy_character_danmaku_class_priest = {		set_variable = { which = th_danmaku_enemy_character_class value = 9 }	}
+th_set_enemy_character_danmaku_class_druid = {		set_variable = { which = th_danmaku_enemy_character_class value = 10 }	}
+th_set_enemy_character_danmaku_class_sorcerer = {	set_variable = { which = th_danmaku_enemy_character_class value = 11 }	}
+th_set_enemy_character_danmaku_class_warlock = {	set_variable = { which = th_danmaku_enemy_character_class value = 12 }	}
+th_set_enemy_character_danmaku_class_mage = {		set_variable = { which = th_danmaku_enemy_character_class value = 13 }	}
+th_set_enemy_character_danmaku_class_artificer = {	set_variable = { which = th_danmaku_enemy_character_class value = 14 }	}
+th_set_enemy_character_danmaku_class_commoner = {	set_variable = { which = th_danmaku_enemy_character_class value = 0 }	}
 th_set_enemy_character_danmaku_class = {
 	hidden_effect = {
-		set_country_flag = th_danmaku_enemy_danmaku_character_class_$class$
+		th_set_enemy_character_danmaku_class_$class$ = yes
 	}
-	th_set_danmaku_class_$class$ = yes
 }
 
 
@@ -390,622 +407,777 @@ th_set_enemy_character_danmaku_class = {
 # eika, urumi, kutaka, mayumi, keiki, yachie, saki, yuuma, mike, takane, sannyo, misumaru, tsukasa, megumu, chimata, 
 # momoyo, son, enoko, chiyari, hisami, zanmu, rinnosuke, tokiko, miyoi, mizuchi, zun
 th_set_danmaku_ruler_reimu = {
+	set_variable = { which = th_danmaku_ruler value = 1 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = priest }
 }
 th_set_danmaku_ruler_marisa = {
+	set_variable = { which = th_danmaku_ruler value = 2 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = mage }
 }
 th_set_danmaku_ruler_mima = {
+	set_variable = { which = th_danmaku_ruler value = 3 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_konngara = {
+	set_variable = { which = th_danmaku_ruler value = 4 }
 	th_set_danmaku_creature_type = { type = oni }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_sariel = {
+	set_variable = { which = th_danmaku_ruler value = 5 }
 	th_set_danmaku_creature_type = { type = angel }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_rika = {
+	set_variable = { which = th_danmaku_ruler value = 6 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = artificer }
 }
 th_set_danmaku_ruler_meira = {
+	set_variable = { which = th_danmaku_ruler value = 7 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_kana = {
+	set_variable = { which = th_danmaku_ruler value = 8 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = mage }
 }
 th_set_danmaku_ruler_kotohime = {
+	set_variable = { which = th_danmaku_ruler value = 9 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_ellen = {
+	set_variable = { which = th_danmaku_ruler value = 10 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = mage }
 }
 th_set_danmaku_ruler_rikako = {
+	set_variable = { which = th_danmaku_ruler value = 11 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = artificer }
 }
 th_set_danmaku_ruler_chiyuri = {
+	set_variable = { which = th_danmaku_ruler value = 12 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = artificer }
 }
 th_set_danmaku_ruler_yumemi = {
+	set_variable = { which = th_danmaku_ruler value = 13 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = artificer }
 }
 th_set_danmaku_ruler_kurumi = {
+	set_variable = { which = th_danmaku_ruler value = 14 }
 	th_set_danmaku_creature_type = { type = vampire }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_elly = {
+	set_variable = { which = th_danmaku_ruler value = 15 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_gengetsu = {
+	set_variable = { which = th_danmaku_ruler value = 16 }
 	th_set_danmaku_creature_type = { type = demon }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_mugetsu = {
+	set_variable = { which = th_danmaku_ruler value = 17 }
 	th_set_danmaku_creature_type = { type = demon }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_yuuka = {
+	set_variable = { which = th_danmaku_ruler value = 18 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = druid }
 }
 th_set_danmaku_ruler_alice = {
+	set_variable = { which = th_danmaku_ruler value = 19 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = mage }
 }
 th_set_danmaku_ruler_yuki = {
+	set_variable = { which = th_danmaku_ruler value = 20 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = mage }
 }
 th_set_danmaku_ruler_mai = {
+	set_variable = { which = th_danmaku_ruler value = 21 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = mage }
 }
 th_set_danmaku_ruler_yumeko = {
+	set_variable = { which = th_danmaku_ruler value = 22 }
 	th_set_danmaku_creature_type = { type = demon }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_shinki = {
+	set_variable = { which = th_danmaku_ruler value = 23 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_rumia = {
+	set_variable = { which = th_danmaku_ruler value = 24 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_cirno = {
+	set_variable = { which = th_danmaku_ruler value = 25 }
 	th_set_danmaku_creature_type = { type = fairy }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_daiyousei = {
+	set_variable = { which = th_danmaku_ruler value = 26 }
 	th_set_danmaku_creature_type = { type = fairy }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_meiling = {
+	set_variable = { which = th_danmaku_ruler value = 27 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = monk }
 }
 th_set_danmaku_ruler_koakuma = {
+	set_variable = { which = th_danmaku_ruler value = 28 }
 	th_set_danmaku_creature_type = { type = devil }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_patchouli = {
+	set_variable = { which = th_danmaku_ruler value = 29 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = mage }
 }
 th_set_danmaku_ruler_sakuya = {
+	set_variable = { which = th_danmaku_ruler value = 30 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_remilia = {
+	set_variable = { which = th_danmaku_ruler value = 31 }
 	th_set_danmaku_creature_type = { type = vampire }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_flandre = {
+	set_variable = { which = th_danmaku_ruler value = 32 }
 	th_set_danmaku_creature_type = { type = vampire }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_satsuki = {
+	set_variable = { which = th_danmaku_ruler value = 33 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = priest }
 }
 th_set_danmaku_ruler_letty = {
+	set_variable = { which = th_danmaku_ruler value = 34 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_chen = {
+	set_variable = { which = th_danmaku_ruler value = 35 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_lily = {
+	set_variable = { which = th_danmaku_ruler value = 36 }
 	th_set_danmaku_creature_type = { type = fairy }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_prismriver = {
+	set_variable = { which = th_danmaku_ruler value = 37 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_lunasa = {
+	set_variable = { which = th_danmaku_ruler value = 38 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_merlin = {
+	set_variable = { which = th_danmaku_ruler value = 39 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_lyrica = {
+	set_variable = { which = th_danmaku_ruler value = 40 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_layla = {
+	set_variable = { which = th_danmaku_ruler value = 41 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_youmu = {
+	set_variable = { which = th_danmaku_ruler value = 42 }
 	th_set_danmaku_creature_type = { type = half_phantom }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_youki = {
+	set_variable = { which = th_danmaku_ruler value = 43 }
 	th_set_danmaku_creature_type = { type = half_phantom }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_yuyuko = {
+	set_variable = { which = th_danmaku_ruler value = 44 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_ran = {
+	set_variable = { which = th_danmaku_ruler value = 45 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_yukari = {
+	set_variable = { which = th_danmaku_ruler value = 46 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_suika = {
+	set_variable = { which = th_danmaku_ruler value = 47 }
 	th_set_danmaku_creature_type = { type = oni }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_wriggle = {
+	set_variable = { which = th_danmaku_ruler value = 48 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_mystia = {
+	set_variable = { which = th_danmaku_ruler value = 49 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_keine = {
+	set_variable = { which = th_danmaku_ruler value = 50 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_tewi = {
+	set_variable = { which = th_danmaku_ruler value = 51 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_reisen = {
+	set_variable = { which = th_danmaku_ruler value = 52 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_eirin = {
+	set_variable = { which = th_danmaku_ruler value = 53 }
 	th_set_danmaku_creature_type = { type = lunarian }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_kaguya = {
+	set_variable = { which = th_danmaku_ruler value = 54 }
 	th_set_danmaku_creature_type = { type = immortal }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_mokou = {
+	set_variable = { which = th_danmaku_ruler value = 55 }
 	th_set_danmaku_creature_type = { type = immortal }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_aya = {
+	set_variable = { which = th_danmaku_ruler value = 56 }
 	th_set_danmaku_creature_type = { type = tengu }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_medicine = {
+	set_variable = { which = th_danmaku_ruler value = 57 }
 	th_set_danmaku_creature_type = { type = doll }
 	th_set_danmaku_class = { class = druid }
 }
 th_set_danmaku_ruler_komachi = {
+	set_variable = { which = th_danmaku_ruler value = 58 }
 	th_set_danmaku_creature_type = { type = shinigami }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_eiki = {
+	set_variable = { which = th_danmaku_ruler value = 59 }
 	th_set_danmaku_creature_type = { type = yama }
 	th_set_danmaku_class = { class = paladin }
 }
 th_set_danmaku_ruler_shizuha = {
+	set_variable = { which = th_danmaku_ruler value = 60 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = druid }
 }
 th_set_danmaku_ruler_minoriko = {
+	set_variable = { which = th_danmaku_ruler value = 61 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = druid }
 }
 th_set_danmaku_ruler_hina = {
+	set_variable = { which = th_danmaku_ruler value = 62 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_nitori = {
+	set_variable = { which = th_danmaku_ruler value = 63 }
 	th_set_danmaku_creature_type = { type = kappa }
 	th_set_danmaku_class = { class = artificer }
 }
 th_set_danmaku_ruler_momiji = {
+	set_variable = { which = th_danmaku_ruler value = 64 }
 	th_set_danmaku_creature_type = { type = tengu }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_sanae = {
+	set_variable = { which = th_danmaku_ruler value = 65 }
 	th_set_danmaku_creature_type = { type = demigod }
 	th_set_danmaku_class = { class = priest }
 }
 th_set_danmaku_ruler_kanako = {
+	set_variable = { which = th_danmaku_ruler value = 66 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_suwako = {
+	set_variable = { which = th_danmaku_ruler value = 67 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_iku = {
+	set_variable = { which = th_danmaku_ruler value = 68 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = druid }
 }
 th_set_danmaku_ruler_tenshi = {
+	set_variable = { which = th_danmaku_ruler value = 69 }
 	th_set_danmaku_creature_type = { type = celestial }
 	th_set_danmaku_class = { class = paladin }
 }
 th_set_danmaku_ruler_kisume = {
+	set_variable = { which = th_danmaku_ruler value = 70 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_yamame = {
+	set_variable = { which = th_danmaku_ruler value = 71 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_parsee = {
+	set_variable = { which = th_danmaku_ruler value = 72 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_yuugi = {
+	set_variable = { which = th_danmaku_ruler value = 73 }
 	th_set_danmaku_creature_type = { type = oni }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_satori = {
+	set_variable = { which = th_danmaku_ruler value = 74 }
 	th_set_danmaku_creature_type = { type = satori }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_orin = {
+	set_variable = { which = th_danmaku_ruler value = 75 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_okuu = {
+	set_variable = { which = th_danmaku_ruler value = 76 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_koishi = {
+	set_variable = { which = th_danmaku_ruler value = 77 }
 	th_set_danmaku_creature_type = { type = satori }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_nazrin = {
+	set_variable = { which = th_danmaku_ruler value = 78 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_kogasa = {
+	set_variable = { which = th_danmaku_ruler value = 79 }
 	th_set_danmaku_creature_type = { type = tsukumogami }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_ichirin = {
+	set_variable = { which = th_danmaku_ruler value = 80 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_minamitsu = {
+	set_variable = { which = th_danmaku_ruler value = 81 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_shou = {
+	set_variable = { which = th_danmaku_ruler value = 82 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_byakuren = {
+	set_variable = { which = th_danmaku_ruler value = 83 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = monk }
 }
 th_set_danmaku_ruler_nue = {
+	set_variable = { which = th_danmaku_ruler value = 84 }
 	th_set_danmaku_creature_type = { type = nue }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_hatate = {
+	set_variable = { which = th_danmaku_ruler value = 85 }
 	th_set_danmaku_creature_type = { type = tengu }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_kyouko = {
+	set_variable = { which = th_danmaku_ruler value = 86 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_yoshika = {
+	set_variable = { which = th_danmaku_ruler value = 87 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_seiga = {
+	set_variable = { which = th_danmaku_ruler value = 88 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_tojiko = {
+	set_variable = { which = th_danmaku_ruler value = 89 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_futo = {
+	set_variable = { which = th_danmaku_ruler value = 90 }
 	th_set_danmaku_creature_type = { type = hermit }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_miko = {
+	set_variable = { which = th_danmaku_ruler value = 91 }
 	th_set_danmaku_creature_type = { type = hermit }
 	th_set_danmaku_class = { class = paladin }
 }
 th_set_danmaku_ruler_mamizou = {
+	set_variable = { which = th_danmaku_ruler value = 92 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_kokoro = {
+	set_variable = { which = th_danmaku_ruler value = 93 }
 	th_set_danmaku_creature_type = { type = tsukumogami }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_wakasagihime = {
+	set_variable = { which = th_danmaku_ruler value = 94 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_sekibanki = {
+	set_variable = { which = th_danmaku_ruler value = 95 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_kagerou = {
+	set_variable = { which = th_danmaku_ruler value = 96 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_benben = {
+	set_variable = { which = th_danmaku_ruler value = 97 }
 	th_set_danmaku_creature_type = { type = tsukumogami }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_yatsuhashi = {
+	set_variable = { which = th_danmaku_ruler value = 98 }
 	th_set_danmaku_creature_type = { type = tsukumogami }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_seija = {
+	set_variable = { which = th_danmaku_ruler value = 99 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_shinmyoumaru = {
+	set_variable = { which = th_danmaku_ruler value = 100 }
 	th_set_danmaku_creature_type = { type = inchling }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_raiko = {
+	set_variable = { which = th_danmaku_ruler value = 101 }
 	th_set_danmaku_creature_type = { type = tsukumogami }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_sumireko = {
+	set_variable = { which = th_danmaku_ruler value = 102 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_renko = {
+	set_variable = { which = th_danmaku_ruler value = 103 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = artificer }
 }
 th_set_danmaku_ruler_maribel = {
+	set_variable = { which = th_danmaku_ruler value = 104 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_seiran = {
+	set_variable = { which = th_danmaku_ruler value = 105 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_ringo = {
+	set_variable = { which = th_danmaku_ruler value = 106 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_doremy = {
+	set_variable = { which = th_danmaku_ruler value = 107 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_sagune = {
+	set_variable = { which = th_danmaku_ruler value = 108 }
 	th_set_danmaku_creature_type = { type = lunarian }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_clownpiece = {
+	set_variable = { which = th_danmaku_ruler value = 109 }
 	th_set_danmaku_creature_type = { type = fairy }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_junko = {
+	set_variable = { which = th_danmaku_ruler value = 110 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_hecatia = {
+	set_variable = { which = th_danmaku_ruler value = 111 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_toyohime = {
+	set_variable = { which = th_danmaku_ruler value = 112 }
 	th_set_danmaku_creature_type = { type = lunarian }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_yorihime = {
+	set_variable = { which = th_danmaku_ruler value = 113 }
 	th_set_danmaku_creature_type = { type = lunarian }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_change = {
+	set_variable = { which = th_danmaku_ruler value = 114 }
 	th_set_danmaku_creature_type = { type = lunarian }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_reisen_moon = {
+	set_variable = { which = th_danmaku_ruler value = 115 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_joon = {
+	set_variable = { which = th_danmaku_ruler value = 116 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_shion = {
+	set_variable = { which = th_danmaku_ruler value = 117 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_sunny = {
+	set_variable = { which = th_danmaku_ruler value = 118 }
 	th_set_danmaku_creature_type = { type = fairy }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_star = {
+	set_variable = { which = th_danmaku_ruler value = 119 }
 	th_set_danmaku_creature_type = { type = fairy }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_luna = {
+	set_variable = { which = th_danmaku_ruler value = 120 }
 	th_set_danmaku_creature_type = { type = fairy }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_kasen = {
+	set_variable = { which = th_danmaku_ruler value = 121 }
 	th_set_danmaku_creature_type = { type = oni }
 	th_set_danmaku_class = { class = monk }
 }
 th_set_danmaku_ruler_larva = {
+	set_variable = { which = th_danmaku_ruler value = 122 }
 	th_set_danmaku_creature_type = { type = fairy }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_nemuno = {
+	set_variable = { which = th_danmaku_ruler value = 123 }
 	th_set_danmaku_creature_type = { type = yamanba }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_aunn = {
+	set_variable = { which = th_danmaku_ruler value = 124 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_narumi = {
+	set_variable = { which = th_danmaku_ruler value = 125 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = mage }
 }
 th_set_danmaku_ruler_teireida = {
+	set_variable = { which = th_danmaku_ruler value = 126 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_satonono = {
+	set_variable = { which = th_danmaku_ruler value = 127 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_okina = {
+	set_variable = { which = th_danmaku_ruler value = 128 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_eika = {
+	set_variable = { which = th_danmaku_ruler value = 129 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_urumi = {
+	set_variable = { which = th_danmaku_ruler value = 130 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = druid }
 }
 th_set_danmaku_ruler_kutaka = {
+	set_variable = { which = th_danmaku_ruler value = 131 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = druid }
 }
 th_set_danmaku_ruler_mayumi = {
+	set_variable = { which = th_danmaku_ruler value = 132 }
 	th_set_danmaku_creature_type = { type = tsukumogami }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_keiki = {
+	set_variable = { which = th_danmaku_ruler value = 133 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = cleric }
 }
 th_set_danmaku_ruler_yachie = {
+	set_variable = { which = th_danmaku_ruler value = 134 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_saki = {
+	set_variable = { which = th_danmaku_ruler value = 135 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_yuuma = {
+	set_variable = { which = th_danmaku_ruler value = 136 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_mike = {
+	set_variable = { which = th_danmaku_ruler value = 137 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_takane = {
+	set_variable = { which = th_danmaku_ruler value = 138 }
 	th_set_danmaku_creature_type = { type = kappa }
 	th_set_danmaku_class = { class = artificer }
 }
 th_set_danmaku_ruler_sannyo = {
+	set_variable = { which = th_danmaku_ruler value = 139 }
 	th_set_danmaku_creature_type = { type = yamanba }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_misumaru = {
+	set_variable = { which = th_danmaku_ruler value = 140 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = sorcerer }
 }
 th_set_danmaku_ruler_tsukasa = {
+	set_variable = { which = th_danmaku_ruler value = 141 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_megumu = {
+	set_variable = { which = th_danmaku_ruler value = 142 }
 	th_set_danmaku_creature_type = { type = tengu }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_chimata = {
+	set_variable = { which = th_danmaku_ruler value = 143 }
 	th_set_danmaku_creature_type = { type = god }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_momoyo = {
+	set_variable = { which = th_danmaku_ruler value = 144 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_son = {
+	set_variable = { which = th_danmaku_ruler value = 145 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = monk }
 }
 th_set_danmaku_ruler_enoko = {
+	set_variable = { which = th_danmaku_ruler value = 146 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = ranger }
 }
 th_set_danmaku_ruler_chiyari = {
+	set_variable = { which = th_danmaku_ruler value = 147 }
 	th_set_danmaku_creature_type = { type = demon }
 	th_set_danmaku_class = { class = rogue }
 }
 th_set_danmaku_ruler_hisami = {
+	set_variable = { which = th_danmaku_ruler value = 148 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_zanmu = {
+	set_variable = { which = th_danmaku_ruler value = 149 }
 	th_set_danmaku_creature_type = { type = oni }
 	th_set_danmaku_class = { class = barbarian }
 }
 th_set_danmaku_ruler_rinnosuke = {
+	set_variable = { which = th_danmaku_ruler value = 150 }
 	th_set_danmaku_creature_type = { type = half_youkai }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_tokiko = {
+	set_variable = { which = th_danmaku_ruler value = 151 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = warrior }
 }
 th_set_danmaku_ruler_miyoi = {
+	set_variable = { which = th_danmaku_ruler value = 152 }
 	th_set_danmaku_creature_type = { type = youkai }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_mizuchi = {
+	set_variable = { which = th_danmaku_ruler value = 153 }
 	th_set_danmaku_creature_type = { type = undead }
 	th_set_danmaku_class = { class = warlock }
 }
 th_set_danmaku_ruler_zun = {
+	set_variable = { which = th_danmaku_ruler value = 999 }
 	th_set_danmaku_creature_type = { type = human }
 	th_set_danmaku_class = { class = bard }
 }
 th_set_danmaku_ruler_generic = {
+	set_variable = { which = th_danmaku_ruler value = 0 }
 	th_set_default_danmaku_creature_type = yes
 	if = {
 		limit = {
@@ -1188,929 +1360,924 @@ th_set_dynamically_danmaku_ruler = {
 		else = { th_set_danmaku_ruler = { who = generic } }
 	}
 }
-th_set_dynamically_danmaku_heir = {
-	set_heir_flag = th_danmaku_ruler_$who$
-}
 
 th_define_enemy_danmaku_character_reimu = {
+	set_variable = { which = th_enemy_danmaku_character value = 1 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = priest }
 }
 th_define_enemy_danmaku_character_marisa = {
+	set_variable = { which = th_enemy_danmaku_character value = 2 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = mage }
 }
 th_define_enemy_danmaku_character_mima = {
+	set_variable = { which = th_enemy_danmaku_character value = 3 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_konngara = {
+	set_variable = { which = th_enemy_danmaku_character value = 4 }
 	th_set_enemy_character_danmaku_creature_type = { type = oni }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_sariel = {
+	set_variable = { which = th_enemy_danmaku_character value = 5 }
 	th_set_enemy_character_danmaku_creature_type = { type = angel }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_rika = {
+	set_variable = { which = th_enemy_danmaku_character value = 6 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = artificer }
 }
 th_define_enemy_danmaku_character_meira = {
+	set_variable = { which = th_enemy_danmaku_character value = 7 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_kana = {
+	set_variable = { which = th_enemy_danmaku_character value = 8 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = mage }
 }
 th_define_enemy_danmaku_character_kotohime = {
+	set_variable = { which = th_enemy_danmaku_character value = 9 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_ellen = {
+	set_variable = { which = th_enemy_danmaku_character value = 10 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = mage }
 }
 th_define_enemy_danmaku_character_rikako = {
+	set_variable = { which = th_enemy_danmaku_character value = 11 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = artificer }
 }
 th_define_enemy_danmaku_character_chiyuri = {
+	set_variable = { which = th_enemy_danmaku_character value = 12 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = artificer }
 }
 th_define_enemy_danmaku_character_yumemi = {
+	set_variable = { which = th_enemy_danmaku_character value = 13 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = artificer }
 }
 th_define_enemy_danmaku_character_kurumi = {
+	set_variable = { which = th_enemy_danmaku_character value = 14 }
 	th_set_enemy_character_danmaku_creature_type = { type = vampire }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_elly = {
+	set_variable = { which = th_enemy_danmaku_character value = 15 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_gengetsu = {
+	set_variable = { which = th_enemy_danmaku_character value = 16 }
 	th_set_enemy_character_danmaku_creature_type = { type = demon }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_mugetsu = {
+	set_variable = { which = th_enemy_danmaku_character value = 17 }
 	th_set_enemy_character_danmaku_creature_type = { type = demon }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_yuuka = {
+	set_variable = { which = th_enemy_danmaku_character value = 18 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = druid }
 }
 th_define_enemy_danmaku_character_alice = {
+	set_variable = { which = th_enemy_danmaku_character value = 19 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = mage }
 }
 th_define_enemy_danmaku_character_yuki = {
+	set_variable = { which = th_enemy_danmaku_character value = 20 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = mage }
 }
 th_define_enemy_danmaku_character_mai = {
+	set_variable = { which = th_enemy_danmaku_character value = 21 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = mage }
 }
 th_define_enemy_danmaku_character_yumeko = {
+	set_variable = { which = th_enemy_danmaku_character value = 22 }
 	th_set_enemy_character_danmaku_creature_type = { type = demon }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_shinki = {
+	set_variable = { which = th_enemy_danmaku_character value = 23 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_rumia = {
+	set_variable = { which = th_enemy_danmaku_character value = 24 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_cirno = {
+	set_variable = { which = th_enemy_danmaku_character value = 25 }
 	th_set_enemy_character_danmaku_creature_type = { type = fairy }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_daiyousei = {
+	set_variable = { which = th_enemy_danmaku_character value = 26 }
 	th_set_enemy_character_danmaku_creature_type = { type = fairy }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_meiling = {
+	set_variable = { which = th_enemy_danmaku_character value = 27 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = monk }
 }
 th_define_enemy_danmaku_character_koakuma = {
+	set_variable = { which = th_enemy_danmaku_character value = 28 }
 	th_set_enemy_character_danmaku_creature_type = { type = devil }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_patchouli = {
+	set_variable = { which = th_enemy_danmaku_character value = 29 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = mage }
 }
 th_define_enemy_danmaku_character_sakuya = {
+	set_variable = { which = th_enemy_danmaku_character value = 30 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_remilia = {
+	set_variable = { which = th_enemy_danmaku_character value = 31 }
 	th_set_enemy_character_danmaku_creature_type = { type = vampire }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_flandre = {
+	set_variable = { which = th_enemy_danmaku_character value = 32 }
 	th_set_enemy_character_danmaku_creature_type = { type = vampire }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_satsuki = {
+	set_variable = { which = th_enemy_danmaku_character value = 33 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = priest }
 }
 th_define_enemy_danmaku_character_letty = {
+	set_variable = { which = th_enemy_danmaku_character value = 34 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_chen = {
+	set_variable = { which = th_enemy_danmaku_character value = 35 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_lily = {
+	set_variable = { which = th_enemy_danmaku_character value = 36 }
 	th_set_enemy_character_danmaku_creature_type = { type = fairy }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_prismriver = {
+	set_variable = { which = th_enemy_danmaku_character value = 37 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_lunasa = {
+	set_variable = { which = th_enemy_danmaku_character value = 38 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_merlin = {
+	set_variable = { which = th_enemy_danmaku_character value = 39 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_lyrica = {
+	set_variable = { which = th_enemy_danmaku_character value = 40 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_layla = {
+	set_variable = { which = th_enemy_danmaku_character value = 41 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_youmu = {
+	set_variable = { which = th_enemy_danmaku_character value = 42 }
 	th_set_enemy_character_danmaku_creature_type = { type = half_phantom }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_youki = {
+	set_variable = { which = th_enemy_danmaku_character value = 43 }
 	th_set_enemy_character_danmaku_creature_type = { type = half_phantom }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_yuyuko = {
+	set_variable = { which = th_enemy_danmaku_character value = 44 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_ran = {
+	set_variable = { which = th_enemy_danmaku_character value = 45 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_yukari = {
+	set_variable = { which = th_enemy_danmaku_character value = 46 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_suika = {
+	set_variable = { which = th_enemy_danmaku_character value = 47 }
 	th_set_enemy_character_danmaku_creature_type = { type = oni }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_wriggle = {
+	set_variable = { which = th_enemy_danmaku_character value = 48 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_mystia = {
+	set_variable = { which = th_enemy_danmaku_character value = 49 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_keine = {
+	set_variable = { which = th_enemy_danmaku_character value = 50 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_tewi = {
+	set_variable = { which = th_enemy_danmaku_character value = 51 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_reisen = {
+	set_variable = { which = th_enemy_danmaku_character value = 52 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_eirin = {
+	set_variable = { which = th_enemy_danmaku_character value = 53 }
 	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_kaguya = {
+	set_variable = { which = th_enemy_danmaku_character value = 54 }
 	th_set_enemy_character_danmaku_creature_type = { type = immortal }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_mokou = {
+	set_variable = { which = th_enemy_danmaku_character value = 55 }
 	th_set_enemy_character_danmaku_creature_type = { type = immortal }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_aya = {
+	set_variable = { which = th_enemy_danmaku_character value = 56 }
 	th_set_enemy_character_danmaku_creature_type = { type = tengu }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_medicine = {
+	set_variable = { which = th_enemy_danmaku_character value = 57 }
 	th_set_enemy_character_danmaku_creature_type = { type = doll }
 	th_set_enemy_character_danmaku_class = { class = druid }
 }
 th_define_enemy_danmaku_character_komachi = {
+	set_variable = { which = th_enemy_danmaku_character value = 58 }
 	th_set_enemy_character_danmaku_creature_type = { type = shinigami }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_eiki = {
+	set_variable = { which = th_enemy_danmaku_character value = 59 }
 	th_set_enemy_character_danmaku_creature_type = { type = yama }
 	th_set_enemy_character_danmaku_class = { class = paladin }
 }
 th_define_enemy_danmaku_character_shizuha = {
+	set_variable = { which = th_enemy_danmaku_character value = 60 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = druid }
 }
 th_define_enemy_danmaku_character_minoriko = {
+	set_variable = { which = th_enemy_danmaku_character value = 61 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = druid }
 }
 th_define_enemy_danmaku_character_hina = {
+	set_variable = { which = th_enemy_danmaku_character value = 62 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_nitori = {
+	set_variable = { which = th_enemy_danmaku_character value = 63 }
 	th_set_enemy_character_danmaku_creature_type = { type = kappa }
 	th_set_enemy_character_danmaku_class = { class = artificer }
 }
 th_define_enemy_danmaku_character_momiji = {
+	set_variable = { which = th_enemy_danmaku_character value = 64 }
 	th_set_enemy_character_danmaku_creature_type = { type = tengu }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_sanae = {
+	set_variable = { which = th_enemy_danmaku_character value = 65 }
 	th_set_enemy_character_danmaku_creature_type = { type = demigod }
 	th_set_enemy_character_danmaku_class = { class = priest }
 }
 th_define_enemy_danmaku_character_kanako = {
+	set_variable = { which = th_enemy_danmaku_character value = 66 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_suwako = {
+	set_variable = { which = th_enemy_danmaku_character value = 67 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_iku = {
+	set_variable = { which = th_enemy_danmaku_character value = 68 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = druid }
 }
 th_define_enemy_danmaku_character_tenshi = {
+	set_variable = { which = th_enemy_danmaku_character value = 69 }
 	th_set_enemy_character_danmaku_creature_type = { type = celestial }
 	th_set_enemy_character_danmaku_class = { class = paladin }
 }
 th_define_enemy_danmaku_character_kisume = {
+	set_variable = { which = th_enemy_danmaku_character value = 70 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_yamame = {
+	set_variable = { which = th_enemy_danmaku_character value = 71 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_parsee = {
+	set_variable = { which = th_enemy_danmaku_character value = 72 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_yuugi = {
+	set_variable = { which = th_enemy_danmaku_character value = 73 }
 	th_set_enemy_character_danmaku_creature_type = { type = oni }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_satori = {
+	set_variable = { which = th_enemy_danmaku_character value = 74 }
 	th_set_enemy_character_danmaku_creature_type = { type = satori }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_orin = {
+	set_variable = { which = th_enemy_danmaku_character value = 75 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_okuu = {
+	set_variable = { which = th_enemy_danmaku_character value = 76 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_koishi = {
+	set_variable = { which = th_enemy_danmaku_character value = 77 }
 	th_set_enemy_character_danmaku_creature_type = { type = satori }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_nazrin = {
+	set_variable = { which = th_enemy_danmaku_character value = 78 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_kogasa = {
+	set_variable = { which = th_enemy_danmaku_character value = 79 }
 	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_ichirin = {
+	set_variable = { which = th_enemy_danmaku_character value = 80 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_minamitsu = {
+	set_variable = { which = th_enemy_danmaku_character value = 81 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_shou = {
+	set_variable = { which = th_enemy_danmaku_character value = 82 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_byakuren = {
+	set_variable = { which = th_enemy_danmaku_character value = 83 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = monk }
 }
 th_define_enemy_danmaku_character_nue = {
+	set_variable = { which = th_enemy_danmaku_character value = 84 }
 	th_set_enemy_character_danmaku_creature_type = { type = nue }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_hatate = {
+	set_variable = { which = th_enemy_danmaku_character value = 85 }
 	th_set_enemy_character_danmaku_creature_type = { type = tengu }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_kyouko = {
+	set_variable = { which = th_enemy_danmaku_character value = 86 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_yoshika = {
+	set_variable = { which = th_enemy_danmaku_character value = 87 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_seiga = {
+	set_variable = { which = th_enemy_danmaku_character value = 88 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_tojiko = {
+	set_variable = { which = th_enemy_danmaku_character value = 89 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_futo = {
+	set_variable = { which = th_enemy_danmaku_character value = 90 }
 	th_set_enemy_character_danmaku_creature_type = { type = hermit }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_miko = {
+	set_variable = { which = th_enemy_danmaku_character value = 91 }
 	th_set_enemy_character_danmaku_creature_type = { type = hermit }
 	th_set_enemy_character_danmaku_class = { class = paladin }
 }
 th_define_enemy_danmaku_character_mamizou = {
+	set_variable = { which = th_enemy_danmaku_character value = 92 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_kokoro = {
+	set_variable = { which = th_enemy_danmaku_character value = 93 }
 	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_wakasagihime = {
+	set_variable = { which = th_enemy_danmaku_character value = 94 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_sekibanki = {
+	set_variable = { which = th_enemy_danmaku_character value = 95 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_kagerou = {
+	set_variable = { which = th_enemy_danmaku_character value = 96 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_benben = {
+	set_variable = { which = th_enemy_danmaku_character value = 97 }
 	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_yatsuhashi = {
+	set_variable = { which = th_enemy_danmaku_character value = 98 }
 	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_seija = {
+	set_variable = { which = th_enemy_danmaku_character value = 99 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_shinmyoumaru = {
+	set_variable = { which = th_enemy_danmaku_character value = 100 }
 	th_set_enemy_character_danmaku_creature_type = { type = inchling }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_raiko = {
+	set_variable = { which = th_enemy_danmaku_character value = 101 }
 	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_sumireko = {
+	set_variable = { which = th_enemy_danmaku_character value = 102 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_renko = {
+	set_variable = { which = th_enemy_danmaku_character value = 103 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = artificer }
 }
 th_define_enemy_danmaku_character_maribel = {
+	set_variable = { which = th_enemy_danmaku_character value = 104 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_seiran = {
+	set_variable = { which = th_enemy_danmaku_character value = 105 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_ringo = {
+	set_variable = { which = th_enemy_danmaku_character value = 106 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_doremy = {
+	set_variable = { which = th_enemy_danmaku_character value = 107 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_sagune = {
+	set_variable = { which = th_enemy_danmaku_character value = 108 }
 	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_clownpiece = {
+	set_variable = { which = th_enemy_danmaku_character value = 109 }
 	th_set_enemy_character_danmaku_creature_type = { type = fairy }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_junko = {
+	set_variable = { which = th_enemy_danmaku_character value = 110 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_hecatia = {
+	set_variable = { which = th_enemy_danmaku_character value = 111 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_toyohime = {
+	set_variable = { which = th_enemy_danmaku_character value = 112 }
 	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_yorihime = {
+	set_variable = { which = th_enemy_danmaku_character value = 113 }
 	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_change = {
+	set_variable = { which = th_enemy_danmaku_character value = 114 }
 	th_set_enemy_character_danmaku_creature_type = { type = lunarian }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_reisen_moon = {
+	set_variable = { which = th_enemy_danmaku_character value = 115 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_joon = {
+	set_variable = { which = th_enemy_danmaku_character value = 116 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_shion = {
+	set_variable = { which = th_enemy_danmaku_character value = 117 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_sunny = {
+	set_variable = { which = th_enemy_danmaku_character value = 118 }
 	th_set_enemy_character_danmaku_creature_type = { type = fairy }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_star = {
+	set_variable = { which = th_enemy_danmaku_character value = 119 }
 	th_set_enemy_character_danmaku_creature_type = { type = fairy }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_luna = {
+	set_variable = { which = th_enemy_danmaku_character value = 120 }
 	th_set_enemy_character_danmaku_creature_type = { type = fairy }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_kasen = {
+	set_variable = { which = th_enemy_danmaku_character value = 121 }
 	th_set_enemy_character_danmaku_creature_type = { type = oni }
 	th_set_enemy_character_danmaku_class = { class = monk }
 }
 th_define_enemy_danmaku_character_larva = {
+	set_variable = { which = th_enemy_danmaku_character value = 122 }
 	th_set_enemy_character_danmaku_creature_type = { type = fairy }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_nemuno = {
+	set_variable = { which = th_enemy_danmaku_character value = 123 }
 	th_set_enemy_character_danmaku_creature_type = { type = yamanba }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_aunn = {
+	set_variable = { which = th_enemy_danmaku_character value = 124 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_narumi = {
+	set_variable = { which = th_enemy_danmaku_character value = 125 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = mage }
 }
 th_define_enemy_danmaku_character_teireida = {
+	set_variable = { which = th_enemy_danmaku_character value = 126 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_satonono = {
+	set_variable = { which = th_enemy_danmaku_character value = 127 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_okina = {
+	set_variable = { which = th_enemy_danmaku_character value = 128 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_eika = {
+	set_variable = { which = th_enemy_danmaku_character value = 129 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_urumi = {
+	set_variable = { which = th_enemy_danmaku_character value = 130 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = druid }
 }
 th_define_enemy_danmaku_character_kutaka = {
+	set_variable = { which = th_enemy_danmaku_character value = 131 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = druid }
 }
 th_define_enemy_danmaku_character_mayumi = {
+	set_variable = { which = th_enemy_danmaku_character value = 132 }
 	th_set_enemy_character_danmaku_creature_type = { type = tsukumogami }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_keiki = {
+	set_variable = { which = th_enemy_danmaku_character value = 133 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = cleric }
 }
 th_define_enemy_danmaku_character_yachie = {
+	set_variable = { which = th_enemy_danmaku_character value = 134 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_saki = {
+	set_variable = { which = th_enemy_danmaku_character value = 135 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_yuuma = {
+	set_variable = { which = th_enemy_danmaku_character value = 136 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_mike = {
+	set_variable = { which = th_enemy_danmaku_character value = 137 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_takane = {
+	set_variable = { which = th_enemy_danmaku_character value = 138 }
 	th_set_enemy_character_danmaku_creature_type = { type = kappa }
 	th_set_enemy_character_danmaku_class = { class = artificer }
 }
 th_define_enemy_danmaku_character_sannyo = {
+	set_variable = { which = th_enemy_danmaku_character value = 139 }
 	th_set_enemy_character_danmaku_creature_type = { type = yamanba }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_misumaru = {
+	set_variable = { which = th_enemy_danmaku_character value = 140 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = sorcerer }
 }
 th_define_enemy_danmaku_character_tsukasa = {
+	set_variable = { which = th_enemy_danmaku_character value = 141 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_megumu = {
+	set_variable = { which = th_enemy_danmaku_character value = 142 }
 	th_set_enemy_character_danmaku_creature_type = { type = tengu }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_chimata = {
+	set_variable = { which = th_enemy_danmaku_character value = 143 }
 	th_set_enemy_character_danmaku_creature_type = { type = god }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_momoyo = {
+	set_variable = { which = th_enemy_danmaku_character value = 144 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_son = {
+	set_variable = { which = th_enemy_danmaku_character value = 145 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = monk }
 }
 th_define_enemy_danmaku_character_enoko = {
+	set_variable = { which = th_enemy_danmaku_character value = 146 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = ranger }
 }
 th_define_enemy_danmaku_character_chiyari = {
+	set_variable = { which = th_enemy_danmaku_character value = 147 }
 	th_set_enemy_character_danmaku_creature_type = { type = demon }
 	th_set_enemy_character_danmaku_class = { class = rogue }
 }
 th_define_enemy_danmaku_character_hisami = {
+	set_variable = { which = th_enemy_danmaku_character value = 148 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_zanmu = {
+	set_variable = { which = th_enemy_danmaku_character value = 149 }
 	th_set_enemy_character_danmaku_creature_type = { type = oni }
 	th_set_enemy_character_danmaku_class = { class = barbarian }
 }
 th_define_enemy_danmaku_character_rinnosuke = {
+	set_variable = { which = th_enemy_danmaku_character value = 150 }
 	th_set_enemy_character_danmaku_creature_type = { type = half_youkai }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_tokiko = {
+	set_variable = { which = th_enemy_danmaku_character value = 151 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = warrior }
 }
 th_define_enemy_danmaku_character_miyoi = {
+	set_variable = { which = th_enemy_danmaku_character value = 152 }
 	th_set_enemy_character_danmaku_creature_type = { type = youkai }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character_mizuchi = {
+	set_variable = { which = th_enemy_danmaku_character value = 153 }
 	th_set_enemy_character_danmaku_creature_type = { type = undead }
 	th_set_enemy_character_danmaku_class = { class = warlock }
 }
 th_define_enemy_danmaku_character_zun = {
+	set_variable = { which = th_enemy_danmaku_character value = 999 }
 	th_set_enemy_character_danmaku_creature_type = { type = human }
 	th_set_enemy_character_danmaku_class = { class = bard }
 }
 th_define_enemy_danmaku_character = {
-	set_country_flag = th_is_duelling_character_$target$
-	th_define_enemy_danmaku_character_$target$ = yes
+	hidden_effect = {
+		th_define_enemy_danmaku_character_$target$ = yes
+	}
 }
 
+th_set_enemy_character_home_hell = {				set_variable = { which = th_danmaku_enemy_character_home value = 100 }	}
+th_set_enemy_character_home_heaven = {				set_variable = { which = th_danmaku_enemy_character_home value = 200 }	}
+th_set_enemy_character_home_youkai_mountain = {		set_variable = { which = th_danmaku_enemy_character_home value = 300 }	}
+th_set_enemy_character_home_moon = {				set_variable = { which = th_danmaku_enemy_character_home value = 400 }	}
+th_set_enemy_character_home_NET = {					set_variable = { which = th_danmaku_enemy_character_home value = 1 }	}
+th_set_enemy_character_home_FUJ = {					set_variable = { which = th_danmaku_enemy_character_home value = 2 }	}
+th_set_enemy_character_home_EIT = {					set_variable = { which = th_danmaku_enemy_character_home value = 3 }	}
+th_set_enemy_character_home_SFF = {					set_variable = { which = th_danmaku_enemy_character_home value = 4 }	}
+th_set_enemy_character_home_MHG = {					set_variable = { which = th_danmaku_enemy_character_home value = 5 }	}
+th_set_enemy_character_home_SCR = {					set_variable = { which = th_danmaku_enemy_character_home value = 6 }	}
+th_set_enemy_character_home_CRD = {					set_variable = { which = th_danmaku_enemy_character_home value = 7 }	}
+th_set_enemy_character_home_TGU = {					set_variable = { which = th_danmaku_enemy_character_home value = 8 }	}
+th_set_enemy_character_home_SNK = {					set_variable = { which = th_danmaku_enemy_character_home value = 9 }	}
+th_set_enemy_character_home_MKI = {					set_variable = { which = th_danmaku_enemy_character_home value = 10 }	}
+th_set_enemy_character_home_HIG = {					set_variable = { which = th_danmaku_enemy_character_home value = 11 }	}
+th_set_enemy_character_home_FOM = {					set_variable = { which = th_danmaku_enemy_character_home value = 12 }	}
+th_set_enemy_character_home_HMC = {					set_variable = { which = th_danmaku_enemy_character_home value = 13 }	}
+th_set_enemy_character_home_YOF = {					set_variable = { which = th_danmaku_enemy_character_home value = 14 }	}
+th_set_enemy_character_home_HVR = {					set_variable = { which = th_danmaku_enemy_character_home value = 15 }	}
+th_set_enemy_character_home_MIM = {					set_variable = { which = th_danmaku_enemy_character_home value = 16 }	}
+th_set_enemy_character_home_KPP = {					set_variable = { which = th_danmaku_enemy_character_home value = 17 }	}
+th_set_enemy_character_home_HKR = {					set_variable = { which = th_danmaku_enemy_character_home value = 18 }	}
+th_set_enemy_character_home_MRY = {					set_variable = { which = th_danmaku_enemy_character_home value = 19 }	}
+th_set_enemy_character_home_HNG = {					set_variable = { which = th_danmaku_enemy_character_home value = 20 }	}
+th_set_enemy_character_home_CIN = {					set_variable = { which = th_danmaku_enemy_character_home value = 21 }	}
+th_set_enemy_character_home_FLR = {					set_variable = { which = th_danmaku_enemy_character_home value = 22 }	}
+th_set_enemy_character_home_GNK = {					set_variable = { which = th_danmaku_enemy_character_home value = 23 }	}
+th_set_enemy_character_home_SCD = {					set_variable = { which = th_danmaku_enemy_character_home value = 24 }	}
+th_set_enemy_character_home_NMG = {					set_variable = { which = th_danmaku_enemy_character_home value = 25 }	}
+th_set_enemy_character_home_KNN = {					set_variable = { which = th_danmaku_enemy_character_home value = 26 }	}
+th_set_enemy_character_home_THR = {					set_variable = { which = th_danmaku_enemy_character_home value = 27 }	}
+th_set_enemy_character_home_OKR = {					set_variable = { which = th_danmaku_enemy_character_home value = 28 }	}
+th_set_enemy_character_home_YUM = {					set_variable = { which = th_danmaku_enemy_character_home value = 29 }	}
+th_set_enemy_character_home_TFR = {					set_variable = { which = th_danmaku_enemy_character_home value = 30 }	}
+th_set_enemy_character_home_LIL = {					set_variable = { which = th_danmaku_enemy_character_home value = 31 }	}
+th_set_enemy_character_home_LRV = {					set_variable = { which = th_danmaku_enemy_character_home value = 32 }	}
+th_set_enemy_character_home_AKI = {					set_variable = { which = th_danmaku_enemy_character_home value = 33 }	}
+th_set_enemy_character_home_ONI = {					set_variable = { which = th_danmaku_enemy_character_home value = 34 }	}
+th_set_enemy_character_home_KOG = {					set_variable = { which = th_danmaku_enemy_character_home value = 35 }	}
+th_set_enemy_character_home_MYO = {					set_variable = { which = th_danmaku_enemy_character_home value = 36 }	}
+th_set_enemy_character_home_OKI = {					set_variable = { which = th_danmaku_enemy_character_home value = 37 }	}
+th_set_enemy_character_home_PRI = {					set_variable = { which = th_danmaku_enemy_character_home value = 38 }	}
+th_set_enemy_character_home_KKO = {					set_variable = { which = th_danmaku_enemy_character_home value = 39 }	}
+th_set_enemy_character_home_SEK = {					set_variable = { which = th_danmaku_enemy_character_home value = 40 }	}
+th_set_enemy_character_home_NCS = {					set_variable = { which = th_danmaku_enemy_character_home value = 41 }	}
+th_set_enemy_character_home_RAI = {					set_variable = { which = th_danmaku_enemy_character_home value = 42 }	}
+th_set_enemy_character_home_KSE = {					set_variable = { which = th_danmaku_enemy_character_home value = 43 }	}
+th_set_enemy_character_home_CLP = {					set_variable = { which = th_danmaku_enemy_character_home value = 44 }	}
+th_set_enemy_character_home_JNK = {					set_variable = { which = th_danmaku_enemy_character_home value = 45 }	}
+th_set_enemy_character_home_HEC = {					set_variable = { which = th_danmaku_enemy_character_home value = 46 }	}
+th_set_enemy_character_home_SKT = {					set_variable = { which = th_danmaku_enemy_character_home value = 47 }	}
+th_set_enemy_character_home_YAC = {					set_variable = { which = th_danmaku_enemy_character_home value = 48 }	}
+th_set_enemy_character_home_GNU = {					set_variable = { which = th_danmaku_enemy_character_home value = 49 }	}
+th_set_enemy_character_home_LCU = {					set_variable = { which = th_danmaku_enemy_character_home value = 50 }	}
+th_set_enemy_character_home_KEI = {					set_variable = { which = th_danmaku_enemy_character_home value = 51 }	}
+th_set_enemy_character_home_SKI = {					set_variable = { which = th_danmaku_enemy_character_home value = 52 }	}
+th_set_enemy_character_home_ORN = {					set_variable = { which = th_danmaku_enemy_character_home value = 53 }	}
+th_set_enemy_character_home_OKU = {					set_variable = { which = th_danmaku_enemy_character_home value = 54 }	}
+th_set_enemy_character_home_FTP = {					set_variable = { which = th_danmaku_enemy_character_home value = 55 }	}
+th_set_enemy_character_home_LEM = {					set_variable = { which = th_danmaku_enemy_character_home value = 56 }	}
+th_set_enemy_character_home_MKN = {					set_variable = { which = th_danmaku_enemy_character_home value = 57 }	}
+th_set_enemy_character_home_KMJ = {					set_variable = { which = th_danmaku_enemy_character_home value = 58 }	}
+th_set_enemy_character_home_GGS = {					set_variable = { which = th_danmaku_enemy_character_home value = 59 }	}
+th_set_enemy_character_home_SNZ = {					set_variable = { which = th_danmaku_enemy_character_home value = 60 }	}
+th_set_enemy_character_home_GYK = {					set_variable = { which = th_danmaku_enemy_character_home value = 61 }	}
+th_set_enemy_character_home_HIF = {					set_variable = { which = th_danmaku_enemy_character_home value = 62 }	}
+th_set_enemy_character_home_YME = {					set_variable = { which = th_danmaku_enemy_character_home value = 63 }	}
+th_set_enemy_character_home_MRU = {					set_variable = { which = th_danmaku_enemy_character_home value = 64 }	}
+th_set_enemy_character_home_HAK = {					set_variable = { which = th_danmaku_enemy_character_home value = 65 }	}
+th_set_enemy_character_home_NUE = {					set_variable = { which = th_danmaku_enemy_character_home value = 66 }	}
+th_set_enemy_character_home_JOO = {					set_variable = { which = th_danmaku_enemy_character_home value = 67 }	}
+th_set_enemy_character_home_SHI = {					set_variable = { which = th_danmaku_enemy_character_home value = 68 }	}
+th_set_enemy_character_home_YMU = {					set_variable = { which = th_danmaku_enemy_character_home value = 69 }	}
+th_set_enemy_character_home_ROD = {					set_variable = { which = th_danmaku_enemy_character_home value = 70 }	}
+th_set_enemy_character_home_PRS = {					set_variable = { which = th_danmaku_enemy_character_home value = 71 }	}
+th_set_enemy_character_home_SOU = {					set_variable = { which = th_danmaku_enemy_character_home value = 72 }	}
+th_set_enemy_character_home_SEI = {					set_variable = { which = th_danmaku_enemy_character_home value = 73 }	}
+th_set_enemy_character_home_MMU = {					set_variable = { which = th_danmaku_enemy_character_home value = 74 }	}
+th_set_enemy_character_home_HVA = {					set_variable = { which = th_danmaku_enemy_character_home value = 75 }	}
+th_set_enemy_character_home_RAN = {					set_variable = { which = th_danmaku_enemy_character_home value = 76 }	}
+th_set_enemy_character_home_KNE = {					set_variable = { which = th_danmaku_enemy_character_home value = 77 }	}
+th_set_enemy_character_home_KN2 = {					set_variable = { which = th_danmaku_enemy_character_home value = 78 }	}
+th_set_enemy_character_home_CH2 = {					set_variable = { which = th_danmaku_enemy_character_home value = 79 }	}
+th_set_enemy_character_home_DAY = {					set_variable = { which = th_danmaku_enemy_character_home value = 80 }	}
+th_set_enemy_character_home_ZUT = {					set_variable = { which = th_danmaku_enemy_character_home value = 81 }	}
+th_set_enemy_character_home = {
+	hidden_effect = {
+		th_set_enemy_character_home_$home$ = yes
+	}
+}
+
+
+
+th_equip_weapon_iron_sword = { set_variable = { which = th_danmaku_weapon_wielded value = 1 } }
+th_equip_weapon_none = { set_variable = { which = th_danmaku_weapon_wielded value = 0 } }
+th_equip_weapon = {
+	th_equip_weapon_$weapon$ = yes
+}
+th_equip_trinket_none = { set_variable = { which = th_danmaku_trinket_equipped value = 0 } }
+th_equip_trinket = {
+	th_equip_trinket_$trinket$ = yes
+}
+th_equip_spell_card_none = { set_variable = { which = th_danmaku_spell_card_equipped value = 0 } }
+th_equip_spell_card = {
+	th_equip_spell_card_$spell_card$ = yes
+}
+
+th_enemy_character_equip_weapon_iron_sword = { set_variable = { which = th_danmaku_enemy_character_weapon value = 1 } }
+th_enemy_character_equip_weapon_none = { set_variable = { which = th_danmaku_enemy_character_weapon value = 0 } }
+th_enemy_character_equip_weapon = {
+	th_enemy_character_equip_weapon_$weapon$ = yes
+}
+th_enemy_character_equip_trinket_none = { set_variable = { which = th_danmaku_enemy_character_trinket value = 0 } }
+th_enemy_character_equip_trinket = {
+	th_enemy_character_equip_trinket_$trinket$ = yes
+}
+th_enemy_character_equip_spell_card_none = { set_variable = { which = th_danmaku_enemy_character_spell_card value = 0 } }
+th_enemy_character_equip_spell_card = {
+	th_enemy_character_equip_spell_card_$spell_card$ = yes
+}
 
 #Clear effects
 th_clear_enemy_character_personality = {
-	clr_country_flag = th_is_duelling_character_reimu
-	clr_country_flag = th_is_duelling_character_marisa
-	clr_country_flag = th_is_duelling_character_mima
-	clr_country_flag = th_is_duelling_character_konngara
-	clr_country_flag = th_is_duelling_character_sariel
-	clr_country_flag = th_is_duelling_character_rika
-	clr_country_flag = th_is_duelling_character_meira
-	clr_country_flag = th_is_duelling_character_kana
-	clr_country_flag = th_is_duelling_character_kotohime
-	clr_country_flag = th_is_duelling_character_ellen
-	clr_country_flag = th_is_duelling_character_rikako
-	clr_country_flag = th_is_duelling_character_chiyuri
-	clr_country_flag = th_is_duelling_character_yumemi
-	clr_country_flag = th_is_duelling_character_kurumi
-	clr_country_flag = th_is_duelling_character_elly	
-	clr_country_flag = th_is_duelling_character_gengetsu
-	clr_country_flag = th_is_duelling_character_mugetsu
-	clr_country_flag = th_is_duelling_character_yuuka
-	clr_country_flag = th_is_duelling_character_alice
-	clr_country_flag = th_is_duelling_character_yuki
-	clr_country_flag = th_is_duelling_character_mai
-	clr_country_flag = th_is_duelling_character_yumeko
-	clr_country_flag = th_is_duelling_character_shinki
-	clr_country_flag = th_is_duelling_character_rumia
-	clr_country_flag = th_is_duelling_character_cirno
-	clr_country_flag = th_is_duelling_character_daiyousei
-	clr_country_flag = th_is_duelling_character_meiling
-	clr_country_flag = th_is_duelling_character_koakuma
-	clr_country_flag = th_is_duelling_character_patchouli	
-	clr_country_flag = th_is_duelling_character_sakuya
-	clr_country_flag = th_is_duelling_character_remilia
-	clr_country_flag = th_is_duelling_character_flandre
-	clr_country_flag = th_is_duelling_character_satsuki
-	clr_country_flag = th_is_duelling_character_letty
-	clr_country_flag = th_is_duelling_character_chen
-	clr_country_flag = th_is_duelling_character_lily
-	clr_country_flag = th_is_duelling_character_prismriver
-	clr_country_flag = th_is_duelling_character_lunasa
-	clr_country_flag = th_is_duelling_character_merlin
-	clr_country_flag = th_is_duelling_character_lyrica
-	clr_country_flag = th_is_duelling_character_layla
-	clr_country_flag = th_is_duelling_character_youmu
-	clr_country_flag = th_is_duelling_character_youki	
-	clr_country_flag = th_is_duelling_character_yuyuko
-	clr_country_flag = th_is_duelling_character_ran
-	clr_country_flag = th_is_duelling_character_yukari
-	clr_country_flag = th_is_duelling_character_suika
-	clr_country_flag = th_is_duelling_character_wriggle
-	clr_country_flag = th_is_duelling_character_mystia
-	clr_country_flag = th_is_duelling_character_keine
-	clr_country_flag = th_is_duelling_character_tewi
-	clr_country_flag = th_is_duelling_character_reisen
-	clr_country_flag = th_is_duelling_character_eirin
-	clr_country_flag = th_is_duelling_character_kaguya
-	clr_country_flag = th_is_duelling_character_mokou
-	clr_country_flag = th_is_duelling_character_aya
-	clr_country_flag = th_is_duelling_character_medicine
-	clr_country_flag = th_is_duelling_character_komachi	
-	clr_country_flag = th_is_duelling_character_eiki
-	clr_country_flag = th_is_duelling_character_shizuha
-	clr_country_flag = th_is_duelling_character_minoriko
-	clr_country_flag = th_is_duelling_character_hina
-	clr_country_flag = th_is_duelling_character_nitori
-	clr_country_flag = th_is_duelling_character_momiji
-	clr_country_flag = th_is_duelling_character_sanae
-	clr_country_flag = th_is_duelling_character_kanako
-	clr_country_flag = th_is_duelling_character_suwako
-	clr_country_flag = th_is_duelling_character_iku
-	clr_country_flag = th_is_duelling_character_tenshi
-	clr_country_flag = th_is_duelling_character_kisume
-	clr_country_flag = th_is_duelling_character_yamame
-	clr_country_flag = th_is_duelling_character_parsee
-	clr_country_flag = th_is_duelling_character_yuugi
-	clr_country_flag = th_is_duelling_character_satori
-	clr_country_flag = th_is_duelling_character_orin
-	clr_country_flag = th_is_duelling_character_okuu
-	clr_country_flag = th_is_duelling_character_koishi
-	clr_country_flag = th_is_duelling_character_nazrin
-	clr_country_flag = th_is_duelling_character_kogasa
-	clr_country_flag = th_is_duelling_character_ichirin
-	clr_country_flag = th_is_duelling_character_minamitsu
-	clr_country_flag = th_is_duelling_character_shou
-	clr_country_flag = th_is_duelling_character_byakuren
-	clr_country_flag = th_is_duelling_character_nue
-	clr_country_flag = th_is_duelling_character_hatate
-	clr_country_flag = th_is_duelling_character_kyouko
-	clr_country_flag = th_is_duelling_character_yoshika
-	clr_country_flag = th_is_duelling_character_seiga
-	clr_country_flag = th_is_duelling_character_tojiko
-	clr_country_flag = th_is_duelling_character_futo
-	clr_country_flag = th_is_duelling_character_miko
-	clr_country_flag = th_is_duelling_character_mamizou
-	clr_country_flag = th_is_duelling_character_kokoro
-	clr_country_flag = th_is_duelling_character_wakasagihime
-	clr_country_flag = th_is_duelling_character_sekibanki
-	clr_country_flag = th_is_duelling_character_kagerou
-	clr_country_flag = th_is_duelling_character_benben
-	clr_country_flag = th_is_duelling_character_yatsuhashi
-	clr_country_flag = th_is_duelling_character_seija
-	clr_country_flag = th_is_duelling_character_shinmyoumaru
-	clr_country_flag = th_is_duelling_character_raiko
-	clr_country_flag = th_is_duelling_character_sumireko
-	clr_country_flag = th_is_duelling_character_renko
-	clr_country_flag = th_is_duelling_character_maribel
-	clr_country_flag = th_is_duelling_character_seiran
-	clr_country_flag = th_is_duelling_character_ringo
-	clr_country_flag = th_is_duelling_character_doremy
-	clr_country_flag = th_is_duelling_character_sagune
-	clr_country_flag = th_is_duelling_character_clownpiece
-	clr_country_flag = th_is_duelling_character_junko
-	clr_country_flag = th_is_duelling_character_hecatia
-	clr_country_flag = th_is_duelling_character_toyohime
-	clr_country_flag = th_is_duelling_character_yorihime
-	clr_country_flag = th_is_duelling_character_change
-	clr_country_flag = th_is_duelling_character_reisen_moon
-	clr_country_flag = th_is_duelling_character_joon
-	clr_country_flag = th_is_duelling_character_shion
-	clr_country_flag = th_is_duelling_character_sunny
-	clr_country_flag = th_is_duelling_character_star
-	clr_country_flag = th_is_duelling_character_luna
-	clr_country_flag = th_is_duelling_character_kasen
-	clr_country_flag = th_is_duelling_character_larva
-	clr_country_flag = th_is_duelling_character_nemuno
-	clr_country_flag = th_is_duelling_character_aunn
-	clr_country_flag = th_is_duelling_character_narumi
-	clr_country_flag = th_is_duelling_character_teireida
-	clr_country_flag = th_is_duelling_character_satonono
-	clr_country_flag = th_is_duelling_character_okina
-	clr_country_flag = th_is_duelling_character_eika
-	clr_country_flag = th_is_duelling_character_urumi
-	clr_country_flag = th_is_duelling_character_kutaka
-	clr_country_flag = th_is_duelling_character_mayumi
-	clr_country_flag = th_is_duelling_character_keiki
-	clr_country_flag = th_is_duelling_character_yachie
-	clr_country_flag = th_is_duelling_character_saki
-	clr_country_flag = th_is_duelling_character_yuuma
-	clr_country_flag = th_is_duelling_character_mike
-	clr_country_flag = th_is_duelling_character_takane
-	clr_country_flag = th_is_duelling_character_sannyo
-	clr_country_flag = th_is_duelling_character_misumaru
-	clr_country_flag = th_is_duelling_character_tsukasa
-	clr_country_flag = th_is_duelling_character_megumu
-	clr_country_flag = th_is_duelling_character_chimata
-	clr_country_flag = th_is_duelling_character_momoyo
-	clr_country_flag = th_is_duelling_character_son
-	clr_country_flag = th_is_duelling_character_enoko
-	clr_country_flag = th_is_duelling_character_chiyari
-	clr_country_flag = th_is_duelling_character_hisami
-	clr_country_flag = th_is_duelling_character_zanmu
-	clr_country_flag = th_is_duelling_character_rinnosuke
-	clr_country_flag = th_is_duelling_character_tokiko
-	clr_country_flag = th_is_duelling_character_miyoi
-	clr_country_flag = th_is_duelling_character_mizuchi
-	clr_country_flag = th_is_duelling_character_zun
+	set_variable = { which = th_enemy_danmaku_character value = 0 }
 }
 th_clear_enemy_character_creature_type = {
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_human
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_fairy
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_vampire
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_god
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_demigod
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_immortal
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_undead
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_half_phantom
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_half_youkai
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_youkai
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_yama
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_hermit
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_lunarian
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_oni
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_demon
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_devil
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_tengu
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_kappa
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_tsukumogami
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_yamanba
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_nue
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_satori
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_angel
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_shinigami
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_inchling
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_doll
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_robot
-	clr_country_flag = th_danmaku_enemy_danmaku_character_creature_type_celestial
+	set_variable = { which = th_danmaku_enemy_character_creature_type value = 0 }
 }
 th_clear_enemy_character_class = {
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_barbarian
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_warrior
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_rogue
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_ranger
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_bard
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_monk
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_paladin
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_cleric
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_priest
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_druid
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_sorcerer
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_warlock
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_mage
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_artificer
-	clr_country_flag = th_danmaku_enemy_danmaku_character_class_commoner
+	set_variable = { which = th_danmaku_enemy_character_class value = 0 }
 }
 th_clear_enemy_home = {
-	clr_country_flag = th_unlanded_character_home_hell
-	clr_country_flag = th_unlanded_character_home_heaven
-	clr_country_flag = th_unlanded_character_home_youkai_mountain
-	clr_country_flag = th_unlanded_character_home_moon
-	clr_country_flag = th_unlanded_character_home_NET
-	clr_country_flag = th_unlanded_character_home_FUJ
-	clr_country_flag = th_unlanded_character_home_EIT
-	clr_country_flag = th_unlanded_character_home_SFF
-	clr_country_flag = th_unlanded_character_home_MHG
-	clr_country_flag = th_unlanded_character_home_SCR
-	clr_country_flag = th_unlanded_character_home_CRD
-	clr_country_flag = th_unlanded_character_home_TGU
-	clr_country_flag = th_unlanded_character_home_SNK
-	clr_country_flag = th_unlanded_character_home_MKI
-	clr_country_flag = th_unlanded_character_home_HIG
-	clr_country_flag = th_unlanded_character_home_FOM
-	clr_country_flag = th_unlanded_character_home_HMC
-	clr_country_flag = th_unlanded_character_home_YOF
-	clr_country_flag = th_unlanded_character_home_HVR
-	clr_country_flag = th_unlanded_character_home_MIM
-	clr_country_flag = th_unlanded_character_home_KPP
-	clr_country_flag = th_unlanded_character_home_HKR
-	clr_country_flag = th_unlanded_character_home_MRY
-	clr_country_flag = th_unlanded_character_home_HNG
-	clr_country_flag = th_unlanded_character_home_CIN
-	clr_country_flag = th_unlanded_character_home_FLR
-	clr_country_flag = th_unlanded_character_home_GNK
-	clr_country_flag = th_unlanded_character_home_SCD
-	clr_country_flag = th_unlanded_character_home_NMG
-	clr_country_flag = th_unlanded_character_home_KNN
-	clr_country_flag = th_unlanded_character_home_THR
-	clr_country_flag = th_unlanded_character_home_OKR
-	clr_country_flag = th_unlanded_character_home_YUM
-	clr_country_flag = th_unlanded_character_home_TFR
-	clr_country_flag = th_unlanded_character_home_LIL
-	clr_country_flag = th_unlanded_character_home_LRV
-	clr_country_flag = th_unlanded_character_home_AKI
-	clr_country_flag = th_unlanded_character_home_ONI
-	clr_country_flag = th_unlanded_character_home_KOG
-	clr_country_flag = th_unlanded_character_home_MYO
-	clr_country_flag = th_unlanded_character_home_OKI
-	clr_country_flag = th_unlanded_character_home_PRI
-	clr_country_flag = th_unlanded_character_home_KKO
-	clr_country_flag = th_unlanded_character_home_SEK
-	clr_country_flag = th_unlanded_character_home_NCS
-	clr_country_flag = th_unlanded_character_home_RAI
-	clr_country_flag = th_unlanded_character_home_KSE
-	clr_country_flag = th_unlanded_character_home_CLP
-	clr_country_flag = th_unlanded_character_home_JNK
-	clr_country_flag = th_unlanded_character_home_HEC
-	clr_country_flag = th_unlanded_character_home_SKT
-	clr_country_flag = th_unlanded_character_home_YAC
-	clr_country_flag = th_unlanded_character_home_GNU
-	clr_country_flag = th_unlanded_character_home_LCU
-	clr_country_flag = th_unlanded_character_home_KEI
-	clr_country_flag = th_unlanded_character_home_SKI
-	clr_country_flag = th_unlanded_character_home_ORN
-	clr_country_flag = th_unlanded_character_home_OKU
-	clr_country_flag = th_unlanded_character_home_FTP
-	clr_country_flag = th_unlanded_character_home_LEM
-	clr_country_flag = th_unlanded_character_home_MKN
-	clr_country_flag = th_unlanded_character_home_KMJ
-	clr_country_flag = th_unlanded_character_home_GGS
-	clr_country_flag = th_unlanded_character_home_SNZ
-	clr_country_flag = th_unlanded_character_home_GYK
-	clr_country_flag = th_unlanded_character_home_HIF
-	clr_country_flag = th_unlanded_character_home_YME
-	clr_country_flag = th_unlanded_character_home_MRU
-	clr_country_flag = th_unlanded_character_home_HAK
-	clr_country_flag = th_unlanded_character_home_NUE
-	clr_country_flag = th_unlanded_character_home_JOO
-	clr_country_flag = th_unlanded_character_home_SHI
-	clr_country_flag = th_unlanded_character_home_YMU
-	clr_country_flag = th_unlanded_character_home_ROD
-	clr_country_flag = th_unlanded_character_home_PRS
-	clr_country_flag = th_unlanded_character_home_SOU
-	clr_country_flag = th_unlanded_character_home_SEI
-	clr_country_flag = th_unlanded_character_home_MMU
-	clr_country_flag = th_unlanded_character_home_HVA
-	clr_country_flag = th_unlanded_character_home_RAN
-	clr_country_flag = th_unlanded_character_home_KNE
-	clr_country_flag = th_unlanded_character_home_KN2
-	clr_country_flag = th_unlanded_character_home_CH2
-	clr_country_flag = th_unlanded_character_home_DAY
-	clr_country_flag = th_unlanded_character_home_ZUT
+	set_variable = { which = th_danmaku_enemy_character_home value = 0 }
 }
 th_clear_enemy_spell_card = {
-	#clr_country_flag = th_unlanded_character_spell_card_$spell_card$
+	set_variable = { which = th_unlanded_character_spell_card value = 0 }
 }
 th_clear_enemy_trinket = {
-	#clr_country_flag = th_unlanded_character_trinket_$trinket$
+	set_variable = { which = th_unlanded_character_trinket value = 0 }
 }
 th_clear_enemy_weapon = {
-	#clr_country_flag = th_unlanded_character_weapon_$weapon$
+	set_variable = { which = th_unlanded_character_weapon value = 0 }
 }
+

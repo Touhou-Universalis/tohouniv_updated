@@ -337,8 +337,8 @@ void CDanmakuDuelManager::CreateLocCommandGetActor(std::string& outputLine, int 
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetActor";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ACTOR_COUNTRY_1 trigger = { th_combat_log_unlanded_get_actor_id = { action = " + std::to_string(a) + " actor = 1 } } }";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ACTOR_COUNTRY_2 trigger = { th_combat_log_unlanded_get_actor_id = { action = " + std::to_string(a) + " actor = 2 } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ACTOR_COUNTRY_1 trigger = { th_combat_log_get_actor_id = { action = " + std::to_string(a) + " actor = 1 } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_ACTOR_COUNTRY_2 trigger = { th_combat_log_get_actor_id = { action = " + std::to_string(a) + " actor = 2 } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -354,7 +354,7 @@ void CDanmakuDuelManager::CreateLocCommandGetEffectVerb(std::string& outputLine,
 		{
 			x = toupper(x);
 		}
-		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_VERB_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_ability_verb = { action = " + std::to_string(a) + " verb = " + v + " } } }";
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_VERB_" + uppercase_v + " trigger = { th_combat_log_get_ability_verb = { action = " + std::to_string(a) + " verb = " + v + " } } }";
 	}
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
@@ -371,7 +371,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbilityArticle(std::string& outputL
 		{
 			x = toupper(x);
 		}
-		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_ARTICLE_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_ability_article = { action = " + std::to_string(a) + " article = " + v + " } } }";
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_ARTICLE_" + uppercase_v + " trigger = { th_combat_log_get_ability_article = { action = " + std::to_string(a) + " article = " + v + " } } }";
 	}
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
@@ -383,7 +383,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbility(std::string& outputLine, in
 	outputLine += "\n\trandom = no";
 	for (std::string v : _combatAbilities)
 	{
-		outputLine += "\n\ttext = { localisation_key = th_ability_" + v + " trigger = { th_combat_log_unlanded_get_ability_id = { action = " + std::to_string(a) + " ability = " + v + " } } }";
+		outputLine += "\n\ttext = { localisation_key = th_ability_" + v + " trigger = { th_combat_log_get_ability_id = { action = " + std::to_string(a) + " ability = " + v + " } } }";
 	}
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
@@ -400,7 +400,7 @@ void CDanmakuDuelManager::CreateLocCommandGetPrePosition(std::string& outputLine
 		{
 			x = toupper(x);
 		}
-		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_PREPOSITION_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_preposition = { action = " + std::to_string(a) + " preposition = " + v + " } } }";
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_PREPOSITION_" + uppercase_v + " trigger = { th_combat_log_get_preposition = { action = " + std::to_string(a) + " preposition = " + v + " } } }";
 	}
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
@@ -410,8 +410,8 @@ void CDanmakuDuelManager::CreateLocCommandGetRecipient(std::string& outputLine, 
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetRecipient";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RECIPIENT_COUNTRY_1 trigger = { th_combat_log_unlanded_get_recipient_id = { action = " + std::to_string(a) + " recipient = 1 } } }";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RECIPIENT_COUNTRY_2 trigger = { th_combat_log_unlanded_get_recipient_id = { action = " + std::to_string(a) + " recipient = 2 } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RECIPIENT_COUNTRY_1 trigger = { th_combat_log_get_recipient_id = { action = " + std::to_string(a) + " recipient = 1 } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_DUEL_COMBAT_LOG_ACTION_" + std::to_string(a) + "_RECIPIENT_COUNTRY_2 trigger = { th_combat_log_get_recipient_id = { action = " + std::to_string(a) + " recipient = 2 } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -420,7 +420,7 @@ void CDanmakuDuelManager::CreateLocCommandGetHitRoll(std::string& outputLine, in
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRoll";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_HIT_ROLL_TEXT trigger = { has_country_flag = th_danmaku_has_advanced_combat_log th_combat_log_unlanded_get_hit_roll = { action = " + std::to_string(a) + " hit_roll = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_HIT_ROLL_TEXT trigger = { has_country_flag = th_danmaku_has_advanced_combat_log th_combat_log_get_hit_roll = { action = " + std::to_string(a) + " hit_roll = yes } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -429,7 +429,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbilityEffect(std::string& outputLi
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityEffect";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_MISS trigger = { 	OR = { th_combat_log_unlanded_get_ability_is_miss = { action = " + std::to_string(a) + " is_miss = yes } th_combat_log_unlanded_get_ability_effect = { action = " + std::to_string(a) + " ability_effect = miss } } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_MISS trigger = { 	OR = { th_combat_log_get_ability_is_miss = { action = " + std::to_string(a) + " is_miss = yes } th_combat_log_get_ability_effect = { action = " + std::to_string(a) + " ability_effect = miss } } } }";
 	for (std::string v : _combatAbilityEffect)
 	{
 		std::string uppercase_v = v;
@@ -437,7 +437,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbilityEffect(std::string& outputLi
 		{
 			x = toupper(x);
 		}
-		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_ability_effect = { action = " + std::to_string(a) + " ability_effect = " + v + " } } }";
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_" + uppercase_v + " trigger = { th_combat_log_get_ability_effect = { action = " + std::to_string(a) + " ability_effect = " + v + " } } }";
 	}
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
@@ -447,7 +447,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbilityEffectNumber(std::string& ou
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityEffectNumber";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_NUMBER trigger = { th_combat_log_unlanded_get_ability_impact_value = { action = " + std::to_string(a) + " number_impact = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_NUMBER trigger = { th_combat_log_get_ability_impact_value = { action = " + std::to_string(a) + " number_impact = yes } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -456,7 +456,7 @@ void CDanmakuDuelManager::CreateLocCommandGetCritical(std::string& outputLine, i
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetCritical";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_IS_CRITICAL trigger = { th_combat_log_unlanded_get_ability_is_critical = { action = " + std::to_string(a) + " is_critical = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_IS_CRITICAL trigger = { th_combat_log_get_ability_is_critical = { action = " + std::to_string(a) + " is_critical = yes } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -465,7 +465,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbilityRoll(std::string& outputLine
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRoll";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_EFFECT_ROLL_TEXT trigger = { has_country_flag = th_danmaku_has_advanced_combat_log th_combat_log_unlanded_get_ability_roll = { action = " + std::to_string(a) + " ability_roll = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_EFFECT_ROLL_TEXT trigger = { has_country_flag = th_danmaku_has_advanced_combat_log th_combat_log_get_ability_roll = { action = " + std::to_string(a) + " ability_roll = yes } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -489,7 +489,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbilityEffectEnd(std::string& outpu
 		{
 			x = toupper(x);
 		}
-		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_END_" + uppercase_v + " trigger = { th_combat_log_unlanded_get_ability_is_" + v + " = { action = " + std::to_string(a) + " is_" + v + " = yes } } }";
+		outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_ABILITY_EFFECT_END_" + uppercase_v + " trigger = { th_combat_log_get_ability_is_" + v + " = { action = " + std::to_string(a) + " is_" + v + " = yes } } }";
 	}
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
@@ -532,7 +532,7 @@ void CDanmakuDuelManager::CreateLocCommandGetHitBonusPerDice(std::string& output
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRollBonusPerDie";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_HIT_BONUS_PER_ROLL trigger = { th_combat_log_unlanded_check_variable = { action = " + std::to_string(a) + " type = hit_die_flat_bonus } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_HIT_BONUS_PER_ROLL trigger = { th_combat_log_check_variable = { action = " + std::to_string(a) + " type = hit_die_flat_bonus } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -541,7 +541,7 @@ void CDanmakuDuelManager::CreateLocCommandGetHitFlatBonus(std::string& outputLin
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetHitRollFlatBonus";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_FLAT_HIT_BONUS trigger = { th_combat_log_unlanded_check_variable = { action = " + std::to_string(a) + " type = hit_die_bonus_per_roll } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_FLAT_HIT_BONUS trigger = { th_combat_log_check_variable = { action = " + std::to_string(a) + " type = hit_die_bonus_per_roll } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -550,7 +550,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbilityBonusPerDice(std::string& ou
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRollBonusPerDie";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_ABILITY_BONUS_PER_ROLL trigger = { th_combat_log_unlanded_check_variable = { action = " + std::to_string(a) + " type = attack_die_bonus_per_roll } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_ABILITY_BONUS_PER_ROLL trigger = { th_combat_log_check_variable = { action = " + std::to_string(a) + " type = attack_die_bonus_per_roll } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -559,7 +559,7 @@ void CDanmakuDuelManager::CreateLocCommandGetAbilityFlatBonus(std::string& outpu
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetAbilityRollFlatBonus";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_FLAT_ABILITY_BONUS trigger = { th_combat_log_unlanded_check_variable = { action = " + std::to_string(a) + " type = attack_die_flat_bonus } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_FLAT_ABILITY_BONUS trigger = { th_combat_log_check_variable = { action = " + std::to_string(a) + " type = attack_die_flat_bonus } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -568,7 +568,7 @@ void CDanmakuDuelManager::CreateLocCommandGetCriticalBonus(std::string& outputLi
 	outputLine += "\ndefined_text = {";
 	outputLine += "\n\tname = ShowDanmakuCombatLogAction" + std::to_string(a) + "GetCriticalBonus";
 	outputLine += "\n\trandom = no";
-	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_CRITICAL_BONUS trigger = { th_combat_log_unlanded_get_ability_is_critical = { action = " + std::to_string(a) + " is_critical = yes } } }";
+	outputLine += "\n\ttext = { localisation_key = TH_DANMAKU_COMBAT_LOG_ACTION_" + std::to_string(a) + "_GET_CRITICAL_BONUS trigger = { th_combat_log_get_ability_is_critical = { action = " + std::to_string(a) + " is_critical = yes } } }";
 	outputLine += "\n\ttext = { localisation_key = empty_text trigger = { always = yes } }";
 	outputLine += "\n}";
 }
@@ -957,7 +957,7 @@ void CDanmakuDuelManager::GenerateLocalizationFile()
 	}
 	for (int a = 1; a <= _actions; a++)
 	{
-		CreateLocalizationCombatLogForUnlandedCharacter(outputLine, a);
+		CreateLocalizationCombatLogForCharacter(outputLine, a);
 		CreateLocalizationGetActor(outputLine, a);
 		CreateLocalizationGetRecipient(outputLine, a);
 		CreateLocalizationGetVariableValue(outputLine, a);
