@@ -74,6 +74,21 @@ th_log_transfer_action = {
 	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_is_miss 				which = th_danmaku_duel_action_$action$_ability_is_miss }
 	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_hit_roll 				which = th_danmaku_duel_action_$action$_ability_hit_roll }
 	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_roll 					which = th_danmaku_duel_action_$action$_ability_roll }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_actor							which = th_danmaku_duel_action_$action$_actor }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_recipient						which = th_danmaku_duel_action_$action$_recipient }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_article				which = th_danmaku_duel_action_$action$_ability_article }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_name					which = th_danmaku_duel_action_$action$_ability_name }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_preposition			which = th_danmaku_duel_action_$action$_ability_preposition }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_effect				which = th_danmaku_duel_action_$action$_ability_effect }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_number_impact			which = th_danmaku_duel_action_$action$_ability_number_impact }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_is_damage				which = th_danmaku_duel_action_$action$_ability_is_damage }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_is_health				which = th_danmaku_duel_action_$action$_ability_is_health }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_is_mana				which = th_danmaku_duel_action_$action$_ability_is_mana }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_is_action_points		which = th_danmaku_duel_action_$action$_ability_is_action_points }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_is_critical			which = th_danmaku_duel_action_$action$_ability_is_critical }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_is_miss				which = th_danmaku_duel_action_$action$_ability_is_miss }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_hit_roll				which = th_danmaku_duel_action_$action$_ability_hit_roll }
+	set_variable = { which = th_danmaku_duel_action_$past_action$_ability_roll					which = th_danmaku_duel_action_$action$_ability_roll }
 }
 
 # total_value = the end result of damage / healing
@@ -268,9 +283,47 @@ th_create_log = {
 	th_log_ability_is_health = { action = 1											is_health = $is_health$ }
 	th_log_ability_is_mana = { action = 1											is_mana = $is_mana$ }
 	th_log_ability_is_action_points = { action = 1									is_action_points = $is_action_points$ }
-	th_log_ability_is_miss = { action = 1											is_miss = $is_critical$ }
 	th_log_ability_hit_roll = { action = 1											hit_roll = $hit_roll$ }
 	th_log_ability_roll = { action = 1												ability_roll = $ability_roll$ }
+}
+
+th_post_mortem_ability_log_enemy_duelist = {
+	if = {
+		limit = { PREV = { has_ruler_flag = th_danmaku_rolled_critical_hit } }
+		th_log_ability_is_critical = { action = 1 is_critical = yes }
+	}
+	else = {
+		th_log_ability_is_critical = { action = 1 is_critical = NULL }
+	}
+	if = {
+		limit = { PREV = { has_ruler_flag = th_danmaku_duel_missed_attack } }
+		th_log_ability_is_miss = { action = 1 is_miss = yes }
+		th_log_ability_number_impact = { action = 1 number_impact = NULL }
+	}
+	else = {
+		th_log_ability_is_miss = { action = 1 is_miss = NULL }
+		th_log_ability_number_impact = { action = 1 number_impact = yes }
+	}
+}
+th_post_mortem_ability_log = {
+	if = {
+		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+		clr_ruler_flag = th_danmaku_rolled_critical_hit
+		th_log_ability_is_critical = { action = 1 is_critical = yes }
+	}
+	else = {
+		th_log_ability_is_critical = { action = 1 is_critical = NULL }
+	}
+	if = {
+		limit = { has_ruler_flag = th_danmaku_duel_missed_attack }
+		clr_ruler_flag = th_danmaku_duel_missed_attack
+		th_log_ability_is_miss = { action = 1 is_miss = yes }
+		th_log_ability_number_impact = { action = 1 number_impact = NULL }
+	}
+	else = {
+		th_log_ability_is_miss = { action = 1 is_miss = NULL }
+		th_log_ability_number_impact = { action = 1 number_impact = yes }
+	}
 }
 
 th_log_ability = {
@@ -289,7 +342,6 @@ th_log_ability = {
 			is_health = $is_health$
 			is_mana = $is_mana$
 			is_action_points = $is_action_points$
-			is_critical = $is_critical$
 			hit_roll = $hit_roll$
 			ability_roll = $ability_roll$
 		}
@@ -311,12 +363,13 @@ th_log_ability = {
 					is_health = $is_health$
 					is_mana = $is_mana$
 					is_action_points = $is_action_points$
-					is_critical = $is_critical$
 					hit_roll = $hit_roll$
 					ability_roll = $ability_roll$
 				}
+				th_post_mortem_ability_log_enemy_duelist = yes
 			}
 		}
+		th_post_mortem_ability_log = yes
 	}
 }
 
@@ -339,7 +392,6 @@ th_log_ability_for_current_actor_against_nobody = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -358,7 +410,6 @@ th_log_ability_for_current_actor_against_nobody = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -380,7 +431,6 @@ th_log_ability_for_current_actor_against_nobody = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -399,7 +449,6 @@ th_log_ability_for_current_actor_against_nobody = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -424,7 +473,6 @@ th_log_ability_for_current_actor_against_self = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -443,7 +491,6 @@ th_log_ability_for_current_actor_against_self = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -465,7 +512,6 @@ th_log_ability_for_current_actor_against_self = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -484,7 +530,6 @@ th_log_ability_for_current_actor_against_self = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -509,7 +554,6 @@ th_log_ability_for_current_actor_against_current_recipient = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -528,7 +572,6 @@ th_log_ability_for_current_actor_against_current_recipient = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -550,7 +593,6 @@ th_log_ability_for_current_actor_against_current_recipient = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -569,7 +611,6 @@ th_log_ability_for_current_actor_against_current_recipient = {
 				is_health = $is_health$
 				is_mana = $is_mana$
 				is_action_points = $is_action_points$
-				is_critical = $is_critical$
 				hit_roll = $hit_roll$
 				ability_roll = $ability_roll$
 			}
@@ -588,7 +629,6 @@ th_create_ability_combat_log = {
 		is_health = $is_health$
 		is_mana = $is_mana$
 		is_action_points = $is_action_points$
-		is_critical = $is_critical$
 		hit_roll = $hit_roll$
 		ability_roll = $ability_roll$
 	}
