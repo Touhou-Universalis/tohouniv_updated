@@ -39,6 +39,20 @@ th_log_cleanup_action = {
 	th_log_ability_roll = { action = $action$												ability_roll = NULL }
 }
 
+th_cleanup_leftover_variables = {
+	set_variable = { which = th_danmaku_duel_logged_actions value = 0 }
+	th_log_cleanup_action = { action = 1 }
+	th_log_cleanup_action = { action = 2 }
+	th_log_cleanup_action = { action = 3 }
+	th_log_cleanup_action = { action = 4 }
+	th_log_cleanup_action = { action = 5 }
+	th_log_cleanup_action = { action = 6 }
+	th_log_cleanup_action = { action = 7 }
+	th_log_cleanup_action = { action = 8 }
+	th_log_cleanup_action = { action = 9 }
+	th_log_cleanup_action = { action = 10 }
+}
+
 th_log_transfer_action = {
 	set_variable = { which = th_danmaku_duel_action_$past_action$_value 						which = th_danmaku_duel_action_$action$_value }
 	set_variable = { which = th_danmaku_duel_action_$past_action$_hit_die						which = th_danmaku_duel_action_$action$_hit_die }
@@ -236,10 +250,9 @@ th_log_ability_roll = {
 
 th_create_log = {
 	if = {
-		limit = { check_variable = { which = th_danmaku_duel_logged_actions value = 10 } }
-		set_variable = { which = th_danmaku_duel_logged_actions value = 1 }
+		limit = { NOT = { check_variable = { which = th_danmaku_duel_logged_actions value = 10 } } }
+		change_variable = { which = th_danmaku_duel_logged_actions value = 1 }
 	}
-	else = { change_variable = { which = th_danmaku_duel_logged_actions value = 1 } }
 	th_log_cleanup_action = { action = 10 }
 	th_log_transfer_action = { action = 9 past_action = 10 }
 	th_log_transfer_action = { action = 8 past_action = 9 }
@@ -287,45 +300,6 @@ th_create_log = {
 	th_log_ability_roll = { action = 1												ability_roll = $ability_roll$ }
 }
 
-th_post_mortem_ability_log_enemy_duelist = {
-	if = {
-		limit = { PREV = { has_ruler_flag = th_danmaku_rolled_critical_hit } }
-		th_log_ability_is_critical = { action = 1 is_critical = yes }
-	}
-	else = {
-		th_log_ability_is_critical = { action = 1 is_critical = NULL }
-	}
-	if = {
-		limit = { PREV = { has_ruler_flag = th_danmaku_duel_missed_attack } }
-		th_log_ability_is_miss = { action = 1 is_miss = yes }
-		th_log_ability_number_impact = { action = 1 number_impact = NULL }
-	}
-	else = {
-		th_log_ability_is_miss = { action = 1 is_miss = NULL }
-		th_log_ability_number_impact = { action = 1 number_impact = yes }
-	}
-}
-th_post_mortem_ability_log = {
-	if = {
-		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
-		clr_ruler_flag = th_danmaku_rolled_critical_hit
-		th_log_ability_is_critical = { action = 1 is_critical = yes }
-	}
-	else = {
-		th_log_ability_is_critical = { action = 1 is_critical = NULL }
-	}
-	if = {
-		limit = { has_ruler_flag = th_danmaku_duel_missed_attack }
-		clr_ruler_flag = th_danmaku_duel_missed_attack
-		th_log_ability_is_miss = { action = 1 is_miss = yes }
-		th_log_ability_number_impact = { action = 1 number_impact = NULL }
-	}
-	else = {
-		th_log_ability_is_miss = { action = 1 is_miss = NULL }
-		th_log_ability_number_impact = { action = 1 number_impact = yes }
-	}
-}
-
 th_log_ability = {
 	hidden_effect = {
 		#Actor
@@ -350,6 +324,26 @@ th_log_ability = {
 			limit = { th_is_not_duelling_an_unlanded_character = yes }
 			th_create_event_target_enemy_duelist = yes
 			event_target:enemy_duelist = {
+				set_variable = { which = th_danmaku_effect_total_value which = PREV }
+				set_variable = { which = th_danmaku_effect_hit_die which = PREV }
+				set_variable = { which = th_danmaku_effect_hit_die_amount which = PREV }
+				set_variable = { which = th_danmaku_effect_hit_die_result which = PREV }
+				set_variable = { which = th_danmaku_effect_enemy_ac which = PREV }
+				set_variable = { which = th_danmaku_effect_hit_die_flat_bonus which = PREV }
+				set_variable = { which = th_danmaku_effect_hit_die_bonus_per_roll which = PREV }
+				set_variable = { which = th_danmaku_effect_attack_die which = PREV }
+				set_variable = { which = th_danmaku_effect_attack_die_amount which = PREV }
+				set_variable = { which = th_danmaku_effect_attack_die_result which = PREV }
+				set_variable = { which = th_danmaku_effect_attack_die_bonus_per_roll which = PREV }
+				set_variable = { which = th_danmaku_effect_attack_die_flat_bonus which = PREV }
+				set_variable = { which = th_danmaku_effect_resistance_reduction which = PREV }
+				set_variable = { which = th_danmaku_effect_type_resistance_reduction which = PREV }
+				set_variable = { which = th_danmaku_effect_school_resistance_reduction which = PREV }
+				set_variable = { which = th_danmaku_effect_critical_damage_bonus which = PREV }
+				set_variable = { which = th_danmaku_effect_damage_type_multiplicator which = PREV }
+				set_variable = { which = th_danmaku_effect_damage_school_multiplicator which = PREV }
+				set_variable = { which = th_danmaku_effect_damage_type which = PREV }
+				set_variable = { which = th_danmaku_effect_damage_school which = PREV }
 				th_create_log = {
 					actor = $actor$
 					recipient = $recipient$
@@ -366,10 +360,46 @@ th_log_ability = {
 					hit_roll = $hit_roll$
 					ability_roll = $ability_roll$
 				}
-				th_post_mortem_ability_log_enemy_duelist = yes
+				if = {
+					limit = { PREV = { has_ruler_flag = th_danmaku_rolled_critical_hit } }
+					th_log_ability_is_critical = { action = 1 is_critical = yes }
+				}
+				else = {
+					th_log_ability_is_critical = { action = 1 is_critical = NULL }
+				}
+				if = {
+					limit = { PREV = { has_ruler_flag = th_danmaku_duel_missed_attack } }
+					th_log_ability_is_miss = { action = 1 is_miss = yes }
+					th_log_ability_number_impact = { action = 1 number_impact = NULL }
+					th_log_ability_is_damage = { action = 1 is_damage = NULL }
+					th_log_ability_roll = { action = 1 ability_roll = NULL }
+				}
+				else = {
+					th_log_ability_is_miss = { action = 1 is_miss = NULL }
+					th_log_ability_number_impact = { action = 1 number_impact = yes }
+				}
 			}
 		}
-		th_post_mortem_ability_log = yes
+		if = {
+			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+			clr_ruler_flag = th_danmaku_rolled_critical_hit
+			th_log_ability_is_critical = { action = 1 is_critical = yes }
+		}
+		else = {
+			th_log_ability_is_critical = { action = 1 is_critical = NULL }
+		}
+		if = {
+			limit = { has_ruler_flag = th_danmaku_duel_missed_attack }
+			clr_ruler_flag = th_danmaku_duel_missed_attack
+			th_log_ability_is_miss = { action = 1 is_miss = yes }
+			th_log_ability_number_impact = { action = 1 number_impact = NULL }
+			th_log_ability_is_damage = { action = 1 is_damage = NULL }
+			th_log_ability_roll = { action = 1 ability_roll = NULL }
+		}
+		else = {
+			th_log_ability_is_miss = { action = 1 is_miss = NULL }
+			th_log_ability_number_impact = { action = 1 number_impact = yes }
+		}
 	}
 }
 
