@@ -8,19 +8,6 @@ th_prepare_country_for_danmaku_duel = {
 	th_gui_update_danmaku_bar = { type = action_points }
 }
 
-th_cleanup_leftover_variables = {
-	th_log_cleanup_action = { action = 1 }
-	th_log_cleanup_action = { action = 2 }
-	th_log_cleanup_action = { action = 3 }
-	th_log_cleanup_action = { action = 4 }
-	th_log_cleanup_action = { action = 5 }
-	th_log_cleanup_action = { action = 6 }
-	th_log_cleanup_action = { action = 7 }
-	th_log_cleanup_action = { action = 8 }
-	th_log_cleanup_action = { action = 9 }
-	th_log_cleanup_action = { action = 10 }
-}
-
 th_assign_country_to_danmaku_duel_instance = {
 	th_prepare_country_for_danmaku_duel = yes
 	th_cleanup_leftover_variables = yes
@@ -443,22 +430,11 @@ th_clear_shared_danmaku_flags = {
 	clr_ruler_flag = th_danmaku_duel_hit_attack
 	clr_ruler_flag = th_danmaku_duel_missed_attack
 	clr_ruler_flag = th_danmaku_duel_over
-	clr_country_flag = th_opened_danmaku_battle_window
-	clr_country_flag = th_danmaku_locked_actions
 }
 
 th_clear_danmaku_flags = {
 	th_clear_shared_danmaku_flags = yes
-	th_log_cleanup_action = { action = 1 }
-	th_log_cleanup_action = { action = 2 }
-	th_log_cleanup_action = { action = 3 }
-	th_log_cleanup_action = { action = 4 }
-	th_log_cleanup_action = { action = 5 }
-	th_log_cleanup_action = { action = 6 }
-	th_log_cleanup_action = { action = 7 }
-	th_log_cleanup_action = { action = 8 }
-	th_log_cleanup_action = { action = 9 }
-	th_log_cleanup_action = { action = 10 }
+	th_cleanup_leftover_variables = yes
 	set_variable = { which = th_danmaku_duel_instance value = 0 }
 }
 
@@ -487,18 +463,9 @@ th_clear_combat_for_instance = {
 	}
 }
 
-th_clear_combat_solo = {
+th_clear_combat = {
 	th_clear_shared_danmaku_flags = yes
-	th_log_cleanup_action = { action = 1 }
-	th_log_cleanup_action = { action = 2 }
-	th_log_cleanup_action = { action = 3 }
-	th_log_cleanup_action = { action = 4 }
-	th_log_cleanup_action = { action = 5 }
-	th_log_cleanup_action = { action = 6 }
-	th_log_cleanup_action = { action = 7 }
-	th_log_cleanup_action = { action = 8 }
-	th_log_cleanup_action = { action = 9 }
-	th_log_cleanup_action = { action = 10 }
+	th_cleanup_leftover_variables = yes
 }
 
 #This effect needs to be called twice to end combat
@@ -932,7 +899,6 @@ th_generate_random_number = {
 				which = rng_used_custom_input
 			}
 			modulo_variable = { which = rng_transfer_input_variable value = 1401 }
-			set_variable = { which = rnroller which = rnroller }
 		]
 		# any value above 1460 will go over the variable size limit of eu4 i'm cutting it at 1400 for safety
 		if = {
@@ -972,15 +938,29 @@ th_generate_random_number = {
 		}
 		#Transfer number to PREV scope
 		PREV = {
-			change_variable = {
+			set_variable = {
 				which = $rng_variable$
 				value = 0
 			}
 		}
-		while = {
-			limit = { check_variable = { which = rnroller2 value = 1 } }
-			PREV = { change_variable = { which = $rng_variable$ value = 1 } }
-			subtract_variable = { which = rnroller2 value = 1 }
+		if = {
+			limit = {
+				check_variable = { which = rng_modulo value = 2 }
+				check_variable = { which = rnroller2 which = rng_modulo }
+				NOT = { is_variable_equal = { which = rnroller2 which = rng_modulo } }
+			}
+			while = {
+				limit = { check_variable = { which = rng_modulo value = 1 } }
+				PREV = { change_variable = { which = $rng_variable$ value = 1 } }
+				subtract_variable = { which = rng_modulo value = 1 }
+			}
+		}
+		else = {
+			while = {
+				limit = { check_variable = { which = rnroller2 value = 1 } }
+				PREV = { change_variable = { which = $rng_variable$ value = 1 } }
+				subtract_variable = { which = rnroller2 value = 1 }
+			}
 		}
 	}
 }
@@ -991,15 +971,8 @@ th_roll_die = {
 			check_variable = { which = $die_type$ value = 2 }
 			check_variable = { which = $die_amount$ value = 1 }
 		}
-		save_global_event_target_as = rng_generator
-		set_variable = {
-			which = th_roll_amount
-			which = $die_amount$
-		}
-		set_variable = {
-			which = th_bonus_per_roll
-			which = $bonus_per_roll$
-		}
+		set_variable = { which = th_roll_amount which = $die_amount$ }
+		set_variable = { which = th_bonus_per_roll which = $bonus_per_roll$ }
 		set_variable = { which = th_roll_die_type which = $die_type$ }
 
 		#Generate country specific random number
@@ -1028,7 +1001,7 @@ th_roll_die = {
 		}
 		#Total result
 		set_variable = {
-			which = rng_result
+			which = rng_result	#Will be set in th_generate_random_number to 0 again
 			value = 0
 		}
 		#Generating the numbers
@@ -1117,60 +1090,70 @@ th_roll_die_no_variable = {
 	}
 }
 
+
+th_set_attack_roll_type_physical = { set_variable = { which = th_danmaku_attack_roll_type value = 0 } }
+th_set_attack_roll_type_magical = { set_variable = { which = th_danmaku_attack_roll_type value = 1 } }
+th_set_attack_roll_type_psionic = { set_variable = { which = th_danmaku_attack_roll_type value = 2 } }
+th_set_attack_roll_type = {
+	th_set_attack_roll_type_$type$ = yes
+}
+
+th_get_attack_type_unlanded_character = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_attack_roll which = th_enemy_character_$type$_crit_roll_needed } }
+		set_ruler_flag = th_danmaku_rolled_critical_hit
+	}
+}
+
+th_get_attack_type = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_attack_roll which = th_danmaku_$type$_crit_roll_needed } }
+		set_ruler_flag = th_danmaku_rolled_critical_hit
+	}
+}
+
 th_perform_attack = {
-	set_variable = {
-		which = th_danmaku_attack_roll
-		value = 0
-	}
-	set_variable = {
-		which = th_danmaku_attack_roll_amount
-		value = 1
-	}
-	set_variable = {
-		which = th_danmaku_attack_roll_die_type
-		value = 20
-	}
-	set_variable = {
-		which = th_danmaku_hit_bonus_per_roll
-		value = 0
-	}
+	set_variable = { which = th_danmaku_attack_roll value = 0 }
+	set_variable = { which = th_danmaku_attack_roll_amount value = 1 }
+	set_variable = { which = th_danmaku_attack_roll_die_type value = 20 }
+	set_variable = { which = th_danmaku_hit_bonus_per_roll value = 0 }
 	th_roll_die = {
 		die_type = th_danmaku_attack_roll_die_type
 		die_amount = th_danmaku_attack_roll_amount
 		bonus_per_roll = th_danmaku_hit_bonus_per_roll
 		result = th_danmaku_attack_roll
 	}
+	set_variable = { which = th_danmaku_attack_roll_type value = 0 }
+	[[override_damage_type]th_set_attack_roll_type = { type = $override_damage_type$ }]
 	if = {
 		limit = { th_unlanded_character_has_turn_ownership = yes }
-		change_variable = {
-			which = th_danmaku_attack_roll
-			which = th_enemy_character_hit_bonus
-		}
+		change_variable = { which = th_danmaku_attack_roll which = th_enemy_character_hit_bonus }
 		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_enemy_character_hit_bonus }
 		if = {
-			limit = {
-				check_variable = {
-					which = th_danmaku_attack_roll
-					which = th_enemy_character_$type$_crit_roll_needed
-				}
-			}
-			set_ruler_flag = th_danmaku_rolled_critical_hit
+			limit = { is_variable_equal = { which = th_danmaku_attack_roll_type value = 1 } }
+			th_get_attack_type_unlanded_character = { type = magical }
+		}
+		else_if = {
+			limit = { is_variable_equal = { which = th_danmaku_attack_roll_type value = 2 } }
+			th_get_attack_type_unlanded_character = { type = psionic }
+		}
+		else = {
+			th_get_attack_type_unlanded_character = { type = physical }
 		}
 	}
 	else = {
-		change_variable = {
-			which = th_danmaku_attack_roll
-			which = th_danmaku_hit_bonus
-		}
+		change_variable = { which = th_danmaku_attack_roll which = th_danmaku_hit_bonus }
 		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
 		if = {
-			limit = {
-				check_variable = {
-					which = th_danmaku_attack_roll
-					which = th_danmaku_$type$_crit_roll_needed
-				}
-			}
-			set_ruler_flag = th_danmaku_rolled_critical_hit
+			limit = { is_variable_equal = { which = th_danmaku_attack_roll_type value = 1 } }
+			th_get_attack_type = { type = magical }
+		}
+		else_if = {
+			limit = { is_variable_equal = { which = th_danmaku_attack_roll_type value = 2 } }
+			th_get_attack_type = { type = psionic }
+		}
+		else = {
+			th_get_attack_type = { type = physical }
 		}
 	}
 	th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
@@ -1181,31 +1164,19 @@ th_perform_attack = {
 		limit = { th_is_duelling_an_unlanded_character = yes }
 		if = {
 			limit = { th_unlanded_character_has_turn_ownership = yes }
-			set_variable = {
-				which = th_danmaku_enemy_armor_class_transfer
-				which = th_danmaku_armor_class
-			}
+			set_variable = { which = th_danmaku_enemy_armor_class_transfer which = th_danmaku_armor_class }
 		}
 		else = {
-			set_variable = {
-				which = th_danmaku_enemy_armor_class_transfer
-				which = th_enemy_character_armor_class
-			}
+			set_variable = { which = th_danmaku_enemy_armor_class_transfer which = th_enemy_character_armor_class }
 		}
 	}
 	else = {
 		if = {
 			limit = { has_saved_event_target = enemy_duelist }
 			event_target:enemy_duelist = {
-				set_variable = {
-					which = th_danmaku_enemy_armor_class_transfer
-					which = th_danmaku_armor_class
-				}
+				set_variable = { which = th_danmaku_enemy_armor_class_transfer which = th_danmaku_armor_class }
 				PREV = {
-					set_variable = {
-						which = th_danmaku_enemy_armor_class_transfer
-						which = PREV
-					}
+					set_variable = { which = th_danmaku_enemy_armor_class_transfer which = PREV }
 				}
 			}
 		}
@@ -1215,39 +1186,26 @@ th_perform_attack = {
 	}
 	th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
 	if = {
-		limit = {
-			check_variable = {
-				which = th_danmaku_attack_roll
-				which = th_danmaku_enemy_armor_class_transfer
-			}
-		}
+		limit = { check_variable = { which = th_danmaku_attack_roll which = th_danmaku_enemy_armor_class_transfer } }
 		set_ruler_flag = th_danmaku_duel_hit_attack
 		clr_ruler_flag = th_danmaku_duel_missed_attack
 		if = {
 			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
 			th_play_sound = { sound = th_danmaku_duel_ability_$ability$_critical_hit }
-			if = {
-				limit = { th_unlanded_character_has_turn_ownership = yes }
-				set_variable = {
-					which = th_danmaku_crit_multiplier
-					which = th_enemy_character_$type$_crit_roll_multiplier
-				}
-			}
-			else = {
-				set_variable = {
-					which = th_danmaku_crit_multiplier
-					which = th_danmaku_$type$_crit_roll_damage_multiplier
-				}
-			}
 		}
 		else = {
 			th_play_sound = { sound = th_danmaku_duel_ability_$ability$_hit }
-			set_variable = {
-				which = th_danmaku_crit_multiplier
-				which = 0
-			}
 		}
-		th_deal_damage = { type = $type$ school = $school$ }
+		th_deal_damage = {
+			[[override_damage_type] override_damage_type = $override_damage_type$]
+			[[override_damage_school] override_damage_school = $override_damage_school$]
+			[[override_damage_die] override_damage_die = $override_damage_die$]
+			[[override_damage_die_amount] override_damage_die_amount = $override_damage_die_amount$]
+			[[override_damage_flat_bonus] override_damage_flat_bonus = $override_damage_flat_bonus$]
+			[[override_damage_bonus_per_die] override_damage_bonus_per_die = $override_damage_bonus_per_die$]
+			[[override_damage_type_modifier] override_damage_type_modifier = $override_damage_type_modifier$]
+			[[override_damage_school_modifier] override_damage_school_modifier = $override_damage_school_modifier$]
+		}
 	}
 	else = {
 		clr_ruler_flag = th_danmaku_duel_hit_attack
@@ -1275,6 +1233,236 @@ th_perform_attack = {
 # necrotic
 # arcane
 # infernal
+th_get_damage_type = {
+	set_variable = { which = th_danmaku_damage_die which = th_danmaku_$type$_attack_die }
+	if = {
+		limit = { th_danmaku_has_damage_modifier_not_zero = { type = $type$ } }
+		change_variable = { which = th_danmaku_damage_type_multiplicator which = th_danmaku_$type$_damage_modifier }
+	}
+	th_log_memorize_type = { type = damage_type_$type$ }
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_type_resistance_transfer
+				which = th_danmaku_$type$_resistance
+			}
+		}
+		set_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = PREV
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = th_enemy_character_$type$_resistance
+		}
+	}
+	if = {
+		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+		set_variable = {
+			which = th_danmaku_crit_multiplier
+			which = th_enemy_character_$type$_crit_roll_multiplier
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_crit_multiplier
+			which = 0
+		}
+	}
+}
+th_get_damage_school = {
+	if = {
+		limit = { th_danmaku_has_damage_modifier_not_zero = { type = $school$ } }
+		change_variable = { which = th_danmaku_damage_school_multiplicator which = th_danmaku_$school$_damage_modifier }
+	}
+	th_log_memorize_type = { type = damage_school_$school$ }
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_school_resistance_transfer
+				which = th_danmaku_$school$_resistance
+			}
+		}
+		set_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = PREV
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = th_enemy_character_$school$_resistance
+		}
+	}
+}
+th_determine_damage_type = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_damage_type_override value = 0 } }
+		if = { 		limit = { is_variable_equal = { which = th_danmaku_damage_type_override value = 1 } } th_get_damage_type = { type = magical } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_type_override value = 2 } } th_get_damage_type = { type = psionic } }
+		else = { 																				 th_get_damage_type = { type = physical } }
+	}
+	else = {
+		if = { 		limit = { is_variable_equal = { which = th_danmaku_attack_type value = 1 } } th_get_damage_type = { type = magical } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_type value = 2 } } th_get_damage_type = { type = psionic } }
+		else = { 																				 th_get_damage_type = { type = physical } }
+	}
+
+	if = {
+		limit = { check_variable = { which = th_danmaku_damage_school_override value = 0 } }
+		if = { limit = { 	  is_variable_equal = { which = th_danmaku_damage_school_override value = 1 } } 	th_get_damage_school = { school = piercing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 2 } } 	th_get_damage_school = { school = slashing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 3 } } 	th_get_damage_school = { school = fire } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 4 } } 	th_get_damage_school = { school = frost } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 5 } } 	th_get_damage_school = { school = earth } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 6 } } 	th_get_damage_school = { school = lightning } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 7 } } 	th_get_damage_school = { school = nature } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 8 } } 	th_get_damage_school = { school = holy } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 9 } } 	th_get_damage_school = { school = shadow } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 10 } } 	th_get_damage_school = { school = necrotic } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 11 } } 	th_get_damage_school = { school = arcane } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 12 } } 	th_get_damage_school = { school = infernal } }
+		else = { th_get_damage_school = { school = bludgeoning } }
+	}
+	else = {
+		if = { limit = { 	  is_variable_equal = { which = th_danmaku_attack_school value = 1 } } 	th_get_damage_school = { school = piercing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 2 } } 	th_get_damage_school = { school = slashing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 3 } } 	th_get_damage_school = { school = fire } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 4 } } 	th_get_damage_school = { school = frost } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 5 } } 	th_get_damage_school = { school = earth } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 6 } } 	th_get_damage_school = { school = lightning } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 7 } } 	th_get_damage_school = { school = nature } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 8 } } 	th_get_damage_school = { school = holy } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 9 } } 	th_get_damage_school = { school = shadow } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 10 } } th_get_damage_school = { school = necrotic } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 11 } } th_get_damage_school = { school = arcane } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 12 } } th_get_damage_school = { school = infernal } }
+		else = { th_get_damage_school = { school = bludgeoning } }
+	}
+}
+th_get_damage_type_unlanded_character = {
+	set_variable = {
+		which = th_danmaku_damage_die
+		which = th_enemy_character_$type$_attack_die
+	}
+	change_variable = {
+		which = th_danmaku_damage_die
+		which = th_enemy_character_$type$_attack_bonus
+	}
+	change_variable = {
+		which = th_danmaku_damage_die_amount
+		which = th_enemy_character_$type$_attack_die_num
+	}
+	if = {
+		limit = { th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $type$ } }
+		change_variable = {
+			which = th_danmaku_damage_type_multiplicator
+			which = th_enemy_character_$type$_damage_modifier
+		}
+	}
+	th_log_memorize_type = { type = damage_type_$type$ }
+	set_variable = {
+		which = th_danmaku_type_resistance_transfer
+		which = th_danmaku_$type$_resistance
+	}
+	if = {
+		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+		set_variable = {
+			which = th_danmaku_crit_multiplier
+			which = th_danmaku_$type$_crit_roll_damage_multiplier
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_crit_multiplier
+			which = 0
+		}
+	}
+}
+th_get_damage_school_unlanded_character = {
+	if = {
+		limit = { th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $school$ } }
+		change_variable = { which = th_danmaku_damage_school_multiplicator which = th_enemy_character_$school$_damage_modifier }
+	}
+	th_log_memorize_type = { type = damage_school_$school$ }
+	set_variable = {
+		which = th_danmaku_school_resistance_transfer
+		which = th_danmaku_$schhol$_resistance
+	}
+}
+th_determine_damage_type_unlanded_character = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_damage_type_override value = 0 } }
+		if = {		limit = { is_variable_equal = { which = th_danmaku_damage_type_override value = 1 } } th_get_damage_type_unlanded_character = { type = magical } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_type_override value = 2 } } th_get_damage_type_unlanded_character = { type = psionic } }
+		else = { 																						 th_get_damage_type_unlanded_character = { type = physical } }
+	}
+	else = {
+		if = {		limit = { is_variable_equal = { which = th_enemy_character_damage_type value = 1 } } th_get_damage_type_unlanded_character = { type = magical } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_type value = 2 } } th_get_damage_type_unlanded_character = { type = psionic } }
+		else = { 																						 th_get_damage_type_unlanded_character = { type = physical } }
+	}
+	
+	if = {
+		limit = { check_variable = { which = th_danmaku_damage_school_override value = 0 } }
+		if = { limit = { 	  is_variable_equal = { which = th_danmaku_damage_school_override value = 1 } } 	th_get_damage_school_unlanded_character = { school = piercing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 2 } } 	th_get_damage_school_unlanded_character = { school = slashing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 3 } } 	th_get_damage_school_unlanded_character = { school = fire } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 4 } } 	th_get_damage_school_unlanded_character = { school = frost } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 5 } } 	th_get_damage_school_unlanded_character = { school = earth } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 6 } } 	th_get_damage_school_unlanded_character = { school = lightning } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 7 } } 	th_get_damage_school_unlanded_character = { school = nature } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 8 } } 	th_get_damage_school_unlanded_character = { school = holy } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 9 } } 	th_get_damage_school_unlanded_character = { school = shadow } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 10 } } 	th_get_damage_school_unlanded_character = { school = necrotic } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 11 } } 	th_get_damage_school_unlanded_character = { school = arcane } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 12 } } 	th_get_damage_school_unlanded_character = { school = infernal } }
+		else = { th_get_damage_school_unlanded_character = { school = bludgeoning } }
+	}
+	else = {
+		if = { limit = { 	  is_variable_equal = { which = th_enemy_character_damage_school value = 1 } } 	th_get_damage_school_unlanded_character = { school = piercing } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 2 } } 	th_get_damage_school_unlanded_character = { school = slashing } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 3 } } 	th_get_damage_school_unlanded_character = { school = fire } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 4 } } 	th_get_damage_school_unlanded_character = { school = frost } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 5 } } 	th_get_damage_school_unlanded_character = { school = earth } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 6 } } 	th_get_damage_school_unlanded_character = { school = lightning } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 7 } } 	th_get_damage_school_unlanded_character = { school = nature } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 8 } } 	th_get_damage_school_unlanded_character = { school = holy } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 9 } } 	th_get_damage_school_unlanded_character = { school = shadow } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 10 } } th_get_damage_school_unlanded_character = { school = necrotic } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 11 } } th_get_damage_school_unlanded_character = { school = arcane } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 12 } } th_get_damage_school_unlanded_character = { school = infernal } }
+		else = { th_get_damage_school_unlanded_character = { school = bludgeoning } }
+	}
+}
+
+th_override_damage_type_physical = { set_variable = { which = th_danmaku_damage_type_override value = 0 } }
+th_override_damage_type_magical = { set_variable = { which = th_danmaku_damage_type_override value = 1 } }
+th_override_damage_type_psionic = { set_variable = { which = th_danmaku_damage_type_override value = 2 } }
+th_override_damage_type = {
+	th_override_damage_type_$type$ = yes
+}
+th_override_damage_school_bludgeoning = { set_variable = { which = th_danmaku_damage_school_override value = 0 } }
+th_override_damage_school_piercing = { set_variable = { which = th_danmaku_damage_school_override value = 1 } }
+th_override_damage_school_slashing = { set_variable = { which = th_danmaku_damage_school_override value = 2 } }
+th_override_damage_school_fire = { set_variable = { which = th_danmaku_damage_school_override value = 3 } }
+th_override_damage_school_frost = { set_variable = { which = th_danmaku_damage_school_override value = 4 } }
+th_override_damage_school_earth = { set_variable = { which = th_danmaku_damage_school_override value = 5 } }
+th_override_damage_school_lightning = { set_variable = { which = th_danmaku_damage_school_override value = 6 } }
+th_override_damage_school_nature = { set_variable = { which = th_danmaku_damage_school_override value = 7 } }
+th_override_damage_school_holy = { set_variable = { which = th_danmaku_damage_school_override value = 8 } }
+th_override_damage_school_shadow = { set_variable = { which = th_danmaku_damage_school_override value = 9 } }
+th_override_damage_school_necrotic = { set_variable = { which = th_danmaku_damage_school_override value = 10 } }
+th_override_damage_school_arcane = { set_variable = { which = th_danmaku_damage_school_override value = 11 } }
+th_override_damage_school_infernal = { set_variable = { which = th_danmaku_damage_school_override value = 12 } }
+th_override_damage_school = {
+	th_override_damage_school_$school$ = yes
+}
+
 th_deal_damage = {
 	#How many dies?
 	set_variable = {
@@ -1282,62 +1470,18 @@ th_deal_damage = {
 		value = 1
 	}
 	#What type of die?
-	set_variable = {
-		which = th_danmaku_damage_type_multiplicator
-		value = 1
-	}
-	set_variable = {
-		which = th_danmaku_damage_school_multiplicator
-		value = 1
-	}
+	set_variable = { which = th_danmaku_damage_type_multiplicator value = 1 }
+	set_variable = { which = th_danmaku_damage_school_multiplicator value = 0 }	#Type and school multiplicators get combined with each other at the end
+	set_variable = { which = th_danmaku_damage_type_override value = -1 }
+	set_variable = { which = th_danmaku_damage_school_override value = -1 }
+	[[override_damage_type]th_override_damage_type = { type = $override_damage_type$ }]
+	[[override_damage_school]th_override_damage_school = { school = $override_damage_school$ }]
 	if = {
 		limit = { th_unlanded_character_has_turn_ownership = yes }
-		set_variable = {
-			which = th_danmaku_damage_die
-			which = th_enemy_character_$type$_attack_die
-		}
-		change_variable = {
-			which = th_danmaku_damage_die
-			which = th_enemy_character_$type$_attack_bonus
-		}
-		change_variable = {
-			which = th_danmaku_damage_die_amount
-			which = th_enemy_character_$type$_attack_die_num
-		}
-		if = {
-			limit = { th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $type$ } }
-			change_variable = {
-				which = th_danmaku_damage_type_multiplicator
-				which = th_enemy_character_$type$_damage_modifier
-			}
-		}
-		if = {
-			limit = { th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $school$ } }
-			change_variable = {
-				which = th_danmaku_damage_school_multiplicator
-				which = th_enemy_character_$school$_damage_modifier
-			}
-		}
+		th_determine_damage_type_unlanded_character = yes
 	}
 	else = {
-		set_variable = {
-			which = th_danmaku_damage_die
-			which = th_danmaku_$type$_attack_die
-		}
-		if = {
-			limit = { th_danmaku_has_damage_modifier_not_zero = { type = $type$ } }
-			change_variable = {
-				which = th_danmaku_damage_type_multiplicator
-				which = th_enemy_character_$type$_damage_modifier
-			}
-		}
-		if = {
-			limit = { th_danmaku_has_damage_modifier_not_zero = { type = $school$ } }
-			change_variable = {
-				which = th_danmaku_damage_school_multiplicator
-				which = th_enemy_character_$school$_damage_modifier
-			}
-		}
+		th_determine_damage_type = yes
 	}
 	change_variable = {
 		which = th_danmaku_damage_die
@@ -1363,8 +1507,6 @@ th_deal_damage = {
 	th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
 	th_log_memorize_value = { type = damage_type_multiplicator variable = th_danmaku_damage_type_multiplicator }
 	th_log_memorize_value = { type = damage_school_multiplicator variable = th_danmaku_damage_school_multiplicator }
-	th_log_memorize_type = { type = damage_type_$type$ }
-	th_log_memorize_type = { type = damage_school_$school$ }
 	if = {
 		limit = {
 			check_variable = { which = th_danmaku_damage_die value = 2 }
@@ -1399,7 +1541,7 @@ th_deal_damage = {
 		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
 		change_variable = {
 			which = th_danmaku_crit_multiplier
-			value = 1
+			value = 3
 		}
 		multiply_variable = {
 			which = th_danmaku_damage_roll
@@ -1414,25 +1556,9 @@ th_deal_damage = {
 				which = th_danmaku_resistance_transfer
 				which = th_danmaku_resistance
 			}
-			set_variable = {
-				which = th_danmaku_type_resistance_transfer
-				which = th_danmaku_$type$_resistance
-			}
-			set_variable = {
-				which = th_danmaku_school_resistance_transfer
-				which = th_danmaku_$school$_resistance
-			}
 		}
 		set_variable = {
 			which = th_danmaku_resistance_transfer
-			which = PREV
-		}
-		set_variable = {
-			which = th_danmaku_type_resistance_transfer
-			which = PREV
-		}
-		set_variable = {
-			which = th_danmaku_school_resistance_transfer
 			which = PREV
 		}
 		#General resistance
@@ -1516,27 +1642,11 @@ th_deal_damage = {
 				which = th_danmaku_resistance_transfer
 				which = th_danmaku_resistance
 			}
-			set_variable = {
-				which = th_danmaku_type_resistance_transfer
-				which = th_danmaku_$type$_resistance
-			}
-			set_variable = {
-				which = th_danmaku_school_resistance_transfer
-				which = th_danmaku_$schhol$_resistance
-			}
 		}
 		else = {
 			set_variable = {
 				which = th_danmaku_resistance_transfer
 				which = th_enemy_character_resistance
-			}
-			set_variable = {
-				which = th_danmaku_type_resistance_transfer
-				which = th_enemy_character_$type$_resistance
-			}
-			set_variable = {
-				which = th_danmaku_school_resistance_transfer
-				which = th_enemy_character_$school$_resistance
 			}
 		}
 		#General resistance
@@ -1918,6 +2028,8 @@ th_create_danmaku_duel_against_unlanded_character = {
 			saving_throw_die_var = th_enemy_character_saving_throw_die
 			armor_class_var = th_enemy_character_armor_class
 			resistance_var = th_enemy_character_resistance
+			damage_type_var = th_enemy_character_damage_type
+			damage_school_var = th_enemy_character_damage_school
 			level_var = th_enemy_character_level
 		}
 		th_define_enemy_danmaku_character = { target = $target$ }
@@ -2167,6 +2279,11 @@ th_create_danmaku_duel_against_unlanded_character = {
 		[[value_change_level]change_variable = { which = th_enemy_character_level													value = $value_change_level$ }]
 		[[override_level]set_variable = { which = th_enemy_character_level															which = $override_level$ }]
 		[[change_level]change_variable = { which = th_enemy_character_level															which = $change_level$ }]
+
+
+		[[damage_type]th_set_enemy_character_damage_type = { type = $damage_type$ }]
+		[[damage_school]th_set_enemy_character_damage_school = { school = $damage_school$ }]
+
 		set_variable = {
 			which = th_enemy_character_current_health
 			which = th_enemy_character_max_health

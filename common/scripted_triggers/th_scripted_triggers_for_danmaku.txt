@@ -631,7 +631,7 @@ th_weapon_has_rarity = {
 			NOT = {
 				is_variable_equal = {
 					which = th_weapon_$weapon$_new_rarity
-					value = 1
+					value = 0
 				}
 			}
 			is_variable_equal = {
@@ -642,11 +642,11 @@ th_weapon_has_rarity = {
 		AND = {
 			check_variable = {
 				which = th_weapon_$weapon$_new_rarity
-				value = 1
+				value = 0
 			}
 			1 = {
 				is_variable_equal = {
-					which = th_weapon_iron_sword_default_rarity
+					which = th_weapon_$weapon$_default_rarity
 					value = $rarity$
 				}
 			}
@@ -681,7 +681,20 @@ th_weapon_is_of_damage_school_necrotic = {		is_variable_equal = { which = th_wea
 th_weapon_is_of_damage_school_arcane = {		is_variable_equal = { which = th_weapon_$weapon$_damage_school value = 11 }	}
 th_weapon_is_of_damage_school_infernal = {		is_variable_equal = { which = th_weapon_$weapon$_damage_school value = 12 }	}
 th_weapon_is_of_damage_school = {
-	1 = { th_weapon_is_of_damage_school_$school$ = { weapon = $weapon$ } }
+	1 = { th_weapon_is_of_damage_school_$type$ = { weapon = $weapon$ } }
+}
+
+th_equipped_weapon_damage_class = {
+	AND = {
+		th_has_equipped_weapon = { weapon = $weapon$ }
+		th_weapon_is_of_damage_$class$ = { weapon = $weapon$ type = $type$ }
+	}
+}
+
+th_currently_equipped_weapon_damage_class = {
+	OR = {
+		th_equipped_weapon_damage_class = { weapon = iron_sword class = $class$ type = $type$ }
+	}
 }
 
 th_gui_current_page_items_collection = {
@@ -708,30 +721,33 @@ th_gui_current_page_is_smaller_items_collection = {
 }
 
 th_gui_has_selected_item_type = {
-	has_country_flag = th_has_selcted_item_of_$type$
+	if = {
+		limit = { NOT = { has_country_flag = th_has_selected_item_of_$type$ } }
+		custom_trigger_tooltip = {
+			tooltip = th_has_selected_item_of_$type$_tt
+			has_country_flag = th_has_selected_item_of_$type$
+		}
+	}
 }
 th_gui_has_not_selected_item_type = {
-	NOT = { has_country_flag = th_has_selcted_item_of_$type$ }
+	NOT = { has_country_flag = th_has_selected_item_of_$type$ }
 }
+th_gui_has_selected_item_iron_sword = { is_variable_equal = { which = th_selected_weapon value = 1 } }
 th_gui_has_selected_item = {
 	th_gui_has_selected_item_type = { type = $type$ }
-	has_country_flag = th_selected_$type$_$item$
+	th_gui_has_selected_item_$item$ = yes
 }
 th_gui_has_selected_weapon = {
 	th_gui_has_selected_item = { type = weapon item = $item$ }
 }
 
-th_has_equipped_item = {
-	has_country_flag = th_danmaku_has_equipped_$type$_$item$
+th_has_equipped_weapon_iron_sword = { is_variable_equal = { which = th_danmaku_weapon_equipped value = 1 } }
+th_has_equipped_weapon_none = { is_variable_equal = { which = th_danmaku_weapon_equipped value = 0 } }
+th_has_equipped_weapon = {
+	th_has_equipped_weapon_$weapon$ = yes
 }
-th_has_not_equipped_item = {
-	NOT = { has_country_flag = th_danmaku_has_equipped_$type$_$item$ }
-}
-
-th_is_wielding_weapon_iron_sword = { is_variable_equal = { which = th_danmaku_weapon_wielded value = 1 } }
-th_is_wielding_weapon_none = { is_variable_equal = { which = th_danmaku_weapon_wielded value = 0 } }
-th_is_wielding_weapon = {
-	th_is_wielding_weapon_$weapon$ = yes
+th_has_equipped_any_weapon = {
+	check_variable = { which = th_danmaku_weapon_equipped value = 1 }
 }
 
 th_has_trinket_equipped_none = { is_variable_equal = { which = th_danmaku_trinket_equipped value = 0 } }
@@ -744,10 +760,10 @@ th_has_spell_card_equipped = {
 	th_has_spell_card_equipped_$spell_card$ = yes
 }
 
-th_enemy_character_is_wielding_weapon_iron_sword = { is_variable_equal = { which = th_danmaku_enemy_character_weapon value = 1 } }
-th_enemy_character_is_wielding_weapon_none = { is_variable_equal = { which = th_danmaku_enemy_character_weapon value = 0 } }
-th_enemy_character_is_wielding_weapon = {
-	th_enemy_character_is_wielding_weapon_$weapon$ = yes
+th_enemy_character_has_equipped_weapon_iron_sword = { is_variable_equal = { which = th_danmaku_enemy_character_weapon value = 1 } }
+th_enemy_character_has_equipped_weapon_none = { is_variable_equal = { which = th_danmaku_enemy_character_weapon value = 0 } }
+th_enemy_character_has_equipped_weapon = {
+	th_enemy_character_has_equipped_weapon_$weapon$ = yes
 }
 
 th_enemy_character_has_trinket_equipped_none = { is_variable_equal = { which = th_danmaku_enemy_character_trinket value = 0 } }
@@ -758,4 +774,17 @@ th_enemy_character_has_trinket_equipped = {
 th_enemy_character_has_spell_card_equipped_none = { is_variable_equal = { which = th_danmaku_enemy_character_spell_card value = 0 } }
 th_enemy_character_has_spell_card_equipped = {
 	th_enemy_character_has_spell_card_equipped_$spell_card$ = yes
+}
+
+th_danmaku_damage_is_of_type = {
+	is_variable_equal = {
+		which = th_danmaku_duel_action_$action$_damage_type
+		value = $type$
+	}
+}
+th_danmaku_damage_is_of_school = {
+	is_variable_equal = {
+		which = th_danmaku_duel_action_$action$_damage_school
+		value = $school$
+	}
 }

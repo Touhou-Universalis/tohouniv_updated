@@ -95,6 +95,10 @@ th_initialize_danmaku_definitions = {
 			set_variable = { which = th_danmaku_default_physical_attack_die_num		value = 1 }		#The amount of die you roll for damage
 			set_variable = { which = th_danmaku_default_physical_crit_roll_needed	value = 20 }	#Need to roll a 20 for a critical hit
 
+			# Default Attack Type
+			set_variable = { which = th_danmaku_default_attack_type					value = 0 }		#Physical
+			set_variable = { which = th_danmaku_default_attack_school				value = 0 }		#Bludgeoning
+
 			# Magical Attack
 			set_variable = { which = th_danmaku_default_magical_attack_bonus		value = 0 }		#The flat attack damage bonus
 			set_variable = { which = th_danmaku_default_magical_attack_die			value = 10 }	#The die you roll for damage
@@ -233,6 +237,30 @@ th_set_weapon_to_damage_school = {
 	th_set_weapon_to_damage_school_$school$ = { weapon = $weapon$ }
 }
 
+th_set_enemy_character_damage_type_physical = { set_variable = { which = th_enemy_character_damage_type value = 0 } }
+th_set_enemy_character_damage_type_magical = { set_variable = { which = th_enemy_character_damage_type value = 1 } }
+th_set_enemy_character_damage_type_psionic = { set_variable = { which = th_enemy_character_damage_type value = 2 } }
+th_set_enemy_character_damage_type = {
+	th_set_enemy_character_damage_type_$type$ = yes
+}
+
+th_set_enemy_character_damage_school_bludgeoning = { 	set_variable = { which = th_enemy_character_damage_school value = 0 } }
+th_set_enemy_character_damage_school_piercing = { 		set_variable = { which = th_enemy_character_damage_school value = 1 } }
+th_set_enemy_character_damage_school_slashing = { 		set_variable = { which = th_enemy_character_damage_school value = 2 } }
+th_set_enemy_character_damage_school_fire = { 			set_variable = { which = th_enemy_character_damage_school value = 3 } }
+th_set_enemy_character_damage_school_frost = { 			set_variable = { which = th_enemy_character_damage_school value = 4 } }
+th_set_enemy_character_damage_school_earth = { 			set_variable = { which = th_enemy_character_damage_school value = 5 } }
+th_set_enemy_character_damage_school_lightning = { 		set_variable = { which = th_enemy_character_damage_school value = 6 } }
+th_set_enemy_character_damage_school_nature = { 		set_variable = { which = th_enemy_character_damage_school value = 7 } }
+th_set_enemy_character_damage_school_holy = { 			set_variable = { which = th_enemy_character_damage_school value = 8 } }
+th_set_enemy_character_damage_school_shadow = { 		set_variable = { which = th_enemy_character_damage_school value = 9 } }
+th_set_enemy_character_damage_school_necrotic = { 		set_variable = { which = th_enemy_character_damage_school value = 10 } }
+th_set_enemy_character_damage_school_arcane = { 		set_variable = { which = th_enemy_character_damage_school value = 11 } }
+th_set_enemy_character_damage_school_infernal = { 		set_variable = { which = th_enemy_character_damage_school value = 12 } }
+th_set_enemy_character_damage_school = {
+	th_set_enemy_character_damage_school_$school$ = yes
+}
+
 #Spellcard Data Base
 th_initialize_spellcard_data_base = {
 	hidden_effect = {
@@ -264,6 +292,13 @@ th_initialize_weapon_data_base = {
 		}
 	}
 }
+th_apply_default_weapon_stats_iron_sword = {
+	th_apply_weapon_stats_on_$who$ = {
+		physical_attack_die = 6
+		physical_attack_die_num = 1
+	}
+}
+th_apply_default_weapon_stats = { th_apply_default_weapon_stats_$weapon$ = { who = $who$ } }
 
 
 #Creature Specific
@@ -2230,10 +2265,11 @@ th_set_enemy_character_home = {
 
 
 
-th_equip_weapon_iron_sword = { set_variable = { which = th_danmaku_weapon_wielded value = 1 } }
-th_equip_weapon_none = { set_variable = { which = th_danmaku_weapon_wielded value = 0 } }
+th_equip_weapon_iron_sword = { set_variable = { which = th_danmaku_weapon_equipped value = 1 } }
+th_equip_weapon_none = { set_variable = { which = th_danmaku_weapon_equipped value = 0 } }
 th_equip_weapon = {
 	th_equip_weapon_$weapon$ = yes
+	th_copy_attack_type_and_school_from_weapon = { weapon = $weapon$ }
 }
 th_equip_trinket_none = { set_variable = { which = th_danmaku_trinket_equipped value = 0 } }
 th_equip_trinket = {
@@ -2248,6 +2284,8 @@ th_enemy_character_equip_weapon_iron_sword = { set_variable = { which = th_danma
 th_enemy_character_equip_weapon_none = { set_variable = { which = th_danmaku_enemy_character_weapon value = 0 } }
 th_enemy_character_equip_weapon = {
 	th_enemy_character_equip_weapon_$weapon$ = yes
+	th_copy_attack_type_and_school_from_weapon_enemy_character = { weapon = $weapon$ }
+	th_apply_default_weapon_stats = { weapon = iron_sword who = unlanded_character }
 }
 th_enemy_character_equip_trinket_none = { set_variable = { which = th_danmaku_enemy_character_trinket value = 0 } }
 th_enemy_character_equip_trinket = {
