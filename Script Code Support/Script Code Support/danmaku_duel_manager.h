@@ -67,7 +67,7 @@ private:
 	void CreateLocalizationGetCriticalBonus(std::string& outputLine, int i, int a);
 
 	//Unlanded Character duels loc
-	void CreateLocalizationCombatLogForUnlandedCharacter(std::string& outputLine, int a);
+	void CreateLocalizationCombatLogForCharacter(std::string& outputLine, int a);
 	void CreateLocalizationGetActor(std::string& outputLine, int a);
 	void CreateLocalizationGetRecipient(std::string& outputLine, int a);
 	void CreateLocalizationGetVariableValue(std::string& outputLine, int a);

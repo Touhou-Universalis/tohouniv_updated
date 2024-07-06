@@ -1,0 +1,2385 @@
+th_prepare_country_for_danmaku_duel = {
+	set_country_flag = th_is_in_a_danmaku_duel
+	set_ruler_flag = th_ruler_is_in_a_danmaku_duel
+	set_variable = {
+		which = th_danmaku_action_points
+		which = th_danmaku_max_action_points
+	}
+	th_gui_update_danmaku_bar = { type = action_points }
+}
+
+th_assign_country_to_danmaku_duel_instance = {
+	th_prepare_country_for_danmaku_duel = yes
+	th_cleanup_leftover_variables = yes
+	set_variable = { which = th_danmaku_duel_instance value = $instance$ }
+	save_global_event_target_as = th_danmaku_duelist_of_id_$country_id$_of_instance_$instance$
+}
+
+th_setup_danmaku_duel_instance = {
+	set_variable = {
+		which = th_danmaku_duel_instance_$instance$_round_counter
+		value = 1
+	}
+	set_variable = {
+		which = th_danmaku_duel_instance_$instance$_opponent_turn	#Is 0 for the first striker, is 1 for the second striker. Gets reset to 0 after the second striker ends turn so initiative can be rerolled.
+		value = 0
+	}
+	set_variable = {
+		which = th_danmaku_duel_instance_$instance$_turn_duration_counter
+		which = th_danmaku_default_turn_duration
+	}
+	set_variable = {
+		which = th_danmaku_duel_logged_actions_for_instance_$instance$
+		value = 0
+	}
+	set_province_flag = th_danmaku_duel_instance_$instance$_online
+	th_cleanup_leftover_variables = yes
+}
+
+th_gui_set_enemy_bar = {
+	$country_1$ = {
+		set_variable = {
+			which = th_danmaku_source_transfer_$type$
+			which = th_danmaku_$type$_var
+		}
+		$country_2$ = {
+			set_variable = {
+				which = th_danmaku_source_transfer_$type$
+				which = PREV
+			}
+			set_variable = { 
+				which = th_danmaku_enemy_$type$_var 
+				which = th_danmaku_source_transfer_$type$ 
+			}
+			set_variable = {
+				which = th_danmaku_target_transfer_$type$
+				which = th_danmaku_$type$_var
+			}
+			$country_1$ = {
+				set_variable = {
+					which = th_danmaku_target_transfer_$type$
+					which = PREV
+				}
+				set_variable = { 
+					which = th_danmaku_enemy_$type$_var 
+					which = th_danmaku_target_transfer_$type$ 
+				}
+			}
+		}
+	}
+}
+
+th_roll_initiative = {
+	custom_tooltip = th_roll_initiative_tt
+	hidden_effect = {
+		set_variable = {
+			which = th_danmaku_rolled_initiative
+			value = 0
+		}
+		random_list = {
+			1 = { change_variable = { which = th_danmaku_rolled_initiative value = 1 } }
+			1 = { change_variable = { which = th_danmaku_rolled_initiative value = 2 } }
+			1 = { change_variable = { which = th_danmaku_rolled_initiative value = 3 } }
+			1 = { change_variable = { which = th_danmaku_rolled_initiative value = 4 } }
+		}
+		change_variable = {
+			which = th_danmaku_rolled_initiative
+			which = th_danmaku_ini_bonus
+		}
+	}
+}
+th_alternative_roll_initiative = {	#I LOOOOOOOOVE EU4's inability to have random numbers
+	custom_tooltip = th_roll_initiative_tt
+	hidden_effect = {
+		export_to_variable = {
+			which = th_danmaku_randomizer
+			value = max_manpower
+		}
+		export_to_variable = {
+			which = $variable$
+			value = manpower
+		}
+		change_variable = {
+			which = th_danmaku_randomizer
+			which = $variable$
+		}
+		divide_variable = {
+			which = th_danmaku_randomizer
+			value = 2
+		}
+		set_variable = {
+			which = $variable$
+			which = th_danmaku_randomizer
+		}
+		random = {
+			chance = 0.25
+			change_variable = {
+				which = th_danmaku_randomizer
+				value = 1
+			}
+		}
+		random = {
+			chance = 0.25
+			change_variable = {
+				which = th_danmaku_randomizer
+				value = 2
+			}
+		}
+		random = {
+			chance = 0.25
+			change_variable = {
+				which = th_danmaku_randomizer
+				value = 3
+			}
+		}
+		divide_variable = {
+			which = th_danmaku_randomizer
+			value = 4
+		}
+		round_variable = {
+			which = th_danmaku_randomizer
+			value = -1
+		}
+		multiply_variable = {
+			which = th_danmaku_randomizer
+			value = 4
+		}
+		subtract_variable = {
+			which = $variable$
+			which = th_danmaku_randomizer
+		}
+		round_variable = {
+			which = $variable$
+			value = 0
+		}
+		change_variable = {
+			which = $variable$
+			which = $bonus$
+		}
+	}
+}
+
+th_roll_initiative_for_current_instance = {
+	custom_tooltip = th_roll_initiative_for_current_instance_tt
+	hidden_effect = {
+		$country_1$ = { th_roll_initiative = yes }
+		$country_2$ = {
+			th_alternative_roll_initiative = {
+				variable = th_danmaku_rolled_initiative
+				bonus = th_danmaku_ini_bonus
+			}
+			set_variable = {
+				which = th_danmaku_rolled_initiative_transfer
+				which = th_danmaku_rolled_initiative
+			}
+			while = {
+				limit = {
+					NOT = {
+						is_variable_equal = {
+							which = th_danmaku_rolled_initiative_transfer
+							value = 0
+						}
+					}
+				}
+				if = {
+					limit = { check_variable = { which = th_danmaku_rolled_initiative_transfer value = 1 } }
+					change_variable = { which = th_danmaku_rolled_initiative_transfer value = -1 }
+				}
+				else = {
+					change_variable = { which = th_danmaku_rolled_initiative_transfer value = 1 }
+				}
+				$country_1$ = { change_variable = { which = th_danmaku_rolled_initiative_comperator value = 1 } }
+			}
+		}
+		$country_1$ = {
+			if = {
+				limit = {
+					check_variable = {
+						which = th_danmaku_rolled_initiative
+						which = th_danmaku_rolled_initiative_comperator
+					}
+				}
+				set_ruler_flag = th_danmaku_has_turn_ownership
+				th_on_new_own_turn = yes
+				$country_2$ = {
+					clr_ruler_flag = th_danmaku_has_turn_ownership
+					th_on_new_enemy_turn = yes
+				}
+			}
+			else = {
+				clr_ruler_flag = th_danmaku_has_turn_ownership
+				$country_2$ = {
+					set_ruler_flag = th_danmaku_has_turn_ownership
+					th_on_new_own_turn = yes
+				}
+			}
+		}
+	}
+}
+
+th_roll_initiative_for_root_scope = {
+	$opponent$ = { custom_tooltip = th_roll_initiative_root_for_current_instance_tt }
+	hidden_effect = {
+		$opponent$ = { th_roll_initiative = yes }
+		th_alternative_roll_initiative = {
+			variable = th_danmaku_rolled_initiative
+			bonus = th_danmaku_ini_bonus
+		}
+		set_variable = {
+			which = th_danmaku_rolled_initiative_transfer
+			which = th_danmaku_rolled_initiative
+		}
+		while = {
+			limit = {
+				NOT = {
+					is_variable_equal = {
+						which = th_danmaku_rolled_initiative_transfer
+						value = 0
+					}
+				}
+			}
+			if = {
+				limit = { check_variable = { which = th_danmaku_rolled_initiative_transfer value = 1 } }
+				change_variable = { which = th_danmaku_rolled_initiative_transfer value = -1 }
+			}
+			else = {
+				change_variable = { which = th_danmaku_rolled_initiative_transfer value = 1 }
+			}
+			$opponent$ = { change_variable = { which = th_danmaku_rolled_initiative_comperator value = 1 } }
+		}
+		$opponent$ = {
+			if = {
+				limit = {
+					check_variable = {
+						which = th_danmaku_rolled_initiative
+						which = th_danmaku_rolled_initiative_comperator
+					}
+				}
+				set_ruler_flag = th_danmaku_has_turn_ownership
+				th_on_new_own_turn = yes
+				prev = {
+					clr_ruler_flag = th_danmaku_has_turn_ownership
+					th_on_new_enemy_turn = yes
+				}
+			}
+			else = {
+				th_on_new_enemy_turn = yes
+				clr_ruler_flag = th_danmaku_has_turn_ownership
+				prev = {
+					set_ruler_flag = th_danmaku_has_turn_ownership
+					th_on_new_own_turn = yes
+				}
+			}
+		}
+	}
+}
+
+th_clear_invalid_combat_instance = {
+	1 = {
+		clr_province_flag = th_danmaku_duel_instance_$instance$_online
+		set_variable = { which = th_danmaku_instance_$instance$_cleaner value = 0 }
+	}
+	if = {
+		limit = { tag = event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ }
+		event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ = {
+			th_clear_danmaku_flags = yes
+			country_event = {
+				id = th_danmaku_duel_event.6
+			}
+		}
+	}
+	if = {
+		limit = { tag = event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ }
+		event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = {
+			th_clear_danmaku_flags = yes
+			country_event = {
+				id = th_danmaku_duel_event.6
+			}
+		}
+	}
+}
+
+
+th_create_danmaku_duel_against_country = {
+	if = {
+		limit = {
+			tag = $country_1$
+			tag = $country_2$
+		}
+		log = "Called a Danmaku Duel against itself. That is not possible."
+	}
+	else_if = {
+		limit = {
+			OR = {
+				$country_1$ = { th_is_in_a_danmaku_duel = yes }
+				$country_2$ = { th_is_in_a_danmaku_duel = yes }
+			}
+		}
+		log = "Either country is already in a danmaku duel."
+	}
+	else = {
+		if = {
+			limit = { tag = $country_1$ }
+			$country_2$ = { custom_tooltip = th_create_danmaku_duel_instance_against_root_tt }
+		}
+		else_if = {
+			limit = { tag = $country_2$ }
+			$country_1$ = { custom_tooltip = th_create_danmaku_duel_instance_against_root_tt }
+		}
+		else = {
+			$country_1$ = { custom_tooltip = th_join_danmaku_duel_instance_tt }
+			$country_2$ = { custom_tooltip = th_join_danmaku_duel_instance_tt }
+			custom_tooltip = th_create_danmaku_duel_instance_tt
+		}
+		hidden_effect = {
+			th_global_setup_danmaku_duels_data = yes
+			$country_1$ = { th_clear_enemy_character_danmaku_flags = yes }
+			$country_2$ = { th_clear_enemy_character_danmaku_flags = yes }
+			1 = {
+				if = {
+					limit = {
+						NOT = {
+							check_variable = {
+								which = th_danmaku_duel_counter
+								which = th_danmaku_max_duels
+							}
+						}
+					}
+					change_variable = {
+						which = th_danmaku_duel_counter
+						value = 1
+					}
+					th_create_danmaku_duel_instance = {
+						country_1 = $country_1$
+						country_2 = $country_2$
+					}
+					th_roll_initiative_for_current_instance = {
+						country_1 = $country_1$
+						country_2 = $country_2$
+					}
+				}
+				else = {
+					log = "Too many Danmaku Duel instances were called..."
+				}
+			}
+			th_gui_set_enemy_bar = { country_1 = $country_1$ country_2 = $country_2$ type = health }
+			th_gui_set_enemy_bar = { country_1 = $country_1$ country_2 = $country_2$ type = mana }
+		}
+	}
+}
+
+th_change_danmaku_specific_instance_round = {
+	hidden_effect = {
+		1 = {
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_duel_instance_$instance$_opponent_turn value = 1 } } }
+				1 = { set_variable = { which = th_danmaku_duel_instance_$instance$_opponent_turn value = 1 } }
+			}
+			else = {
+				1 = {
+					set_variable = { which = th_danmaku_duel_instance_$instance$_opponent_turn value = 0 }
+					change_variable = { which = th_danmaku_duel_instance_$instance$_round_counter value = 1 }
+				}
+			}
+			set_variable = {
+				which = th_danmaku_duel_instance_$instance$_turn_duration_counter
+				which = th_danmaku_default_turn_duration
+			}
+		}
+	}
+	if = {
+		limit = {
+			1 = {
+				NOT = { check_variable = { which = th_danmaku_duel_instance_$instance$_opponent_turn value = 0 } }
+				check_variable = { which = th_danmaku_default_setting_reroll_initiative value = 1 }
+			}
+		}
+		th_roll_initiative_for_root_scope = { opponent = $opponent$ }
+	}
+	else = {
+		if = {
+			limit = { $opponent$ = { th_has_turn_ownership = yes } }
+			$opponent$ = {
+				custom_tooltip = th_end_turn_for_this_ruler_tt
+				clr_ruler_flag = th_danmaku_has_turn_ownership
+				th_on_new_enemy_turn = yes
+			}
+			custom_tooltip = th_start_turn_for_this_ruler_tt
+			set_ruler_flag = th_danmaku_has_turn_ownership
+			th_on_new_own_turn = yes
+		}
+		else = {
+			$opponent$ = {
+				custom_tooltip = th_start_turn_for_this_ruler_tt
+				set_ruler_flag = th_danmaku_has_turn_ownership
+				th_on_new_own_turn = yes
+			}
+			custom_tooltip = th_end_turn_for_this_ruler_tt
+			clr_ruler_flag = th_danmaku_has_turn_ownership
+			th_on_new_enemy_turn = yes
+		}
+	}
+}
+
+th_clear_shared_danmaku_flags = {
+	clr_country_flag = th_is_in_a_danmaku_duel
+	clr_ruler_flag = th_ruler_is_in_a_danmaku_duel
+	clr_ruler_flag = th_danmaku_has_turn_ownership
+	clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+	clr_ruler_flag = th_danmaku_rolled_critical_hit
+	clr_ruler_flag = th_danmaku_duel_hit_attack
+	clr_ruler_flag = th_danmaku_duel_missed_attack
+	clr_ruler_flag = th_danmaku_duel_over
+}
+
+th_clear_danmaku_flags = {
+	th_clear_shared_danmaku_flags = yes
+	th_cleanup_leftover_variables = yes
+	set_variable = { which = th_danmaku_duel_instance value = 0 }
+}
+
+th_clear_combat_for_instance = {
+	th_clear_danmaku_flags = yes
+	1 = {
+		if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						which = th_danmaku_instance_$instance$_cleaner	#Both players have to leave combat before the instance is destroyed. This way a player can consultate the combat log first before leaving.
+						value = 1
+					}
+				}
+			}
+			set_variable = { which = th_danmaku_instance_$instance$_cleaner value = 1 }
+		}
+		else = {
+			change_variable = { which = th_danmaku_instance_$instance$_cleaner value = 1 }
+		}
+		if = {
+			limit = { check_variable = { which = th_danmaku_instance_$instance$_cleaner value = 2 } }
+			clr_province_flag = th_danmaku_duel_instance_$instance$_online
+			set_variable = { which = th_danmaku_instance_$instance$_cleaner value = 0 }
+		}
+	}
+}
+
+th_clear_combat = {
+	th_clear_shared_danmaku_flags = yes
+	th_cleanup_leftover_variables = yes
+}
+
+#This effect needs to be called twice to end combat
+#Both parties get an event to kill the instance
+th_deactivate_current_instance = {
+	hidden_effect = {
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 1 } }  th_clear_combat_for_instance = { instance = 1 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 2 } }  th_clear_combat_for_instance = { instance = 2 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 3 } }  th_clear_combat_for_instance = { instance = 3 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 4 } }  th_clear_combat_for_instance = { instance = 4 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 5 } }  th_clear_combat_for_instance = { instance = 5 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 6 } }  th_clear_combat_for_instance = { instance = 6 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 7 } }  th_clear_combat_for_instance = { instance = 7 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 8 } }  th_clear_combat_for_instance = { instance = 8 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 9 } }  th_clear_combat_for_instance = { instance = 9 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 10 } } th_clear_combat_for_instance = { instance = 10 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 11 } } th_clear_combat_for_instance = { instance = 11 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 12 } } th_clear_combat_for_instance = { instance = 12 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 13 } } th_clear_combat_for_instance = { instance = 13 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 14 } } th_clear_combat_for_instance = { instance = 14 } }
+		if = { limit = { th_get_danmaku_duel_instance = { instance = 15 } } th_clear_combat_for_instance = { instance = 15 } }
+	}
+}
+
+#General Interaction mechanics
+th_end_turn = {
+	hidden_effect = {
+		if = {
+			limit = { th_is_not_duelling_an_unlanded_character = yes }
+			th_create_event_target_enemy_duelist = yes
+			event_target:enemy_duelist = {
+				th_change_danmaku_instance_round = { opponent = root }
+			}
+		}
+		else = {
+			th_end_turn_against_unlanded_character = yes
+		}
+	}
+}
+
+th_monthly_danmaku_duel_duration_reduction = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_duel_instance_$instance$_turn_duration_counter value = 0 } } }
+		1 = {
+			subtract_variable = {
+				which = th_danmaku_duel_instance_$instance$_turn_duration_counter
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				1 = { NOT = { check_variable = { which = th_danmaku_duel_instance_$instance$_turn_duration_counter value = 1 } } }
+				has_saved_global_event_target = th_danmaku_duelist_of_id_1_of_instance_$instance$
+				has_saved_global_event_target = th_danmaku_duelist_of_id_2_of_instance_$instance$
+				event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = { exists = yes }
+				event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ = { exists = yes }
+			}
+			if = {
+				limit = { event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = { th_has_turn_ownership = yes } }
+				event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ = { th_change_danmaku_instance_round = { opponent = event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ } }
+			}
+			else = {
+				event_target:th_danmaku_duelist_of_id_2_of_instance_$instance$ = { th_change_danmaku_instance_round = { opponent = event_target:th_danmaku_duelist_of_id_1_of_instance_$instance$ } }
+			}
+		}
+	}
+}
+
+th_change_danmaku_round = {
+	hidden_effect = {
+		if = {
+			limit = { th_has_turn_ownership = yes }
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_unlanded_duel_opponent_turn value = 1 } } }
+				set_variable = { which = th_danmaku_unlanded_duel_opponent_turn value = 1 }
+			}
+			else = {
+				set_variable = { which = th_danmaku_unlanded_duel_opponent_turn value = 0 }
+				change_variable = { which = th_danmaku_unlanded_duel_round_counter value = 1 }
+			}
+		}
+		else = {
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_unlanded_duel_own_turn value = 1 } } }
+				set_variable = { which = th_danmaku_unlanded_duel_own_turn value = 1 }
+			}
+			else = {
+				set_variable = { which = th_danmaku_unlanded_duel_own_turn value = 0 }
+				change_variable = { which = th_danmaku_unlanded_duel_round_counter value = 1 }
+			}
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_turn_duration
+			which = 18
+		}
+		1 = {
+			set_variable = {
+				which = th_danmaku_default_turn_duration_transfer
+				which = th_danmaku_default_turn_duration
+			}
+			PREV = {
+				set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
+				set_variable = {
+					which = th_danmaku_unlanded_turn_duration
+					which = th_danmaku_default_turn_duration_transfer
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			NOT = { check_variable = { which = th_danmaku_unlanded_duel_round_counter value = 0 } }
+			1 = { check_variable = { which = th_danmaku_default_setting_reroll_initiative value = 1 } }
+		}
+		th_roll_initiative_for_solo_fight = yes
+	}
+	else = {
+		if = {
+			limit = { has_ruler_flag = th_danmaku_unlanded_character_turn_ownership }
+			set_ruler_flag = th_danmaku_has_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			th_on_new_own_turn = yes
+		}
+		else = {
+			clr_ruler_flag = th_danmaku_has_turn_ownership
+			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			th_on_new_enemy_turn = yes
+		}
+	}
+}
+
+th_monthly_danmaku_duel_unlanded_duration_reduction = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_unlanded_turn_duration value = 0 } }
+		subtract_variable = {
+			which = th_danmaku_unlanded_turn_duration
+			value = 1
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_unlanded_turn_duration value = 1 } } }
+			th_change_danmaku_round = yes
+		}
+	}
+}
+
+th_gui_get_enemy_resource_bar = {
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_source_transfer_$type$
+				which = th_danmaku_$type$_var
+			}
+			PREV = {
+				set_variable = {
+					which = th_danmaku_source_transfer_$type$
+					which = PREV
+				}
+				set_variable = { 
+					which = th_danmaku_enemy_$type$_var 
+					which = th_danmaku_source_transfer_$type$ 
+				}
+			}
+		}
+	}
+}
+
+th_gui_update_enemy_resource_bar = {
+	set_variable = {
+		which = th_danmaku_source_transfer_$type$
+		which = th_danmaku_$type$_var
+	}
+	th_create_event_target_enemy_duelist = yes
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_source_transfer_$type$
+				which = PREV
+			}
+			set_variable = { 
+				which = th_danmaku_enemy_$type$_var 
+				which = th_danmaku_source_transfer_$type$ 
+			}
+		}
+	}
+}
+
+th_change_combat_resource = {
+	if = {
+		limit = { th_unlanded_character_has_turn_ownership = yes }
+		change_variable = {
+			which = th_enemy_character_current_$type$
+			value = $value$
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_enemy_character_current_$type$ value = 0 } } }
+			set_variable = {
+				which = th_enemy_character_current_$type$
+				value = 0
+			}
+		}
+		if = {
+			limit = { check_variable = { which = th_enemy_character_current_$type$ which = th_enemy_character_max_$type$ } }
+			set_variable = {
+				which = th_enemy_character_current_$type$
+				which = th_enemy_character_max_$type$
+			}
+		}
+		th_gui_update_danmaku_bar_enemy_character = { type = $type$ }
+	}
+	else = {
+		change_variable = {
+			which = th_danmaku_$type$
+			value = $value$
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
+			set_variable = {
+				which = th_danmaku_$type$
+				value = 0
+			}
+		}
+		if = {
+			limit = { check_variable = { which = th_danmaku_$type$ which = th_danmaku_max_$type$ } }
+			set_variable = {
+				which = th_danmaku_$type$
+				which = th_danmaku_max_$type$
+			}
+		}
+		th_gui_update_danmaku_bar = { type = $type$ }
+		th_gui_update_enemy_resource_bar = { type = $type$ }
+	}
+}
+
+th_change_combat_resource_ability = {
+	if = {
+		limit = { th_unlanded_character_has_turn_ownership = yes }
+		change_variable = {
+			which = th_enemy_character_current_$type$
+			value = $value$
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_enemy_character_current_$type$ value = 0 } } }
+			set_variable = {
+				which = th_enemy_character_current_$type$
+				value = 0
+			}
+		}
+		if = {
+			limit = { check_variable = { which = th_enemy_character_current_$type$ which = th_enemy_character_max_$type$ } }
+			set_variable = {
+				which = th_enemy_character_current_$type$
+				which = th_enemy_character_max_$type$
+			}
+		}
+		th_gui_update_danmaku_bar_enemy_character = { type = $type$ }
+	}
+	else = {
+		if = {
+			limit = {
+				NOT = {
+					is_variable_equal = {
+						which = th_ability_$ability$_$type$_cost_override
+						value = 0
+					}
+				}
+			}
+			change_variable = {
+				which = th_danmaku_$type$
+				which = th_ability_$ability$_$type$_cost_override
+			}
+		}
+		else = {
+			change_variable = {
+				which = th_danmaku_$type$
+				value = $value$
+			}
+		}
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
+			set_variable = {
+				which = th_danmaku_$type$
+				value = 0
+			}
+		}
+		if = {
+			limit = { check_variable = { which = th_danmaku_$type$ which = th_danmaku_max_$type$ } }
+			set_variable = {
+				which = th_danmaku_$type$
+				which = th_danmaku_max_$type$
+			}
+		}
+		th_gui_update_danmaku_bar = { type = $type$ }
+		th_gui_update_enemy_resource_bar = { type = $type$ }
+	}
+}
+th_set_combat_resource = {
+	set_variable = {
+		which = th_danmaku_$type$
+		value = $value$
+	}
+	if = {
+		limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
+		set_variable = {
+			which = th_danmaku_$type$
+			value = 0
+		}
+	}
+	if = {
+		limit = { check_variable = { which = th_danmaku_$type$ which = th_danmaku_max_$type$ } }
+		set_variable = {
+			which = th_danmaku_$type$
+			which = th_danmaku_max_$type$
+		}
+	}
+	th_gui_update_danmaku_bar = { type = $type$ }
+	th_gui_update_enemy_resource_bar = { type = $type$ }
+}
+th_reset_combat_resource = {
+	set_variable = {
+		which = th_danmaku_$type$
+		which = th_danmaku_max_$type$
+	}
+	if = {
+		limit = { NOT = { check_variable = { which = th_danmaku_$type$ value = 0 } } }
+		set_variable = {
+			which = th_danmaku_$type$
+			value = 0
+		}
+	}
+	th_gui_update_danmaku_bar = { type = $type$ }
+	th_gui_update_enemy_resource_bar = { type = $type$ }
+}
+
+th_on_new_own_turn = {
+	th_reset_combat_resource = { type = action_points }
+}
+
+th_on_new_enemy_turn = {
+}
+
+th_check_if_kill = {
+	if = {
+		limit = { NOT = { th_is_alive = yes } }
+		set_ruler_flag = th_danmaku_duel_over
+		PREV = { set_ruler_flag = th_danmaku_duel_over }
+		if = {
+			limit = { PREV = { th_is_alive = yes } }
+			th_on_defeat = yes
+			PREV = { th_on_win = yes }
+		}
+		else = {
+			th_on_draw = yes
+			PREV = { th_on_draw = yes }
+		}
+	}
+}
+
+th_on_win = {
+	th_clear_danmaku_flags = yes
+	country_event = {
+		id = th_danmaku_duel_event.1
+	}
+}
+th_on_defeat = {
+	th_clear_danmaku_flags = yes
+	th_play_sound = { sound = th_danmaku_death }
+	country_event = {
+		id = th_danmaku_duel_event.2
+	}
+}
+th_on_draw = {
+	th_clear_danmaku_flags = yes
+	country_event = {
+		id = th_danmaku_duel_event.3
+	}
+}
+
+#Yes, this is absolutely terrible, but in order to get events these two sections have to be separated..
+th_on_win_solo = {
+	th_cleanup_leftover_variables = yes
+	th_play_sound = { sound = th_danmaku_death }
+	country_event = {
+		id = th_danmaku_duel_event.7
+	}
+}
+th_on_defeat_solo = {
+	th_cleanup_leftover_variables = yes
+	th_play_sound = { sound = th_danmaku_death }
+	country_event = {
+		id = th_danmaku_duel_event.8
+	}
+}
+th_on_draw_solo = {
+	th_cleanup_leftover_variables = yes
+	country_event = {
+		id = th_danmaku_duel_event.9
+	}
+}
+
+th_generate_random_number = {
+	1 = {
+		[[input_variable]
+			change_variable = {
+				which = rng_used_custom_input
+				value = 1
+			}
+			change_variable = {
+				which = rng_used_custom_input_2
+				which = rng_used_custom_input
+			}
+			multiply_variable = {
+				which = rng_used_custom_input
+				which = rng_used_custom_input_2
+			}
+			if = {
+				limit = { check_variable = { which = rng_used_custom_input value = 1400 } }
+				subtract_variable = { which = rng_used_custom_input value = 1100 }
+			}
+			PREV = {
+				set_variable = { which = rng_transfer_input_variable which = $input_variable$ }
+				if = {
+					limit = { NOT = { check_variable = { which = rng_transfer_input_variable value = 0 } } }
+					multiply_variable = { which = rng_transfer_input_variable value = -1 }
+				}
+				1 = { set_variable = { which = rng_transfer_input_variable which = PREV } }
+			}
+			multiply_variable = {
+				which = rng_transfer_input_variable
+				which = rng_used_custom_input
+			}
+			modulo_variable = { which = rng_transfer_input_variable value = 1401 }
+		]
+		# any value above 1460 will go over the variable size limit of eu4 i'm cutting it at 1400 for safety
+		if = {
+			limit = { check_variable = { which = rnroller value = 1400 } }
+			#200 is a good starting value anything lower than 100 will start being too predictable 
+			subtract_variable = { which = rnroller value = 1200 }
+		}
+		set_variable = { 		which = rnroller2	 which = rnroller }
+		multiply_variable = { 	which = rnroller2	 which = rnroller }
+		change_variable = { 	which = rnroller2	 value = 11 }
+		change_variable = { 	which = rnroller2	 which = rnroller }
+		divide_variable = { 	which = rnroller2	 value = 83 }
+		set_variable = { 		which = rnroller3	 which = rnroller }
+		multiply_variable = { 	which = rnroller3	 which = rnroller }
+		divide_variable = { 	which = rnroller3	 value = 6 }
+		change_variable = { 	which = rnroller3	 value = 29 }
+		modulo_variable = { 	which = rnroller3	 value = 89 }
+		multiply_variable = { 	which = rnroller2	 which = rnroller3 }
+		modulo_variable = { 	which = rnroller2	 value = 100 }
+		random_variable = { 	which = rnroller3	 value = 100 }
+		change_variable = { 	which = rnroller3	 value = 1 }
+		round_variable = { 		which = rnroller3	 value = 0 }
+		change_variable = { 	which = rnroller	 which = rnroller3 }
+		#User Input section
+		set_variable = { which = rng_modulo value = 0 }
+		[[modulo]
+		PREV = {
+			set_variable = { which = rng_modulo which = $modulo$ }
+			1 = { set_variable = { which = rng_modulo which = PREV } }
+		}
+		]
+		[[modulo_number]set_variable = { which = rng_modulo value = $modulo_number$ }]
+		if = {
+			limit = { check_variable = { which = rng_modulo value = 2 } }
+			modulo_variable = { which = rnroller2 which = rng_modulo }
+			change_variable = { which = rnroller2 value = 1 }
+		}
+		#Transfer number to PREV scope
+		PREV = {
+			set_variable = {
+				which = $rng_variable$
+				value = 0
+			}
+		}
+		if = {
+			limit = {
+				check_variable = { which = rng_modulo value = 2 }
+				check_variable = { which = rnroller2 which = rng_modulo }
+				NOT = { is_variable_equal = { which = rnroller2 which = rng_modulo } }
+			}
+			while = {
+				limit = { check_variable = { which = rng_modulo value = 1 } }
+				PREV = { change_variable = { which = $rng_variable$ value = 1 } }
+				subtract_variable = { which = rng_modulo value = 1 }
+			}
+		}
+		else = {
+			while = {
+				limit = { check_variable = { which = rnroller2 value = 1 } }
+				PREV = { change_variable = { which = $rng_variable$ value = 1 } }
+				subtract_variable = { which = rnroller2 value = 1 }
+			}
+		}
+	}
+}
+
+th_roll_die = {
+	if = {
+		limit = {
+			check_variable = { which = $die_type$ value = 2 }
+			check_variable = { which = $die_amount$ value = 1 }
+		}
+		set_variable = { which = th_roll_amount which = $die_amount$ }
+		set_variable = { which = th_bonus_per_roll which = $bonus_per_roll$ }
+		set_variable = { which = th_roll_die_type which = $die_type$ }
+
+		#Generate country specific random number
+		export_to_variable = {
+			variable_name = rng_input
+			value = manpower
+			who = ROOT
+		}
+		export_to_variable = {
+			variable_name = rng_input_treasury
+			value = treasury
+			who = ROOT
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_treasury
+		}
+		export_to_variable = {
+			variable_name = rng_input_max_manpower
+			value = max_manpower
+			who = ROOT
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_max_manpower
+		}
+		#Total result
+		set_variable = {
+			which = rng_result	#Will be set in th_generate_random_number to 0 again
+			value = 0
+		}
+		#Generating the numbers
+		while = {
+			limit = { check_variable = { which = th_roll_amount value = 1 } }
+			th_generate_random_number = {
+				input_variable = rng_input
+				modulo = th_roll_die_type
+				rng_variable = rng_result
+			}
+			change_variable = {
+				which = rng_result
+				which = th_bonus_per_roll
+			}
+			subtract_variable = { which = th_roll_amount value = 1 }
+		}
+		change_variable = {
+			which = $result$
+			which = rng_result
+		}
+	}
+	else = {
+		log = "Cannot roll due to few dies or too small dies."
+	}
+}
+
+th_roll_die_no_variable = {
+	set_variable = { which = th_roll_die_type value = $die_type$ }
+	set_variable = { which = th_roll_amount value = $die_amount$ }
+	if = {
+		limit = {
+			check_variable = { which = th_roll_die_type value = 2 }
+			check_variable = { which = th_roll_amount value = 1 }
+		}
+		set_variable = {
+			which = th_bonus_per_roll
+			value = $bonus_per_roll$
+		}
+		#Generate country specific random number
+		export_to_variable = {
+			which = rng_input
+			value = manpower
+		}
+		export_to_variable = {
+			which = rng_input_treasury
+			value = treasury
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_treasury
+		}
+		export_to_variable = {
+			which = rng_input_max_manpower
+			value = max_manpower
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_max_manpower
+		}
+		#Total result
+		set_variable = {
+			which = rng_result
+			value = 0
+		}
+		#Generating the numbers
+		while = {
+			limit = { check_variable = { which = th_roll_amount value = 1 } }
+			th_generate_random_number = {
+				input_variable = rng_input
+				modulo = th_roll_die_type
+				rng_variable = rng_result
+			}
+			change_variable = {
+				which = rng_result
+				which = th_bonus_per_roll
+			}
+			subtract_variable = { which = th_roll_amount value = 1 }
+		}
+		change_variable = {
+			which = $result$
+			which = rng_result
+		}
+	}
+	else = {
+		log = "Cannot roll due to few dies or too small dies."
+	}
+}
+
+
+th_set_attack_roll_type_physical = { set_variable = { which = th_danmaku_attack_roll_type value = 0 } }
+th_set_attack_roll_type_magical = { set_variable = { which = th_danmaku_attack_roll_type value = 1 } }
+th_set_attack_roll_type_psionic = { set_variable = { which = th_danmaku_attack_roll_type value = 2 } }
+th_set_attack_roll_type = {
+	th_set_attack_roll_type_$type$ = yes
+}
+
+th_get_attack_type_unlanded_character = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_attack_roll which = th_enemy_character_$type$_crit_roll_needed } }
+		set_ruler_flag = th_danmaku_rolled_critical_hit
+	}
+}
+
+th_get_attack_type = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_attack_roll which = th_danmaku_$type$_crit_roll_needed } }
+		set_ruler_flag = th_danmaku_rolled_critical_hit
+	}
+}
+
+th_perform_attack = {
+	set_variable = { which = th_danmaku_attack_roll value = 0 }
+	set_variable = { which = th_danmaku_attack_roll_amount value = 1 }
+	set_variable = { which = th_danmaku_attack_roll_die_type value = 20 }
+	set_variable = { which = th_danmaku_hit_bonus_per_roll value = 0 }
+	th_roll_die = {
+		die_type = th_danmaku_attack_roll_die_type
+		die_amount = th_danmaku_attack_roll_amount
+		bonus_per_roll = th_danmaku_hit_bonus_per_roll
+		result = th_danmaku_attack_roll
+	}
+	set_variable = { which = th_danmaku_attack_roll_type value = 0 }
+	[[override_damage_type]th_set_attack_roll_type = { type = $override_damage_type$ }]
+	if = {
+		limit = { th_unlanded_character_has_turn_ownership = yes }
+		change_variable = { which = th_danmaku_attack_roll which = th_enemy_character_hit_bonus }
+		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_enemy_character_hit_bonus }
+		if = {
+			limit = { is_variable_equal = { which = th_danmaku_attack_roll_type value = 1 } }
+			th_get_attack_type_unlanded_character = { type = magical }
+		}
+		else_if = {
+			limit = { is_variable_equal = { which = th_danmaku_attack_roll_type value = 2 } }
+			th_get_attack_type_unlanded_character = { type = psionic }
+		}
+		else = {
+			th_get_attack_type_unlanded_character = { type = physical }
+		}
+	}
+	else = {
+		change_variable = { which = th_danmaku_attack_roll which = th_danmaku_hit_bonus }
+		th_log_memorize_value = { type = hit_die_flat_bonus variable = th_danmaku_hit_bonus }
+		if = {
+			limit = { is_variable_equal = { which = th_danmaku_attack_roll_type value = 1 } }
+			th_get_attack_type = { type = magical }
+		}
+		else_if = {
+			limit = { is_variable_equal = { which = th_danmaku_attack_roll_type value = 2 } }
+			th_get_attack_type = { type = psionic }
+		}
+		else = {
+			th_get_attack_type = { type = physical }
+		}
+	}
+	th_log_memorize_value = { type = hit_die variable = th_danmaku_attack_roll_die_type }
+	th_log_memorize_value = { type = hit_die_amount variable = th_danmaku_attack_roll_amount }
+	th_log_memorize_value = { type = hit_die_result variable = th_danmaku_attack_roll }
+	th_log_memorize_value = { type = hit_die_bonus_per_roll variable = th_danmaku_hit_bonus_per_roll }
+	if = {
+		limit = { th_is_duelling_an_unlanded_character = yes }
+		if = {
+			limit = { th_unlanded_character_has_turn_ownership = yes }
+			set_variable = { which = th_danmaku_enemy_armor_class_transfer which = th_danmaku_armor_class }
+		}
+		else = {
+			set_variable = { which = th_danmaku_enemy_armor_class_transfer which = th_enemy_character_armor_class }
+		}
+	}
+	else = {
+		if = {
+			limit = { has_saved_event_target = enemy_duelist }
+			event_target:enemy_duelist = {
+				set_variable = { which = th_danmaku_enemy_armor_class_transfer which = th_danmaku_armor_class }
+				PREV = {
+					set_variable = { which = th_danmaku_enemy_armor_class_transfer which = PREV }
+				}
+			}
+		}
+		else = {
+			log = "No enemy party available to attack!"
+		}
+	}
+	th_log_memorize_value = { type = enemy_ac variable = th_danmaku_enemy_armor_class_transfer }
+	if = {
+		limit = { check_variable = { which = th_danmaku_attack_roll which = th_danmaku_enemy_armor_class_transfer } }
+		set_ruler_flag = th_danmaku_duel_hit_attack
+		clr_ruler_flag = th_danmaku_duel_missed_attack
+		if = {
+			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+			th_play_sound = { sound = th_danmaku_duel_ability_$ability$_critical_hit }
+		}
+		else = {
+			th_play_sound = { sound = th_danmaku_duel_ability_$ability$_hit }
+		}
+		th_deal_damage = {
+			[[override_damage_type] override_damage_type = $override_damage_type$]
+			[[override_damage_school] override_damage_school = $override_damage_school$]
+			[[override_damage_die] override_damage_die = $override_damage_die$]
+			[[override_damage_die_amount] override_damage_die_amount = $override_damage_die_amount$]
+			[[override_damage_flat_bonus] override_damage_flat_bonus = $override_damage_flat_bonus$]
+			[[override_damage_bonus_per_die] override_damage_bonus_per_die = $override_damage_bonus_per_die$]
+			[[override_damage_type_modifier] override_damage_type_modifier = $override_damage_type_modifier$]
+			[[override_damage_school_modifier] override_damage_school_modifier = $override_damage_school_modifier$]
+		}
+	}
+	else = {
+		clr_ruler_flag = th_danmaku_duel_hit_attack
+		set_ruler_flag = th_danmaku_duel_missed_attack
+		clr_ruler_flag = th_danmaku_rolled_critical_hit
+		th_play_sound = { sound = th_danmaku_duel_miss }
+	}
+}
+
+#Supports the following damage types
+# physical
+# magical
+# psionic
+#Supports the following schools
+# bludgeoning
+# piercing
+# slashing
+# fire
+# frost
+# earth
+# lightning
+# nature
+# holy
+# shadow
+# necrotic
+# arcane
+# infernal
+th_get_damage_type = {
+	set_variable = { which = th_danmaku_damage_die which = th_danmaku_$type$_attack_die }
+	if = {
+		limit = { th_danmaku_has_damage_modifier_not_zero = { type = $type$ } }
+		change_variable = { which = th_danmaku_damage_type_multiplicator which = th_danmaku_$type$_damage_modifier }
+	}
+	th_log_memorize_type = { type = damage_type_$type$ }
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_type_resistance_transfer
+				which = th_danmaku_$type$_resistance
+			}
+		}
+		set_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = PREV
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = th_enemy_character_$type$_resistance
+		}
+	}
+	if = {
+		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+		set_variable = {
+			which = th_danmaku_crit_multiplier
+			which = th_enemy_character_$type$_crit_roll_multiplier
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_crit_multiplier
+			which = 0
+		}
+	}
+}
+th_get_damage_school = {
+	if = {
+		limit = { th_danmaku_has_damage_modifier_not_zero = { type = $school$ } }
+		change_variable = { which = th_danmaku_damage_school_multiplicator which = th_danmaku_$school$_damage_modifier }
+	}
+	th_log_memorize_type = { type = damage_school_$school$ }
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_school_resistance_transfer
+				which = th_danmaku_$school$_resistance
+			}
+		}
+		set_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = PREV
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = th_enemy_character_$school$_resistance
+		}
+	}
+}
+th_determine_damage_type = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_damage_type_override value = 0 } }
+		if = { 		limit = { is_variable_equal = { which = th_danmaku_damage_type_override value = 1 } } th_get_damage_type = { type = magical } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_type_override value = 2 } } th_get_damage_type = { type = psionic } }
+		else = { 																				 th_get_damage_type = { type = physical } }
+	}
+	else = {
+		if = { 		limit = { is_variable_equal = { which = th_danmaku_attack_type value = 1 } } th_get_damage_type = { type = magical } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_type value = 2 } } th_get_damage_type = { type = psionic } }
+		else = { 																				 th_get_damage_type = { type = physical } }
+	}
+
+	if = {
+		limit = { check_variable = { which = th_danmaku_damage_school_override value = 0 } }
+		if = { limit = { 	  is_variable_equal = { which = th_danmaku_damage_school_override value = 1 } } 	th_get_damage_school = { school = piercing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 2 } } 	th_get_damage_school = { school = slashing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 3 } } 	th_get_damage_school = { school = fire } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 4 } } 	th_get_damage_school = { school = frost } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 5 } } 	th_get_damage_school = { school = earth } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 6 } } 	th_get_damage_school = { school = lightning } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 7 } } 	th_get_damage_school = { school = nature } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 8 } } 	th_get_damage_school = { school = holy } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 9 } } 	th_get_damage_school = { school = shadow } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 10 } } 	th_get_damage_school = { school = necrotic } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 11 } } 	th_get_damage_school = { school = arcane } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 12 } } 	th_get_damage_school = { school = infernal } }
+		else = { th_get_damage_school = { school = bludgeoning } }
+	}
+	else = {
+		if = { limit = { 	  is_variable_equal = { which = th_danmaku_attack_school value = 1 } } 	th_get_damage_school = { school = piercing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 2 } } 	th_get_damage_school = { school = slashing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 3 } } 	th_get_damage_school = { school = fire } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 4 } } 	th_get_damage_school = { school = frost } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 5 } } 	th_get_damage_school = { school = earth } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 6 } } 	th_get_damage_school = { school = lightning } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 7 } } 	th_get_damage_school = { school = nature } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 8 } } 	th_get_damage_school = { school = holy } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 9 } } 	th_get_damage_school = { school = shadow } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 10 } } th_get_damage_school = { school = necrotic } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 11 } } th_get_damage_school = { school = arcane } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_attack_school value = 12 } } th_get_damage_school = { school = infernal } }
+		else = { th_get_damage_school = { school = bludgeoning } }
+	}
+}
+th_get_damage_type_unlanded_character = {
+	set_variable = {
+		which = th_danmaku_damage_die
+		which = th_enemy_character_$type$_attack_die
+	}
+	change_variable = {
+		which = th_danmaku_damage_die
+		which = th_enemy_character_$type$_attack_bonus
+	}
+	change_variable = {
+		which = th_danmaku_damage_die_amount
+		which = th_enemy_character_$type$_attack_die_num
+	}
+	if = {
+		limit = { th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $type$ } }
+		change_variable = {
+			which = th_danmaku_damage_type_multiplicator
+			which = th_enemy_character_$type$_damage_modifier
+		}
+	}
+	th_log_memorize_type = { type = damage_type_$type$ }
+	set_variable = {
+		which = th_danmaku_type_resistance_transfer
+		which = th_danmaku_$type$_resistance
+	}
+	if = {
+		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+		set_variable = {
+			which = th_danmaku_crit_multiplier
+			which = th_danmaku_$type$_crit_roll_damage_multiplier
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_crit_multiplier
+			which = 0
+		}
+	}
+}
+th_get_damage_school_unlanded_character = {
+	if = {
+		limit = { th_danmaku_unlanded_character_has_damage_modifier_not_zero = { type = $school$ } }
+		change_variable = { which = th_danmaku_damage_school_multiplicator which = th_enemy_character_$school$_damage_modifier }
+	}
+	th_log_memorize_type = { type = damage_school_$school$ }
+	set_variable = {
+		which = th_danmaku_school_resistance_transfer
+		which = th_danmaku_$schhol$_resistance
+	}
+}
+th_determine_damage_type_unlanded_character = {
+	if = {
+		limit = { check_variable = { which = th_danmaku_damage_type_override value = 0 } }
+		if = {		limit = { is_variable_equal = { which = th_danmaku_damage_type_override value = 1 } } th_get_damage_type_unlanded_character = { type = magical } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_type_override value = 2 } } th_get_damage_type_unlanded_character = { type = psionic } }
+		else = { 																						 th_get_damage_type_unlanded_character = { type = physical } }
+	}
+	else = {
+		if = {		limit = { is_variable_equal = { which = th_enemy_character_damage_type value = 1 } } th_get_damage_type_unlanded_character = { type = magical } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_type value = 2 } } th_get_damage_type_unlanded_character = { type = psionic } }
+		else = { 																						 th_get_damage_type_unlanded_character = { type = physical } }
+	}
+	
+	if = {
+		limit = { check_variable = { which = th_danmaku_damage_school_override value = 0 } }
+		if = { limit = { 	  is_variable_equal = { which = th_danmaku_damage_school_override value = 1 } } 	th_get_damage_school_unlanded_character = { school = piercing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 2 } } 	th_get_damage_school_unlanded_character = { school = slashing } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 3 } } 	th_get_damage_school_unlanded_character = { school = fire } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 4 } } 	th_get_damage_school_unlanded_character = { school = frost } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 5 } } 	th_get_damage_school_unlanded_character = { school = earth } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 6 } } 	th_get_damage_school_unlanded_character = { school = lightning } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 7 } } 	th_get_damage_school_unlanded_character = { school = nature } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 8 } } 	th_get_damage_school_unlanded_character = { school = holy } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 9 } } 	th_get_damage_school_unlanded_character = { school = shadow } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 10 } } 	th_get_damage_school_unlanded_character = { school = necrotic } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 11 } } 	th_get_damage_school_unlanded_character = { school = arcane } }
+		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 12 } } 	th_get_damage_school_unlanded_character = { school = infernal } }
+		else = { th_get_damage_school_unlanded_character = { school = bludgeoning } }
+	}
+	else = {
+		if = { limit = { 	  is_variable_equal = { which = th_enemy_character_damage_school value = 1 } } 	th_get_damage_school_unlanded_character = { school = piercing } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 2 } } 	th_get_damage_school_unlanded_character = { school = slashing } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 3 } } 	th_get_damage_school_unlanded_character = { school = fire } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 4 } } 	th_get_damage_school_unlanded_character = { school = frost } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 5 } } 	th_get_damage_school_unlanded_character = { school = earth } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 6 } } 	th_get_damage_school_unlanded_character = { school = lightning } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 7 } } 	th_get_damage_school_unlanded_character = { school = nature } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 8 } } 	th_get_damage_school_unlanded_character = { school = holy } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 9 } } 	th_get_damage_school_unlanded_character = { school = shadow } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 10 } } th_get_damage_school_unlanded_character = { school = necrotic } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 11 } } th_get_damage_school_unlanded_character = { school = arcane } }
+		else_if = { limit = { is_variable_equal = { which = th_enemy_character_damage_school value = 12 } } th_get_damage_school_unlanded_character = { school = infernal } }
+		else = { th_get_damage_school_unlanded_character = { school = bludgeoning } }
+	}
+}
+
+th_override_damage_type_physical = { set_variable = { which = th_danmaku_damage_type_override value = 0 } }
+th_override_damage_type_magical = { set_variable = { which = th_danmaku_damage_type_override value = 1 } }
+th_override_damage_type_psionic = { set_variable = { which = th_danmaku_damage_type_override value = 2 } }
+th_override_damage_type = {
+	th_override_damage_type_$type$ = yes
+}
+th_override_damage_school_bludgeoning = { set_variable = { which = th_danmaku_damage_school_override value = 0 } }
+th_override_damage_school_piercing = { set_variable = { which = th_danmaku_damage_school_override value = 1 } }
+th_override_damage_school_slashing = { set_variable = { which = th_danmaku_damage_school_override value = 2 } }
+th_override_damage_school_fire = { set_variable = { which = th_danmaku_damage_school_override value = 3 } }
+th_override_damage_school_frost = { set_variable = { which = th_danmaku_damage_school_override value = 4 } }
+th_override_damage_school_earth = { set_variable = { which = th_danmaku_damage_school_override value = 5 } }
+th_override_damage_school_lightning = { set_variable = { which = th_danmaku_damage_school_override value = 6 } }
+th_override_damage_school_nature = { set_variable = { which = th_danmaku_damage_school_override value = 7 } }
+th_override_damage_school_holy = { set_variable = { which = th_danmaku_damage_school_override value = 8 } }
+th_override_damage_school_shadow = { set_variable = { which = th_danmaku_damage_school_override value = 9 } }
+th_override_damage_school_necrotic = { set_variable = { which = th_danmaku_damage_school_override value = 10 } }
+th_override_damage_school_arcane = { set_variable = { which = th_danmaku_damage_school_override value = 11 } }
+th_override_damage_school_infernal = { set_variable = { which = th_danmaku_damage_school_override value = 12 } }
+th_override_damage_school = {
+	th_override_damage_school_$school$ = yes
+}
+
+th_deal_damage = {
+	#How many dies?
+	set_variable = {
+		which = th_danmaku_damage_die_amount
+		value = 1
+	}
+	#What type of die?
+	set_variable = { which = th_danmaku_damage_type_multiplicator value = 1 }
+	set_variable = { which = th_danmaku_damage_school_multiplicator value = 0 }	#Type and school multiplicators get combined with each other at the end
+	set_variable = { which = th_danmaku_damage_type_override value = -1 }
+	set_variable = { which = th_danmaku_damage_school_override value = -1 }
+	[[override_damage_type]th_override_damage_type = { type = $override_damage_type$ }]
+	[[override_damage_school]th_override_damage_school = { school = $override_damage_school$ }]
+	if = {
+		limit = { th_unlanded_character_has_turn_ownership = yes }
+		th_determine_damage_type_unlanded_character = yes
+	}
+	else = {
+		th_determine_damage_type = yes
+	}
+	change_variable = {
+		which = th_danmaku_damage_die
+		which = th_danmaku_ability_damage_die_bonus
+	}
+	change_variable = {
+		which = th_danmaku_damage_die_amount
+		which = th_danmaku_ability_damage_die_amount_bonus
+	}
+	[[override_damage_die]set_variable = { which = th_danmaku_damage_die value = $override_damage_die$ }]
+	[[override_damage_die_amount]set_variable = { which = th_danmaku_damage_die_amount value = $override_damage_die_amount$ }]
+	[[override_damage_flat_bonus]set_variable = { which = th_danmaku_ability_damage_flat_bonus value = $override_damage_flat_bonus$ }]
+	[[override_damage_bonus_per_die]set_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = $override_damage_bonus_per_die$ }]
+	[[override_damage_type_modifier]set_variable = { which = th_danmaku_damage_type_multiplicator value = $override_damage_type_modifier$ }]
+	[[override_damage_school_modifier]set_variable = { which = th_danmaku_damage_school_multiplicator value = $override_damage_school_modifier$ }]
+	#Rolled damage end result
+	set_variable = {
+		which = th_danmaku_damage_roll
+		value = 0
+	}
+	th_log_memorize_value = { type = attack_die variable = th_danmaku_damage_die }
+	th_log_memorize_value = { type = attack_die_amount variable = th_danmaku_damage_die_amount }
+	th_log_memorize_value = { type = attack_die_bonus_per_roll variable = th_danmaku_ability_damage_flat_bonus_per_die }
+	th_log_memorize_value = { type = damage_type_multiplicator variable = th_danmaku_damage_type_multiplicator }
+	th_log_memorize_value = { type = damage_school_multiplicator variable = th_danmaku_damage_school_multiplicator }
+	if = {
+		limit = {
+			check_variable = { which = th_danmaku_damage_die value = 2 }
+			check_variable = { which = th_danmaku_damage_die_amount value = 1 }
+		}
+		th_roll_die = {
+			die_type = th_danmaku_damage_die
+			die_amount = th_danmaku_damage_die_amount
+			bonus_per_roll = th_danmaku_ability_damage_flat_bonus_per_die
+			result = th_danmaku_damage_roll
+		}
+	}
+	change_variable = {
+		which = th_danmaku_damage_roll
+		which = th_danmaku_ability_damage_flat_bonus
+	}
+	th_log_memorize_value = { type = attack_die_flat_bonus variable = th_danmaku_ability_damage_flat_bonus }
+	change_variable = {
+		which = th_danmaku_damage_type_multiplicator
+		which = th_danmaku_damage_school_multiplicator
+	}
+	multiply_variable = {
+		which = th_danmaku_damage_roll
+		which = th_danmaku_damage_type_multiplicator
+	}
+	round_variable = {
+		which = th_danmaku_damage_roll
+		value = 0
+	}
+	th_log_memorize_value = { type = attack_die_result variable = th_danmaku_damage_roll }
+	if = {
+		limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+		change_variable = {
+			which = th_danmaku_crit_multiplier
+			value = 3
+		}
+		multiply_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_crit_multiplier
+		}
+		th_log_memorize_value = { type = critical_damage_bonus variable = th_danmaku_crit_multiplier }
+	}
+	if = {
+		limit = { has_saved_event_target = enemy_duelist }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_resistance_transfer
+				which = th_danmaku_resistance
+			}
+		}
+		set_variable = {
+			which = th_danmaku_resistance_transfer
+			which = PREV
+		}
+		#General resistance
+		divide_variable = {
+			which = th_danmaku_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#Type resistance
+		divide_variable = {
+			which = th_danmaku_type_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#School resistance
+		divide_variable = {
+			which = th_danmaku_school_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#Subtraction
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_resistance_transfer
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_type_resistance_transfer
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_school_resistance_transfer
+		}
+		round_variable = {
+			which = th_danmaku_damage_roll
+			value = 0
+		}
+		th_log_memorize_value = { type = resistance_reduction variable = th_danmaku_resistance_transfer }
+		th_log_memorize_value = { type = type_resistance_reduction variable = th_danmaku_type_resistance_transfer }
+		th_log_memorize_value = { type = school_resistance_reduction variable = th_danmaku_school_resistance_transfer }
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_damage_roll value = 0 } } }
+			set_variable = { which = th_danmaku_damage_roll value = 0 }
+		}
+		th_log_memorize_value = { type = total_value variable = th_danmaku_damage_roll }
+		event_target:enemy_duelist = {
+			set_variable = {
+				which = th_danmaku_damage_roll
+				which = PREV
+			}
+			subtract_variable = {
+				which = th_danmaku_health
+				which = th_danmaku_damage_roll
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_health value = 0 } } }
+				set_variable = {
+					which = th_danmaku_health
+					value = 0
+				}
+			}
+			th_gui_update_danmaku_bar = { type = health }
+			th_check_if_kill = yes
+		}
+		th_gui_get_enemy_resource_bar = { type = health }
+	}
+	if = {
+		limit = { th_is_duelling_an_unlanded_character = yes }
+		if = {
+			limit = { th_unlanded_character_has_turn_ownership = yes }
+			set_variable = {
+				which = th_danmaku_resistance_transfer
+				which = th_danmaku_resistance
+			}
+		}
+		else = {
+			set_variable = {
+				which = th_danmaku_resistance_transfer
+				which = th_enemy_character_resistance
+			}
+		}
+		#General resistance
+		divide_variable = {
+			which = th_danmaku_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#Type resistance
+		divide_variable = {
+			which = th_danmaku_type_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_type_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#School resistance
+		divide_variable = {
+			which = th_danmaku_school_resistance_transfer
+			value = 100
+		}
+		multiply_variable = {
+			which = th_danmaku_school_resistance_transfer
+			which = th_danmaku_damage_roll
+		}
+		#Subtraction
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_resistance_transfer
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_type_resistance_transfer
+		}
+		subtract_variable = {
+			which = th_danmaku_damage_roll
+			which = th_danmaku_school_resistance_transfer
+		}
+		round_variable = {
+			which = th_danmaku_damage_roll
+			value = 0
+		}
+		th_log_memorize_value = { type = resistance_reduction variable = th_danmaku_resistance_transfer }
+		th_log_memorize_value = { type = type_resistance_reduction variable = th_danmaku_type_resistance_transfer }
+		th_log_memorize_value = { type = school_resistance_reduction variable = th_danmaku_school_resistance_transfer }
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_damage_roll value = 0 } } }
+			set_variable = { which = th_danmaku_damage_roll value = 0 }
+		}
+		th_log_memorize_value = { type = total_value variable = th_danmaku_damage_roll }
+		if = {
+			limit = { th_unlanded_character_has_turn_ownership = yes }
+			subtract_variable = {
+				which = th_danmaku_health
+				which = th_danmaku_damage_roll
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = th_danmaku_health value = 0 } } }
+				set_variable = {
+					which = th_danmaku_health
+					value = 0
+				}
+			}
+			th_gui_update_danmaku_bar = { type = health }
+			if = {
+				limit = { NOT = { th_is_alive = yes } }
+				set_ruler_flag = th_danmaku_duel_over
+				if = {
+					limit = { th_is_alive_solo = yes }
+					th_on_defeat_solo = yes
+				}
+				if = {
+					limit = { NOT = { th_is_alive_solo = yes } }
+					th_on_draw_solo = yes
+				}
+			}
+		}
+		if = {
+			limit = { th_unlanded_character_has_not_turn_ownership = yes }
+			subtract_variable = {
+				which = th_enemy_character_current_health
+				which = th_danmaku_damage_roll
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = th_enemy_character_current_health value = 0 } } }
+				set_variable = {
+					which = th_enemy_character_current_health
+					value = 0
+				}
+			}
+			th_gui_update_danmaku_bar_enemy_character = { type = health }
+			if = {
+				limit = { NOT = { th_is_alive_solo = yes } }
+				set_ruler_flag = th_danmaku_duel_over
+				if = {
+					limit = { th_is_alive = yes }
+					th_on_win_solo = yes
+				}
+				if = {
+					limit = { NOT = { th_is_alive = yes } }
+					th_on_draw_solo = yes
+				}
+			}
+		}
+	}
+}
+
+
+th_heal_damage = {
+	#How many dies?
+	set_variable = {
+		which = th_danmaku_heal_die_amount
+		value = 1
+	}
+	#What type of die?
+	if = {
+		limit = { }
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_damage_die
+			which = th_danmaku_physical_attack_die
+		}
+	}
+}
+
+th_restore_mana = {
+
+}
+
+th_burn_mana = {
+
+}
+
+th_restore_action_points = {
+
+}
+
+th_burn_action_points = {
+
+}
+
+th_apply_danmaku_modifier_buff = {
+
+}
+th_apply_danmaku_modifier_debuff = {
+
+}
+th_apply_danmaku_modifier = {
+
+}
+
+th_remove_danmaku_modifier_buff = {
+
+}
+th_remove_danmaku_modifier_debuff = {
+
+}
+th_remove_danmaku_modifier = {
+
+}
+
+th_apply_environment_modifier = {
+
+}
+th_remove_environment_modifier = {
+
+}
+
+#Status effects are the following:
+# stun -> next turn is automatically skipped
+# immune -> attack and abilities cannot damage the target
+# freeze -> cannot use any *physical* abilities
+# paralyzed -> half the AP the character starts at their turn
+# silenced -> cannot use any *magical* abilities
+# invisible -> cannot be targetted
+# unstoppable -> is immune towards all negative status effects
+# banished -> the target cannot take nor deal physical damage. Magical damage received increased by +200%
+# anti_magic -> the target cannot take nor deal magical damage. Physical damage received increased by +200%
+# invicible -> the HP of the target can never fall below 0
+th_apply_status_effect = {
+
+}
+th_remove_status_effect = {
+
+}
+
+
+th_play_sound = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_sound_effects value = 1 } } }
+		play_sound = $sound$
+		if = {
+			limit = {
+				has_saved_event_target = enemy_duelist
+				event_target:enemy_duelist = {
+					has_country_flag = th_opened_danmaku_battle_window
+					NOT = { tag = PREV }
+				}
+			}
+			event_target:enemy_duelist = { play_sound = $sound$ }
+		}
+		if = {
+			limit = {
+				has_saved_event_target = root_duelist
+				event_target:root_duelist = {
+					has_country_flag = th_opened_danmaku_battle_window
+					NOT = { tag = PREV }
+				}
+			}
+			event_target:root_duelist = { play_sound = $sound$ }
+		}
+	}
+}
+
+th_use_ability = {
+	hidden_effect = {
+		if = {
+			limit = { th_is_not_duelling_an_unlanded_character = yes }
+			th_create_event_target_enemy_duelist = yes
+		}
+		th_play_sound = { sound = th_danmaku_duel_ability_$ability$_launch }
+		#Hit bonuses
+		set_variable = { which = th_danmaku_ability_hit_flat_bonus value = 0 }
+		set_variable = { which = th_danmaku_ability_hit_die_bonus value = 0 }
+		set_variable = { which = th_danmaku_ability_damage_flat_bonus value = 0 }
+		set_variable = { which = th_danmaku_ability_damage_die_bonus value = 0 }
+		set_variable = { which = th_danmaku_ability_damage_die_amount_bonus value = 0 }
+		set_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = 0 }
+	}
+
+	[[hit_flat_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_hit_flat_bonus value = $hit_flat_bonus$ } }
+		custom_tooltip = th_ability_bonus_hit_flat_bonus_$hit_flat_bonus$_tt
+	]
+	[[hit_die_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_hit_die_bonus value = $hit_die_bonus$ } }
+		custom_tooltip = th_ability_bonus_hit_die_bonus_$hit_die_bonus$_tt
+	]
+	[[damage_flat_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_damage_flat_bonus value = $damage_flat_bonus$ } }
+		custom_tooltip = th_ability_bonus_damage_flat_bonus_$damage_flat_bonus$_tt
+	]
+	[[damage_die_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_damage_die_bonus value = $damage_die_bonus$ } }
+		custom_tooltip = th_ability_bonus_damage_die_bonus_$damage_die_bonus$_tt
+	]
+	[[damage_die_amount_bonus]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_damage_die_amount_bonus value = $damage_die_amount_bonus$ } }
+		custom_tooltip = th_ability_bonus_damage_die_amount_bonus_$damage_die_amount_bonus$_tt
+	]
+	[[damage_flat_bonus_per_die]
+		hidden_effect = { change_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = $damage_flat_bonus_per_die$ } }
+		custom_tooltip = th_ability_bonus_damage_flat_bonus_per_die_$damage_flat_bonus_per_die$_tt
+	]
+
+	hidden_effect = {
+		th_use_ability_$ability$ = yes
+	}
+}
+
+th_clear_enemy_character_danmaku_flags = {
+	th_cleanup_leftover_variables = yes
+	th_clear_enemy_character_personality = yes
+	th_clear_enemy_character_creature_type = yes
+	th_clear_enemy_character_class = yes
+	th_clear_enemy_home = yes
+	th_clear_enemy_spell_card = yes
+	th_clear_enemy_trinket = yes
+	th_clear_enemy_weapon = yes
+}
+
+th_create_danmaku_duel_against_unlanded_character = {
+	custom_tooltip = th_create_danmaku_duel_against_unlanded_character_$target$_tt
+	hidden_effect = {
+		th_clear_enemy_character_danmaku_flags = yes
+		th_prepare_country_for_danmaku_duel = yes
+		set_ruler_flag = th_is_duelling_an_unlanded_character
+		th_roll_initiative_for_solo_fight = yes
+		set_variable = {
+			which = th_danmaku_unlanded_duel_round_counter
+			value = 1
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_duel_opponent_turn
+			value = 0
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_duel_own_turn
+			value = 0
+		}
+		set_variable = {
+			which = th_danmaku_duel_logged_actions
+			value = 0
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_turn_duration
+			value = 18
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_turn_duration_alert
+			value = 6
+		}
+		1 = {
+			set_variable = {
+				which = th_danmaku_default_turn_duration_transfer
+				which = th_danmaku_default_turn_duration
+			}
+			PREV = {
+				set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
+				set_variable = {
+					which = th_danmaku_unlanded_turn_duration
+					which = th_danmaku_default_turn_duration_transfer
+				}
+			}
+		}
+		th_transfer_default_stats_to_target_vars = {
+			max_hp_var = th_enemy_character_max_health
+			max_mp_var = th_enemy_character_max_mana
+			max_ap_var = th_enemy_character_max_action_points
+			initiative_bonus_var = th_enemy_character_initiative_bonus
+			hit_bonus_var = th_enemy_character_hit_bonus
+			physical_attack_bonus_var = th_enemy_character_physical_attack_bonus
+			physical_attack_die_var = th_enemy_character_physical_attack_die
+			physical_attack_die_num_var = th_enemy_character_physical_attack_die_num
+			physical_crit_roll_needed_var = th_enemy_character_physical_crit_roll_needed
+			physical_crit_roll_multiplier_var = th_enemy_character_physical_crit_roll_multiplier
+			magical_attack_bonus_var = th_enemy_character_magical_attack_bonus
+			magical_attack_die_var = th_enemy_character_magical_attack_die
+			magical_attack_die_num_var = th_enemy_character_magical_attack_die_num
+			magical_crit_roll_needed_var = th_enemy_character_magical_crit_roll_needed
+			magical_crit_roll_multiplier_var = th_enemy_character_magical_crit_roll_multiplier
+			psionic_attack_bonus_var = th_enemy_character_psionic_attack_bonus
+			psionic_attack_die_var = th_enemy_character_psionic_attack_die
+			psionic_attack_die_num_var = th_enemy_character_psionic_attack_die_num
+			psionic_crit_roll_needed_var = th_enemy_character_psionic_crit_roll_needed
+			psionic_crit_roll_multiplier_var = th_enemy_character_psionic_crit_roll_multiplier
+			physical_damage_modifier_var = th_enemy_character_physical_damage_modifier
+			magical_damage_modifier_var = th_enemy_character_magical_damage_modifier
+			psionic_damage_modifier_var = th_enemy_character_psionic_damage_modifier
+			bludgeoning_damage_modifier_var = th_enemy_character_bludgeoning_damage_modifier
+			piercing_damage_modifier_var = th_enemy_character_piercing_damage_modifier
+			slashing_damage_modifier_var = th_enemy_character_slashing_damage_modifier
+			fire_damage_modifier_var = th_enemy_character_fire_damage_modifier
+			frost_damage_modifier_var = th_enemy_character_frost_damage_modifier
+			earth_damage_modifier_var = th_enemy_character_earth_damage_modifier
+			lightning_damage_modifier_var = th_enemy_character_lightning_damage_modifier
+			nature_damage_modifier_var = th_enemy_character_nature_damage_modifier
+			holy_damage_modifier_var = th_enemy_character_holy_damage_modifier
+			shadow_damage_modifier_var = th_enemy_character_shadow_damage_modifier
+			necrotic_damage_modifier_var = th_enemy_character_necrotic_damage_modifier
+			arcane_damage_modifier_var = th_enemy_character_arcane_damage_modifier
+			infernal_damage_modifier_var = th_enemy_character_infernal_damage_modifier
+			physical_resistance_var = th_enemy_character_physical_resistance
+			magical_resistance_var = th_enemy_character_magical_resistance
+			psionic_resistance_var = th_enemy_character_psionic_resistance
+			bludgeoning_resistance_var = th_enemy_character_bludgeoning_resistance
+			piercing_resistance_var = th_enemy_character_piercing_resistance
+			slashing_resistance_var = th_enemy_character_slashing_resistance
+			fire_resistance_var = th_enemy_character_fire_resistance
+			frost_resistance_var = th_enemy_character_frost_resistance
+			earth_resistance_var = th_enemy_character_earth_resistance
+			lightning_resistance_var = th_enemy_character_lightning_resistance
+			nature_resistance_var = th_enemy_character_nature_resistance
+			holy_resistance_var = th_enemy_character_holy_resistance
+			shadow_resistance_var = th_enemy_character_shadow_resistance
+			necrotic_resistance_var = th_enemy_character_necrotic_resistance
+			arcane_resistance_var = th_enemy_character_arcane_resistance
+			infernal_resistance_var = th_enemy_character_infernal_resistance
+			healing_die_var = th_enemy_character_healing_die
+			healing_die_num_var = th_enemy_character_healing_die_num
+			healing_crit_roll_needed_var = th_enemy_character_healing_crit_roll_needed
+			healing_received_bonus_var = th_enemy_character_healing_received_bonus
+			healing_received_modifier_var = th_enemy_character_healing_received_modifier
+			saving_throw_die_var = th_enemy_character_saving_throw_die
+			armor_class_var = th_enemy_character_armor_class
+			resistance_var = th_enemy_character_resistance
+			damage_type_var = th_enemy_character_damage_type
+			damage_school_var = th_enemy_character_damage_school
+			level_var = th_enemy_character_level
+		}
+		th_define_enemy_danmaku_character = { target = $target$ }
+		[[class]th_clear_enemy_character_class = yes th_set_enemy_character_danmaku_class = { class = $class$ }]
+
+		[[value_override_max_hp]set_variable = { which = th_enemy_character_max_health												value = $value_override_max_hp$ }]
+		[[value_change_max_hp]change_variable = { which = th_enemy_character_max_health												value = $value_change_max_hp$ }]
+		[[override_max_hp]set_variable = { which = th_enemy_character_max_health													which = $override_max_hp$ }]
+		[[change_max_hp]change_variable = { which = th_enemy_character_max_health													which = $change_max_hp$ }]
+		[[value_override_max_mp]set_variable = { which = th_enemy_character_max_mana												value = $value_override_max_mp$ }]
+		[[value_change_max_mp]change_variable = { which = th_enemy_character_max_mana												value = $value_change_max_mp$ }]
+		[[override_max_mp]set_variable = { which = th_enemy_character_max_mana														which = $override_max_mp$ }]
+		[[change_max_mp]change_variable = { which = th_enemy_character_max_mana														which = $change_max_mp$ }]
+		[[value_override_max_ap]set_variable = { which = th_enemy_character_max_action_points										value = $value_override_max_ap$ }]
+		[[value_change_max_ap]change_variable = { which = th_enemy_character_max_action_points										value = $value_change_max_ap$ }]
+		[[override_max_ap]set_variable = { which = th_enemy_character_max_action_points												which = $override_max_ap$ }]
+		[[change_max_ap]change_variable = { which = th_enemy_character_max_action_points											which = $change_max_ap$ }]
+		[[value_override_initiative_bonus]set_variable = { which = th_enemy_character_initiative_bonus								value = $value_override_initiative_bonus$ }]
+		[[value_change_initiative_bonus]change_variable = { which = th_enemy_character_initiative_bonus								value = $value_change_initiative_bonus$ }]
+		[[override_initiative_bonus]set_variable = { which = th_enemy_character_initiative_bonus									which = $override_initiative_bonus$ }]
+		[[change_initiative_bonus]change_variable = { which = th_enemy_character_initiative_bonus									which = $change_initiative_bonus$ }]
+		[[value_override_hit_bonus]set_variable = { which = th_enemy_character_hit_bonus											value = $value_override_hit_bonus$ }]
+		[[value_change_hit_bonus]change_variable = { which = th_enemy_character_hit_bonus											value = $value_change_hit_bonus$ }]
+		[[override_hit_bonus]set_variable = { which = th_enemy_character_hit_bonus													which = $override_hit_bonus$ }]
+		[[change_hit_bonus]change_variable = { which = th_enemy_character_hit_bonus													which = $change_hit_bonus$ }]
+		[[value_override_physical_attack_bonus]set_variable = { which = th_enemy_character_physical_attack_bonus					value = $value_override_physical_attack_bonus$ }]
+		[[value_change_physical_attack_bonus]change_variable = { which = th_enemy_character_physical_attack_bonus					value = $value_change_physical_attack_bonus$ }]
+		[[override_physical_attack_bonus]set_variable = { which = th_enemy_character_physical_attack_bonus							which = $override_physical_attack_bonus$ }]
+		[[change_physical_attack_bonus]change_variable = { which = th_enemy_character_physical_attack_bonus							which = $change_physical_attack_bonus$ }]
+		[[value_override_physical_attack_die]set_variable = { which = th_enemy_character_physical_attack_die						value = $value_override_physical_attack_die$ }]
+		[[value_change_physical_attack_die]change_variable = { which = th_enemy_character_physical_attack_die						value = $value_change_physical_attack_die$ }]
+		[[override_physical_attack_die]set_variable = { which = th_enemy_character_physical_attack_die								which = $override_physical_attack_die$ }]
+		[[change_physical_attack_die]change_variable = { which = th_enemy_character_physical_attack_die								which = $change_physical_attack_die$ }]
+		[[value_override_physical_attack_die_num]set_variable = { which = th_enemy_character_physical_attack_die_num				value = $value_override_physical_attack_die_num$ }]
+		[[value_change_physical_attack_die_num]change_variable = { which = th_enemy_character_physical_attack_die_num				value = $value_change_physical_attack_die_num$ }]
+		[[override_physical_attack_die_num]set_variable = { which = th_enemy_character_physical_attack_die_num						which = $override_physical_attack_die_num$ }]
+		[[change_physical_attack_die_num]change_variable = { which = th_enemy_character_physical_attack_die_num						which = $change_physical_attack_die_num$ }]
+		[[value_override_physical_crit_roll_needed]set_variable = { which = th_enemy_character_physical_crit_roll_needed			value = $value_override_physical_crit_roll_needed$ }]
+		[[value_change_physical_crit_roll_needed]change_variable = { which = th_enemy_character_physical_crit_roll_needed			value = $value_change_physical_crit_roll_needed$ }]
+		[[override_physical_crit_roll_needed]set_variable = { which = th_enemy_character_physical_crit_roll_needed					which = $override_physical_crit_roll_needed$ }]
+		[[change_physical_crit_roll_needed]change_variable = { which = th_enemy_character_physical_crit_roll_needed					which = $change_physical_crit_roll_needed$ }]
+		[[value_override_physical_crit_roll_multiplier]set_variable = { which = th_enemy_character_physical_crit_roll_multiplier	value = $value_override_physical_crit_roll_multiplier$ }]
+		[[value_change_physical_crit_roll_multiplier]change_variable = { which = th_enemy_character_physical_crit_roll_multiplier	value = $value_change_physical_crit_roll_multiplier$ }]
+		[[override_physical_crit_roll_multiplier]set_variable = { which = th_enemy_character_physical_crit_roll_multiplier			which = $override_physical_crit_roll_multiplier$ }]
+		[[change_physical_crit_roll_multiplier]change_variable = { which = th_enemy_character_physical_crit_roll_multiplier			which = $change_physical_crit_roll_multiplier$ }]
+		[[value_override_magical_attack_bonus]set_variable = { which = th_enemy_character_magical_attack_bonus						value = $value_override_magical_attack_bonus$ }]
+		[[value_change_magical_attack_bonus]change_variable = { which = th_enemy_character_magical_attack_bonus						value = $value_change_magical_attack_bonus$ }]
+		[[override_magical_attack_bonus]set_variable = { which = th_enemy_character_magical_attack_bonus							which = $override_magical_attack_bonus$ }]
+		[[change_magical_attack_bonus]change_variable = { which = th_enemy_character_magical_attack_bonus							which = $change_magical_attack_bonus$ }]
+		[[value_override_magical_attack_die]set_variable = { which = th_enemy_character_magical_attack_die							value = $value_override_magical_attack_die$ }]
+		[[value_change_magical_attack_die]change_variable = { which = th_enemy_character_magical_attack_die							value = $value_change_magical_attack_die$ }]
+		[[override_magical_attack_die]set_variable = { which = th_enemy_character_magical_attack_die								which = $override_magical_attack_die$ }]
+		[[change_magical_attack_die]change_variable = { which = th_enemy_character_magical_attack_die								which = $change_magical_attack_die$ }]
+		[[value_override_magical_attack_die_num]set_variable = { which = th_enemy_character_magical_attack_die_num					value = $value_override_magical_attack_die_num$ }]
+		[[value_change_magical_attack_die_num]change_variable = { which = th_enemy_character_magical_attack_die_num					value = $value_change_magical_attack_die_num$ }]
+		[[override_magical_attack_die_num]set_variable = { which = th_enemy_character_magical_attack_die_num						which = $override_magical_attack_die_num$ }]
+		[[change_magical_attack_die_num]change_variable = { which = th_enemy_character_magical_attack_die_num						which = $change_magical_attack_die_num$ }]
+		[[value_override_magical_crit_roll_needed]set_variable = { which = th_enemy_character_magical_crit_roll_needed				value = $value_override_magical_crit_roll_needed$ }]
+		[[value_change_magical_crit_roll_needed]change_variable = { which = th_enemy_character_magical_crit_roll_needed				value = $value_change_magical_crit_roll_needed$ }]
+		[[override_magical_crit_roll_needed]set_variable = { which = th_enemy_character_magical_crit_roll_needed					which = $override_magical_crit_roll_needed$ }]
+		[[change_magical_crit_roll_needed]change_variable = { which = th_enemy_character_magical_crit_roll_needed					which = $change_magical_crit_roll_needed$ }]
+		[[value_override_magical_crit_roll_multiplier]set_variable = { which = th_enemy_character_magical_crit_roll_multiplier		value = $value_override_magical_crit_roll_multiplier$ }]
+		[[value_change_magical_crit_roll_multiplier]change_variable = { which = th_enemy_character_magical_crit_roll_multiplier		value = $value_change_magical_crit_roll_multiplier$ }]
+		[[override_magical_crit_roll_multiplier]set_variable = { which = th_enemy_character_magical_crit_roll_multiplier			which = $override_magical_crit_roll_multiplier$ }]
+		[[change_magical_crit_roll_multiplier]change_variable = { which = th_enemy_character_magical_crit_roll_multiplier			which = $change_magical_crit_roll_multiplier$ }]
+		[[value_override_psionic_attack_bonus]set_variable = { which = th_enemy_character_psionic_attack_bonus						value = $value_override_psionic_attack_bonus$ }]
+		[[value_change_psionic_attack_bonus]change_variable = { which = th_enemy_character_psionic_attack_bonus						value = $value_change_psionic_attack_bonus$ }]
+		[[override_psionic_attack_bonus]set_variable = { which = th_enemy_character_psionic_attack_bonus							which = $override_psionic_attack_bonus$ }]
+		[[change_psionic_attack_bonus]change_variable = { which = th_enemy_character_psionic_attack_bonus							which = $change_psionic_attack_bonus$ }]
+		[[value_override_psionic_attack_die]set_variable = { which = th_enemy_character_psionic_attack_die							value = $value_override_psionic_attack_die$ }]
+		[[value_change_psionic_attack_die]change_variable = { which = th_enemy_character_psionic_attack_die							value = $value_change_psionic_attack_die$ }]
+		[[override_psionic_attack_die]set_variable = { which = th_enemy_character_psionic_attack_die								which = $override_psionic_attack_die$ }]
+		[[change_psionic_attack_die]change_variable = { which = th_enemy_character_psionic_attack_die								which = $change_psionic_attack_die$ }]
+		[[value_override_psionic_attack_die_num]set_variable = { which = th_enemy_character_psionic_attack_die_num					value = $value_override_psionic_attack_die_num$ }]
+		[[value_change_psionic_attack_die_num]change_variable = { which = th_enemy_character_psionic_attack_die_num					value = $value_change_psionic_attack_die_num$ }]
+		[[override_psionic_attack_die_num]set_variable = { which = th_enemy_character_psionic_attack_die_num						which = $override_psionic_attack_die_num$ }]
+		[[change_psionic_attack_die_num]change_variable = { which = th_enemy_character_psionic_attack_die_num						which = $change_psionic_attack_die_num$ }]
+		[[value_override_psionic_crit_roll_needed]set_variable = { which = th_enemy_character_psionic_crit_roll_needed				value = $value_override_psionic_crit_roll_needed$ }]
+		[[value_change_psionic_crit_roll_needed]change_variable = { which = th_enemy_character_psionic_crit_roll_needed				value = $value_change_psionic_crit_roll_needed$ }]
+		[[override_psionic_crit_roll_needed]set_variable = { which = th_enemy_character_psionic_crit_roll_needed					which = $override_psionic_crit_roll_needed$ }]
+		[[change_psionic_crit_roll_needed]change_variable = { which = th_enemy_character_psionic_crit_roll_needed					which = $change_psionic_crit_roll_needed$ }]
+		[[value_override_psionic_crit_roll_multiplier]set_variable = { which = th_enemy_character_psionic_crit_roll_multiplier		value = $value_override_psionic_crit_roll_multiplier$ }]
+		[[value_change_psionic_crit_roll_multiplier]change_variable = { which = th_enemy_character_psionic_crit_roll_multiplier		value = $value_change_psionic_crit_roll_multiplier$ }]
+		[[override_psionic_crit_roll_multiplier]set_variable = { which = th_enemy_character_psionic_crit_roll_multiplier			which = $override_psionic_crit_roll_multiplier$ }]
+		[[change_psionic_crit_roll_multiplier]change_variable = { which = th_enemy_character_psionic_crit_roll_multiplier			which = $change_psionic_crit_roll_multiplier$ }]
+		[[value_override_physical_damage_modifier]set_variable = { which = th_enemy_character_physical_damage_modifier				value = $value_override_physical_damage_modifier$ }]
+		[[value_change_physical_damage_modifier]change_variable = { which = th_enemy_character_physical_damage_modifier				value = $value_change_physical_damage_modifier$ }]
+		[[override_physical_damage_modifier]set_variable = { which = th_enemy_character_physical_damage_modifier					which = $override_physical_damage_modifier$ }]
+		[[change_physical_damage_modifier]change_variable = { which = th_enemy_character_physical_damage_modifier					which = $change_physical_damage_modifier$ }]
+		[[value_override_magical_damage_modifier]set_variable = { which = th_enemy_character_magical_damage_modifier				value = $value_override_magical_damage_modifier$ }]
+		[[value_change_magical_damage_modifier]change_variable = { which = th_enemy_character_magical_damage_modifier				value = $value_change_magical_damage_modifier$ }]
+		[[override_magical_damage_modifier]set_variable = { which = th_enemy_character_magical_damage_modifier						which = $override_magical_damage_modifier$ }]
+		[[change_magical_damage_modifier]change_variable = { which = th_enemy_character_magical_damage_modifier						which = $change_magical_damage_modifier$ }]
+		[[value_override_psionic_damage_modifier]set_variable = { which = th_enemy_character_psionic_damage_modifier				value = $value_override_psionic_damage_modifier$ }]
+		[[value_change_psionic_damage_modifier]change_variable = { which = th_enemy_character_psionic_damage_modifier				value = $value_change_psionic_damage_modifier$ }]
+		[[override_psionic_damage_modifier]set_variable = { which = th_enemy_character_psionic_damage_modifier						which = $override_psionic_damage_modifier$ }]
+		[[change_psionic_damage_modifier]change_variable = { which = th_enemy_character_psionic_damage_modifier						which = $change_psionic_damage_modifier$ }]
+		[[value_override_bludgeoning_damage_modifier]set_variable = { which = th_enemy_character_bludgeoning_damage_modifier		value = $value_override_bludgeoning_damage_modifier$ }]
+		[[value_change_bludgeoning_damage_modifier]change_variable = { which = th_enemy_character_bludgeoning_damage_modifier		value = $value_change_bludgeoning_damage_modifier$ }]
+		[[override_bludgeoning_damage_modifier]set_variable = { which = th_enemy_character_bludgeoning_damage_modifier				which = $override_bludgeoning_damage_modifier$ }]
+		[[change_bludgeoning_damage_modifier]change_variable = { which = th_enemy_character_bludgeoning_damage_modifier				which = $change_bludgeoning_damage_modifier$ }]
+		[[value_override_piercing_damage_modifier]set_variable = { which = th_enemy_character_piercing_damage_modifier				value = $value_override_piercing_damage_modifier$ }]
+		[[value_change_piercing_damage_modifier]change_variable = { which = th_enemy_character_piercing_damage_modifier				value = $value_change_piercing_damage_modifier$ }]
+		[[override_piercing_damage_modifier]set_variable = { which = th_enemy_character_piercing_damage_modifier					which = $override_piercing_damage_modifier$ }]
+		[[change_piercing_damage_modifier]change_variable = { which = th_enemy_character_piercing_damage_modifier					which = $change_piercing_damage_modifier$ }]
+		[[value_override_slashing_damage_modifier]set_variable = { which = th_enemy_character_slashing_damage_modifier				value = $value_override_slashing_damage_modifier$ }]
+		[[value_change_slashing_damage_modifier]change_variable = { which = th_enemy_character_slashing_damage_modifier				value = $value_change_slashing_damage_modifier$ }]
+		[[override_slashing_damage_modifier]set_variable = { which = th_enemy_character_slashing_damage_modifier					which = $override_slashing_damage_modifier$ }]
+		[[change_slashing_damage_modifier]change_variable = { which = th_enemy_character_slashing_damage_modifier					which = $change_slashing_damage_modifier$ }]
+		[[value_override_fire_damage_modifier]set_variable = { which = th_enemy_character_fire_damage_modifier						value = $value_override_fire_damage_modifier$ }]
+		[[value_change_fire_damage_modifier]change_variable = { which = th_enemy_character_fire_damage_modifier						value = $value_change_fire_damage_modifier$ }]
+		[[override_fire_damage_modifier]set_variable = { which = th_enemy_character_fire_damage_modifier							which = $override_fire_damage_modifier$ }]
+		[[change_fire_damage_modifier]change_variable = { which = th_enemy_character_fire_damage_modifier							which = $change_fire_damage_modifier$ }]
+		[[value_override_frost_damage_modifier]set_variable = { which = th_enemy_character_frost_damage_modifier					value = $value_override_frost_damage_modifier$ }]
+		[[value_change_frost_damage_modifier]change_variable = { which = th_enemy_character_frost_damage_modifier					value = $value_change_frost_damage_modifier$ }]
+		[[override_frost_damage_modifier]set_variable = { which = th_enemy_character_frost_damage_modifier							which = $override_frost_damage_modifier$ }]
+		[[change_frost_damage_modifier]change_variable = { which = th_enemy_character_frost_damage_modifier							which = $change_frost_damage_modifier$ }]
+		[[value_override_earth_damage_modifier]set_variable = { which = th_enemy_character_earth_damage_modifier					value = $value_override_earth_damage_modifier$ }]
+		[[value_change_earth_damage_modifier]change_variable = { which = th_enemy_character_earth_damage_modifier					value = $value_change_earth_damage_modifier$ }]
+		[[override_earth_damage_modifier]set_variable = { which = th_enemy_character_earth_damage_modifier							which = $override_earth_damage_modifier$ }]
+		[[change_earth_damage_modifier]change_variable = { which = th_enemy_character_earth_damage_modifier							which = $change_earth_damage_modifier$ }]
+		[[value_override_lightning_damage_modifier]set_variable = { which = th_enemy_character_lightning_damage_modifier			value = $value_override_lightning_damage_modifier$ }]
+		[[value_change_lightning_damage_modifier]change_variable = { which = th_enemy_character_lightning_damage_modifier			value = $value_change_lightning_damage_modifier$ }]
+		[[override_lightning_damage_modifier]set_variable = { which = th_enemy_character_lightning_damage_modifier					which = $override_lightning_damage_modifier$ }]
+		[[change_lightning_damage_modifier]change_variable = { which = th_enemy_character_lightning_damage_modifier					which = $change_lightning_damage_modifier$ }]
+		[[value_override_nature_damage_modifier]set_variable = { which = th_enemy_character_nature_damage_modifier					value = $value_override_nature_damage_modifier$ }]
+		[[value_change_nature_damage_modifier]change_variable = { which = th_enemy_character_nature_damage_modifier					value = $value_change_nature_damage_modifier$ }]
+		[[override_nature_damage_modifier]set_variable = { which = th_enemy_character_nature_damage_modifier						which = $override_nature_damage_modifier$ }]
+		[[change_nature_damage_modifier]change_variable = { which = th_enemy_character_nature_damage_modifier						which = $change_nature_damage_modifier$ }]
+		[[value_override_holy_damage_modifier]set_variable = { which = th_enemy_character_holy_damage_modifier						value = $value_override_holy_damage_modifier$ }]
+		[[value_change_holy_damage_modifier]change_variable = { which = th_enemy_character_holy_damage_modifier						value = $value_change_holy_damage_modifier$ }]
+		[[override_holy_damage_modifier]set_variable = { which = th_enemy_character_holy_damage_modifier							which = $override_holy_damage_modifier$ }]
+		[[change_holy_damage_modifier]change_variable = { which = th_enemy_character_holy_damage_modifier							which = $change_holy_damage_modifier$ }]
+		[[value_override_shadow_damage_modifier]set_variable = { which = th_enemy_character_shadow_damage_modifier					value = $value_override_shadow_damage_modifier$ }]
+		[[value_change_shadow_damage_modifier]change_variable = { which = th_enemy_character_shadow_damage_modifier					value = $value_change_shadow_damage_modifier$ }]
+		[[override_shadow_damage_modifier]set_variable = { which = th_enemy_character_shadow_damage_modifier						which = $override_shadow_damage_modifier$ }]
+		[[change_shadow_damage_modifier]change_variable = { which = th_enemy_character_shadow_damage_modifier						which = $change_shadow_damage_modifier$ }]
+		[[value_override_necrotic_damage_modifier]set_variable = { which = th_enemy_character_necrotic_damage_modifier				value = $value_override_necrotic_damage_modifier$ }]
+		[[value_change_necrotic_damage_modifier]change_variable = { which = th_enemy_character_necrotic_damage_modifier				value = $value_change_necrotic_damage_modifier$ }]
+		[[override_necrotic_damage_modifier]set_variable = { which = th_enemy_character_necrotic_damage_modifier					which = $override_necrotic_damage_modifier$ }]
+		[[change_necrotic_damage_modifier]change_variable = { which = th_enemy_character_necrotic_damage_modifier					which = $change_necrotic_damage_modifier$ }]
+		[[value_override_arcane_damage_modifier]set_variable = { which = th_enemy_character_arcane_damage_modifier					value = $value_override_arcane_damage_modifier$ }]
+		[[value_change_arcane_damage_modifier]change_variable = { which = th_enemy_character_arcane_damage_modifier					value = $value_change_arcane_damage_modifier$ }]
+		[[override_arcane_damage_modifier]set_variable = { which = th_enemy_character_arcane_damage_modifier						which = $override_arcane_damage_modifier$ }]
+		[[change_arcane_damage_modifier]change_variable = { which = th_enemy_character_arcane_damage_modifier						which = $change_arcane_damage_modifier$ }]
+		[[value_override_infernal_damage_modifier]set_variable = { which = th_enemy_character_infernal_damage_modifier				value = $value_override_infernal_damage_modifier$ }]
+		[[value_change_infernal_damage_modifier]change_variable = { which = th_enemy_character_infernal_damage_modifier				value = $value_change_infernal_damage_modifier$ }]
+		[[override_infernal_damage_modifier]set_variable = { which = th_enemy_character_infernal_damage_modifier					which = $override_infernal_damage_modifier$ }]
+		[[change_infernal_damage_modifier]change_variable = { which = th_enemy_character_infernal_damage_modifier					which = $change_infernal_damage_modifier$ }]
+		[[value_override_physical_resistance]set_variable = { which = th_enemy_character_physical_resistance						value = $value_override_physical_resistance$ }]
+		[[value_change_physical_resistance]change_variable = { which = th_enemy_character_physical_resistance						value = $value_change_physical_resistance$ }]
+		[[override_physical_resistance]set_variable = { which = th_enemy_character_physical_resistance								which = $override_physical_resistance$ }]
+		[[change_physical_resistance]change_variable = { which = th_enemy_character_physical_resistance								which = $change_physical_resistance$ }]
+		[[value_override_magical_resistance]set_variable = { which = th_enemy_character_magical_resistance							value = $value_override_magical_resistance$ }]
+		[[value_change_magical_resistance]change_variable = { which = th_enemy_character_magical_resistance							value = $value_change_magical_resistance$ }]
+		[[override_magical_resistance]set_variable = { which = th_enemy_character_magical_resistance								which = $override_magical_resistance$ }]
+		[[change_magical_resistance]change_variable = { which = th_enemy_character_magical_resistance								which = $change_magical_resistance$ }]
+		[[value_override_psionic_resistance]set_variable = { which = th_enemy_character_psionic_resistance							value = $value_override_psionic_resistance$ }]
+		[[value_change_psionic_resistance]change_variable = { which = th_enemy_character_psionic_resistance							value = $value_change_psionic_resistance$ }]
+		[[override_psionic_resistance]set_variable = { which = th_enemy_character_psionic_resistance								which = $override_psionic_resistance$ }]
+		[[change_psionic_resistance]change_variable = { which = th_enemy_character_psionic_resistance								which = $change_psionic_resistance$ }]
+		[[value_override_bludgeoning_resistance]set_variable = { which = th_enemy_character_bludgeoning_resistance					value = $value_override_bludgeoning_resistance$ }]
+		[[value_change_bludgeoning_resistance]change_variable = { which = th_enemy_character_bludgeoning_resistance					value = $value_change_bludgeoning_resistance$ }]
+		[[override_bludgeoning_resistance]set_variable = { which = th_enemy_character_bludgeoning_resistance						which = $override_bludgeoning_resistance$ }]
+		[[change_bludgeoning_resistance]change_variable = { which = th_enemy_character_bludgeoning_resistance						which = $change_bludgeoning_resistance$ }]
+		[[value_override_piercing_resistance]set_variable = { which = th_enemy_character_piercing_resistance						value = $value_override_piercing_resistance$ }]
+		[[value_change_piercing_resistance]change_variable = { which = th_enemy_character_piercing_resistance						value = $value_change_piercing_resistance$ }]
+		[[override_piercing_resistance]set_variable = { which = th_enemy_character_piercing_resistance								which = $override_piercing_resistance$ }]
+		[[change_piercing_resistance]change_variable = { which = th_enemy_character_piercing_resistance								which = $change_piercing_resistance$ }]
+		[[value_override_slashing_resistance]set_variable = { which = th_enemy_character_slashing_resistance						value = $value_override_slashing_resistance$ }]
+		[[value_change_slashing_resistance]change_variable = { which = th_enemy_character_slashing_resistance						value = $value_change_slashing_resistance$ }]
+		[[override_slashing_resistance]set_variable = { which = th_enemy_character_slashing_resistance								which = $override_slashing_resistance$ }]
+		[[change_slashing_resistance]change_variable = { which = th_enemy_character_slashing_resistance								which = $change_slashing_resistance$ }]
+		[[value_override_fire_resistance]set_variable = { which = th_enemy_character_fire_resistance								value = $value_override_fire_resistance$ }]
+		[[value_change_fire_resistance]change_variable = { which = th_enemy_character_fire_resistance								value = $value_change_fire_resistance$ }]
+		[[override_fire_resistance]set_variable = { which = th_enemy_character_fire_resistance										which = $override_fire_resistance$ }]
+		[[change_fire_resistance]change_variable = { which = th_enemy_character_fire_resistance										which = $change_fire_resistance$ }]
+		[[value_override_frost_resistance]set_variable = { which = th_enemy_character_frost_resistance								value = $value_override_frost_resistance$ }]
+		[[value_change_frost_resistance]change_variable = { which = th_enemy_character_frost_resistance								value = $value_change_frost_resistance$ }]
+		[[override_frost_resistance]set_variable = { which = th_enemy_character_frost_resistance									which = $override_frost_resistance$ }]
+		[[change_frost_resistance]change_variable = { which = th_enemy_character_frost_resistance									which = $change_frost_resistance$ }]
+		[[value_override_earth_resistance]set_variable = { which = th_enemy_character_earth_resistance								value = $value_override_earth_resistance$ }]
+		[[value_change_earth_resistance]change_variable = { which = th_enemy_character_earth_resistance								value = $value_change_earth_resistance$ }]
+		[[override_earth_resistance]set_variable = { which = th_enemy_character_earth_resistance									which = $override_earth_resistance$ }]
+		[[change_earth_resistance]change_variable = { which = th_enemy_character_earth_resistance									which = $change_earth_resistance$ }]
+		[[value_override_lightning_resistance]set_variable = { which = th_enemy_character_lightning_resistance						value = $value_override_lightning_resistance$ }]
+		[[value_change_lightning_resistance]change_variable = { which = th_enemy_character_lightning_resistance						value = $value_change_lightning_resistance$ }]
+		[[override_lightning_resistance]set_variable = { which = th_enemy_character_lightning_resistance							which = $override_lightning_resistance$ }]
+		[[change_lightning_resistance]change_variable = { which = th_enemy_character_lightning_resistance							which = $change_lightning_resistance$ }]
+		[[value_override_nature_resistance]set_variable = { which = th_enemy_character_nature_resistance							value = $value_override_nature_resistance$ }]
+		[[value_change_nature_resistance]change_variable = { which = th_enemy_character_nature_resistance							value = $value_change_nature_resistance$ }]
+		[[override_nature_resistance]set_variable = { which = th_enemy_character_nature_resistance									which = $override_nature_resistance$ }]
+		[[change_nature_resistance]change_variable = { which = th_enemy_character_nature_resistance									which = $change_nature_resistance$ }]
+		[[value_override_holy_resistance]set_variable = { which = th_enemy_character_holy_resistance								value = $value_override_holy_resistance$ }]
+		[[value_change_holy_resistance]change_variable = { which = th_enemy_character_holy_resistance								value = $value_change_holy_resistance$ }]
+		[[override_holy_resistance]set_variable = { which = th_enemy_character_holy_resistance										which = $override_holy_resistance$ }]
+		[[change_holy_resistance]change_variable = { which = th_enemy_character_holy_resistance										which = $change_holy_resistance$ }]
+		[[value_override_shadow_resistance]set_variable = { which = th_enemy_character_shadow_resistance							value = $value_override_shadow_resistance$ }]
+		[[value_change_shadow_resistance]change_variable = { which = th_enemy_character_shadow_resistance							value = $value_change_shadow_resistance$ }]
+		[[override_shadow_resistance]set_variable = { which = th_enemy_character_shadow_resistance									which = $override_shadow_resistance$ }]
+		[[change_shadow_resistance]change_variable = { which = th_enemy_character_shadow_resistance									which = $change_shadow_resistance$ }]
+		[[value_override_necrotic_resistance]set_variable = { which = th_enemy_character_necrotic_resistance						value = $value_override_necrotic_resistance$ }]
+		[[value_change_necrotic_resistance]change_variable = { which = th_enemy_character_necrotic_resistance						value = $value_change_necrotic_resistance$ }]
+		[[override_necrotic_resistance]set_variable = { which = th_enemy_character_necrotic_resistance								which = $override_necrotic_resistance$ }]
+		[[change_necrotic_resistance]change_variable = { which = th_enemy_character_necrotic_resistance								which = $change_necrotic_resistance$ }]
+		[[value_override_arcane_resistance]set_variable = { which = th_enemy_character_arcane_resistance							value = $value_override_arcane_resistance$ }]
+		[[value_change_arcane_resistance]change_variable = { which = th_enemy_character_arcane_resistance							value = $value_change_arcane_resistance$ }]
+		[[override_arcane_resistance]set_variable = { which = th_enemy_character_arcane_resistance									which = $override_arcane_resistance$ }]
+		[[change_arcane_resistance]change_variable = { which = th_enemy_character_arcane_resistance									which = $change_arcane_resistance$ }]
+		[[value_override_infernal_resistance]set_variable = { which = th_enemy_character_infernal_resistance						value = $value_override_infernal_resistance$ }]
+		[[value_change_infernal_resistance]change_variable = { which = th_enemy_character_infernal_resistance						value = $value_change_infernal_resistance$ }]
+		[[override_infernal_resistance]set_variable = { which = th_enemy_character_infernal_resistance								which = $override_infernal_resistance$ }]
+		[[change_infernal_resistance]change_variable = { which = th_enemy_character_infernal_resistance								which = $change_infernal_resistance$ }]
+		[[value_override_healing_die]set_variable = { which = th_enemy_character_healing_die										value = $value_override_healing_die$ }]
+		[[value_change_healing_die]change_variable = { which = th_enemy_character_healing_die										value = $value_change_healing_die$ }]
+		[[override_healing_die]set_variable = { which = th_enemy_character_healing_die												which = $override_healing_die$ }]
+		[[change_healing_die]change_variable = { which = th_enemy_character_healing_die												which = $change_healing_die$ }]
+		[[value_override_healing_die_num]set_variable = { which = th_enemy_character_healing_die_num								value = $value_override_healing_die_num$ }]
+		[[value_change_healing_die_num]change_variable = { which = th_enemy_character_healing_die_num								value = $value_change_healing_die_num$ }]
+		[[override_healing_die_num]set_variable = { which = th_enemy_character_healing_die_num										which = $override_healing_die_num$ }]
+		[[change_healing_die_num]change_variable = { which = th_enemy_character_healing_die_num										which = $change_healing_die_num$ }]
+		[[value_override_healing_crit_roll_needed]set_variable = { which = th_enemy_character_healing_crit_roll_needed				value = $value_override_healing_crit_roll_needed$ }]
+		[[value_change_healing_crit_roll_needed]change_variable = { which = th_enemy_character_healing_crit_roll_needed				value = $value_change_healing_crit_roll_needed$ }]
+		[[override_healing_crit_roll_needed]set_variable = { which = th_enemy_character_healing_crit_roll_needed					which = $override_healing_crit_roll_needed$ }]
+		[[change_healing_crit_roll_needed]change_variable = { which = th_enemy_character_healing_crit_roll_needed					which = $change_healing_crit_roll_needed$ }]
+		[[value_override_healing_received_bonus]set_variable = { which = th_enemy_character_healing_received_bonus					value = $value_override_healing_received_bonus$ }]
+		[[value_change_healing_received_bonus]change_variable = { which = th_enemy_character_healing_received_bonus					value = $value_change_healing_received_bonus$ }]
+		[[override_healing_received_bonus]set_variable = { which = th_enemy_character_healing_received_bonus						which = $override_healing_received_bonus$ }]
+		[[change_healing_received_bonus]change_variable = { which = th_enemy_character_healing_received_bonus						which = $change_healing_received_bonus$ }]
+		[[value_override_healing_received_modifier]set_variable = { which = th_enemy_character_healing_received_modifier			value = $value_override_healing_received_modifier$ }]
+		[[value_change_healing_received_modifier]change_variable = { which = th_enemy_character_healing_received_modifier			value = $value_change_healing_received_modifier$ }]
+		[[override_healing_received_modifier]set_variable = { which = th_enemy_character_healing_received_modifier					which = $override_healing_received_modifier$ }]
+		[[change_healing_received_modifier]change_variable = { which = th_enemy_character_healing_received_modifier					which = $change_healing_received_modifier$ }]
+		[[value_override_saving_throw_die]set_variable = { which = th_enemy_character_saving_throw_die								value = $value_override_saving_throw_die$ }]
+		[[value_change_saving_throw_die]change_variable = { which = th_enemy_character_saving_throw_die								value = $value_change_saving_throw_die$ }]
+		[[override_saving_throw_die]set_variable = { which = th_enemy_character_saving_throw_die									which = $override_saving_throw_die$ }]
+		[[change_saving_throw_die]change_variable = { which = th_enemy_character_saving_throw_die									which = $change_saving_throw_die$ }]
+		[[value_override_armor_class]set_variable = { which = th_enemy_character_armor_class										value = $value_override_armor_class$ }]
+		[[value_change_armor_class]change_variable = { which = th_enemy_character_armor_class										value = $value_change_armor_class$ }]
+		[[override_armor_class]set_variable = { which = th_enemy_character_armor_class												which = $override_armor_class$ }]
+		[[change_armor_class]change_variable = { which = th_enemy_character_armor_class												which = $change_armor_class$ }]
+		[[value_override_resistance]set_variable = { which = th_enemy_character_resistance											value = $value_override_resistance$ }]
+		[[value_change_resistance]change_variable = { which = th_enemy_character_resistance											value = $value_change_resistance$ }]
+		[[override_resistance]set_variable = { which = th_enemy_character_resistance												which = $override_resistance$ }]
+		[[change_resistance]change_variable = { which = th_enemy_character_resistance												which = $change_resistance$ }]
+		[[value_override_level]set_variable = { which = th_enemy_character_level													value = $value_override_level$ }]
+		[[value_change_level]change_variable = { which = th_enemy_character_level													value = $value_change_level$ }]
+		[[override_level]set_variable = { which = th_enemy_character_level															which = $override_level$ }]
+		[[change_level]change_variable = { which = th_enemy_character_level															which = $change_level$ }]
+
+
+		[[damage_type]th_set_enemy_character_damage_type = { type = $damage_type$ }]
+		[[damage_school]th_set_enemy_character_damage_school = { school = $damage_school$ }]
+
+		set_variable = {
+			which = th_enemy_character_current_health
+			which = th_enemy_character_max_health
+		}
+		set_variable = {
+			which = th_enemy_character_current_mana
+			which = th_enemy_character_max_mana
+		}
+		set_variable = {
+			which = th_enemy_character_current_action_points
+			which = th_enemy_character_max_action_points
+		}
+		th_gui_update_danmaku_bar_enemy_character = { type = health }
+		th_gui_update_danmaku_bar_enemy_character = { type = mana }
+		[[home]th_set_enemy_character_home = { home = $home$ }]
+		[[spell_card]th_enemy_character_equip_spell_card = { spell_card = $spell_card$ }]
+		[[trinket]th_enemy_character_equip_trinket = { trinket = $trinket$ }]
+		[[weapon]th_enemy_character_equip_weapon = { weapon = $weapon$ }]
+	}
+}
+
+th_roll_initiative_for_solo_fight = {
+	custom_tooltip = th_roll_initiative_for_solo_fight_tt
+	hidden_effect = {
+		th_roll_initiative = yes
+		th_alternative_roll_initiative = {
+			variable = th_danmaku_unlanded_character_rolled_initiative
+			bonus = th_danmaku_unlanded_character_ini_bonus
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = th_danmaku_rolled_initiative
+					which = th_danmaku_unlanded_character_rolled_initiative
+				}
+			}
+			set_ruler_flag = th_danmaku_has_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			th_on_new_own_turn = yes
+		}
+		else = {
+			clr_ruler_flag = th_danmaku_has_turn_ownership
+			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			th_on_new_enemy_turn = yes
+		}
+	}
+}
+
+th_end_turn_against_unlanded_character = {
+	if = {
+		limit = {
+			NOT = {
+				check_variable = {
+					which = th_danmaku_unlanded_duel_opponent_turn
+					value = 1
+				}
+			}
+		}
+		set_variable = {
+			which = th_danmaku_unlanded_duel_opponent_turn
+			value = 1
+		}
+		if = {
+			limit = { has_ruler_flag = th_danmaku_has_turn_ownership }
+			clr_ruler_flag = th_danmaku_has_turn_ownership
+			set_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			th_on_new_enemy_turn = yes
+		}
+		else = {
+			set_ruler_flag = th_danmaku_has_turn_ownership
+			clr_ruler_flag = th_danmaku_unlanded_character_turn_ownership
+			th_on_new_own_turn = yes
+		}
+	}
+	else = {
+		set_variable = {
+			which = th_danmaku_unlanded_duel_opponent_turn
+			value = 0
+		}
+		change_variable = {
+			which = th_danmaku_unlanded_duel_round_counter
+			value = 1
+		}
+		th_roll_initiative_for_solo_fight = yes
+	}
+	1 = {
+		set_variable = {
+			which = th_danmaku_default_turn_duration_transfer
+			which = th_danmaku_default_turn_duration
+		}
+		PREV = {
+			set_variable = { which = th_danmaku_default_turn_duration_transfer 		which = PREV }
+			set_variable = {
+				which = th_danmaku_unlanded_turn_duration
+				which = th_danmaku_default_turn_duration_transfer
+			}
+		}
+	}
+}
