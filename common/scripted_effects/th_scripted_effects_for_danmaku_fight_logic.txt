@@ -317,19 +317,57 @@ th_create_danmaku_duel_against_country = {
 		}
 		log = "Either country is already in a danmaku duel."
 	}
-	else = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { tag = $country_1$ }
+				NOT = { tag = $country_2$ }
+			}
+			$country_1$ = { NOT = { th_is_in_a_danmaku_duel = yes } }
+			$country_2$ = { NOT = { th_is_in_a_danmaku_duel = yes } }
+		}
 		if = {
 			limit = { tag = $country_1$ }
-			$country_2$ = { custom_tooltip = th_create_danmaku_duel_instance_against_root_tt }
+			$country_2$ = {
+				custom_tooltip = th_create_danmaku_duel_instance_against_root_tt
+				[[trigger_event]
+					hidden_effect = {
+						if = {
+							limit = { ai = no }
+							country_event = { id = th_danmaku_duel_event.20 }
+						}
+					}
+				]
+			}
 		}
-		else_if = {
+		if = {
 			limit = { tag = $country_2$ }
-			$country_1$ = { custom_tooltip = th_create_danmaku_duel_instance_against_root_tt }
+			$country_1$ = {
+				custom_tooltip = th_create_danmaku_duel_instance_against_root_tt
+				[[trigger_event]
+					hidden_effect = {
+						if = {
+							limit = { ai = no }
+							country_event = { id = th_danmaku_duel_event.20 }
+						}
+					}
+				]
+			}
 		}
-		else = {
+		if = {
+			limit = {
+				NOT = { tag = $country_1$ }
+				NOT = { tag = $country_2$ }
+			}
 			$country_1$ = { custom_tooltip = th_join_danmaku_duel_instance_tt }
 			$country_2$ = { custom_tooltip = th_join_danmaku_duel_instance_tt }
 			custom_tooltip = th_create_danmaku_duel_instance_tt
+			[[trigger_event]
+				hidden_effect = {
+					$country_1$ = { if = { limit = { ai = no } country_event = { id = th_danmaku_duel_event.21 } } }
+					$country_2$ = { if = { limit = { ai = no } country_event = { id = th_danmaku_duel_event.21 } } }
+				}
+			]
 		}
 		hidden_effect = {
 			th_global_setup_danmaku_duels_data = yes
@@ -812,12 +850,27 @@ th_reset_combat_resource = {
 	th_gui_update_danmaku_bar = { type = $type$ }
 	th_gui_update_enemy_resource_bar = { type = $type$ }
 }
+th_reset_enemy_character_combat_resource = {
+	set_variable = {
+		which = th_enemy_character_current_$type$
+		which = th_enemy_character_max_$type$
+	}
+	if = {
+		limit = { NOT = { check_variable = { which = th_enemy_character_current_$type$ value = 0 } } }
+		set_variable = {
+			which = th_enemy_character_current_$type$
+			value = 0
+		}
+	}
+	th_gui_update_danmaku_bar_enemy_character = { type = $type$ }
+}
 
 th_on_new_own_turn = {
 	th_reset_combat_resource = { type = action_points }
 }
 
 th_on_new_enemy_turn = {
+	th_reset_enemy_character_combat_resource = { type = action_points }
 }
 
 th_check_if_kill = {
@@ -1950,6 +2003,7 @@ th_clear_enemy_character_danmaku_flags = {
 
 th_create_danmaku_duel_against_unlanded_character = {
 	custom_tooltip = th_create_danmaku_duel_against_unlanded_character_$target$_tt
+	[[rank]custom_tooltip = th_danmaku_duel_unlanded_character_has_rank_$rank$_tt ]
 	hidden_effect = {
 		th_clear_enemy_character_danmaku_flags = yes
 		th_prepare_country_for_danmaku_duel = yes
@@ -2063,6 +2117,7 @@ th_create_danmaku_duel_against_unlanded_character = {
 		}
 		th_define_enemy_danmaku_character = { target = $target$ }
 		[[class]th_clear_enemy_character_class = yes th_set_enemy_character_danmaku_class = { class = $class$ }]
+		[[rank]th_set_enemy_character_static_modifier = { type = $rank$ }]
 
 		[[value_override_max_hp]set_variable = { which = th_enemy_character_max_health												value = $value_override_max_hp$ }]
 		[[value_change_max_hp]change_variable = { which = th_enemy_character_max_health												value = $value_change_max_hp$ }]
