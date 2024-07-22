@@ -212,7 +212,7 @@ public class SecondGui implements ActionListener {
 			String holder = name;
 			for(int i = 0; i<holder.length(); i++) {
 				if(Character.isSpaceChar(holder.charAt(i))) {
-					holder.replace(holder.charAt(i), '_');
+					holder = holder.replace(holder.charAt(i), '_');
 				}
 			}
 			name2=holder;
