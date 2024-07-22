@@ -107,7 +107,7 @@ public class MasterOutput {
 		 String LocalDirectoy = "/localisation/touhou_danmaku_l_english.yml";
 		 PrintWriter out =FileShenanigans.maker(LocalDirectoy);
 	 JTextArea a  = (JTextArea)AbilityName[1].getComponent(1);
-	 out.println("\n th_danmaku_battle_window_ability_"+SecondGui.name2+"_desc: \"§Y[Root.GetAbilityName_"+SecondGui.name2+"]§!\\n[Root.GetAbilityDesc_"+SecondGui.name2+"]\""
+	 out.println("\n th_danmaku_battle_window_ability_"+SecondGui.name2.toLowerCase()+"_desc: \"§Y[Root.GetAbilityName_"+SecondGui.name2+"]§!\\n[Root.GetAbilityDesc_"+SecondGui.name2+"]\""
 			 );
 	 out.println(" th_ability_"+SecondGui.name2.toLowerCase()+": \""+SecondGui.name+"\""
 			 );
