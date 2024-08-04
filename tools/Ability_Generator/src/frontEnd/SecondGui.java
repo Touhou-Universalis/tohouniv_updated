@@ -356,7 +356,7 @@ public class SecondGui implements ActionListener {
 			frame = new JFrame("Big Editor");
 			frame.setSize(1600, 900);
 			frame.setVisible(true);
-			ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("assets"));
+			ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("assests/tohouniv_updated.png"));
 			frame.setIconImage(icon.getImage());
 			contentPane = frame.getContentPane();
 			

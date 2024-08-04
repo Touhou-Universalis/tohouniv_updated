@@ -130,7 +130,7 @@ public class SimpleGui implements ActionListener{
 		frame = new JFrame("Launcher");
 		frame.setSize(400, 400);
 		frame.setVisible(true);
-		ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("assets"));
+		ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("assests/tohouniv_updated.png"));
 		frame.setIconImage(icon.getImage());
 		contentPane = frame.getContentPane();
 

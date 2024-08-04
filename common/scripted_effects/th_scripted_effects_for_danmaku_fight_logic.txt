@@ -1274,9 +1274,9 @@ th_perform_attack = {
 		else = {
 			th_play_sound = { sound = th_danmaku_duel_ability_$ability$_hit }
 		}
+		[[override_damage_type]th_override_damage_type = { type = $override_damage_type$ }]
+		[[override_damage_school]th_override_damage_school = { school = $override_damage_school$ }]
 		th_deal_damage = {
-			[[override_damage_type] override_damage_type = $override_damage_type$]
-			[[override_damage_school] override_damage_school = $override_damage_school$]
 			[[override_damage_die] override_damage_die = $override_damage_die$]
 			[[override_damage_die_amount] override_damage_die_amount = $override_damage_die_amount$]
 			[[override_damage_flat_bonus] override_damage_flat_bonus = $override_damage_flat_bonus$]
@@ -1325,10 +1325,12 @@ th_get_damage_type = {
 				which = th_danmaku_type_resistance_transfer
 				which = th_danmaku_$type$_resistance
 			}
-		}
-		set_variable = {
-			which = th_danmaku_type_resistance_transfer
-			which = PREV
+			PREV = {
+				set_variable = {
+					which = th_danmaku_type_resistance_transfer
+					which = PREV
+				}
+			}
 		}
 	}
 	else = {
@@ -1364,10 +1366,12 @@ th_get_damage_school = {
 				which = th_danmaku_school_resistance_transfer
 				which = th_danmaku_$school$_resistance
 			}
-		}
-		set_variable = {
-			which = th_danmaku_school_resistance_transfer
-			which = PREV
+			PREV = {
+				set_variable = {
+					which = th_danmaku_school_resistance_transfer
+					which = PREV
+				}
+			}
 		}
 	}
 	else = {
@@ -1404,7 +1408,8 @@ th_determine_damage_type = {
 		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 10 } } 	th_get_damage_school = { school = necrotic } }
 		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 11 } } 	th_get_damage_school = { school = arcane } }
 		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 12 } } 	th_get_damage_school = { school = infernal } }
-		else = { th_get_damage_school = { school = bludgeoning } }
+		#else = { th_get_damage_school = { school = bludgeoning } }
+		else = { th_get_damage_school = { school = arcane } }
 	}
 	else = {
 		if = { limit = { 	  is_variable_equal = { which = th_danmaku_attack_school value = 1 } } 	th_get_damage_school = { school = piercing } }
@@ -1522,6 +1527,7 @@ th_override_damage_type_physical = { set_variable = { which = th_danmaku_damage_
 th_override_damage_type_magical = { set_variable = { which = th_danmaku_damage_type_override value = 1 } }
 th_override_damage_type_psionic = { set_variable = { which = th_danmaku_damage_type_override value = 2 } }
 th_override_damage_type = {
+	set_country_flag = th_overriding_damage_type
 	th_override_damage_type_$type$ = yes
 }
 th_override_damage_school_bludgeoning = { set_variable = { which = th_danmaku_damage_school_override value = 0 } }
@@ -1538,6 +1544,7 @@ th_override_damage_school_necrotic = { set_variable = { which = th_danmaku_damag
 th_override_damage_school_arcane = { set_variable = { which = th_danmaku_damage_school_override value = 11 } }
 th_override_damage_school_infernal = { set_variable = { which = th_danmaku_damage_school_override value = 12 } }
 th_override_damage_school = {
+	set_country_flag = th_overriding_damage_school
 	th_override_damage_school_$school$ = yes
 }
 
@@ -1550,10 +1557,20 @@ th_deal_damage = {
 	#What type of die?
 	set_variable = { which = th_danmaku_damage_type_multiplicator value = 1 }
 	set_variable = { which = th_danmaku_damage_school_multiplicator value = 0 }	#Type and school multiplicators get combined with each other at the end
-	set_variable = { which = th_danmaku_damage_type_override value = -1 }
-	set_variable = { which = th_danmaku_damage_school_override value = -1 }
-	[[override_damage_type]th_override_damage_type = { type = $override_damage_type$ }]
-	[[override_damage_school]th_override_damage_school = { school = $override_damage_school$ }]
+	if = {
+		limit = { NOT = { has_country_flag = th_overriding_damage_type } }
+		set_variable = { which = th_danmaku_damage_type_override value = -1 }
+	}
+	else = {
+		clr_country_flag = th_overriding_damage_type
+	}
+	if = {
+		limit = { NOT = { has_country_flag = th_overriding_damage_school } }
+		set_variable = { which = th_danmaku_damage_school_override value = -1 }
+	}
+	else = {
+		clr_country_flag = th_overriding_damage_school
+	}
 	if = {
 		limit = { th_unlanded_character_has_turn_ownership = yes }
 		th_determine_damage_type_unlanded_character = yes
