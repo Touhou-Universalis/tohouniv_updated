@@ -5,7 +5,7 @@ th_prepare_country_for_danmaku_duel = {
 		which = th_danmaku_action_points
 		which = th_danmaku_max_action_points
 	}
-	th_gui_update_danmaku_bar = { type = action_points }
+	th_gui_update_danmaku_bar_own_ruler = { type = action_points }
 }
 
 th_assign_country_to_danmaku_duel_instance = {
@@ -661,49 +661,6 @@ th_monthly_danmaku_duel_unlanded_duration_reduction = {
 	}
 }
 
-th_gui_get_enemy_resource_bar = {
-	if = {
-		limit = { has_saved_event_target = enemy_duelist }
-		event_target:enemy_duelist = {
-			set_variable = {
-				which = th_danmaku_source_transfer_$type$
-				which = th_danmaku_$type$_var
-			}
-			PREV = {
-				set_variable = {
-					which = th_danmaku_source_transfer_$type$
-					which = PREV
-				}
-				set_variable = { 
-					which = th_danmaku_enemy_$type$_var 
-					which = th_danmaku_source_transfer_$type$ 
-				}
-			}
-		}
-	}
-}
-
-th_gui_update_enemy_resource_bar = {
-	set_variable = {
-		which = th_danmaku_source_transfer_$type$
-		which = th_danmaku_$type$_var
-	}
-	th_create_event_target_enemy_duelist = yes
-	if = {
-		limit = { has_saved_event_target = enemy_duelist }
-		event_target:enemy_duelist = {
-			set_variable = {
-				which = th_danmaku_source_transfer_$type$
-				which = PREV
-			}
-			set_variable = { 
-				which = th_danmaku_enemy_$type$_var 
-				which = th_danmaku_source_transfer_$type$ 
-			}
-		}
-	}
-}
-
 th_change_combat_resource = {
 	if = {
 		limit = { th_unlanded_character_has_turn_ownership = yes }
@@ -746,7 +703,7 @@ th_change_combat_resource = {
 				which = th_danmaku_max_$type$
 			}
 		}
-		th_gui_update_danmaku_bar = { type = $type$ }
+		th_gui_update_danmaku_bar_own_ruler = { type = $type$ }
 		th_gui_update_enemy_resource_bar = { type = $type$ }
 	}
 }
@@ -809,7 +766,7 @@ th_change_combat_resource_ability = {
 				which = th_danmaku_max_$type$
 			}
 		}
-		th_gui_update_danmaku_bar = { type = $type$ }
+		th_gui_update_danmaku_bar_own_ruler = { type = $type$ }
 		th_gui_update_enemy_resource_bar = { type = $type$ }
 	}
 }
@@ -832,7 +789,7 @@ th_set_combat_resource = {
 			which = th_danmaku_max_$type$
 		}
 	}
-	th_gui_update_danmaku_bar = { type = $type$ }
+	th_gui_update_danmaku_bar_own_ruler = { type = $type$ }
 	th_gui_update_enemy_resource_bar = { type = $type$ }
 }
 th_reset_combat_resource = {
@@ -847,7 +804,7 @@ th_reset_combat_resource = {
 			value = 0
 		}
 	}
-	th_gui_update_danmaku_bar = { type = $type$ }
+	th_gui_update_danmaku_bar_own_ruler = { type = $type$ }
 	th_gui_update_enemy_resource_bar = { type = $type$ }
 }
 th_reset_enemy_character_combat_resource = {
@@ -1168,6 +1125,85 @@ th_roll_die_no_variable = {
 	}
 }
 
+th_roll_die_for_crit_heal = {
+	1 = {
+		set_variable = {
+			which = th_danmaku_default_healing_crit_roll_needed_transfer
+			which = th_danmaku_default_healing_crit_roll_needed
+		}
+		PREV = {
+			set_variable = {
+				which = th_danmaku_default_healing_crit_roll_needed_transfer
+				which = PREV
+			}
+		}
+	}
+	set_variable = { which = th_roll_die_type value = 20 }
+	set_variable = { which = th_roll_amount value = 1 }
+	if = {
+		limit = {
+			check_variable = { which = th_roll_die_type value = 2 }
+			check_variable = { which = th_roll_amount value = 1 }
+		}
+		set_variable = {
+			which = th_bonus_per_roll
+			value = $bonus_per_roll$
+		}
+		#Generate country specific random number
+		export_to_variable = {
+			which = rng_input
+			value = manpower
+		}
+		export_to_variable = {
+			which = rng_input_treasury
+			value = treasury
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_treasury
+		}
+		export_to_variable = {
+			which = rng_input_max_manpower
+			value = max_manpower
+		}
+		change_variable = {
+			which = rng_input
+			which = rng_input_max_manpower
+		}
+		#Total result
+		set_variable = {
+			which = rng_result
+			value = 0
+		}
+		#Generating the numbers
+		while = {
+			limit = { check_variable = { which = th_roll_amount value = 1 } }
+			th_generate_random_number = {
+				input_variable = rng_input
+				modulo = th_roll_die_type
+				rng_variable = rng_result
+			}
+			change_variable = {
+				which = rng_result
+				which = th_bonus_per_roll
+			}
+			subtract_variable = { which = th_roll_amount value = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = rng_result
+					which = th_danmaku_default_healing_crit_roll_needed_transfer
+				}
+			}
+			set_ruler_flag = th_danmaku_rolled_critical_hit
+		}
+	}
+	else = {
+		log = "Cannot roll due to few dies or too small dies."
+	}
+}
+
 
 th_set_attack_roll_type_physical = { set_variable = { which = th_danmaku_attack_roll_type value = 0 } }
 th_set_attack_roll_type_magical = { set_variable = { which = th_danmaku_attack_roll_type value = 1 } }
@@ -1408,8 +1444,7 @@ th_determine_damage_type = {
 		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 10 } } 	th_get_damage_school = { school = necrotic } }
 		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 11 } } 	th_get_damage_school = { school = arcane } }
 		else_if = { limit = { is_variable_equal = { which = th_danmaku_damage_school_override value = 12 } } 	th_get_damage_school = { school = infernal } }
-		#else = { th_get_damage_school = { school = bludgeoning } }
-		else = { th_get_damage_school = { school = arcane } }
+		else = { th_get_damage_school = { school = bludgeoning } }
 	}
 	else = {
 		if = { limit = { 	  is_variable_equal = { which = th_danmaku_attack_school value = 1 } } 	th_get_damage_school = { school = piercing } }
@@ -1592,6 +1627,25 @@ th_deal_damage = {
 	[[override_damage_bonus_per_die]set_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = $override_damage_bonus_per_die$ }]
 	[[override_damage_type_modifier]set_variable = { which = th_danmaku_damage_type_multiplicator value = $override_damage_type_modifier$ }]
 	[[override_damage_school_modifier]set_variable = { which = th_danmaku_damage_school_multiplicator value = $override_damage_school_modifier$ }]
+	[[override_damage_die_var]set_variable = { which = th_danmaku_damage_die which = $override_damage_die_var$ }]
+	[[override_damage_die_amount_var]set_variable = { which = th_danmaku_damage_die_amount which = $override_damage_die_amount_var$ }]
+	[[override_damage_flat_bonus_var]set_variable = { which = th_danmaku_ability_damage_flat_bonus which = $override_damage_flat_bonus_var$ }]
+	[[override_damage_bonus_per_die_var]set_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die which = $override_damage_bonus_per_die_var$ }]
+	[[override_damage_type_modifier_var]set_variable = { which = th_danmaku_damage_type_multiplicator which = $override_damage_type_modifier_var$ }]
+	[[override_damage_school_modifier_var]set_variable = { which = th_danmaku_damage_school_multiplicator which = $override_damage_school_modifier_var$ }]
+
+	[[bonus_damage_die]change_variable = { which = th_danmaku_damage_die value = $bonus_damage_die$ }]
+	[[bonus_damage_die_amount]change_variable = { which = th_danmaku_damage_die_amount value = $bonus_damage_die_amount$ }]
+	[[bonus_damage_flat_bonus]change_variable = { which = th_danmaku_ability_damage_flat_bonus value = $bonus_damage_flat_bonus$ }]
+	[[bonus_damage_bonus_per_die]change_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die value = $bonus_damage_bonus_per_die$ }]
+	[[bonus_damage_type_modifier]change_variable = { which = th_danmaku_damage_type_multiplicator value = $bonus_damage_type_modifier$ }]
+	[[bonus_damage_school_modifier]change_variable = { which = th_danmaku_damage_school_multiplicator value = $bonus_damage_school_modifier$ }]
+	[[bonus_damage_die_var]change_variable = { which = th_danmaku_damage_die which = $bonus_damage_die_var$ }]
+	[[bonus_damage_die_amount_var]change_variable = { which = th_danmaku_damage_die_amount which = $bonus_damage_die_amount_var$ }]
+	[[bonus_damage_flat_bonus_var]change_variable = { which = th_danmaku_ability_damage_flat_bonus which = $bonus_damage_flat_bonus_var$ }]
+	[[bonus_damage_bonus_per_die_var]change_variable = { which = th_danmaku_ability_damage_flat_bonus_per_die which = $bonus_damage_bonus_per_die_var$ }]
+	[[bonus_damage_type_modifier_var]change_variable = { which = th_danmaku_damage_type_multiplicator which = $bonus_damage_type_modifier_var$ }]
+	[[bonus_damage_school_modifier_var]change_variable = { which = th_danmaku_damage_school_multiplicator which = $bonus_damage_school_modifier_var$ }]
 	#Rolled damage end result
 	set_variable = {
 		which = th_danmaku_damage_roll
@@ -1724,7 +1778,7 @@ th_deal_damage = {
 					value = 0
 				}
 			}
-			th_gui_update_danmaku_bar = { type = health }
+			th_gui_update_danmaku_bar_own_ruler = { type = health }
 			th_check_if_kill = yes
 		}
 		th_gui_get_enemy_resource_bar = { type = health }
@@ -1809,7 +1863,7 @@ th_deal_damage = {
 					value = 0
 				}
 			}
-			th_gui_update_danmaku_bar = { type = health }
+			th_gui_update_danmaku_bar_own_ruler = { type = health }
 			if = {
 				limit = { NOT = { th_is_alive = yes } }
 				set_ruler_flag = th_danmaku_duel_over
@@ -1853,22 +1907,213 @@ th_deal_damage = {
 	}
 }
 
+th_heal_effect_variable = {
+	change_variable = {
+		which = $health$
+		which = $value$
+	}
+	if = {
+		limit = { check_variable = { which = $health$ which = $max_health$ } }
+		set_variable = { which = $health$ which = $max_health$ }
+	}
+}
+th_heal_effect_numbers = {
+	change_variable = {
+		which = $health$
+		value = $value$
+	}
+	if = {
+		limit = { check_variable = { which = $health$ which = $max_health$ } }
+		set_variable = { which = $health$ which = $max_health$ }
+	}
+}
+th_heal_effect = {
+	th_heal_effect_$type$ = {
+		health = $health$
+		max_health = $max_health$
+		value = $value$
+	}
+}
 
-th_heal_damage = {
+th_heal = {
 	#How many dies?
 	set_variable = {
 		which = th_danmaku_heal_die_amount
-		value = 1
+		value = $heal_die_amount$
 	}
 	#What type of die?
-	if = {
-		limit = { }
+	set_variable = {
+		which = th_danmaku_heal_die
+		value = $heal_die$
 	}
-	else = {
-		set_variable = {
-			which = th_danmaku_damage_die
-			which = th_danmaku_physical_attack_die
+	#What bonuses apply?
+	set_variable = {
+		which = th_danmaku_flat_heal_bonus
+		value = 0
+	}
+	set_variable = {
+		which = th_danmaku_heal_bonus_per_die
+		value = 0
+	}
+	[[heal_flat_bonus]set_variable = { which = th_danmaku_flat_heal_bonus value = $heal_flat_bonus$ }]
+	[[heal_bonus_per_die]set_variable = { which = th_danmaku_heal_bonus_per_die value = $heal_bonus_per_die$ }]
+	[[override_heal_die_var]set_variable = { which = th_danmaku_heal_die which = $override_heal_die_var$ }]
+	[[override_heal_die_amount_var]set_variable = { which = th_danmaku_heal_die_amount which = $override_heal_die_amount_var$ }]
+	[[override_heal_flat_bonus_var]set_variable = { which = th_danmaku_flat_heal_bonus which = $override_heal_flat_bonus_var$ }]
+	[[override_heal_bonus_per_die_var]set_variable = { which = th_danmaku_heal_bonus_per_die which = $override_heal_bonus_per_die_var$ }]
+
+	[[bonus_heal_die]change_variable = { which = th_danmaku_heal_die value = $bonus_heal_die$ }]
+	[[bonus_heal_die_amount]change_variable = { which = th_danmaku_heal_die_amount value = $bonus_heal_die_amount$ }]
+	[[bonus_heal_flat_bonus]change_variable = { which = th_danmaku_flat_heal_bonus value = $bonus_heal_flat_bonus$ }]
+	[[bonus_heal_bonus_per_die]change_variable = { which = th_danmaku_heal_bonus_per_die value = $bonus_heal_bonus_per_die$ }]
+	[[bonus_heal_die_var]change_variable = { which = th_danmaku_heal_die which = $bonus_heal_die_var$ }]
+	[[bonus_heal_die_amount_var]change_variable = { which = th_danmaku_heal_die_amount which = $bonus_heal_die_amount_var$ }]
+	[[bonus_heal_flat_bonus_var]change_variable = { which = th_danmaku_flat_heal_bonus which = $bonus_heal_flat_bonus_var$ }]
+	[[bonus_heal_bonus_per_die_var]change_variable = { which = th_danmaku_heal_bonus_per_die which = $bonus_heal_bonus_per_die_var$ }]
+	#Rolled healing end result
+	set_variable = {
+		which = th_danmaku_healing_roll
+		value = 0
+	}
+	th_log_memorize_value = { type = heal_die variable = th_danmaku_heal_die }
+	th_log_memorize_value = { type = heal_die_amount variable = th_danmaku_heal_die_amount }
+	th_log_memorize_value = { type = heal_die_bonus_per_roll variable = th_danmaku_heal_bonus_per_die }
+	if = {
+		limit = {
+			check_variable = { which = th_danmaku_heal_die value = 2 }
+			check_variable = { which = th_danmaku_heal_die_amount value = 1 }
 		}
+		th_roll_die = {
+			die_type = th_danmaku_heal_die
+			die_amount = th_danmaku_heal_die_amount
+			bonus_per_roll = th_danmaku_heal_bonus_per_die
+			result = th_danmaku_healing_roll
+		}
+	}
+	th_log_memorize_value = { type = heal_die_flat_bonus variable = th_danmaku_flat_heal_bonus }
+	round_variable = {
+		which = th_danmaku_healing_roll
+		value = 0
+	}
+	th_log_memorize_value = { type = heal_die_result variable = th_danmaku_healing_roll }
+	th_roll_die_for_crit_heal = yes
+	if = {
+		limit = {
+			OR = {
+				has_saved_event_target = enemy_duelist
+				AND = {
+					th_is_duelling_an_unlanded_character = yes
+					th_unlanded_character_has_not_turn_ownership = yes
+				}
+			}
+		}
+		change_variable = {
+			which = th_danmaku_healing_roll
+			which = th_danmaku_healing_received_bonus
+		}
+		th_log_memorize_value = { type = healing_received_bonus variable = th_danmaku_healing_received_bonus }
+		if = {
+			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+			change_variable = {
+				which = th_danmaku_crit_multiplier
+				value = 3
+			}
+			multiply_variable = {
+				which = th_danmaku_healing_roll
+				which = th_danmaku_crit_multiplier
+			}
+			th_log_memorize_value = { type = critical_heal_bonus variable = th_danmaku_crit_multiplier }
+		}
+		set_variable = {
+			which = th_danmaku_healing_received_modifier_transfer
+			which = th_danmaku_healing_received_modifier
+		}
+		set_variable = {
+			which = th_danmaku_healing_received_factor
+			value = 1
+		}
+		subtract_variable = {
+			which = th_danmaku_healing_received_factor
+			which = th_danmaku_healing_received_modifier_transfer
+		}
+		multiply_variable = {
+			which = th_danmaku_healing_roll
+			which = th_danmaku_healing_received_factor
+		}
+		round_variable = {
+			which = th_danmaku_healing_roll
+			value = 0
+		}
+		th_log_memorize_value = { type = healing_received_modifier variable = th_danmaku_healing_received_modifier_transfer }
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_healing_roll value = 0 } } }
+			set_variable = { which = th_danmaku_healing_roll value = 0 }
+		}
+		th_log_memorize_value = { type = total_value variable = th_danmaku_healing_roll }
+		#Actual healing effect
+		th_heal_effect = {
+			type = variable
+			value = th_danmaku_healing_roll
+			health = th_danmaku_health
+			max_health = th_danmaku_max_health
+		}
+		th_gui_update_danmaku_bar_own_ruler = { type = health }
+		event_target:enemy_duelist = {
+			th_gui_get_enemy_resource_bar = { type = health }
+		}
+	}
+	if = {
+		limit = {
+			th_is_duelling_an_unlanded_character = yes
+			th_unlanded_character_has_turn_ownership = yes
+		}
+		change_variable = {
+			which = th_danmaku_healing_roll
+			which = th_enemy_character_healing_received_bonus
+		}
+		th_log_memorize_value = { type = healing_received_bonus variable = th_enemy_character_healing_received_bonus }
+		if = {
+			limit = { has_ruler_flag = th_danmaku_rolled_critical_hit }
+			change_variable = {
+				which = th_danmaku_crit_multiplier
+				value = 3
+			}
+			multiply_variable = {
+				which = th_danmaku_healing_roll
+				which = th_danmaku_crit_multiplier
+			}
+			th_log_memorize_value = { type = critical_heal_bonus variable = th_danmaku_crit_multiplier }
+		}
+		set_variable = {
+			which = th_danmaku_healing_received_modifier_transfer
+			which = th_enemy_character_healing_received_modifier
+		}
+		set_variable = {
+			which = th_danmaku_healing_received_factor
+			value = 1
+		}
+		subtract_variable = {
+			which = th_danmaku_healing_received_factor
+			which = th_danmaku_healing_received_modifier_transfer
+		}
+		multiply_variable = {
+			which = th_danmaku_healing_roll
+			which = th_danmaku_healing_received_factor
+		}
+		th_log_memorize_value = { type = healing_received_modifier variable = th_danmaku_healing_received_modifier_transfer }
+		if = {
+			limit = { NOT = { check_variable = { which = th_danmaku_healing_roll value = 0 } } }
+			set_variable = { which = th_danmaku_healing_roll value = 0 }
+		}
+		th_log_memorize_value = { type = total_value variable = th_danmaku_healing_roll }
+		#Actual healing effect
+		th_heal_effect = {
+			type = variable
+			value = th_danmaku_healing_roll
+			health = th_danmaku_health
+			max_health = th_danmaku_max_health
+		}
+		th_gui_update_danmaku_bar_enemy_character = { type = health }
 	}
 }
 
