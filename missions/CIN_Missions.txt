@@ -98,7 +98,7 @@ cirnia_missions_fairy_vengeance_slot = {
 						culture = ROOT
 					}
 				}
-				amount = 30
+				amount = 60
 			}
 			army_tradition = 40
 		}
@@ -157,6 +157,9 @@ cirnia_missions_government_policy_slot = {
 					NOT = { exists = CLP }
 					NOT = { exists = LRV }
 					NOT = { exists = LIL }
+					NOT = { exists = SNM }
+					NOT = { exists = LNC }
+					NOT = { exists = SSH }
 					NOT = { exists = TFR }
 					NOT = { exists = FTP }
 				}
@@ -190,22 +193,52 @@ cirnia_missions_one_slot = {
 		required_missions = { }
 		position = 5
 		provinces_to_highlight = {
-			province_id = 5079
+			province_id = 4996
 			NOT = { owned_by = ROOT }
 		}
 		trigger = {
-			owns_or_non_sovereign_subject_of = 5079
+			OR = {
+				AND = {
+					alliance_with = DAY
+					if = {
+						limit = { has_dlc = "The Cossacks" } 
+						DAY = {
+							trust = {
+								who = ROOT
+								value = 80
+							}
+						}
+					}
+					else = {
+						reverse_has_opinion = {
+							who = DAY
+							value = 150
+						}
+					}
+				}
+				DAY = {
+					is_subject_of = ROOT
+				}
+				AND = {
+					NOT = { exists = DAY }
+					owns_or_non_sovereign_subject_of = 4996
+				}
+			}
 		}
 		effect = {
+			if = {
+				limit = {
+					exists = DAY
+				}
+				inherit = DAY
+			}
 			th_enable_touhou_advisor = {
 				advisor = th_advisor_daiyousei
 			}
 			hidden_effect = {
 				set_country_flag = cin_save_daiyousei
 			}
-			5079 = {
-				change_province_name = "Daiyousei's Castle"
-				rename_capital = "Daiyousei's Castle"
+			4996 = {
 				change_culture = ROOT
 				add_base_production = 2
 			}
@@ -218,10 +251,11 @@ cirnia_missions_one_slot = {
 		position = 6
 		provinces_to_highlight = {
 			OR = {
-				area = underworld_coast_area
-				area = lone_coast_area
-				area = chireiden_state_3
+				area = hellcats_place_area
+				area = burial_ground_state
+				area = chireiden_state_4
 				province_id = 5007
+				province_id = 6606
 			}
 			NOT = {	country_or_non_sovereign_subject_holds = ROOT }
 		}
@@ -229,10 +263,11 @@ cirnia_missions_one_slot = {
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				value = 12 #3/4 of the provinces highlighted 
 				OR = {
-					area = underworld_coast_area
-					area = lone_coast_area
-					area = chireiden_state_3
+					area = hellcats_place_area
+					area = burial_ground_state
+					area = chireiden_state_4
 					province_id = 5007
+					province_id = 6606
 				}
 			}
 		}
@@ -365,6 +400,7 @@ cin_slot2_branch = {
 							continent = gensokyo_continent
 						}
 						NOT = { overlord_of = ROOT }
+						NOT = { tag = DAY }
 						is_free_or_tributary_trigger = yes
 						has_opinion = {
 							who = ROOT
@@ -466,56 +502,7 @@ cin_slot2_branch = {
 					}
 					add_core = ROOT
 				}
-			}
-			if = {
-				limit = {
-					exists = HKR
-				}
-				add_casus_belli = {
-					target = HKR
-					type = cb_touhou_mission_punish_fairy_slayers
-					months = 1800
-				}
-			}
-			if = {
-				limit = {
-					exists = FOM
-				}
-				add_casus_belli = {
-					target = FOM
-					type = cb_touhou_mission_punish_fairy_slayers
-					months = 1800
-				}
-			}
-			if = {
-				limit = {
-					exists = SCR
-				}
-				add_casus_belli = {
-					target = SCR
-					type = cb_touhou_mission_punish_fairy_slayers
-					months = 1800
-				}
-			}
-			if = {
-				limit = {
-					exists = NET
-				}
-				add_casus_belli = {
-					target = NET
-					type = cb_touhou_mission_punish_fairy_slayers
-					months = 1800
-				}
-			}
-			if = {
-				limit = {
-					exists = MRY
-				}
-				add_casus_belli = {
-					target = MRY
-					type = cb_touhou_mission_punish_fairy_slayers
-					months = 1800
-				}
+				set_country_flag = th_has_punish_fairy_slayers_cb_flag
 			}
 			custom_tooltip = CIN_get_bunch_of_claims
 			hidden_effect = {
@@ -826,11 +813,37 @@ cin_slot2_branch = {
 					}
 				}
 			}
+			OR = {
+				alliance_with = ROD
+				ROD = {
+					is_subject_of = ROOT
+				}
+				AND = {
+					NOT = { exists = ROD }
+					5521 = {
+						owned_by = ROOT
+					}
+				}
+			}
 		}
 		effect = {
-			custom_tooltip = CIN_team_nine_rumia_tt
-			hidden_effect = {
-				set_country_flag = cin_enabled_general_rumia
+			if = {
+				limit = {
+					OR = {
+						alliance_with = ROD
+						ROD = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+				ROD = { 
+					add_historical_friend = ROOT
+				}
+				add_historical_friend = ROD			
+			}
+			else = {
+				custom_tooltip = CIN_team_nine_rumia_tt
+				set_country_flag = cin_enabled_general_rumia				
 			}
 			th_get_default_permanent_province_buff = yes
 		}
@@ -945,7 +958,7 @@ cin_slot2_branch = {
 			}
 			add_army_professionalism = 0.1
 			add_yearly_manpower = 0.5 
-			clownsville = {
+			clownsville_area = {
 				limit = {
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -1248,16 +1261,41 @@ cin_slot3_branch = {
 			}
 			custom_trigger_tooltip = {
 				tooltip = CIN_council_of_nine_mission_mystia
-				4977 = {
-					grown_by_development = 5
-					owned_by = ROOT
+				OR = {
+					alliance_with = MYT
+					AND = {
+						OR = {
+							MYT = {
+								is_subject_of = ROOT
+							}
+							NOT = { exists = MYT }
+						}
+						custom_trigger_tooltip = {
+							tooltip = CIN_council_of_nine_mission_mystia
+							4977 = {
+								OR = { 
+									grown_by_development = 5
+									num_of_times_improved = 6 # same reasoning as last time
+								}
+								owns_or_subject_of = ROOT
+							}
+						}
+					}
 				}
 			}
 			custom_trigger_tooltip = {
 				tooltip = CIN_council_of_nine_mission_wriggle
-				5092 = {
-					NOT = { culture = th_magician_culture }
-					owned_by = ROOT
+				OR = {
+					alliance_with = WRG
+					WRG = {
+						is_subject_of = ROOT
+					}
+					AND = {
+						NOT = { exists = WRG }
+						5581 = {
+							owned_by = ROOT
+						}
+					}
 				}
 			}
 		}
@@ -1472,23 +1510,62 @@ cin_slot4_branch = {
 			}
 		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = CIN_council_of_nine_mission_mystia
-				4977 = {
-					OR = { 
-						grown_by_development = 5
-						num_of_times_improved_by_owner = 6 # same reasoning as last time
+			OR = {
+				alliance_with = MYT
+				AND = {
+					OR = {
+						MYT = {
+							is_subject_of = ROOT
+						}
+						NOT = { exists = MYT }
 					}
-					owned_by = ROOT
+					custom_trigger_tooltip = {
+						tooltip = CIN_council_of_nine_mission_mystia
+						4977 = {
+							OR = { 
+								grown_by_development = 5
+								num_of_times_improved = 6 # same reasoning as last time
+							}
+							owns_or_subject_of = ROOT
+						}
+					}
 				}
 			}
 		}
 		effect = {
-			4977 = {
-				add_permanent_province_modifier = {
-					name = cin_mystias_cart
-					duration = -1
+			if = {
+				limit = {
+					alliance_with = MYT
 				}
+				MYT = { 
+					add_historical_friend = ROOT
+				}
+				add_historical_friend = MYT
+			}
+			else_if = {
+				limit = {
+					MYT = {
+						is_subject_of = ROOT
+					}
+				}
+				MYT = { 
+					add_historical_friend = ROOT
+				}
+				add_historical_friend = MYT
+				4977 = {
+					add_permanent_province_modifier = {
+						name = cin_mystias_cart
+						duration = -1
+					}
+				}			
+			}
+			else = {
+				4977 = {
+					add_permanent_province_modifier = {
+						name = cin_mystias_cart
+						duration = -1
+					}
+				}	
 			}
 		}
 	}
@@ -1749,7 +1826,7 @@ cin_slot5_branch = {
 		icon = mission_rb_a_mighty_fleet
 		required_missions = { }
 		trigger = {
-			num_of_total_ports = 7
+			num_of_total_ports = 15
 			navy_size_percentage = 0.9
 		}
 		effect = {
@@ -1835,14 +1912,20 @@ cin_slot5_branch = {
 		required_missions = {  }
 		position = 4
 		trigger = {
-			calc_true_if = {
-				all_country = {
-					custom_trigger_tooltip = {
-						tooltip = CIN_find_letty_tt
-						has_country_flag = th_was_pranked_by_@ROOT
-					}
+			OR = {
+				alliance_with = LET
+				LET = {
+					is_subject_of = ROOT
 				}
-				amount = 5
+				calc_true_if = {
+					all_country = {
+						custom_trigger_tooltip = {
+							tooltip = CIN_find_letty_tt
+							has_country_flag = th_was_pranked_by_@ROOT
+						}
+					}
+					amount = 5
+				}
 			}
 		}
 		effect = {
@@ -1857,22 +1940,35 @@ cin_slot5_branch = {
 		required_missions = { }
 		position = 5
 		provinces_to_highlight = {
-			province_id = 5092
+			province_id = 5581
 			OR = {
-				culture = th_magician_culture
 				NOT = { owned_by = ROOT }
 			}
 		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = CIN_council_of_nine_mission_wriggle
-				5092 = {
-					NOT = { culture = th_magician_culture }
-					owned_by = ROOT
+			OR = {
+				alliance_with = WRG
+				WRG = {
+					is_subject_of = ROOT
+				}
+				AND = {
+					NOT = { exists = WRG }
+					5581 = {
+						owned_by = ROOT
+					}
 				}
 			}
 		}
 		effect = {
+			if = {
+				limit = {
+					alliance_with = WRG
+					WRG = {
+						is_subject_of = ROOT
+					}
+				}
+
+			}
 			custom_tooltip = CIN_team_nine_wriggle_tt
 			hidden_effect = {
 				set_country_flag = cin_enabled_wriggle_news
