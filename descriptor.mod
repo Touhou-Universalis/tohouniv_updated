@@ -6,6 +6,6 @@ tags={
 	"New Nations"
 	"Expansion"
 }
-name="Touhou Universalis Updated"
+name="Touhou Universalis Updated - Big Gensokyo"
 supported_version="1.37.*"
 remote_file_id="1537902566"
