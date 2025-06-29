@@ -1052,6 +1052,63 @@ fabricate_claim = {
 		}
 	}
 	effect = {
+		if = { # Koishi can't claim the capital of another country
+			limit = {
+				has_government_attribute = enables_migration_through_countries
+				FROM = { capital_scope = { is_claim = ROOT } }
+			}
+			FROM = { capital_scope = { remove_claim = ROOT } }
+		}
+		if = {
+			limit = {
+				has_government_attribute = enables_migration_through_countries
+				is_at_war = no
+				capital_scope = {
+					any_neighbor_province = {
+						is_claim = ROOT
+						is_capital = no
+					}
+				}
+			}
+			capital_scope = {
+				random_neighbor_province = {
+					limit = {
+						is_claim = ROOT
+						is_capital = no
+					}
+					owner = {
+						save_event_target_as = kmj_temp_next_previous_owner
+					}
+					set_province_flag = th_target_for_migration
+					cede_province = ROOT
+					add_core = ROOT
+					save_global_event_target_as = kmj_capital # th_save_province_as_new_kmj_capital = yes
+					ROOT = { set_capital = PREV }
+				}
+				save_event_target_as = kmj_previous_capital
+			}
+			#set_capital = event_target:kmj_capital
+			
+			event_target:kmj_previous_owner = {
+				event_target:kmj_previous_capital = {
+					#th_reset_province = yes
+
+					add_core = PREV
+					cede_province = PREV
+					remove_core = ROOT
+					remove_claim = ROOT
+				}
+			}
+			
+			# event_target:kmj_capital = {
+			# 	th_save_development_of_province = yes
+			# 	th_update_new_kmj_capital = yes
+			# 	remove_claim = ROOT
+			# }
+			event_target:kmj_temp_next_previous_owner = {
+				save_global_event_target_as = kmj_previous_owner
+			}
+		}
 		if = {
 			limit = {
 				religious_school = {
