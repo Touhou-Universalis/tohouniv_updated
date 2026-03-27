@@ -1104,5 +1104,1487 @@ th_danmaku_won_a_danmaku_fight = {
 				value = 1
 			}
 		}
+		set_variable = {
+			which = th_total_power_gain
+			which = th_danmaku_base_power_reward_transfer
+		}
+		if = {
+			limit = { th_is_duelling_an_unlanded_character = yes }
+			set_variable = {
+				which = th_ruler_danmaku_level_transfer
+				which = th_enemy_character_level
+			}
+		}
+		else = {
+			event_target:enemy_duelist = {
+				set_variable = {
+					which = th_ruler_danmaku_level_transfer
+					which = th_ruler_danmaku_level
+				}
+				PREV = {
+					set_variable = {
+						which = th_ruler_danmaku_level_transfer
+						which = PREV
+					}
+				}
+			}
+		}
+		multiply_variable = {
+			which = th_danmaku_scale_power_reward_transfer
+			which = th_ruler_danmaku_level_transfer
+		}
+		change_variable = {
+			which = th_total_power_gain
+			which = th_danmaku_scale_power_reward_transfer
+		}
+		set_variable = {
+			which = th_power_gain_modifier
+			which = th_danmaku_power_gain
+		}
+		change_variable = {
+			which = th_power_gain_modifier
+			value = 1
+		}
+		multiply_variable = {
+			which = th_total_power_gain
+			which = th_power_gain_modifier
+		}
+		if = {
+			limit = { 1 = { is_variable_equal = { which = th_danmaku_default_power_type value = 4 } } }
+			set_country_flag = th_danmaku_power_reward_all
+		}
+		else_if = {
+			limit = { 1 = { is_variable_equal = { which = th_danmaku_default_power_type value = 3 } } }
+			set_country_flag = th_danmaku_power_reward_mil
+		}
+		else_if = {
+			limit = { 1 = { is_variable_equal = { which = th_danmaku_default_power_type value = 2 } } }
+			set_country_flag = th_danmaku_power_reward_dip
+		}
+		else_if = {
+			limit = { 1 = { is_variable_equal = { which = th_danmaku_default_power_type value = 1 } } }
+			set_country_flag = th_danmaku_power_reward_adm
+		}
+		else = {
+			set_country_flag = th_danmaku_power_reward_random
+			set_variable = {
+				which = th_rng_roll
+				value = 0
+			}
+			th_roll_die_no_variable = {
+				die_type = 3
+				die_amount = 1
+				bonus_per_roll = 0
+				result = th_rng_roll
+			}
+			if = {
+				limit = { is_variable_equal = { which = th_rng_roll value = 1 } }
+				set_country_flag = th_rng_rolled_adm
+			}
+			else_if = {
+				limit = { is_variable_equal = { which = th_rng_roll value = 2 } }
+				set_country_flag = th_rng_rolled_dip
+			}
+			else = {
+				set_country_flag = th_rng_rolled_mil
+			}
+		}
+	}
+}
+
+# gold
+# power
+# exp
+th_reward_multiplier = {
+	multiply_variable = {
+		which = th_total_$type$_gain
+		value = $factor$
+	}
+}
+
+#Suppoorts:
+# victory
+# draw
+th_add_danmaku_exp_reward = {
+	if = {
+		limit = { NOT = { check_variable = { which = th_ruler_danmaku_level which = th_danmaku_default_max_level } } }
+		custom_tooltip = th_add_danmaku_exp_reward_$type$_tt
+		hidden_effect = {
+			th_add_experience = { type = variable value = th_total_exp_gain }
+		}
+	}
+}
+th_add_danmaku_gold_reward = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_default_gold_gain_activated value = 1 } } }
+		custom_tooltip = th_add_danmaku_gold_reward_$type$_tt
+		hidden_effect = {
+			while = {
+				limit = { check_variable = { which = th_total_gold_gain value = 1 } }
+				add_treasury = 1
+				subtract_variable = { which = th_total_gold_gain value = 1 }
+			}
+			multiply_variable = { which = th_total_gold_gain value = 100 }
+			while = {
+				limit = { check_variable = { which = th_total_gold_gain value = 1 } }
+				add_treasury = 0.01
+				subtract_variable = { which = th_total_gold_gain value = 1 }
+			}
+		}
+	}
+}
+th_add_danmaku_power_reward = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_default_power_gain_activated value = 1 } } }
+		if = { limit = { has_country_flag = th_danmaku_power_reward_all } custom_tooltip = th_add_danmaku_all_power_reward_$type$_tt }
+		if = { limit = { OR = { has_country_flag = th_danmaku_power_reward_adm has_country_flag = th_rng_rolled_adm } } custom_tooltip = th_add_danmaku_adm_power_reward_$type$_tt }
+		if = { limit = { OR = { has_country_flag = th_danmaku_power_reward_dip has_country_flag = th_rng_rolled_dip } } custom_tooltip = th_add_danmaku_dip_power_reward_$type$_tt }
+		if = { limit = { OR = { has_country_flag = th_danmaku_power_reward_mil has_country_flag = th_rng_rolled_mil } } custom_tooltip = th_add_danmaku_mil_power_reward_$type$_tt }
+		hidden_effect = {
+			while = {
+				limit = { check_variable = { which = th_total_power_gain value = 1 } }
+				trigger_switch = {
+					on_trigger = has_country_flag
+					th_danmaku_power_reward_all = {
+						add_adm_power = 1 add_dip_power = 1 add_mil_power = 1
+					}
+					th_danmaku_power_reward_adm = { add_adm_power = 1 }
+					th_danmaku_power_reward_dip = { add_dip_power = 1 }
+					th_danmaku_power_reward_mil = { add_mil_power = 1 }
+					th_danmaku_power_reward_random = {
+						trigger_switch = {
+							on_trigger = has_country_flag
+							th_rng_rolled_adm = { add_adm_power = 1 }
+							th_rng_rolled_dip = { add_dip_power = 1 }
+							th_rng_rolled_mil = { add_mil_power = 1 }
+						}
+					}
+				}
+				subtract_variable = { which = th_total_power_gain value = 1 }
+			}
+			clr_country_flag = th_danmaku_power_reward_all
+			clr_country_flag = th_danmaku_power_reward_mil
+			clr_country_flag = th_danmaku_power_reward_dip
+			clr_country_flag = th_danmaku_power_reward_adm
+			clr_country_flag = th_danmaku_power_reward_random
+			clr_country_flag = th_rng_rolled_adm
+			clr_country_flag = th_rng_rolled_dip
+			clr_country_flag = th_rng_rolled_mil
+		}
+	}
+}
+
+th_danmaku_lose_effect = {
+	if = {
+		limit = { 1 = { check_variable = { which = th_danmaku_default_setting_ruler_death value = 1 } } }
+		kill_ruler = yes
+	}
+	else = {
+		add_ruler_modifier = {
+			name = th_danmaku_incapacitated
+			duration = 730
+		}
+		custom_tooltip = th_danmaku_incapacitated_tt
+		th_add_danmaku_exp_reward = { type = defeat }
+	}
+}
+
+################################################################################
+
+#Get the extra buffs from the danmaku modifiers
+th_additional_danmaku_buff = {
+	export_to_variable = {
+		variable_name = th_additional_danmaku_power
+		value = modifier:danmaku_power_constant
+		who = ROOT
+	}
+	export_to_variable = {
+		variable_name = th_danmaku_power_modifier
+		value = modifier:danmaku_power_factor
+		who = ROOT
+	}
+	set_variable = {
+		which = th_danmaku_combat_power
+		value = roll_power_gain
+	}
+	change_variable = {
+		which = th_danmaku_power_modifier
+		value = 1
+	}
+	if = {
+		limit = {
+			NOT = {
+				check_variable = {
+					which = th_danmaku_power_modifier
+					value = 0
+				}
+			}
+		}
+		set_variable = {
+			which = th_danmaku_power_modifier
+			value = 0
+		}
+	}
+	change_variable = {
+		which = $fighting_variable$
+		which = th_additional_danmaku_power
+	}
+	multiply_variable = {
+		which = $fighting_variable$
+		which = th_danmaku_power_modifier
+	}
+}
+
+#Uses "type"
+#Supports the following types:
+# incident			- used for all incident related fights
+# lesser_incident	- used for all smaller scope incidents related fights
+# normal			- used for all the other fights
+th_getruler_fighting_skill = {
+	#Players Fighting Skills
+	#modifiers were moved to modifier:danmaku_power_constant, which is controlled by th_additional_danmaku_buff
+	set_variable = {
+		which = th_current_fighting_skills_$type$
+		value = $skill_boni$
+	}
+	export_to_variable = {
+		variable_name = th_fighting_danmaku_power
+		value = modifier:fighting_danmaku_power_constant
+		who = ROOT
+	}
+	change_variable = {
+		which = th_current_fighting_skills_$type$
+		which = th_fighting_danmaku_power
+	}
+	th_additional_danmaku_buff = {
+		fighting_variable = th_current_fighting_skills_$type$
+	}
+}
+
+th_getruler_diplomatic_skill = {
+	#Players Fighting Skills
+	set_variable = {
+		which = th_current_diplo_skills
+		value = $skill_boni$
+	}
+	export_to_variable = {
+		variable_name = th_diplomatic_danmaku_power
+		value = modifier:diplomatic_danmaku_power_constant
+		who = ROOT
+	}
+	export_to_variable = {
+		variable_name = th_diplomatic_danmaku_power_modifier
+		value = modifier:diplomatic_danmaku_power_factor
+		who = ROOT
+	}
+	change_variable = {
+		which = th_current_diplo_skills
+		which = th_diplomatic_danmaku_power
+	}
+	######
+	# For subject count
+	export_to_variable = {
+		variable_name = th_current_subjects_skill
+		value = trigger_value:num_of_subjects
+		who = ROOT
+	}
+	multiply_variable = {
+		which = th_current_subjects_skill
+		value = 50
+	}
+	change_variable = {
+		which = th_current_diplo_skills
+		which = th_current_subjects_skill
+	}
+	#Add default buff
+	th_additional_danmaku_buff = {
+		fighting_variable = th_current_diplo_skills
+	}
+}
+
+#Is used for danmaku fights through diplomatic action
+th_danmaku_set_compare_variable = {
+	set_variable = {
+		which = th_current_fighting_skills_counter
+		which = th_current_fighting_skills_$type$
+	}
+}
+
+#Supports the following types:
+# incident			- used for all incident related fights
+# lesser_incident	- used for all smaller incidents related fights
+# normal			- used for all the other fights
+# diplomatic		- used for diplo fights only
+th_defineopponent_fighting_skill = {
+	#Draw Zone
+	set_variable = {
+		which = th_enemy_lower_border_draw_$type$
+		value = 0
+	}
+	set_variable = {
+		which = th_enemy_upper_border_draw_$type$
+		value = 0
+	}
+	set_variable = {
+		which = th_enemy_lower_border_draw_$type$
+		which = $variable$
+	}
+	set_variable = {
+		which = th_enemy_upper_border_draw_$type$
+		which = $variable$
+	}
+			
+	change_variable = {
+		which = th_enemy_upper_border_draw_$type$
+		value = 50
+	}
+	subtract_variable = {
+		which = th_enemy_lower_border_draw_$type$
+		value = 50
+	}
+			
+	#Victory Zone
+	set_variable = {
+		which = th_enemy_border_great_victory_$type$
+		value = 0
+	}
+	set_variable = {
+		which = th_enemy_border_great_victory_$type$
+		which = th_enemy_upper_border_draw_$type$
+	}
+			
+	change_variable = {
+		which = th_enemy_border_great_victory_$type$
+		value = 125
+	}
+			
+	#Defeat Zone
+	set_variable = {
+		which = th_enemy_border_great_defeat_$type$
+		value = 0
+	}
+	set_variable = {
+		which = th_enemy_border_great_defeat_$type$
+		which = th_enemy_lower_border_draw_$type$
+	}
+	subtract_variable = {
+		which = th_enemy_border_great_defeat_$type$
+		value = 125
+	}
+
+	#Show Variable
+	set_variable = {
+		which = th_danmaku_duel_show_variable_$type$
+		which = $variable$
+	}
+}
+
+th_danmaku_incident_fight_ruler_and_opponent = {
+	custom_tooltip = th_danmaku_incident_fight_ruler_and_opponent_tt
+	#Player is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_incident
+				which = th_enemy_border_great_victory_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_enemy_upper_border_draw_incident
+					which = th_current_fighting_skills_incident
+				}
+			}
+		}
+		random_list = {
+			60 = {
+				country_event = {
+					id = th_danmaku_event.3
+					days = 1
+				}
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.2
+					days = 1
+				}	
+			}
+		}
+	}
+	#Player is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_incident
+				which = th_enemy_upper_border_draw_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_incident
+					which = th_enemy_border_great_victory_incident
+				}
+			}
+		}
+		random_list = {
+			75 = {
+				country_event = {
+					id = th_danmaku_event.3
+					days = 1
+				}
+			}
+			15 = {
+				country_event = {
+					id = th_danmaku_event.2
+					days = 1
+				}			
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.4
+					days = 1
+				}			
+			}
+		}
+	}
+	#Opponent and Player are equal strong
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_incident
+				which = th_enemy_lower_border_draw_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_incident
+					which = th_enemy_upper_border_draw_incident
+				}
+			}
+		}
+		random_list = {
+			65 = {
+				country_event = {
+					id = th_danmaku_event.4
+					days = 1
+				}
+			}
+			25 = {
+				country_event = {
+					id = th_danmaku_event.3
+					days = 1
+				}			
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.5
+					days = 1
+				}			
+			}
+		}
+	}
+	#Opponent is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_incident
+				which = th_enemy_border_great_defeat_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_incident
+					which = th_enemy_lower_border_draw_incident
+				}
+			}
+		}
+		random_list = {
+			20 = {
+				country_event = {
+					id = th_danmaku_event.6
+					days = 1
+				}
+			}
+			60 = {
+				country_event = {
+					id = th_danmaku_event.5
+					days = 1
+				}			
+			}
+			20 = {
+				country_event = {
+					id = th_danmaku_event.4
+					days = 1
+				}			
+			}
+		}
+	}
+	#Opponent is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_enemy_border_great_defeat_incident
+				which = th_current_fighting_skills_incident
+			}
+		}
+		random_list = {
+			50 = {
+				country_event = {
+					id = th_danmaku_event.6
+					days = 1
+				}
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.5
+					days = 1
+				}			
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.4
+					days = 1
+				}			
+			}
+		}
+	}
+}
+
+#Use th_empty_event.1 for win/draw/lose events if you don't have any additional events following the fight
+th_danmaku_lesser_incident_fight_ruler_and_opponent = {
+	custom_tooltip = th_danmaku_lesser_incident_fight_ruler_and_opponent_tt
+	#Player is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_lesser_incident
+				which = th_enemy_border_great_victory_lesser_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_enemy_upper_border_draw_lesser_incident
+					which = th_current_fighting_skills_lesser_incident
+				}
+			}
+		}
+		random_list = {
+			60 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.8
+					days = 1
+				}	
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = $win_event$
+				days = $days$
+			}
+		}
+	}
+	#Player is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_lesser_incident
+				which = th_enemy_upper_border_draw_lesser_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_lesser_incident
+					which = th_enemy_border_great_victory_lesser_incident
+				}
+			}
+		}
+		random_list = {
+			75 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			15 = {
+				country_event = {
+					id = th_danmaku_event.8
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}		
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent and Player are equal strong
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_lesser_incident
+				which = th_enemy_lower_border_draw_lesser_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_lesser_incident
+					which = th_enemy_upper_border_draw_lesser_incident
+				}
+			}
+		}
+		random_list = {
+			65 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+			25 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+		}
+	}
+	#Opponent is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_lesser_incident
+				which = th_enemy_border_great_defeat_lesser_incident
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_lesser_incident
+					which = th_enemy_lower_border_draw_lesser_incident
+				}
+			}
+		}
+		random_list = {
+			20 = {
+				country_event = {
+					id = th_danmaku_event.12
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+			60 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}			
+			}
+			20 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_enemy_border_great_defeat_lesser_incident
+				which = th_current_fighting_skills_lesser_incident
+			}
+		}
+		random_list = {
+			50 = {
+				country_event = {
+					id = th_danmaku_event.12
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}			
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+}
+
+#Use th_empty_event.1 for win/draw/lose events if you don't have any additional events following the fight
+th_danmaku_normal_fight_ruler_and_opponent = {
+	custom_tooltip = th_danmaku_normal_fight_ruler_and_opponent_tt
+	#Player is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_normal
+				which = th_enemy_border_great_victory_normal
+			}
+			NOT = {
+				check_variable = {
+					which = th_enemy_upper_border_draw_normal
+					which = th_current_fighting_skills_normal
+				}
+			}
+		}
+		random_list = {
+			60 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.8
+					days = 1
+				}	
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = $win_event$
+				days = $days$
+			}
+		}
+	}
+	#Player is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_normal
+				which = th_enemy_upper_border_draw_normal
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_normal
+					which = th_enemy_border_great_victory_normal
+				}
+			}
+		}
+		random_list = {
+			75 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			15 = {
+				country_event = {
+					id = th_danmaku_event.8
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}		
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent and Player are equal strong
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_normal
+				which = th_enemy_lower_border_draw_normal
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_normal
+					which = th_enemy_upper_border_draw_normal
+				}
+			}
+		}
+		random_list = {
+			65 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+			25 = {
+				country_event = {
+					id = th_danmaku_event.9
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+		}
+	}
+	#Opponent is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_fighting_skills_normal
+				which = th_enemy_border_great_defeat_normal
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_fighting_skills_normal
+					which = th_enemy_lower_border_draw_normal
+				}
+			}
+		}
+		random_list = {
+			20 = {
+				country_event = {
+					id = th_danmaku_event.12
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+			60 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}			
+			}
+			20 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_enemy_border_great_defeat_normal
+				which = th_current_fighting_skills_normal
+			}
+		}
+		random_list = {
+			50 = {
+				country_event = {
+					id = th_danmaku_event.12
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.11
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}			
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.10
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+}
+
+th_danmaku_diplo_fight_ruler_and_opponent = {
+	custom_tooltip = th_danmaku_diplo_fight_ruler_and_opponent_tt
+	#Player is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_diplo_skills
+				which = th_enemy_border_great_victory_normal
+			}
+			NOT = {
+				check_variable = {
+					which = th_enemy_upper_border_draw_normal
+					which = th_current_diplo_skills
+				}
+			}
+		}
+		random_list = {
+			60 = {
+				country_event = {
+					id = th_danmaku_event.22
+					days = 1
+				}
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.21
+					days = 1
+				}	
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = $win_event$
+				days = $days$
+			}
+		}
+	}
+	#Player is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_diplo_skills
+				which = th_enemy_upper_border_draw_normal
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_diplo_skills
+					which = th_enemy_border_great_victory_normal
+				}
+			}
+		}
+		random_list = {
+			75 = {
+				country_event = {
+					id = th_danmaku_event.22
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			15 = {
+				country_event = {
+					id = th_danmaku_event.21
+					days = 1
+				}			
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.23
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent and Player are equal strong
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_diplo_skills
+				which = th_enemy_lower_border_draw_normal
+			}
+			NOT = {
+				check_variable = {
+					which = th_current_diplo_skills
+					which = th_enemy_upper_border_draw_normal
+				}
+			}
+		}
+		random_list = {
+			65 = {
+				country_event = {
+					id = th_danmaku_event.23
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+			25 = {
+				country_event = {
+					id = th_danmaku_event.22
+					days = 1
+				}			
+				hidden_effect = {
+					country_event = {
+						id = $win_event$
+						days = $days$
+					}
+				}
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.24
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent is stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_current_diplo_skills
+				which = th_enemy_border_great_defeat_normal
+			}
+			NOT = {
+				check_variable = {
+					which = th_enemy_lower_border_draw_normal
+					which = th_enemy_border_great_defeat_normal
+				}
+			}
+		}
+		random_list = {
+			20 = {
+				country_event = {
+					id = th_danmaku_event.25
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}
+			}
+			60 = {
+				country_event = {
+					id = th_danmaku_event.24
+					days = 1
+				}		
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}	
+			}
+			20 = {
+				country_event = {
+					id = th_danmaku_event.23
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+	#Opponent is waaaay stronger
+	if = {
+		limit = {
+			check_variable = {
+				which = th_enemy_border_great_defeat_normal
+				which = th_current_diplo_skills
+			}
+		}
+		random_list = {
+			50 = {
+				country_event = {
+					id = th_danmaku_event.25
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}
+			}
+			40 = {
+				country_event = {
+					id = th_danmaku_event.24
+					days = 1
+				}	
+				hidden_effect = {
+					country_event = {
+						id = $defeat_event$
+						days = $days$
+					}
+				}		
+			}
+			10 = {
+				country_event = {
+					id = th_danmaku_event.23
+					days = 1
+				}
+				hidden_effect = {
+					country_event = {
+						id = $draw_event$
+						days = $days$
+					}
+				}
+			}
+		}
+	}
+}
+
+#Increases the counter for the danmaku fights the country has won
+th_danmaku_won_a_danmaku_fight = {
+	hidden_effect = {
+		1 = {
+			set_variable = {
+				which = th_danmaku_attack_type
+				which = th_weapon_$weapon$_damage_type
+			}
+			set_variable = {
+				which = th_danmaku_attack_school
+				which = th_weapon_$weapon$_damage_school
+			}
+			PREV = {
+				set_variable = {
+					which = th_danmaku_attack_type
+					which = PREV
+				}
+				set_variable = {
+					which = th_danmaku_attack_school
+					which = PREV
+				}
+			}
+		}
+	}
+}
+th_copy_attack_type_and_school_from_weapon_enemy_character = {
+	hidden_effect = {
+		1 = {
+			set_variable = {
+				which = th_enemy_character_damage_type
+				which = th_weapon_$weapon$_damage_type
+			}
+			set_variable = {
+				which = th_enemy_character_damage_school
+				which = th_weapon_$weapon$_damage_school
+			}
+			PREV = {
+				set_variable = {
+					which = th_enemy_character_damage_type
+					which = PREV
+				}
+				set_variable = {
+					which = th_enemy_character_damage_school
+					which = PREV
+				}
+			}
+		}
+	}
+}
+
+th_apply_stats_on_ruler = {
+	[[physical_attack_bonus]change_variable = { 					which = th_danmaku_physical_attack_bonus 							value = $physical_attack_bonus$ }]
+	[[physical_attack_bonus_per_die]change_variable = { 			which = th_danmaku_physical_attack_bonus_per_die					value = $physical_attack_bonus_per_die$ }]
+	[[physical_attack_die]change_variable = { 						which = th_danmaku_physical_attack_die 								value = $physical_attack_die$ }]
+	[[physical_attack_die_num]change_variable = { 					which = th_danmaku_physical_attack_die_num 							value = $physical_attack_die_num$ }]
+	[[physical_crit_roll_needed]change_variable = { 				which = th_danmaku_physical_crit_roll_needed 						value = $physical_crit_roll_needed$ }]
+	[[physical_crit_roll_damage_multiplier]change_variable = { 		which = th_danmaku_physical_crit_roll_damage_multiplier 			value = $physical_crit_roll_damage_multiplier$ }]
+	[[magical_attack_bonus]change_variable = { 						which = th_danmaku_magical_attack_bonus 							value = $magical_attack_bonus$ }]
+	[[magical_attack_bonus_per_die]change_variable = { 				which = th_danmaku_magical_attack_bonus_per_die						value = $magical_attack_bonus_per_die$ }]
+	[[magical_attack_die]change_variable = { 						which = th_danmaku_magical_attack_die 								value = $magical_attack_die$ }]
+	[[magical_attack_die_num]change_variable = { 					which = th_danmaku_magical_attack_die_num 							value = $magical_attack_die_num$ }]
+	[[magical_crit_roll_needed]change_variable = { 					which = th_danmaku_magical_crit_roll_needed 						value = $magical_crit_roll_needed$ }]
+	[[magical_crit_roll_damage_multiplier]change_variable = { 		which = th_danmaku_magical_crit_roll_damage_multiplier 				value = $magical_crit_roll_damage_multiplier$ }]
+	[[psionic_attack_bonus]change_variable = { 						which = th_danmaku_psionic_attack_bonus 							value = $psionic_attack_bonus$ }]
+	[[psionic_attack_bonus_per_die]change_variable = { 				which = th_danmaku_psionic_attack_bonus_per_die						value = $psionic_attack_bonus_per_die$ }]
+	[[psionic_attack_die]change_variable = { 						which = th_danmaku_psionic_attack_die 								value = $psionic_attack_die$ }]
+	[[psionic_attack_die_num]change_variable = { 					which = th_danmaku_psionic_attack_die_num 							value = $psionic_attack_die_num$ }]
+	[[psionic_crit_roll_needed]change_variable = { 					which = th_danmaku_psionic_crit_roll_needed 						value = $psionic_crit_roll_needed$ }]
+	[[psionic_crit_roll_damage_multiplier]change_variable = { 		which = th_danmaku_psionic_crit_roll_damage_multiplier 				value = $psionic_crit_roll_damage_multiplier$ }]
+}
+th_apply_stats_on_unlanded_character = {
+	[[physical_attack_bonus]set_variable = { 						which = th_enemy_character_physical_attack_bonus 					value = $physical_attack_bonus$ }]
+	[[physical_attack_bonus_per_die]set_variable = { 				which = th_enemy_character_physical_attack_bonus_per_die			value = $physical_attack_bonus_per_die$ }]
+	[[physical_attack_die]set_variable = { 							which = th_enemy_character_physical_attack_die 						value = $physical_attack_die$ }]
+	[[physical_attack_die_num]set_variable = { 						which = th_enemy_character_physical_attack_die_num 					value = $physical_attack_die_num$ }]
+	[[physical_crit_roll_needed]set_variable = { 					which = th_enemy_character_physical_crit_roll_needed 				value = $physical_crit_roll_needed$ }]
+	[[physical_crit_roll_damage_multiplier]set_variable = { 		which = th_enemy_character_physical_crit_roll_multiplier 			value = $physical_crit_roll_damage_multiplier$ }]
+	[[magical_attack_bonus]set_variable = { 						which = th_enemy_character_magical_attack_bonus 					value = $magical_attack_bonus$ }]
+	[[magical_attack_bonus_per_die]set_variable = { 				which = th_enemy_character_magical_attack_bonus_per_die				value = $magical_attack_bonus_per_die$ }]
+	[[magical_attack_die]set_variable = { 							which = th_enemy_character_magical_attack_die 						value = $magical_attack_die$ }]
+	[[magical_attack_die_num]set_variable = { 						which = th_enemy_character_magical_attack_die_num 					value = $magical_attack_die_num$ }]
+	[[magical_crit_roll_needed]set_variable = { 					which = th_enemy_character_magical_crit_roll_needed 				value = $magical_crit_roll_needed$ }]
+	[[magical_crit_roll_damage_multiplier]set_variable = { 			which = th_enemy_character_magical_crit_roll_multiplier 			value = $magical_crit_roll_damage_multiplier$ }]
+	[[psionic_attack_bonus]set_variable = { 						which = th_enemy_character_psionic_attack_bonus 					value = $psionic_attack_bonus$ }]
+	[[psionic_attack_bonus_per_die]set_variable = { 				which = th_enemy_character_psionic_attack_bonus_per_die				value = $psionic_attack_bonus_per_die$ }]
+	[[psionic_attack_die]set_variable = { 							which = th_enemy_character_psionic_attack_die 						value = $psionic_attack_die$ }]
+	[[psionic_attack_die_num]set_variable = { 						which = th_enemy_character_psionic_attack_die_num 					value = $psionic_attack_die_num$ }]
+	[[psionic_crit_roll_needed]set_variable = { 					which = th_enemy_character_psionic_crit_roll_needed 				value = $psionic_crit_roll_needed$ }]
+	[[psionic_crit_roll_damage_multiplier]set_variable = { 			which = th_enemy_character_psionic_crit_roll_multiplier 			value = $psionic_crit_roll_damage_multiplier$ }]
+}
+
+th_equip_currently_selected_weapon = {
+	custom_tooltip = th_equip_currently_selected_weapon_item_tt
+	hidden_effect = {
+		set_variable = {
+			which = th_danmaku_weapon_equipped
+			which = th_selected_weapon
+		}
+		play_sound = th_equip_minor_weapon
+		th_get_weapon_attack_and_apply = yes
+	}
+}
+
+th_get_weapon_attack_and_apply = {
+	hidden_effect = {
+		#upgraded weapon
+		#if = {
+		#	limit = { always = no }
+		#}
+		#else = {
+		#	
+		#}
+		if = {
+			limit = { th_has_equipped_any_weapon = yes }
+			if = {
+				limit = { th_has_equipped_weapon = { weapon = iron_sword } }
+				th_apply_default_weapon_stats = { weapon = iron_sword who = ruler }
+			}
+		}
+	}
+}
+
+th_setup_type_resistance = {
+	set_variable = {
+		which = th_danmaku_$type$_resistance
+		value = $value$
+	}
+}
+th_setup_school_resistance = {
+	set_variable = {
+		which = th_danmaku_$school$_resistance
+		value = $value$
+	}
+}
+
+th_setup_enemy_character_type_resistance = {
+	set_variable = {
+		which = th_enemy_character_$type$_resistance
+		value = $value$
+	}
+}
+th_setup_enemy_character_school_resistance = {
+	set_variable = {
+		which = th_enemy_character_$school$_resistance
+		value = $value$
+	}
+}
+
+th_setup_max_resource = {
+	set_variable = {
+		which = th_danmaku_max_$type$
+		value = $value$
+	}
+	set_variable = {
+		which = th_danmaku_$type$
+		value = $value$
+	}
+	th_gui_update_danmaku_bar_own_ruler = {
+		type = $type$
+	}
+}
+th_setup_enemy_character_max_resource = {
+	set_variable = {
+		which = th_enemy_character_max_$type$
+		value = $value$
+	}
+	set_variable = {
+		which = th_enemy_character_$type$
+		value = $value$
+	}
+	th_gui_update_danmaku_bar_enemy_character = {
+		type = $type$
+	}
+}
+
+th_post_danmaku_trigger_event_from_key_victory_flavor_cin = { country_event = { id = flavor_cin.7 } }
+th_post_danmaku_trigger_event_from_key_victory_cin_vs_clp = { country_event = { id = flavor_cin.24 } }
+th_post_danmaku_trigger_event_from_key_victory = {
+	th_post_danmaku_trigger_event_from_key_victory_$event_key$ = yes
+}
+th_post_danmaku_trigger_event_from_key_draw_flavor_cin = { country_event = { id = flavor_cin.7 } }
+th_post_danmaku_trigger_event_from_key_draw_cin_vs_clp = { country_event = { id = flavor_cin.24 } }
+th_post_danmaku_trigger_event_from_key_draw = {
+	th_post_danmaku_trigger_event_from_key_draw_$event_key$ = yes
+}
+th_post_danmaku_trigger_event_from_key_defeat_flavor_cin = { country_event = { id = flavor_cin.8 } }
+th_post_danmaku_trigger_event_from_key_defeat_cin_vs_clp = { country_event = { id = flavor_cin.25 } }
+th_post_danmaku_trigger_event_from_key_defeat = {
+	th_post_danmaku_trigger_event_from_key_defeat_$event_key$ = yes
+}
+th_post_danmaku_trigger_event_from_key = {
+	th_post_danmaku_trigger_event_from_key_$type$ = { event_key = $event_key$ }
+}
+th_post_danmaku_trigger_events = {
+	if = {
+		limit = { th_post_danmaku_has_event_key = { event_key = flavor_cin } }
+		clr_country_flag = th_danmaku_post_fight_event_key_flavor_cin
+		th_post_danmaku_trigger_event_from_key = { type = $type$ event_key = flavor_cin }
+	}
+	if = {
+		limit = { th_post_danmaku_has_event_key = { event_key = cin_vs_clp } }
+		clr_country_flag = th_danmaku_post_fight_event_key_cin_vs_clp
+		th_post_danmaku_trigger_event_from_key = { type = $type$ event_key = cin_vs_clp }
 	}
 }
