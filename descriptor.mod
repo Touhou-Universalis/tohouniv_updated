@@ -9,3 +9,4 @@ tags={
 name="Touhou Universalis Updated - Big Gensokyo Github"
 supported_version="1.37.*"
 remote_file_id="1537902566"
+picture="tohouniv_updated.png"
