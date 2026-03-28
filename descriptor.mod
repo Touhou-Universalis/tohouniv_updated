@@ -1,4 +1,4 @@
-version="4.0.1"
+version="4.0.2"
 tags={
 	"Alternative History"
 	"Map"
@@ -7,5 +7,6 @@ tags={
 	"Expansion"
 }
 name="Touhou Universalis Updated - Big Gensokyo Github"
-supported_version="1.37.*"
-remote_file_id="1537902566"
+supported_version="v1.37.5.0"
+remote_file_id="3503126341"
+picture="thumbnail.png"
