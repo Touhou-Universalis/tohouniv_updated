@@ -39,6 +39,11 @@ has_branching_missions = {
 	}
 }
 
+has_mission_and_key_mismatch = {
+	NOT = { has_mission = $mission$ }
+	can_preview_mission_of_key = { key = $key$ }
+}
+
 has_any_mission_and_key_mismatch = {
 	OR = {
 		has_mission_and_key_mismatch = { mission = mal_pick_religious_direction				key = MAL }
@@ -75,6 +80,46 @@ has_any_mission_and_key_mismatch = {
 	}
 }
 
+has_preview_mission_flag = {
+	check_variable = {
+		which = can_preview_missions_var
+		value = 1
+	}
+}
+
+can_preview_batch = {
+	has_country_flag = has_batch_$batch$_active
+}
+
+has_any_previewable_batch_active = {
+	OR = {
+		can_preview_batch = { batch = 1 }
+		can_preview_batch = { batch = 2 }
+		can_preview_batch = { batch = 3 }
+	}
+}
+
+has_mission_and_key_mismatch = {
+	OR = {
+		NOT = { has_mission = $mission$ }
+		mission_completed = $mission$
+	}
+	can_preview_mission_of_key = { key = $key$ }
+}
+
+can_preview_mission_of_key_and_batch = {
+	has_country_flag = can_choose_$key$_$batch$_branching_missions
+}
+has_preview_missions_of_key_for_branch_in_batch = {
+	has_country_flag = $key$_loc_preview_$batch$_for_$branch$
+}
+can_preview_mission_of_key = {
+	or = {
+		can_preview_mission_of_key_and_batch = { key = $key$ batch = 1 }
+		can_preview_mission_of_key_and_batch = { key = $key$ batch = 2 }
+		can_preview_mission_of_key_and_batch = { key = $key$ batch = 3 }
+	}
+}
 can_preview_missions = {
 	custom_trigger_tooltip = {
 		tooltip = preview_missions_decision_ct
@@ -115,6 +160,22 @@ can_preview_missions = {
 			can_preview_mission_of_key = { key = HORDES }
 			#TOUHOU
 			can_preview_mission_of_key = { key = SCR }
+		}
+	}
+}
+
+not_in_mission_preview_mode = {
+	if = {
+		limit = {
+			check_variable = {
+				which = can_preview_missions_var
+				value = 1
+			}
+			can_preview_mission_of_key = { key = $key$ }
+		}
+		custom_trigger_tooltip = {
+			tooltip = BYZ_we_are_in_preview
+			always = no
 		}
 	}
 }
@@ -842,6 +903,9 @@ currently_selected_branch_5 = {
 	always = no
 	has_country_flag = has_$batch$_batch	#dummy
 }
+currently_selected_branch = {
+	currently_selected_branch_$value$ = { batch = $batch$ }
+}
 
 can_select_branch_1 = {
 	if = {
@@ -936,6 +1000,9 @@ can_select_branch_4 = {
 }
 can_select_branch_5 = {
 	hidden_trigger = { or = { always = yes has_country_flag = has_$batch$_batch } }
+}
+can_select_branch = {
+	can_select_branch_$value$ = { batch = $batch$ }
 }
 
 can_select_current_branch = {
