@@ -1743,34 +1743,19 @@ th_scarlet_christians_clear_all_tenets = {
 	}
 }
 
-th_scarlet_christians_take_tenet_scarlet_vanity_tenet = {
-	custom_tooltip = th_scarlet_christians_take_tenet_scarlet_vanity_tenet_tt
-	hidden_effect = {
-		clr_ruler_flag = th_scarlet_christians_vampiric_ferocity_tenet
-		clr_ruler_flag = th_scarlet_christians_elegant_charisma_tenet
-		set_ruler_flag = th_scarlet_christians_scarlet_vanity_tenet
-	}
-}
-th_scarlet_christians_take_tenet_vampiric_ferocity_tenet = {
-	custom_tooltip = th_scarlet_christians_take_tenet_vampiric_ferocity_tenet_tt
-	hidden_effect = {
-		clr_ruler_flag = th_scarlet_christians_scarlet_vanity_tenet
-		clr_ruler_flag = th_scarlet_christians_elegant_charisma_tenet
-		set_ruler_flag = th_scarlet_christians_vampiric_ferocity_tenet
-	}
-}
-th_scarlet_christians_take_tenet_elegant_charisma_tenet = {
-	custom_tooltip = th_scarlet_christians_take_tenet_elegant_charisma_tenet_tt
+th_scarlet_christians_add_tenet_flags = {
+	custom_tooltip = th_scarlet_christians_take_tenet_$tenet$_tt
 	hidden_effect = {
 		clr_ruler_flag = th_scarlet_christians_scarlet_vanity_tenet
 		clr_ruler_flag = th_scarlet_christians_vampiric_ferocity_tenet
-		set_ruler_flag = th_scarlet_christians_elegant_charisma_tenet
+		clr_ruler_flag = th_scarlet_christians_elegant_charisma_tenet
+		set_ruler_flag = th_scarlet_christians_$tenet$
 	}
 }
 
 th_scarlet_christians_take_tenet = {
 	th_scarlet_christians_clear_all_tenets = yes
-	th_scarlet_christians_take_tenet_$tenet$ = yes
+	th_scarlet_christians_add_tenet_flags = { tenet = $tenet$ }
 	th_scarlet_christians_update_tenets = yes
 }
 
@@ -1850,15 +1835,15 @@ th_scarlet_christians_upgrade_tenet = {
 
 th_scarlet_christians_update_tenets = {
 	if = {
-		limit = { has_ruler_flag = th_scarlet_christians_scarlet_vanity_tenet }
+		limit = { th_scarlet_christians_has_tenet = { tenet = scarlet_vanity_tenet } }
 		th_scarlet_christians_upgrade_tenet = { tenet = scarlet_vanity_tenet }
 	}
 	else_if = {
-		limit = { has_ruler_flag = th_scarlet_christians_vampiric_ferocity_tenet }
+		limit = { th_scarlet_christians_has_tenet = { tenet = vampiric_ferocity_tenet } }
 		th_scarlet_christians_upgrade_tenet = { tenet = vampiric_ferocity_tenet }
 	}
 	else_if = {
-		limit = { has_ruler_flag = th_scarlet_christians_elegant_charisma_tenet }
+		limit = { th_scarlet_christians_has_tenet = { tenet = elegant_charisma_tenet } }
 		th_scarlet_christians_upgrade_tenet = { tenet = elegant_charisma_tenet }
 	}
 }
@@ -1866,7 +1851,24 @@ th_scarlet_christians_update_tenets = {
 th_scarlet_christians_level_up = {
 	custom_tooltip = th_scarlet_christians_level_up_tt
 	hidden_effect = {
+		set_variable = {
+			which = th_scarlet_christians_exp
+			value = 0
+		}
 		change_variable = { which = th_scarlet_christians_level value = 1 }
+		if = {
+			limit = { check_variable = { which = th_scarlet_christians_level value = 5 } }
+			set_variable = {
+				which = th_scarlet_christians_exp_UI
+				value = 100
+			}
+		}
+		else = {
+			set_variable = {
+				which = th_scarlet_christians_exp_UI
+				value = 0
+			}
+		}
 		th_scarlet_christians_update_tenets = yes
 	}
 }
@@ -1875,7 +1877,14 @@ th_scarlet_christians_apply_exp = {
 	if = {
 		limit = { check_variable = { which = th_scarlet_christians_level value = 5 } }
 		hidden_effect = {
-			#do nothing
+			set_variable = {
+				which = th_scarlet_christians_exp
+				value = 0
+			}
+			set_variable = {
+				which = th_scarlet_christians_exp_UI
+				value = 0
+			}
 		}
 	}
 	else_if = {
@@ -1911,6 +1920,52 @@ th_scarlet_christians_change_exp = {
 	change_variable = {
 		which = th_scarlet_christians_exp
 		value = $value$
+	}
+	hidden_effect = {
+		if = {
+			limit = { check_variable = { which = th_scarlet_christians_level value = 5 } }
+			set_variable = {
+				which = th_scarlet_christians_exp_UI
+				value = 1
+			}
+		}
+		else = {
+			set_variable = {
+				which = th_scarlet_christians_exp_UI
+				which = th_scarlet_christians_exp
+			}
+			if = {
+				limit = { check_variable = { which = th_scarlet_christians_level value = 4 } }
+				divide_variable = {
+					which = th_scarlet_christians_exp_UI
+					value = 500
+				}
+			}
+			else_if = {
+				limit = { check_variable = { which = th_scarlet_christians_level value = 3 } }
+				divide_variable = {
+					which = th_scarlet_christians_exp_UI
+					value = 500
+				}
+			}
+			else_if = {
+				limit = { check_variable = { which = th_scarlet_christians_level value = 2 } }
+				divide_variable = {
+					which = th_scarlet_christians_exp_UI
+					value = 500
+				}
+			}
+			else = {
+				divide_variable = {
+					which = th_scarlet_christians_exp_UI
+					value = 500
+				}
+			}
+			multiply_variable = {
+				which = th_scarlet_christians_exp_UI
+				value = 100
+			}
+		}
 	}
 	th_scarlet_christians_apply_exp = yes
 }
