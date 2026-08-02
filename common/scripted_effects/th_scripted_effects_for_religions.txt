@@ -1745,6 +1745,7 @@ th_scarlet_christians_clear_all_tenets = {
 
 th_scarlet_christians_add_tenet_flags = {
 	custom_tooltip = th_scarlet_christians_take_tenet_$tenet$_tt
+	custom_tooltip = $tenet$_bonus
 	hidden_effect = {
 		clr_ruler_flag = th_scarlet_christians_scarlet_vanity_tenet
 		clr_ruler_flag = th_scarlet_christians_vampiric_ferocity_tenet
@@ -1830,6 +1831,7 @@ th_scarlet_christians_upgrade_tenet_elegant_charisma_tenet = {
 }
 
 th_scarlet_christians_upgrade_tenet = {
+	th_scarlet_christians_clear_all_tenets = yes
 	th_scarlet_christians_upgrade_tenet_$tenet$ = yes
 }
 
@@ -1856,11 +1858,19 @@ th_scarlet_christians_level_up = {
 			value = 0
 		}
 		change_variable = { which = th_scarlet_christians_level value = 1 }
+		change_variable = {
+			which = th_scarlet_christians_exp_threshold
+			value = 100
+		}
 		if = {
 			limit = { check_variable = { which = th_scarlet_christians_level value = 5 } }
 			set_variable = {
 				which = th_scarlet_christians_exp_UI
 				value = 100
+			}
+			set_variable = {
+				which = th_scarlet_christians_exp_threshold
+				value = 0
 			}
 		}
 		else = {
@@ -1882,35 +1892,18 @@ th_scarlet_christians_apply_exp = {
 				value = 0
 			}
 			set_variable = {
-				which = th_scarlet_christians_exp_UI
+				which = th_scarlet_christians_exp_threshold
 				value = 0
 			}
-		}
-	}
-	else_if = {
-		limit = { check_variable = { which = th_scarlet_christians_level value = 4 } }
-		if = {
-			limit = { check_variable = { which = th_scarlet_christians_exp value = 500 } }
-			th_scarlet_christians_level_up = yes
-		}
-	}
-	else_if = {
-		limit = { check_variable = { which = th_scarlet_christians_level value = 3 } }
-		if = {
-			limit = { check_variable = { which = th_scarlet_christians_exp value = 500 } }
-			th_scarlet_christians_level_up = yes
-		}
-	}
-	else_if = {
-		limit = { check_variable = { which = th_scarlet_christians_level value = 2 } }
-		if = {
-			limit = { check_variable = { which = th_scarlet_christians_exp value = 500 } }
-			th_scarlet_christians_level_up = yes
+			set_variable = {
+				which = th_scarlet_christians_exp_UI
+				value = 1
+			}
 		}
 	}
 	else = {
 		if = {
-			limit = { check_variable = { which = th_scarlet_christians_exp value = 500 } }
+			limit = { check_variable = { which = th_scarlet_christians_exp which = th_scarlet_christians_exp_threshold } }
 			th_scarlet_christians_level_up = yes
 		}
 	}
@@ -1934,32 +1927,9 @@ th_scarlet_christians_change_exp = {
 				which = th_scarlet_christians_exp_UI
 				which = th_scarlet_christians_exp
 			}
-			if = {
-				limit = { check_variable = { which = th_scarlet_christians_level value = 4 } }
-				divide_variable = {
-					which = th_scarlet_christians_exp_UI
-					value = 500
-				}
-			}
-			else_if = {
-				limit = { check_variable = { which = th_scarlet_christians_level value = 3 } }
-				divide_variable = {
-					which = th_scarlet_christians_exp_UI
-					value = 500
-				}
-			}
-			else_if = {
-				limit = { check_variable = { which = th_scarlet_christians_level value = 2 } }
-				divide_variable = {
-					which = th_scarlet_christians_exp_UI
-					value = 500
-				}
-			}
-			else = {
-				divide_variable = {
-					which = th_scarlet_christians_exp_UI
-					value = 500
-				}
+			divide_variable = {
+				which = th_scarlet_christians_exp_UI
+				which = th_scarlet_christians_exp_threshold
 			}
 			multiply_variable = {
 				which = th_scarlet_christians_exp_UI
