@@ -22,7 +22,7 @@ ran_slot1_russian_lands = {
 	}
 
 	RAN_first_request = {
-		icon = mission_touhou_puppeteer_yukari
+		icon = mission_ran_first_request
 		required_missions = { }
 		position = 1
 		provinces_to_highlight = {
@@ -83,6 +83,14 @@ ran_slot1_russian_lands = {
 			novgorod_area = {
 				limit = {
 					OR = { owned_by = NOV is_core = NOV }
+					NOT = { owned_by = ROOT }
+					NOT = { is_core = ROOT }
+					NOT = { is_permanent_claim = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			perm_area = {	#for RAN_great_perm (column 5, row 1)
+				limit = {
 					NOT = { owned_by = ROOT }
 					NOT = { is_core = ROOT }
 					NOT = { is_permanent_claim = ROOT }
@@ -251,26 +259,21 @@ ran_slot1_russian_lands = {
 		}
 		effect = {
 			country_event = { id = flavor_ran.12 }
-			custom_tooltip = RAN_east_slavic_accepted_tt
-			hidden_effect = {
-				ran_accept_culture = { culture = russian }
-				ran_accept_culture = { culture = novgorodian }
-				ran_accept_culture = { culture = ryazanian }
-				ran_accept_culture = { culture = byelorussian }
-				ran_accept_culture = { culture = ruthenian }
+			tooltip = {
+				custom_tooltip = RAN_east_slavic_accepted_tt
+				295 = {
+					add_base_tax = 2
+					add_base_production = 2
+					add_base_manpower = 2
+				}
+				add_country_modifier = {
+					name = ran_muscovite_levies
+					duration = -1
+				}
+				th_unlock_mercenary_company = { mercenary_company = merc_th_moscow_streltsy }
+				custom_tooltip = SEPERATOR_TOOLTIP
+				give_claims = { region = russia_region }
 			}
-			295 = {
-				add_base_tax = 2
-				add_base_production = 2
-				add_base_manpower = 2
-			}
-			add_country_modifier = {
-				name = ran_muscovite_levies
-				duration = -1
-			}
-			th_unlock_mercenary_company = { mercenary_company = merc_th_moscow_streltsy }
-			custom_tooltip = SEPERATOR_TOOLTIP
-			give_claims = { region = russia_region }
 		}
 	}
 
@@ -651,13 +654,15 @@ ran_slot2_north_and_west = {
 		}
 		effect = {
 			country_event = { id = flavor_ran.20 }
-			add_country_modifier = {
-				name = ran_northern_steel
-				duration = 7300
+			tooltip = {
+				add_country_modifier = {
+					name = ran_northern_steel
+					duration = 7300
+				}
+				add_army_tradition = 25
+				custom_tooltip = SEPERATOR_TOOLTIP
+				give_claims = { region = scandinavia_region }
 			}
-			add_army_tradition = 25
-			custom_tooltip = SEPERATOR_TOOLTIP
-			give_claims = { region = scandinavia_region }
 		}
 	}
 
@@ -982,20 +987,18 @@ ran_slot2_north_and_west = {
 		}
 		effect = {
 			country_event = { id = flavor_ran.25 }
-			add_country_modifier = {
-				name = ran_mistress_of_europe
-				duration = -1
-			}
-			add_permanent_power_projection = {
-				type = ran_permanent_power_projection
-				amount = 50
-			}
-			if = {
-				limit = { hre_size = 1 }
-				custom_tooltip = RAN_hre_faith_locked_tt
-				hidden_effect = {
-					set_hre_religion = th_ninetailedshinto
-					set_hre_religion_locked = yes
+			tooltip = {
+				add_country_modifier = {
+					name = ran_mistress_of_europe
+					duration = -1
+				}
+				add_permanent_power_projection = {
+					type = ran_permanent_power_projection
+					amount = 50
+				}
+				if = {
+					limit = { hre_size = 1 }
+					custom_tooltip = RAN_hre_faith_locked_tt
 				}
 			}
 		}
@@ -1029,35 +1032,31 @@ ran_slot3_fox_court = {
 		effect = {
 			country_event = { id = flavor_ran.30 }
 			add_treasury = -100
-			1955 = {
-				if = {
-					limit = {
-						NOT = { has_building = temple }
-						NOT = { has_building = cathedral }
+			tooltip = {
+				1955 = {
+					if = {
+						limit = {
+							NOT = { has_building = temple }
+							NOT = { has_building = cathedral }
+						}
+						add_building = temple
 					}
-					add_building = temple
-				}
-				if = {
-					limit = {
-						NOT = { has_building = marketplace }
-						NOT = { has_building = trade_depot }
-						NOT = { has_building = stock_exchange }
+					if = {
+						limit = {
+							NOT = { has_building = marketplace }
+							NOT = { has_building = trade_depot }
+							NOT = { has_building = stock_exchange }
+						}
+						add_building = marketplace
 					}
-					add_building = marketplace
+					add_province_modifier = {
+						name = ran_shrine_of_the_nine_tailed_fox
+						duration = -1
+					}
 				}
-				add_province_modifier = {
-					name = ran_shrine_of_the_nine_tailed_fox
-					duration = -1
-				}
-			}
-			custom_tooltip = RAN_pilgrims_to_kholmogory_tt
-			hidden_effect = {
-				set_country_flag = ran_pilgrims_to_kholmogory
-			}
-			custom_tooltip = SEPERATOR_TOOLTIP
-			custom_tooltip = RAN_fox_charm_unlock_tt
-			hidden_effect = {
-				set_country_flag = ran_fox_charm_unlocked
+				custom_tooltip = RAN_pilgrims_to_kholmogory_tt
+				custom_tooltip = SEPERATOR_TOOLTIP
+				custom_tooltip = RAN_fox_charm_unlock_tt
 			}
 		}
 	}
@@ -1073,34 +1072,20 @@ ran_slot3_fox_court = {
 		}
 		effect = {
 			country_event = { id = flavor_ran.31 }
-			if = {
-				limit = {
-					NOT = { religion = th_ninetailedshinto }
-				}
-				change_religion = th_ninetailedshinto
-			}
-			custom_tooltip = RAN_fox_faith_convert_tt
-			hidden_effect = {
-				every_owned_province = {
+			tooltip = {
+				if = {
 					limit = {
-						OR = {
-							province_id = 1955
-							is_capital = yes
-							area = arkhangelsk_area
-						}
 						NOT = { religion = th_ninetailedshinto }
 					}
 					change_religion = th_ninetailedshinto
 				}
-			}
-			add_country_modifier = {
-				name = ran_zeal_of_a_new_faith
-				duration = 7300
-			}
-			custom_tooltip = SEPERATOR_TOOLTIP
-			custom_tooltip = RAN_fox_revelation_unlock_tt
-			hidden_effect = {
-				set_country_flag = ran_fox_revelation_unlocked
+				custom_tooltip = RAN_fox_faith_convert_tt
+				add_country_modifier = {
+					name = ran_zeal_of_a_new_faith
+					duration = 7300
+				}
+				custom_tooltip = SEPERATOR_TOOLTIP
+				custom_tooltip = RAN_fox_revelation_unlock_tt
 			}
 		}
 	}
@@ -1135,24 +1120,11 @@ ran_slot3_fox_court = {
 		}
 		effect = {
 			country_event = { id = flavor_ran.32 }
-			th_enable_touhou_advisor = { advisor = th_advisor_chen }
-			custom_tooltip = RAN_chen_general_tt
-			hidden_effect = {
-				define_general = {
-					name = "Chen"
-					shock = 4
-					fire = 3
-					manuever = 6
-					siege = 2
-					female = yes
-				}
-				set_country_flag = ran_chen_in_the_north
-			}
-			custom_tooltip = SEPERATOR_TOOLTIP
-			custom_tooltip = RAN_chen_stays_loyal_tt
-			custom_tooltip = RAN_chen_comes_north_hint_tt
-			hidden_effect = {
-				change_variable = { which = ran_own_will value = 1 }
+			tooltip = {
+				th_enable_touhou_advisor = { advisor = th_advisor_chen }
+				custom_tooltip = RAN_chen_general_tt
+				custom_tooltip = SEPERATOR_TOOLTIP
+				custom_tooltip = RAN_chen_stays_loyal_tt
 			}
 		}
 	}
@@ -1384,26 +1356,12 @@ ran_slot3_fox_court = {
 		}
 		effect = {
 			country_event = { id = flavor_ran.36 }
-			add_country_modifier = {
-				name = ran_barrier_hums
-				duration = -1
-			}
-			custom_tooltip = RAN_strengthened_barrier_tt
-			hidden_effect = {
-				every_country = {
-					limit = {
-						NOT = { tag = ROOT }
-						OR = {
-							tag = MHG
-							tag = NMG
-							capital_scope = { continent = gensokyo_continent }
-						}
-					}
-					add_country_modifier = {
-						name = ran_strengthened_barrier
-						duration = 9125
-					}
+			tooltip = {
+				add_country_modifier = {
+					name = ran_barrier_hums
+					duration = -1
 				}
+				custom_tooltip = RAN_strengthened_barrier_tt
 			}
 		}
 	}
@@ -1804,7 +1762,7 @@ ran_slot4_southern_road = {
 }
 
 ###COLUMN 5: THE FAR EAST (Siberia -> Japan -> America)###
-#Events flavor_ran.50-59. Row 9 is left empty. Central Asia and Across the Bering float (checked in their triggers).
+#Events flavor_ran.50-59. Rows 1-9 are the chain (Great Perm added as row 1 on 2026-10-21). Central Asia and Across the Bering float (checked in their triggers).
 ran_slot5_far_east = {
 	slot = 5
 	generic = no
@@ -1815,56 +1773,100 @@ ran_slot5_far_east = {
 		NOT = { map_setup = map_setup_random }
 	}
 
-	RAN_stroganov_frontier = {
+	RAN_great_perm = {	#User: a mission for Perm first, then the Stroganovs. Ustyug (Muscovy's) is not needed.
 		icon = mission_integrate_perm
 		required_missions = { }
 		position = 1
 		provinces_to_highlight = {
+			OR = {
+				province_id = 1077
+				province_id = 1963
+				province_id = 1964
+				province_id = 4129
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		trigger = {
+			1077 = { country_or_non_sovereign_subject_holds = ROOT }
+			1963 = { country_or_non_sovereign_subject_holds = ROOT }
+			1964 = { country_or_non_sovereign_subject_holds = ROOT }
+			4129 = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+		effect = {
+			1077 = {
+				add_province_modifier = {
+					name = ran_perm_salt_springs
+					duration = -1
+				}
+			}
+			1963 = {
+				add_province_modifier = {
+					name = ran_perm_salt_springs
+					duration = -1
+				}
+			}
+			custom_tooltip = SEPERATOR_TOOLTIP
+			give_claims = { area = ural_area }
+		}
+	}
+
+	RAN_stroganov_frontier = {	#User: the start of an expedition. ADM tech 7 buys the player time; the event offers three levels of investment.
+		icon = mission_cossack_cavalry
+		required_missions = { RAN_great_perm }
+		position = 2
+		provinces_to_highlight = {
 			province_id = 4256
 		}
 		trigger = {
+			adm_tech = 7
 			owns = 4256
 			4256 = { development = 10 }
-			treasury = 100
 		}
 		effect = {
-			add_treasury = -100
 			4256 = {
 				add_province_modifier = {
 					name = ran_stroganov_saltworks
 					duration = -1
 				}
 			}
-			add_country_modifier = {
-				name = ran_fox_trails_east
-				duration = 9125
+			country_event_with_option_insight = {
+				id = flavor_ran.54
+				option_1 = "
+					add_years_of_income = -0.5
+					custom_tooltip = RAN_fox_trails_east_tt
+				"
+				option_2 = "
+					add_years_of_income = -2
+					custom_tooltip = RAN_fox_trails_east_tt
+					add_country_modifier = {
+						name = ran_stroganov_expedition
+						duration = 9125
+					}
+				"
+				option_3 = "
+					add_mil_power = -100
+					custom_tooltip = RAN_fox_trails_east_tt
+					give_claims = { area = ishim_area }
+					th_unlock_mercenary_company = { mercenary_company = merc_th_yermak_cossacks }
+				"
 			}
-			custom_tooltip = RAN_fox_trails_east_tt
-			custom_tooltip = SEPERATOR_TOOLTIP
-			give_claims = { area = perm_area }
-			give_claims = { area = ural_area }
 		}
 	}
 
 	RAN_sibir = {
 		icon = mission_beyond_the_urals
 		required_missions = { RAN_stroganov_frontier }
-		position = 2
+		position = 3
 		provinces_to_highlight = {
 			OR = {
 				province_id = 1074
 				province_id = 1075
-				area = perm_area
 			}
 			NOT = { owned_by = ROOT }
 		}
 		trigger = {
 			owns = 1074
 			owns = 1075
-			perm_area = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
 			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 				value = 10
 				region = west_siberia_region
@@ -1880,7 +1882,7 @@ ran_slot5_far_east = {
 	RAN_yasak = {
 		icon = mission_collect_yasak
 		required_missions = { RAN_sibir }
-		position = 3
+		position = 4
 		trigger = {
 			num_of_owned_provinces_with = {
 				value = 12
@@ -1917,7 +1919,7 @@ ran_slot5_far_east = {
 	RAN_to_the_pacific = {
 		icon = mission_russian_navy
 		required_missions = { RAN_yasak }
-		position = 4
+		position = 5
 		provinces_to_highlight = {
 			OR = {
 				province_id = 1045
@@ -1935,23 +1937,25 @@ ran_slot5_far_east = {
 		}
 		effect = {
 			country_event = { id = flavor_ran.51 }
-			1043 = {
-				add_province_modifier = {
-					name = ran_pacific_harbour
-					duration = -1
+			tooltip = {
+				1043 = {
+					add_province_modifier = {
+						name = ran_pacific_harbour
+						duration = -1
+					}
 				}
+				custom_tooltip = SEPERATOR_TOOLTIP
+				give_claims = { area = heilongjiang_area }
+				give_claims = { area = east_heilongjiang_area }
+				give_claims = { area = ilan_hala_area }
 			}
-			custom_tooltip = SEPERATOR_TOOLTIP
-			give_claims = { area = heilongjiang_area }
-			give_claims = { area = east_heilongjiang_area }
-			give_claims = { area = ilan_hala_area }
 		}
 	}
 
 	RAN_the_amur = {
 		icon = mission_amur_acquisition
 		required_missions = { RAN_to_the_pacific }
-		position = 5
+		position = 6
 		provinces_to_highlight = {
 			OR = {
 				province_id = 1053
@@ -1974,7 +1978,7 @@ ran_slot5_far_east = {
 	RAN_ezo = {
 		icon = mission_to_japan
 		required_missions = { RAN_the_amur }
-		position = 6
+		position = 7
 		provinces_to_highlight = {
 			area = hokkaido_area
 			NOT = { owned_by = ROOT }
@@ -1997,7 +2001,7 @@ ran_slot5_far_east = {
 	RAN_offer_foxes_of_japan = {
 		icon = mission_ran_offer_foxes_of_japan
 		required_missions = { RAN_ezo }
-		position = 7
+		position = 8
 		trigger = {
 			hokkaido_area = {
 				type = all
@@ -2013,7 +2017,7 @@ ran_slot5_far_east = {
 	RAN_japan_subdued = {
 		icon = mission_japanese_fort
 		required_missions = { RAN_offer_foxes_of_japan }
-		position = 8
+		position = 9
 		provinces_to_highlight = {
 			region = japan_region
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }

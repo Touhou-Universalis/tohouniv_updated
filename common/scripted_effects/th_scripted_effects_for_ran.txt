@@ -568,3 +568,72 @@ ran_find_false_fox_home = {
 		}
 	}
 }
+
+#The False Fox rises (flavor_ran.94; user: pretender war, scaled to our size): an army of size $home$ in her province, then armies of
+#size $extra$ in other owned provinces near it: 2 (1 when full = no), +1 at 50 owned provinces, +1 at 100. Never in the capital.
+ran_false_fox_rise = {
+	event_target:ran_false_fox_home = {
+		spawn_rebels = {
+			type = th_false_fox_rebels
+			size = $home$
+		}
+		set_province_flag = ran_false_fox_risen
+	}
+	if = {
+		limit = { always = $full$ }
+		ran_false_fox_extra_rising = { size = $extra$ }
+	}
+	ran_false_fox_extra_rising = { size = $extra$ }
+	if = {
+		limit = { num_of_cities = 50 }
+		ran_false_fox_extra_rising = { size = $extra$ }
+	}
+	if = {
+		limit = { num_of_cities = 100 }
+		ran_false_fox_extra_rising = { size = $extra$ }
+	}
+}
+
+#One more False Fox army of size $size$, in a province near hers if we have one, else anywhere but the capital
+ran_false_fox_extra_rising = {
+	if = {
+		limit = {
+			any_owned_province = {
+				is_capital = no
+				NOT = { has_province_flag = ran_false_fox_risen }
+				province_distance = {
+					who = event_target:ran_false_fox_home
+					distance = 400
+				}
+			}
+		}
+		random_owned_province = {
+			limit = {
+				is_capital = no
+				NOT = { has_province_flag = ran_false_fox_risen }
+				province_distance = {
+					who = event_target:ran_false_fox_home
+					distance = 400
+				}
+			}
+			spawn_rebels = {
+				type = th_false_fox_rebels
+				size = $size$
+			}
+			set_province_flag = ran_false_fox_risen
+		}
+	}
+	else = {
+		random_owned_province = {
+			limit = {
+				is_capital = no
+				NOT = { has_province_flag = ran_false_fox_risen }
+			}
+			spawn_rebels = {
+				type = th_false_fox_rebels
+				size = $size$
+			}
+			set_province_flag = ran_false_fox_risen
+		}
+	}
+}
