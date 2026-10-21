@@ -1,8 +1,11 @@
 #RAN: The Fox's Autocracy. A copy of vanilla russian_mechanic (common/government_mechanics/04_russian.txt) with reworked buttons.
 #RAN starts without it. Gensokyan_ran_tsardom (mission RAN_zemsky_sobor) carries th_fox_autocracy_mechanic (gauges up to 150);
-#Gensokyan_ran_tsardom_ranks (mission RAN_table_of_ranks) carries th_fox_autocracy_ranks_mechanic (gauges up to 200).
+#Gensokyan_ran_tsardom_ranks (mission RAN_table_of_ranks) carries th_fox_autocracy_ranks_mechanic, "The Fox's Rule" (gauges up to 200,
+#passive bonuses and stronger buttons, like vanilla's Russian Rule).
 #No modifier can raise a gauge's maximum, hence two copies. The button effects live in common/scripted_effects/th_scripted_effects_for_ran.txt.
-#Buttons use vanilla's Russian window and art (russian_mechanics_interaction_gui, GFX_russian_ability_*) until RAN's own icons exist.
+#Own look (user): window th_fox_autocracy_interaction_gui (interface/government_mechanics/th_fox_autocracy.gui), Ran buttons
+#GFX_th_fox_* in Yukari's Shogunate style and amber gauges (government_mechanics_touhou.gfx). The Fox's Rule uses
+#th_fox_rule_interaction_gui: bigger square gold-framed buttons (absolute_rule, golden_census, fire_regiments).
 #No DLC gate, unlike vanilla's.
 
 th_fox_autocracy_mechanic = {
@@ -31,8 +34,8 @@ th_fox_autocracy_mechanic = {
 
 	interactions = {
 		th_fox_sudebnik = {
-			gui = russian_mechanics_interaction_gui
-			icon = GFX_russian_ability_ADM
+			gui = th_fox_autocracy_interaction_gui
+			icon = GFX_th_fox_sudebnik
 			cost_type = th_fox_adm_power
 			cost = 100
 			trigger = {
@@ -53,8 +56,8 @@ th_fox_autocracy_mechanic = {
 			}
 		}
 		th_fox_oprichnina = {
-			gui = russian_mechanics_interaction_gui
-			icon = GFX_russian_ability_DIP
+			gui = th_fox_autocracy_interaction_gui
+			icon = GFX_th_fox_oprichnina
 			cost_type = th_fox_dip_power
 			cost = 100
 			trigger = {
@@ -72,8 +75,8 @@ th_fox_autocracy_mechanic = {
 			}
 		}
 		th_fox_streltsy = {
-			gui = russian_mechanics_interaction_gui
-			icon = GFX_russian_ability_MIL
+			gui = th_fox_autocracy_interaction_gui
+			icon = GFX_th_fox_streltsy
 			cost_type = th_fox_mil_power
 			cost = 100
 			trigger = {
@@ -99,43 +102,73 @@ th_fox_autocracy_mechanic = {
 	}
 }
 
-th_fox_autocracy_ranks_mechanic = {
+th_fox_autocracy_ranks_mechanic = {	#"The Fox's Rule" (user: like vanilla russian_rule_mechanic, but stronger)
 	alert_icon_gfx = GFX_alerticons_government_mechanics
 	alert_icon_index = 1
 	available = {
 	}
 
+	#Twice the first stage's growth: a 100-point button comes back as often as vanilla Russian Rule's 50-point ones.
+	#Each gauge gives a bonus that grows with it (full at 200); vanilla Russian Rule gives half of each at full.
 	powers = {
 		th_fox_ranks_adm_power = {
 			max = 200
 			monarch_power = ADM
-			base_monthly_growth = 0.25
+			base_monthly_growth = 0.5
+			scaled_modifier = {
+				modifier = {
+					development_cost = -0.15
+					core_creation = -0.15
+				}
+			}
 		}
 		th_fox_ranks_dip_power = {
 			max = 200
 			monarch_power = DIP
-			base_monthly_growth = 0.25
+			base_monthly_growth = 0.5
+			scaled_modifier = {
+				modifier = {
+					diplomatic_reputation = 2
+					improve_relation_modifier = 0.2
+				}
+			}
 		}
 		th_fox_ranks_mil_power = {
 			max = 200
 			monarch_power = MIL
-			base_monthly_growth = 0.25
+			base_monthly_growth = 0.5
+			scaled_modifier = {
+				modifier = {
+					army_tradition = 1
+					harsh_treatment_cost = -0.75
+				}
+			}
 		}
 	}
 
 	interactions = {
-		th_fox_ranks_sudebnik = {
-			gui = russian_mechanics_interaction_gui
-			icon = GFX_russian_ability_ADM
+		th_fox_absolute_rule = {
+			gui = th_fox_rule_interaction_gui
+			icon = GFX_th_fox_absolute_rule
 			cost_type = th_fox_ranks_adm_power
 			cost = 100
 			trigger = {
-				any_owned_province = {
-					local_autonomy_above_min = 5
+				OR = {
+					any_owned_province = {
+						local_autonomy_above_min = 5
+					}
+					if = {
+						limit = { has_any_estates = yes }
+						has_any_active_estate_agenda = yes
+					}
+					if = {
+						limit = { has_parliament = yes }
+						has_active_debate = yes
+					}
 				}
 			}
 			effect = {
-				ran_fox_sudebnik_effect = yes
+				ran_fox_absolute_rule_effect = yes
 			}
 			cooldown_years = 0
 			ai_chance = {
@@ -144,17 +177,21 @@ th_fox_autocracy_ranks_mechanic = {
 					factor = 10
 					average_autonomy_above_min = 10
 				}
+				modifier = {
+					factor = 10
+					has_any_active_estate_agenda = yes
+				}
 			}
 		}
-		th_fox_ranks_oprichnina = {
-			gui = russian_mechanics_interaction_gui
-			icon = GFX_russian_ability_DIP
+		th_fox_golden_census = {
+			gui = th_fox_rule_interaction_gui
+			icon = GFX_th_fox_golden_census
 			cost_type = th_fox_ranks_dip_power
 			cost = 100
 			trigger = {
 			}
 			effect = {
-				ran_fox_oprichnina_effect = yes
+				ran_golden_census_effect = yes
 			}
 			cooldown_years = 0
 			ai_chance = {
@@ -163,11 +200,15 @@ th_fox_autocracy_ranks_mechanic = {
 					factor = 10
 					rebel_progress_at_least = { value = 30 }
 				}
+				modifier = {
+					factor = 5
+					NOT = { has_country_modifier = ran_golden_census }
+				}
 			}
 		}
-		th_fox_ranks_streltsy = {
-			gui = russian_mechanics_interaction_gui
-			icon = GFX_russian_ability_MIL
+		th_fox_fire_regiments = {
+			gui = th_fox_rule_interaction_gui
+			icon = GFX_th_fox_fire_regiments
 			cost_type = th_fox_ranks_mil_power
 			cost = 100
 			trigger = {
@@ -179,7 +220,7 @@ th_fox_autocracy_ranks_mechanic = {
 				}
 			}
 			effect = {
-				ran_fox_streltsy_effect = yes
+				ran_fox_fire_regiments_effect = yes
 			}
 			cooldown_years = 0
 			ai_chance = {

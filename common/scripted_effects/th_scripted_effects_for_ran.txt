@@ -12,7 +12,7 @@ ran_accept_culture = {
 }
 
 ###THE FOX'S AUTOCRACY (common/government_mechanics/th_fox_autocracy.txt)###
-#Both copies of the mechanic (150 and 200 cap) call these, so the buttons always match.
+#The first stage (th_fox_autocracy_mechanic, after RAN_zemsky_sobor) calls these three; The Fox's Rule has its own below.
 
 #Ran's Sudebnik (ADM): -10 autonomy everywhere, +25 government reform progress
 ran_fox_sudebnik_effect = {
@@ -60,6 +60,94 @@ ran_fox_streltsy_effect = {
 	}
 	add_yearly_manpower = 0.6
 	add_war_exhaustion = -2
+}
+
+#THE FOX'S RULE (th_fox_autocracy_ranks_mechanic, after RAN_table_of_ranks): stronger than vanilla's Russian Rule (user)
+
+#The Fox's Absolute Rule (ADM): -20 autonomy everywhere, every estate agenda completed, +25 government reform progress
+#(vanilla Enforce Absolute Rule: -15 autonomy and the agendas)
+ran_fox_absolute_rule_effect = {
+	tooltip = {
+		add_local_autonomy_no_authority_effect = -20
+	}
+	custom_tooltip = RAN_fox_absolute_rule_tt
+	hidden_effect = {
+		every_owned_province = {
+			add_local_autonomy_no_authority_effect = -20
+		}
+		if = {
+			limit = {
+				has_parliament = yes
+				has_active_debate = yes
+			}
+			end_current_debate = yes
+		}
+		auto_complete_estate_agenda = {
+			estate = all
+		}
+	}
+	change_government_reform_progress = 25
+}
+
+#The Golden Census (DIP): -40 rebel progress, +5% crown land from the nobility, "The Golden Census" for 10 years (stacks its time)
+#(vanilla Enforce Cultural Revolution: -30 rebel progress and a cultural_revolution modifier)
+ran_golden_census_effect = {
+	add_rebel_progress = {
+		value = -40
+	}
+	if = {
+		limit = { has_estate = estate_nobles }
+		change_estate_land_share = {
+			estate = estate_nobles
+			share = -5
+		}
+	}
+	if = {
+		limit = { has_country_modifier = ran_golden_census }
+		extend_country_modifier = {
+			name = ran_golden_census
+			duration = 3650
+		}
+	}
+	else = {
+		add_country_modifier = {
+			name = ran_golden_census
+			duration = 3650
+		}
+	}
+}
+
+#Fox-Fire Regiments (MIL): Equipped Streltsy and "Fox-Fire Regiments" for 10 years (both stack their time), +1 year of manpower, -4 war exhaustion
+#(vanilla Mobilize New Order Regiments: +10% infantry combat ability, +20% reinforce speed, +0.75 years of manpower, -3 war exhaustion)
+ran_fox_fire_regiments_effect = {
+	if = {
+		limit = { has_country_modifier = equipped_streltsy_modifier }
+		extend_country_modifier = {
+			name = equipped_streltsy_modifier
+			duration = 3650
+		}
+	}
+	else = {
+		add_country_modifier = {
+			name = equipped_streltsy_modifier
+			duration = 3650
+		}
+	}
+	if = {
+		limit = { has_country_modifier = ran_fox_fire_regiments }
+		extend_country_modifier = {
+			name = ran_fox_fire_regiments
+			duration = 3650
+		}
+	}
+	else = {
+		add_country_modifier = {
+			name = ran_fox_fire_regiments
+			duration = 3650
+		}
+	}
+	add_yearly_manpower = 1
+	add_war_exhaustion = -4
 }
 
 #RAN_table_of_ranks swaps th_fox_autocracy_mechanic for th_fox_autocracy_ranks_mechanic. The two use different powers,
