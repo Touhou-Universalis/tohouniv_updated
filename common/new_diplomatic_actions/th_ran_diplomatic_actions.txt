@@ -1,0 +1,104 @@
+#RAN Fox's Charm: unlocked by the mission RAN_foxs_shrine (flag ran_fox_charm_unlocked).
+#Marks the target with ran_fox_charmed (checked by RAN_charm_the_electors, RAN_empress_of_the_hre and the Fox's Revelation)
+#and counts uses in ran_charm_counter. ROOT is RAN, FROM is the target.
+ran_fox_charm = {
+	category = th_diplo_action
+
+	require_acceptance = no
+
+	is_visible = {
+		tag = RAN
+		has_country_flag = ran_fox_charm_unlocked
+	}
+
+	is_allowed = {
+		dip_power = 50
+		NOT = { war_with = FROM }
+		custom_trigger_tooltip = {
+			tooltip = ran_fox_charm_not_charmed_tt
+			FROM = {
+				NOT = { has_country_flag = ran_fox_charmed }
+			}
+		}
+	}
+
+	on_accept = {
+		add_dip_power = -50
+		change_variable = {
+			which = ran_charm_counter
+			value = 1
+		}
+		FROM = {
+			set_country_flag = ran_fox_charmed
+			add_opinion = {
+				who = ROOT
+				modifier = ran_charmed_by_fox
+			}
+			add_trust = {
+				who = ROOT
+				value = 15
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}
+
+#RAN Fox's Revelation: unlocked by the mission RAN_fox_faith (flag ran_fox_revelation_unlocked).
+#Converts a charmed country and its capital to our faith. This is how electors come to share it for RAN_mistress_of_europe.
+#Human targets choose; AI targets always accept (that is the charm).
+ran_fox_revelation = {
+	category = th_diplo_action
+
+	require_acceptance = yes
+
+	is_visible = {
+		tag = RAN
+		has_country_flag = ran_fox_revelation_unlocked
+		FROM = { has_country_flag = ran_fox_charmed }
+	}
+
+	is_allowed = {
+		dip_power = 50
+		religion = th_ninetailedshinto
+		NOT = { war_with = FROM }
+		FROM = {
+			NOT = { religion = ROOT }
+			NOT = { tag = PAP }
+			has_opinion = {
+				who = ROOT
+				value = 100
+			}
+			trust = {
+				who = ROOT
+				value = 50
+			}
+		}
+	}
+
+	on_accept = {
+		add_dip_power = -50
+		FROM = {
+			change_religion = ROOT
+			capital_scope = {
+				change_religion = ROOT
+			}
+		}
+	}
+
+	ai_acceptance = {
+		add_entry = {
+			name = ran_fox_revelation_charmed
+			export_to_variable = {
+				variable_name = ai_value
+				value = 1000
+			}
+		}
+	}
+
+	ai_will_do = {
+		always = no
+	}
+}

@@ -51,14 +51,6 @@ country_event = {
 				add_base_manpower = 1
 				add_base_production = 1
 			}
-			russia_region = {
-				limit = {
-					NOT = { is_core = RAN }
-					NOT = { is_permanent_claim = RAN }
-				}
-				add_permanent_claim = RAN
-			}			
-			
 		}
 		release = RAN
 		switch_tag = RAN
@@ -92,7 +84,7 @@ country_event = {
 				add_mil_power = 126
 				add_manpower = 9
 				add_sailors = 100
-				add_treasury = 200
+				add_treasury = 90
 				add_prestige = 15
 				set_capital = 1955
 
@@ -131,66 +123,2406 @@ country_event = {
 	}
 }
 
+###COLUMN 1: THE RUSSIAN LANDS###
+
+#The Veche Bell (RAN_humble_novgorod)
 country_event = {
-	id = flavor_ran.2
-	title = "flavor_ran.2.t"
-	desc = "flavor_ran.2.desc"
-	picture = SHRINE_eventPicture
-	
-	fire_only_once = yes
+	id = flavor_ran.10
+	title = flavor_ran.10.t
+	desc = flavor_ran.10.desc
+	picture = RAN_VECHE_BELL_eventPicture
 
-	major = yes
+	is_triggered_only = yes
 
+	option = {		#Carry it to Kholmogory
+		name = flavor_ran.10.a
+		add_prestige = 25
+		310 = {
+			add_province_modifier = {
+				name = ran_silenced_bell
+				duration = 3650
+			}
+		}
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Let it ring for the fox
+		name = flavor_ran.10.b
+		310 = {
+			add_province_modifier = {
+				name = ran_bell_rings_for_ran
+				duration = -1
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 10
+		}
+		ai_chance = { factor = 60 }
+	}
+}
+
+#Yukari's Offer: A Gap to Moscow (RAN_offer_gap_to_moscow)
+country_event = {
+	id = flavor_ran.11
+	title = flavor_ran.11.t
+	desc = flavor_ran.11.desc
+	picture = RAN_GAP_TO_MOSCOW_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			295 = {
+				owner = { save_event_target_as = ran_moscow_owner }
+			}
+		}
+	}
+
+	option = {		#Accept (stronger on paper)
+		name = flavor_ran.11.a
+		if = {
+			limit = {
+				event_target:ran_moscow_owner = {
+					NOT = { tag = ROOT }
+				}
+			}
+			event_target:ran_moscow_owner = {
+				add_country_modifier = {
+					name = ran_gaps_in_the_kremlin
+					duration = 3650
+				}
+			}
+			hidden_effect = {
+				event_target:ran_moscow_owner = {
+					every_owned_province = {
+						set_province_flag = ran_gap_touched
+					}
+				}
+			}
+		}
+		else = {
+			hidden_effect = {
+				moscow_area = {
+					limit = { owned_by = ROOT }
+					set_province_flag = ran_gap_touched
+				}
+			}
+		}
+		add_country_modifier = {
+			name = ran_yukaris_favour_moscow
+			duration = 3650
+		}
+		ai_chance = { factor = 80 }
+	}
+	option = {		#Refuse
+		name = flavor_ran.11.b
+		add_country_modifier = {
+			name = ran_own_plan
+			duration = 1825
+		}
+		custom_tooltip = RAN_gap_refuse_hint_tt
+		hidden_effect = {
+			change_variable = { which = ran_own_will value = 2 }
+		}
+		ai_chance = { factor = 20 }
+	}
+}
+
+#A Fox in the Kremlin (RAN_break_muscovy)
+country_event = {
+	id = flavor_ran.12
+	title = flavor_ran.12.t
+	desc = flavor_ran.12.desc
+	picture = RAN_FOX_IN_THE_KREMLIN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.12.a
+	}
+}
+
+#A Throne for the Fox (RAN_gather_the_rus, or the decision ran_throne_for_the_fox)
+country_event = {
+	id = flavor_ran.13
+	title = flavor_ran.13.t
+	desc = flavor_ran.13.desc
+	picture = RAN_THRONE_FOR_THE_FOX_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Moscow
+		name = flavor_ran.13.a
+		trigger = { owns = 295 }
+		295 = { move_capital_effect = yes }
+		add_country_modifier = {
+			name = ran_heart_of_the_rus
+			duration = -1
+		}
+		set_country_flag = ran_throne_chosen
+		ai_chance = { factor = 100 }
+	}
+	option = {		#Build St. Petersburg
+		name = flavor_ran.13.b
+		trigger = {
+			owns = 33
+			treasury = 1000
+		}
+		add_treasury = -1000
+		custom_tooltip = RAN_petersburg_chain_tt
+		set_country_flag = ran_building_petersburg
+		country_event = { id = flavor_ran.14 days = 30 }
+		ai_chance = { factor = 20 }
+	}
+	option = {		#Decide later
+		name = flavor_ran.13.c
+		set_country_flag = ran_throne_postponed
+		custom_tooltip = RAN_throne_postponed_tt
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				owns = 295
+			}
+		}
+	}
+}
+
+#Stakes in the Marsh (St. Petersburg 1/4)
+country_event = {
+	id = flavor_ran.14
+	title = flavor_ran.14.t
+	desc = flavor_ran.14.desc
+	picture = RAN_STAKES_IN_THE_MARSH_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.14.a
+		country_event = { id = flavor_ran.15 days = 730 }
+	}
+}
+
+#The Neva Floods (St. Petersburg 2/4)
+country_event = {
+	id = flavor_ran.15
+	title = flavor_ran.15.t
+	desc = flavor_ran.15.desc
+	picture = RAN_NEVA_FLOODS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Pay to stay on schedule
+		name = flavor_ran.15.a
+		trigger = { treasury = 250 }
+		add_treasury = -250
+		country_event = { id = flavor_ran.16 days = 1095 }
+		ai_chance = { factor = 70 }
+	}
+	option = {		#Lose two years
+		name = flavor_ran.15.b
+		custom_tooltip = RAN_neva_delay_tt
+		country_event = { id = flavor_ran.16 days = 1825 }
+		ai_chance = { factor = 30 }
+	}
+}
+
+#Architects from the West (St. Petersburg 3/4)
+country_event = {
+	id = flavor_ran.16
+	title = flavor_ran.16.t
+	desc = flavor_ran.16.desc
+	picture = RAN_ARCHITECTS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Italians: prestige and trade
+		name = flavor_ran.16.a
+		add_prestige = 25
+		if = {
+			limit = { owns = 33 }
+			33 = {
+				add_province_modifier = {
+					name = ran_italianate_palaces
+					duration = -1
+				}
+			}
+		}
+		country_event = { id = flavor_ran.17 days = 1095 }
+		ai_chance = { factor = 34 }
+	}
+	option = {		#Dutch: the navy
+		name = flavor_ran.16.b
+		add_country_modifier = {
+			name = ran_dutch_shipwrights
+			duration = 9125
+		}
+		country_event = { id = flavor_ran.17 days = 1095 }
+		ai_chance = { factor = 33 }
+	}
+	option = {		#French: diplomacy
+		name = flavor_ran.16.c
+		add_country_modifier = {
+			name = ran_french_salons
+			duration = 9125
+		}
+		country_event = { id = flavor_ran.17 days = 1095 }
+		ai_chance = { factor = 33 }
+	}
+}
+
+#The Northern Capital (St. Petersburg 4/4)
+country_event = {
+	id = flavor_ran.17
+	title = flavor_ran.17.t
+	desc = {
+		trigger = { owns = 33 }
+		desc = flavor_ran.17.desc
+	}
+	desc = {
+		trigger = { NOT = { owns = 33 } }
+		desc = flavor_ran.17.desc_lost
+	}
+	picture = RAN_NORTHERN_CAPITAL_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#The city is finished
+		name = flavor_ran.17.a
+		trigger = { owns = 33 }
+		clr_country_flag = ran_building_petersburg
+		set_country_flag = ran_throne_chosen
+		33 = {
+			change_province_name = "St. Petersburg"
+			rename_capital = "St. Petersburg"
+			move_capital_effect = yes
+			add_base_tax = 5
+			add_base_production = 5
+			add_base_manpower = 3
+			add_province_modifier = {
+				name = ran_city_on_the_neva
+				duration = -1
+			}
+		}
+		add_country_modifier = {
+			name = ran_northern_capital
+			duration = -1
+		}
+	}
+	option = {		#The Neva was lost while building
+		name = flavor_ran.17.b
+		trigger = { NOT = { owns = 33 } }
+		clr_country_flag = ran_building_petersburg
+		set_country_flag = ran_throne_postponed
+		custom_tooltip = RAN_throne_postponed_tt
+	}
+}
+
+###COLUMN 2: NORTH AND WEST###
+
+#Lions and Foxes (RAN_humble_sweden)
+country_event = {
+	id = flavor_ran.20
+	title = flavor_ran.20.t
+	desc = flavor_ran.20.desc
+	picture = RAN_LIONS_AND_FOXES_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.20.a
+	}
+}
+
+#The Sound Toll (RAN_scandinavia_united)
+country_event = {
+	id = flavor_ran.21
+	title = flavor_ran.21.t
+	desc = flavor_ran.21.desc
+	picture = RAN_SOUND_TOLL_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Raise the dues
+		name = flavor_ran.21.a
+		add_country_modifier = {
+			name = ran_sound_dues
+			duration = 9125
+		}
+		every_country = {
+			limit = {
+				NOT = { tag = ROOT }
+				NOT = { is_subject_of = ROOT }
+				capital_scope = { continent = europe }
+				OR = {
+					has_reform = merchants_reform
+					has_reform = venice_merchants_reform
+					has_idea_group = trade_ideas
+				}
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = ran_sound_dues_opinion
+			}
+		}
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Open the strait
+		name = flavor_ran.21.b
+		add_country_modifier = {
+			name = ran_free_passage
+			duration = 9125
+		}
+		ai_chance = { factor = 50 }
+	}
+}
+
+#The Great Embassy (RAN_great_embassy)
+country_event = {
+	id = flavor_ran.22
+	title = flavor_ran.22.t
+	desc = flavor_ran.22.desc
+	picture = RAN_GREAT_EMBASSY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#A shipwright
+		name = flavor_ran.22.a
+		define_advisor = {
+			type = naval_reformer
+			skill = 3
+			culture = ROOT
+			religion = ROOT
+			cost_multiplier = 0.5
+		}
+		ai_chance = { factor = 33 }
+	}
+	option = {		#An engineer
+		name = flavor_ran.22.b
+		define_advisor = {
+			type = fortification_expert
+			skill = 3
+			culture = ROOT
+			religion = ROOT
+			cost_multiplier = 0.5
+		}
+		ai_chance = { factor = 33 }
+	}
+	option = {		#A scholar
+		name = flavor_ran.22.c
+		define_advisor = {
+			type = philosopher
+			skill = 3
+			culture = ROOT
+			religion = ROOT
+			cost_multiplier = 0.5
+		}
+		ai_chance = { factor = 34 }
+	}
+}
+
+#The Boundary Moves (RAN_boundary_of_the_empire)
+country_event = {
+	id = flavor_ran.23
+	title = flavor_ran.23.t
+	desc = {
+		trigger = { hre_size = 1 }
+		desc = flavor_ran.23.desc
+	}
+	desc = {
+		trigger = { NOT = { hre_size = 1 } }
+		desc = flavor_ran.23.desc_gone
+	}
+	picture = RAN_BOUNDARY_MOVES_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Yukari redraws the border
+		name = flavor_ran.23.a
+		trigger = { hre_size = 1 }
+		set_in_empire = yes
+		add_prestige = 25
+	}
+	option = {		#The Empire is gone: claims on German provinces next to us
+		name = flavor_ran.23.b
+		trigger = { NOT = { hre_size = 1 } }
+		custom_tooltip = RAN_boundary_gone_claims_tt
+		hidden_effect = {
+			every_province = {
+				limit = {
+					OR = {
+						region = north_german_region
+						region = south_german_region
+					}
+					NOT = { owned_by = ROOT }
+					NOT = { is_core = ROOT }
+					any_neighbor_province = { owned_by = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+		add_prestige = 25
+	}
+}
+
+#A Fox on the Imperial Throne (RAN_empress_of_the_hre)
+country_event = {
+	id = flavor_ran.24
+	title = flavor_ran.24.t
+	desc = {
+		trigger = { hre_size = 1 }
+		desc = flavor_ran.24.desc
+	}
+	desc = {
+		trigger = { NOT = { hre_size = 1 } }
+		desc = flavor_ran.24.desc_gone
+	}
+	picture = RAN_IMPERIAL_THRONE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Take the crown
+		name = flavor_ran.24.a
+		trigger = { hre_size = 1 }
+		if = {
+			limit = { is_emperor = no }
+			set_emperor = yes
+		}
+		add_imperial_influence = 25
+	}
+	option = {		#No Empire left to rule
+		name = flavor_ran.24.b
+		trigger = { NOT = { hre_size = 1 } }
+		add_prestige = 50
+		give_claims = { region = north_german_region }
+		give_claims = { region = south_german_region }
+	}
+}
+
+#Crowned at Aachen (RAN_mistress_of_europe)
+country_event = {
+	id = flavor_ran.25
+	title = flavor_ran.25.t
+	desc = {
+		trigger = { hre_size = 1 }
+		desc = flavor_ran.25.desc
+	}
+	desc = {
+		trigger = { NOT = { hre_size = 1 } }
+		desc = flavor_ran.25.desc_gone
+	}
+	picture = RAN_CROWNED_AT_AACHEN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.25.a
+	}
+}
+
+###COLUMN 3: THE FOX'S COURT###
+
+#The First Pilgrims (RAN_foxs_shrine)
+country_event = {
+	id = flavor_ran.30
+	title = flavor_ran.30.t
+	desc = flavor_ran.30.desc
+	picture = RAN_FIRST_PILGRIMS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.30.a
+	}
+}
+
+#The Nine-Tailed Goddess (RAN_fox_faith)
+country_event = {
+	id = flavor_ran.31
+	title = flavor_ran.31.t
+	desc = flavor_ran.31.desc
+	picture = RAN_NINE_TAILED_GODDESS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.31.a
+	}
+}
+
+#Reunion in the North (RAN_chen_comes_north)
+country_event = {
+	id = flavor_ran.32
+	title = flavor_ran.32.t
+	desc = flavor_ran.32.desc
+	picture = RAN_REUNION_IN_THE_NORTH_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.32.a
+	}
+}
+
+#The Assembly of the Land (RAN_zemsky_sobor)
+country_event = {
+	id = flavor_ran.33
+	title = flavor_ran.33.t
+	desc = flavor_ran.33.desc
+	picture = RAN_ASSEMBLY_OF_THE_LAND_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#The boyars speak first
+		name = flavor_ran.33.a
+		add_country_modifier = {
+			name = ran_assembly_boyars
+			duration = 7300
+		}
+		add_estate_loyalty = { estate = estate_nobles loyalty = 10 }
+		add_estate_loyalty = { estate = estate_church loyalty = -5 }
+		add_estate_loyalty = { estate = estate_burghers loyalty = -5 }
+		ai_chance = { factor = 34 }
+	}
+	option = {		#The clergy speak first
+		name = flavor_ran.33.b
+		add_country_modifier = {
+			name = ran_assembly_clergy
+			duration = 7300
+		}
+		add_estate_loyalty = { estate = estate_church loyalty = 10 }
+		add_estate_loyalty = { estate = estate_nobles loyalty = -5 }
+		add_estate_loyalty = { estate = estate_burghers loyalty = -5 }
+		ai_chance = { factor = 33 }
+	}
+	option = {		#The merchants speak first
+		name = flavor_ran.33.c
+		add_country_modifier = {
+			name = ran_assembly_merchants
+			duration = 7300
+		}
+		add_estate_loyalty = { estate = estate_burghers loyalty = 10 }
+		add_estate_loyalty = { estate = estate_nobles loyalty = -5 }
+		add_estate_loyalty = { estate = estate_church loyalty = -5 }
+		ai_chance = { factor = 33 }
+	}
+}
+
+#A Boy from Kholmogory (RAN_academy). A nod to Mikhail Lomonosov, born near Kholmogory in 1711.
+country_event = {
+	id = flavor_ran.34
+	title = flavor_ran.34.t
+	desc = flavor_ran.34.desc
+	picture = RAN_BOY_FROM_KHOLMOGORY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.34.a
+		define_advisor = {
+			type = natural_scientist
+			name = "Mikhail of Kholmogory"
+			skill = 3
+			culture = novgorodian
+			religion = ROOT
+			discount = yes
+			cost_multiplier = 0
+		}
+	}
+}
+
+#Candles Before the Fox (RAN_dvoeverie)
+#The province reward is given here rather than in the mission: vanilla warns that owner = { secondary_religion = PREV }
+#can fail inside scripted effects (01_scripted_effects_for_estates.txt:541) and uses an event for the same check.
+country_event = {
+	id = flavor_ran.35
+	title = flavor_ran.35.t
+	desc = flavor_ran.35.desc
+	picture = RAN_CANDLES_BEFORE_THE_FOX_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.35.a
+		custom_tooltip = RAN_dvoeverie_provinces_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					owner = {
+						secondary_religion = PREV
+					}
+					NOT = { has_province_modifier = ran_dvoeverie }
+				}
+				add_province_modifier = {
+					name = ran_dvoeverie
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+#Yukari's Gratitude (RAN_gensokyo_grows_stronger)
+country_event = {
+	id = flavor_ran.36
+	title = flavor_ran.36.t
+	desc = flavor_ran.36.desc
+	picture = RAN_YUKARIS_GRATITUDE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.36.a
+	}
+}
+
+#The Fox's Autocracy, explained (decision ran_fox_autocracy_information in decisions/TH_MechanicWiki.txt)
+country_event = {
+	id = flavor_ran.38
+	title = flavor_ran.38.t
+	desc = flavor_ran.38.desc
+	picture = RAN_ASSEMBLY_OF_THE_LAND_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.38.a
+	}
+}
+
+#Hidden: refills the Fox's Autocracy gauges after RAN_table_of_ranks swaps in the 200-cap copy of the mechanic.
+country_event = {
+	id = flavor_ran.39
+	title = flavor_ran.39.t
+	desc = flavor_ran.39.desc
+	picture = RAN_ASSEMBLY_OF_THE_LAND_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		ran_restore_autocracy_power = { type = adm }
+		ran_restore_autocracy_power = { type = dip }
+		ran_restore_autocracy_power = { type = mil }
+	}
+
+	option = {
+		name = flavor_ran.39.a
+	}
+}
+
+###COLUMN 4: THE SOUTHERN ROAD###
+
+#The Cathedral of the Fox (RAN_kazan). In 1552 Moscow raised St. Basil's for the same victory.
+country_event = {
+	id = flavor_ran.40
+	title = flavor_ran.40.t
+	desc = flavor_ran.40.desc
+	picture = RAN_CATHEDRAL_OF_THE_FOX_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Raise the nine-domed cathedral
+		name = flavor_ran.40.a
+		trigger = { treasury = 250 }
+		add_treasury = -250
+		add_country_modifier = {
+			name = ran_nine_domed_cathedral
+			duration = -1
+		}
+		capital_scope = {
+			add_base_tax = 1
+		}
+		ai_chance = { factor = 60 }
+	}
+	option = {		#Take the khan's treasury
+		name = flavor_ran.40.b
+		add_years_of_income = 1
+		1082 = {
+			add_province_modifier = {
+				name = ran_khans_treasury_taken
+				duration = 1825
+			}
+		}
+		ai_chance = { factor = 40 }
+	}
+}
+
+#Liberator or Conqueror (RAN_balkans)
+country_event = {
+	id = flavor_ran.41
+	title = flavor_ran.41.t
+	desc = flavor_ran.41.desc
+	picture = RAN_LIBERATOR_OR_CONQUEROR_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Free them under the fox: Serbia and Bulgaria as vassals, where we hold their cores
+		name = flavor_ran.41.a
+		trigger = {
+			OR = {
+				AND = {
+					NOT = { exists = SER }
+					any_owned_province = { is_core = SER }
+				}
+				AND = {
+					NOT = { exists = BUL }
+					any_owned_province = { is_core = BUL }
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { exists = SER }
+				any_owned_province = { is_core = SER }
+			}
+			release = SER
+			vassalize = SER
+		}
+		if = {
+			limit = {
+				NOT = { exists = BUL }
+				any_owned_province = { is_core = BUL }
+			}
+			release = BUL
+			vassalize = BUL
+		}
+		add_prestige = 50
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Rule them ourselves
+		name = flavor_ran.41.b
+		add_country_modifier = {
+			name = ran_balkan_governors
+			duration = 9125
+		}
+		custom_tooltip = RAN_balkan_governors_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { region = balkan_region }
+				add_province_modifier = {
+					name = ran_balkan_governors_province
+					duration = 9125
+				}
+			}
+		}
+		ai_chance = { factor = 70 }
+	}
+}
+
+#The Sultan's Insult (RAN_the_archenemy). Ran replies in the spirit of the Zaporozhian Cossacks' famous letter.
+#Comes from whoever holds Constantinople; the mission skips it if that is us or our subject.
+country_event = {
+	id = flavor_ran.42
+	title = flavor_ran.42.t
+	desc = flavor_ran.42.desc
+	picture = RAN_SULTANS_INSULT_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			151 = {
+				owner = { save_event_target_as = ran_sultan }
+			}
+		}
+	}
+
+	option = {
+		name = flavor_ran.42.a
+		add_prestige = 10
+	}
+}
+
+#Yukari's Offer: Gaps in the Golden Horn (RAN_offer_golden_horn)
+country_event = {
+	id = flavor_ran.43
+	title = flavor_ran.43.t
+	desc = {
+		trigger = { NOT = { owns = 151 } }
+		desc = flavor_ran.43.desc
+	}
+	desc = {
+		trigger = { owns = 151 }
+		desc = flavor_ran.43.desc_owned
+	}
+	picture = RAN_GOLDEN_HORN_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			151 = {
+				owner = { save_event_target_as = ran_constantinople_owner }
+			}
+		}
+	}
+
+	option = {		#Accept (stronger on paper)
+		name = flavor_ran.43.a
+		if = {
+			limit = { NOT = { owns = 151 } }
+			151 = {
+				add_province_modifier = {
+					name = ran_gap_in_the_walls
+					duration = 730
+				}
+			}
+			event_target:ran_constantinople_owner = {
+				add_country_modifier = {
+					name = ran_gaps_in_the_golden_horn
+					duration = 730
+				}
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = ran_yukaris_favour_tsargrad
+				duration = 3650
+			}
+		}
+		hidden_effect = {
+			thrace_area = {
+				set_province_flag = ran_gap_touched
+			}
+		}
+		ai_chance = { factor = 80 }
+	}
+	option = {		#Refuse
+		name = flavor_ran.43.b
+		add_country_modifier = {
+			name = ran_siegecraft
+			duration = 1825
+		}
+		custom_tooltip = RAN_golden_horn_refuse_hint_tt
+		hidden_effect = {
+			change_variable = { which = ran_own_will value = 2 }
+		}
+		ai_chance = { factor = 20 }
+	}
+}
+
+#The Great Church of Tsargrad (RAN_ultimate_showdown)
+country_event = {
+	id = flavor_ran.44
+	title = flavor_ran.44.t
+	desc = {
+		trigger = { 151 = { religion_group = muslim } }
+		desc = flavor_ran.44.desc
+	}
+	desc = {
+		trigger = { 151 = { NOT = { religion_group = muslim } } }
+		desc = flavor_ran.44.desc_church
+	}
+	picture = RAN_GREAT_CHURCH_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Make it the Fox's shrine
+		name = flavor_ran.44.a
+		151 = {
+			change_religion = ROOT
+		}
+		add_country_modifier = {
+			name = ran_great_shrine_of_tsargrad
+			duration = -1
+		}
+		custom_tooltip = RAN_great_church_desecrated_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					OR = {
+						religion_group = muslim
+						religion = orthodox
+					}
+				}
+				add_province_modifier = {
+					name = ran_great_church_desecrated
+					duration = 3650
+				}
+			}
+		}
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Return it to the Orthodox
+		name = flavor_ran.44.b
+		custom_tooltip = RAN_great_church_orthodox_opinion_tt
+		hidden_effect = {
+			every_country = {
+				limit = {
+					religion = orthodox
+					NOT = { tag = ROOT }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = ran_great_church_returned_opinion
+				}
+			}
+		}
+		custom_tooltip = RAN_great_church_returned_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { religion = orthodox }
+				add_province_modifier = {
+					name = ran_great_church_returned
+					duration = 9125
+				}
+			}
+		}
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Leave the mosque
+		name = flavor_ran.44.c
+		custom_tooltip = RAN_mosque_left_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { religion = sunni }
+				add_province_modifier = {
+					name = ran_mosque_left
+					duration = 9125
+				}
+			}
+		}
+		add_country_modifier = {
+			name = ran_tolerance_at_tsargrad
+			duration = 9125
+		}
+		ai_chance = { factor = 30 }
+	}
+}
+
+###COLUMN 5: THE FAR EAST###
+
+#Red Fox Pelts (RAN_yasak). Pays the mission's one-off yasak: 15 ducats per owned fur province, or half.
+country_event = {
+	id = flavor_ran.50
+	title = flavor_ran.50.t
+	desc = flavor_ran.50.desc
+	picture = RAN_RED_FOX_PELTS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Strike foxes from the yasak
+		name = flavor_ran.50.a
+		custom_tooltip = RAN_yasak_half_ducats_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { trade_goods = fur }
+				owner = { add_treasury = 7.5 }
+			}
+		}
+		add_stability = 1
+		hidden_effect = {
+			change_variable = { which = ran_own_will value = 1 }
+		}
+		ai_chance = { factor = 50 }
+	}
+	option = {		#A pelt is a pelt
+		name = flavor_ran.50.b
+		custom_tooltip = RAN_yasak_full_ducats_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { trade_goods = fur }
+				owner = { add_treasury = 15 }
+			}
+		}
+		custom_tooltip = RAN_red_fox_pelts_hint_tt
+		ai_chance = { factor = 50 }
+	}
+}
+
+#Ran Sees the Ocean (RAN_to_the_pacific)
+country_event = {
+	id = flavor_ran.51
+	title = flavor_ran.51.t
+	desc = flavor_ran.51.desc
+	picture = RAN_SEES_THE_OCEAN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.51.a
+	}
+}
+
+#The Amur Question (RAN_the_amur)
+#The rival is the Emperor of China; without one (no Mandate of Heaven), the largest owner of Manchuria.
+country_event = {
+	id = flavor_ran.52
+	title = flavor_ran.52.t
+	desc = {
+		trigger = { has_saved_event_target = ran_amur_rival }
+		desc = flavor_ran.52.desc
+	}
+	desc = {
+		trigger = { NOT = { has_saved_event_target = ran_amur_rival } }
+		desc = flavor_ran.52.desc_none
+	}
+	picture = RAN_AMUR_QUESTION_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					any_country = {
+						is_emperor_of_china = yes
+						NOT = { tag = ROOT }
+					}
+				}
+				random_country = {
+					limit = {
+						is_emperor_of_china = yes
+						NOT = { tag = ROOT }
+					}
+					save_event_target_as = ran_amur_rival
+				}
+			}
+			else_if = {
+				limit = { any_country = { ran_is_amur_rival = { size = 15 } } }
+				random_country = { limit = { ran_is_amur_rival = { size = 15 } } save_event_target_as = ran_amur_rival }
+			}
+			else_if = {
+				limit = { any_country = { ran_is_amur_rival = { size = 10 } } }
+				random_country = { limit = { ran_is_amur_rival = { size = 10 } } save_event_target_as = ran_amur_rival }
+			}
+			else_if = {
+				limit = { any_country = { ran_is_amur_rival = { size = 6 } } }
+				random_country = { limit = { ran_is_amur_rival = { size = 6 } } save_event_target_as = ran_amur_rival }
+			}
+			else_if = {
+				limit = { any_country = { ran_is_amur_rival = { size = 3 } } }
+				random_country = { limit = { ran_is_amur_rival = { size = 3 } } save_event_target_as = ran_amur_rival }
+			}
+			else_if = {
+				limit = { any_country = { ran_is_amur_rival = { size = 1 } } }
+				random_country = { limit = { ran_is_amur_rival = { size = 1 } } save_event_target_as = ran_amur_rival }
+			}
+		}
+	}
+
+	option = {		#War
+		name = flavor_ran.52.a
+		give_claims = { region = manchuria_region }
+		if = {
+			limit = { has_saved_event_target = ran_amur_rival }
+			event_target:ran_amur_rival = {
+				reverse_add_casus_belli = {
+					target = ROOT
+					type = cb_ran_amur_war
+					months = 300
+				}
+			}
+		}
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Treaty
+		name = flavor_ran.52.b
+		add_country_modifier = {
+			name = ran_kyakhta_trade
+			duration = -1
+		}
+		ai_chance = { factor = 50 }
+	}
+}
+
+#Yukari's Offer: The Foxes of Japan (RAN_offer_foxes_of_japan). Both options give claims on all of Japan.
+country_event = {
+	id = flavor_ran.53
+	title = flavor_ran.53.t
+	desc = flavor_ran.53.desc
+	picture = RAN_FOXES_OF_JAPAN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Accept (stronger on paper)
+		name = flavor_ran.53.a
+		give_claims = { region = japan_region }
+		custom_tooltip = RAN_whispers_from_the_shrines_tt
+		hidden_effect = {
+			every_province = {
+				limit = {
+					region = japan_region
+					NOT = { owned_by = ROOT }
+				}
+				add_province_modifier = {
+					name = ran_whispers_from_the_shrines
+					duration = 3650
+				}
+				set_province_flag = ran_gap_touched
+			}
+		}
+		ai_chance = { factor = 80 }
+	}
+	option = {		#Refuse: Ran walks in herself
+		name = flavor_ran.53.b
+		give_claims = { region = japan_region }
+		add_country_modifier = {
+			name = ran_foxfire_landing
+			duration = 3650
+		}
+		custom_tooltip = RAN_foxes_of_japan_refuse_hint_tt
+		hidden_effect = {
+			change_variable = { which = ran_own_will value = 2 }
+		}
+		ai_chance = { factor = 20 }
+	}
+}
+
+###THE FINALE: "GOOD JOB, RAN" AND THE CIVIL WAR (flavor_ran.60-79)###
+#Disaster: common/disasters/th_ran_civil_war.txt. Rebels: common/rebel_types/th_yukari_loyalists.txt.
+#Ran's hidden will (ran_own_will) locks Refuse at 4 and sets the difficulty: 5-7 hard, 8-10 medium, 11-13 easy.
+
+#"Good Job, Ran" (RAN_good_job_ran)
+country_event = {
+	id = flavor_ran.60
+	title = flavor_ran.60.t
+	desc = {
+		trigger = { check_variable = { which = ran_own_will value = 5 } }
+		desc = flavor_ran.60.desc
+	}
+	desc = {
+		trigger = { NOT = { check_variable = { which = ran_own_will value = 5 } } }
+		desc = flavor_ran.60.desc_obedient
+	}
+	picture = RAN_GOOD_JOB_RAN_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			ran_find_yukari_country = yes
+		}
+	}
+
+	option = {		#Refuse: the civil war. Locked when Ran never once acted on her own (will 4).
+		name = flavor_ran.60.a
+		trigger = {
+			check_variable = { which = ran_own_will value = 5 }
+		}
+		custom_tooltip = RAN_refuse_yukari_tt
+		hidden_effect = {
+			set_country_flag = ran_refused_yukari
+			add_disaster_progress = {
+				disaster = th_ran_civil_war
+				value = 100
+			}
+		}
+		ai_chance = { factor = 10 }
+	}
+	option = {		#Return to Yukari, who has a country
+		name = flavor_ran.60.b
+		trigger = { has_saved_event_target = ran_yukari_country }
+		custom_tooltip = RAN_return_vassal_tt
+		hidden_effect = {
+			ran_bow_to_yukari = yes
+		}
+		add_country_modifier = {
+			name = ran_a_loyal_shikigami
+			duration = -1
+		}
+		event_target:ran_yukari_country = {
+			add_country_modifier = {
+				name = ran_her_shikigamis_gift
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			set_country_flag = ran_civil_war_over
+		}
+		ai_chance = { factor = 90 }
+	}
+	option = {		#Return to Yukari, who has no country: she takes Ran's place
+		name = flavor_ran.60.c
+		trigger = { NOT = { has_saved_event_target = ran_yukari_country } }
+		custom_tooltip = RAN_return_takeover_tt
+		hidden_effect = {
+			ran_bow_to_yukari = yes
+		}
+		add_country_modifier = {
+			name = ran_a_loyal_shikigami
+			duration = -1
+		}
+		hidden_effect = {
+			set_country_flag = ran_civil_war_over
+		}
+		ai_chance = { factor = 90 }
+	}
+}
+
+#The Shikigami Rebels (on_start of th_ran_civil_war)
+country_event = {
+	id = flavor_ran.61
+	title = flavor_ran.61.t
+	desc = flavor_ran.61.desc
+	picture = RAN_SHIKIGAMI_REBELS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = ran_civil_war_started
+			#Opening wave by the hidden will (sizes only from the will, Step 8b):
+			#low (5-7): 2 x size 4 + 5 x size 2; medium (8-10): 1 x size 4 + 4 x size 2; strong (11-13): 1 x size 3 + 4 x size 2
+			if = {
+				limit = { check_variable = { which = ran_own_will value = 11 } }
+				ran_spawn_opening_loyalists = { size = 3 }
+			}
+			else_if = {
+				limit = { check_variable = { which = ran_own_will value = 8 } }
+				ran_spawn_opening_loyalists = { size = 4 }
+			}
+			else = {
+				ran_spawn_opening_loyalists = { size = 4 }
+				ran_spawn_opening_loyalists = { size = 4 }
+				ran_spawn_opening_loyalists = { size = 2 }
+			}
+			ran_spawn_opening_loyalists = { size = 2 }
+			ran_spawn_opening_loyalists = { size = 2 }
+			ran_spawn_opening_loyalists = { size = 2 }
+			ran_spawn_opening_loyalists = { size = 2 }
+			#Plus one army per gap province, at most 10 (user decision)
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			ran_spawn_gap_loyalists = yes
+			if = {
+				limit = { has_country_flag = ran_chen_in_the_north }
+				country_event = { id = flavor_ran.62 days = 3 }
+			}
+		}
+	}
+
+	option = {
+		name = flavor_ran.61.a
+		custom_tooltip = RAN_shikigami_rebels_tt
+	}
+}
+
+#Chen Stands by Ran (with the disaster's start, only if Chen came north)
+country_event = {
+	id = flavor_ran.62
+	title = flavor_ran.62.t
+	desc = flavor_ran.62.desc
+	picture = RAN_CHEN_STANDS_BY_RAN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.62.a
+		add_country_modifier = {
+			name = ran_chens_courage
+			duration = 1825
+		}
+	}
+}
+
+#Gaps Open in the Night (barrage)
+country_event = {
+	id = flavor_ran.63
+	title = flavor_ran.63.t
+	desc = flavor_ran.63.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {
+		name = flavor_ran.63.a
+		custom_tooltip = RAN_gaps_open_tt
+		hidden_effect = {
+			ran_spawn_wave_loyalists = { size = 2 }
+		}
+	}
+}
+
+#The Formula Falters (barrage)
+country_event = {
+	id = flavor_ran.64
+	title = flavor_ran.64.t
+	desc = flavor_ran.64.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {		#Let it falter
+		name = flavor_ran.64.a
+		add_stability = -1
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Hold the formula together
+		name = flavor_ran.64.b
+		trigger = { adm_power = 100 }
+		add_adm_power = -100
+		ai_chance = { factor = 60 }
+	}
+}
+
+#Youkai Desert to Yukari (barrage). One year of manpower recovery is about 10% of the maximum.
+country_event = {
+	id = flavor_ran.65
+	title = flavor_ran.65.t
+	desc = flavor_ran.65.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {		#Let them go
+		name = flavor_ran.65.a
+		add_yearly_manpower = -1
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Pay them to stay
+		name = flavor_ran.65.b
+		add_years_of_income = -0.5
+		ai_chance = { factor = 50 }
+	}
+}
+
+#A Boyar's Doubt (barrage)
+country_event = {
+	id = flavor_ran.66
+	title = flavor_ran.66.t
+	desc = flavor_ran.66.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		has_disaster = th_ran_civil_war
+		has_estate = estate_nobles
+	}
+
+	option = {		#Let them doubt
+		name = flavor_ran.66.a
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -15
+		}
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Buy their loyalty with land
+		name = flavor_ran.66.b
+		change_estate_land_share = {
+			estate = estate_nobles
+			share = 5
+		}
+		ai_chance = { factor = 50 }
+	}
+}
+
+#Whispers from Mayohiga (barrage): three of our areas, standing in for "one of our regions"
+country_event = {
+	id = flavor_ran.67
+	title = flavor_ran.67.t
+	desc = flavor_ran.67.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {
+		name = flavor_ran.67.a
+		custom_tooltip = RAN_whispers_from_mayohiga_tt
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					is_capital = no
+					NOT = { has_province_modifier = ran_whispers_from_mayohiga }
+				}
+				area = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = ran_whispers_from_mayohiga
+						duration = 1825
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					is_capital = no
+					NOT = { has_province_modifier = ran_whispers_from_mayohiga }
+				}
+				area = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = ran_whispers_from_mayohiga
+						duration = 1825
+					}
+				}
+			}
+			random_owned_province = {
+				limit = {
+					is_capital = no
+					NOT = { has_province_modifier = ran_whispers_from_mayohiga }
+				}
+				area = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = ran_whispers_from_mayohiga
+						duration = 1825
+					}
+				}
+			}
+		}
+	}
+}
+
+#The Peasants Pray to Ran (barrage, kind)
+country_event = {
+	id = flavor_ran.68
+	title = flavor_ran.68.t
+	desc = flavor_ran.68.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {
+		name = flavor_ran.68.a
+		add_country_modifier = {
+			name = ran_peasants_pray_to_ran
+			duration = 730
+		}
+	}
+}
+
+#Chen Holds the Line (barrage, kind, only while Chen serves us)
+country_event = {
+	id = flavor_ran.69
+	title = flavor_ran.69.t
+	desc = flavor_ran.69.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		has_disaster = th_ran_civil_war
+		has_country_flag = ran_chen_in_the_north
+	}
+
+	option = {
+		name = flavor_ran.69.a
+		add_country_modifier = {
+			name = ran_chen_holds_the_line
+			duration = 730
+		}
+	}
+}
+
+#The Last Spell Card (on_end of th_ran_civil_war: Ran won). Not when the loyalists won (they end the disaster too).
+country_event = {
+	id = flavor_ran.70
+	title = flavor_ran.70.t
+	desc = flavor_ran.70.desc
+	picture = RAN_LAST_SPELL_CARD_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		NOT = { has_country_flag = ran_lost_civil_war }
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = ran_civil_war_over
+			every_owned_province = {
+				limit = { has_province_flag = ran_loyalists_rose }
+				clr_province_flag = ran_loyalists_rose
+			}
+			ran_find_yukari_country = yes
+			if = {
+				limit = {
+					has_saved_event_target = ran_yukari_country
+					event_target:ran_yukari_country = { ai = no }
+				}
+				event_target:ran_yukari_country = {
+					country_event = { id = flavor_ran.74 }
+				}
+			}
+		}
+	}
+
+	option = {
+		name = flavor_ran.70.a
+		custom_tooltip = RAN_last_spell_card_tt
+		hidden_effect = {
+			country_event = { id = flavor_ran.71 }
+		}
+	}
+}
+
+#The Formula Rewritten: The Shikigami Unbound
+country_event = {
+	id = flavor_ran.71
+	title = flavor_ran.71.t
+	desc = flavor_ran.71.desc
+	picture = RAN_FORMULA_REWRITTEN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.71.a
+		custom_tooltip = RAN_ruler_six_tt
+		hidden_effect = {
+			ran_raise_ruler_to_six = yes
+		}
+		add_country_modifier = {
+			name = ran_unbound_shikigami
+			duration = -1
+		}
+		#Golden Era, vanilla ARB pattern (03_scripted_effects_for_mission_rewards.txt, ARB_flavor_event_6_effect)
+		if = {
+			limit = { has_dlc = "Mandate of Heaven" }
+			if = {
+				limit = { in_golden_age = yes }
+				custom_tooltip = RAN_golden_era_extended_tt
+				hidden_effect = { extend_golden_age = 600 }
+			}
+			else_if = {
+				limit = { has_had_golden_age = yes }
+				custom_tooltip = RAN_golden_era_renewed_tt
+				hidden_effect = { reset_golden_age = yes }
+			}
+			else = {
+				custom_tooltip = RAN_golden_era_available_tt
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = ran_golden_era_of_the_fox
+				duration = 18250
+			}
+		}
+		hidden_effect = {
+			country_event = { id = flavor_ran.72 }
+		}
+	}
+}
+
+#Goddess of the North
+country_event = {
+	id = flavor_ran.72
+	title = flavor_ran.72.t
+	desc = flavor_ran.72.desc
+	picture = RAN_GODDESS_OF_THE_NORTH_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.72.a
+		custom_tooltip = RAN_goddess_of_the_north_deity_tt
+		hidden_effect = {
+			set_global_flag = th_ran_goddess_of_the_north
+			every_country = {
+				limit = { has_personal_deity = th_ran_devyatikhvostaya }
+				change_personal_deity = th_ran_goddess_of_the_north
+			}
+		}
+		add_country_modifier = {
+			name = ran_living_goddess
+			duration = -1
+		}
+		custom_tooltip = RAN_goddess_blessing_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { religion = ROOT }
+				add_province_modifier = {
+					name = ran_goddess_blessing
+					duration = 9125
+				}
+			}
+		}
+	}
+}
+
+#Back to Mayohiga (the loyalists enforced their demands: Ran lost). No reward.
+country_event = {
+	id = flavor_ran.73
+	title = flavor_ran.73.t
+	desc = {
+		trigger = { has_saved_event_target = ran_yukari_country }
+		desc = flavor_ran.73.desc
+	}
+	desc = {
+		trigger = { NOT = { has_saved_event_target = ran_yukari_country } }
+		desc = flavor_ran.73.desc_takeover
+	}
+	picture = RAN_BACK_TO_MAYOHIGA_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			every_owned_province = {
+				limit = { has_province_flag = ran_loyalists_rose }
+				clr_province_flag = ran_loyalists_rose
+			}
+			ran_find_yukari_country = yes
+		}
+	}
+
+	option = {
+		name = flavor_ran.73.a
+		if = {
+			limit = { has_saved_event_target = ran_yukari_country }
+			custom_tooltip = RAN_return_vassal_tt
+		}
+		else = {
+			custom_tooltip = RAN_return_takeover_tt
+		}
+		hidden_effect = {
+			ran_bow_to_yukari = yes
+		}
+	}
+}
+
+#The Last Spell Card, seen from Yukari's side (only when Yukari's country is played by a human)
+country_event = {
+	id = flavor_ran.74
+	title = flavor_ran.74.t
+	desc = flavor_ran.74.desc
+	picture = RAN_LAST_SPELL_CARD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.74.a
+	}
+}
+
+#Yukari's reinforcement waves (fired by flavor_ran.79 at about 1.5, 3 and 4.5 years). Sized by Ran's will.
+country_event = {
+	id = flavor_ran.75
+	title = flavor_ran.75.t
+	desc = flavor_ran.75.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	immediate = {
+		hidden_effect = {
+			ran_loyalist_reinforcement_wave = yes
+		}
+	}
+
+	option = {
+		name = flavor_ran.75.a
+		custom_tooltip = RAN_loyalist_wave_tt
+	}
+}
+
+country_event = {
+	id = flavor_ran.76
+	title = flavor_ran.76.t
+	desc = flavor_ran.76.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	immediate = {
+		hidden_effect = {
+			ran_loyalist_reinforcement_wave = yes
+		}
+	}
+
+	option = {
+		name = flavor_ran.76.a
+		custom_tooltip = RAN_loyalist_wave_tt
+	}
+}
+
+country_event = {
+	id = flavor_ran.77
+	title = flavor_ran.77.t
+	desc = flavor_ran.77.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	immediate = {
+		hidden_effect = {
+			ran_loyalist_reinforcement_wave = yes
+		}
+	}
+
+	option = {
+		name = flavor_ran.77.a
+		custom_tooltip = RAN_loyalist_wave_tt
+	}
+}
+
+#Hidden: monthly from th_ran_civil_war. Sends Yukari's three reinforcement waves (flavor_ran.75-77) at about 1.5, 3 and 4.5 years,
+#fires one of Yukari's sabotage events (flavor_ran.80-83) about every 10 months,
+#and fires one barrage event about every 4, 5 or 6 months by Ran's hidden will.
+country_event = {
+	id = flavor_ran.79
+	title = flavor_ran.79.t
+	desc = flavor_ran.79.desc
+	picture = RAN_CIVIL_WAR_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		#Reinforcement waves: one each at about 18, 36 and 54 months, for every will level
+		if = {
+			limit = {
+				had_country_flag = { flag = ran_civil_war_started days = 1643 }
+				NOT = { has_country_flag = ran_loyalist_wave_3 }
+			}
+			set_country_flag = ran_loyalist_wave_3
+			country_event = { id = flavor_ran.77 }
+		}
+		else_if = {
+			limit = {
+				had_country_flag = { flag = ran_civil_war_started days = 1095 }
+				NOT = { has_country_flag = ran_loyalist_wave_2 }
+			}
+			set_country_flag = ran_loyalist_wave_2
+			country_event = { id = flavor_ran.76 }
+		}
+		else_if = {
+			limit = {
+				had_country_flag = { flag = ran_civil_war_started days = 548 }
+				NOT = { has_country_flag = ran_loyalist_wave_1 }
+			}
+			set_country_flag = ran_loyalist_wave_1
+			country_event = { id = flavor_ran.75 }
+		}
+		#Yukari's sabotage: after the first 3 months, about every 10 months, the same for every will level
+		if = {
+			limit = {
+				had_country_flag = { flag = ran_civil_war_started days = 90 }
+			}
+			random = {
+				chance = 10
+				ran_yukari_sabotage = yes
+			}
+		}
+		#Barrage
+		if = {
+			limit = { check_variable = { which = ran_own_will value = 11 } }
+			random = {
+				chance = 17
+				ran_civil_war_barrage = yes
+			}
+		}
+		else_if = {
+			limit = { check_variable = { which = ran_own_will value = 8 } }
+			random = {
+				chance = 20
+				ran_civil_war_barrage = yes
+			}
+		}
+		else = {
+			random = {
+				chance = 25
+				ran_civil_war_barrage = yes
+			}
+		}
+	}
+
+	option = {
+		name = flavor_ran.79.a
+	}
+}
+
+#Yukari's sabotage (flavor_ran.80-83): picked by ran_yukari_sabotage from flavor_ran.79, about every 10 months after the first 3.
+#Each fires at most once per war. Every will level gets the same pace.
+
+#A Gap in the Treasury (sabotage: the treasury)
+country_event = {
+	id = flavor_ran.80
+	title = flavor_ran.80.t
+	desc = flavor_ran.80.desc
+	picture = RAN_YUKARI_SABOTAGE_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {		#Guard it: the gap keeps eating for 2 years
+		name = flavor_ran.80.a
+		add_years_of_income = -0.25
+		add_country_modifier = {
+			name = ran_gap_in_the_treasury
+			duration = 730
+		}
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Seal it with Ran's own barrier
+		name = flavor_ran.80.b
+		trigger = { adm_power = 100 }
+		add_years_of_income = -0.25
+		add_adm_power = -100
+		ai_chance = { factor = 60 }
+	}
+}
+
+#Gaps in the Walls (sabotage: the forts)
+country_event = {
+	id = flavor_ran.81
+	title = flavor_ran.81.t
+	desc = flavor_ran.81.desc
+	picture = RAN_YUKARI_SABOTAGE_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {		#Patch the stone
+		name = flavor_ran.81.a
+		add_country_modifier = {
+			name = ran_gaps_in_the_walls
+			duration = 730
+		}
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Ward every wall
+		name = flavor_ran.81.b
+		trigger = { mil_power = 100 }
+		add_mil_power = -100
+		ai_chance = { factor = 60 }
+	}
+}
+
+#Supplies Spirited Away (sabotage: the army's supplies)
+country_event = {
+	id = flavor_ran.82
+	title = flavor_ran.82.t
+	desc = flavor_ran.82.desc
+	picture = RAN_YUKARI_SABOTAGE_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {		#Make do
+		name = flavor_ran.82.a
+		add_country_modifier = {
+			name = ran_supplies_spirited_away
+			duration = 730
+		}
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Buy everything again
+		name = flavor_ran.82.b
+		add_years_of_income = -0.5
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Send Chen after the wagons (only while Chen serves us): half the cost
+		name = flavor_ran.82.c
+		trigger = { has_country_flag = ran_chen_in_the_north }
+		add_years_of_income = -0.25
+		ai_chance = { factor = 60 }
+	}
+}
+
+#Letters Ran Never Wrote (sabotage: diplomacy)
+country_event = {
+	id = flavor_ran.83
+	title = flavor_ran.83.t
+	desc = flavor_ran.83.desc
+	picture = RAN_YUKARI_SABOTAGE_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_disaster = th_ran_civil_war }
+
+	option = {		#Let the letters stand: neighbours and allies take offence
+		name = flavor_ran.83.a
+		custom_tooltip = RAN_forged_letters_tt
+		hidden_effect = {
+			every_country = {
+				limit = {
+					NOT = { tag = ROOT }
+					OR = {
+						is_neighbor_of = ROOT
+						alliance_with = ROOT
+					}
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = ran_forged_letters
+				}
+			}
+		}
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Send envoys with apologies
+		name = flavor_ran.83.b
+		trigger = { dip_power = 100 }
+		add_dip_power = -100
+		ai_chance = { factor = 60 }
+	}
+}
+
+#####################################################################
+#Recurring events (flavor_ran.85-99): A Letter from Mayohiga, Chen's Mischief, the False Fox.
+#Letters and Chen are sent by the hidden yearly event flavor_ran.99 (on_yearly_pulse in th_on_actions.txt).
+#The False Fox is scheduled once by RAN_gather_the_rus, 5-15 years after it.
+#None of these change Ran's hidden will.
+#####################################################################
+
+#A Letter from Mayohiga: Pocket Money
+country_event = {
+	id = flavor_ran.85
+	title = flavor_ran.85.t
+	desc = flavor_ran.85.desc
+	picture = RAN_LETTER_FROM_MAYOHIGA_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Send it: half a year of income
+		name = flavor_ran.85.a
+		add_years_of_income = -0.5
+		add_country_modifier = {
+			name = ran_yukaris_favour
+			duration = 1825
+		}
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Keep it
+		name = flavor_ran.85.b
+		ai_chance = { factor = 50 }
+	}
+}
+
+#A Letter from Mayohiga: Guards for the Barrier
+country_event = {
+	id = flavor_ran.86
+	title = flavor_ran.86.t
+	desc = flavor_ran.86.desc
+	picture = RAN_LETTER_FROM_MAYOHIGA_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Send the men: half a year of manpower recovery
+		name = flavor_ran.86.a
+		add_yearly_manpower = -0.5
+		add_country_modifier = {
+			name = ran_veterans_of_the_barrier
+			duration = 1825
+		}
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Keep them
+		name = flavor_ran.86.b
+		ai_chance = { factor = 50 }
+	}
+}
+
+#A Letter from Mayohiga: Books for the Gap. 50 / 75 / 100 power by ADM tech below 10 / 10+ / 20+, of the kind we choose.
+country_event = {
+	id = flavor_ran.87
+	title = flavor_ran.87.t
+	desc = flavor_ran.87.desc
+	picture = RAN_LETTER_FROM_MAYOHIGA_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Send the jurists (ADM)
+		name = flavor_ran.87.a
+		trigger = { ran_can_send_scholars = { power = adm } }
+		ran_send_scholars = { power = adm }
+		ai_chance = { factor = 25 }
+	}
+	option = {		#Send the translators (DIP)
+		name = flavor_ran.87.b
+		trigger = { ran_can_send_scholars = { power = dip } }
+		ran_send_scholars = { power = dip }
+		ai_chance = { factor = 25 }
+	}
+	option = {		#Send the engineers (MIL)
+		name = flavor_ran.87.c
+		trigger = { ran_can_send_scholars = { power = mil } }
+		ran_send_scholars = { power = mil }
+		ai_chance = { factor = 25 }
+	}
+	option = {		#Keep them
+		name = flavor_ran.87.d
+		ai_chance = { factor = 25 }
+	}
+}
+
+#A Letter from Mayohiga: Housework
+country_event = {
+	id = flavor_ran.88
+	title = flavor_ran.88.t
+	desc = flavor_ran.88.desc
+	picture = RAN_LETTER_FROM_MAYOHIGA_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Go home for a year; flavor_ran.89 when she is back
+		name = flavor_ran.88.a
+		add_country_modifier = {
+			name = ran_the_fox_is_away
+			duration = 365
+		}
+		custom_tooltip = RAN_fox_is_away_tt
+		hidden_effect = {
+			country_event = { id = flavor_ran.89 days = 365 }
+		}
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Send Chen instead (only while Chen serves us): no Chen's Mischief for a year
+		name = flavor_ran.88.b
+		trigger = { has_country_flag = ran_chen_in_the_north }
+		add_prestige = -10
+		custom_tooltip = RAN_chen_sent_to_mayohiga_tt
+		hidden_effect = {
+			clr_country_flag = ran_chen_sent_to_mayohiga
+			set_country_flag = ran_chen_sent_to_mayohiga
+		}
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Ignore it
+		name = flavor_ran.88.c
+		ai_chance = { factor = 30 }
+	}
+}
+
+#The Fox Comes Home (a year after Housework option a)
+country_event = {
+	id = flavor_ran.89
+	title = flavor_ran.89.t
+	desc = flavor_ran.89.desc
+	picture = RAN_LETTER_FROM_MAYOHIGA_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.89.a
+		add_stability = 1
+		add_country_modifier = {
+			name = ran_yukaris_favour
+			duration = 1825
+		}
+	}
+}
+
+#Chen's Mischief: A Cat in the Duma (always possible)
+country_event = {
+	id = flavor_ran.90
+	title = flavor_ran.90.t
+	desc = flavor_ran.90.desc
+	picture = RAN_CHENS_MISCHIEF_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Scold her
+		name = flavor_ran.90.a
+		add_stability = 1
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Laugh it off: the boyars laugh too
+		name = flavor_ran.90.b
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 10
+			}
+		}
+		else = {
+			add_prestige = 15
+		}
+		ai_chance = { factor = 50 }
+	}
+}
+
+#Chen's Mischief: Lost in the Moscow Markets (we own Moskva)
+country_event = {
+	id = flavor_ran.91
+	title = flavor_ran.91.t
+	desc = flavor_ran.91.desc
+	picture = RAN_CHENS_MISCHIEF_eventPicture
+
+	is_triggered_only = yes
+	trigger = { owns = 295 }
+
+	option = {		#Scold her
+		name = flavor_ran.91.a
+		add_stability = 1
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Laugh it off: thank the merchants
+		name = flavor_ran.91.b
+		if = {
+			limit = { has_estate = estate_burghers }
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 10
+			}
+		}
+		else = {
+			add_prestige = 15
+		}
+		ai_chance = { factor = 50 }
+	}
+}
+
+#Chen's Mischief: Chen Falls into the Neva (we own Neva)
+country_event = {
+	id = flavor_ran.92
+	title = flavor_ran.92.t
+	desc = flavor_ran.92.desc
+	picture = RAN_CHENS_MISCHIEF_eventPicture
+
+	is_triggered_only = yes
+	trigger = { owns = 33 }
+
+	option = {		#Scold her
+		name = flavor_ran.92.a
+		add_stability = 1
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Laugh it off
+		name = flavor_ran.92.b
+		add_prestige = 15
+		ai_chance = { factor = 50 }
+	}
+}
+
+#The False Fox: Rumours (once, 5-15 years after RAN_gather_the_rus)
+country_event = {
+	id = flavor_ran.93
+	title = flavor_ran.93.t
+	desc = flavor_ran.93.desc
+	picture = RAN_FALSE_FOX_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			ran_find_false_fox_home = yes
+		}
+	}
+
+	option = {
+		name = flavor_ran.93.a
+		custom_tooltip = RAN_false_fox_rumours_tt
+		hidden_effect = {
+			country_event = { id = flavor_ran.94 days = 365 }
+		}
+	}
+}
+
+#The False Fox Marches (a year after the rumours)
+country_event = {
+	id = flavor_ran.94
+	title = flavor_ran.94.t
+	desc = flavor_ran.94.desc
+	picture = RAN_FALSE_FOX_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			#Pick the pretender's province again if we no longer own the one from the rumours
+			if = {
+				limit = { NOT = { has_saved_event_target = ran_false_fox_home } }
+				ran_find_false_fox_home = yes
+			}
+			else_if = {
+				limit = {
+					event_target:ran_false_fox_home = { NOT = { owned_by = ROOT } }
+				}
+				ran_find_false_fox_home = yes
+			}
+		}
+	}
+
+	option = {		#Send spies: she vanishes before she can rise
+		name = flavor_ran.94.a
+		trigger = { dip_power = 50 }
+		add_dip_power = -50
+		custom_tooltip = RAN_false_fox_spies_tt
+		hidden_effect = {
+			set_country_flag = ran_false_fox_spies
+			country_event = { id = flavor_ran.95 days = 60 }
+		}
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Crush her: her rebels rise; flavor_ran.96 watches for their defeat
+		name = flavor_ran.94.b
+		custom_tooltip = RAN_false_fox_rebels_tt
+		hidden_effect = {
+			set_country_flag = ran_false_fox_crushed
+			event_target:ran_false_fox_home = {
+				spawn_rebels = {
+					type = th_false_fox_rebels
+					size = 2
+				}
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						is_capital = no
+					}
+					spawn_rebels = {
+						type = th_false_fox_rebels
+						size = 1
+					}
+				}
+			}
+			country_event = { id = flavor_ran.96 days = 30 }
+		}
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Invite her to court: a free level-2 spymaster
+		name = flavor_ran.94.c
+		custom_tooltip = RAN_false_fox_court_tt
+		hidden_effect = {
+			set_country_flag = ran_false_fox_court
+			define_advisor = {
+				type = spymaster
+				name = "Lisa Patrikeevna"
+				female = yes
+				skill = 2
+				culture = ROOT
+				religion = ROOT
+				discount = yes
+				cost_multiplier = 0
+			}
+			country_event = { id = flavor_ran.95 days = 365 }
+		}
+		ai_chance = { factor = 30 }
+	}
+}
+
+#The False Fox Unmasked: Mamizou. Mamizou's Wager unless her rebels won (user decision: then a penalty and no Wager).
+country_event = {
+	id = flavor_ran.95
+	title = flavor_ran.95.t
+	desc = {
+		trigger = { has_country_flag = ran_false_fox_spies }
+		desc = flavor_ran.95.desc_spies
+	}
+	desc = {
+		trigger = {
+			has_country_flag = ran_false_fox_crushed
+			NOT = { has_country_flag = ran_false_fox_won }
+		}
+		desc = flavor_ran.95.desc_crushed
+	}
+	desc = {
+		trigger = { has_country_flag = ran_false_fox_court }
+		desc = flavor_ran.95.desc_court
+	}
+	desc = {
+		trigger = { has_country_flag = ran_false_fox_won }
+		desc = flavor_ran.95.desc_won
+	}
+	picture = RAN_MAMIZOU_UNMASKED_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Accept the wager
+		name = flavor_ran.95.a
+		trigger = { NOT = { has_country_flag = ran_false_fox_won } }
+		if = {
+			limit = { has_country_flag = ran_false_fox_crushed }
+			add_army_tradition = 10
+			add_prestige = 25
+		}
+		add_country_modifier = {
+			name = ran_mamizous_wager
+			duration = 7300
+		}
+	}
+	option = {		#Her rebels won
+		name = flavor_ran.95.b
+		trigger = { has_country_flag = ran_false_fox_won }
+		add_stability = -1
+		add_prestige = -50
+	}
+}
+
+#Hidden: checks every 30 days whether the False Fox's rebels are gone (Marches option b). Their victory fires flavor_ran.95 from the rebel type instead.
+country_event = {
+	id = flavor_ran.96
+	title = flavor_ran.96.t
+	desc = flavor_ran.96.desc
+	picture = RAN_FALSE_FOX_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		if = {
+			limit = { has_spawned_rebels = th_false_fox_rebels }
+			country_event = { id = flavor_ran.96 days = 30 }
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = ran_false_fox_won } }
+			country_event = { id = flavor_ran.95 }
+		}
+	}
+
+	option = {
+		name = flavor_ran.96.a
+	}
+}
+
+#Hidden: yearly (on_yearly_pulse in th_on_actions.txt). Sends A Letter from Mayohiga (flavor_ran.85-88) at most once every 20 years
+#until the finale, and Chen's Mischief (flavor_ran.90-92) at most once every 15 years while Chen serves us.
+country_event = {
+	id = flavor_ran.99
+	title = flavor_ran.99.t
+	desc = flavor_ran.99.desc
+	picture = RAN_LETTER_FROM_MAYOHIGA_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
 	trigger = {
 		tag = RAN
-		is_year = 1445
-		NOT = { religion = orthodox }
+		NOT = { map_setup = map_setup_random }
 	}
 
-	mean_time_to_happen = {
-		months = 1
-	}
-
-	option = {
-		name = flavor_ran.2.a
-		
-		ai_chance = { 
-			factor = 25
-		}
-	}
-
-	option = {
-		name = flavor_ran.2.b
-		
-		change_religion = orthodox
-
-		capital_scope = {
-			area = {
-				change_religion = orthodox
+	immediate = {
+		#Letters: not before 1450, then at most once every 20 years (about one year in five once allowed), until the finale
+		if = {
+			limit = {
+				is_year = 1450
+				NOT = { mission_completed = RAN_good_job_ran }
+				OR = {
+					NOT = { has_country_flag = ran_letter_received }
+					had_country_flag = { flag = ran_letter_received days = 7300 }
+				}
+			}
+			random = {
+				chance = 20
+				ran_letter_from_mayohiga = yes
 			}
 		}
-		
-		ai_chance = { 
-			factor = 50
+		#Chen's Mischief: from 5 years after Chen arrives, at most once every 15 years, never while she is at Mayohiga (Housework option b)
+		if = {
+			limit = {
+				had_country_flag = { flag = ran_chen_in_the_north days = 1825 }
+				OR = {
+					NOT = { has_country_flag = ran_chen_sent_to_mayohiga }
+					had_country_flag = { flag = ran_chen_sent_to_mayohiga days = 365 }
+				}
+				OR = {
+					NOT = { has_country_flag = ran_chen_mischief_seen }
+					had_country_flag = { flag = ran_chen_mischief_seen days = 5475 }
+				}
+			}
+			random = {
+				chance = 20
+				ran_chens_mischief = yes
+			}
 		}
 	}
 
 	option = {
-		name = flavor_ran.2.c
-		
-		change_religion = th_oldhakurei
-		add_country_modifier = {
-			name = "conversion_zeal_v2"
-			duration = 10950
-		}
-		capital_scope = {
-			area = {
-				change_religion = th_oldhakurei
-			}
-		}
-		
-		ai_chance = { 
-			factor = 25
-		}
+		name = flavor_ran.99.a
 	}
 }
