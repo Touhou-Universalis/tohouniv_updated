@@ -17,9 +17,6 @@ country_event = {
 		name = flavor_ran.1.b
 		highlight = yes
 		hidden_effect = {
-			kill_heir = {}		#Mayohiga's heir (Ran) leaves with her new country. Hidden, not removed (user)
-		}
-		hidden_effect = {
 			4257 = {
 				cede_province = ROOT
 				add_core = RAN
@@ -57,6 +54,7 @@ country_event = {
 		release = RAN
 		switch_tag = RAN
 		hidden_effect = {
+			MHG = { country_event = { id = flavor_ran.2 days = 30 } }	#Mayohiga's heir (Ran) leaves a month later, once the player is RAN (user)
 			RAN = {
 				change_government = monarchy
 				add_government_reform = Gensokyan_ran_monarchy
@@ -119,9 +117,35 @@ country_event = {
 			}
 		}
 	
-		ai_chance = { 
+		ai_chance = {
 			factor = 0
 		}
+	}
+}
+
+#Hidden: Mayohiga's heir (Ran) leaves with her new country (flavor_ran.1 b). Fired on Mayohiga a month after the tag switch,
+#so the "heir has died" message goes to Mayohiga's AI instead of the player (user)
+country_event = {
+	id = flavor_ran.2
+	title = flavor_ran.2.t
+	desc = flavor_ran.2.desc
+	picture = RAN_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		if = {
+			limit = {
+				has_heir = yes
+				has_heir_flag = touhou_original_heir
+			}
+			kill_heir = {}
+		}
+	}
+
+	option = {
+		name = flavor_ran.2.a
 	}
 }
 
@@ -550,6 +574,7 @@ country_event = {
 
 	is_triggered_only = yes
 
+	#Each choice: its passenger (advisor) and that city's lessons, permanent (user)
 	option = {		#A shipwright
 		name = flavor_ran.22.a
 		define_advisor = {
@@ -558,6 +583,10 @@ country_event = {
 			culture = ROOT
 			religion = ROOT
 			cost_multiplier = 0.5
+		}
+		add_country_modifier = {
+			name = ran_amsterdam_shipyards
+			duration = -1
 		}
 		ai_chance = { factor = 33 }
 	}
@@ -570,6 +599,10 @@ country_event = {
 			religion = ROOT
 			cost_multiplier = 0.5
 		}
+		add_country_modifier = {
+			name = ran_konigsberg_gunnery
+			duration = -1
+		}
 		ai_chance = { factor = 33 }
 	}
 	option = {		#A scholar
@@ -580,6 +613,10 @@ country_event = {
 			culture = ROOT
 			religion = ROOT
 			cost_multiplier = 0.5
+		}
+		add_country_modifier = {
+			name = ran_leiden_learning
+			duration = -1
 		}
 		ai_chance = { factor = 34 }
 	}
@@ -597,7 +634,7 @@ country_event = {
 		trigger = { NOT = { hre_size = 1 } }
 		desc = flavor_ran.23.desc_gone
 	}
-	picture = TOUHOUMAPS_eventPicture
+	picture = YUKARI2_eventPicture	#user: was TOUHOUMAPS
 
 	is_triggered_only = yes
 
@@ -813,8 +850,6 @@ country_event = {
 			}
 			set_country_flag = ran_chen_in_the_north
 		}
-		custom_tooltip = SEPERATOR_TOOLTIP
-		custom_tooltip = RAN_chen_stays_loyal_tt
 		hidden_effect = {
 			change_variable = { which = ran_own_will value = 1 }
 		}
@@ -1562,6 +1597,76 @@ country_event = {
 		give_claims = { area = ishim_area }
 		th_unlock_mercenary_company = { mercenary_company = merc_th_yermak_cossacks }
 		ai_chance = { factor = 30 }
+	}
+}
+
+#What Is Fort Ross For? (RAN_fort_ross). User: two options. Both keep the old reward (fort, Fort Ross modifier, prestige).
+country_event = {
+	id = flavor_ran.55
+	title = flavor_ran.55.t
+	desc = flavor_ran.55.desc
+	picture = COLONIZATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Feed Alaska: development across Cascadia and northern California
+		name = flavor_ran.55.a
+		871 = {
+			if = {
+				limit = {
+					NOT = { has_building = fort_15th }
+					NOT = { has_building = fort_16th }
+					NOT = { has_building = fort_17th }
+					NOT = { has_building = fort_18th }
+				}
+				add_building = fort_15th
+			}
+			add_province_modifier = {
+				name = ran_fort_ross
+				duration = -1
+			}
+		}
+		add_prestige = 25
+		custom_tooltip = RAN_feed_alaska_tt
+		hidden_effect = {
+			every_province = {
+				limit = {
+					OR = {
+						region = cascadia_region
+						area = northern_california_area
+					}
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				add_base_tax = 1
+				add_base_production = 1
+			}
+		}
+		ai_chance = { factor = 50 }
+	}
+	option = {		#The Russian-American Company: trade centre in Pomo, merchant and tariffs for 20 years
+		name = flavor_ran.55.b
+		871 = {
+			if = {
+				limit = {
+					NOT = { has_building = fort_15th }
+					NOT = { has_building = fort_16th }
+					NOT = { has_building = fort_17th }
+					NOT = { has_building = fort_18th }
+				}
+				add_building = fort_15th
+			}
+			add_province_modifier = {
+				name = ran_fort_ross
+				duration = -1
+			}
+			add_center_of_trade_level = 1
+		}
+		add_prestige = 25
+		add_country_modifier = {
+			name = ran_russian_american_company
+			duration = 7300
+		}
+		ai_chance = { factor = 50 }
 	}
 }
 
