@@ -19,7 +19,6 @@ ran_fox_sudebnik_effect = {
 	tooltip = {
 		add_local_autonomy_no_authority_effect = -10
 	}
-	custom_tooltip = RAN_fox_sudebnik_tt
 	hidden_effect = {
 		every_owned_province = {
 			add_local_autonomy_no_authority_effect = -10
@@ -578,7 +577,8 @@ ran_send_scholars = {
 	}
 }
 
-#Country scope: one of Chen's Mischief scenes (flavor_ran.90-92). The last scene is ten times less likely to repeat. Called by flavor_ran.99.
+#Country scope: one of Chen's Mischief scenes (flavor_ran.90-92, 97, 98). The last scene is ten times less likely to repeat.
+#The big scenes (97, 98) need a spoiled Chen (ran_chen_spoiled 2+). Called by flavor_ran.99.
 ran_chens_mischief = {
 	clr_country_flag = ran_chen_mischief_seen
 	set_country_flag = ran_chen_mischief_seen
@@ -609,11 +609,48 @@ ran_chens_mischief = {
 				NOT = { owns = 33 }
 			}
 			modifier = {
+				factor = 0
+				has_country_flag = ran_chen_waterproof
+			}
+			modifier = {
 				factor = 0.1
 				has_country_flag = ran_last_mischief_neva
 			}
 			ran_set_last_mischief = { scene = neva }
 			country_event = { id = flavor_ran.92 }		#Chen Falls into the Neva
+		}
+		15 = {
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = ran_chen_spoiled value = 2 } }
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					any_neighbor_country = {
+						NOT = { is_subject_of = ROOT }
+						NOT = { war_with = ROOT }
+					}
+				}
+			}
+			modifier = {
+				factor = 0.1
+				has_country_flag = ran_last_mischief_lapdog
+			}
+			ran_set_last_mischief = { scene = lapdog }
+			country_event = { id = flavor_ran.97 }		#The Ambassador's Lapdog
+		}
+		15 = {
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = ran_chen_spoiled value = 2 } }
+			}
+			modifier = {
+				factor = 0.1
+				has_country_flag = ran_last_mischief_cats
+			}
+			ran_set_last_mischief = { scene = cats }
+			country_event = { id = flavor_ran.98 }		#A Kremlin Full of Cats
 		}
 	}
 }
@@ -622,7 +659,81 @@ ran_set_last_mischief = {
 	clr_country_flag = ran_last_mischief_duma
 	clr_country_flag = ran_last_mischief_market
 	clr_country_flag = ran_last_mischief_neva
+	clr_country_flag = ran_last_mischief_lapdog
+	clr_country_flag = ran_last_mischief_cats
 	set_country_flag = ran_last_mischief_$scene$
+}
+
+#Country scope: a Chen's Mischief option that scolds her. She sulks for a year and is no longer spoiled.
+ran_chen_scold = {
+	add_country_modifier = {
+		name = ran_chen_sulking
+		duration = 365
+	}
+	if = {
+		limit = { check_variable = { which = ran_chen_spoiled value = 1 } }
+		custom_tooltip = RAN_chen_scolded_tt
+	}
+	hidden_effect = {
+		set_variable = { which = ran_chen_spoiled value = 0 }
+	}
+}
+
+#Country scope: a Chen's Mischief option that indulges her. Chen gets more spoiled (ran_chen_spoiled, at most 3).
+#At 2+ her mischief comes every 10 years instead of 15 and the big scenes can fire (flavor_ran.97, 98).
+#The first time she reaches 3, Yukari writes (flavor_ran.84) a few months later, unless the finale has begun.
+ran_chen_spoil = {
+	if = {
+		limit = { check_variable = { which = ran_chen_spoiled value = 3 } }
+		custom_tooltip = RAN_chen_spoiled_max_tt
+	}
+	else_if = {
+		limit = { check_variable = { which = ran_chen_spoiled value = 2 } }
+		custom_tooltip = RAN_chen_spoiled_3_tt
+		if = {
+			limit = {
+				NOT = { has_country_flag = ran_yukari_spoil_letter }
+				NOT = { mission_completed = RAN_good_job_ran }
+			}
+			custom_tooltip = RAN_chen_spoiled_letter_tt
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = ran_chen_spoiled value = 1 } }
+		custom_tooltip = RAN_chen_spoiled_2_tt
+	}
+	else = {
+		custom_tooltip = RAN_chen_spoiled_1_tt
+	}
+	hidden_effect = {
+		if = {
+			limit = { NOT = { check_variable = { which = ran_chen_spoiled value = 3 } } }
+			change_variable = { which = ran_chen_spoiled value = 1 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = ran_chen_spoiled value = 3 }
+				NOT = { has_country_flag = ran_yukari_spoil_letter }
+				NOT = { mission_completed = RAN_good_job_ran }
+			}
+			set_country_flag = ran_yukari_spoil_letter
+			country_event = { id = flavor_ran.84 days = 60 random = 60 }
+		}
+	}
+}
+
+#Country scope: one outcome of laughing off Chen's mischief. $loyalty$ loyalty with $estate$, or $prestige$ prestige without that estate.
+ran_chen_laugh_result = {
+	if = {
+		limit = { has_estate = $estate$ }
+		add_estate_loyalty = {
+			estate = $estate$
+			loyalty = $loyalty$
+		}
+	}
+	else = {
+		add_prestige = $prestige$
+	}
 }
 
 #Country scope: saves event target ran_false_fox_home, where the False Fox appears.

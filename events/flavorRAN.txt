@@ -1387,7 +1387,7 @@ country_event = {
 				owner = { add_treasury = 7.5 }
 			}
 		}
-		add_stability = 1
+		add_stability_or_adm_power = yes
 		hidden_effect = {
 			change_variable = { which = ran_own_will value = 1 }
 		}
@@ -2485,8 +2485,9 @@ country_event = {
 }
 
 #####################################################################
-#Recurring events (flavor_ran.85-99): A Letter from Mayohiga, Chen's Mischief, the False Fox.
+#Recurring events (flavor_ran.84-99): A Letter from Mayohiga, Chen's Mischief, the False Fox.
 #Letters and Chen are sent by the hidden yearly event flavor_ran.99 (on_yearly_pulse in th_on_actions.txt).
+#Laughing off Chen's mischief spoils her; the first time she is fully spoiled, Yukari writes (flavor_ran.84).
 #The False Fox is scheduled once by RAN_gather_the_rus, 5-15 years after it.
 #None of these change Ran's hidden will.
 #####################################################################
@@ -2621,7 +2622,7 @@ country_event = {
 
 	option = {
 		name = flavor_ran.89.a
-		add_stability = 1
+		add_stability_or_adm_power = yes	#vanilla: 50 ADM instead at 3 stability
 		add_country_modifier = {
 			name = ran_yukaris_favour
 			duration = 1825
@@ -2630,6 +2631,8 @@ country_event = {
 }
 
 #Chen's Mischief: A Cat in the Duma (always possible)
+#Every scene offers the same three kinds of answer: scold her (ran_chen_scold: Chen sulks for a year and is no longer spoiled),
+#laugh it off (a gamble that spoils her further: ran_chen_spoil) or make amends (gold or power, nothing else).
 country_event = {
 	id = flavor_ran.90
 	title = flavor_ran.90.t
@@ -2640,22 +2643,29 @@ country_event = {
 
 	option = {		#Scold her
 		name = flavor_ran.90.a
-		add_stability = 1
-		ai_chance = { factor = 50 }
+		ran_chen_scold = yes
+		ai_chance = { factor = 35 }
 	}
-	option = {		#Laugh it off: the boyars laugh too
+	option = {		#Laugh it off: the Duma laughs too, or the old boyar walks out
 		name = flavor_ran.90.b
-		if = {
-			limit = { has_estate = estate_nobles }
-			add_estate_loyalty = {
-				estate = estate_nobles
-				loyalty = 10
+		random_list = {
+			50 = {
+				custom_tooltip = RAN_chen_duma_laughs_tt
+				ran_chen_laugh_result = { estate = estate_nobles loyalty = 10 prestige = 10 }
+			}
+			50 = {
+				custom_tooltip = RAN_chen_duma_walks_out_tt
+				ran_chen_laugh_result = { estate = estate_nobles loyalty = -15 prestige = -10 }
+				add_prestige = -10
 			}
 		}
-		else = {
-			add_prestige = 15
-		}
-		ai_chance = { factor = 50 }
+		ran_chen_spoil = yes
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Pay for the damage
+		name = flavor_ran.90.c
+		add_years_of_income = -0.25
+		ai_chance = { factor = 35 }
 	}
 }
 
@@ -2671,26 +2681,33 @@ country_event = {
 
 	option = {		#Scold her
 		name = flavor_ran.91.a
-		add_stability = 1
-		ai_chance = { factor = 50 }
+		ran_chen_scold = yes
+		ai_chance = { factor = 35 }
 	}
-	option = {		#Laugh it off: thank the merchants
+	option = {		#Laugh it off: the merchants tear up the bill, or talk about it in every guild hall
 		name = flavor_ran.91.b
-		if = {
-			limit = { has_estate = estate_burghers }
-			add_estate_loyalty = {
-				estate = estate_burghers
-				loyalty = 10
+		random_list = {
+			50 = {
+				custom_tooltip = RAN_chen_market_laughs_tt
+				ran_chen_laugh_result = { estate = estate_burghers loyalty = 10 prestige = 10 }
+			}
+			50 = {
+				custom_tooltip = RAN_chen_market_angry_tt
+				ran_chen_laugh_result = { estate = estate_burghers loyalty = -15 prestige = -10 }
+				add_prestige = -10
 			}
 		}
-		else = {
-			add_prestige = 15
-		}
-		ai_chance = { factor = 50 }
+		ran_chen_spoil = yes
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Pay the bill
+		name = flavor_ran.91.c
+		add_years_of_income = -0.25
+		ai_chance = { factor = 35 }
 	}
 }
 
-#Chen's Mischief: Chen Falls into the Neva (we own Neva)
+#Chen's Mischief: Chen Falls into the Neva (we own Neva; never again once option c made her shikigami waterproof)
 country_event = {
 	id = flavor_ran.92
 	title = flavor_ran.92.t
@@ -2702,13 +2719,198 @@ country_event = {
 
 	option = {		#Scold her
 		name = flavor_ran.92.a
-		add_stability = 1
-		ai_chance = { factor = 50 }
+		ran_chen_scold = yes
+		ai_chance = { factor = 35 }
 	}
-	option = {		#Laugh it off
+	option = {		#Laugh it off: the city laughs with her, or at us
 		name = flavor_ran.92.b
-		add_prestige = 15
-		ai_chance = { factor = 50 }
+		random_list = {
+			50 = {
+				custom_tooltip = RAN_chen_neva_laughs_tt
+				add_prestige = 10
+			}
+			50 = {
+				custom_tooltip = RAN_chen_neva_mocked_tt
+				add_prestige = -20
+			}
+		}
+		ran_chen_spoil = yes
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Write a waterproof formula: this scene never comes again
+		name = flavor_ran.92.c
+		add_adm_power = -50
+		custom_tooltip = RAN_chen_waterproof_tt
+		hidden_effect = {
+			set_country_flag = ran_chen_waterproof
+		}
+		ai_chance = { factor = 35 }
+	}
+}
+
+#Chen's Mischief: The Ambassador's Lapdog (a big scene: only while Chen is spoiled, ran_chen_spoiled 2+)
+#The envoy comes from a neighbour at peace with us that isn't our subject.
+country_event = {
+	id = flavor_ran.97
+	title = flavor_ran.97.t
+	desc = flavor_ran.97.desc
+	picture = CHEN2_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		any_neighbor_country = {
+			NOT = { is_subject_of = ROOT }
+			NOT = { war_with = ROOT }
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_neighbor_country = {
+				limit = {
+					NOT = { is_subject_of = ROOT }
+					NOT = { war_with = ROOT }
+				}
+				save_event_target_as = ran_lapdog_envoy
+			}
+		}
+	}
+
+	option = {		#Scold her
+		name = flavor_ran.97.a
+		ran_chen_scold = yes
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Let Chen apologise herself: she charms the envoy, or bites him
+		name = flavor_ran.97.b
+		random_list = {
+			50 = {
+				custom_tooltip = RAN_chen_lapdog_charms_tt
+				add_prestige = 10
+				event_target:ran_lapdog_envoy = {
+					add_opinion = {
+						who = ROOT
+						modifier = ran_chen_charmed_envoy
+					}
+				}
+			}
+			50 = {
+				custom_tooltip = RAN_chen_lapdog_bites_tt
+				add_prestige = -15
+				event_target:ran_lapdog_envoy = {
+					add_opinion = {
+						who = ROOT
+						modifier = ran_chen_bit_envoy
+					}
+				}
+			}
+		}
+		ran_chen_spoil = yes
+		ai_chance = { factor = 20 }
+	}
+	option = {		#Send the envoy home with gifts
+		name = flavor_ran.97.c
+		add_years_of_income = -0.5
+		ai_chance = { factor = 30 }
+	}
+	option = {		#The dog started it
+		name = flavor_ran.97.d
+		add_prestige = 5
+		event_target:ran_lapdog_envoy = {
+			add_opinion = {
+				who = ROOT
+				modifier = ran_dog_started_it
+			}
+		}
+		ran_chen_spoil = yes
+		ai_chance = { factor = 20 }
+	}
+}
+
+#Chen's Mischief: A Kremlin Full of Cats (a big scene: only while Chen is spoiled, ran_chen_spoiled 2+)
+country_event = {
+	id = flavor_ran.98
+	title = flavor_ran.98.t
+	desc = flavor_ran.98.desc
+	picture = CHENSWING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Scold her: every cat goes back to the street
+		name = flavor_ran.98.a
+		ran_chen_scold = yes
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Let them stay: clean granaries, and a gamble on the court's dignity
+		name = flavor_ran.98.b
+		capital_scope = {
+			add_province_modifier = {
+				name = ran_kremlin_cats
+				duration = 3650
+			}
+		}
+		random_list = {
+			50 = {
+				custom_tooltip = RAN_chen_cats_behave_tt
+			}
+			50 = {
+				custom_tooltip = RAN_chen_cats_throne_tt
+				add_prestige = -25
+			}
+		}
+		ran_chen_spoil = yes
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Find every cat a home
+		name = flavor_ran.98.c
+		add_years_of_income = -0.5
+		ai_chance = { factor = 30 }
+	}
+}
+
+#I Told You Not to Spoil Her: Yukari writes once, 2-4 months after Chen first becomes fully spoiled (ran_chen_spoil). Not after the finale.
+country_event = {
+	id = flavor_ran.84
+	title = flavor_ran.84.t
+	desc = flavor_ran.84.desc
+	picture = YAKUMOHOME_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		NOT = { mission_completed = RAN_good_job_ran }
+	}
+
+	option = {		#Be stricter: the same as scolding her
+		name = flavor_ran.84.a
+		ran_chen_scold = yes
+		ai_chance = { factor = 40 }
+	}
+	option = {		#Invite Yukari to teach her: Chen behaves, or learns new tricks
+		name = flavor_ran.84.b
+		random_list = {
+			50 = {
+				custom_tooltip = RAN_yukari_teaches_chen_good_tt
+				add_country_modifier = {
+					name = ran_yukaris_favour
+					duration = 1825
+				}
+				custom_tooltip = RAN_chen_scolded_tt
+				hidden_effect = {
+					set_variable = { which = ran_chen_spoiled value = 0 }
+				}
+			}
+			50 = {
+				custom_tooltip = RAN_yukari_teaches_chen_bad_tt
+				add_prestige = -15
+			}
+		}
+		ai_chance = { factor = 30 }
+	}
+	option = {		#Raise her my way: Chen stays spoiled
+		name = flavor_ran.84.c
+		add_prestige = 10
+		custom_tooltip = RAN_chen_stays_spoiled_tt
+		ai_chance = { factor = 30 }
 	}
 }
 
@@ -2892,7 +3094,7 @@ country_event = {
 }
 
 #Hidden: yearly (on_yearly_pulse in th_on_actions.txt). Sends A Letter from Mayohiga (flavor_ran.85-88) at most once every 20 years
-#until the finale, and Chen's Mischief (flavor_ran.90-92) at most once every 15 years while Chen serves us.
+#until the finale, and Chen's Mischief (flavor_ran.90-92, 97, 98) at most once every 15 years (10 if spoiled) while Chen serves us.
 country_event = {
 	id = flavor_ran.99
 	title = flavor_ran.99.t
@@ -2922,7 +3124,8 @@ country_event = {
 				ran_letter_from_mayohiga = yes
 			}
 		}
-		#Chen's Mischief: from 5 years after Chen arrives, at most once every 15 years, never while she is at Mayohiga (Housework option b)
+		#Chen's Mischief: from 5 years after Chen arrives, at most once every 15 years (10 while she is spoiled, ran_chen_spoiled 2+),
+		#never while she is at Mayohiga (Housework option b)
 		if = {
 			limit = {
 				had_country_flag = { flag = ran_chen_in_the_north days = 1825 }
@@ -2933,6 +3136,10 @@ country_event = {
 				OR = {
 					NOT = { has_country_flag = ran_chen_mischief_seen }
 					had_country_flag = { flag = ran_chen_mischief_seen days = 5475 }
+					AND = {
+						check_variable = { which = ran_chen_spoiled value = 2 }
+						had_country_flag = { flag = ran_chen_mischief_seen days = 3650 }
+					}
 				}
 			}
 			random = {
