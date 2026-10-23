@@ -121,12 +121,6 @@ ran_slot1_russian_lands = {
 		}
 		effect = {
 			country_event = { id = flavor_ran.10 }
-			if = {
-				limit = {
-					NOT = { government_rank = 2 }
-				}
-				set_government_rank = 2
-			}
 			310 = {
 				add_province_modifier = {
 					name = ran_fox_blessed_market
@@ -138,6 +132,7 @@ ran_slot1_russian_lands = {
 				duration = -1
 			}
 			custom_tooltip = SEPERATOR_TOOLTIP
+			give_claims = { area = beloozero_area }
 			give_claims = { area = vologda_area }
 			give_claims = { area = moscow_area }
 			give_claims = { area = yaroslavl_area }
@@ -183,6 +178,12 @@ ran_slot1_russian_lands = {
 			owns_or_non_sovereign_subject_of = 1961
 		}
 		effect = {
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
 			custom_tooltip = RAN_master_of_the_north_dev_tt
 			hidden_effect = {
 				every_owned_province = {
@@ -283,9 +284,21 @@ ran_slot1_russian_lands = {
 		position = 6
 		provinces_to_highlight = {
 			region = russia_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			OR = {
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				AND = {
+					OR = {
+						province_id = 295
+						province_id = 33
+					}
+					NOT = { owned_by = ROOT }
+				}
+			}
 		}
 		trigger = {
+			#Moskva and Neva ourselves (not a subject): flavor_ran.13 offers the throne in one or the other
+			owns = 295
+			owns = 33
 			custom_trigger_tooltip = {
 				tooltip = RAN_gather_the_rus_90_tt
 				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
@@ -529,6 +542,7 @@ ran_slot2_north_and_west = {
 					NOT = { has_building = shipyard }
 					NOT = { has_building = dock }
 				}
+				NOT = { development = 8 }
 			}
 		}
 		trigger = {
@@ -538,11 +552,14 @@ ran_slot2_north_and_west = {
 					has_building = shipyard
 					has_building = dock
 				}
+				development = 8	#a town before it becomes Kitsunegrad (4 in 1444)
 			}
 			navy_size = 20
 		}
 		effect = {
 			313 = {
+				change_province_name = "Kitsunegrad"
+				rename_capital = "Kitsunegrad"
 				add_base_tax = 1
 				add_base_production = 2
 				add_province_modifier = {
@@ -1026,21 +1043,6 @@ ran_slot3_fox_court = {
 			add_treasury = -100
 			tooltip = {
 				1955 = {
-					if = {
-						limit = {
-							NOT = { has_building = temple }
-							NOT = { has_building = cathedral }
-						}
-						add_building = temple
-					}
-					if = {
-						limit = {
-							NOT = { has_building = marketplace }
-							NOT = { has_building = trade_depot }
-							NOT = { has_building = stock_exchange }
-						}
-						add_building = marketplace
-					}
 					add_province_modifier = {
 						name = ran_shrine_of_the_nine_tailed_fox
 						duration = -1
@@ -1087,7 +1089,7 @@ ran_slot3_fox_court = {
 		required_missions = { RAN_fox_faith }
 		position = 3
 		trigger = {
-			adm_tech = 6
+			adm_tech = 8
 			th_has_adm_advisor_2 = yes
 			adm_power = 100
 		}
@@ -1128,6 +1130,9 @@ ran_slot3_fox_court = {
 				province_id = 295
 				province_id = 294
 				province_id = 310
+				province_id = 307
+				province_id = 1956
+				province_id = 308
 			}
 			OR = {
 				NOT = { owned_by = ROOT }
@@ -1138,7 +1143,11 @@ ran_slot3_fox_court = {
 			295 = { owned_by = ROOT is_core = ROOT }
 			294 = { owned_by = ROOT is_core = ROOT }
 			310 = { owned_by = ROOT is_core = ROOT }
-			adm_tech = 8
+			#The Golden Ring: Vladimir, Suzdal, Yaroslavl
+			307 = { owned_by = ROOT is_core = ROOT }
+			1956 = { owned_by = ROOT is_core = ROOT }
+			308 = { owned_by = ROOT is_core = ROOT }
+			adm_tech = 10
 			estate_loyalty = { estate = estate_nobles loyalty = 50 }
 			estate_loyalty = { estate = estate_church loyalty = 50 }
 			estate_loyalty = { estate = estate_burghers loyalty = 50 }
