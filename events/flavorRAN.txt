@@ -343,16 +343,18 @@ country_event = {
 		set_country_flag = ran_throne_chosen
 		ai_chance = { factor = 100 }
 	}
-	option = {		#Build St. Petersburg
+	option = {		#Build Kitsunegrad
 		name = flavor_ran.13.b
 		trigger = {
 			owns = 33
 			treasury = 1000
 		}
 		add_treasury = -1000
-		custom_tooltip = RAN_petersburg_chain_tt
-		set_country_flag = ran_building_petersburg
-		country_event = { id = flavor_ran.14 days = 30 }
+		custom_tooltip = RAN_kitsunegrad_chain_tt
+		set_country_flag = ran_building_kitsunegrad
+		hidden_effect = {
+			country_event = { id = flavor_ran.14 days = 30 }
+		}
 		ai_chance = { factor = 20 }
 	}
 	option = {		#Decide later
@@ -369,7 +371,7 @@ country_event = {
 	}
 }
 
-#Stakes in the Marsh (St. Petersburg 1/4)
+#Stakes in the Marsh (Kitsunegrad 1/4)
 country_event = {
 	id = flavor_ran.14
 	title = flavor_ran.14.t
@@ -380,11 +382,14 @@ country_event = {
 
 	option = {
 		name = flavor_ran.14.a
-		country_event = { id = flavor_ran.15 days = 730 }
+		custom_tooltip = RAN_neva_work_goes_on_tt
+		hidden_effect = {
+			country_event = { id = flavor_ran.15 days = 730 }
+		}
 	}
 }
 
-#The Neva Floods (St. Petersburg 2/4)
+#The Neva Floods (Kitsunegrad 2/4)
 country_event = {
 	id = flavor_ran.15
 	title = flavor_ran.15.t
@@ -397,18 +402,23 @@ country_event = {
 		name = flavor_ran.15.a
 		trigger = { treasury = 250 }
 		add_treasury = -250
-		country_event = { id = flavor_ran.16 days = 1095 }
+		custom_tooltip = RAN_neva_on_schedule_tt
+		hidden_effect = {
+			country_event = { id = flavor_ran.16 days = 1095 }
+		}
 		ai_chance = { factor = 70 }
 	}
 	option = {		#Lose two years
 		name = flavor_ran.15.b
 		custom_tooltip = RAN_neva_delay_tt
-		country_event = { id = flavor_ran.16 days = 1825 }
+		hidden_effect = {
+			country_event = { id = flavor_ran.16 days = 1825 }
+		}
 		ai_chance = { factor = 30 }
 	}
 }
 
-#Architects from the West (St. Petersburg 3/4)
+#Architects from the West (Kitsunegrad 3/4). Each buff is permanent and applies to Neva only
 country_event = {
 	id = flavor_ran.16
 	title = flavor_ran.16.t
@@ -417,9 +427,8 @@ country_event = {
 
 	is_triggered_only = yes
 
-	option = {		#Italians: prestige and trade
+	option = {		#Italians: trade
 		name = flavor_ran.16.a
-		add_prestige = 25
 		if = {
 			limit = { owns = 33 }
 			33 = {
@@ -429,30 +438,49 @@ country_event = {
 				}
 			}
 		}
-		country_event = { id = flavor_ran.17 days = 1095 }
+		custom_tooltip = RAN_neva_finish_tt
+		hidden_effect = {
+			country_event = { id = flavor_ran.17 days = 1095 }
+		}
 		ai_chance = { factor = 34 }
 	}
 	option = {		#Dutch: the navy
 		name = flavor_ran.16.b
-		add_country_modifier = {
-			name = ran_dutch_shipwrights
-			duration = 9125
+		if = {
+			limit = { owns = 33 }
+			33 = {
+				add_province_modifier = {
+					name = ran_dutch_shipwrights
+					duration = -1
+				}
+			}
 		}
-		country_event = { id = flavor_ran.17 days = 1095 }
+		custom_tooltip = RAN_neva_finish_tt
+		hidden_effect = {
+			country_event = { id = flavor_ran.17 days = 1095 }
+		}
 		ai_chance = { factor = 33 }
 	}
-	option = {		#French: diplomacy
+	option = {		#French: the boyars move in (taxes, development)
 		name = flavor_ran.16.c
-		add_country_modifier = {
-			name = ran_french_salons
-			duration = 9125
+		if = {
+			limit = { owns = 33 }
+			33 = {
+				add_province_modifier = {
+					name = ran_french_salons
+					duration = -1
+				}
+			}
 		}
-		country_event = { id = flavor_ran.17 days = 1095 }
+		custom_tooltip = RAN_neva_finish_tt
+		hidden_effect = {
+			country_event = { id = flavor_ran.17 days = 1095 }
+		}
 		ai_chance = { factor = 33 }
 	}
 }
 
-#The Northern Capital (St. Petersburg 4/4)
+#The Northern Capital (Kitsunegrad 4/4)
 country_event = {
 	id = flavor_ran.17
 	title = flavor_ran.17.t
@@ -464,25 +492,19 @@ country_event = {
 		trigger = { NOT = { owns = 33 } }
 		desc = flavor_ran.17.desc_lost
 	}
-	picture = {
-		trigger = { has_dlc = "Third Rome" }
-		picture = WESTERN_TZAR_AND_PETERSBURG_eventPicture
-	}
-	picture = {
-		trigger = { NOT = { has_dlc = "Third Rome" } }
-		picture = CITY_VIEW_eventPicture
-	}
+	picture = RANWRITING_eventPicture
 
 	is_triggered_only = yes
 
 	option = {		#The city is finished
 		name = flavor_ran.17.a
 		trigger = { owns = 33 }
-		clr_country_flag = ran_building_petersburg
+		clr_country_flag = ran_building_kitsunegrad
 		set_country_flag = ran_throne_chosen
 		33 = {
-			change_province_name = "St. Petersburg"
-			rename_capital = "St. Petersburg"
+			change_province_name = "Kitsunegrad"
+			rename_capital = "Kitsunegrad"
+			change_culture = ROOT
 			move_capital_effect = yes
 			add_base_tax = 5
 			add_base_production = 5
@@ -500,7 +522,7 @@ country_event = {
 	option = {		#The Neva was lost while building
 		name = flavor_ran.17.b
 		trigger = { NOT = { owns = 33 } }
-		clr_country_flag = ran_building_petersburg
+		clr_country_flag = ran_building_kitsunegrad
 		set_country_flag = ran_throne_postponed
 		custom_tooltip = RAN_throne_postponed_tt
 	}
@@ -2937,12 +2959,12 @@ country_event = {
 		}
 		custom_tooltip = RAN_false_fox_rumours_tt
 		hidden_effect = {
-			country_event = { id = flavor_ran.94 days = 365 }
+			country_event = { id = flavor_ran.94 days = 1095 random = 730 }		#3-5 years
 		}
 	}
 }
 
-#The False Fox Marches (a year after the rumours). She always rises; the options only set how big the rising is (no cheap escape).
+#The False Fox Marches (3-5 years after the rumours). She always rises; the options only set how big the rising is (no cheap escape).
 country_event = {
 	id = flavor_ran.94
 	title = flavor_ran.94.t
@@ -2980,8 +3002,8 @@ country_event = {
 		custom_tooltip = RAN_false_fox_stakes_tt
 		hidden_effect = {
 			set_country_flag = ran_false_fox_field
-			ran_false_fox_rise = { home = 3 extra = 2 full = yes }
-			country_event = { id = flavor_ran.96 days = 30 }
+			ran_false_fox_rise = { home = 5 extra = 3 full = yes }
+			country_event = { id = flavor_ran.96 days = 180 }
 		}
 		ai_chance = { factor = 40 }
 	}
@@ -2992,8 +3014,8 @@ country_event = {
 		custom_tooltip = RAN_false_fox_smaller_tt
 		custom_tooltip = RAN_false_fox_stakes_tt
 		hidden_effect = {
-			ran_false_fox_rise = { home = 2 extra = 1 full = no }
-			country_event = { id = flavor_ran.96 days = 30 }
+			ran_false_fox_rise = { home = 4 extra = 2 full = no }
+			country_event = { id = flavor_ran.96 days = 180 }
 		}
 		ai_chance = { factor = 30 }
 	}
@@ -3004,8 +3026,8 @@ country_event = {
 		custom_tooltip = RAN_false_fox_smaller_tt
 		custom_tooltip = RAN_false_fox_stakes_tt
 		hidden_effect = {
-			ran_false_fox_rise = { home = 2 extra = 1 full = no }
-			country_event = { id = flavor_ran.96 days = 30 }
+			ran_false_fox_rise = { home = 4 extra = 2 full = no }
+			country_event = { id = flavor_ran.96 days = 180 }
 		}
 		ai_chance = { factor = 30 }
 	}
@@ -3067,7 +3089,8 @@ country_event = {
 	}
 }
 
-#Hidden: checks every 30 days whether the False Fox's rebels are gone (Marches option b). Their victory fires flavor_ran.95 from the rebel type instead.
+#Hidden: first 6 months after the rising, then every 30 days, checks whether the False Fox's rebels are gone: no rebel army
+#of ours left and no province of ours held by rebels. Their victory fires flavor_ran.95 from the rebel type instead.
 country_event = {
 	id = flavor_ran.96
 	title = flavor_ran.96.t
@@ -3079,7 +3102,14 @@ country_event = {
 
 	immediate = {
 		if = {
-			limit = { has_spawned_rebels = th_false_fox_rebels }
+			limit = {
+				NOT = { has_country_flag = ran_false_fox_won }
+				OR = {
+					has_spawned_rebels = th_false_fox_rebels
+					num_of_rebel_armies = 1
+					any_owned_province = { controlled_by = REB }
+				}
+			}
 			country_event = { id = flavor_ran.96 days = 30 }
 		}
 		else_if = {
