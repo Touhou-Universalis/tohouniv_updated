@@ -578,7 +578,7 @@ country_event = {
 		name = flavor_ran.21.a
 		add_country_modifier = {
 			name = ran_sound_dues
-			duration = 9125
+			duration = -1
 		}
 		every_country = {
 			limit = {
@@ -602,7 +602,7 @@ country_event = {
 		name = flavor_ran.21.b
 		add_country_modifier = {
 			name = ran_free_passage
-			duration = 9125
+			duration = -1
 		}
 		ai_chance = { factor = 50 }
 	}
@@ -709,7 +709,8 @@ country_event = {
 	}
 }
 
-#A Fox on the Imperial Throne (RAN_empress_of_the_hre)
+#The Old Crown (RAN_empress_of_the_hre). A non-Christian can't be Emperor, so: rule through a charmed Emperor (a),
+#or dissolve the Empire with the charmed electors behind us (c). b: the Empire is already gone. d: we are somehow Emperor already.
 country_event = {
 	id = flavor_ran.24
 	title = flavor_ran.24.t
@@ -725,14 +726,80 @@ country_event = {
 
 	is_triggered_only = yes
 
-	option = {		#Take the crown
-		name = flavor_ran.24.a
-		trigger = { hre_size = 1 }
-		if = {
-			limit = { is_emperor = no }
-			set_emperor = yes
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { hre_size = 1 }
+				emperor = { save_event_target_as = ran_old_crown_emperor }
+			}
 		}
-		add_imperial_influence = 25
+	}
+
+	option = {		#Rule from behind the throne
+		name = flavor_ran.24.a
+		trigger = {
+			hre_size = 1
+			is_emperor = no
+			emperor = {
+				OR = {
+					AND = {
+						has_country_flag = ran_fox_charmed
+						has_opinion = { who = ROOT value = 150 }
+					}
+					alliance_with = ROOT
+					is_subject_of = ROOT
+				}
+			}
+		}
+		set_country_flag = ran_protector_of_the_empire
+		add_country_modifier = {
+			name = ran_protector_of_the_empire
+			duration = -1
+		}
+		add_prestige = 50
+		if = {
+			limit = {
+				event_target:ran_old_crown_emperor = {
+					NOT = { alliance_with = ROOT }
+					NOT = { is_subject_of = ROOT }
+				}
+			}
+			create_alliance = event_target:ran_old_crown_emperor
+		}
+		ai_chance = { factor = 60 }
+	}
+	option = {		#Break the old crown: the charmed electors stand with us, then the Empire is dissolved
+		name = flavor_ran.24.c
+		trigger = {
+			hre_size = 1
+			is_emperor = no
+			calc_true_if = {
+				all_elector = {
+					has_country_flag = ran_fox_charmed
+				}
+				amount = 5
+			}
+			army_strength = {
+				who = emperor
+				value = 3
+			}
+		}
+		custom_tooltip = RAN_charmed_electors_ally_tt
+		hidden_effect = {
+			every_elector = {
+				limit = {
+					has_country_flag = ran_fox_charmed
+					NOT = { alliance_with = ROOT }
+					NOT = { is_subject_of = ROOT }
+				}
+				create_alliance = ROOT
+			}
+		}
+		dismantle_hre = yes
+		add_prestige = 100
+		give_claims = { region = north_german_region }
+		give_claims = { region = south_german_region }
+		ai_chance = { factor = 40 }
 	}
 	option = {		#No Empire left to rule
 		name = flavor_ran.24.b
@@ -740,6 +807,15 @@ country_event = {
 		add_prestige = 50
 		give_claims = { region = north_german_region }
 		give_claims = { region = south_german_region }
+	}
+	option = {		#Already Emperor (should not happen to a non-Christian, kept so the event always has an option)
+		name = flavor_ran.24.d
+		trigger = {
+			hre_size = 1
+			is_emperor = yes
+		}
+		add_imperial_influence = 25
+		add_prestige = 50
 	}
 }
 
@@ -768,14 +844,6 @@ country_event = {
 		add_permanent_power_projection = {
 			type = ran_permanent_power_projection
 			amount = 50
-		}
-		if = {
-			limit = { hre_size = 1 }
-			custom_tooltip = RAN_hre_faith_locked_tt
-			hidden_effect = {
-				set_hre_religion = th_ninetailedshinto
-				set_hre_religion_locked = yes
-			}
 		}
 	}
 }
@@ -1141,7 +1209,7 @@ country_event = {
 
 	is_triggered_only = yes
 
-	option = {		#Free them under the fox: Serbia and Bulgaria as vassals, where we hold their cores
+	option = {		#Free them under the fox: Serbia and Bulgaria as vassals of our faith, where we hold their cores, grateful for 30 years
 		name = flavor_ran.41.a
 		trigger = {
 			OR = {
@@ -1162,6 +1230,14 @@ country_event = {
 			}
 			release = SER
 			vassalize = SER
+			SER = {
+				change_religion = ROOT
+				capital_scope = { change_religion = ROOT }
+				add_country_modifier = {
+					name = ran_liberated_by_the_fox
+					duration = 10950
+				}
+			}
 		}
 		if = {
 			limit = {
@@ -1170,6 +1246,14 @@ country_event = {
 			}
 			release = BUL
 			vassalize = BUL
+			BUL = {
+				change_religion = ROOT
+				capital_scope = { change_religion = ROOT }
+				add_country_modifier = {
+					name = ran_liberated_by_the_fox
+					duration = 10950
+				}
+			}
 		}
 		add_prestige = 50
 		ai_chance = { factor = 30 }
@@ -1268,7 +1352,7 @@ country_event = {
 		}
 		else = {
 			add_country_modifier = {
-				name = ran_yukaris_favour_tsargrad
+				name = ran_yukaris_favour_zolotograd
 				duration = 3650
 			}
 		}
@@ -1293,7 +1377,7 @@ country_event = {
 	}
 }
 
-#The Great Church of Tsargrad (RAN_ultimate_showdown)
+#The Great Church of Zolotograd (RAN_ultimate_showdown)
 country_event = {
 	id = flavor_ran.44
 	title = flavor_ran.44.t
@@ -1316,13 +1400,23 @@ country_event = {
 
 	is_triggered_only = yes
 
-	option = {		#Make it the Fox's shrine
+	option = {		#Make it the Fox's shrine: the city and our Thrace convert
 		name = flavor_ran.44.a
 		151 = {
 			change_religion = ROOT
 		}
+		custom_tooltip = RAN_thrace_converts_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					area = thrace_area
+					NOT = { religion = ROOT }
+				}
+				change_religion = ROOT
+			}
+		}
 		add_country_modifier = {
-			name = ran_great_shrine_of_tsargrad
+			name = ran_great_shrine_of_zolotograd
 			duration = -1
 		}
 		custom_tooltip = RAN_great_church_desecrated_tt
@@ -1340,10 +1434,20 @@ country_event = {
 				}
 			}
 		}
-		ai_chance = { factor = 40 }
+		ai_chance = { factor = 30 }
 	}
-	option = {		#Return it to the Orthodox
+	option = {		#Return it to the Orthodox: the Rus' heartland and the Orthodox world
 		name = flavor_ran.44.b
+		if = {
+			limit = { 151 = { religion_group = muslim } }
+			151 = {
+				change_religion = orthodox
+			}
+		}
+		add_country_modifier = {
+			name = ran_patron_of_the_patriarch
+			duration = -1
+		}
 		custom_tooltip = RAN_great_church_orthodox_opinion_tt
 		hidden_effect = {
 			every_country = {
@@ -1363,29 +1467,86 @@ country_event = {
 				limit = { religion = orthodox }
 				add_province_modifier = {
 					name = ran_great_church_returned
-					duration = 9125
+					duration = -1
+				}
+			}
+		}
+		custom_tooltip = RAN_imams_slighted_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { religion_group = muslim }
+				add_province_modifier = {
+					name = ran_imams_slighted
+					duration = 3650
 				}
 			}
 		}
 		ai_chance = { factor = 30 }
 	}
-	option = {		#Leave the mosque
+	option = {		#Leave the mosque: the road to Anatolia, Syria and Egypt
 		name = flavor_ran.44.c
+		add_country_modifier = {
+			name = ran_tolerance_at_zolotograd
+			duration = -1
+		}
 		custom_tooltip = RAN_mosque_left_tt
 		hidden_effect = {
 			every_owned_province = {
-				limit = { religion = sunni }
+				limit = { religion_group = muslim }
 				add_province_modifier = {
 					name = ran_mosque_left
-					duration = 9125
+					duration = -1
 				}
 			}
 		}
-		add_country_modifier = {
-			name = ran_tolerance_at_tsargrad
-			duration = 9125
+		custom_tooltip = RAN_patriarch_snubbed_opinion_tt
+		hidden_effect = {
+			every_country = {
+				limit = {
+					religion = orthodox
+					NOT = { tag = ROOT }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = ran_patriarch_snubbed_opinion
+				}
+			}
 		}
-		ai_chance = { factor = 30 }
+		custom_tooltip = RAN_patriarch_snubbed_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { religion = orthodox }
+				add_province_modifier = {
+					name = ran_patriarch_snubbed
+					duration = 3650
+				}
+			}
+		}
+		ai_chance = { factor = 25 }
+	}
+	option = {		#Ran's own way: no god gets the dome, her clerks do
+		name = flavor_ran.44.d
+		add_country_modifier = {
+			name = ran_counting_house_of_zolotograd
+			duration = -1
+		}
+		add_stability = -1
+		custom_tooltip = RAN_great_church_desecrated_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					OR = {
+						religion_group = muslim
+						religion = orthodox
+					}
+				}
+				add_province_modifier = {
+					name = ran_great_church_desecrated
+					duration = 3650
+				}
+			}
+		}
+		ai_chance = { factor = 15 }
 	}
 }
 

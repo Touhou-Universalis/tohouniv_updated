@@ -881,11 +881,6 @@ ran_slot2_north_and_west = {
 						modifier = ran_enchanted_by_fox
 					}
 				}
-				set_allow_female_emperor = yes
-				custom_tooltip = RAN_hre_faith_tt
-				hidden_effect = {
-					set_hre_religion = th_ninetailedshinto
-				}
 			}
 			else = {
 				every_country = {
@@ -904,9 +899,15 @@ ran_slot2_north_and_west = {
 					}
 				}
 			}
+			add_country_modifier = {
+				name = ran_electors_favour
+				duration = -1
+			}
 		}
 	}
 
+	#A non-Christian can't hold the imperial crown, so Ran rules through a charmed Emperor or dissolves the Empire
+	#(the choice is flavor_ran.24). Nothing in this line changes the Empire's religion.
 	RAN_empress_of_the_hre = {
 		icon = mission_ran_empress_of_the_hre
 		required_missions = { RAN_charm_the_electors }
@@ -924,6 +925,19 @@ ran_slot2_north_and_west = {
 				is_part_of_hre = yes
 				OR = {
 					is_emperor = yes
+					custom_trigger_tooltip = {
+						tooltip = RAN_emperor_charmed_tt
+						emperor = {
+							OR = {
+								AND = {
+									has_country_flag = ran_fox_charmed
+									has_opinion = { who = ROOT value = 150 }
+								}
+								alliance_with = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
 					custom_trigger_tooltip = {
 						tooltip = RAN_empress_by_charm_tt
 						calc_true_if = {
@@ -971,14 +985,29 @@ ran_slot2_north_and_west = {
 			great_power_rank = 1
 			if = {
 				limit = { hre_size = 1 }
-				is_emperor = yes
+				custom_trigger_tooltip = {
+					tooltip = RAN_emperor_ours_tt
+					OR = {
+						is_emperor = yes
+						emperor = {
+							OR = {
+								has_country_flag = ran_fox_charmed
+								alliance_with = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+				}
 				custom_trigger_tooltip = {
 					tooltip = RAN_four_loyal_electors_tt
 					calc_true_if = {
 						all_elector = {
 							OR = {
 								is_subject_of = ROOT
-								religion = ROOT
+								AND = {
+									has_country_flag = ran_fox_charmed
+									has_opinion = { who = ROOT value = 100 }
+								}
 							}
 						}
 						amount = 4
@@ -1006,10 +1035,6 @@ ran_slot2_north_and_west = {
 				add_permanent_power_projection = {
 					type = ran_permanent_power_projection
 					amount = 50
-				}
-				if = {
-					limit = { hre_size = 1 }
-					custom_tooltip = RAN_hre_faith_locked_tt
 				}
 			}
 		}
@@ -1675,31 +1700,31 @@ ran_slot4_southern_road = {
 		position = 10
 		provinces_to_highlight = {
 			area = thrace_area
-			NOT = { owned_by = ROOT }
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
-		trigger = {
-			owns = 151
+		trigger = {		#provinces of our subjects count
+			owns_or_non_sovereign_subject_of = 151
 			thrace_area = {
 				type = all
-				owned_by = ROOT
+				country_or_non_sovereign_subject_holds = ROOT
 			}
 		}
 		effect = {
 			country_event = { id = flavor_ran.44 }
 			151 = {
-				change_province_name = "Tsargrad"
-				rename_capital = "Tsargrad"
+				change_province_name = "Zolotograd"
+				rename_capital = "Zolotograd"
 				add_base_tax = 3
 				add_base_production = 3
 				add_base_manpower = 2
 				add_province_modifier = {
-					name = ran_tsargrad
+					name = ran_zolotograd
 					duration = -1
 				}
 			}
-			custom_tooltip = RAN_tsargrad_decision_unlock_tt
+			custom_tooltip = RAN_zolotograd_decision_unlock_tt
 			hidden_effect = {
-				set_country_flag = ran_tsargrad_taken
+				set_country_flag = ran_zolotograd_taken
 			}
 			custom_tooltip = SEPERATOR_TOOLTIP
 			give_claims = { region = anatolia_region }
@@ -1723,7 +1748,7 @@ ran_slot4_southern_road = {
 		}
 		effect = {
 			add_country_modifier = {
-				name = ran_lord_of_two_seas
+				name = ran_tsaritsa_of_two_seas
 				duration = -1
 			}
 			custom_tooltip = SEPERATOR_TOOLTIP
