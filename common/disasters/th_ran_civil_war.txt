@@ -1,8 +1,9 @@
-#RAN: the civil war against Yukari's Loyalists. Started by refusing Yukari in "Good Job, Ran" (flavor_ran.60):
+#RAN: the civil war against Yukari's troops. Started by refusing Yukari in "Good Job, Ran" (flavor_ran.60):
 #the option sets ran_refused_yukari and adds 100 progress (vanilla has no effect that starts a disaster directly).
-#Win: 5 years passed and no loyalists left -> on_end flavor_ran.70 "The Last Spell Card".
-#Lose: the loyalists enforce their demands (common/rebel_types/th_yukari_loyalists.txt) -> flavor_ran.73 "Back to Mayohiga".
-#The barrage runs through the hidden monthly event flavor_ran.79, paced by Ran's hidden will.
+#Win: 5 years passed, no rebels left and none of our provinces held by rebels, so every gap fortress is closed
+#-> on_end flavor_ran.70 "The Last Spell Card".
+#Lose: any of Yukari's three rebel types enforces its demands (common/rebel_types/th_yukari_loyalists.txt) -> flavor_ran.73 "Back to Mayohiga".
+#The barrage, the waves and the gap fortresses run through the hidden monthly event flavor_ran.79.
 th_ran_civil_war = {
 	potential = {
 		tag = RAN
@@ -33,15 +34,27 @@ th_ran_civil_war = {
 			tooltip = RAN_civil_war_five_years_tt
 			had_country_flag = { flag = ran_civil_war_started days = 1825 }
 		}
-		custom_trigger_tooltip = {
+		custom_trigger_tooltip = {		#has_spawned_rebels alone misses armies made by spawn_rebels
 			tooltip = RAN_civil_war_no_loyalists_tt
 			NOT = { has_spawned_rebels = th_yukari_loyalists }
+			NOT = { has_spawned_rebels = th_yukari_boundary_youkai }
+			NOT = { has_spawned_rebels = th_yukari_own }
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { any_owned_province = { controlled_by = REB } }
 		}
 	}
 
 	modifier = {
-		global_unrest = 2
-		land_morale = -0.1
+		global_unrest = 4
+		land_morale = -0.2
+		discipline = -0.05
+		reinforce_speed = -0.25
+		global_manpower_modifier = -0.33
+		manpower_recovery_speed = -0.25
+		global_tax_modifier = -0.33
+		production_efficiency = -0.33
+		stability_cost_modifier = 0.5
+		legitimacy = -2
 	}
 
 	on_start = flavor_ran.61

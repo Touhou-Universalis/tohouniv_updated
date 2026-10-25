@@ -1,6 +1,13 @@
 ######################################################################
-# RAN: Yukari's Loyalists. Spawned only by the civil-war disaster th_ran_civil_war (never naturally).
-# Winning their demands sends RAN back to Yukari: flavor_ran.73 "Back to Mayohiga".
+# RAN: Yukari's troops in the Shikigami Rebellion (disaster th_ran_civil_war). Never spawn naturally.
+# Three tiers, each with its own flag in gfx/flags/<type>.tga:
+#	th_yukari_loyalists			usual: rise from inside the realm
+#	th_yukari_boundary_youkai	better: come through Yukari's old gaps and her gap fortresses
+#	th_yukari_own				elite: Yukari's own guard, only through her gap fortresses
+# Rebels can't have discipline or a chosen general (rebel generals come from REBEL_LEADER_POWER for every
+# rebel in the game), so the tiers differ by morale, cannons and horses, and stack size (set where they spawn,
+# th_scripted_effects_for_ran.txt).
+# Whichever tier enforces "Return to Mayohiga", ran_loyalists_win sends RAN back to Yukari (flavor_ran.73).
 ######################################################################
 th_yukari_loyalists = {
 
@@ -19,10 +26,10 @@ th_yukari_loyalists = {
 	unit_transfer = no
 	will_relocate = yes
 
-	artillery = 0.15
-	infantry = 0.6
+	artillery = 0.2
+	infantry = 0.55
 	cavalry = 0.25
-	morale = 1.25
+	morale = 1.5
 
 	handle_action_negotiate = no
 	handle_action_stability = yes
@@ -73,12 +80,150 @@ th_yukari_loyalists = {
 
 	# Country scope (RAN)
 	demands_enforced_effect = {
-		set_country_flag = ran_lost_civil_war
-		set_country_flag = ran_civil_war_over
-		if = {
-			limit = { has_disaster = th_ran_civil_war }
-			end_disaster = th_ran_civil_war
+		ran_loyalists_win = yes
+	}
+}
+
+th_yukari_boundary_youkai = {
+
+	color = { 80 40 200 }
+
+	area = nation
+	government = any
+	defection = none
+	independence = none
+	gfx_type = culture_province
+
+	resilient = yes
+	reinforcing = yes
+	general = yes
+	smart = yes
+	unit_transfer = no
+	will_relocate = yes
+
+	artillery = 0.25
+	infantry = 0.5
+	cavalry = 0.25
+	morale = 1.75
+
+	handle_action_negotiate = no
+	handle_action_stability = yes
+	handle_action_build_core = no
+	handle_action_send_missionary = no
+
+	spawn_chance = {
+		factor = 0
+	}
+
+	# They go for the forts and the capital
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.25
+			units_in_province = 1
 		}
-		country_event = { id = flavor_ran.73 }
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 4.0
+			is_capital = yes
+		}
+		modifier = {
+			factor = 2.0
+			fort_level = 1
+		}
+		modifier = {
+			factor = 2.0
+			has_province_flag = ran_gap_touched
+		}
+	}
+
+	siege_won_trigger = {
+	}
+	siege_won_effect = {
+	}
+
+	can_negotiate_trigger = {
+		always = no
+	}
+
+	can_enforce_trigger = {
+		always = yes
+	}
+
+	demands_description = "th_yukari_loyalists_demand"
+
+	demands_enforced_effect = {
+		ran_loyalists_win = yes
+	}
+}
+
+th_yukari_own = {
+
+	color = { 214 160 20 }
+
+	area = nation
+	government = any
+	defection = none
+	independence = none
+	gfx_type = culture_province
+
+	resilient = yes
+	reinforcing = yes
+	general = yes
+	smart = yes
+	unit_transfer = no
+	will_relocate = yes
+
+	artillery = 0.3
+	infantry = 0.45
+	cavalry = 0.25
+	morale = 2.0
+
+	handle_action_negotiate = no
+	handle_action_stability = yes
+	handle_action_build_core = no
+	handle_action_send_missionary = no
+
+	spawn_chance = {
+		factor = 0
+	}
+
+	# They don't avoid our armies, and they march for the heart of the realm
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.01
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 8.0
+			is_capital = yes
+		}
+		modifier = {
+			factor = 1.5
+			fort_level = 1
+		}
+	}
+
+	siege_won_trigger = {
+	}
+	siege_won_effect = {
+	}
+
+	can_negotiate_trigger = {
+		always = no
+	}
+
+	can_enforce_trigger = {
+		always = yes
+	}
+
+	demands_description = "th_yukari_loyalists_demand"
+
+	demands_enforced_effect = {
+		ran_loyalists_win = yes
 	}
 }

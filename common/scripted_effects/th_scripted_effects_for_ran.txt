@@ -292,44 +292,154 @@ ran_bow_to_yukari = {
 	}
 }
 
-#Loyalist army sizes come only from Ran's hidden will, never from our own army.
+#Yukari's troops come in three tiers (common/rebel_types/th_yukari_loyalists.txt). The size of each army comes from
+#its tier and Ran's hidden will (will 5-7 / 8-10 / 11-13), and every size fills the battle line:
+#	Yukari's Loyalists (usual, th_yukari_loyalists)		6 / 5 / 5
+#	Boundary Youkai (better, th_yukari_boundary_youkai)		6 / 6 / 5
+#	Yukari's Own (elite, th_yukari_own)						7 / 6 / 6
+#How many armies come grows with our own army (army_size, in regiments).
 #Regiments per army = (5 + 0.1 x province development) x (1 + 0.03 x our military tech) x size
 #(vanilla defines REVOLT_SIZE_BASE, REVOLT_SIZE_DEVELOPMENT_MULTIPLIER, REVOLT_TECH_IMPACT). Late game, size 1 is about 12 regiments.
+#Combat width (15 + 25 from tech, at most 40) grows at about the same 3% per tech, so size 5 fills it in a province of average development.
 
-#Province scope: one army of Yukari's Loyalists. Usage: ran_spawn_loyalists_here = { size = 4 }
+#Province scope: one army of a tier, sized by the owner's hidden will.
+#Usage: ran_spawn_loyalists_here = { type = th_yukari_own hard = 7 medium = 6 easy = 6 }
 ran_spawn_loyalists_here = {
-	spawn_rebels = {
-		type = th_yukari_loyalists
-		size = $size$
+	if = {
+		limit = { owner = { check_variable = { which = ran_own_will value = 11 } } }
+		spawn_rebels = {
+			type = $type$
+			size = $easy$
+		}
+	}
+	else_if = {
+		limit = { owner = { check_variable = { which = ran_own_will value = 8 } } }
+		spawn_rebels = {
+			type = $type$
+			size = $medium$
+		}
+	}
+	else = {
+		spawn_rebels = {
+			type = $type$
+			size = $hard$
+		}
 	}
 	set_province_flag = ran_loyalists_rose
 }
 
-#Country scope: one opening army in a random owned province that hasn't had one yet (never the capital).
-#Usage: ran_spawn_opening_loyalists = { size = 4 }
+#Province scope: one army of each tier.
+ran_spawn_loyalist_army_here = {
+	ran_spawn_loyalists_here = { type = th_yukari_loyalists hard = 6 medium = 5 easy = 5 }
+}
+ran_spawn_boundary_youkai_here = {
+	ran_spawn_loyalists_here = { type = th_yukari_boundary_youkai hard = 6 medium = 6 easy = 5 }
+}
+ran_spawn_yukaris_own_here = {
+	ran_spawn_loyalists_here = { type = th_yukari_own hard = 7 medium = 6 easy = 6 }
+}
+
+#Province scope: an army of Yukari's Own comes through a new gap and takes the province at once
+#(spawn_rebels win = yes, as in vanilla's Castilian civil war; change_controller only if that didn't do it).
+ran_gap_breach_here = {
+	if = {		#the same sizes as ran_spawn_yukaris_own_here: 6 at will 8+, 7 below
+		limit = { owner = { check_variable = { which = ran_own_will value = 8 } } }
+		spawn_rebels = {
+			type = th_yukari_own
+			size = 6
+			win = yes
+		}
+	}
+	else = {
+		spawn_rebels = {
+			type = th_yukari_own
+			size = 7
+			win = yes
+		}
+	}
+	set_province_flag = ran_loyalists_rose
+	if = {
+		limit = {
+			NOT = { controlled_by = REB }
+		}
+		change_controller = REB
+	}
+}
+
+#Country scope: one opening army of Yukari's Loyalists in a random owned province that hasn't had one yet (never the capital).
 ran_spawn_opening_loyalists = {
 	random_owned_province = {
 		limit = {
 			is_capital = no
 			NOT = { has_province_flag = ran_loyalists_rose }
 		}
-		ran_spawn_loyalists_here = { size = $size$ }
+		ran_spawn_loyalist_army_here = yes
 	}
 }
 
-#Country scope: one size-2 army in a random gap-flagged province (Yukari's help was used there). Does nothing if none is left.
+#Country scope: the opening host of Yukari's Loyalists. 4 armies, plus one for every 100 regiments we have (at most 14).
+ran_spawn_loyalist_host = {
+	ran_spawn_opening_loyalists = yes
+	ran_spawn_opening_loyalists = yes
+	ran_spawn_opening_loyalists = yes
+	ran_spawn_opening_loyalists = yes
+	if = {
+		limit = { army_size = 100 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 200 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 300 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 400 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 500 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 600 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 700 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 800 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 900 }
+		ran_spawn_opening_loyalists = yes
+	}
+	if = {
+		limit = { army_size = 1000 }
+		ran_spawn_opening_loyalists = yes
+	}
+}
+
+#Country scope: one army of Boundary Youkai in a random province where Yukari's help was used (ran_gap_touched).
+#Does nothing if none is left.
 ran_spawn_gap_loyalists = {
 	random_owned_province = {
 		limit = {
 			has_province_flag = ran_gap_touched
 			NOT = { has_province_flag = ran_loyalists_rose }
 		}
-		ran_spawn_loyalists_here = { size = 2 }
+		ran_spawn_boundary_youkai_here = yes
 	}
 }
 
-#Country scope: one army of a reinforcement wave or a barrage spawn, in a gap province if there is one, otherwise anywhere
-#but the capital. Provinces may be reused. Usage: ran_spawn_wave_loyalists = { size = 4 }
+#Country scope: one army of a reinforcement wave or a barrage spawn, in a gap-touched province if there is one, otherwise
+#anywhere but the capital. Provinces may be reused. $army$ is the province effect of the tier.
+#Usage: ran_spawn_wave_loyalists = { army = ran_spawn_boundary_youkai_here }
 ran_spawn_wave_loyalists = {
 	if = {
 		limit = {
@@ -337,29 +447,174 @@ ran_spawn_wave_loyalists = {
 		}
 		random_owned_province = {
 			limit = { has_province_flag = ran_gap_touched }
-			ran_spawn_loyalists_here = { size = $size$ }
+			$army$ = yes
 		}
 	}
 	else = {
 		random_owned_province = {
 			limit = { is_capital = no }
-			ran_spawn_loyalists_here = { size = $size$ }
+			$army$ = yes
 		}
 	}
 }
 
-#Country scope: one reinforcement wave (flavor_ran.75-77), sized by Ran's will.
-#Low 1 x size 4 + 2 x size 2; medium 1 x size 4 + 2 x size 2; strong 1 x size 3 + 2 x size 2.
+#Country scope: one of Yukari's reinforcement waves (flavor_ran.75-77): a new gap fortress, plus 2 armies of the wave's tier
+#and one more for every 200 regiments we have (at most 7).
+#Usage: ran_loyalist_reinforcement_wave = { army = ran_spawn_yukaris_own_here }
 ran_loyalist_reinforcement_wave = {
+	ran_open_yukari_gap = yes
+	ran_spawn_wave_loyalists = { army = $army$ }
+	ran_spawn_wave_loyalists = { army = $army$ }
 	if = {
-		limit = { check_variable = { which = ran_own_will value = 11 } }
-		ran_spawn_wave_loyalists = { size = 3 }
+		limit = { army_size = 200 }
+		ran_spawn_wave_loyalists = { army = $army$ }
+	}
+	if = {
+		limit = { army_size = 400 }
+		ran_spawn_wave_loyalists = { army = $army$ }
+	}
+	if = {
+		limit = { army_size = 600 }
+		ran_spawn_wave_loyalists = { army = $army$ }
+	}
+	if = {
+		limit = { army_size = 800 }
+		ran_spawn_wave_loyalists = { army = $army$ }
+	}
+	if = {
+		limit = { army_size = 1000 }
+		ran_spawn_wave_loyalists = { army = $army$ }
+	}
+}
+
+#Yukari's gap fortresses. Yukari opens a gap in one of our fort provinces (never the capital): an army of Yukari's Own
+#takes the fort at once and an army of Boundary Youkai follows. The province gets "Yukari's Gap" (ran_yukari_gap, +50% fort
+#defence). While her forces hold it, another army of each comes through every 6 months; once we control the province again,
+#the gap closes for good. One opens when the rebellion starts (flavor_ran.61) and one with each of the 3 waves.
+
+#Country scope: opens a gap. Prefers forts on our home continent where Yukari's help was used before (ran_gap_touched), then
+#any fort on our home continent, then any fort, then any province but the capital. Saves the province as ran_new_gap.
+ran_open_yukari_gap = {
+	if = {
+		limit = {
+			any_owned_province = {
+				ran_gap_site = yes
+				is_overseas = no
+				has_province_flag = ran_gap_touched
+			}
+		}
+		random_owned_province = {
+			limit = {
+				ran_gap_site = yes
+				is_overseas = no
+				has_province_flag = ran_gap_touched
+			}
+			ran_gap_opens_here = yes
+		}
+	}
+	else_if = {
+		limit = {
+			any_owned_province = {
+				ran_gap_site = yes
+				is_overseas = no
+			}
+		}
+		random_owned_province = {
+			limit = {
+				ran_gap_site = yes
+				is_overseas = no
+			}
+			ran_gap_opens_here = yes
+		}
+	}
+	else_if = {
+		limit = {
+			any_owned_province = { ran_gap_site = yes }
+		}
+		random_owned_province = {
+			limit = { ran_gap_site = yes }
+			ran_gap_opens_here = yes
+		}
 	}
 	else = {
-		ran_spawn_wave_loyalists = { size = 4 }
+		random_owned_province = {
+			limit = {
+				is_capital = no
+				controlled_by = owner
+				NOT = { has_province_modifier = ran_yukari_gap }
+			}
+			ran_gap_opens_here = yes
+		}
 	}
-	ran_spawn_wave_loyalists = { size = 2 }
-	ran_spawn_wave_loyalists = { size = 2 }
+}
+
+#Province scope: the gap opens here.
+ran_gap_opens_here = {
+	save_event_target_as = ran_new_gap
+	add_province_modifier = {
+		name = ran_yukari_gap
+		duration = -1
+	}
+	set_province_flag = ran_gap_open		#its age times the next host
+	ran_gap_breach_here = yes
+	ran_spawn_boundary_youkai_here = yes
+}
+
+#Country scope, monthly from flavor_ran.79: every 6 months a gap held by Yukari's forces sends another army of Yukari's Own
+#and one of Boundary Youkai (flavor_ran.100); once we control the province again, the gap closes for good (flavor_ran.101).
+ran_tend_yukari_gaps = {
+	every_owned_province = {
+		limit = { has_province_modifier = ran_yukari_gap }
+		if = {
+			limit = { controlled_by = owner }
+			remove_province_modifier = ran_yukari_gap
+			clr_province_flag = ran_gap_open
+			province_event = { id = flavor_ran.101 }
+		}
+		else_if = {
+			limit = {
+				had_province_flag = {
+					flag = ran_gap_open
+					days = 180
+				}
+			}
+			clr_province_flag = ran_gap_open
+			set_province_flag = ran_gap_open
+			ran_spawn_yukaris_own_here = yes
+			ran_spawn_boundary_youkai_here = yes
+			province_event = { id = flavor_ran.100 }
+		}
+	}
+}
+
+#Country scope: removes every gap, wherever it is (the war is over, one way or the other).
+ran_close_all_yukari_gaps = {
+	every_province = {
+		limit = { has_province_modifier = ran_yukari_gap }
+		remove_province_modifier = ran_yukari_gap
+		clr_province_flag = ran_gap_open
+	}
+}
+
+#Country scope (RAN): one of Yukari's three tiers enforced "Return to Mayohiga" (their demands_enforced_effect).
+#Runs only once. "Back to Mayohiga" fires a day later, once the engine is done with the winning faction, and disbands the
+#other tiers there.
+ran_loyalists_win = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = ran_lost_civil_war }
+		}
+		set_country_flag = ran_lost_civil_war
+		set_country_flag = ran_civil_war_over
+		if = {
+			limit = { has_disaster = th_ran_civil_war }
+			end_disaster = th_ran_civil_war
+		}
+		country_event = {
+			id = flavor_ran.73
+			days = 1
+		}
+	}
 }
 
 #Country scope: picks one civil-war barrage event. Called by flavor_ran.79 with a chance set by the hidden will.

@@ -1714,7 +1714,6 @@ country_event = {
 			name = ran_foxfire_landing
 			duration = 3650
 		}
-		custom_tooltip = RAN_foxes_of_japan_refuse_hint_tt
 		hidden_effect = {
 			change_variable = { which = ran_own_will value = 2 }
 		}
@@ -1937,36 +1936,18 @@ country_event = {
 	title = flavor_ran.61.t
 	desc = flavor_ran.61.desc
 	picture = RANREBELLION_eventPicture
+	goto = ran_new_gap
 
 	is_triggered_only = yes
 
 	immediate = {
 		hidden_effect = {
 			set_country_flag = ran_civil_war_started
-			#Opening wave by the hidden will (sizes only from the will, Step 8b):
-			#low (5-7): 2 x size 4 + 5 x size 2; medium (8-10): 1 x size 4 + 4 x size 2; strong (11-13): 1 x size 3 + 4 x size 2
-			if = {
-				limit = { check_variable = { which = ran_own_will value = 11 } }
-				ran_spawn_opening_loyalists = { size = 3 }
-			}
-			else_if = {
-				limit = { check_variable = { which = ran_own_will value = 8 } }
-				ran_spawn_opening_loyalists = { size = 4 }
-			}
-			else = {
-				ran_spawn_opening_loyalists = { size = 4 }
-				ran_spawn_opening_loyalists = { size = 4 }
-				ran_spawn_opening_loyalists = { size = 2 }
-			}
-			ran_spawn_opening_loyalists = { size = 2 }
-			ran_spawn_opening_loyalists = { size = 2 }
-			ran_spawn_opening_loyalists = { size = 2 }
-			ran_spawn_opening_loyalists = { size = 2 }
-			#Plus one army per gap province, at most 10
-			ran_spawn_gap_loyalists = yes
-			ran_spawn_gap_loyalists = yes
-			ran_spawn_gap_loyalists = yes
-			ran_spawn_gap_loyalists = yes
+			#The first gap fortress: Yukari's Own take a fort at once (saved as ran_new_gap)
+			ran_open_yukari_gap = yes
+			#Yukari's Loyalists: 4 armies plus one per 100 of our regiments (at most 14), sized by the hidden will
+			ran_spawn_loyalist_host = yes
+			#Boundary Youkai: one army per province where Yukari's help was used, at most 6
 			ran_spawn_gap_loyalists = yes
 			ran_spawn_gap_loyalists = yes
 			ran_spawn_gap_loyalists = yes
@@ -1983,6 +1964,7 @@ country_event = {
 	option = {
 		name = flavor_ran.61.a
 		custom_tooltip = RAN_shikigami_rebels_tt
+		custom_tooltip = RAN_gap_opened_tt
 	}
 }
 
@@ -2018,7 +2000,8 @@ country_event = {
 		name = flavor_ran.63.a
 		custom_tooltip = RAN_gaps_open_tt
 		hidden_effect = {
-			ran_spawn_wave_loyalists = { size = 2 }
+			ran_spawn_wave_loyalists = { army = ran_spawn_boundary_youkai_here }
+			ran_spawn_wave_loyalists = { army = ran_spawn_loyalist_army_here }
 		}
 	}
 }
@@ -2212,6 +2195,7 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			set_country_flag = ran_civil_war_over
+			ran_close_all_yukari_gaps = yes
 			every_owned_province = {
 				limit = { has_province_flag = ran_loyalists_rose }
 				clr_province_flag = ran_loyalists_rose
@@ -2340,6 +2324,15 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			#Yukari's other tiers lay down their arms, and provinces still held by rebels come back to us
+			disband_rebels = th_yukari_loyalists
+			disband_rebels = th_yukari_boundary_youkai
+			disband_rebels = th_yukari_own
+			ran_close_all_yukari_gaps = yes
+			every_owned_province = {
+				limit = { controlled_by = REB }
+				change_controller = ROOT
+			}
 			every_owned_province = {
 				limit = { has_province_flag = ran_loyalists_rose }
 				clr_province_flag = ran_loyalists_rose
@@ -2377,25 +2370,28 @@ country_event = {
 	}
 }
 
-#Yukari's reinforcement waves (fired by flavor_ran.79 at about 1.5, 3 and 4.5 years). Sized by Ran's will.
+#Yukari's reinforcement waves (fired by flavor_ran.79 at about 1.5, 3 and 4.5 years). Each opens a new gap fortress (ran_new_gap)
+#and brings a host that grows with our army: Yukari's Loyalists, then Boundary Youkai, then Yukari's Own.
 country_event = {
 	id = flavor_ran.75
 	title = flavor_ran.75.t
 	desc = flavor_ran.75.desc
 	picture = LAND_MILITARY_eventPicture
+	goto = ran_new_gap
 
 	is_triggered_only = yes
 	trigger = { has_disaster = th_ran_civil_war }
 
 	immediate = {
 		hidden_effect = {
-			ran_loyalist_reinforcement_wave = yes
+			ran_loyalist_reinforcement_wave = { army = ran_spawn_loyalist_army_here }
 		}
 	}
 
 	option = {
 		name = flavor_ran.75.a
-		custom_tooltip = RAN_loyalist_wave_tt
+		custom_tooltip = RAN_loyalist_wave_1_tt
+		custom_tooltip = RAN_gap_opened_tt
 	}
 }
 
@@ -2404,19 +2400,21 @@ country_event = {
 	title = flavor_ran.76.t
 	desc = flavor_ran.76.desc
 	picture = CONJURATION_eventPicture
+	goto = ran_new_gap
 
 	is_triggered_only = yes
 	trigger = { has_disaster = th_ran_civil_war }
 
 	immediate = {
 		hidden_effect = {
-			ran_loyalist_reinforcement_wave = yes
+			ran_loyalist_reinforcement_wave = { army = ran_spawn_boundary_youkai_here }
 		}
 	}
 
 	option = {
 		name = flavor_ran.76.a
-		custom_tooltip = RAN_loyalist_wave_tt
+		custom_tooltip = RAN_loyalist_wave_2_tt
+		custom_tooltip = RAN_gap_opened_tt
 	}
 }
 
@@ -2425,23 +2423,26 @@ country_event = {
 	title = flavor_ran.77.t
 	desc = flavor_ran.77.desc
 	picture = SAGES_OF_GENSOKYO_eventPicture
+	goto = ran_new_gap
 
 	is_triggered_only = yes
 	trigger = { has_disaster = th_ran_civil_war }
 
 	immediate = {
 		hidden_effect = {
-			ran_loyalist_reinforcement_wave = yes
+			ran_loyalist_reinforcement_wave = { army = ran_spawn_yukaris_own_here }
 		}
 	}
 
 	option = {
 		name = flavor_ran.77.a
-		custom_tooltip = RAN_loyalist_wave_tt
+		custom_tooltip = RAN_loyalist_wave_3_tt
+		custom_tooltip = RAN_gap_opened_tt
 	}
 }
 
-#Hidden: monthly from th_ran_civil_war. Sends Yukari's three reinforcement waves (flavor_ran.75-77) at about 1.5, 3 and 4.5 years,
+#Hidden: monthly from th_ran_civil_war. Tends Yukari's gap fortresses (a new host every 6 months while she holds one, closed once
+#we retake it), sends her three reinforcement waves (flavor_ran.75-77) at about 1.5, 3 and 4.5 years,
 #fires one of Yukari's sabotage events (flavor_ran.80-83) about every 10 months,
 #and fires one barrage event about every 4, 5 or 6 months by Ran's hidden will.
 country_event = {
@@ -2454,6 +2455,8 @@ country_event = {
 	hidden = yes
 
 	immediate = {
+		#Gap fortresses
+		ran_tend_yukari_gaps = yes
 		#Reinforcement waves: one each at about 18, 36 and 54 months, for every will level
 		if = {
 			limit = {
@@ -2514,6 +2517,42 @@ country_event = {
 
 	option = {
 		name = flavor_ran.79.a
+	}
+}
+
+#More Through the Gap: every 6 months while Yukari's forces hold a gap fortress (ran_tend_yukari_gaps). ROOT is the province.
+province_event = {
+	id = flavor_ran.100
+	title = flavor_ran.100.t
+	desc = flavor_ran.100.desc
+	picture = SOMBER_YUKARI_eventPicture
+	goto = root
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.100.a
+		custom_tooltip = RAN_gap_still_open_tt
+	}
+}
+
+#The Gap Is Sealed: we control a gap fortress again, and the gap closes for good (ran_tend_yukari_gaps). ROOT is the province.
+province_event = {
+	id = flavor_ran.101
+	title = flavor_ran.101.t
+	desc = flavor_ran.101.desc
+	picture = RANWRITING_eventPicture
+	goto = root
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_ran.101.a
+		custom_tooltip = RAN_gap_sealed_tt
+		owner = {
+			add_army_tradition = 5
+			add_prestige = 10
+		}
 	}
 }
 
