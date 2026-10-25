@@ -2371,7 +2371,8 @@ country_event = {
 }
 
 #Yukari's reinforcement waves (fired by flavor_ran.79 at about 1.5, 3 and 4.5 years). Each opens a new gap fortress (ran_new_gap)
-#and brings a host that grows with our army: Yukari's Loyalists, then Boundary Youkai, then Yukari's Own.
+#and brings a host that grows with our army: Yukari's Loyalists, then Boundary Youkai, then Yukari's Own. The last opens
+#2 gaps at high will (11+), 3 at medium (8-10) and 4 at low.
 country_event = {
 	id = flavor_ran.75
 	title = flavor_ran.75.t
@@ -2430,6 +2431,15 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			ran_open_yukari_gap = yes		#extra gaps by will; the wave's own comes last and becomes ran_new_gap
+			if = {
+				limit = { NOT = { check_variable = { which = ran_own_will value = 11 } } }
+				ran_open_yukari_gap = yes
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = ran_own_will value = 8 } } }
+				ran_open_yukari_gap = yes
+			}
 			ran_loyalist_reinforcement_wave = { army = ran_spawn_yukaris_own_here }
 		}
 	}
@@ -2437,7 +2447,17 @@ country_event = {
 	option = {
 		name = flavor_ran.77.a
 		custom_tooltip = RAN_loyalist_wave_3_tt
-		custom_tooltip = RAN_gap_opened_tt
+		if = {
+			limit = { check_variable = { which = ran_own_will value = 11 } }
+			custom_tooltip = RAN_two_gaps_opened_tt
+		}
+		else_if = {
+			limit = { check_variable = { which = ran_own_will value = 8 } }
+			custom_tooltip = RAN_three_gaps_opened_tt
+		}
+		else = {
+			custom_tooltip = RAN_four_gaps_opened_tt
+		}
 	}
 }
 

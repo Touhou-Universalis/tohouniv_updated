@@ -438,21 +438,34 @@ ran_spawn_gap_loyalists = {
 }
 
 #Country scope: one army of a reinforcement wave or a barrage spawn, in a gap-touched province if there is one, otherwise
-#anywhere but the capital. Provinces may be reused. $army$ is the province effect of the tier.
+#anywhere but the capital. Provinces may be reused, but never one the rebels hold or a gap: rebels of different tiers
+#fight each other when they share a province. $army$ is the province effect of the tier.
 #Usage: ran_spawn_wave_loyalists = { army = ran_spawn_boundary_youkai_here }
 ran_spawn_wave_loyalists = {
 	if = {
 		limit = {
-			any_owned_province = { has_province_flag = ran_gap_touched }
+			any_owned_province = {
+				has_province_flag = ran_gap_touched
+				NOT = { controlled_by = REB }
+				NOT = { has_province_modifier = ran_yukari_gap }
+			}
 		}
 		random_owned_province = {
-			limit = { has_province_flag = ran_gap_touched }
+			limit = {
+				has_province_flag = ran_gap_touched
+				NOT = { controlled_by = REB }
+				NOT = { has_province_modifier = ran_yukari_gap }
+			}
 			$army$ = yes
 		}
 	}
 	else = {
 		random_owned_province = {
-			limit = { is_capital = no }
+			limit = {
+				is_capital = no
+				NOT = { controlled_by = REB }
+				NOT = { has_province_modifier = ran_yukari_gap }
+			}
 			$army$ = yes
 		}
 	}
@@ -488,9 +501,10 @@ ran_loyalist_reinforcement_wave = {
 }
 
 #Yukari's gap fortresses. Yukari opens a gap in one of our fort provinces (never the capital): an army of Yukari's Own
-#takes the fort at once and an army of Boundary Youkai follows. The province gets "Yukari's Gap" (ran_yukari_gap, +50% fort
-#defence). While her forces hold it, another army of each comes through every 6 months; once we control the province again,
-#the gap closes for good. One opens when the rebellion starts (flavor_ran.61) and one with each of the 3 waves.
+#takes the fort at once and a second one follows. Only Yukari's Own come through gaps, since rebels of different tiers fight
+#each other in a shared province. The province gets "Yukari's Gap" (ran_yukari_gap, +50% fort defence). While her forces
+#hold it, two more armies come through every 6 months; once we control the province again, the gap closes for good.
+#One opens when the rebellion starts (flavor_ran.61), one with each of the first 2 waves and 3 with the last (flavor_ran.77).
 
 #Country scope: opens a gap. Prefers forts on our home continent where Yukari's help was used before (ran_gap_touched), then
 #any fort on our home continent, then any fort, then any province but the capital. Saves the province as ran_new_gap.
@@ -557,11 +571,11 @@ ran_gap_opens_here = {
 	}
 	set_province_flag = ran_gap_open		#its age times the next host
 	ran_gap_breach_here = yes
-	ran_spawn_boundary_youkai_here = yes
+	ran_spawn_yukaris_own_here = yes
 }
 
-#Country scope, monthly from flavor_ran.79: every 6 months a gap held by Yukari's forces sends another army of Yukari's Own
-#and one of Boundary Youkai (flavor_ran.100); once we control the province again, the gap closes for good (flavor_ran.101).
+#Country scope, monthly from flavor_ran.79: every 6 months a gap held by Yukari's forces sends two more armies of
+#Yukari's Own (flavor_ran.100); once we control the province again, the gap closes for good (flavor_ran.101).
 ran_tend_yukari_gaps = {
 	every_owned_province = {
 		limit = { has_province_modifier = ran_yukari_gap }
@@ -581,7 +595,7 @@ ran_tend_yukari_gaps = {
 			clr_province_flag = ran_gap_open
 			set_province_flag = ran_gap_open
 			ran_spawn_yukaris_own_here = yes
-			ran_spawn_boundary_youkai_here = yes
+			ran_spawn_yukaris_own_here = yes
 			province_event = { id = flavor_ran.100 }
 		}
 	}
