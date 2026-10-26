@@ -1038,6 +1038,63 @@ ran_find_false_fox_home = {
 	}
 }
 
+#Country scope: picks the False Fox's province again if the saved one is gone or no longer ours (flavor_ran.94, 104).
+ran_refresh_false_fox_home = {
+	if = {
+		limit = { NOT = { has_saved_event_target = ran_false_fox_home } }
+		ran_find_false_fox_home = yes
+	}
+	else_if = {
+		limit = {
+			event_target:ran_false_fox_home = { NOT = { owned_by = ROOT } }
+		}
+		ran_find_false_fox_home = yes
+	}
+}
+
+#Country scope: the False Fox story is over (flavor_ran.95, either outcome). Removes Two Foxes and her tricks' modifiers, clears the rising flags.
+ran_false_fox_ends = {
+	remove_country_modifier = ran_two_foxes
+	if = {
+		limit = { has_country_modifier = ran_leaf_money }
+		remove_country_modifier = ran_leaf_money
+	}
+	if = {
+		limit = { has_country_modifier = ran_envoys_denying }
+		remove_country_modifier = ran_envoys_denying
+	}
+	if = {
+		limit = { has_country_modifier = ran_talk_of_every_court }
+		remove_country_modifier = ran_talk_of_every_court
+	}
+	if = {
+		limit = { has_country_modifier = ran_seals_and_passwords }
+		remove_country_modifier = ran_seals_and_passwords
+	}
+	if = {
+		limit = { has_country_modifier = ran_which_fox_commands }
+		remove_country_modifier = ran_which_fox_commands
+	}
+	hidden_effect = {
+		every_owned_province = {
+			limit = { has_province_flag = ran_false_fox_risen }
+			clr_province_flag = ran_false_fox_risen
+		}
+	}
+}
+
+#Country scope: refusing a Letter from Mayohiga (flavor_ran.85-88). $modifier$ for 5 years, then Yukari collects something anyway ($prank$, 3-9 months later).
+ran_refuse_yukari_letter = {
+	add_country_modifier = {
+		name = $modifier$
+		duration = 1825
+	}
+	custom_tooltip = RAN_yukari_collects_tt
+	hidden_effect = {
+		country_event = { id = $prank$ days = 90 random = 180 }
+	}
+}
+
 #The False Fox rises (flavor_ran.94; a pretender war, scaled to our size): an army of size $home$ in her province, then armies of
 #size $extra$ in other owned provinces near it: 2 (1 when full = no), +1 at 50 owned provinces, +1 at 100. Never in the capital.
 ran_false_fox_rise = {

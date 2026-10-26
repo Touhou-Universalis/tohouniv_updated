@@ -2703,8 +2703,9 @@ country_event = {
 }
 
 #####################################################################
-#Recurring events (flavor_ran.84-99): A Letter from Mayohiga, Chen's Mischief, the False Fox.
+#Recurring events (flavor_ran.84-99, 102-108): A Letter from Mayohiga, Chen's Mischief, the False Fox.
 #Letters and Chen are sent by the hidden yearly event flavor_ran.99 (on_yearly_pulse in th_on_actions.txt).
+#Refusing a letter costs a 5-year modifier, and a few months later Yukari collects something anyway (flavor_ran.105-108).
 #Laughing off Chen's mischief spoils her; the first time she is fully spoiled, Yukari writes (flavor_ran.84).
 #The False Fox is scheduled once by RAN_gather_the_rus, 5-15 years after it.
 #None of these change Ran's hidden will.
@@ -2728,8 +2729,9 @@ country_event = {
 		}
 		ai_chance = { factor = 50 }
 	}
-	option = {		#Keep it
+	option = {		#Keep it: Purse Strings Cut, then Received with Thanks (flavor_ran.105)
 		name = flavor_ran.85.b
+		ran_refuse_yukari_letter = { modifier = ran_purse_strings_cut prank = flavor_ran.105 }
 		ai_chance = { factor = 50 }
 	}
 }
@@ -2752,8 +2754,9 @@ country_event = {
 		}
 		ai_chance = { factor = 50 }
 	}
-	option = {		#Keep them
+	option = {		#Keep them: An Unguarded Border, then The Borrowed Regiment (flavor_ran.106)
 		name = flavor_ran.86.b
+		ran_refuse_yukari_letter = { modifier = ran_unguarded_border prank = flavor_ran.106 }
 		ai_chance = { factor = 50 }
 	}
 }
@@ -2785,8 +2788,9 @@ country_event = {
 		ran_send_scholars = { power = mil modifier = ran_copied_siege_manuals }
 		ai_chance = { factor = 25 }
 	}
-	option = {		#Keep them
+	option = {		#Keep them: Library Doors Closed, then Overdue Books (flavor_ran.107)
 		name = flavor_ran.87.d
+		ran_refuse_yukari_letter = { modifier = ran_library_doors_closed prank = flavor_ran.107 }
 		ai_chance = { factor = 25 }
 	}
 }
@@ -2823,8 +2827,10 @@ country_event = {
 		}
 		ai_chance = { factor = 30 }
 	}
-	option = {		#Ignore it
+	option = {		#Ignore it: -1 stability, A Mistress Neglected, then Laundry from Mayohiga (flavor_ran.108)
 		name = flavor_ran.88.c
+		add_stability = -1
+		ran_refuse_yukari_letter = { modifier = ran_mistress_neglected prank = flavor_ran.108 }
 		ai_chance = { factor = 30 }
 	}
 }
@@ -2845,6 +2851,85 @@ country_event = {
 			name = ran_yukaris_favour
 			duration = 1825
 		}
+	}
+}
+
+#Yukari collects (flavor_ran.105-108): 3-9 months after a refused letter (ran_refuse_yukari_letter), she takes something anyway.
+#A one-off loss; skipped once the finale has begun.
+
+#Received with Thanks (Pocket Money refused)
+country_event = {
+	id = flavor_ran.105
+	title = flavor_ran.105.t
+	desc = flavor_ran.105.desc
+	picture = YUKARI_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		NOT = { mission_completed = RAN_good_job_ran }
+	}
+
+	option = {
+		name = flavor_ran.105.a
+		add_years_of_income = -0.25
+	}
+}
+
+#The Borrowed Regiment (Guards refused)
+country_event = {
+	id = flavor_ran.106
+	title = flavor_ran.106.t
+	desc = flavor_ran.106.desc
+	picture = SOMBER_YUKARI_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		NOT = { mission_completed = RAN_good_job_ran }
+	}
+
+	option = {
+		name = flavor_ran.106.a
+		add_yearly_manpower = -0.25
+		add_army_tradition = -5
+	}
+}
+
+#Overdue Books (Books refused)
+country_event = {
+	id = flavor_ran.107
+	title = flavor_ran.107.t
+	desc = flavor_ran.107.desc
+	picture = CONJURATION_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		NOT = { mission_completed = RAN_good_job_ran }
+	}
+
+	option = {
+		name = flavor_ran.107.a
+		add_adm_power = -25
+		add_dip_power = -25
+		add_mil_power = -25
+	}
+}
+
+#Laundry from Mayohiga (Housework ignored)
+country_event = {
+	id = flavor_ran.108
+	title = flavor_ran.108.t
+	desc = flavor_ran.108.desc
+	picture = SLEEPYYUKARI_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		NOT = { mission_completed = RAN_good_job_ran }
+	}
+
+	option = {
+		name = flavor_ran.108.a
+		add_adm_power = -50
+		add_prestige = -20
 	}
 }
 
@@ -3133,6 +3218,8 @@ country_event = {
 }
 
 #The False Fox: Rumours (once, 5-15 years after RAN_gather_the_rus). From here until she is unmasked the realm has Two Foxes (a pretender war).
+#The False Fox is Mamizou, sent by Yukari to test Ran. Small hints here and in 103, a clear one in 95; it is never said outright.
+#She plays three tricks (102-104, about 6, 12 and 18 months) and rises after exactly 2 years (94).
 country_event = {
 	id = flavor_ran.93
 	title = flavor_ran.93.t
@@ -3155,12 +3242,116 @@ country_event = {
 		}
 		custom_tooltip = RAN_false_fox_rumours_tt
 		hidden_effect = {
-			country_event = { id = flavor_ran.94 days = 1095 random = 730 }		#3-5 years
+			country_event = { id = flavor_ran.102 days = 180 random = 30 }		#Leaf Money
+			country_event = { id = flavor_ran.103 days = 365 random = 30 }		#Tales at Foreign Courts
+			country_event = { id = flavor_ran.104 days = 545 random = 30 }		#A Fox in Two Places
+			country_event = { id = flavor_ran.94 days = 730 }		#she rises: 2 years
 		}
 	}
 }
 
-#The False Fox Marches (3-5 years after the rumours). She always rises; the options only set how big the rising is (no cheap escape).
+#The False Fox's tricks (flavor_ran.102-104) while she gathers her army. Both options of each hurt, in different places;
+#the modifiers last until she is unmasked (ran_false_fox_ends in flavor_ran.95).
+
+#Leaf Money (a tanuki trick: coins that turn back into leaves)
+country_event = {
+	id = flavor_ran.102
+	title = flavor_ran.102.t
+	desc = flavor_ran.102.desc
+	picture = PEASANTS_BARTERING_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		has_country_modifier = ran_two_foxes
+	}
+
+	option = {		#Mint new silver and pay the merchants back
+		name = flavor_ran.102.a
+		add_inflation = 2
+		ai_chance = { factor = 50 }
+	}
+	option = {		#The merchants carry the loss
+		name = flavor_ran.102.b
+		add_country_modifier = {
+			name = ran_leaf_money
+			duration = -1
+		}
+		custom_tooltip = RAN_false_fox_until_unmasked_tt
+		ai_chance = { factor = 50 }
+	}
+}
+
+#Tales at Foreign Courts (her pamphlets know about Ran's housework: a hint that she comes from Mayohiga)
+country_event = {
+	id = flavor_ran.103
+	title = flavor_ran.103.t
+	desc = flavor_ran.103.desc
+	picture = ACCUSATION_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		has_country_modifier = ran_two_foxes
+	}
+
+	option = {		#Deny everything
+		name = flavor_ran.103.a
+		add_country_modifier = {
+			name = ran_envoys_denying
+			duration = -1
+		}
+		custom_tooltip = RAN_false_fox_until_unmasked_tt
+		ai_chance = { factor = 50 }
+	}
+	option = {		#Let them talk
+		name = flavor_ran.103.b
+		add_country_modifier = {
+			name = ran_talk_of_every_court
+			duration = -1
+		}
+		custom_tooltip = RAN_false_fox_until_unmasked_tt
+		ai_chance = { factor = 50 }
+	}
+}
+
+#A Fox in Two Places (Mamizou disguised as Ran marches off one of our regiments)
+country_event = {
+	id = flavor_ran.104
+	title = flavor_ran.104.t
+	desc = flavor_ran.104.desc
+	picture = MAMIZOUDISGUISE_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		has_country_modifier = ran_two_foxes
+	}
+
+	immediate = {
+		hidden_effect = {
+			ran_refresh_false_fox_home = yes
+		}
+	}
+
+	option = {		#Seals and passwords
+		name = flavor_ran.104.a
+		add_country_modifier = {
+			name = ran_seals_and_passwords
+			duration = -1
+		}
+		custom_tooltip = RAN_false_fox_until_unmasked_tt
+		ai_chance = { factor = 50 }
+	}
+	option = {		#No time for passwords
+		name = flavor_ran.104.b
+		add_country_modifier = {
+			name = ran_which_fox_commands
+			duration = -1
+		}
+		custom_tooltip = RAN_false_fox_until_unmasked_tt
+		ai_chance = { factor = 50 }
+	}
+}
+
+#The False Fox Marches (2 years after the rumours). She always rises; the options only set how big the rising is (no cheap escape).
 country_event = {
 	id = flavor_ran.94
 	title = flavor_ran.94.t
@@ -3178,17 +3369,7 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			#Pick the pretender's province again if we no longer own the one from the rumours
-			if = {
-				limit = { NOT = { has_saved_event_target = ran_false_fox_home } }
-				ran_find_false_fox_home = yes
-			}
-			else_if = {
-				limit = {
-					event_target:ran_false_fox_home = { NOT = { owned_by = ROOT } }
-				}
-				ran_find_false_fox_home = yes
-			}
+			ran_refresh_false_fox_home = yes		#if we no longer own the province from the rumours
 		}
 	}
 
@@ -3230,7 +3411,7 @@ country_event = {
 }
 
 #The False Fox Unmasked: Mamizou. Beating her rising unlocks Mamizou as a hireable advisor.
-#If her rebels win: a penalty and nothing from her.
+#If her rebels win: a penalty and nothing from her. Either way she leaves through one of Yukari's gaps (the clear hint).
 country_event = {
 	id = flavor_ran.95
 	title = flavor_ran.95.t
@@ -3256,32 +3437,20 @@ country_event = {
 	option = {		#We beat her: Mamizou can be hired
 		name = flavor_ran.95.a
 		trigger = { NOT = { has_country_flag = ran_false_fox_won } }
-		remove_country_modifier = ran_two_foxes
+		ran_false_fox_ends = yes
 		if = {
 			limit = { has_country_flag = ran_false_fox_field }
 			add_army_tradition = 10
 			add_prestige = 25
 		}
 		th_enable_touhou_advisor = { advisor = th_advisor_mamizou }
-		hidden_effect = {
-			every_owned_province = {
-				limit = { has_province_flag = ran_false_fox_risen }
-				clr_province_flag = ran_false_fox_risen
-			}
-		}
 	}
 	option = {		#Her rebels won
 		name = flavor_ran.95.b
 		trigger = { has_country_flag = ran_false_fox_won }
-		remove_country_modifier = ran_two_foxes
+		ran_false_fox_ends = yes
 		add_stability = -2
 		add_prestige = -100
-		hidden_effect = {
-			every_owned_province = {
-				limit = { has_province_flag = ran_false_fox_risen }
-				clr_province_flag = ran_false_fox_risen
-			}
-		}
 	}
 }
 
